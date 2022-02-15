@@ -12,7 +12,7 @@ Created on Tue Feb 15 10:26:44 2022
 """
 
 # Revision history
-# 2022-02-15 alpha version
+# 2022-02-15 alpha version, check attributes in foodlayer.__repr__
 
 # %% ALL ROOT CLASSES
 
@@ -29,8 +29,8 @@ class foodlayer():
         print('Food object "%s" (%s) with properties:' % (self.name,self.description))
         print("%15s: %0.8g" % ("volume",self.volume))
         print("%15s: %0.8g" % ("surface area",self.surfacearea))
-        print("%15s: %0.8g" % ("k0",self.k0))
-        print("%15s: %0.8g" % ("h",self.h))
+        if hasattr(self,'k0'): print("%15s: %0.8g" % ("k0",self.k0))
+        if hasattr(self,'h'): print("%15s: %0.8g" % ("h",self.h))
         
         return "%s (%s)" % (self.name,self.description)
 
