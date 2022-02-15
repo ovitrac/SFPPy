@@ -13,7 +13,8 @@
 
 # list of public classes: data, dump, raster, struct
 
-# $ last revision - 2022-02-14 $
+# $ last revision - 2022-02-15 $
 
-from patankar.layer import layer
+from patankar.layer import *
+from patankar.food import *
 from patankar.private.struct import struct

@@ -8,4 +8,5 @@ export PYTHONPATH='/home/olivi/natacha/python':'/home/olivi/anaconda3/lib/python
 
 pdoc -f --html -o ./html/ ./patankar/layer.py
 pdoc -f --html -o ./html/ ./patankar/senspatankar.py
+pdoc -f --html -o ./html/ ./patankar/food.py
 pdoc -f --html -o ./html/ ./patankar/__init__.py
