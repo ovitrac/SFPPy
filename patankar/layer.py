@@ -16,6 +16,7 @@
 # 2022-01-21 add split()
 # 2022-01-22 add child classes for common polymers
 # 2022-01-23 full implementation of units 
+# 2022-01-26 mesh() method generating mesh objects
 
 
 oneline = "Build multilayer objects"
@@ -72,6 +73,7 @@ def check_units(value,ProvidedUnits,ExpectedUnits):
     
 
 # default values (usable in layer object methods)
+# these default values can be moved in a configuration file
 default = struct(l=1e-6,
                  D=1e-14,
                  k=1,
@@ -83,8 +85,11 @@ default = struct(l=1e-6,
                  Cunit=NoUnits,
                  layername="my layer",
                  layertype="unknown type",
-                 layermaterial="unknown material"
+                 layermaterial="unknown material",
+                 nmeshmin = 10,
+                 nmesh = 200
                         )
+
 
 # Main class definition
 # =======================
@@ -117,7 +122,8 @@ class layer:
                  lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername=default.layername,
                  layertype=default.layertype,
-                 layermaterial=default.layermaterial):
+                 layermaterial=default.layermaterial,
+                 nmesh=None, nmeshmin=None):
         """
         
         Parameters
@@ -160,6 +166,8 @@ class layer:
         if Dunit==None: Dunit=default.Dunit
         if kunit==None: kunit=default.kunit
         if Cunit==None: Cunit=default.Cunit
+        if nmesh==None: nmesh=default.nmesh
+        if nmeshmin==None: nmeshmin=default.nmeshmin        
         l,lunit = check_units(l,lunit,default.lunit)
         D,Dunit = check_units(D,Dunit,default.Dunit)
         k,kunit = check_units(k,kunit,default.kunit)
@@ -176,6 +184,8 @@ class layer:
         self._Dunit = Dunit
         self._kunit = kunit
         self._Cunit = Cunit
+        self._nmesh = nmesh
+        self._nmeshmin = nmeshmin
         
     # --------------------------------------------------------------------
     # overloading binary addition (note that the output is of type layer)
@@ -302,6 +312,10 @@ class layer:
     @property
     def n(self): return self._nlayer
     @property
+    def nmesh(self): return self._nmesh
+    @property
+    def nmeshmin(self): return self._nmeshmin
+    @property
     def resistance(self): return self.l*self.k/self.D
     @property
     def permeability(self): return self.D/(self.l*self.k)
@@ -322,7 +336,9 @@ class layer:
     @property
     def referencelayer(self): return np.argmax(self.resistance)
     @property
-    def Foscale(self): return self.D[self.referencelayer]/self.l[self.referencelayer]**2
+    def lreferencelayer(self): return self.l[self.referencelayer]
+    @property
+    def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2
     
     # --------------------------------------------------------------------
     # comparators based resistance
@@ -377,6 +393,28 @@ class layer:
 
     
     # --------------------------------------------------------------------
+    # remesh generates mesh
+    # --------------------------------------------------------------------
+    def mesh(self,nmesh=None,nmeshmin=None):
+        """ nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) """
+        if nmesh==None: nmesh = self.nmesh
+        if nmeshmin==None: nmeshmin = self.nmeshmin
+        if nmeshmin>nmesh: nmeshmin,nmesh = nmesh, nmeshmin
+        # X = mesh distribution (number of nodes per layer)
+        X = np.ones(self._nlayer)
+        for i in range(1,self._nlayer):
+           X[i] = X[i-1]*(self.permeability[i-1]*self.l[i])/(self.permeability[i]*self.l[i-1])
+        X = np.maximum(nmeshmin,np.ceil(nmesh*X/sum(X)))
+        X = np.round((X/sum(X))*nmesh)
+        # do the mesh
+        x0 = 0
+        mymesh = []
+        for i in range(self._nlayer):
+            mymesh.append(mesh(self.l[i],int(X[i]),x0))
+            x0 += self.l[i]
+        return mymesh
+        
+    # --------------------------------------------------------------------
     # Getter methods and tools to validate inputs checknumvalue and checktextvalue
     # --------------------------------------------------------------------
     def checknumvalue(self,value):
@@ -417,7 +455,11 @@ class layer:
     def type(self,value): self._type =self.checktextvalue(value)
     @material.setter
     def material(self,value): self._material =self.checktextvalue(value)
-    
+    @nmesh.setter
+    def nmesh(self,value): self._nmesh = max(value,self._nlayer*self._nmeshmin)
+    @nmeshmin.setter
+    def nmeshmin(self,value): self._nmeshmin = max(value,round(self._nmesh/(2*self._nlayer)))
+
         
     # --------------------------------------------------------------------
     # hash methods (assembly and layer-by-layer)
@@ -516,6 +558,32 @@ class layer:
             for i in range(self._nlayer):
                 out = out + (self[i],) # (,) special syntax for tuple singleton
         return out
+
+
+# Mesh classX
+# =======================
+class mesh():
+    """ simple nodes class for finite-volume methods """
+    def __init__(self,l,n,x0=0):
+       self.x0 = x0
+       self.l = l
+       self.n = n
+       de = dw = l/(2*n)
+       self.de = np.ones(n)*de
+       self.dw = np.ones(n)*dw
+       self.xmesh = np.linspace(0+dw,l-de,n) # nodes positions
+       self.w = self.xmesh - dw
+       self.e = self.xmesh + de
+       
+    def __repr__(self):
+        print("-- mesh object --")
+        print("%25s = %0.4g" % ("start at x0", self.x0))
+        print("%25s = %0.4g" % ("domain length l", self.l))
+        print("%25s = %0.4g" % ("number of nodes n", self.n))
+        print("%25s = %0.4g" % ("dw", self.dw[0]))
+        print("%25s = %0.4g" % ("de", self.de[0]))
+        return "mesh%d=[%0.4g %0.4g]" % \
+            (self.n,self.x0+self.xmesh[0],self.x0+self.xmesh[-1])
 
 
 """
@@ -663,3 +731,4 @@ if __name__ == '__main__':
     print(test)
     testsimple = test.simplify()
     print(testsimple)
+    testsimple.mesh()
