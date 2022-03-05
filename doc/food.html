@@ -47,7 +47,7 @@ Created on Tue Feb 15 10:26:44 2022
 &#34;&#34;&#34;
 
 # Revision history
-# 2022-02-15 alpha version
+# 2022-02-15 alpha version, check attributes in foodlayer.__repr__
 
 # %% ALL ROOT CLASSES
 
@@ -64,8 +64,8 @@ class foodlayer():
         print(&#39;Food object &#34;%s&#34; (%s) with properties:&#39; % (self.name,self.description))
         print(&#34;%15s: %0.8g&#34; % (&#34;volume&#34;,self.volume))
         print(&#34;%15s: %0.8g&#34; % (&#34;surface area&#34;,self.surfacearea))
-        print(&#34;%15s: %0.8g&#34; % (&#34;k0&#34;,self.k0))
-        print(&#34;%15s: %0.8g&#34; % (&#34;h&#34;,self.h))
+        if hasattr(self,&#39;k0&#39;): print(&#34;%15s: %0.8g&#34; % (&#34;k0&#34;,self.k0))
+        if hasattr(self,&#39;h&#39;): print(&#34;%15s: %0.8g&#34; % (&#34;h&#34;,self.h))
         
         return &#34;%s (%s)&#34; % (self.name,self.description)
 
@@ -415,8 +415,8 @@ if __name__ == &#39;__main__&#39;:
         print(&#39;Food object &#34;%s&#34; (%s) with properties:&#39; % (self.name,self.description))
         print(&#34;%15s: %0.8g&#34; % (&#34;volume&#34;,self.volume))
         print(&#34;%15s: %0.8g&#34; % (&#34;surface area&#34;,self.surfacearea))
-        print(&#34;%15s: %0.8g&#34; % (&#34;k0&#34;,self.k0))
-        print(&#34;%15s: %0.8g&#34; % (&#34;h&#34;,self.h))
+        if hasattr(self,&#39;k0&#39;): print(&#34;%15s: %0.8g&#34; % (&#34;k0&#34;,self.k0))
+        if hasattr(self,&#39;h&#39;): print(&#34;%15s: %0.8g&#34; % (&#34;h&#34;,self.h))
         
         return &#34;%s (%s)&#34; % (self.name,self.description)</code></pre>
 </details>

@@ -50,6 +50,7 @@ derived ones LDPE(),HDPE(),PP()...air() …" />
 # 2022-01-21 add split()
 # 2022-01-22 add child classes for common polymers
 # 2022-01-23 full implementation of units 
+# 2022-01-26 mesh() method generating mesh objects
 
 
 oneline = &#34;Build multilayer objects&#34;
@@ -106,6 +107,7 @@ def check_units(value,ProvidedUnits,ExpectedUnits):
     
 
 # default values (usable in layer object methods)
+# these default values can be moved in a configuration file
 default = struct(l=1e-6,
                  D=1e-14,
                  k=1,
@@ -117,8 +119,11 @@ default = struct(l=1e-6,
                  Cunit=NoUnits,
                  layername=&#34;my layer&#34;,
                  layertype=&#34;unknown type&#34;,
-                 layermaterial=&#34;unknown material&#34;
+                 layermaterial=&#34;unknown material&#34;,
+                 nmeshmin = 10,
+                 nmesh = 200
                         )
+
 
 # Main class definition
 # =======================
@@ -151,7 +156,8 @@ class layer:
                  lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername=default.layername,
                  layertype=default.layertype,
-                 layermaterial=default.layermaterial):
+                 layermaterial=default.layermaterial,
+                 nmesh=None, nmeshmin=None):
         &#34;&#34;&#34;
         
         Parameters
@@ -194,6 +200,8 @@ class layer:
         if Dunit==None: Dunit=default.Dunit
         if kunit==None: kunit=default.kunit
         if Cunit==None: Cunit=default.Cunit
+        if nmesh==None: nmesh=default.nmesh
+        if nmeshmin==None: nmeshmin=default.nmeshmin        
         l,lunit = check_units(l,lunit,default.lunit)
         D,Dunit = check_units(D,Dunit,default.Dunit)
         k,kunit = check_units(k,kunit,default.kunit)
@@ -210,6 +218,8 @@ class layer:
         self._Dunit = Dunit
         self._kunit = kunit
         self._Cunit = Cunit
+        self._nmesh = nmesh
+        self._nmeshmin = nmeshmin
         
     # --------------------------------------------------------------------
     # overloading binary addition (note that the output is of type layer)
@@ -336,6 +346,10 @@ class layer:
     @property
     def n(self): return self._nlayer
     @property
+    def nmesh(self): return self._nmesh
+    @property
+    def nmeshmin(self): return self._nmeshmin
+    @property
     def resistance(self): return self.l*self.k/self.D
     @property
     def permeability(self): return self.D/(self.l*self.k)
@@ -356,7 +370,9 @@ class layer:
     @property
     def referencelayer(self): return np.argmax(self.resistance)
     @property
-    def Foscale(self): return self.D[self.referencelayer]/self.l[self.referencelayer]**2
+    def lreferencelayer(self): return self.l[self.referencelayer]
+    @property
+    def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2
     
     # --------------------------------------------------------------------
     # comparators based resistance
@@ -411,6 +427,28 @@ class layer:
 
     
     # --------------------------------------------------------------------
+    # remesh generates mesh
+    # --------------------------------------------------------------------
+    def mesh(self,nmesh=None,nmeshmin=None):
+        &#34;&#34;&#34; nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) &#34;&#34;&#34;
+        if nmesh==None: nmesh = self.nmesh
+        if nmeshmin==None: nmeshmin = self.nmeshmin
+        if nmeshmin&gt;nmesh: nmeshmin,nmesh = nmesh, nmeshmin
+        # X = mesh distribution (number of nodes per layer)
+        X = np.ones(self._nlayer)
+        for i in range(1,self._nlayer):
+           X[i] = X[i-1]*(self.permeability[i-1]*self.l[i])/(self.permeability[i]*self.l[i-1])
+        X = np.maximum(nmeshmin,np.ceil(nmesh*X/sum(X)))
+        X = np.round((X/sum(X))*nmesh)
+        # do the mesh
+        x0 = 0
+        mymesh = []
+        for i in range(self._nlayer):
+            mymesh.append(mesh(self.l[i],int(X[i]),x0))
+            x0 += self.l[i]
+        return mymesh
+        
+    # --------------------------------------------------------------------
     # Getter methods and tools to validate inputs checknumvalue and checktextvalue
     # --------------------------------------------------------------------
     def checknumvalue(self,value):
@@ -451,7 +489,11 @@ class layer:
     def type(self,value): self._type =self.checktextvalue(value)
     @material.setter
     def material(self,value): self._material =self.checktextvalue(value)
-    
+    @nmesh.setter
+    def nmesh(self,value): self._nmesh = max(value,self._nlayer*self._nmeshmin)
+    @nmeshmin.setter
+    def nmeshmin(self,value): self._nmeshmin = max(value,round(self._nmesh/(2*self._nlayer)))
+
         
     # --------------------------------------------------------------------
     # hash methods (assembly and layer-by-layer)
@@ -550,6 +592,32 @@ class layer:
             for i in range(self._nlayer):
                 out = out + (self[i],) # (,) special syntax for tuple singleton
         return out
+
+
+# Mesh classX
+# =======================
+class mesh():
+    &#34;&#34;&#34; simple nodes class for finite-volume methods &#34;&#34;&#34;
+    def __init__(self,l,n,x0=0):
+       self.x0 = x0
+       self.l = l
+       self.n = n
+       de = dw = l/(2*n)
+       self.de = np.ones(n)*de
+       self.dw = np.ones(n)*dw
+       self.xmesh = np.linspace(0+dw,l-de,n) # nodes positions
+       self.w = self.xmesh - dw
+       self.e = self.xmesh + de
+       
+    def __repr__(self):
+        print(&#34;-- mesh object --&#34;)
+        print(&#34;%25s = %0.4g&#34; % (&#34;start at x0&#34;, self.x0))
+        print(&#34;%25s = %0.4g&#34; % (&#34;domain length l&#34;, self.l))
+        print(&#34;%25s = %0.4g&#34; % (&#34;number of nodes n&#34;, self.n))
+        print(&#34;%25s = %0.4g&#34; % (&#34;dw&#34;, self.dw[0]))
+        print(&#34;%25s = %0.4g&#34; % (&#34;de&#34;, self.de[0]))
+        return &#34;mesh%d=[%0.4g %0.4g]&#34; % \
+            (self.n,self.x0+self.xmesh[0],self.x0+self.xmesh[-1])
 
 
 &#34;&#34;&#34;
@@ -696,7 +764,8 @@ if __name__ == &#39;__main__&#39;:
     test = A+A+B+B+B+C
     print(test)
     testsimple = test.simplify()
-    print(testsimple)</code></pre>
+    print(testsimple)
+    testsimple.mesh()</code></pre>
 </details>
 </section>
 <section>
@@ -818,6 +887,7 @@ def Tg(self):
 <li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
 <li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
 <li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
@@ -901,6 +971,7 @@ def Tg(self):
 <li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
 <li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
 <li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
@@ -984,6 +1055,7 @@ def Tg(self):
 <li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
 <li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
 <li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
@@ -1028,6 +1100,7 @@ def Tg(self):
 <li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
 <li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
 <li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
@@ -1037,7 +1110,7 @@ def Tg(self):
 </dd>
 <dt id="layer.layer"><code class="flex name class">
 <span>class <span class="ident">layer</span></span>
-<span>(</span><span>l=None, D=None, k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None, layername='my layer', layertype='unknown type', layermaterial='unknown material')</span>
+<span>(</span><span>l=None, D=None, k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None, layername='my layer', layertype='unknown type', layermaterial='unknown material', nmesh=None, nmeshmin=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>layer class from patankar package
@@ -1112,7 +1185,8 @@ scalar properties: D,k,l,C0
                  lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername=default.layername,
                  layertype=default.layertype,
-                 layermaterial=default.layermaterial):
+                 layermaterial=default.layermaterial,
+                 nmesh=None, nmeshmin=None):
         &#34;&#34;&#34;
         
         Parameters
@@ -1155,6 +1229,8 @@ scalar properties: D,k,l,C0
         if Dunit==None: Dunit=default.Dunit
         if kunit==None: kunit=default.kunit
         if Cunit==None: Cunit=default.Cunit
+        if nmesh==None: nmesh=default.nmesh
+        if nmeshmin==None: nmeshmin=default.nmeshmin        
         l,lunit = check_units(l,lunit,default.lunit)
         D,Dunit = check_units(D,Dunit,default.Dunit)
         k,kunit = check_units(k,kunit,default.kunit)
@@ -1171,6 +1247,8 @@ scalar properties: D,k,l,C0
         self._Dunit = Dunit
         self._kunit = kunit
         self._Cunit = Cunit
+        self._nmesh = nmesh
+        self._nmeshmin = nmeshmin
         
     # --------------------------------------------------------------------
     # overloading binary addition (note that the output is of type layer)
@@ -1297,6 +1375,10 @@ scalar properties: D,k,l,C0
     @property
     def n(self): return self._nlayer
     @property
+    def nmesh(self): return self._nmesh
+    @property
+    def nmeshmin(self): return self._nmeshmin
+    @property
     def resistance(self): return self.l*self.k/self.D
     @property
     def permeability(self): return self.D/(self.l*self.k)
@@ -1317,7 +1399,9 @@ scalar properties: D,k,l,C0
     @property
     def referencelayer(self): return np.argmax(self.resistance)
     @property
-    def Foscale(self): return self.D[self.referencelayer]/self.l[self.referencelayer]**2
+    def lreferencelayer(self): return self.l[self.referencelayer]
+    @property
+    def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2
     
     # --------------------------------------------------------------------
     # comparators based resistance
@@ -1372,6 +1456,28 @@ scalar properties: D,k,l,C0
 
     
     # --------------------------------------------------------------------
+    # remesh generates mesh
+    # --------------------------------------------------------------------
+    def mesh(self,nmesh=None,nmeshmin=None):
+        &#34;&#34;&#34; nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) &#34;&#34;&#34;
+        if nmesh==None: nmesh = self.nmesh
+        if nmeshmin==None: nmeshmin = self.nmeshmin
+        if nmeshmin&gt;nmesh: nmeshmin,nmesh = nmesh, nmeshmin
+        # X = mesh distribution (number of nodes per layer)
+        X = np.ones(self._nlayer)
+        for i in range(1,self._nlayer):
+           X[i] = X[i-1]*(self.permeability[i-1]*self.l[i])/(self.permeability[i]*self.l[i-1])
+        X = np.maximum(nmeshmin,np.ceil(nmesh*X/sum(X)))
+        X = np.round((X/sum(X))*nmesh)
+        # do the mesh
+        x0 = 0
+        mymesh = []
+        for i in range(self._nlayer):
+            mymesh.append(mesh(self.l[i],int(X[i]),x0))
+            x0 += self.l[i]
+        return mymesh
+        
+    # --------------------------------------------------------------------
     # Getter methods and tools to validate inputs checknumvalue and checktextvalue
     # --------------------------------------------------------------------
     def checknumvalue(self,value):
@@ -1412,7 +1518,11 @@ scalar properties: D,k,l,C0
     def type(self,value): self._type =self.checktextvalue(value)
     @material.setter
     def material(self,value): self._material =self.checktextvalue(value)
-    
+    @nmesh.setter
+    def nmesh(self,value): self._nmesh = max(value,self._nlayer*self._nmeshmin)
+    @nmeshmin.setter
+    def nmeshmin(self,value): self._nmeshmin = max(value,round(self._nmesh/(2*self._nlayer)))
+
         
     # --------------------------------------------------------------------
     # hash methods (assembly and layer-by-layer)
@@ -1573,7 +1683,7 @@ def Dunit(self): return self._Dunit</code></pre>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def Foscale(self): return self.D[self.referencelayer]/self.l[self.referencelayer]**2</code></pre>
+def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2</code></pre>
 </details>
 </dd>
 <dt id="layer.layer.concentration"><code class="name">var <span class="ident">concentration</span></code></dt>
@@ -1652,6 +1762,17 @@ def l(self): return self._l</code></pre>
 def lag(self): return self.l**2/(6*self.D)</code></pre>
 </details>
 </dd>
+<dt id="layer.layer.lreferencelayer"><code class="name">var <span class="ident">lreferencelayer</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def lreferencelayer(self): return self.l[self.referencelayer]</code></pre>
+</details>
+</dd>
 <dt id="layer.layer.lunit"><code class="name">var <span class="ident">lunit</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -1694,6 +1815,28 @@ def n(self): return self._nlayer</code></pre>
 </summary>
 <pre><code class="python">@property
 def name(self): return self._name</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.nmesh"><code class="name">var <span class="ident">nmesh</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def nmesh(self): return self._nmesh</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.nmeshmin"><code class="name">var <span class="ident">nmeshmin</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def nmeshmin(self): return self._nmeshmin</code></pre>
 </details>
 </dd>
 <dt id="layer.layer.permeability"><code class="name">var <span class="ident">permeability</span></code></dt>
@@ -1842,6 +1985,35 @@ def type(self): return self._type</code></pre>
     return value        </code></pre>
 </details>
 </dd>
+<dt id="layer.layer.mesh"><code class="name flex">
+<span>def <span class="ident">mesh</span></span>(<span>self, nmesh=None, nmeshmin=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh(self,nmesh=None,nmeshmin=None):
+    &#34;&#34;&#34; nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) &#34;&#34;&#34;
+    if nmesh==None: nmesh = self.nmesh
+    if nmeshmin==None: nmeshmin = self.nmeshmin
+    if nmeshmin&gt;nmesh: nmeshmin,nmesh = nmesh, nmeshmin
+    # X = mesh distribution (number of nodes per layer)
+    X = np.ones(self._nlayer)
+    for i in range(1,self._nlayer):
+       X[i] = X[i-1]*(self.permeability[i-1]*self.l[i])/(self.permeability[i]*self.l[i-1])
+    X = np.maximum(nmeshmin,np.ceil(nmesh*X/sum(X)))
+    X = np.round((X/sum(X))*nmesh)
+    # do the mesh
+    x0 = 0
+    mymesh = []
+    for i in range(self._nlayer):
+        mymesh.append(mesh(self.l[i],int(X[i]),x0))
+        x0 += self.l[i]
+    return mymesh</code></pre>
+</details>
+</dd>
 <dt id="layer.layer.simplify"><code class="name flex">
 <span>def <span class="ident">simplify</span></span>(<span>self)</span>
 </code></dt>
@@ -1904,6 +2076,40 @@ def type(self): return self._type</code></pre>
 </dd>
 </dl>
 </dd>
+<dt id="layer.mesh"><code class="flex name class">
+<span>class <span class="ident">mesh</span></span>
+<span>(</span><span>l, n, x0=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>simple nodes class for finite-volume methods</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class mesh():
+    &#34;&#34;&#34; simple nodes class for finite-volume methods &#34;&#34;&#34;
+    def __init__(self,l,n,x0=0):
+       self.x0 = x0
+       self.l = l
+       self.n = n
+       de = dw = l/(2*n)
+       self.de = np.ones(n)*de
+       self.dw = np.ones(n)*dw
+       self.xmesh = np.linspace(0+dw,l-de,n) # nodes positions
+       self.w = self.xmesh - dw
+       self.e = self.xmesh + de
+       
+    def __repr__(self):
+        print(&#34;-- mesh object --&#34;)
+        print(&#34;%25s = %0.4g&#34; % (&#34;start at x0&#34;, self.x0))
+        print(&#34;%25s = %0.4g&#34; % (&#34;domain length l&#34;, self.l))
+        print(&#34;%25s = %0.4g&#34; % (&#34;number of nodes n&#34;, self.n))
+        print(&#34;%25s = %0.4g&#34; % (&#34;dw&#34;, self.dw[0]))
+        print(&#34;%25s = %0.4g&#34; % (&#34;de&#34;, self.de[0]))
+        return &#34;mesh%d=[%0.4g %0.4g]&#34; % \
+            (self.n,self.x0+self.xmesh[0],self.x0+self.xmesh[-1])</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 </article>
@@ -1965,10 +2171,14 @@ def type(self): return self._type</code></pre>
 <li><code><a title="layer.layer.kunit" href="#layer.layer.kunit">kunit</a></code></li>
 <li><code><a title="layer.layer.l" href="#layer.layer.l">l</a></code></li>
 <li><code><a title="layer.layer.lag" href="#layer.layer.lag">lag</a></code></li>
+<li><code><a title="layer.layer.lreferencelayer" href="#layer.layer.lreferencelayer">lreferencelayer</a></code></li>
 <li><code><a title="layer.layer.lunit" href="#layer.layer.lunit">lunit</a></code></li>
 <li><code><a title="layer.layer.material" href="#layer.layer.material">material</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
 <li><code><a title="layer.layer.n" href="#layer.layer.n">n</a></code></li>
 <li><code><a title="layer.layer.name" href="#layer.layer.name">name</a></code></li>
+<li><code><a title="layer.layer.nmesh" href="#layer.layer.nmesh">nmesh</a></code></li>
+<li><code><a title="layer.layer.nmeshmin" href="#layer.layer.nmeshmin">nmeshmin</a></code></li>
 <li><code><a title="layer.layer.permeability" href="#layer.layer.permeability">permeability</a></code></li>
 <li><code><a title="layer.layer.pressure" href="#layer.layer.pressure">pressure</a></code></li>
 <li><code><a title="layer.layer.rank" href="#layer.layer.rank">rank</a></code></li>
@@ -1982,6 +2192,9 @@ def type(self): return self._type</code></pre>
 <li><code><a title="layer.layer.thickness" href="#layer.layer.thickness">thickness</a></code></li>
 <li><code><a title="layer.layer.type" href="#layer.layer.type">type</a></code></li>
 </ul>
+</li>
+<li>
+<h4><code><a title="layer.mesh" href="#layer.mesh">mesh</a></code></h4>
 </li>
 </ul>
 </li>

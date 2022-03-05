@@ -16,12 +16,20 @@ Created on Sun Jan 23 14:19:03 2022
 # 2022-02-19 integration of the derived class param()
 # 2022-02-20 code optimization, iterable class- major update
 # 2022-02-26 clarify in the help the precedence s=s1+s2
+# 2022-02-28 display nested structures
+# 2022-03-01 implement value as list
+# 2022-03-02 display correctly class names (not instances)
+# 2022-03-04 add str()
+# 2022-03-05 add __copy__ and __deepcopy__ methods
+# 2022-03-05 AttributeError replaces KeyError in getattr() exceptions (required for for pdoc3)
 
 # Dependencies
 from math import * # import math to authorize all math expressions in parameters
 import types       # to check types
 import re          # regular expression
+import numpy as np
 from copy import copy as duplicate # to duplicate objects
+from copy import deepcopy as duplicatedeep # used by __deepcopy__()
 
 # core struct cal
 class struct():
@@ -141,7 +149,7 @@ class struct():
         """ get value """
         if key in self.keys():
             return self.__dict__[key]
-        raise KeyError(f'the {self._ftype} "{key}" does not exist')
+        raise AttributeError(f'the {self._ftype} "{key}" does not exist')
     
     def hasattr(self,key):
         """ return true if the field exist """
@@ -250,15 +258,29 @@ class struct():
             print(line)
             for key,value in self.__dict__.items():
                 if key not in self._excludedattr:
-                    print(fmt % key,value)
+                    if isinstance(value,(int,float,str,list,tuple,np.ndarray,np.generic)):
+                        print(fmt % key,value)
+                    elif isinstance(value,struct):
+                        print(fmt % key,value.__str__())
+                    elif isinstance(value,type):
+                        print(fmt % key,str(value))
+                    else:
+                        print(fmt % key,type(value))
                     if self._evalfeature and isinstance(value,str):
                         print(fmteval % "",tmp.getattr(key))
             print(line)
             return f"{self._fulltype} ({self._type} object) with {len(self.__dict__)} {self._ftype}s"
+
+    def __str__(self):
+        return f"{self._fulltype} ({self._type} object) with {len(self.__dict__)} {self._ftype}s"
         
     def format(self,s):
         """ format a string with field (use {field} as placeholders) """
-        return s.replace("${","{").format(**self.__dict__)
+        try:
+            return s.replace("${","{").format(**self.__dict__)
+        except KeyError:
+            print(f'\n Missing {self._ftype} unable interpret the expression:\n\t"{s}"')
+            raise
 
     def fromkeys(self,keys):
         """ returns a structure from keys """
@@ -299,7 +321,23 @@ class struct():
                 else:
                     print(fmt % k,"/* unsupported type */",end=end)
                     
-    
+    # copy and deep copy methpds for the class
+    def __copy__(self):
+        """ copy method """
+        cls = self.__class__
+        copie = cls.__new__(cls)
+        copie.__dict__.update(self.__dict__)
+        return copie
+
+    def __deepcopy__(self, memo):
+        """ deep copy method """
+        cls = self.__class__
+        copie = cls.__new__(cls)
+        memo[id(self)] = copie
+        for k, v in self.__dict__.items():
+            setattr(copie, k, duplicatedeep(v, memo))
+        return copie
+
 
 # meta struct class param for scripting with evaluation capability
 class param(struct):
@@ -401,7 +439,7 @@ class param(struct):
                         tmp.setattr(key,valuesafe) # empty content
                     else:
                         tmp.setattr(key, eval(tmp.format(valuesafe)))
-            elif isinstance(value,(int,float)): # already a number
+            elif isinstance(value,(int,float,list,tuple)): # already a number
                 tmp.setattr(key, value) # store the value with the key
             else: # unsupported types
                 if s.find("{"+key+"}")>=0:
