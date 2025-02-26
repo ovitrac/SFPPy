@@ -1,4 +1,4 @@
-# SFPPy - Python Framework for Food Contact Compliance and Risk Assessment 🍏
+# SFPPy - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎
 
 ## 🛠️ Overview
 
@@ -25,7 +25,7 @@ This project **translates well-established chemical migration models** from MATL
 <details>
   <summary>📜 Click to expand</summary>
 
-> 💡 The `patankar` folder is named in honor of **Suhas V. Patankar**, who developed and popularized the **finite volume method**, which this project adapts for **mass transfer problems with an arbitrary number of Rankine discontinuities**.
+> 💡 The `patankar` folder is named in honor of **Suhas V. Patankar**, who developed and popularized the **[finite volume method](https://catatanstudi.wordpress.com/wp-content/uploads/2010/02/numerical-heat-transfer-and-fluid-flow.pdf)**, which this project adapts for **mass transfer problems with an arbitrary number of Rankine discontinuities**.
 >
 > 🔧 The modules include a knowledge management system via extensible classes, allowing easy expansion to cover additional cases and implement new prediction methods.
 
@@ -43,6 +43,8 @@ pip install -r requirements.txt
 ```
 
 ## 💡 Usage Snippets
+
+SFPPy is fully object-oriented and supports multiple syntax styles, ranging from a functional approach to a more abstract, operator-driven paradigm—all in a **Pythonic** manner. The snippets below demonstrate both approaches.
 
 ### Snippet 1: Simple Migration Simulation
 
@@ -82,7 +84,7 @@ m = migrant(name="bisphenol A")
 print(m.M, m.logP)  # Molecular weight & logP value
 ```
 
-💡 The examples show how to inject `m` into layers (e.g., `multilayer` in snippet 1) to get customized simulations for specific substances and polymers.
+<small>💡 The examples show how to inject `m` into layers (e.g., `multilayer` in snippet 1) to get customized simulations for specific substances and polymers.</small>
 
 </details>
 
@@ -101,13 +103,89 @@ print("Volume (m³):", vol)
 print("Surface Area (m²):", area)
 ```
 
-💡 The examples show how to use either `pkg` or its properties to achieve mass transfer simulation for a specific geometry.
+<small>💡 The examples show how to use either `pkg` or its properties to achieve mass transfer simulation for a specific geometry.</small>
 
-⚠️ **Note**: To efficiently simulate the migration of substances from packaging materials, SFPPy **unfolds complex 3D packaging geometries** into an equivalent **1D representation**. This transformation assumes that **substance desorption is predominantly governed by diffusion within the walls** of the packaging.
+<small>⚠️ **Note**: To efficiently simulate the migration of substances from packaging materials, SFPPy **unfolds complex 3D packaging geometries** into an equivalent **1D representation**. This transformation assumes that **substance desorption is predominantly governed by diffusion within the walls** of the packaging.</small>
 
-🔍 The `geometry.py` module provides tools to compute **surface-area-to-volume ratios**, extract wall thicknesses, and generate equivalent **1D models** for mass transfer simulations.
+<small>🔍 The `geometry.py` module provides tools to compute **surface-area-to-volume ratios**, extract wall thicknesses, and generate equivalent **1D models** for mass transfer simulations.</small>
 
 </details>
+
+<details>
+ <summary>📦 Click to expand</summary>
+
+### Snippet 4: Using  **⏩**  as mass transfer operator in chained simulations
+
+📌 **SFPPy** leverages **multiple inheritance** to define food contact conditions by combining **storage conditions**, **food types**, and **physical properties**.  
+
+📌 Additionally, **two operators** play a key role in SFPPy’s intuitive syntax:  
+
+- **➕** for **combining layers** and **merging results**  
+- **⏩** for naturally representing **mass transfer**  
+
+With these operators, **mass transfer** can be abstracted into a simple, visual representation:  
+
+1. **🍏⏩🍎**  
+   _(Direct transfer from green to red, symbolizing migration.)_  
+
+2. **🍏⏩🟠⏩🍎**  
+   _(Includes an intermediate step, depicting progressive migration.)_  
+
+3. **🍏⏩🟡⏩🟠⏩🍎**  
+   _(More detailed, illustrating multiple contamination stages over time.)_  
+
+4. **🍏⚡⏩🍎**  
+   _(Emphasizes **active food transformation**, with accelerated mass transfer.)_  
+
+🌟 **SFPPy** makes this abstraction possible with simple, expressive code.
+
+```python
+from patankar.layer import gPET, PP
+from patankar.food import ambient, hotfilled, realfood, fat, liquid, stacked
+from patankar.loadpubchem import migrant
+
+# Define migrant and packaging layers (ABA: PET-PP-PET)
+m = migrant("limonene")
+A = gPET(l=(20, "um"), migrant=m, C0=0)
+B = PP(l=(500, "um"), migrant=m, C0=200)  
+ABA = A + B + A  # the most left layer is contact (food on the left)
+
+# Define storage and processing conditions:
+# 1:storage in stacks >> 2:hot-filled container >> 3:long-term storage of packaged food
+class contact1(stacked, ambient): name = "1:setoff"; contacttime = (4, "months")
+class contact2(hotfilled, realfood, liquid, fat): name = "2:hotfilling"
+class contact3(ambient, realfood, liquid, fat): name = "3:storage"; contacttime = (6, "months")
+
+# Instantiate and simulate with ⏩
+medium1, medium2, medium3 = contact1(), contact2(), contact3()
+medium1 >> ABA >> medium1 >> medium2 >> medium3  # Automatic chaining
+
+# Merge all kinetics into a single one and plot the migration kinetics
+sol123 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
+sol123.plotCF()
+
+```
+### **🧩 How It Works**
+
+Each **contact class** inherits attributes from **multiple base classes**, allowing flexible combinations of:
+
+1. **📌 Storage Conditions**:  
+   - `ambient`: Defines standard storage at room temperature  
+   - `hotfilled`: Represents high-temperature filling processes  
+   - `stacked`: Models setoff migration when packaging layers are stacked  
+
+2. **🥘 Food Types & Interactions**:  
+   - `realfood`: Represents actual food matrices  
+   - `liquid`: Specifies that the food is a liquid  
+   - `fat`: Indicates a fatty food, influencing partitioning behavior  
+
+
+
+<small>🔬 **By combining these components, SFPPy allows streamlined, physics-based simulations with minimal code.** 🚀</small>
+
+</details>
+
+
 
 ## 📖 Case Studies
 
@@ -128,8 +206,24 @@ The project includes three case studies: `example1.py`, `example2.py`, and `exam
 - 📦 Simulates migration in a **trilayer (ABA) multilayer system**, with **PET (A) and recycled PP (B)**.
 - 🔥 Evaluates migration behavior across **storage with set-off, hot-filling, and long-term storage conditions**.
 - ⚙️ Explores **variants** where the migrant and layer thickness are modified to assess performance.
+- 🍏⏩🍎 Example 3 showcases the mass transfer operator ⏩.
 
-⚠️ **Disclaimer**: These examples do not discuss sources of uncertainty. Please refer to our publications for details on the limitations of the presented approaches and assumptions.
+
+
+> ⚠️ **Disclaimer**: These examples do not discuss sources of uncertainty. Please refer to our publications for details on the limitations of the presented approaches and assumptions.
+
+
+
+## **🌟 Why SFPPy?**
+
+✔ **SFPPy:** is **free** and **opensource**. 
+✔ **SFPPy:** accepts any unit as `(value,"unit")` or `([value1,value2...],"unit")`. 
+✔ **Operator-based chaining:** `>>` handles **automatic mass transfer and property propagation**
+✔ **Minimal code for complex simulations:** `+` joins layers and merges results across storage conditions
+✔ **Pythonic abstraction:** Works with **PubChem**, predefined **polymer materials**, and **3D packaging geometries**
+✔ **Built-in visualization & export:** Supports **Excel (`.xlsx`), CSV, PDF, PNG** and **Matlab** (if its really needed)
+
+🔬 **SFPPy powers scalable, real-world safe food packaging simulations.**
 
 ## 📜 License
 
