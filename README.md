@@ -111,7 +111,7 @@ print("Surface Area (m²):", area)
 
 </details>
 
-### Snippet 4: Using  **⏩**  as mass transfer operator in chained simulations
+### Snippet 4: Using  **⏩**  as Mass Transfer Operator in Chained Simulations
 <details>
  <summary>📦 Click to expand</summary>
 
