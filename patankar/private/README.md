@@ -7,7 +7,6 @@ This directory contains internal modules that are used internally by the SFPPy l
 - `pint/` 📏: Standard **Pint** library used for SI unit conversions in SFPPy.
 - `pubchempy.py` 🔬: Interface for retrieving chemical data from **PubChem**.
 - `chemspipy/` ⚠️: Previously used for **ChemSpider** integration but now deprecated (requires API tokens).
-- `__pycache__/` ⚙️: Compiled Python bytecode files.
 
 ## 🔹 Notes
 - Modules in this folder are accessed indirectly through public-facing modules in `patankar/`.
