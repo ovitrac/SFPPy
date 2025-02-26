@@ -141,7 +141,7 @@ import numpy as np
 from datetime import datetime
 
 # private version of pubchempy
-from private.pubchempy import get_compounds
+from patankar.private.pubchempy import get_compounds
 
 # %% Core class (low-level)
 class CompoundIndex:
@@ -603,7 +603,7 @@ class migrant:
 
         # local import
         # import implicity property migration models (e.g., Dpiringer)
-        from property import MigrationPropertyModels, MigrationPropertyModel_validator
+        from patankar.property import MigrationPropertyModels, MigrationPropertyModel_validator
 
         self.compound = None   # str
         self.name = None       # str or list

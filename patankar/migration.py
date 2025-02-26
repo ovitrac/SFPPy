@@ -26,7 +26,7 @@ Uses a modified Patankar scheme with exact solutions to handle partitioning at i
 
 Example:
 ```python
-from migration import senspatankar
+from patankar.migration import senspatankar
 solution = senspatankar(multilayer, medium)
 solution.plotCF()
 ```
@@ -66,8 +66,8 @@ Example
 -------
 ```python
 
-    from food import ethanol
-    from layer import layer
+    from patankar.food import ethanol
+    from patankar.layer import layer
 
     # Create medium and layers
     medium = ethanol()
@@ -109,8 +109,8 @@ from matplotlib.figure import Figure
 import pandas as pd
 
 # Local dependencies
-from layer import layer, check_units
-from food import foodphysics,foodlayer
+from patankar.layer import layer, check_units
+from patankar.food import foodphysics,foodlayer
 
 # Plot configuration (preferred units)
 plotconfig = {
@@ -1474,8 +1474,8 @@ def senspatankar(multilayer=None, medium=None,
     -------
     .. code-block:: python
 
-        from food import ethanol
-        from layer import layer
+        from patankar.food import ethanol
+        from patankar.layer import layer
         medium = ethanol()
         A = layer(layername="layer A")
         B = layer(layername="layer B")
@@ -1866,8 +1866,8 @@ def compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh, xreltol=0):
 # Example usage (for debugging / standalone tests)
 # -------------------------------------------------------------------
 if __name__ == '__main__':
-    from food import ethanol, setoff, nofood
-    from layer import PP
+    from patankar.food import ethanol, setoff, nofood
+    from patankar.layer import PP
 
     medium = ethanol()
     medium.CF0 = 100 # works

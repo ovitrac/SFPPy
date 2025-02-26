@@ -27,7 +27,7 @@ Defines **food materials** for migration simulations. Models food as a **0D laye
 
 Example:
 ```python
-from food import foodlayer
+from patankar.food import foodlayer
 medium = foodlayer(name="ethanol", contacttemperature=(40, "degC"))
 ```
 
@@ -48,7 +48,7 @@ import textwrap
 import numpy as np
 from copy import deepcopy as duplicate
 
-from layer import check_units, NoUnits, layer # to convert units to SI
+from patankar.layer import check_units, NoUnits, layer # to convert units to SI
 
 #%% Private Properties and functions
 
@@ -260,7 +260,7 @@ class foodphysics:
         """general constructor"""
 
         # local import
-        from migration import SensPatankarResult
+        from patankar.migration import SensPatankarResult
 
         # numeric validator
         def numvalidator(key,value):
@@ -566,7 +566,7 @@ class foodphysics:
 
     # migration method
     def migration(self,material,**kwargs):
-        from migration import senspatankar
+        from patankar.migration import senspatankar
         self._to(material) # propagate contact conditions first
         return senspatankar(material,self,**kwargs)
 

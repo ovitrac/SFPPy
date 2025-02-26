@@ -26,7 +26,7 @@ Currently implements the **Piringer model** for worst-case migration simulations
 
 Example:
 ```python
-from property import Dpiringer
+from property patankar.import Dpiringer
 D_value = Dpiringer.evaluate(polymer="LDPE", M=100, T=40)
 ```
 

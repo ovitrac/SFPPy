@@ -27,7 +27,7 @@ Defines **packaging materials** as 1D layers. Supports:
 
 Example:
 ```python
-from layer import LDPE
+from patankar.layer import LDPE
 A = LDPE(l=50e-6, D=1e-14)
 ```
 
@@ -126,10 +126,10 @@ import numpy as np
 from copy import deepcopy as duplicate
 # <--  local packages  -->
 if 'SIbase' not in dir(): # avoid loading it twice
-    from private.pint import UnitRegistry as SIbase
-    from private.pint import set_application_registry as fixSIbase
+    from patankar.private.pint import UnitRegistry as SIbase
+    from patankar.private.pint import set_application_registry as fixSIbase
 if 'migrant' not in dir():
-    from loadpubchem import migrant
+    from patankar.loadpubchem import migrant
 
 
 # %% Private functions
@@ -1088,7 +1088,7 @@ class layer:
     # --------------------------------------------------------------------
     def _from(self,medium=None):
         """Propagates contact conditions from food instance"""
-        from food import foodphysics
+        from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f"medium must be a foodphysics, foodlayer not a {type(medium).__name__}")
         if not hasattr(medium, "contacttemperature"):
@@ -1138,7 +1138,7 @@ class layer:
         return self.migration(medium,**kwargs)
 
     def migration(self,medium,**kwargs):
-        from migration import senspatankar
+        from patankar.migration import senspatankar
         sim = senspatankar(self,medium,**kwargs)
         medium.lastsimulation = sim # store the last simulation result in medium
         medium.lastinput = self # store the last input (self)
@@ -1148,7 +1148,7 @@ class layer:
     # overloading operation
     def __rshift__(self, medium):
         """Overloads >> to propagate migration to food."""
-        from food import foodphysics
+        from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f"medium must be a foodphysics object not a {type(medium).__name__}")
         return self.contact(medium)

@@ -23,7 +23,7 @@ Supports standalone shapes and composite structures for packaging simulations.
 
 Example:
 ```python
-from geometry import Packaging3D
+from patankar.geometry import Packaging3D
 pkg = Packaging3D('bottle', body_radius=(5, 'cm'), body_height=(20, 'cm'))
 vol, area = pkg.get_volume_and_area()
 ```
@@ -74,7 +74,7 @@ Overview:
        (in m³) and surface area (in m²) via `.get_volume_and_area()`.
 
 Usage Example:
-    from packaging import Packaging3D
+    from patankar.packaging import Packaging3D
 
     # Create a 'bottle' (two stacked cylinders) by specifying body and neck dims
     pkg = Packaging3D(
@@ -134,7 +134,7 @@ Dependencies:
 import math
 import numpy as np
 from collections import defaultdict
-from layer import check_units
+from patankar.layer import check_units
 
 # %% Helper functions
 
@@ -1111,7 +1111,7 @@ class Packaging3D:
     # method: medium._to(material) and its associated operator >>
     def _to(self,other=None):
         """Propagates volume and area to a food instance"""
-        from food import foodphysics
+        from patankar.food import foodphysics
         if not isinstance(other,foodphysics):
             raise TypeError(f"other must be a foodphysics instance not a {type(other).__name__}")
         other.volume,other.surfacearea = self.get_volume_and_area()
