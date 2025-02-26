@@ -111,10 +111,9 @@ print("Surface Area (m²):", area)
 
 </details>
 
+### Snippet 4: Using  **⏩**  as mass transfer operator in chained simulations
 <details>
  <summary>📦 Click to expand</summary>
-
-### Snippet 4: Using  **⏩**  as mass transfer operator in chained simulations
 
 📌 **SFPPy** leverages **multiple inheritance** to define food contact conditions by combining **storage conditions**, **food types**, and **physical properties**.  
 
