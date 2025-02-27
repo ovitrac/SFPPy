@@ -122,7 +122,7 @@ Dependencies:
 
 @version: 1.0
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
-@author: INRAE\olivier.vitrac@agroparistech.fr
+@author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-10-28, rev. 2025-02-22
 
@@ -136,6 +136,16 @@ import numpy as np
 from collections import defaultdict
 from patankar.layer import check_units
 
+__all__ = ['CompositeShape', 'Cone', 'Connector', 'Cylinder', 'Hemisphere', 'OpenCone', 'OpenCylinder1', 'OpenCylinder2', 'OpenPrism1', 'OpenPrism2', 'OpenSquare1', 'OpenSquare2', 'Packaging3D', 'RectangularPrism', 'Shape3D', 'Sphere', 'SquarePyramid', 'check_units', 'create_shape_by_name', 'get_all_shapes_info', 'get_geometries_and_synonyms', 'help_geometry']
+
+__project__ = "SFPPy"
+__author__ = "Olivier Vitrac"
+__copyright__ = "Copyright 2022"
+__credits__ = ["Olivier Vitrac"]
+__license__ = "MIT"
+__maintainer__ = "Olivier Vitrac"
+__email__ = "olivier.vitrac@agroparistech.fr"
+__version__ = "1.2"
 # %% Helper functions
 
 # Convert lengths to SI units [m]

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>SFPPy Usage/Class Examples</title>
+<style>
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #f9f9f9; 
+    color: #333;
+}
+header {
+    background: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    position: relative; /* For positioning the toggle button */
+}
+header h1 {
+    margin: 0; 
+    font-size: 1.5em;
+    color: #fff; /* Explicitly set to white */
+    padding-left: 50px; /* Space for the toggle button */
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px); /* Adjusted for header height */
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+#nav {
+    width: 300px; /* Set a fixed width */
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: width 0.3s ease, padding 0.3s ease; /* Transition for smooth animations */
+    flex-shrink: 0; /* Prevent flexbox from shrinking */
+}
+#nav.collapsed {
+    width: 0; /* Hide the sidebar completely */
+    padding: 20px 0; /* Optionally adjust padding */
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+header .toggle-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    left: 10px; /* Place the button on the left */
+    background-color: #4CAF50; /* Green background */
+    border: none;
+    color: white; /* Ensure the hamburger icon is white */
+    padding: 10px 12px; /* Adjust padding for larger button */
+    cursor: pointer;
+    font-size: 1.2em; /* Increase font size for better visibility */
+    border-radius: 4px;
+    z-index: 1001; /* Ensure the button is above other elements */
+}
+header .toggle-btn:hover {
+    background-color: #45a049;
+}
+header .toggle-btn kbd {
+    font-family: 'Arial', sans-serif; /* Match the header font */
+    color: white; /* Ensure the hamburger icon is white */
+    font-size: 1.2em; /* Same size as the button text */
+    background: none; /* Remove any background styling from <kbd> */
+    border: none; /* Remove any borders from <kbd> */
+}
+h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+h2 {
+    color: #333; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 5px;
+}
+a {
+    text-decoration: none; 
+    color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul {
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+}
+li {
+    margin: 5px 0;
+}
+.folder-title {
+    font-weight: bold; 
+    color: #333; 
+    padding: 5px 0;
+    cursor: pointer;
+}
+.folder-content {
+    margin-left: 20px;
+    display: none; /* start collapsed */
+}
+.file {
+    margin-left: 20px;
+}
+hr {
+    margin: 20px 0; 
+    border: 1px solid #ddd;
+}
+footer {
+    font-size: 0.9em; 
+    color: #666; 
+    margin-top: 20px; 
+    text-align: center;
+}
+/* Enhanced Table Styling with Banded Colors */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+tr:nth-child(odd) {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green for odd rows */
+}
+/* Collapsible Code Section */
+.collapsible {
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+}
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+/* Minimal Syntax Highlighting */
+.code {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+.keyword {
+    color: #007BFF;
+    font-weight: bold;
+}
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+.string {
+    color: #a31515;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px; /* Height of the header */
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+    #nav.collapsed {
+        width: 0; /* Hide the sidebar completely */
+        padding: 20px 0; /* Adjust padding */
+    }
+    #main {
+        flex: 1;
+    }
+    /* Add overlay when sidebar is open on mobile */
+    body.nav-open::before {
+        content: "";
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 50px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+
+
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code .hll { background-color: #ffffcc }
+.code { background: #f8f8f8; }
+.code .c { color: #3D7B7B; font-style: italic } /* Comment */
+.code .err { border: 1px solid #FF0000 } /* Error */
+.code .k { color: #008000; font-weight: bold } /* Keyword */
+.code .o { color: #666666 } /* Operator */
+.code .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.code .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.code .cp { color: #9C6500 } /* Comment.Preproc */
+.code .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.code .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.code .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.code .gd { color: #A00000 } /* Generic.Deleted */
+.code .ge { font-style: italic } /* Generic.Emph */
+.code .gr { color: #E40000 } /* Generic.Error */
+.code .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code .gi { color: #008400 } /* Generic.Inserted */
+.code .go { color: #717171 } /* Generic.Output */
+.code .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.code .gs { font-weight: bold } /* Generic.Strong */
+.code .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code .gt { color: #0044DD } /* Generic.Traceback */
+.code .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.code .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.code .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.code .kp { color: #008000 } /* Keyword.Pseudo */
+.code .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.code .kt { color: #B00040 } /* Keyword.Type */
+.code .m { color: #666666 } /* Literal.Number */
+.code .s { color: #BA2121 } /* Literal.String */
+.code .na { color: #687822 } /* Name.Attribute */
+.code .nb { color: #008000 } /* Name.Builtin */
+.code .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.code .no { color: #880000 } /* Name.Constant */
+.code .nd { color: #AA22FF } /* Name.Decorator */
+.code .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.code .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.code .nf { color: #0000FF } /* Name.Function */
+.code .nl { color: #767600 } /* Name.Label */
+.code .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.code .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.code .nv { color: #19177C } /* Name.Variable */
+.code .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.code .w { color: #bbbbbb } /* Text.Whitespace */
+.code .mb { color: #666666 } /* Literal.Number.Bin */
+.code .mf { color: #666666 } /* Literal.Number.Float */
+.code .mh { color: #666666 } /* Literal.Number.Hex */
+.code .mi { color: #666666 } /* Literal.Number.Integer */
+.code .mo { color: #666666 } /* Literal.Number.Oct */
+.code .sa { color: #BA2121 } /* Literal.String.Affix */
+.code .sb { color: #BA2121 } /* Literal.String.Backtick */
+.code .sc { color: #BA2121 } /* Literal.String.Char */
+.code .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.code .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.code .s2 { color: #BA2121 } /* Literal.String.Double */
+.code .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.code .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.code .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.code .sx { color: #008000 } /* Literal.String.Other */
+.code .sr { color: #A45A77 } /* Literal.String.Regex */
+.code .s1 { color: #BA2121 } /* Literal.String.Single */
+.code .ss { color: #19177C } /* Literal.String.Symbol */
+.code .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.code .fm { color: #0000FF } /* Name.Function.Magic */
+.code .vc { color: #19177C } /* Name.Variable.Class */
+.code .vg { color: #19177C } /* Name.Variable.Global */
+.code .vi { color: #19177C } /* Name.Variable.Instance */
+.code .vm { color: #19177C } /* Name.Variable.Magic */
+.code .il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
+</head>
+<body>
+<header>
+    <!-- Toggle Sidebar Button -->
+    <button class='toggle-btn' id='toggleSidebar' aria-label='Toggle Sidebar' aria-expanded='false'>
+        <kbd>&#9776;</kbd>
+    </button>
+    <h1>SFPPy Documentation - Usage Examples</h1>
+</header>
+<div id='content'>
+<div id='nav'>
+<p><strong>Version:</strong> SFPPy v.1.2</p>
+<p><strong>Maintained by:</strong> INRAE\olivier.vitrac@agroparistech.fr</p>
+<hr>
+<ul>
+<li class="folder">
+<div class="folder-title" onclick="toggleFolder(this)">patankar</div>
+<ul class="folder-content">
+<ul>
+<li class="file"><a href="#patankar_food" onclick="loadDoc('patankar_food')">food.py</a></li>
+<li class="file"><a href="#patankar_geometry" onclick="loadDoc('patankar_geometry')">geometry.py</a></li>
+<li class="file"><a href="#patankar_layer" onclick="loadDoc('patankar_layer')">layer.py</a></li>
+<li class="file"><a href="#patankar_loadpubchem" onclick="loadDoc('patankar_loadpubchem')">loadpubchem.py</a></li>
+<li class="file"><a href="#patankar_migration" onclick="loadDoc('patankar_migration')">migration.py</a></li>
+<li class="file"><a href="#patankar_property" onclick="loadDoc('patankar_property')">property.py</a></li>
+<li class="folder">
+<div class="folder-title" onclick="toggleFolder(this)">private</div>
+<ul class="folder-content">
+<ul>
+<li class="file"><a href="#patankar_private_mstruct" onclick="loadDoc('patankar_private_mstruct')">mstruct.py</a></li>
+<li class="file"><a href="#patankar_private_pubchempy" onclick="loadDoc('patankar_private_pubchempy')">pubchempy.py</a></li>
+</ul>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+</ul>
+
+</div>
+<div id='main'>
+<div id="welcome" class="module-content" style="display:block;">
+
+<h2>Welcome to Usage Class Examples</h2>
+<p>Select a module in the left menu to view usage examples. These examples are not for production and are automatically extracted from the main section of each module.</p>
+<p>Back to the <a href='index.html'>Python'SFPPy documentation</a>.</p>
+<p>When no module is selected, you see this welcome page. They are used to test classes with typical codes. The main section often serves as a testing script, example usage block, or self-contained test block. It's a way to demonstrate how the module's functionality works or to run simple unit tests and examples inline.</p>
+<p>Generated on: 2025-02-27 14:44:38</p>
+
+</div>
+
+<div id="patankar_food" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">F</span> <span class="o">=</span> <span class="n">foodlayer</span><span class="p">()</span>
+    <span class="n">E95</span> <span class="o">=</span> <span class="n">ethanol</span><span class="p">()</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">yogurt</span><span class="p">()</span>
+    <span class="n">YF</span> <span class="o">=</span> <span class="n">yogurt</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;danone&quot;</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span><span class="s2">&quot;mL&quot;</span><span class="p">))</span>
+    <span class="n">YF</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;yogurt with fruits&quot;</span>  <span class="c1"># You can still update the description on the instance if needed</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">F</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">E95</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">YF</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>How to define a new food easily:</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="k">class</span> <span class="nc">sandwich</span><span class="p">(</span><span class="n">realfood</span><span class="p">,</span> <span class="n">solid</span><span class="p">,</span> <span class="n">fat</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sandwich&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">sandwich</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">S</span><span class="p">))</span>
+    <span class="n">help_food</span><span class="p">()</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_geometry" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+<p>1) A &quot;bottle&quot; composed of two cylinders</p>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">bottle_pkg</span> <span class="o">=</span> <span class="n">Packaging3D</span><span class="p">(</span>
+        <span class="s2">&quot;bottle&quot;</span><span class="p">,</span>
+        <span class="n">body_radius</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;mm&quot;</span><span class="p">),</span> <span class="c1"># 0.05 m</span>
+        <span class="n">body_height</span><span class="o">=</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">),</span> <span class="c1"># 0.20 m</span>
+        <span class="n">neck_radius</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;cm&quot;</span><span class="p">),</span>  <span class="c1"># 0.02 m</span>
+        <span class="n">neck_height</span><span class="o">=</span><span class="mf">0.05</span>        <span class="c1"># 0.05 m</span>
+    <span class="p">)</span>
+    <span class="n">b_vol</span><span class="p">,</span> <span class="n">b_area</span> <span class="o">=</span> <span class="n">bottle_pkg</span><span class="o">.</span><span class="n">get_volume_and_area</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bottle Volume (m**3):&quot;</span><span class="p">,</span> <span class="n">b_vol</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bottle Surface (m**2):&quot;</span><span class="p">,</span> <span class="n">b_area</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>2) A single shape: &quot;can&quot; is just a cylinder</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="n">can_pkg</span> <span class="o">=</span> <span class="n">Packaging3D</span><span class="p">(</span><span class="s2">&quot;can&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="s2">&quot;cm&quot;</span><span class="p">),</span> <span class="n">height</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="s2">&quot;cm&quot;</span><span class="p">))</span>
+    <span class="n">c_vol</span><span class="p">,</span> <span class="n">c_area</span> <span class="o">=</span> <span class="n">can_pkg</span><span class="o">.</span><span class="n">get_volume_and_area</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Can Volume (m**3):&quot;</span><span class="p">,</span> <span class="n">c_vol</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Can Surface (m**2):&quot;</span><span class="p">,</span> <span class="n">c_area</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>3) A &quot;cube&quot; with side=10 cm</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">cube_pkg</span> <span class="o">=</span> <span class="n">Packaging3D</span><span class="p">(</span><span class="s2">&quot;cube&quot;</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="s2">&quot;cm&quot;</span><span class="p">))</span>
+    <span class="n">cu_vol</span><span class="p">,</span> <span class="n">cu_area</span> <span class="o">=</span> <span class="n">cube_pkg</span><span class="o">.</span><span class="n">get_volume_and_area</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cube Volume (m**3):&quot;</span><span class="p">,</span> <span class="n">cu_vol</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cube Surface (m**2):&quot;</span><span class="p">,</span> <span class="n">cu_area</span><span class="p">)</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_layer" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">G</span> <span class="o">=</span> <span class="n">air</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">LDPE</span><span class="p">(</span><span class="n">D</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span><span class="n">Dunit</span><span class="o">=</span><span class="s1">&#39;cm**2/s&#39;</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">LDPE</span><span class="p">(</span><span class="n">D</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-8</span><span class="p">,</span><span class="s2">&quot;cm**2/s&quot;</span><span class="p">))</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">LDPE</span><span class="p">()</span>
+    <span class="n">A</span><span class="o">=</span><span class="n">layer</span><span class="p">(</span><span class="n">D</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">,</span><span class="n">l</span><span class="o">=</span><span class="mf">50e-6</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">A</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">A</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">*</span><span class="mi">3</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">+</span><span class="n">A</span>
+    <span class="n">C</span><span class="o">=</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">B</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">struct</span><span class="p">()</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">B</span><span class="o">*</span><span class="mi">4</span>
+</pre>
+    </div>
+    <p>E[1:4]=[]</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="n">E</span>
+</pre>
+    </div>
+    <p>======</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">A</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">layername</span> <span class="o">=</span> <span class="s2">&quot;layer A&quot;</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">layername</span> <span class="o">=</span> <span class="s2">&quot;layer B&quot;</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">layername</span> <span class="o">=</span> <span class="s2">&quot;layer C&quot;</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">layername</span> <span class="o">=</span> <span class="s2">&quot;layer D&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>test = A+B+C+D<br>test[2] = test[0]<br>test[3] = []<br>test</p>
+
+    <button type="button" class="collapsible">Show Code Example 4</button>
+    <div class="content">
+    <pre class="code"><span class="n">test</span> <span class="o">=</span> <span class="n">A</span><span class="o">+</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="o">+</span><span class="n">B</span><span class="o">+</span><span class="n">B</span><span class="o">+</span><span class="n">C</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">test</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">testsimple</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">testsimple</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">testsimple</span><span class="o">.</span><span class="n">mesh</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>test with substance</p>
+
+    <button type="button" class="collapsible">Show Code Example 5</button>
+    <div class="content">
+    <pre class="code"><span class="n">m1</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;limonene&#39;</span><span class="p">)</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;anisole&#39;</span><span class="p">)</span>
+    <span class="n">pet_with_limonene</span> <span class="o">=</span> <span class="n">gPET</span><span class="p">(</span><span class="n">substance</span><span class="o">=</span><span class="n">m1</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span><span class="n">l</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="s2">&quot;um&quot;</span><span class="p">))</span>
+    <span class="n">PP_with_anisole</span> <span class="o">=</span> <span class="n">PP</span><span class="p">(</span><span class="n">substance</span><span class="o">=</span><span class="n">m2</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span><span class="n">l</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="s2">&quot;um&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">pet_with_limonene</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">pet_with_limonene</span> <span class="o">+</span> <span class="n">PP_with_anisole</span>
+    <span class="n">test</span><span class="o">.</span><span class="n">D</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">test</span><span class="p">),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_loadpubchem" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">db</span> <span class="o">=</span> <span class="n">CompoundIndex</span><span class="p">()</span>
+    <span class="n">df_simple</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;limonene&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+    <span class="n">df_simple</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;aspirin&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+    <span class="n">df_simple</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;irganox 1076&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+    <span class="n">df_simple</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;anisole&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simple result:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">df_simple</span><span class="p">)</span>
+    <span class="n">df_full</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;anisole&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Full result:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">df_full</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>for migration modeling</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;anisole&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;limonene&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;irganox 1076&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;irgafos 168&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">()</span> <span class="c1"># toluene</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Piringer D value (several models can be implemented in module property.py)</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">Dval</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Deval</span><span class="p">(</span><span class="n">polymer</span><span class="o">=</span><span class="s2">&quot;PET&quot;</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Dval</span><span class="p">)</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_migration" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="kn">from</span> <span class="nn">patankar.food</span> <span class="kn">import</span> <span class="n">ethanol</span><span class="p">,</span> <span class="n">setoff</span><span class="p">,</span> <span class="n">nofood</span>
+    <span class="kn">from</span> <span class="nn">patankar.layer</span> <span class="kn">import</span> <span class="n">PP</span>
+    <span class="n">medium</span> <span class="o">=</span> <span class="n">ethanol</span><span class="p">()</span>
+    <span class="n">medium</span><span class="o">.</span><span class="n">CF0</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># works</span>
+    <span class="n">medium</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">CF0</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># works also</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">layername</span><span class="o">=</span><span class="s2">&quot;layer A&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">C0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="mf">1e-16</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">layername</span><span class="o">=</span><span class="s2">&quot;layer B&quot;</span><span class="p">)</span>
+    <span class="n">multilayer</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span>
+    <span class="n">sol1</span> <span class="o">=</span> <span class="n">senspatankar</span><span class="p">(</span><span class="n">multilayer</span><span class="p">,</span> <span class="n">medium</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="s2">&quot;days&quot;</span><span class="p">))</span>
+    <span class="n">sol1</span><span class="o">.</span><span class="n">plotCF</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">14</span><span class="p">])</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">3600</span><span class="p">)</span>
+    <span class="n">sol1</span><span class="o">.</span><span class="n">plotCx</span><span class="p">()</span>
+    <span class="n">r</span><span class="o">=</span><span class="n">sol1</span><span class="o">.</span><span class="n">restart</span>
+    <span class="nb">repr</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>extend the solution for 40 days</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="n">sol2</span> <span class="o">=</span> <span class="n">sol1</span><span class="o">.</span><span class="n">resume</span><span class="p">((</span><span class="mi">40</span><span class="p">,</span><span class="s2">&quot;days&quot;</span><span class="p">))</span>
+    <span class="n">sol2</span><span class="o">.</span><span class="n">plotCF</span><span class="p">()</span>
+    <span class="n">sol2</span><span class="o">.</span><span class="n">plotCx</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>extend the solution for 60 days from sol2</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">sol3</span> <span class="o">=</span> <span class="n">sol2</span><span class="o">.</span><span class="n">resume</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span><span class="s2">&quot;days&quot;</span><span class="p">))</span>
+    <span class="n">sol3</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sol3&quot;</span><span class="p">)</span>
+    <span class="n">sol3</span><span class="o">.</span><span class="n">plotCF</span><span class="p">()</span>
+    <span class="n">sol3</span><span class="o">.</span><span class="n">plotCx</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>merge the previous solutions 1+2<br>extend the solution for 60 days from sol12=sol1+sol2</p>
+
+    <button type="button" class="collapsible">Show Code Example 4</button>
+    <div class="content">
+    <pre class="code"><span class="n">sol12</span> <span class="o">=</span> <span class="n">sol1</span><span class="o">+</span><span class="n">sol2</span>
+    <span class="n">sol123a</span> <span class="o">=</span> <span class="n">sol12</span><span class="o">.</span><span class="n">resume</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span><span class="s2">&quot;days&quot;</span><span class="p">))</span>
+    <span class="n">sol123a</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sol123a&quot;</span><span class="p">)</span>
+    <span class="n">sol123a</span><span class="o">.</span><span class="n">plotCF</span><span class="p">()</span>
+    <span class="n">sol123a</span><span class="o">.</span><span class="n">plotCx</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>concat</p>
+
+    <button type="button" class="collapsible">Show Code Example 5</button>
+    <div class="content">
+    <pre class="code"><span class="n">sol123a_</span> <span class="o">=</span> <span class="n">sol12</span> <span class="o">+</span> <span class="n">sol123a</span>
+    <span class="n">sol123a_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sol123a_ (full): sol12 + sol123a&quot;</span><span class="p">)</span>
+    <span class="n">sol123a_</span><span class="o">.</span><span class="n">plotCF</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>compare with sol1+sol2+sol3</p>
+
+    <button type="button" class="collapsible">Show Code Example 6</button>
+    <div class="content">
+    <pre class="code"><span class="n">sol123_</span> <span class="o">=</span> <span class="n">sol1</span><span class="o">+</span><span class="n">sol2</span><span class="o">+</span><span class="n">sol3</span>
+    <span class="n">sol123_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sol123_ (full): sol1+sol2+sol3&quot;</span><span class="p">)</span>
+    <span class="n">sol123_</span><span class="o">.</span><span class="n">plotCF</span><span class="p">()</span>
+    <span class="n">sol123_</span><span class="o">.</span><span class="n">plotCx</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>simulation of setoff</p>
+
+    <button type="button" class="collapsible">Show Code Example 7</button>
+    <div class="content">
+    <pre class="code"><span class="n">packstorage</span> <span class="o">=</span> <span class="n">setoff</span><span class="p">(</span><span class="n">contacttime</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s2">&quot;days&quot;</span><span class="p">))</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">PP</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="s2">&quot;um&quot;</span><span class="p">),</span><span class="n">C0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">PP</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span><span class="s2">&quot;um&quot;</span><span class="p">),</span><span class="n">C0</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+    <span class="n">AB</span> <span class="o">=</span> <span class="n">A</span><span class="o">+</span><span class="n">B</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">medium</span><span class="p">)</span>
+    <span class="n">solAB</span> <span class="o">=</span> <span class="n">senspatankar</span><span class="p">(</span><span class="n">AB</span><span class="p">,</span><span class="n">packstorage</span><span class="p">)</span>
+    <span class="n">solAB</span><span class="o">.</span><span class="n">plotCx</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>we extend the previous solution by putting medium in contact</p>
+
+    <button type="button" class="collapsible">Show Code Example 8</button>
+    <div class="content">
+    <pre class="code"><span class="n">solABext</span> <span class="o">=</span> <span class="n">solAB</span><span class="o">.</span><span class="n">resume</span><span class="p">(</span><span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">)</span>
+    <span class="n">solABext</span><span class="o">.</span><span class="n">plotCF</span><span class="p">()</span>
+    <span class="n">solABext</span><span class="o">.</span><span class="n">plotCx</span><span class="p">()</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_private_mstruct" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+<p>=============================================================================<br># very advanced<br>import os<br>from fitness.private.loadods import alias<br>local = &quot;C:/Users/olivi/OneDrive/Data/Olivier/INRA/Etudiants &amp; visiteurs/Steward Ouadi/python/test/output/&quot;<br>odsfile = &quot;fileid_conferences_FoodRisk.ods&quot;<br>fullfodsfile = os.path.join(local,odsfile)<br>p = alias(fullfodsfile)<br>p.disp()<br>=============================================================================<br>new feature</p>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">a</span> <span class="o">=</span> <span class="n">struct</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">a</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span>
+</pre>
+    </div>
+    <p>path example</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="n">s0</span> <span class="o">=</span> <span class="n">struct</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">pstr</span><span class="p">(</span><span class="s2">&quot;/tmp/&quot;</span><span class="p">),</span><span class="n">b</span><span class="o">=</span><span class="n">pstr</span><span class="p">(</span><span class="s2">&quot;test////&quot;</span><span class="p">),</span><span class="n">c</span><span class="o">=</span><span class="n">pstr</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">/$</span><span class="si">{b}</span><span class="s2">&quot;</span><span class="p">),</span><span class="n">d</span><span class="o">=</span><span class="n">pstr</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">/$</span><span class="si">{c}</span><span class="s2">&quot;</span><span class="p">),</span><span class="n">e</span><span class="o">=</span><span class="n">pstr</span><span class="p">(</span><span class="s2">&quot;$c/$a&quot;</span><span class="p">))</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">struct2param</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span><span class="n">protection</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">disp</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">a</span><span class="o">/</span><span class="n">s</span><span class="o">.</span><span class="n">b</span>
+    <span class="nb">str</span><span class="p">(</span><span class="n">pstr</span><span class="o">.</span><span class="n">topath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>escape example</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">definitions</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">*10+$</span><span class="si">{a}</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\$</span><span class="si">{a}</span><span class="s2">+10&quot;</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;\$</span><span class="si">{myparam}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">definitions</span><span class="o">.</span><span class="n">formateval</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;this my text $</span><span class="si">{a}</span><span class="s2">, $</span><span class="si">{b}</span><span class="s2">, \$</span><span class="si">{myvar}</span><span class="s2">=$</span><span class="si">{c}</span><span class="s2">+$</span><span class="si">{d}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">definitions</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="s2">&quot;$a*10+$a&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\$a+10&quot;</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;\$myparam&#39;</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">definitions</span><span class="o">.</span><span class="n">formateval</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;this my text $a, $b, \$myvar=$c+$d&quot;</span><span class="p">,</span><span class="n">protection</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>assignment</p>
+
+    <button type="button" class="collapsible">Show Code Example 4</button>
+    <div class="content">
+    <pre class="code"><span class="n">s</span> <span class="o">=</span> <span class="n">struct</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">disp</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>conversion</p>
+
+    <button type="button" class="collapsible">Show Code Example 5</button>
+    <div class="content">
+    <pre class="code"><span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+    <span class="n">t</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">dict2struct</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">disp</span><span class="p">()</span>
+    <span class="n">sback</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">struct2dict</span><span class="p">()</span>
+    <span class="n">sback</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>file definition</p>
+
+    <button type="button" class="collapsible">Show Code Example 6</button>
+    <div class="content">
+    <pre class="code"><span class="n">p</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">fromkeysvalues</span><span class="p">([</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="s2">&quot;c&quot;</span><span class="p">,</span><span class="s2">&quot;d&quot;</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">struct2param</span><span class="p">()</span>
+    <span class="n">ptxt</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">protect</span><span class="p">(</span><span class="s2">&quot;$c=$a+$b&quot;</span><span class="p">)</span>
+    <span class="n">definitions</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;../../tmp/test.txt&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>populate/inherit fields</p>
+
+    <button type="button" class="collapsible">Show Code Example 7</button>
+    <div class="content">
+    <pre class="code"><span class="n">default</span> <span class="o">=</span> <span class="n">struct</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">tst</span> <span class="o">=</span> <span class="n">struct</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">tst</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+    <span class="n">tst</span><span class="o">.</span><span class="n">disp</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>multiple assigment</p>
+
+    <button type="button" class="collapsible">Show Code Example 8</button>
+    <div class="content">
+    <pre class="code"><span class="n">a</span> <span class="o">=</span> <span class="n">struct</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">struct</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+    <span class="n">a</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">a</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
+</pre>
+    </div>
+    <p>reorganize definitions to enable param.eval()</p>
+
+    <button type="button" class="collapsible">Show Code Example 9</button>
+    <div class="content">
+    <pre class="code"><span class="n">s</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{e}</span><span class="s2">/3&quot;</span><span class="p">,</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">*$</span><span class="si">{c}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">+$</span><span class="si">{b}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{c}</span><span class="s2">*2&quot;</span>
+        <span class="p">)</span>
+</pre>
+    </div>
+    <p>s[0:2] = [1,2]</p>
+
+    <button type="button" class="collapsible">Show Code Example 10</button>
+    <div class="content">
+    <pre class="code"><span class="n">s</span><span class="o">.</span><span class="n">isexpression</span>
+    <span class="n">struct</span><span class="o">.</span><span class="n">isstrdefined</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">+$</span><span class="si">{b}</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">isdefined</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">sortdefinitions</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">disp</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">+1&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{a}</span><span class="s2">+$</span><span class="si">{d}</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">disp</span><span class="p">()</span>
+</pre>
+    </div>
+    <p>features 2025</p>
+
+    <button type="button" class="collapsible">Show Code Example 11</button>
+    <div class="content">
+    <pre class="code"><span class="n">p</span><span class="o">=</span><span class="n">param</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="s1">&#39;![1,2,&quot;test&quot;,&quot;$</span><span class="si">{a[1]}</span><span class="s1">&quot;]&#39;</span>
+    <span class="n">p</span>
+</pre>
+    </div>
+    <p>Mathematical expressions<br>Example: param.safe_fstring()<br>Sample context with a NumPy array</p>
+
+    <button type="button" class="collapsible">Show Code Example 12</button>
+    <div class="content">
+    <pre class="code"><span class="n">context</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+        <span class="p">])</span>
+    <span class="p">)</span>
+</pre>
+    </div>
+    <p>Example expressions</p>
+
+    <button type="button" class="collapsible">Show Code Example 13</button>
+    <div class="content">
+    <pre class="code"><span class="n">expressions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;$</span><span class="si">{a[1]}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># Should return 0.2 (assuming &#39;a&#39; is defined in context)</span>
+        <span class="s2">&quot;$</span><span class="si">{b[0,1]}</span><span class="s2"> + $</span><span class="si">{a[0]}</span><span class="s2">&quot;</span><span class="p">,</span>    <span class="c1"># Should return 1.2 (assuming &#39;b&#39; and &#39;a&#39; are defined)</span>
+        <span class="s2">&quot;$</span><span class="si">{f[0:2,1]}</span><span class="s2">&quot;</span>               <span class="c1"># Should return the second column of &#39;f&#39;</span>
+    <span class="p">]</span>
+</pre>
+    </div>
+    <p>Assuming &#x27;a&#x27; and &#x27;b&#x27; are defined in the context</p>
+
+    <button type="button" class="collapsible">Show Code Example 14</button>
+    <div class="content">
+    <pre class="code"><span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">a</span> <span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">],</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">]])</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">expressions</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">safe_fstring</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expression: </span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s2"> =&gt; Result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Example with matrix operations</p>
+
+    <button type="button" class="collapsible">Show Code Example 15</button>
+    <div class="content">
+    <pre class="code"><span class="n">p</span><span class="o">=</span><span class="n">param</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">.2</span><span class="p">,</span> <span class="mf">.03</span><span class="p">,</span> <span class="mf">.004</span><span class="p">]</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">a</span><span class="p">])</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="mi">2</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">b</span><span class="o">*</span><span class="mi">2</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">T</span><span class="nd">@p</span><span class="o">.</span><span class="n">b</span> <span class="c1"># Matrix multiplication for (3x1) @ (1x3)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{a[1]}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{b[0,1]}</span><span class="s2"> + $</span><span class="si">{a[0]}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{f[0,1]}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">j</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{f[:,1]}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{j}</span><span class="s2">+1&quot;</span>  <span class="c1"># note that &quot;@{j}+1&quot; and &quot;${j}+1&quot; do not have the same meaning</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{b.T}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="s2">&quot;${b.T @ b}&quot;</span>    <span class="c1"># evaluate fully the matrix operation</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{b.T}</span><span class="s2"> @ $</span><span class="si">{b}</span><span class="s2">&quot;</span> <span class="c1"># concatenate two string-results separated by @</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span><span class="s2">&quot;the result is: $</span><span class="si">{b[0,1]}</span><span class="s2"> + $</span><span class="si">{a[0]}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="s2">&quot;the value of a[0] is $</span><span class="si">{a[0]}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="s2">&quot;1+1&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+</pre>
+    </div>
+    <p>Example with new NumPy shorthands</p>
+
+    <button type="button" class="collapsible">Show Code Example 16</button>
+    <div class="content">
+    <pre class="code"><span class="n">p</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;10.0&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;$[$</span><span class="si">{a}</span><span class="s2">,2,3]*$</span><span class="si">{b}</span><span class="s2">&quot;</span> <span class="c1"># Create a Numpy vector from an operation</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="s2">&quot;$[0,0,1]&quot;</span>         <span class="c1"># another one</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">o1</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{n}</span><span class="s2">&quot;</span>          <span class="c1"># create a copy</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">o2</span> <span class="o">=</span> <span class="s2">&quot;$[$</span><span class="si">{a}</span><span class="s2">,2,3]&quot;</span> <span class="c1"># create a Numpy vector</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">o3</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{o1}</span><span class="s2"> @ @</span><span class="si">{o2}</span><span class="s2">.T&quot;</span> <span class="c1"># multiplication between two vectots</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{n}</span><span class="s2">.T @ $[[$</span><span class="si">{a}</span><span class="s2">,2,3]]&quot;</span> <span class="c1"># another one</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="s2">&quot;($[$</span><span class="si">{a}</span><span class="s2">,2,3]*$</span><span class="si">{b}</span><span class="s2">) @ np.array([[0,0,1]]).T&quot;</span> <span class="c1"># another one using explicitly NumPy</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">nT</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{n}</span><span class="s2">.T&quot;</span> <span class="c1"># transpose of a vector/matrix</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{n.T}</span><span class="s2">*2&quot;</span> <span class="c1"># this operation is illegal and will be kept as a string</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{n}</span><span class="s2">.T*2&quot;</span> <span class="c1"># this one is the correct one</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="s2">&quot;$[[1,2],[3,4]]&quot;</span> <span class="c1"># Create a 2D Numpy array</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{p[1,1]}</span><span class="s2">&quot;</span>   <span class="c1"># index a 2D NumPy array</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{p[:,1]}</span><span class="s2">&quot;</span>   <span class="c1"># this is a valid syntax to get the slice as a list</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{p}</span><span class="s2">[:,1]+1&quot;</span> <span class="c1"># use this syntax if you need apply an operation to the slice</span>
+</pre>
+    </div>
+    <p>more advanced</p>
+
+    <button type="button" class="collapsible">Show Code Example 17</button>
+    <div class="content">
+    <pre class="code"><span class="n">p</span><span class="o">.</span><span class="n">V1</span> <span class="o">=</span> <span class="s2">&quot;$[1.0,0.2,0.03]&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">V2</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{V1}</span><span class="s2">+1&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">V3</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{V1}</span><span class="s2">.T @ @</span><span class="si">{V2}</span><span class="s2">&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">V4</span> <span class="o">=</span> <span class="s2">&quot;np.diag(@</span><span class="si">{V3}</span><span class="s2">)&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">V5</span> <span class="o">=</span> <span class="s2">&quot;np.linalg.eig(@</span><span class="si">{V3}</span><span class="s2">)&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;the first eigenvalue is: $</span><span class="si">{V5.eigenvalues[0]}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+</pre>
+    </div>
+    <p>Advanced NumPy example</p>
+
+    <button type="button" class="collapsible">Show Code Example 18</button>
+    <div class="content">
+    <pre class="code"><span class="n">p</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="s2">&quot;$[[1, 2], [3, 4]]&quot;</span>      <span class="c1"># Create a 2D NumPy array</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{p[1, 1]}</span><span class="s2">&quot;</span>             <span class="c1"># Indexing: retrieves 4</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{p}</span><span class="s2">[:,1] + 1&quot;</span>          <span class="c1"># Add 1 to the second column</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{p}</span><span class="s2">[:, 1].reshape(-1, 1) @ @</span><span class="si">{r}</span><span class="s2">&quot;</span> <span class="c1"># perform p(:,1)&#39;*s in Matlab sense</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="s2">&quot;np.linalg.eig(@</span><span class="si">{s}</span><span class="s2">)&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{t.eigenvalues[0]}</span><span class="s2"> + $</span><span class="si">{t.eigenvalues[1]}</span><span class="s2">&quot;</span> <span class="c1"># sum of eigen values</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;$[[0,$</span><span class="si">{t.eigenvalues[0]}</span><span class="s2">+$</span><span class="si">{t.eigenvalues[1]}</span><span class="s2">]]&quot;</span> <span class="c1"># horizontal concat à la Matlab</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+</pre>
+    </div>
+    <p>%% Math example with DSCRIPT (pending) - v 1.005</p>
+
+    <button type="button" class="collapsible">Show Code Example 19</button>
+    <div class="content">
+    <pre class="code"><span class="kn">from</span> <span class="nn">patanakar.dscript</span> <span class="kn">import</span> <span class="n">dscript</span>
+    <span class="kn">from</span> <span class="nn">patanakar.private.mstruct</span> <span class="kn">import</span> <span class="n">param</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">dscript</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;math example&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>The definitions are given with hybrid Matlab/NumPy notations</p>
+
+    <button type="button" class="collapsible">Show Code Example 20</button>
+    <div class="content">
+    <pre class="code"><span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">2e-3</span><span class="p">,</span> <span class="mf">3e-3</span><span class="p">]</span>    <span class="c1"># l is defined as a list</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="s2">&quot;$[1 2 3]&quot;</span>            <span class="c1"># a is defined with  Matlab notations</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;$[1:3]&quot;</span>              <span class="c1"># b is defined with  Matlab notations</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;$[0.1:0.1:0.9]&quot;</span>      <span class="c1"># c is defined with  Matlab notations</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{l}</span><span class="s2">*2*@</span><span class="si">{a}</span><span class="s2">&quot;</span>     <span class="c1"># l is rescaled</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="s2">&quot;$[[[-0.5, -0.5],[-0.5, -0.5]],[[ 0.5,  0.5],[ 0.5,  0.5]]]*$</span><span class="si">{scale[0,0]}</span><span class="s2">*$</span><span class="si">{a[0,0]}</span><span class="s2">&quot;</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">y0</span> <span class="o">=</span> <span class="s2">&quot;$[[[-0.5, -0.5],[0.5, 0.5]],[[ -0.5,  -0.5],[ 0.5,  0.5]]]*$</span><span class="si">{scale[0,1]}</span><span class="s2">*$</span><span class="si">{a[0,1]}</span><span class="s2">&quot;</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">z0</span> <span class="o">=</span> <span class="s2">&quot;$[[-0.5 0.5 ;-0.5 0.5],[ -0.5,  0.5;  -0.5,  0.5]]*$</span><span class="si">{l[2]}</span><span class="s2">*$</span><span class="si">{a[0,2]}</span><span class="s2">&quot;</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">X0</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{x0}</span><span class="s2">.flatten()&quot;</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">Y0</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{y0}</span><span class="s2">.flatten()&quot;</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">Z0</span> <span class="o">=</span> <span class="s2">&quot;@</span><span class="si">{z0}</span><span class="s2">.flatten()&quot;</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="o">.</span><span class="n">x0</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">x0</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">DEFINITIONS</span><span class="p">))</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_private_pubchempy" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="nb">print</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>from private.pubchempy import get_compounds</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="kn">import</span> <span class="nn">re</span>
+</pre>
+    </div>
+    <p>Simple example</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">cas_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^\d{1,7}-\d</span><span class="si">{2}</span><span class="s1">-\d$&#39;</span><span class="p">)</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">get_compounds</span><span class="p">(</span><span class="s1">&#39;anisole&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>
+    <span class="n">nmatches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nmatches</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">synonyms</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">synonyms</span>
+        <span class="n">cas_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">syn</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">syn</span> <span class="ow">in</span> <span class="n">synonyms</span> <span class="k">if</span> <span class="n">cas_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">syn</span><span class="o">.</span><span class="n">strip</span><span class="p">())]</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="p">{</span>
+         <span class="s1">&#39;CID&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cid</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iupac_name</span><span class="p">,</span>
+    <span class="s1">&#39;synonyms&#39;</span><span class="p">:</span> <span class="n">synonyms</span><span class="p">,</span>
+         <span class="s1">&#39;CAS&#39;</span><span class="p">:</span> <span class="n">cas_list</span><span class="p">,</span>
+           <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">molecular_weight</span><span class="p">,</span>
+     <span class="s1">&#39;formula&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">molecular_formula</span><span class="p">,</span>
+      <span class="s1">&#39;SMILES&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">canonical_smiles</span><span class="p">,</span>
+       <span class="s1">&#39;InChi&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">inchi</span><span class="p">,</span>
+    <span class="s1">&#39;InChiKey&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">inchikey</span><span class="p">,</span>
+        <span class="s1">&#39;logP&#39;</span><span class="p">:</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xlogp</span><span class="p">,</span>
+</pre>
+    </div>
+    <p>&#x27;raw&#x27; : matches[0], # we store all info as raw</p>
+
+    <button type="button" class="collapsible">Show Code Example 4</button>
+    <div class="content">
+    <pre class="code"><span class="s1">&#39;date&#39;</span> <span class="p">:</span> <span class="s2">&quot;add here the date of the record&quot;</span>
+       <span class="p">}</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_property" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">Dpiringer</span><span class="p">()),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>static use (without instantiation)</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="n">values</span> <span class="o">=</span> <span class="n">Dpiringer</span><span class="o">.</span><span class="n">get_piringer_params</span><span class="p">(</span><span class="s2">&quot;air&quot;</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">Dpiringer</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;PET&quot;</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">40</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;D1 = </span><span class="si">{</span><span class="n">D</span><span class="si">}</span><span class="s2"> [m**2/s]&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>dynamic use (with instantiation)</p>
+
+    <button type="button" class="collapsible">Show Code Example 3</button>
+    <div class="content">
+    <pre class="code"><span class="n">Dmodel</span> <span class="o">=</span> <span class="n">Dpiringer</span><span class="p">(</span><span class="s2">&quot;PET&quot;</span><span class="p">,</span><span class="n">M</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+    <span class="n">Dvalue</span><span class="o">=</span> <span class="n">Dmodel</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;D2 = </span><span class="si">{</span><span class="n">Dvalue</span><span class="si">}</span><span class="s2"> [m**2/s]&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    </div>
+
+</div>
+</div>
+<footer>
+<p>&copy; 2025 SFPPy Project. All rights reserved.</p>
+</footer>
+<script>
+// Toggle visibility of folder contents
+function toggleFolder(element) {
+    var content = element.nextElementSibling;
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
+    }
+}
+
+// Load documentation into the main panel
+function loadDoc(moduleId) {
+    var modules = document.getElementsByClassName('module-content');
+    for (var i = 0; i < modules.length; i++) {
+        modules[i].style.display = 'none';
+    }
+    var welcome = document.getElementById('welcome');
+    welcome.style.display = 'none';
+    var selected = document.getElementById(moduleId);
+    if (selected) {
+        selected.style.display = 'block';
+    }
+}
+
+// Toggle All Code Sections
+function toggleAllCode(button) {
+    var moduleContent = button.parentElement;
+    var collapsibles = moduleContent.querySelectorAll('.collapsible');
+    var contents = moduleContent.querySelectorAll('.content');
+    var shouldExpand = true;
+    // Determine if we should expand or collapse based on the first content's display
+    if (contents.length > 0 && (contents[0].style.display === 'block')) {
+        shouldExpand = false;
+    }
+    collapsibles.forEach(function(collapsible, index) {
+        var content = collapsibles[index].nextElementSibling;
+        if (shouldExpand) {
+            content.style.display = 'block';
+            collapsible.textContent = 'Hide Code Example ' + (index + 1);
+        } else {
+            content.style.display = 'none';
+            collapsible.textContent = 'Show Code Example ' + (index + 1);
+        }
+    });
+    button.textContent = shouldExpand ? 'Collapse All Code Sections' : 'Expand All Code Sections';
+}
+
+// Initialize all collapsible buttons and handle URL hash on page load
+document.addEventListener("DOMContentLoaded", function() {
+    var coll = document.getElementsByClassName("collapsible");
+    for (var i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                this.textContent = this.textContent.replace('Hide', 'Show');
+            } else {
+                content.style.display = "block";
+                this.textContent = this.textContent.replace('Show', 'Hide');
+            }
+        });
+    }
+    
+    // Handle URL hash on page load to display the corresponding module examples
+    var hash = window.location.hash.substring(1); // Remove the #
+    if (hash) {
+        loadDoc(hash);
+    }
+});
+
+// Toggle Sidebar Functionality
+const toggleButton = document.getElementById('toggleSidebar');
+const nav = document.getElementById('nav');
+
+toggleButton.addEventListener('click', () => {
+    nav.classList.toggle('collapsed');
+    document.body.classList.toggle('nav-open'); // Toggle overlay on small screens
+    // Change icon based on sidebar state
+    if(nav.classList.contains('collapsed')) {
+        toggleButton.innerHTML = '<kbd>&#9776;</kbd>'; // Hamburger icon
+        toggleButton.setAttribute('aria-expanded', 'false');
+    } else {
+        toggleButton.innerHTML = '<kbd>&#10005;</kbd>'; // Close icon (X)
+        toggleButton.setAttribute('aria-expanded', 'true');
+    }
+});
+</script>
+</body>
+</html>

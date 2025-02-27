@@ -25,7 +25,7 @@ This module aims to streamline the creation and manipulation of structures for s
 
 ---
 
-## Evaluation Features (Updated for Pizza 1.0)
+## Evaluation Features
 - **Dynamic Expressions**: Evaluate expressions within `${...}` placeholders or as standalone scalar expressions.
 - **Matrix and Array Support**: Perform advanced operations such as matrix multiplication (`@`), transposition (`.T`), and slicing within `${...}`.
 - **Safe Evaluation**: Eliminates the use of `eval`, using `safe_fstring()` and `SafeEvaluator` for secure computation.
@@ -37,7 +37,6 @@ This module aims to streamline the creation and manipulation of structures for s
 - **Type Preservation**: Retains original data types (e.g., `float`, `numpy.ndarray`) for accuracy and further computation.
 - **Custom Formatting**: Formats arrays and matrices for display with clear distinction between row/column vectors and higher-dimensional arrays.
 
-The implementation in Pizza 1.0 ensures both flexibility and security, making it ideal for scenarios requiring dynamic parameter management and safe expression evaluation.
 
 ---
 
@@ -100,7 +99,7 @@ pa.disp()
 
 ### Evaluation Usage
 ```python
-from pizza.private.mstruct import param
+from patankar.private.mstruct import param
 import numpy as np
 
 p = param()
@@ -115,79 +114,20 @@ print(p.eval())
 ---
 
 Created on Sun Jan 23 14:19:03 2022
-**Author**: Olivier Vitrac, AgroParisTech
+**Author**: INRAE\Olivier Vitrac
 """
 
 # revision history
-# 2022-02-12 fix disp method for empty structures
-# 2022-02-12 add type, format
-# 2022-02-19 integration of the derived class param()
-# 2022-02-20 code optimization, iterable class- major update
-# 2022-02-26 clarify in the help the precedence s=s1+s2
-# 2022-02-28 display nested structures
-# 2022-03-01 implement value as list
-# 2022-03-02 display correctly class names (not instances)
-# 2022-03-04 add str()
-# 2022-03-05 add __copy__ and __deepcopy__ methods
-# 2022-03-05 AttributeError replaces KeyError in getattr() exceptions (required for for pdoc3)
-# 2022-03-16 Prevent replacement/evaluation if the string is escaped \${parameter}
-# 2022-03-19 add struct2dict(), dict2struct()
-# 2022-03-20 add zip(), items()
-# 2022-03-27 add __setitem__(), fromkeysvalues(), struct2param()
-# 2022-03-28 add read() and write()
-# 2022-03-29 fix protection for $var, $variable - add keysorted(), tostruct()
-# 2022-03-30 specific display p"this/is/my/path" for pstr
-# 2022-03-31 add dispmax()
-# 2022-04-05 add check(), such that a.check(b) is similar to b+a
-# 2022-04-09 manage None and [] values in check()
-# 2022-05-14 s[:4], s[(3,5,2)] indexing a structure with a slice, list, tuple generates a substructure
-# 2022-05-14 isempty (property) is TRUE for an empty structure
-# 2022-05-15 __getitem__ and __set__item are now vectorized, add clear()
-# 2022-05-16 add sortdefinitions(), isexpression, isdefined(), isstrdefined()
-# 2022-05-16 __add__ and __iadd__ when called explicitly (not with + and +=) accept sordefinitions=True
-# 2022-05-16 improved help, add tostatic() - v 0.45 (major version)
-# 2022-05-17 new class paramauto() to simplify the management of multiple definitions
-# 2022-05-17 catches most common errors in expressions and display explicit error messages - v 0.46
-# 2023-01-18 add indexing as a dictionary s["a"] is the same as s.a - 0.461
-# 2023-01-19 add % as comment instead of # to enable replacement
-# 2023-01-27 param.eval() add % to freeze an interpretation (needed when a list is spanned as a string)
-# 2023-01-27 struct.format() will replace {var} by ${var} if var is not defined
-# 2023-08-11 display "" as <empty string> if evaluated
-# 2024-09-06 add _returnerror as paramm class attribute (default=true) - dscript.lambdaScriptdata overrides it
-# 2024-09-12 file management for all OS
-# 2024-09-12 repr() improvements
-# 2024-10-09 enable @property as attribute if _propertyasattribute is True
-# 2024-10-11 add _callable__ and update()
-# 2024-10-22 raises an error in escape() if s is not a string
-# 2024-10-25 add dellatr()
-# 2024-10-26 force silentmode to + and += operators
-# 2024-12-08 fix help
-# 2025-01-17 enable evaluation with ! and first recursion for lists (v1.002)
-# 2025-01-18 fixes and explicit imports, better management of NumpPy arrays
-# 2025-01-19 consolidation of slice handling, implicit evaluation and error handling (v1.003)
-# 2025-01-20 full implementation and documentation of NumPy shorthands (v.1.004), use debug=True to show evaluation errors
-# 2025-01-21 full implementation of 3D and 4D NumPy arrays (v.1.005): better parser (replace_matrix_shorthand) and display (format_array), see final example
-# 2025-01-22 implement Matlab syntaxes for row and column vector, and matrices
-# 2025-01-23 consolidation of nD matrices, expand ranges start:stop, start:step:stop à la Matlab
-# 2025-01-30 "!" forces nemerical evaluation in lists '![1,2,"test","${a[1]}"]
-# 2025-01-30 substitutions and calulations applied in lists (not expressions) [1, 2, 'test', '${a[1]}'] yields [1, 2, 'test', 1]
-# 2025-01-31 better parsing rules for converting spaces into , (Matlab-like) (version 1.0051)
-# 2025-01-31 p=param(a=..,b=..), p("a","b") returns the values of a and b as a struct, p.getval("a") returns the value of a
-# 2025-02-01 better separation of param interpolation and global evaluation, consolidation of local evaluation: "the sum p is ${sum(p)}", [${n},${o}]" (version 1.0052)
-# 2025-02-03 add _precision, fix generator for NumPy
-# 2025-02-06 maintnance version (fixes and extensions) in agreement with the revised version of param_demo()
-# 2025-02-07 add struct.numrepl(), major release (version 1.0054), improve evaluation error messages
-# 2025-02-19 add importfrom(), add operator <<, add validkeys()
-# 2025-02-19 fix strong slowdown when precedence rules are applied with +: defer sorting() for paramauto()
+# imported from the project Pizza3 (not used yet in SFPPy)
 
-__project__ = "Pizza3"
+__project__ = "SFPPy" # from project Pizza3
 __author__ = "Olivier Vitrac"
 __copyright__ = "Copyright 2022"
 __credits__ = ["Olivier Vitrac"]
-__license__ = "GPLv3"
+__license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.0062"
+__version__ = "1.2"
 
 
 # %% Dependencies
@@ -3573,8 +3513,8 @@ if __name__ == '__main__':
 
 
 #%% Math example with DSCRIPT (pending) - v 1.005
-    from pizza.dscript import dscript
-    from pizza.private.mstruct import param
+    from patanakar.dscript import dscript
+    from patanakar.private.mstruct import param
 
     D = dscript(name="math example")
 

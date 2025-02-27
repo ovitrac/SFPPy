@@ -85,7 +85,7 @@ A temperature and substance can be assigned to layers.
 
 @version: 1.2
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
-@author: INRAE\olivier.vitrac@agroparistech.fr
+@author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
 @rev. 2025-02-14
@@ -132,6 +132,16 @@ if 'migrant' not in dir():
     from patankar.loadpubchem import migrant
 
 
+__all__ = ['AdhesiveAcrylate', 'AdhesiveEVA', 'AdhesiveNaturalRubber', 'AdhesivePU', 'AdhesivePVAC', 'AdhesiveSyntheticRubber', 'AdhesiveVAE', 'Cardboard', 'HDPE', 'HIPS', 'LDPE', 'LLDPE', 'PA6', 'PA66', 'PBT', 'PEN', 'PP', 'PPrubber', 'PS', 'Paper', 'R', 'RT0K', 'SBS', 'SI', 'SIbase', 'T0K', 'air', 'check_units', 'fixSIbase', 'gPET', 'help_layer', 'iRT0K', 'layer', 'list_layer_subclasses', 'mesh', 'migrant', 'oPP', 'plasticizedPVC', 'qSI', 'rPET', 'rigidPVC', 'toSI']
+
+__project__ = "SFPPy"
+__author__ = "Olivier Vitrac"
+__copyright__ = "Copyright 2022"
+__credits__ = ["Olivier Vitrac"]
+__license__ = "MIT"
+__maintainer__ = "Olivier Vitrac"
+__email__ = "olivier.vitrac@agroparistech.fr"
+__version__ = "1.2"
 # %% Private functions
 
 # Initialize unit conversion (intensive initialization with old Python versions)

@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>example3 API documentation</title>
+<meta name="description" content="SFPPy Example: mass transfer from chained steps and complex scenarios
+…" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>example3</code></h1>
+</header>
+<section id="section-intro">
+<p>===============================================================================
+SFPPy Example: mass transfer from chained steps and complex scenarios
+===============================================================================</p>
+<h2 id="example-3-advanced-migration-simulation-with-variants">Example 3: Advanced Migration Simulation with Variants</h2>
+<h2 id="scenario-mass-transfer-in-a-multilayer-packaging-system">Scenario: Mass Transfer in a Multilayer Packaging System</h2>
+<p>This example simulates the migration of <strong>limonene</strong> from a recycled <strong>polypropylene (PP)</strong> core
+to food, using a <strong>trilayer packaging (ABA structure)</strong> where <strong>A = PET</strong> and <strong>B = PP</strong>.
+The study follows three consecutive storage and processing steps:</p>
+<ol>
+<li>Storage at ambient temperature (20°C) for 4 months</li>
+<li>Hot-filling at 90°C with a fatty food</li>
+<li>Storage at 30°C for 6 months</li>
+</ol>
+<p>Limonene is initially present in <strong>B at 200 mg/kg</strong>. The layer thicknesses are:
+- PET (A): <strong>20 µm</strong>
+- PP (B): <strong>500 µm</strong></p>
+<p>Variants Studied:
+- <strong>Variant 1</strong>: Replace limonene with toluene
+- <strong>Variant 2</strong>: Reduce B’s thickness from 20 µm to 10 µm for both limonene and toluene
+- <strong>Variant 3</strong>: Combination of Variant 1 and Variant 2</p>
+<p>All four conditions (Reference, Variant 1, Variant 2, and Variant 3) are compared in a single
+figure, with results exported to <strong>Excel and CSV</strong> for further analysis.</p>
+<hr>
+<h2 id="exploring-sfppys-database">Exploring SFPPy’s Database</h2>
+<p>This example allows interaction with <strong>SFPPy’s extensive databases</strong>, including:
+- <strong>3D geometries</strong> (predefined packaging shapes)
+- <strong>Chemical substances</strong> (millions via PubChem)
+- <strong>Food contact conditions</strong> (various storage and processing scenarios)
+- <strong>Polymers and materials</strong> (tens of predefined types)</p>
+<hr>
+<h2 id="key-features-and-pythonic-syntax">Key Features And Pythonic Syntax</h2>
+<ol>
+<li>
+<p><strong>Compact and Concise Code Structure</strong>
+Example 3 demonstrates <strong>chained simulations</strong> with <strong>minimal coding</strong>, contrasting with
+Examples 1 and 2. The approach <strong>stores results within objects</strong>, enabling streamlined operations.</p>
+</li>
+<li>
+<p><strong>Operator <code>&gt;&gt;</code> for Seamless Processing</strong>
+The <code>&gt;&gt;</code> operator automates <strong>property propagation</strong> and <strong>mass transfer simulations</strong>:</p>
+</li>
+<li><code>mypackaging &gt;&gt; myfood</code> → Updates <strong>food geometry</strong></li>
+<li><code>food1 &gt;&gt; food2</code> → Synchronizes food properties</li>
+<li><code>myfood &gt;&gt; mymaterial</code> → Transfers <strong>temperature</strong></li>
+<li><code>mymaterial &gt;&gt; myfood</code> → Simulates <strong>mass transfer</strong></li>
+</ol>
+<p>Example: <code>mypackaging &gt;&gt; myfood &gt;&gt; mymaterial &gt;&gt; myfood</code> performs:
+1. <strong>Update food geometry</strong> to match packaging
+2. <strong>Transfer temperature</strong> to the material
+3. <strong>Simulate mass transfer</strong> from material to food</p>
+<p>For multiple contact conditions:
+<code>mypackaging &gt;&gt; foodcontact2 &gt;&gt; foodcontact1 &gt;&gt; mymaterial &gt;&gt; foodcontact1 &gt;&gt; foodcontact2</code>
+- Adjusts food geometry (<code>foodcontact1</code>, <code>foodcontact2</code>)
+- Transfers <strong>temperature</strong> (<code>foodcontact1 &gt;&gt; mymaterial</code>)
+- Simulates mass transfer and propagates results
+- Final results stored in <strong>foodcontact1.lastsimulation, foodcontact2.lastsimulation</strong></p>
+<p>To explicitly save results: <code>result = ... step n &gt;&gt; step n+1</code>
+Dynamic updates:
+<code>foodcontact1 &gt;&gt; mymaterial.update(substance="new migrant", l=new_thickness) &gt;&gt; foodcontact1</code></p>
+<ol>
+<li><strong>Operator <code>+</code> for Combining Results</strong></li>
+<li><strong>Material assembly:</strong> <code>ABA = A + B + A</code> (trilayer structure)</li>
+<li>
+<p><strong>Merging simulation results:</strong> <code>fullsolution = foodcontact1.lastsimulation + foodcontact2.lastsimulation</code></p>
+</li>
+<li>
+<p><strong>Comprehensive Result Output</strong></p>
+</li>
+<li><strong>Visualization:</strong> Results can be plotted directly</li>
+<li><strong>Exporting:</strong> Save to <strong>Excel</strong> (<code>.xlsx</code>) and <strong>CSV</strong> (<code>.csv</code>)</li>
+</ol>
+<hr>
+<h2 id="summary">Summary</h2>
+<p>Example 3 demonstrates <strong>efficient chaining of migration simulations</strong> using intuitive operators
+(<code>&gt;&gt;</code> for sequential processing, <code>+</code> for merging results). SFPPy’s powerful database and
+Pythonic syntax enable complex simulations with minimal effort.</p>
+<p>@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\olivier.vitrac@agroparistech.fr
+@licence: MIT</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+===============================================================================
+SFPPy Example: mass transfer from chained steps and complex scenarios
+===============================================================================
+
+
+Example 3: Advanced Migration Simulation with Variants
+------------------------------------------------------
+
+Scenario: Mass Transfer in a Multilayer Packaging System
+--------------------------------------------------------
+This example simulates the migration of **limonene** from a recycled **polypropylene (PP)** core
+to food, using a **trilayer packaging (ABA structure)** where **A = PET** and **B = PP**.
+The study follows three consecutive storage and processing steps:
+
+1. Storage at ambient temperature (20°C) for 4 months
+2. Hot-filling at 90°C with a fatty food
+3. Storage at 30°C for 6 months
+
+Limonene is initially present in **B at 200 mg/kg**. The layer thicknesses are:
+- PET (A): **20 µm**
+- PP (B): **500 µm**
+
+Variants Studied:
+- **Variant 1**: Replace limonene with toluene
+- **Variant 2**: Reduce B’s thickness from 20 µm to 10 µm for both limonene and toluene
+- **Variant 3**: Combination of Variant 1 and Variant 2
+
+All four conditions (Reference, Variant 1, Variant 2, and Variant 3) are compared in a single
+figure, with results exported to **Excel and CSV** for further analysis.
+
+--------------------------------------------------------
+Exploring SFPPy’s Database
+--------------------------------------------------------
+This example allows interaction with **SFPPy’s extensive databases**, including:
+- **3D geometries** (predefined packaging shapes)
+- **Chemical substances** (millions via PubChem)
+- **Food contact conditions** (various storage and processing scenarios)
+- **Polymers and materials** (tens of predefined types)
+
+--------------------------------------------------------
+Key Features and Pythonic Syntax
+--------------------------------------------------------
+
+1. **Compact and Concise Code Structure**
+Example 3 demonstrates **chained simulations** with **minimal coding**, contrasting with
+Examples 1 and 2. The approach **stores results within objects**, enabling streamlined operations.
+
+2. **Operator `&gt;&gt;` for Seamless Processing**
+The `&gt;&gt;` operator automates **property propagation** and **mass transfer simulations**:
+- `mypackaging &gt;&gt; myfood` → Updates **food geometry**
+- `food1 &gt;&gt; food2` → Synchronizes food properties
+- `myfood &gt;&gt; mymaterial` → Transfers **temperature**
+- `mymaterial &gt;&gt; myfood` → Simulates **mass transfer**
+
+Example: `mypackaging &gt;&gt; myfood &gt;&gt; mymaterial &gt;&gt; myfood` performs:
+1. **Update food geometry** to match packaging
+2. **Transfer temperature** to the material
+3. **Simulate mass transfer** from material to food
+
+For multiple contact conditions:
+`mypackaging &gt;&gt; foodcontact2 &gt;&gt; foodcontact1 &gt;&gt; mymaterial &gt;&gt; foodcontact1 &gt;&gt; foodcontact2`
+- Adjusts food geometry (`foodcontact1`, `foodcontact2`)
+- Transfers **temperature** (`foodcontact1 &gt;&gt; mymaterial`)
+- Simulates mass transfer and propagates results
+- Final results stored in **foodcontact1.lastsimulation, foodcontact2.lastsimulation**
+
+To explicitly save results: `result = ... step n &gt;&gt; step n+1`
+Dynamic updates:
+`foodcontact1 &gt;&gt; mymaterial.update(substance=&#34;new migrant&#34;, l=new_thickness) &gt;&gt; foodcontact1`
+
+3. **Operator `+` for Combining Results**
+- **Material assembly:** `ABA = A + B + A` (trilayer structure)
+- **Merging simulation results:** `fullsolution = foodcontact1.lastsimulation + foodcontact2.lastsimulation`
+
+4. **Comprehensive Result Output**
+- **Visualization:** Results can be plotted directly
+- **Exporting:** Save to **Excel** (`.xlsx`) and **CSV** (`.csv`)
+
+--------------------------------------------------------
+Summary
+--------------------------------------------------------
+Example 3 demonstrates **efficient chaining of migration simulations** using intuitive operators
+(`&gt;&gt;` for sequential processing, `+` for merging results). SFPPy’s powerful database and
+Pythonic syntax enable complex simulations with minimal effort.
+
+
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\\olivier.vitrac@agroparistech.fr
+@licence: MIT
+&#34;&#34;&#34;
+
+# %% Output folder
+# -----------------
+# Define the output directory to store results.
+import os
+outputfolder = os.path.join(os.getcwd(), &#34;tmp&#34;)  # Full path
+os.makedirs(outputfolder, exist_ok=True)  # Create folder if missing
+
+# %% Build the geometry
+# ---------------------
+&#34;&#34;&#34;
+Identify and select a suitable 3D packaging geometry.
+The function `help_geometry()` lists available shapes.
+
+Example: `box_container` is a rectangular prism with one open face.
+Its volume and surface area are computed as:
+    Volume = length × width × height
+    Surface Area = 2(lw + lh + wh) - lw  (removing the open top)
+&#34;&#34;&#34;
+# Import the geometry module
+from patankar.geometry import Packaging3D, help_geometry
+
+# Display available geometries and required parameters
+help_geometry()
+
+# Define the container as an open rectangular prism
+container = Packaging3D(&#39;box_container&#39;, height=(8, &#34;cm&#34;), width=(10, &#34;cm&#34;), length=(19, &#34;cm&#34;))
+
+# %% Define the migrant
+# ---------------------
+# Retrieve the properties of the migrating substance.
+from patankar.loadpubchem import migrant
+
+# Search for limonene in PubChem and retrieve chemical properties.
+m = migrant(&#34;limonene&#34;)
+
+# %% Identify the materials
+# -------------------------
+&#34;&#34;&#34;
+List available polymer/material options for packaging.
+Use `help_layer()` to display predefined materials.
+
+| Class Name | Type     | Material                 | Code |
+|------------|---------|---------------------------|------|
+| PP         | polymer | Isotactic Polypropylene   | PP   |
+| gPET       | polymer | Glassy PET                | PET  |
+&#34;&#34;&#34;
+# Import material properties
+from patankar.layer import help_layer, layer
+
+# Display available polymer options
+help_layer()
+
+# Import required polymer classes (Polypropylene, PET)
+from patankar.layer import gPET, PP
+
+# %% Build the materials
+# ----------------------
+&#34;&#34;&#34;
+Define and configure the layers for the multilayer packaging.
+Each layer has properties such as:
+    - Thickness (`l`)
+    - Initial concentration (`C0`)
+    - Migrant type (`substance`, `migrant`, etc.)
+
+Property synonyms:
+| Parameter  | Synonyms                  |
+|------------|---------------------------|
+| substance  | molecule, solute, migrant |
+| C0         | Cp0, CP0                  |
+| l          | lp, lP                    |
+&#34;&#34;&#34;
+# Define the PET (A) and PP (B) layers
+A = gPET(l=(20, &#34;um&#34;), migrant=m, C0=0)       # 20 µm PET with no initial migrant
+B = PP(l=(0.5, &#34;mm&#34;), migrant=m, CP0=200)    # 500 µm PP with 200 mg/kg limonene
+
+# Assemble the multilayer structure: ABA configuration
+ABA = A + B + A
+
+# Display basic information (default temperature: 40°C)
+print(&#34;\nOur ABA technology\n&#34;, repr(ABA))
+
+# %% Identify storage and contact conditions
+# -----------------------------------------
+&#34;&#34;&#34;
+Define different storage and processing conditions.
+Use `help_food()` to display available predefined food-contact scenarios.
+
+| Class Name  | Description              | Level  | Inheritance    | Parameters        |
+|-------------|--------------------------|--------|----------------|-------------------|
+| fat        | Fat contact               | root   |chemicalaffinity| k0                |
+| liquid     | Liquid food               | root   | texture        | h                 |
+| ambient    | Ambient storage           | contact| realcontact    | contacttemperature|
+| hotfilled  | Hot-filling               | contact| realcontact    | contacttemperature|
+| stacked    | Stacked storage           | user   | setoff         | h                 |
+&#34;&#34;&#34;
+from patankar.food import help_food
+help_food()
+
+# Import relevant food-contact conditions
+from patankar.food import realfood, liquid, fat, ambient, hotfilled, stacked
+
+# Define three food-contact conditions
+class contact1(stacked, ambient):
+    name = &#34;1:setoff&#34;
+    contacttemperature = (20, &#34;degC&#34;)
+    contacttime = (3, &#34;months&#34;)
+
+class contact2(hotfilled, realfood, liquid, fat):
+    name = &#34;2:hotfilling&#34;
+
+class contact3(ambient, realfood, liquid, fat):
+    name = &#34;3:storage&#34;
+    contacttime = (6, &#34;months&#34;)
+
+# Instantiate food-contact conditions
+medium1 = contact1(contacttime=(4, &#34;months&#34;))  # Adjust time
+medium2 = contact2()
+medium3 = contact3()
+
+# %% Wrap the food with its container-packaging
+# --------------------------------------------
+&#34;&#34;&#34;
+Use the `&gt;&gt;` operator to propagate the packaging properties (volume, surface area)
+to all food-contact conditions.
+
+Example:
+    container &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+&#34;&#34;&#34;
+container &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+
+# %% Simulate Step 1
+# ------------------
+&#34;&#34;&#34;
+Chain operations using `&gt;&gt;`:
+1. Transfer temperature from `medium1` to `ABA`
+2. Simulate mass transfer from `ABA` to `medium1`
+&#34;&#34;&#34;
+medium1 &gt;&gt; ABA &gt;&gt; medium1
+
+# Verify simulation results
+medium1.lastsimulation.plotCx()
+
+# %% Simulate all steps (Step 1 → Step 2 → Step 3)
+# -----------------------------------------------
+&#34;&#34;&#34;
+Continue simulation by chaining:
+    medium1 &gt;&gt; ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+
+All results are stored inside:
+    medium1.lastsimulation, medium2.lastsimulation, medium3.lastsimulation
+&#34;&#34;&#34;
+medium1 &gt;&gt; ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+
+# Plot migration kinetics
+medium1.lastsimulation.plotCx()
+medium2.lastsimulation.plotCF()
+medium3.lastsimulation.plotCF()
+
+# %% Combine all profiles into a single kinetic curve
+# ---------------------------------------------------
+&#34;&#34;&#34;
+Use `+` operator to merge kinetic profiles.
+&#34;&#34;&#34;
+sol123 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
+sol123.plotCF()
+
+# %% Variant 1: Replace limonene with toluene
+# -------------------------------------------
+&#34;&#34;&#34;
+Repeat all steps using toluene instead of limonene.
+&#34;&#34;&#34;
+m2 = migrant(&#34;toluene&#34;)  # Retrieve new migrant
+
+# Restart the simulation pipeline with updated migrant
+medium1 &gt;&gt; ABA.update(solute=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+
+# Store results
+sol123_variant1 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
+sol123_variant1.plotCF()
+
+# %% Variant 2: Reduce thickness of outer PET layers
+# --------------------------------------------------
+&#34;&#34;&#34;
+Halve the thickness of the first and last layers (A) while keeping PP constant.
+&#34;&#34;&#34;
+refthickness = ABA.l.copy()
+newthickness = refthickness
+newthickness[[0, -1]] /= 2  # Reduce thickness of A layers (index 0=first layer in contact with food, index -1= last layer)
+
+# Restart simulation with modified structure
+medium1 &gt;&gt; ABA.copy(l=newthickness, migrant=m) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+sol123_variant2 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
+
+# %% Variant 3: Combine Variant 1 and Variant 2
+# ---------------------------------------------
+&#34;&#34;&#34;
+Use both modifications:
+- Toluene as the migrant
+- Reduced PET layer thickness
+&#34;&#34;&#34;
+medium1 &gt;&gt; ABA.copy(l=newthickness, migrant=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+sol123_variant3 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
+
+# %% Compare Reference and Variants
+# ---------------------------------
+&#34;&#34;&#34;
+Store and compare all solutions using `CFSimulationContainer`.
+&#34;&#34;&#34;
+from patankar.migration import CFSimulationContainer as store
+
+# Initialize collection
+collection = store(name=&#34;container with FB&#34;)
+
+# Add results to collection
+collection.add(sol123, &#34;Limonene-FB = 20 µm (ref)&#34;, &#34;dodgerblue&#34;, linewidth=3)
+collection.add(sol123_variant1, &#34;Toluene-FB = 20 µm (v1)&#34;, &#34;orangered&#34;, linewidth=3)
+collection.add(sol123_variant2, &#34;Limonene-FB = 10 µm (v2)&#34;, &#34;deepskyblue&#34;, linewidth=2)
+collection.add(sol123_variant3, &#34;Toluene-FB = 10 µm (v3)&#34;, &#34;tomato&#34;, linewidth=2)
+
+# Plot comparative migration kinetics
+collection_fig = collection.plotCF()
+
+# %% Export Results (PNG, PDF, Excel, CSV)
+# ----------------------------------------
+&#34;&#34;&#34;
+Save simulation results for further analysis.
+&#34;&#34;&#34;
+printconfig = {&#34;destinationfolder&#34;: outputfolder, &#34;overwrite&#34;: True}
+collection_fig.print(**printconfig)
+
+# Export data
+collection.save_as_csv(filename=&#34;example3.csv&#34;, destinationfolder=outputfolder, overwrite=True)
+
+# saving to Excel requires: openpyxl &gt;= 3.0.10
+# (install it with `conda install openpyl` if you encounter an error message)
+collection.save_as_excel(filename=&#34;example3.xlsx&#34;, destinationfolder=outputfolder, overwrite=True)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="example3.collection_fig"><code class="name">var <span class="ident">collection_fig</span></code></dt>
+<dd>
+<div class="desc"><p>Save simulation results for further analysis.</p></div>
+</dd>
+<dt id="example3.m"><code class="name">var <span class="ident">m</span></code></dt>
+<dd>
+<div class="desc"><p>List available polymer/material options for packaging.
+Use <code>help_layer()</code> to display predefined materials.</p>
+<table>
+<thead>
+<tr>
+<th>Class Name</th>
+<th>Type</th>
+<th>Material</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PP</td>
+<td>polymer</td>
+<td>Isotactic Polypropylene</td>
+<td>PP</td>
+</tr>
+<tr>
+<td>gPET</td>
+<td>polymer</td>
+<td>Glassy PET</td>
+<td>PET</td>
+</tr>
+</tbody>
+</table></div>
+</dd>
+<dt id="example3.medium3"><code class="name">var <span class="ident">medium3</span></code></dt>
+<dd>
+<div class="desc"><p>Use the <code>&gt;&gt;</code> operator to propagate the packaging properties (volume, surface area)
+to all food-contact conditions.</p>
+<h2 id="example">Example</h2>
+<p>container &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3</p></div>
+</dd>
+<dt id="example3.sol123_variant2"><code class="name">var <span class="ident">sol123_variant2</span></code></dt>
+<dd>
+<div class="desc"><p>Use both modifications:
+- Toluene as the migrant
+- Reduced PET layer thickness</p></div>
+</dd>
+<dt id="example3.sol123_variant3"><code class="name">var <span class="ident">sol123_variant3</span></code></dt>
+<dd>
+<div class="desc"><p>Store and compare all solutions using <code>CFSimulationContainer</code>.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="example3.contact1"><code class="flex name class">
+<span>class <span class="ident">contact1</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>stacked storage</p>
+<p>general constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class contact1(stacked, ambient):
+    name = &#34;1:setoff&#34;
+    contacttemperature = (20, &#34;degC&#34;)
+    contacttime = (3, &#34;months&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>patankar.food.stacked</li>
+<li>patankar.food.setoff</li>
+<li>patankar.food.ambient</li>
+<li>patankar.food.realcontact</li>
+<li>patankar.food.foodphysics</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="example3.contact1.contacttemperature"><code class="name">var <span class="ident">contacttemperature</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="example3.contact1.contacttime"><code class="name">var <span class="ident">contacttime</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="example3.contact1.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="example3.contact2"><code class="flex name class">
+<span>class <span class="ident">contact2</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>real contact conditions</p>
+<p>general constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class contact2(hotfilled, realfood, liquid, fat):
+    name = &#34;2:hotfilling&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>patankar.food.hotfilled</li>
+<li>patankar.food.realcontact</li>
+<li>patankar.food.realfood</li>
+<li>patankar.food.foodproperty</li>
+<li>patankar.food.foodlayer</li>
+<li>patankar.food.liquid</li>
+<li>patankar.food.texture</li>
+<li>patankar.food.fat</li>
+<li>patankar.food.chemicalaffinity</li>
+<li>patankar.food.foodphysics</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="example3.contact2.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="example3.contact3"><code class="flex name class">
+<span>class <span class="ident">contact3</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>real contact conditions</p>
+<p>general constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class contact3(ambient, realfood, liquid, fat):
+    name = &#34;3:storage&#34;
+    contacttime = (6, &#34;months&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>patankar.food.ambient</li>
+<li>patankar.food.realcontact</li>
+<li>patankar.food.realfood</li>
+<li>patankar.food.foodproperty</li>
+<li>patankar.food.foodlayer</li>
+<li>patankar.food.liquid</li>
+<li>patankar.food.texture</li>
+<li>patankar.food.fat</li>
+<li>patankar.food.chemicalaffinity</li>
+<li>patankar.food.foodphysics</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="example3.contact3.contacttime"><code class="name">var <span class="ident">contacttime</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="example3.contact3.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#example-3-advanced-migration-simulation-with-variants">Example 3: Advanced Migration Simulation with Variants</a></li>
+<li><a href="#scenario-mass-transfer-in-a-multilayer-packaging-system">Scenario: Mass Transfer in a Multilayer Packaging System</a></li>
+<li><a href="#exploring-sfppys-database">Exploring SFPPy’s Database</a></li>
+<li><a href="#key-features-and-pythonic-syntax">Key Features and Pythonic Syntax</a></li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="example3.collection_fig" href="#example3.collection_fig">collection_fig</a></code></li>
+<li><code><a title="example3.m" href="#example3.m">m</a></code></li>
+<li><code><a title="example3.medium3" href="#example3.medium3">medium3</a></code></li>
+<li><code><a title="example3.sol123_variant2" href="#example3.sol123_variant2">sol123_variant2</a></code></li>
+<li><code><a title="example3.sol123_variant3" href="#example3.sol123_variant3">sol123_variant3</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="example3.contact1" href="#example3.contact1">contact1</a></code></h4>
+<ul class="">
+<li><code><a title="example3.contact1.contacttemperature" href="#example3.contact1.contacttemperature">contacttemperature</a></code></li>
+<li><code><a title="example3.contact1.contacttime" href="#example3.contact1.contacttime">contacttime</a></code></li>
+<li><code><a title="example3.contact1.name" href="#example3.contact1.name">name</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="example3.contact2" href="#example3.contact2">contact2</a></code></h4>
+<ul class="">
+<li><code><a title="example3.contact2.name" href="#example3.contact2.name">name</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="example3.contact3" href="#example3.contact3">contact3</a></code></h4>
+<ul class="">
+<li><code><a title="example3.contact3.contacttime" href="#example3.contact3.contacttime">contacttime</a></code></li>
+<li><code><a title="example3.contact3.name" href="#example3.contact3.name">name</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

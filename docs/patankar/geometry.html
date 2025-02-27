@@ -1,0 +1,2795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>geometry API documentation</title>
+<meta name="description" content="SFPPy Module: Geometry
+Provides a framework for defining 3D packaging geometries and their surface/volume properties.
+Supports standalone shapes and …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>geometry</code></h1>
+</header>
+<section id="section-intro">
+<p>===============================================================================
+SFPPy Module: Geometry
+===============================================================================
+Provides a framework for defining 3D packaging geometries and their surface/volume properties.
+Supports standalone shapes and composite structures for packaging simulations.</p>
+<p><strong>Main Components:</strong>
+- <strong>Shape3D</strong> (Base class for 3D shapes)
+- Subclasses: <code><a title="geometry.Cylinder" href="#geometry.Cylinder">Cylinder</a></code>, <code><a title="geometry.Cone" href="#geometry.Cone">Cone</a></code>, <code><a title="geometry.RectangularPrism" href="#geometry.RectangularPrism">RectangularPrism</a></code>, <code><a title="geometry.Sphere" href="#geometry.Sphere">Sphere</a></code>, <code><a title="geometry.SquarePyramid" href="#geometry.SquarePyramid">SquarePyramid</a></code>, <code><a title="geometry.Hemisphere" href="#geometry.Hemisphere">Hemisphere</a></code>
+- Implements <code>_compute_volume()</code>, <code>_compute_surface_area()</code>, <code>_compute_connectors()</code>
+- <strong>CompositeShape</strong> (Combines multiple shapes while adjusting for overlapping volumes and shared faces)
+- <strong>Packaging3D</strong> (High-level interface for working with packaging geometries)
+- <strong>Connector</strong> (Defines interfaces between shapes for composite construction)
+- <strong>SHAPE_REGISTRY</strong> (Maps packaging terms like "can" or "bottle" to their geometric models)</p>
+<p><strong>Integration with SFPPy Modules:</strong>
+- Uses <code><a title="geometry.check_units" href="#geometry.check_units">check_units()</a></code> from <code>layer.py</code> to convert dimensions into SI units.
+- Supports <code>migration.py</code> by providing accurate volume and surface area computations for mass transfer models.</p>
+<p>Example:</p>
+<pre><code class="language-python">from patankar.geometry import Packaging3D
+pkg = Packaging3D('bottle', body_radius=(5, 'cm'), body_height=(20, 'cm'))
+vol, area = pkg.get_volume_and_area()
+</code></pre>
+<p>===============================================================================
+Details
+===============================================================================</p>
+<h2 id="purpose">Purpose</h2>
+<p>This module provides a framework for defining and combining various
+three-dimensional packaging shapes—both simple (e.g., cylinders, cones,
+rectangular prisms) and composite (e.g., 'bottle' = large cylinder + narrow
+cylinder). It also calculates each shape’s internal volume (in m³) and
+internal surface area (in m²).</p>
+<h2 id="overview">Overview</h2>
+<ol>
+<li><strong>Shape3D and Subclasses</strong>:</li>
+<li>Each subclass (Cylinder, Cone, RectangularPrism, Sphere, SquarePyramid,
+Hemisphere) implements:<ul>
+<li><code>_compute_volume()</code> and <code>_compute_surface_area()</code>.</li>
+<li><code>_compute_connectors()</code>, which returns a list of <code><a title="geometry.Connector" href="#geometry.Connector">Connector</a></code> objects
+representing the flat faces that can potentially connect to other
+shapes. Connectors have a face area and an axis (normal vector).</li>
+</ul>
+</li>
+<li>
+<p>Connectors allow shapes to “snap” together in a <code><a title="geometry.CompositeShape" href="#geometry.CompositeShape">CompositeShape</a></code>.</p>
+</li>
+<li>
+<p><strong>CompositeShape</strong>:</p>
+</li>
+<li>Manages multiple shapes added together, summing volumes and surface
+areas, minus overlaps along shared connector faces.</li>
+<li>
+<p>Uses <code>add_shape(&hellip;)</code> to join a new shape to any existing sub-shape
+via matching connector orientations. Overlapping face area is removed
+from the total surface area calculation.</p>
+</li>
+<li>
+<p><strong>Synonyms and Shape Registry</strong>:</p>
+</li>
+<li>A dictionary <code>SHAPE_REGISTRY</code> maps real-world packaging names (like
+"can", "box", "glass") to their corresponding Shape3D classes.</li>
+<li>
+<p>Some "synonyms" map to more complex, composite constructs. For example,
+the name "bottle" creates a <code><a title="geometry.CompositeShape" href="#geometry.CompositeShape">CompositeShape</a></code> of two cylinders (body +
+neck).</p>
+</li>
+<li>
+<p><strong>Units</strong>:</p>
+</li>
+<li>
+<p>Dimensions can be given either as floats in meters or as <code>(value, "unit")</code>
+pairs. The helper <code>_to_m(&hellip;)</code> uses <code><a title="geometry.check_units" href="#geometry.check_units">check_units()</a></code> (imported from
+<code>layer</code>) to convert numeric values to SI units (meters).</p>
+</li>
+<li>
+<p><strong>Packaging3D</strong>:</p>
+</li>
+<li>A high-level interface for creating either a single shape or a
+composite shape by name and keyword arguments. It returns volume
+(in m³) and surface area (in m²) via <code>.get_volume_and_area()</code>.</li>
+</ol>
+<p>Usage Example:
+from patankar.packaging import Packaging3D</p>
+<pre><code># Create a 'bottle' (two stacked cylinders) by specifying body and neck dims
+pkg = Packaging3D(
+    'bottle',
+    body_radius=(5, 'cm'),
+    body_height=(20, 'cm'),
+    neck_radius=(2, 'cm'),
+    neck_height=(5, 'cm')
+)
+vol, area = pkg.get_volume_and_area()
+print("Volume (m^3):", vol)
+print("Surface Area (m^2):", area)
+
+# Create a single shape (e.g., 'can' which is a cylinder) with radius
+# and height specified in centimeters
+pkg2 = Packaging3D('can', radius=(4, 'cm'), height=(12, 'cm'))
+vol2, area2 = pkg2.get_volume_and_area()
+</code></pre>
+<p>About units:
+All lengths can be given:
+- without units: all lengths are assumed to be in meters (i.e., their SI unit)
+- with units by using a tupple (value,"unit"), where unit can be m,dm,cm,mm,um,nm&hellip;
+Input units can be heterogenerous, the result is always SI:
+- [m<strong>2] for surface areas
+- [m</strong>3] for volumes</p>
+<p>Get help and syntax:
+help_geometry()</p>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>This code is primarily illustrative. In a production system, you may expand
+the geometry classes, refine orientation logic for connectors, handle
+partial overlaps, or integrate with a 3D transform library for more
+sophisticated shape placement.</li>
+<li>The overlap deduction for composite shapes is simplified. It subtracts
+<code>2 * (minimum overlapping face area)</code> from the total surface area, which
+assumes a perfect “face-to-face” join.</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>Python 3.x</li>
+<li><code><a title="geometry.check_units" href="#geometry.check_units">check_units()</a></code> function from the <code>layer</code> module</li>
+</ul>
+<p>@version: 1.0
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-10-28, rev. 2025-02-22</p>
+<p>===============================================================================</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+&#34;&#34;&#34;
+===============================================================================
+SFPPy Module: Geometry
+===============================================================================
+Provides a framework for defining 3D packaging geometries and their surface/volume properties.
+Supports standalone shapes and composite structures for packaging simulations.
+
+**Main Components:**
+- **Shape3D** (Base class for 3D shapes)
+    - Subclasses: `Cylinder`, `Cone`, `RectangularPrism`, `Sphere`, `SquarePyramid`, `Hemisphere`
+    - Implements `_compute_volume()`, `_compute_surface_area()`, `_compute_connectors()`
+- **CompositeShape** (Combines multiple shapes while adjusting for overlapping volumes and shared faces)
+- **Packaging3D** (High-level interface for working with packaging geometries)
+- **Connector** (Defines interfaces between shapes for composite construction)
+- **SHAPE_REGISTRY** (Maps packaging terms like &#34;can&#34; or &#34;bottle&#34; to their geometric models)
+
+**Integration with SFPPy Modules:**
+- Uses `check_units()` from `layer.py` to convert dimensions into SI units.
+- Supports `migration.py` by providing accurate volume and surface area computations for mass transfer models.
+
+Example:
+```python
+from patankar.geometry import Packaging3D
+pkg = Packaging3D(&#39;bottle&#39;, body_radius=(5, &#39;cm&#39;), body_height=(20, &#39;cm&#39;))
+vol, area = pkg.get_volume_and_area()
+```
+
+
+===============================================================================
+Details
+===============================================================================
+Purpose:
+  This module provides a framework for defining and combining various
+  three-dimensional packaging shapes—both simple (e.g., cylinders, cones,
+  rectangular prisms) and composite (e.g., &#39;bottle&#39; = large cylinder + narrow
+  cylinder). It also calculates each shape’s internal volume (in m³) and
+  internal surface area (in m²).
+
+Overview:
+  1. **Shape3D and Subclasses**:
+     - Each subclass (Cylinder, Cone, RectangularPrism, Sphere, SquarePyramid,
+       Hemisphere) implements:
+         * `_compute_volume()` and `_compute_surface_area()`.
+         * `_compute_connectors()`, which returns a list of `Connector` objects
+           representing the flat faces that can potentially connect to other
+           shapes. Connectors have a face area and an axis (normal vector).
+     - Connectors allow shapes to “snap” together in a `CompositeShape`.
+
+  2. **CompositeShape**:
+     - Manages multiple shapes added together, summing volumes and surface
+       areas, minus overlaps along shared connector faces.
+     - Uses `add_shape(...)` to join a new shape to any existing sub-shape
+       via matching connector orientations. Overlapping face area is removed
+       from the total surface area calculation.
+
+  3. **Synonyms and Shape Registry**:
+     - A dictionary `SHAPE_REGISTRY` maps real-world packaging names (like
+       &#34;can&#34;, &#34;box&#34;, &#34;glass&#34;) to their corresponding Shape3D classes.
+     - Some &#34;synonyms&#34; map to more complex, composite constructs. For example,
+       the name &#34;bottle&#34; creates a `CompositeShape` of two cylinders (body +
+       neck).
+
+  4. **Units**:
+     - Dimensions can be given either as floats in meters or as `(value, &#34;unit&#34;)`
+       pairs. The helper `_to_m(...)` uses `check_units` (imported from
+       `layer`) to convert numeric values to SI units (meters).
+
+  5. **Packaging3D**:
+     - A high-level interface for creating either a single shape or a
+       composite shape by name and keyword arguments. It returns volume
+       (in m³) and surface area (in m²) via `.get_volume_and_area()`.
+
+Usage Example:
+    from patankar.packaging import Packaging3D
+
+    # Create a &#39;bottle&#39; (two stacked cylinders) by specifying body and neck dims
+    pkg = Packaging3D(
+        &#39;bottle&#39;,
+        body_radius=(5, &#39;cm&#39;),
+        body_height=(20, &#39;cm&#39;),
+        neck_radius=(2, &#39;cm&#39;),
+        neck_height=(5, &#39;cm&#39;)
+    )
+    vol, area = pkg.get_volume_and_area()
+    print(&#34;Volume (m^3):&#34;, vol)
+    print(&#34;Surface Area (m^2):&#34;, area)
+
+    # Create a single shape (e.g., &#39;can&#39; which is a cylinder) with radius
+    # and height specified in centimeters
+    pkg2 = Packaging3D(&#39;can&#39;, radius=(4, &#39;cm&#39;), height=(12, &#39;cm&#39;))
+    vol2, area2 = pkg2.get_volume_and_area()
+
+About units:
+    All lengths can be given:
+        - without units: all lengths are assumed to be in meters (i.e., their SI unit)
+        - with units by using a tupple (value,&#34;unit&#34;), where unit can be m,dm,cm,mm,um,nm...
+    Input units can be heterogenerous, the result is always SI:
+        - [m**2] for surface areas
+        - [m**3] for volumes
+
+Get help and syntax:
+    help_geometry()
+
+Notes:
+  - This code is primarily illustrative. In a production system, you may expand
+    the geometry classes, refine orientation logic for connectors, handle
+    partial overlaps, or integrate with a 3D transform library for more
+    sophisticated shape placement.
+  - The overlap deduction for composite shapes is simplified. It subtracts
+    `2 * (minimum overlapping face area)` from the total surface area, which
+    assumes a perfect “face-to-face” join.
+
+
+
+Dependencies:
+  - Python 3.x
+  - `check_units` function from the `layer` module
+
+
+@version: 1.0
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-10-28, rev. 2025-02-22
+
+===============================================================================
+&#34;&#34;&#34;
+
+
+# %% Dependencies
+import math
+import numpy as np
+from collections import defaultdict
+from patankar.layer import check_units
+
+__all__ = [&#39;CompositeShape&#39;, &#39;Cone&#39;, &#39;Connector&#39;, &#39;Cylinder&#39;, &#39;Hemisphere&#39;, &#39;OpenCone&#39;, &#39;OpenCylinder1&#39;, &#39;OpenCylinder2&#39;, &#39;OpenPrism1&#39;, &#39;OpenPrism2&#39;, &#39;OpenSquare1&#39;, &#39;OpenSquare2&#39;, &#39;Packaging3D&#39;, &#39;RectangularPrism&#39;, &#39;Shape3D&#39;, &#39;Sphere&#39;, &#39;SquarePyramid&#39;, &#39;check_units&#39;, &#39;create_shape_by_name&#39;, &#39;get_all_shapes_info&#39;, &#39;get_geometries_and_synonyms&#39;, &#39;help_geometry&#39;]
+
+__project__ = &#34;SFPPy&#34;
+__author__ = &#34;Olivier Vitrac&#34;
+__copyright__ = &#34;Copyright 2022&#34;
+__credits__ = [&#34;Olivier Vitrac&#34;]
+__license__ = &#34;MIT&#34;
+__maintainer__ = &#34;Olivier Vitrac&#34;
+__email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
+__version__ = &#34;1.2&#34;
+# %% Helper functions
+
+# Convert lengths to SI units [m]
+def _to_m(value):
+    &#34;&#34;&#34;
+    Convert a dimension value to meters using check_units if it&#39;s a tuple.
+    Otherwise assume the value is already in meters.
+    &#34;&#34;&#34;
+    if isinstance(value, tuple):
+        val_in_m, _ = check_units(value)  # check_units returns (value_in_SI, &#34;m&#34;)
+        return val_in_m
+    else:
+        return value
+
+# %% Private Classes
+class Connector:
+    &#34;&#34;&#34;
+    Represents a &#39;connection face&#39; on a shape:
+      - area: the connectable area (m^2)
+      - axis: a unit vector (tuple) indicating the orientation of the connector
+      - name: optionally label the connector (e.g. &#39;top&#39;, &#39;bottom&#39;, etc.)
+    &#34;&#34;&#34;
+    def __init__(self, area, axis=(0, 0, 1), name=&#34;&#34;):
+        self.area = area
+        # Normalize axis for safety
+        mag = math.sqrt(axis[0]**2 + axis[1]**2 + axis[2]**2)
+        if mag &gt; 0:
+            self.axis = (axis[0]/mag, axis[1]/mag, axis[2]/mag)
+        else:
+            self.axis = axis
+        self.name = name
+
+    def __repr__(self):
+        &#34;&#34;&#34;String representation of the Connector object.&#34;&#34;&#34;
+        axis_str = f&#34;({self.axis[0]:.2f}, {self.axis[1]:.2f}, {self.axis[2]:.2f})&#34;
+        name_str = f&#34;&#39;{self.name}&#39;&#34; if self.name else &#34;(unnamed)&#34;
+        print(f&#34;Connector(name={name_str}, area={self.area.item():.4g} m², axis={axis_str})&#34;)
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted representation of the connector&#34;&#34;&#34;
+        return f&#34;&lt;{self.__class__.__name__}: {self.name}&gt;&#34;
+
+
+class Shape3D:
+    &#34;&#34;&#34;
+    Base class for a 3D shape. Subclasses must implement:
+      - _compute_volume()
+      - _compute_surface_area()
+      - _compute_connectors() -&gt; list of Connector objects
+    &#34;&#34;&#34;
+    def __init__(self, **dimensions):
+        # Convert every dimension to meters
+        self.dimensions = {k: _to_m(v) for k, v in dimensions.items()}
+
+    def volume(self):
+        return self._compute_volume()
+
+    def surface_area(self):
+        return self._compute_surface_area()
+
+    def connectors(self):
+        return self._compute_connectors()
+
+    def _compute_volume(self):
+        raise NotImplementedError
+
+    def _compute_surface_area(self):
+        raise NotImplementedError
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        Return a list of Connector objects that represent the shape’s
+        possible connections. By default, shapes with no flat faces return [].
+        &#34;&#34;&#34;
+        return []
+
+    def __repr__(self):
+        &#34;&#34;&#34;String representation of the Shape3D object.&#34;&#34;&#34;
+        class_name = self.__class__.__name__
+
+        # Convert numpy arrays to scalars before formatting
+        dimensions_str = &#34;, &#34;.join(f&#34;{k}={v.item():.4g} m&#34; if isinstance(v, np.ndarray) else f&#34;{k}={v:.4f} m&#34;
+                                   for k, v in self.dimensions.items())
+
+        vol = self.volume()
+        surf = self.surface_area()
+        connectors = self.connectors()
+
+        connector_str = (
+            &#34;\n  - &#34;.join(repr(c) for c in connectors) if connectors else &#34;None&#34;
+        )
+
+        print(
+            f&#34;{class_name}(\n&#34;
+            f&#34;  Dimensions: {dimensions_str}\n&#34;
+            f&#34;  Volume: {vol.item():.4g} m³\n&#34;
+            f&#34;  Surface Area: {surf.item():.4g} m²\n&#34;
+            f&#34;  Connectors:\n  - {connector_str}\n&#34;
+            f&#34;)&#34;
+        )
+
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted string representing the 3D shape&#34;&#34;&#34;
+        n = len(self.connectors())
+        return f&#34;&lt;{self.__class__.__name__} with {n} connector{&#39;s&#39; if n&gt;1 else &#39;&#39;}&gt;&#34;
+
+
+# ----------------------------------------------------------------------------
+# Basic shapes
+# ----------------------------------------------------------------------------
+
+class Cylinder(Shape3D):
+    &#34;&#34;&#34;
+    A cylinder with radius=r and height=h.
+    Has two connectors (top and bottom).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # Full cylinder: side + 2 ends
+        return 2.0 * math.pi * r * h + 2.0 * math.pi * r**2
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        Two circular faces: top (normal +z), bottom (normal -z).
+        &#34;&#34;&#34;
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        c_top = Connector(area=area_face, axis=(0,0,1), name=&#34;cylinder_top&#34;)
+        c_bottom = Connector(area=area_face, axis=(0,0,-1), name=&#34;cylinder_bottom&#34;)
+        return [c_top, c_bottom]
+
+class Cone(Shape3D):
+    &#34;&#34;&#34;
+    A cone with radius=r, height=h.
+    Typically only 1 connectable face: the circular base (normal -z).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return (1.0/3.0) * math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        slant = math.sqrt(r**2 + h**2)
+        base_area = math.pi * r**2
+        lateral_area = math.pi * r * slant
+        return base_area + lateral_area
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        # We&#39;ll define the base as normal -z
+        return [Connector(area=area_face, axis=(0,0,-1), name=&#34;cone_base&#34;)]
+
+class RectangularPrism(Shape3D):
+    &#34;&#34;&#34;
+    A rectangular prism with length=l, width=w, height=h.
+    Has 6 connectors for each face.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return l * w * h
+
+    def _compute_surface_area(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return 2.0 * (l*w + w*h + h*l)
+
+    def _compute_connectors(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+
+        # areas
+        area_lw = l * w
+        area_wh = w * h
+        area_hl = h * l
+
+        # Each face axis.
+        # We&#39;ll define +z, -z, +y, -y, +x, -x as possible &#34;connectors&#34;.
+        return [
+            Connector(area=area_lw, axis=(0,0, 1), name=&#34;top_face&#34;),
+            Connector(area=area_lw, axis=(0,0,-1), name=&#34;bottom_face&#34;),
+            Connector(area=area_wh, axis=(0, 1,0), name=&#34;front_face&#34;),
+            Connector(area=area_wh, axis=(0,-1,0), name=&#34;back_face&#34;),
+            Connector(area=area_hl, axis=( 1,0,0), name=&#34;right_face&#34;),
+            Connector(area=area_hl, axis=(-1,0,0), name=&#34;left_face&#34;)
+        ]
+
+class Sphere(Shape3D):
+    &#34;&#34;&#34;
+    A sphere with radius=r.
+    In a strict sense, no perfectly flat &#39;connector&#39; faces exist.
+    So we typically return [] for connectors.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return (4.0/3.0)*math.pi*(r**3)
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return 4.0*math.pi*(r**2)
+
+    def _compute_connectors(self):
+        # Spheres have no truly flat face to connect.
+        return []
+
+class SquarePyramid(Shape3D):
+    &#34;&#34;&#34;
+    Square-based pyramid with side=a and height=h.
+    Has 1 connectable face (square base) with normal -z (assuming apex up).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        a = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return (a**2 * h) / 3.0
+
+    def _compute_surface_area(self):
+        a = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        base_area = a**2
+        # Slant height
+        slant = math.sqrt((a/2.0)**2 + h**2)
+        # Four triangular faces
+        lateral_area = a * slant * 2.0  # Because each triangle is (a*slant)/2, times 4 =&gt; 2*a*slant
+        return base_area + lateral_area
+
+    def _compute_connectors(self):
+        a = self.dimensions[&#39;side&#39;]
+        # The base area is a^2
+        return [Connector(area=a**2, axis=(0,0,-1), name=&#34;pyramid_base&#34;)]
+
+class Hemisphere(Shape3D):
+    &#34;&#34;&#34;
+    Hemisphere with radius=r.
+    One connector (the flat circular base).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return (2.0/3.0)*math.pi*(r**3)
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        # Curved surface area = 2πr^2
+        # The flat cross-section area (open) = πr^2
+        # If it&#39;s closed, we might add that, but typically &#34;hemisphere&#34; is open.
+        # So total &#34;internal&#34; area might be 3πr^2 if we consider the open face.
+        return 3.0*math.pi*(r**2)
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return [Connector(area=math.pi*r**2, axis=(0,0,-1), name=&#34;hemisphere_flat&#34;)]
+
+
+class OpenCylinder1(Shape3D):
+    &#34;&#34;&#34;
+    An open cylinder with exactly one open end (like a glass, pot, or jar).
+
+    Volume:
+      π * r^2 * h
+    Surface area:
+      Lateral area (2πrh) + base area (πr^2) =&gt; 2πrh + πr^2
+    Connectors:
+      Only one at the bottom (circular face).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        lateral_area = 2.0 * math.pi * r * h
+        bottom_area = math.pi * r**2
+        return lateral_area + bottom_area
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        bottom_area = math.pi * r**2
+        return [Connector(area=bottom_area, axis=(0, 0, -1), name=&#34;open_cylinder1_bottom&#34;)]
+
+
+class OpenCylinder2(Shape3D):
+    &#34;&#34;&#34;
+    An open cylinder with two open ends (like a straw or tube).
+
+    Volume:
+      π * r^2 * h
+    Surface area:
+      Only lateral area =&gt; 2πrh
+      (No top or bottom disk, since both ends are open.)
+    Connectors:
+      Two (top and bottom), each with area πr^2.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # No bases since both ends are open
+        return 2.0 * math.pi * r * h
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        # top face (normal +z) and bottom face (normal -z)
+        c_top = Connector(area=area_face, axis=(0,0, 1), name=&#34;open_cylinder2_top&#34;)
+        c_bottom = Connector(area=area_face, axis=(0,0,-1), name=&#34;open_cylinder2_bottom&#34;)
+        return [c_top, c_bottom]
+
+class OpenSquare1(Shape3D):
+    &#34;&#34;&#34;
+    A square-based box with ONE open face (like an open-top box).
+
+    Required dimensions:
+      side (the length of each side of the square base)
+      height
+    Volume:
+      side^2 * height
+    Surface area:
+      4 * side * height + (bottom face area)
+      = (4 * side * height) + (side^2)
+    Connectors:
+      One connector at the open face (the top).
+        - The bottom is closed, so no connector there.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return s * s * h
+
+    def _compute_surface_area(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # Side walls: 4 * s * h
+        # Bottom: s^2
+        return (4.0 * s * h) + (s**2)
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        The open face is the top: area = side^2, normal +z
+        &#34;&#34;&#34;
+        s = self.dimensions[&#39;side&#39;]
+        top_area = s**2
+        return [Connector(area=top_area, axis=(0,0,1), name=&#34;open_square1_top&#34;)]
+
+
+class OpenSquare2(Shape3D):
+    &#34;&#34;&#34;
+    A square-based box with TWO open faces (no top, no bottom).
+
+    Required dimensions:
+      side
+      height
+    Volume:
+      side^2 * height
+    Surface area:
+      Only the 4 vertical walls =&gt; 4 * side * height
+    Connectors:
+      Two connectors: top (+z) and bottom (-z).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return s * s * h
+
+    def _compute_surface_area(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # No top or bottom =&gt; 4 side walls
+        return 4.0 * s * h
+
+    def _compute_connectors(self):
+        s = self.dimensions[&#39;side&#39;]
+        area_face = s**2
+        top_connector = Connector(area=area_face, axis=(0,0,1),  name=&#34;open_square2_top&#34;)
+        bot_connector = Connector(area=area_face, axis=(0,0,-1), name=&#34;open_square2_bottom&#34;)
+        return [top_connector, bot_connector]
+
+
+class OpenPrism1(Shape3D):
+    &#34;&#34;&#34;
+    A rectangular prism with ONE open face.
+
+    Required dimensions:
+      length, width, height
+    Volume:
+      length * width * height
+    Surface area:
+      (Sum of all faces) - area of the open face
+      i.e. 2*(lw + lh + wh) - lw (assuming top is open).
+      So total = lw + 2*(lh + wh).
+    Connectors:
+      One connector at the open face.
+
+    By convention, let&#39;s treat the &#34;top&#34; (normal +z) as open.
+    That means the bottom is length x width, and sides are intact.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return l * w * h
+
+    def _compute_surface_area(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        total_closed = 2.0*(l*w + w*h + h*l)
+        # Open face is the top (area = l*w).
+        return total_closed - (l*w)
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        The open face is the top: area = l*w, normal +z.
+        &#34;&#34;&#34;
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        top_area = l * w
+        return [Connector(area=top_area, axis=(0,0,1), name=&#34;open_prism1_top&#34;)]
+
+
+class OpenPrism2(Shape3D):
+    &#34;&#34;&#34;
+    A rectangular prism with TWO open faces (no top, no bottom).
+
+    Required dimensions:
+      length, width, height
+    Volume:
+      length * width * height
+    Surface area:
+      (Sum of all faces) - 2*(area of top + bottom)
+      i.e. 2*(l*w + w*h + h*l) - 2*(l*w)
+      = 2*(w*h + h*l)
+    Connectors:
+      Two connectors: top (+z), bottom (-z).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return l * w * h
+
+    def _compute_surface_area(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # Full closed prism area: 2*(lw + lh + wh)
+        # Remove top (lw) and bottom (lw), total of 2*lw
+        return 2.0*(l*h + w*h)  # Just the 4 side faces
+
+    def _compute_connectors(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        face_area = l * w
+        top_connector = Connector(area=face_area, axis=(0,0,1),  name=&#34;open_prism2_top&#34;)
+        bot_connector = Connector(area=face_area, axis=(0,0,-1), name=&#34;open_prism2_bottom&#34;)
+        return [top_connector, bot_connector]
+
+
+class OpenCone(Shape3D):
+    &#34;&#34;&#34;
+    A cone with the base removed, leaving a single open circular face.
+
+    Required dimensions:
+      radius, height
+    Volume:
+      Same as a full cone =&gt; (1/3)*π*r^2*h
+    Surface area:
+      Only the lateral surface =&gt; π*r*sqrt(r^2 + h^2)
+      (No base area since it&#39;s open.)
+    Connectors:
+      One connector at the base (the open circle).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return (1.0/3.0) * math.pi * (r**2) * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        slant = math.sqrt(r**2 + h**2)
+        # Lateral area only
+        return math.pi * r * slant
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        # The open face is the base, normal -z
+        return [Connector(area=area_face, axis=(0,0,-1), name=&#34;open_cone_base&#34;)]
+
+
+# %% Main code
+
+# ----------------------------------------------------------------------------
+# Shape Registry (synonyms):
+# ----------------------------------------------------------------------------
+
+SHAPE_REGISTRY = {
+    # Existing geometry classes
+    &#34;cylinder&#34;: Cylinder,
+    &#34;cone&#34;: Cone,
+    &#34;rectangular_prism&#34;: RectangularPrism,
+    &#34;sphere&#34;: Sphere,
+    &#34;square_pyramid&#34;: SquarePyramid,
+    &#34;hemisphere&#34;: Hemisphere,
+    &#34;cube&#34;: RectangularPrism,   # special case =&gt; length=width=height
+    &#34;box&#34;: RectangularPrism,
+    &#34;prism&#34;: RectangularPrism,
+    &#34;can&#34;: Cylinder,
+    &#34;bowl&#34;: Hemisphere,
+
+    # Open geometries
+    &#34;open_cylinder_1&#34;: OpenCylinder1,
+    &#34;open_cylinder_2&#34;: OpenCylinder2,
+    &#34;open_square1&#34;: OpenSquare1,
+    &#34;open_square2&#34;: OpenSquare2,
+    &#34;open_prism1&#34;: OpenPrism1,
+    &#34;open_prism2&#34;: OpenPrism2,
+    &#34;open_cone&#34;: OpenCone,
+
+    # Synonyms for open containers
+    &#34;box_container&#34;: OpenPrism1,
+
+    # Synonyms for an open cylinder with one open end:
+    &#34;glass&#34;: OpenCylinder1,
+    &#34;pot&#34;: OpenCylinder1,
+    &#34;jar&#34;: OpenCylinder1,
+
+    # Synonym for an open cylinder with two open ends:
+    &#34;straw&#34;: OpenCylinder2,
+}
+
+# ----------------------------------------------------------------------------
+# Shape Metadata:
+# ----------------------------------------------------------------------------
+
+SHAPE_PARAMETER_SPEC = {
+    &#34;Cylinder&#34;: {
+        &#34;required&#34;: [&#34;radius&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A standard cylinder with top and bottom faces.\n&#34;
+            &#34;Volume = π r² h. Surface area includes top and bottom disks.&#34;
+        ),
+    },
+    &#34;OpenCylinder1&#34;: {
+        &#34;required&#34;: [&#34;radius&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A cylinder with exactly one open end (like a glass).\n&#34;
+            &#34;Volume = π r² h. Surface area = 2πrh + πr².&#34;
+        ),
+    },
+    &#34;OpenCylinder2&#34;: {
+        &#34;required&#34;: [&#34;radius&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A cylinder with two open ends (like a straw).\n&#34;
+            &#34;Volume = π r² h. Surface area = 2πrh (no top or bottom).&#34;
+        ),
+    },
+    &#34;Cone&#34;: {
+        &#34;required&#34;: [&#34;radius&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A full cone with closed circular base.\n&#34;
+            &#34;Volume = (1/3) π r² h. Surface area = base + lateral area.&#34;
+        ),
+    },
+    &#34;OpenCone&#34;: {
+        &#34;required&#34;: [&#34;radius&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A cone with its base removed, leaving a single open circular face.\n&#34;
+            &#34;Volume = (1/3) π r² h. Surface area = π r * slant (no base).&#34;
+        ),
+    },
+    &#34;RectangularPrism&#34;: {
+        &#34;required&#34;: [&#34;length&#34;, &#34;width&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A rectangular prism with all faces closed.\n&#34;
+            &#34;Volume = l * w * h. Surface area = 2(lw + lh + wh).&#34;
+        ),
+    },
+    &#34;SquarePyramid&#34;: {
+        &#34;required&#34;: [&#34;side&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A square-based pyramid.\n&#34;
+            &#34;Volume = (side² * height) / 3. Surface area = base + 4 triangles.&#34;
+        ),
+    },
+    &#34;Hemisphere&#34;: {
+        &#34;required&#34;: [&#34;radius&#34;],
+        &#34;doc&#34;: (
+            &#34;A hemisphere (half a sphere) typically open at the flat side.\n&#34;
+            &#34;Volume = (2/3) π r³. Surface area = 3π r² (2πr² curved + πr² open).&#34;
+        ),
+    },
+    &#34;Sphere&#34;: {
+        &#34;required&#34;: [&#34;radius&#34;],
+        &#34;doc&#34;: (
+            &#34;A full sphere.\n&#34;
+            &#34;Volume = (4/3) π r³. Surface area = 4π r².&#34;
+        ),
+    },
+    &#34;OpenSquare1&#34;: {
+        &#34;required&#34;: [&#34;side&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A square-based box with ONE open face (like an open-top box).\n&#34;
+            &#34;Volume = side² * height.\n&#34;
+            &#34;Surface area = bottom + 4 walls = side² + 4 side * height.&#34;
+        ),
+    },
+    &#34;OpenSquare2&#34;: {
+        &#34;required&#34;: [&#34;side&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A square-based box with TWO open faces (no top, no bottom).\n&#34;
+            &#34;Volume = side² * height.\n&#34;
+            &#34;Surface area = 4 side * height.&#34;
+        ),
+    },
+    &#34;OpenPrism1&#34;: {
+        &#34;required&#34;: [&#34;length&#34;, &#34;width&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A rectangular prism with ONE open face (e.g. open top).\n&#34;
+            &#34;Volume = l * w * h.\n&#34;
+            &#34;Surface area = 2(lw + lh + wh) - lw (remove top).&#34;
+        ),
+    },
+    &#34;OpenPrism2&#34;: {
+        &#34;required&#34;: [&#34;length&#34;, &#34;width&#34;, &#34;height&#34;],
+        &#34;doc&#34;: (
+            &#34;A rectangular prism with TWO open faces (no top, no bottom).\n&#34;
+            &#34;Volume = l * w * h.\n&#34;
+            &#34;Surface area = 2(lw + lh + wh) - 2(lw).&#34;
+        ),
+    },
+}
+
+# ----------------------------------------------------------------------------
+# autodoc function:
+# ----------------------------------------------------------------------------
+def get_geometries_and_synonyms():
+    &#34;&#34;&#34;
+    Returns a dictionary mapping each shape class name
+    to a sorted list of all registry keys (synonyms) that point to it.
+
+    Example return:
+    {
+      &#34;Cylinder&#34;: [&#34;can&#34;, &#34;cylinder&#34;],
+      &#34;OpenCylinder1&#34;: [&#34;glass&#34;, &#34;jar&#34;, &#34;open_cylinder_1&#34;, &#34;pot&#34;],
+      ...
+    }
+    &#34;&#34;&#34;
+    class_to_names = defaultdict(list)
+    for shape_name, shape_cls in SHAPE_REGISTRY.items():
+        # e.g. shape_cls.__name__ =&gt; &#39;Cylinder&#39;
+        class_to_names[shape_cls.__name__].append(shape_name)
+
+    # Sort synonyms for a consistent presentation
+    result = {}
+    for cls_name, synonyms in class_to_names.items():
+        result[cls_name] = sorted(synonyms)
+    return result
+
+def get_all_shapes_info():
+    &#34;&#34;&#34;
+    Returns a dictionary that combines synonyms, required parameters,
+    and doc strings for each shape class.
+
+    Example structure:
+    {
+      &#39;Cylinder&#39;: {
+          &#39;synonyms&#39;: [&#39;can&#39;, &#39;cylinder&#39;],
+          &#39;required_params&#39;: [&#39;radius&#39;, &#39;height&#39;],
+          &#39;doc&#39;: &#39;...&#39;
+      },
+      &#39;OpenCylinder1&#39;: {
+          &#39;synonyms&#39;: [&#39;glass&#39;, &#39;jar&#39;, &#39;open_cylinder_1&#39;, &#39;pot&#39;],
+          &#39;required_params&#39;: [&#39;radius&#39;, &#39;height&#39;],
+          &#39;doc&#39;: &#39;...&#39;
+      },
+      ...
+    }
+    &#34;&#34;&#34;
+    shape_synonyms_map = get_geometries_and_synonyms()  # {class_name -&gt; [synonyms]}
+    all_info = {}
+    for cls_name, synonyms in shape_synonyms_map.items():
+        param_spec = SHAPE_PARAMETER_SPEC.get(cls_name, {})
+        required = param_spec.get(&#34;required&#34;, [])
+        doc_str = param_spec.get(&#34;doc&#34;, &#34;No documentation available.&#34;)
+
+        all_info[cls_name] = {
+            &#34;synonyms&#34;: synonyms,
+            &#34;required_params&#34;: required,
+            &#34;doc&#34;: doc_str,
+        }
+    return all_info
+
+def help_geometry():
+    &#34;&#34;&#34;
+    Returns a pretty-formatted string showing all shape classes,
+    their synonyms, required parameters, and documentation.
+
+    Example usage:
+      help_geometry()
+    &#34;&#34;&#34;
+    info = get_all_shapes_info()
+
+    lines = []
+    lines.append(&#34;=== List of Implemented Geometries &amp; Synonyms ===\n&#34;)
+
+    # Sort by class name for consistency
+    for cls_name in sorted(info.keys()):
+        synonyms = info[cls_name][&#34;synonyms&#34;]
+        required_params = info[cls_name][&#34;required_params&#34;]
+        doc_text = info[cls_name][&#34;doc&#34;]
+
+        lines.append(f&#34;Shape Class: {cls_name}&#34;)
+        lines.append(f&#34;  Synonyms       : {&#39;, &#39;.join(synonyms)}&#34;)
+        lines.append(f&#34;  Required Params: {&#39;, &#39;.join(required_params) if required_params else &#39;None&#39;}&#34;)
+
+        # Optionally indent doc lines
+        doc_lines = doc_text.split(&#34;\n&#34;)
+        for dl in doc_lines:
+            lines.append(f&#34;    {dl}&#34;)
+        lines.append(&#34;-&#34; * 60)
+
+    prettytxt = &#34;\n&#34;.join(lines)
+    print(prettytxt)
+
+
+# ----------------------------------------------------------------------------
+# Main Factory Function:
+# ----------------------------------------------------------------------------
+def create_shape_by_name(name, **dimensions):
+    &#34;&#34;&#34;
+    Factory function to create either a single shape or a known composite shape.
+
+    For a direct shape, we find it in SHAPE_REGISTRY.
+    For a composite shape (like &#39;bottle&#39;), we build it from simpler shapes.
+    &#34;&#34;&#34;
+    lower_name = name.lower()
+
+    # Example of a special composite shape: &#39;bottle&#39;
+    # A &#34;bottle&#34; can be modeled as: a large cylinder (body) + smaller cylinder (neck)
+    # joined along their circular faces.
+    if lower_name == &#34;bottle&#34;:
+        # We expect: body_radius, body_height, neck_radius, neck_height
+        body_radius = _to_m(dimensions[&#34;body_radius&#34;])
+        body_height = _to_m(dimensions[&#34;body_height&#34;])
+        neck_radius = _to_m(dimensions[&#34;neck_radius&#34;])
+        neck_height = _to_m(dimensions[&#34;neck_height&#34;])
+
+        # Create the big cylinder
+        body = Cylinder(radius=body_radius, height=body_height)
+        # Create the smaller cylinder for neck
+        neck = Cylinder(radius=neck_radius, height=neck_height)
+
+        # Combine them
+        bottle_composite = CompositeShape()
+        bottle_composite.add_shape(body)
+        bottle_composite.add_shape(neck, connect_axis=(0,0,1))
+
+        return bottle_composite
+    else:
+        # If it&#39;s a direct geometry name or a synonym:
+        shape_class = SHAPE_REGISTRY.get(lower_name, None)
+        if shape_class is None:
+            raise ValueError(f&#34;Unknown shape or composite name &#39;{name}&#39;.&#34;)
+
+        # Special case for &#34;cube&#34;: user might supply side=...
+        # or length=... In normal usage for a &#34;cube&#34; we do side=...
+        # We&#39;ll unify as rectangular prism with l=w=h=side
+        if lower_name == &#34;cube&#34;:
+            # We expect &#39;side&#39; =&gt; l=w=h
+            side = _to_m(dimensions[&#39;side&#39;])
+            return RectangularPrism(length=side, width=side, height=side)
+
+        # Otherwise just create the shape with the given dimensions
+        return shape_class(**dimensions)
+
+# ----------------------------------------------------------------------------
+# Composite Geometry Class (valid approximation for 3D--&gt;1D simulation)
+# ----------------------------------------------------------------------------
+
+class CompositeShape(Shape3D):
+    &#34;&#34;&#34;
+    Represents a shape made by combining multiple sub-shapes.
+    The total volume is the sum of sub-shapes&#39; volumes.
+
+    For surface area, we use the naive sum minus the overlapped face
+    (twice the minimum connectable area).
+
+    In a real system you might track the exact arrangement in 3D space,
+    but here we keep it conceptual for demonstration:
+      - add_shape(shape, connect_axis): we try to connect the new shape along
+        a matching connector from an existing shape if axes align.
+    &#34;&#34;&#34;
+    def __init__(self):
+        super().__init__()  # empty base
+        self.shapes = []
+        self.connections = []  # List of (shapeA, shapeB, overlap_area)
+
+    def add_shape(self, new_shape, connect_axis=None):
+        &#34;&#34;&#34;
+        Add a new shape to this composite. If connect_axis is provided,
+        we attempt to find a connector on &#39;new_shape&#39; that matches
+        a connector on an existing shape in self.shapes.
+
+        For demonstration, we connect to the first available match.
+        Overlap area is min( area1, area2 ).
+        &#34;&#34;&#34;
+        if not self.shapes:
+            # If this is the first shape in the composite, just add it.
+            self.shapes.append(new_shape)
+            return
+
+        if connect_axis is None:
+            # No connector logic needed, just add it unconnected
+            self.shapes.append(new_shape)
+            return
+
+        # We&#39;ll search for a matching connector (by orientation) in the new_shape,
+        # and see if we can pair it with an existing shape&#39;s connector.
+        # If found, record the overlap.
+
+        # Step 1: gather new_shape connectors that match the connect_axis
+        new_connectors = [
+            c for c in new_shape.connectors()
+            if _axes_almost_equal(c.axis, connect_axis)
+        ]
+        if not new_connectors:
+            # If we found no matching connectors, we just add shape
+            self.shapes.append(new_shape)
+            return
+
+        # Step 2: gather existing shapes&#39; connectors that match the opposite axis
+        # i.e. connect_axis is (0,0,1), we might need existing axis to be (0,0,-1)
+        # so that they can connect “face-to-face”.
+        opposite_axis = tuple([-a for a in connect_axis])
+
+        for existing in self.shapes:
+            existing_connectors = [
+                c for c in existing.connectors()
+                if _axes_almost_equal(c.axis, opposite_axis)
+            ]
+            if not existing_connectors:
+                continue  # no suitable connector on that shape
+
+            # We’ll just connect the first pair of connectors we find
+            # (In a real system, you’d define a better approach or prompt the user.)
+            overlap_area = _compute_min_overlap(new_connectors[0], existing_connectors[0])
+            self.connections.append((new_shape, existing, overlap_area))
+
+            # Add the new shape to the composite
+            self.shapes.append(new_shape)
+            return
+
+        # If we get here, no suitable pairing was found. Just add shape unconnected
+        self.shapes.append(new_shape)
+
+    def _compute_volume(self):
+        return sum(s.volume() for s in self.shapes)
+
+    def _compute_surface_area(self):
+        &#34;&#34;&#34;
+        Sum of the sub-shapes’ surface areas minus
+        2 * sum of each overlapping face area.
+        &#34;&#34;&#34;
+        total_area = sum(s.surface_area() for s in self.shapes)
+
+        overlap = 0.0
+        for (shapeA, shapeB, overlap_area) in self.connections:
+            overlap += overlap_area
+
+        # We remove twice the overlap area for each connection
+        # (once from shape A, once from shape B).
+        return total_area - 2.0 * overlap
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        As a composite, its external connectors might be complicated.
+        Here we return an empty list, or you could gather connectors
+        that are not overlapped.
+        &#34;&#34;&#34;
+        return []
+
+# ----------------------------------------------------------------------------
+# Helper functions
+# ----------------------------------------------------------------------------
+
+def _axes_almost_equal(axis1, axis2, tol=1e-5):
+    &#34;&#34;&#34;
+    Check if two unit vectors are nearly the same (or exactly opposite).
+    Because connectors are face normals, we consider &#34;matching&#34; to be
+    an axis that is within tolerance of the negative direction or the same,
+    depending on your design rules.
+
+    In the code above, for matching we do EXACT direction or EXACT opposite.
+    Adjust to your preference.
+    &#34;&#34;&#34;
+    # We&#39;ll check if either they&#39;re almost the same or almost exact opposites
+    dot = axis1[0]*axis2[0] + axis1[1]*axis2[1] + axis1[2]*axis2[2]
+    # If dot ~ 1.0 =&gt; same direction, if dot ~ -1.0 =&gt; opposite direction
+    return abs(abs(dot) - 1.0) &lt; tol
+
+def _compute_min_overlap(connector1, connector2):
+    &#34;&#34;&#34;
+    The overlap area is the minimum of the two connectable faces,
+    since you can&#39;t overlap more than the smaller face area.
+    &#34;&#34;&#34;
+    return min(connector1.area, connector2.area)
+
+# %% Packaging3D
+
+# ----------------------------------------------------------------------------
+# High Level &#34;Packaging3D&#34; class
+# ----------------------------------------------------------------------------
+
+class Packaging3D:
+    &#34;&#34;&#34;
+    High-level interface that creates a shape/composite shape by name
+    and provides volume &amp; surface area in SI units.
+
+    usage:
+      pkg = Packaging3D(&#39;bottle&#39;,
+                        body_radius=(5, &#39;cm&#39;),
+                        body_height=(20, &#39;cm&#39;),
+                        neck_radius=(1.5, &#39;cm&#39;),
+                        neck_height=(5, &#39;cm&#39;))
+      vol, area = pkg.get_volume_and_area()
+    &#34;&#34;&#34;
+    def __init__(self, geometry_name, **dimensions):
+        self.geometry_name = geometry_name
+        self.shape = create_shape_by_name(geometry_name, **dimensions)
+
+    def get_volume_and_area(self):
+        &#34;&#34;&#34;
+        Returns: (volume_in_m3, surface_area_in_m2)
+        &#34;&#34;&#34;
+        return (self.shape.volume(), self.shape.surface_area())
+
+    def __repr__(self):
+        &#34;&#34;&#34;String representation of Packaging3D, including the nested shape.&#34;&#34;&#34;
+        print(f&#34;Packaging3D(geometry_name=&#39;{self.geometry_name}&#39;, shape=\n{repr(self.shape)})&#34;)
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted string representation of the Packaging 3D&#34;&#34;&#34;
+        return f&#34;&lt;{self.__class__.__name__}: {self.geometry_name}&gt;&#34;
+
+
+    # --------------------------------------------------------------------
+    # For convenience, several operators have been overloaded
+    #   packaging &gt;&gt; medium      # sets the volume and the surfacearea
+    # --------------------------------------------------------------------
+
+    # method: medium._to(material) and its associated operator &gt;&gt;
+    def _to(self,other=None):
+        &#34;&#34;&#34;Propagates volume and area to a food instance&#34;&#34;&#34;
+        from patankar.food import foodphysics
+        if not isinstance(other,foodphysics):
+            raise TypeError(f&#34;other must be a foodphysics instance not a {type(other).__name__}&#34;)
+        other.volume,other.surfacearea = self.get_volume_and_area()
+        # we record in other the properties inherited and then transferable
+        other.acknowledge(what={&#34;volume&#34;,&#34;surfacearea&#34;},category=&#34;geometry&#34;)
+        return other
+
+    def __rshift__(self, other):
+        &#34;&#34;&#34;Overloads &gt;&gt; to propagate to other.&#34;&#34;&#34;
+        self._to(other)
+        return other
+# %% Test
+# ----------------------------------------------------------------------------
+# USAGE EXAMPLES
+# ----------------------------------------------------------------------------
+if __name__ == &#34;__main__&#34;:
+
+    # 1) A &#34;bottle&#34; composed of two cylinders
+    bottle_pkg = Packaging3D(
+        &#34;bottle&#34;,
+        body_radius=(50, &#34;mm&#34;), # 0.05 m
+        body_height=(0.2, &#34;m&#34;), # 0.20 m
+        neck_radius=(2, &#34;cm&#34;),  # 0.02 m
+        neck_height=0.05        # 0.05 m
+    )
+    b_vol, b_area = bottle_pkg.get_volume_and_area()
+    print(&#34;Bottle Volume (m**3):&#34;, b_vol)
+    print(&#34;Bottle Surface (m**2):&#34;, b_area)
+
+    # 2) A single shape: &#34;can&#34; is just a cylinder
+    can_pkg = Packaging3D(&#34;can&#34;, radius=(4,&#34;cm&#34;), height=(12,&#34;cm&#34;))
+    c_vol, c_area = can_pkg.get_volume_and_area()
+    print(&#34;Can Volume (m**3):&#34;, c_vol)
+    print(&#34;Can Surface (m**2):&#34;, c_area)
+
+    # 3) A &#34;cube&#34; with side=10 cm
+    cube_pkg = Packaging3D(&#34;cube&#34;, side=(10,&#34;cm&#34;))
+    cu_vol, cu_area = cube_pkg.get_volume_and_area()
+    print(&#34;Cube Volume (m**3):&#34;, cu_vol)
+    print(&#34;Cube Surface (m**2):&#34;, cu_area)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="geometry.check_units"><code class="name flex">
+<span>def <span class="ident">check_units</span></span>(<span>value, ProvidedUnits=None, ExpectedUnits=None, defaulttempUnits='degC')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>check numeric inputs and convert them to SI units</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_units(value,ProvidedUnits=None,ExpectedUnits=None,defaulttempUnits=&#34;degC&#34;):
+    &#34;&#34;&#34; check numeric inputs and convert them to SI units &#34;&#34;&#34;
+    # by convention, NumPy arrays and None are return unchanged (prevent nesting)
+    if isinstance(value,np.ndarray) or value is None:
+        return value,UnknownUnits
+    if isinstance(value,tuple):
+        if len(value) != 2:
+            raise ValueError(&#39;value should be a tuple: (value,&#34;unit&#34;&#39;)
+        ProvidedUnits = value[1]
+        value = value[0]
+    if isinstance(value,list): # the function is vectorized
+        value = np.array(value)
+    if {&#34;degC&#34;, &#34;K&#34;} &amp; {ProvidedUnits, ExpectedUnits}: # the value is a temperature
+        ExpectedUnits = defaulttempUnits if ExpectedUnits is None else ExpectedUnits
+        ProvidedUnits = ExpectedUnits if ProvidedUnits is None else ProvidedUnits
+        if ProvidedUnits==&#34;degC&#34; and ExpectedUnits==&#34;K&#34;:
+            value += constants[&#34;T0K&#34;]
+        elif ProvidedUnits==&#34;K&#34; and ExpectedUnits==&#34;degC&#34;:
+            value -= constants[&#34;T0K&#34;]
+        return np.array([value]),ExpectedUnits
+    else: # the value is not a temperature
+        ExpectedUnits = NoUnits if ExpectedUnits is None else ExpectedUnits
+        if (ProvidedUnits==ExpectedUnits) or (ProvidedUnits==NoUnits) or (ExpectedUnits==None):
+            conversion =1               # no conversion needed
+            units = ExpectedUnits if ExpectedUnits is not None else NoUnits
+        else:
+            q0,conversion,units = toSI(qSI(1,ProvidedUnits))
+        return np.array([value*conversion]),units</code></pre>
+</details>
+</dd>
+<dt id="geometry.create_shape_by_name"><code class="name flex">
+<span>def <span class="ident">create_shape_by_name</span></span>(<span>name, **dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Factory function to create either a single shape or a known composite shape.</p>
+<p>For a direct shape, we find it in SHAPE_REGISTRY.
+For a composite shape (like 'bottle'), we build it from simpler shapes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_shape_by_name(name, **dimensions):
+    &#34;&#34;&#34;
+    Factory function to create either a single shape or a known composite shape.
+
+    For a direct shape, we find it in SHAPE_REGISTRY.
+    For a composite shape (like &#39;bottle&#39;), we build it from simpler shapes.
+    &#34;&#34;&#34;
+    lower_name = name.lower()
+
+    # Example of a special composite shape: &#39;bottle&#39;
+    # A &#34;bottle&#34; can be modeled as: a large cylinder (body) + smaller cylinder (neck)
+    # joined along their circular faces.
+    if lower_name == &#34;bottle&#34;:
+        # We expect: body_radius, body_height, neck_radius, neck_height
+        body_radius = _to_m(dimensions[&#34;body_radius&#34;])
+        body_height = _to_m(dimensions[&#34;body_height&#34;])
+        neck_radius = _to_m(dimensions[&#34;neck_radius&#34;])
+        neck_height = _to_m(dimensions[&#34;neck_height&#34;])
+
+        # Create the big cylinder
+        body = Cylinder(radius=body_radius, height=body_height)
+        # Create the smaller cylinder for neck
+        neck = Cylinder(radius=neck_radius, height=neck_height)
+
+        # Combine them
+        bottle_composite = CompositeShape()
+        bottle_composite.add_shape(body)
+        bottle_composite.add_shape(neck, connect_axis=(0,0,1))
+
+        return bottle_composite
+    else:
+        # If it&#39;s a direct geometry name or a synonym:
+        shape_class = SHAPE_REGISTRY.get(lower_name, None)
+        if shape_class is None:
+            raise ValueError(f&#34;Unknown shape or composite name &#39;{name}&#39;.&#34;)
+
+        # Special case for &#34;cube&#34;: user might supply side=...
+        # or length=... In normal usage for a &#34;cube&#34; we do side=...
+        # We&#39;ll unify as rectangular prism with l=w=h=side
+        if lower_name == &#34;cube&#34;:
+            # We expect &#39;side&#39; =&gt; l=w=h
+            side = _to_m(dimensions[&#39;side&#39;])
+            return RectangularPrism(length=side, width=side, height=side)
+
+        # Otherwise just create the shape with the given dimensions
+        return shape_class(**dimensions)</code></pre>
+</details>
+</dd>
+<dt id="geometry.get_all_shapes_info"><code class="name flex">
+<span>def <span class="ident">get_all_shapes_info</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a dictionary that combines synonyms, required parameters,
+and doc strings for each shape class.</p>
+<p>Example structure:
+{
+'Cylinder': {
+'synonyms': ['can', 'cylinder'],
+'required_params': ['radius', 'height'],
+'doc': '&hellip;'
+},
+'OpenCylinder1': {
+'synonyms': ['glass', 'jar', 'open_cylinder_1', 'pot'],
+'required_params': ['radius', 'height'],
+'doc': '&hellip;'
+},
+&hellip;
+}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_shapes_info():
+    &#34;&#34;&#34;
+    Returns a dictionary that combines synonyms, required parameters,
+    and doc strings for each shape class.
+
+    Example structure:
+    {
+      &#39;Cylinder&#39;: {
+          &#39;synonyms&#39;: [&#39;can&#39;, &#39;cylinder&#39;],
+          &#39;required_params&#39;: [&#39;radius&#39;, &#39;height&#39;],
+          &#39;doc&#39;: &#39;...&#39;
+      },
+      &#39;OpenCylinder1&#39;: {
+          &#39;synonyms&#39;: [&#39;glass&#39;, &#39;jar&#39;, &#39;open_cylinder_1&#39;, &#39;pot&#39;],
+          &#39;required_params&#39;: [&#39;radius&#39;, &#39;height&#39;],
+          &#39;doc&#39;: &#39;...&#39;
+      },
+      ...
+    }
+    &#34;&#34;&#34;
+    shape_synonyms_map = get_geometries_and_synonyms()  # {class_name -&gt; [synonyms]}
+    all_info = {}
+    for cls_name, synonyms in shape_synonyms_map.items():
+        param_spec = SHAPE_PARAMETER_SPEC.get(cls_name, {})
+        required = param_spec.get(&#34;required&#34;, [])
+        doc_str = param_spec.get(&#34;doc&#34;, &#34;No documentation available.&#34;)
+
+        all_info[cls_name] = {
+            &#34;synonyms&#34;: synonyms,
+            &#34;required_params&#34;: required,
+            &#34;doc&#34;: doc_str,
+        }
+    return all_info</code></pre>
+</details>
+</dd>
+<dt id="geometry.get_geometries_and_synonyms"><code class="name flex">
+<span>def <span class="ident">get_geometries_and_synonyms</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a dictionary mapping each shape class name
+to a sorted list of all registry keys (synonyms) that point to it.</p>
+<p>Example return:
+{
+"Cylinder": ["can", "cylinder"],
+"OpenCylinder1": ["glass", "jar", "open_cylinder_1", "pot"],
+&hellip;
+}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_geometries_and_synonyms():
+    &#34;&#34;&#34;
+    Returns a dictionary mapping each shape class name
+    to a sorted list of all registry keys (synonyms) that point to it.
+
+    Example return:
+    {
+      &#34;Cylinder&#34;: [&#34;can&#34;, &#34;cylinder&#34;],
+      &#34;OpenCylinder1&#34;: [&#34;glass&#34;, &#34;jar&#34;, &#34;open_cylinder_1&#34;, &#34;pot&#34;],
+      ...
+    }
+    &#34;&#34;&#34;
+    class_to_names = defaultdict(list)
+    for shape_name, shape_cls in SHAPE_REGISTRY.items():
+        # e.g. shape_cls.__name__ =&gt; &#39;Cylinder&#39;
+        class_to_names[shape_cls.__name__].append(shape_name)
+
+    # Sort synonyms for a consistent presentation
+    result = {}
+    for cls_name, synonyms in class_to_names.items():
+        result[cls_name] = sorted(synonyms)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="geometry.help_geometry"><code class="name flex">
+<span>def <span class="ident">help_geometry</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a pretty-formatted string showing all shape classes,
+their synonyms, required parameters, and documentation.</p>
+<p>Example usage:
+help_geometry()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def help_geometry():
+    &#34;&#34;&#34;
+    Returns a pretty-formatted string showing all shape classes,
+    their synonyms, required parameters, and documentation.
+
+    Example usage:
+      help_geometry()
+    &#34;&#34;&#34;
+    info = get_all_shapes_info()
+
+    lines = []
+    lines.append(&#34;=== List of Implemented Geometries &amp; Synonyms ===\n&#34;)
+
+    # Sort by class name for consistency
+    for cls_name in sorted(info.keys()):
+        synonyms = info[cls_name][&#34;synonyms&#34;]
+        required_params = info[cls_name][&#34;required_params&#34;]
+        doc_text = info[cls_name][&#34;doc&#34;]
+
+        lines.append(f&#34;Shape Class: {cls_name}&#34;)
+        lines.append(f&#34;  Synonyms       : {&#39;, &#39;.join(synonyms)}&#34;)
+        lines.append(f&#34;  Required Params: {&#39;, &#39;.join(required_params) if required_params else &#39;None&#39;}&#34;)
+
+        # Optionally indent doc lines
+        doc_lines = doc_text.split(&#34;\n&#34;)
+        for dl in doc_lines:
+            lines.append(f&#34;    {dl}&#34;)
+        lines.append(&#34;-&#34; * 60)
+
+    prettytxt = &#34;\n&#34;.join(lines)
+    print(prettytxt)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="geometry.CompositeShape"><code class="flex name class">
+<span>class <span class="ident">CompositeShape</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents a shape made by combining multiple sub-shapes.
+The total volume is the sum of sub-shapes' volumes.</p>
+<p>For surface area, we use the naive sum minus the overlapped face
+(twice the minimum connectable area).</p>
+<p>In a real system you might track the exact arrangement in 3D space,
+but here we keep it conceptual for demonstration:
+- add_shape(shape, connect_axis): we try to connect the new shape along
+a matching connector from an existing shape if axes align.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CompositeShape(Shape3D):
+    &#34;&#34;&#34;
+    Represents a shape made by combining multiple sub-shapes.
+    The total volume is the sum of sub-shapes&#39; volumes.
+
+    For surface area, we use the naive sum minus the overlapped face
+    (twice the minimum connectable area).
+
+    In a real system you might track the exact arrangement in 3D space,
+    but here we keep it conceptual for demonstration:
+      - add_shape(shape, connect_axis): we try to connect the new shape along
+        a matching connector from an existing shape if axes align.
+    &#34;&#34;&#34;
+    def __init__(self):
+        super().__init__()  # empty base
+        self.shapes = []
+        self.connections = []  # List of (shapeA, shapeB, overlap_area)
+
+    def add_shape(self, new_shape, connect_axis=None):
+        &#34;&#34;&#34;
+        Add a new shape to this composite. If connect_axis is provided,
+        we attempt to find a connector on &#39;new_shape&#39; that matches
+        a connector on an existing shape in self.shapes.
+
+        For demonstration, we connect to the first available match.
+        Overlap area is min( area1, area2 ).
+        &#34;&#34;&#34;
+        if not self.shapes:
+            # If this is the first shape in the composite, just add it.
+            self.shapes.append(new_shape)
+            return
+
+        if connect_axis is None:
+            # No connector logic needed, just add it unconnected
+            self.shapes.append(new_shape)
+            return
+
+        # We&#39;ll search for a matching connector (by orientation) in the new_shape,
+        # and see if we can pair it with an existing shape&#39;s connector.
+        # If found, record the overlap.
+
+        # Step 1: gather new_shape connectors that match the connect_axis
+        new_connectors = [
+            c for c in new_shape.connectors()
+            if _axes_almost_equal(c.axis, connect_axis)
+        ]
+        if not new_connectors:
+            # If we found no matching connectors, we just add shape
+            self.shapes.append(new_shape)
+            return
+
+        # Step 2: gather existing shapes&#39; connectors that match the opposite axis
+        # i.e. connect_axis is (0,0,1), we might need existing axis to be (0,0,-1)
+        # so that they can connect “face-to-face”.
+        opposite_axis = tuple([-a for a in connect_axis])
+
+        for existing in self.shapes:
+            existing_connectors = [
+                c for c in existing.connectors()
+                if _axes_almost_equal(c.axis, opposite_axis)
+            ]
+            if not existing_connectors:
+                continue  # no suitable connector on that shape
+
+            # We’ll just connect the first pair of connectors we find
+            # (In a real system, you’d define a better approach or prompt the user.)
+            overlap_area = _compute_min_overlap(new_connectors[0], existing_connectors[0])
+            self.connections.append((new_shape, existing, overlap_area))
+
+            # Add the new shape to the composite
+            self.shapes.append(new_shape)
+            return
+
+        # If we get here, no suitable pairing was found. Just add shape unconnected
+        self.shapes.append(new_shape)
+
+    def _compute_volume(self):
+        return sum(s.volume() for s in self.shapes)
+
+    def _compute_surface_area(self):
+        &#34;&#34;&#34;
+        Sum of the sub-shapes’ surface areas minus
+        2 * sum of each overlapping face area.
+        &#34;&#34;&#34;
+        total_area = sum(s.surface_area() for s in self.shapes)
+
+        overlap = 0.0
+        for (shapeA, shapeB, overlap_area) in self.connections:
+            overlap += overlap_area
+
+        # We remove twice the overlap area for each connection
+        # (once from shape A, once from shape B).
+        return total_area - 2.0 * overlap
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        As a composite, its external connectors might be complicated.
+        Here we return an empty list, or you could gather connectors
+        that are not overlapped.
+        &#34;&#34;&#34;
+        return []</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry.CompositeShape.add_shape"><code class="name flex">
+<span>def <span class="ident">add_shape</span></span>(<span>self, new_shape, connect_axis=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add a new shape to this composite. If connect_axis is provided,
+we attempt to find a connector on 'new_shape' that matches
+a connector on an existing shape in self.shapes.</p>
+<p>For demonstration, we connect to the first available match.
+Overlap area is min( area1, area2 ).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_shape(self, new_shape, connect_axis=None):
+    &#34;&#34;&#34;
+    Add a new shape to this composite. If connect_axis is provided,
+    we attempt to find a connector on &#39;new_shape&#39; that matches
+    a connector on an existing shape in self.shapes.
+
+    For demonstration, we connect to the first available match.
+    Overlap area is min( area1, area2 ).
+    &#34;&#34;&#34;
+    if not self.shapes:
+        # If this is the first shape in the composite, just add it.
+        self.shapes.append(new_shape)
+        return
+
+    if connect_axis is None:
+        # No connector logic needed, just add it unconnected
+        self.shapes.append(new_shape)
+        return
+
+    # We&#39;ll search for a matching connector (by orientation) in the new_shape,
+    # and see if we can pair it with an existing shape&#39;s connector.
+    # If found, record the overlap.
+
+    # Step 1: gather new_shape connectors that match the connect_axis
+    new_connectors = [
+        c for c in new_shape.connectors()
+        if _axes_almost_equal(c.axis, connect_axis)
+    ]
+    if not new_connectors:
+        # If we found no matching connectors, we just add shape
+        self.shapes.append(new_shape)
+        return
+
+    # Step 2: gather existing shapes&#39; connectors that match the opposite axis
+    # i.e. connect_axis is (0,0,1), we might need existing axis to be (0,0,-1)
+    # so that they can connect “face-to-face”.
+    opposite_axis = tuple([-a for a in connect_axis])
+
+    for existing in self.shapes:
+        existing_connectors = [
+            c for c in existing.connectors()
+            if _axes_almost_equal(c.axis, opposite_axis)
+        ]
+        if not existing_connectors:
+            continue  # no suitable connector on that shape
+
+        # We’ll just connect the first pair of connectors we find
+        # (In a real system, you’d define a better approach or prompt the user.)
+        overlap_area = _compute_min_overlap(new_connectors[0], existing_connectors[0])
+        self.connections.append((new_shape, existing, overlap_area))
+
+        # Add the new shape to the composite
+        self.shapes.append(new_shape)
+        return
+
+    # If we get here, no suitable pairing was found. Just add shape unconnected
+    self.shapes.append(new_shape)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry.Cone"><code class="flex name class">
+<span>class <span class="ident">Cone</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A cone with radius=r, height=h.
+Typically only 1 connectable face: the circular base (normal -z).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Cone(Shape3D):
+    &#34;&#34;&#34;
+    A cone with radius=r, height=h.
+    Typically only 1 connectable face: the circular base (normal -z).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return (1.0/3.0) * math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        slant = math.sqrt(r**2 + h**2)
+        base_area = math.pi * r**2
+        lateral_area = math.pi * r * slant
+        return base_area + lateral_area
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        # We&#39;ll define the base as normal -z
+        return [Connector(area=area_face, axis=(0,0,-1), name=&#34;cone_base&#34;)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.Connector"><code class="flex name class">
+<span>class <span class="ident">Connector</span></span>
+<span>(</span><span>area, axis=(0, 0, 1), name='')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents a 'connection face' on a shape:
+- area: the connectable area (m^2)
+- axis: a unit vector (tuple) indicating the orientation of the connector
+- name: optionally label the connector (e.g. 'top', 'bottom', etc.)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Connector:
+    &#34;&#34;&#34;
+    Represents a &#39;connection face&#39; on a shape:
+      - area: the connectable area (m^2)
+      - axis: a unit vector (tuple) indicating the orientation of the connector
+      - name: optionally label the connector (e.g. &#39;top&#39;, &#39;bottom&#39;, etc.)
+    &#34;&#34;&#34;
+    def __init__(self, area, axis=(0, 0, 1), name=&#34;&#34;):
+        self.area = area
+        # Normalize axis for safety
+        mag = math.sqrt(axis[0]**2 + axis[1]**2 + axis[2]**2)
+        if mag &gt; 0:
+            self.axis = (axis[0]/mag, axis[1]/mag, axis[2]/mag)
+        else:
+            self.axis = axis
+        self.name = name
+
+    def __repr__(self):
+        &#34;&#34;&#34;String representation of the Connector object.&#34;&#34;&#34;
+        axis_str = f&#34;({self.axis[0]:.2f}, {self.axis[1]:.2f}, {self.axis[2]:.2f})&#34;
+        name_str = f&#34;&#39;{self.name}&#39;&#34; if self.name else &#34;(unnamed)&#34;
+        print(f&#34;Connector(name={name_str}, area={self.area.item():.4g} m², axis={axis_str})&#34;)
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted representation of the connector&#34;&#34;&#34;
+        return f&#34;&lt;{self.__class__.__name__}: {self.name}&gt;&#34;</code></pre>
+</details>
+</dd>
+<dt id="geometry.Cylinder"><code class="flex name class">
+<span>class <span class="ident">Cylinder</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A cylinder with radius=r and height=h.
+Has two connectors (top and bottom).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Cylinder(Shape3D):
+    &#34;&#34;&#34;
+    A cylinder with radius=r and height=h.
+    Has two connectors (top and bottom).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # Full cylinder: side + 2 ends
+        return 2.0 * math.pi * r * h + 2.0 * math.pi * r**2
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        Two circular faces: top (normal +z), bottom (normal -z).
+        &#34;&#34;&#34;
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        c_top = Connector(area=area_face, axis=(0,0,1), name=&#34;cylinder_top&#34;)
+        c_bottom = Connector(area=area_face, axis=(0,0,-1), name=&#34;cylinder_bottom&#34;)
+        return [c_top, c_bottom]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.Hemisphere"><code class="flex name class">
+<span>class <span class="ident">Hemisphere</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Hemisphere with radius=r.
+One connector (the flat circular base).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Hemisphere(Shape3D):
+    &#34;&#34;&#34;
+    Hemisphere with radius=r.
+    One connector (the flat circular base).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return (2.0/3.0)*math.pi*(r**3)
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        # Curved surface area = 2πr^2
+        # The flat cross-section area (open) = πr^2
+        # If it&#39;s closed, we might add that, but typically &#34;hemisphere&#34; is open.
+        # So total &#34;internal&#34; area might be 3πr^2 if we consider the open face.
+        return 3.0*math.pi*(r**2)
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return [Connector(area=math.pi*r**2, axis=(0,0,-1), name=&#34;hemisphere_flat&#34;)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.OpenCone"><code class="flex name class">
+<span>class <span class="ident">OpenCone</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A cone with the base removed, leaving a single open circular face.</p>
+<p>Required dimensions:
+radius, height</p>
+<h2 id="volume">Volume</h2>
+<p>Same as a full cone =&gt; (1/3)<em>π</em>r^2<em>h
+Surface area:
+Only the lateral surface =&gt; π</em>r*sqrt(r^2 + h^2)
+(No base area since it's open.)</p>
+<h2 id="connectors">Connectors</h2>
+<p>One connector at the base (the open circle).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenCone(Shape3D):
+    &#34;&#34;&#34;
+    A cone with the base removed, leaving a single open circular face.
+
+    Required dimensions:
+      radius, height
+    Volume:
+      Same as a full cone =&gt; (1/3)*π*r^2*h
+    Surface area:
+      Only the lateral surface =&gt; π*r*sqrt(r^2 + h^2)
+      (No base area since it&#39;s open.)
+    Connectors:
+      One connector at the base (the open circle).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return (1.0/3.0) * math.pi * (r**2) * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        slant = math.sqrt(r**2 + h**2)
+        # Lateral area only
+        return math.pi * r * slant
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        # The open face is the base, normal -z
+        return [Connector(area=area_face, axis=(0,0,-1), name=&#34;open_cone_base&#34;)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.OpenCylinder1"><code class="flex name class">
+<span>class <span class="ident">OpenCylinder1</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An open cylinder with exactly one open end (like a glass, pot, or jar).</p>
+<h2 id="volume">Volume</h2>
+<p>π * r^2 * h
+Surface area:
+Lateral area (2πrh) + base area (πr^2) =&gt; 2πrh + πr^2</p>
+<h2 id="connectors">Connectors</h2>
+<p>Only one at the bottom (circular face).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenCylinder1(Shape3D):
+    &#34;&#34;&#34;
+    An open cylinder with exactly one open end (like a glass, pot, or jar).
+
+    Volume:
+      π * r^2 * h
+    Surface area:
+      Lateral area (2πrh) + base area (πr^2) =&gt; 2πrh + πr^2
+    Connectors:
+      Only one at the bottom (circular face).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        lateral_area = 2.0 * math.pi * r * h
+        bottom_area = math.pi * r**2
+        return lateral_area + bottom_area
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        bottom_area = math.pi * r**2
+        return [Connector(area=bottom_area, axis=(0, 0, -1), name=&#34;open_cylinder1_bottom&#34;)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.OpenCylinder2"><code class="flex name class">
+<span>class <span class="ident">OpenCylinder2</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An open cylinder with two open ends (like a straw or tube).</p>
+<h2 id="volume">Volume</h2>
+<p>π * r^2 * h
+Surface area:
+Only lateral area =&gt; 2πrh
+(No top or bottom disk, since both ends are open.)</p>
+<h2 id="connectors">Connectors</h2>
+<p>Two (top and bottom), each with area πr^2.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenCylinder2(Shape3D):
+    &#34;&#34;&#34;
+    An open cylinder with two open ends (like a straw or tube).
+
+    Volume:
+      π * r^2 * h
+    Surface area:
+      Only lateral area =&gt; 2πrh
+      (No top or bottom disk, since both ends are open.)
+    Connectors:
+      Two (top and bottom), each with area πr^2.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return math.pi * r**2 * h
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # No bases since both ends are open
+        return 2.0 * math.pi * r * h
+
+    def _compute_connectors(self):
+        r = self.dimensions[&#39;radius&#39;]
+        area_face = math.pi * r**2
+        # top face (normal +z) and bottom face (normal -z)
+        c_top = Connector(area=area_face, axis=(0,0, 1), name=&#34;open_cylinder2_top&#34;)
+        c_bottom = Connector(area=area_face, axis=(0,0,-1), name=&#34;open_cylinder2_bottom&#34;)
+        return [c_top, c_bottom]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.OpenPrism1"><code class="flex name class">
+<span>class <span class="ident">OpenPrism1</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A rectangular prism with ONE open face.</p>
+<p>Required dimensions:
+length, width, height</p>
+<h2 id="volume">Volume</h2>
+<p>length * width * height
+Surface area:
+(Sum of all faces) - area of the open face
+i.e. 2<em>(lw + lh + wh) - lw (assuming top is open).
+So total = lw + 2</em>(lh + wh).</p>
+<h2 id="connectors">Connectors</h2>
+<p>One connector at the open face.</p>
+<p>By convention, let's treat the "top" (normal +z) as open.
+That means the bottom is length x width, and sides are intact.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenPrism1(Shape3D):
+    &#34;&#34;&#34;
+    A rectangular prism with ONE open face.
+
+    Required dimensions:
+      length, width, height
+    Volume:
+      length * width * height
+    Surface area:
+      (Sum of all faces) - area of the open face
+      i.e. 2*(lw + lh + wh) - lw (assuming top is open).
+      So total = lw + 2*(lh + wh).
+    Connectors:
+      One connector at the open face.
+
+    By convention, let&#39;s treat the &#34;top&#34; (normal +z) as open.
+    That means the bottom is length x width, and sides are intact.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return l * w * h
+
+    def _compute_surface_area(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        total_closed = 2.0*(l*w + w*h + h*l)
+        # Open face is the top (area = l*w).
+        return total_closed - (l*w)
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        The open face is the top: area = l*w, normal +z.
+        &#34;&#34;&#34;
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        top_area = l * w
+        return [Connector(area=top_area, axis=(0,0,1), name=&#34;open_prism1_top&#34;)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.OpenPrism2"><code class="flex name class">
+<span>class <span class="ident">OpenPrism2</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A rectangular prism with TWO open faces (no top, no bottom).</p>
+<p>Required dimensions:
+length, width, height</p>
+<h2 id="volume">Volume</h2>
+<p>length * width * height
+Surface area:
+(Sum of all faces) - 2<em>(area of top + bottom)
+i.e. 2</em>(l<em>w + w</em>h + h<em>l) - 2</em>(l<em>w)
+= 2</em>(w<em>h + h</em>l)</p>
+<h2 id="connectors">Connectors</h2>
+<p>Two connectors: top (+z), bottom (-z).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenPrism2(Shape3D):
+    &#34;&#34;&#34;
+    A rectangular prism with TWO open faces (no top, no bottom).
+
+    Required dimensions:
+      length, width, height
+    Volume:
+      length * width * height
+    Surface area:
+      (Sum of all faces) - 2*(area of top + bottom)
+      i.e. 2*(l*w + w*h + h*l) - 2*(l*w)
+      = 2*(w*h + h*l)
+    Connectors:
+      Two connectors: top (+z), bottom (-z).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return l * w * h
+
+    def _compute_surface_area(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # Full closed prism area: 2*(lw + lh + wh)
+        # Remove top (lw) and bottom (lw), total of 2*lw
+        return 2.0*(l*h + w*h)  # Just the 4 side faces
+
+    def _compute_connectors(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        face_area = l * w
+        top_connector = Connector(area=face_area, axis=(0,0,1),  name=&#34;open_prism2_top&#34;)
+        bot_connector = Connector(area=face_area, axis=(0,0,-1), name=&#34;open_prism2_bottom&#34;)
+        return [top_connector, bot_connector]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.OpenSquare1"><code class="flex name class">
+<span>class <span class="ident">OpenSquare1</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A square-based box with ONE open face (like an open-top box).</p>
+<p>Required dimensions:
+side (the length of each side of the square base)
+height</p>
+<h2 id="volume">Volume</h2>
+<p>side^2 * height
+Surface area:
+4 * side * height + (bottom face area)
+= (4 * side * height) + (side^2)</p>
+<h2 id="connectors">Connectors</h2>
+<p>One connector at the open face (the top).
+- The bottom is closed, so no connector there.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenSquare1(Shape3D):
+    &#34;&#34;&#34;
+    A square-based box with ONE open face (like an open-top box).
+
+    Required dimensions:
+      side (the length of each side of the square base)
+      height
+    Volume:
+      side^2 * height
+    Surface area:
+      4 * side * height + (bottom face area)
+      = (4 * side * height) + (side^2)
+    Connectors:
+      One connector at the open face (the top).
+        - The bottom is closed, so no connector there.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return s * s * h
+
+    def _compute_surface_area(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # Side walls: 4 * s * h
+        # Bottom: s^2
+        return (4.0 * s * h) + (s**2)
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        The open face is the top: area = side^2, normal +z
+        &#34;&#34;&#34;
+        s = self.dimensions[&#39;side&#39;]
+        top_area = s**2
+        return [Connector(area=top_area, axis=(0,0,1), name=&#34;open_square1_top&#34;)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.OpenSquare2"><code class="flex name class">
+<span>class <span class="ident">OpenSquare2</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A square-based box with TWO open faces (no top, no bottom).</p>
+<p>Required dimensions:
+side
+height</p>
+<h2 id="volume">Volume</h2>
+<p>side^2 * height
+Surface area:
+Only the 4 vertical walls =&gt; 4 * side * height</p>
+<h2 id="connectors">Connectors</h2>
+<p>Two connectors: top (+z) and bottom (-z).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenSquare2(Shape3D):
+    &#34;&#34;&#34;
+    A square-based box with TWO open faces (no top, no bottom).
+
+    Required dimensions:
+      side
+      height
+    Volume:
+      side^2 * height
+    Surface area:
+      Only the 4 vertical walls =&gt; 4 * side * height
+    Connectors:
+      Two connectors: top (+z) and bottom (-z).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return s * s * h
+
+    def _compute_surface_area(self):
+        s = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        # No top or bottom =&gt; 4 side walls
+        return 4.0 * s * h
+
+    def _compute_connectors(self):
+        s = self.dimensions[&#39;side&#39;]
+        area_face = s**2
+        top_connector = Connector(area=area_face, axis=(0,0,1),  name=&#34;open_square2_top&#34;)
+        bot_connector = Connector(area=area_face, axis=(0,0,-1), name=&#34;open_square2_bottom&#34;)
+        return [top_connector, bot_connector]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.Packaging3D"><code class="flex name class">
+<span>class <span class="ident">Packaging3D</span></span>
+<span>(</span><span>geometry_name, **dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>High-level interface that creates a shape/composite shape by name
+and provides volume &amp; surface area in SI units.</p>
+<p>usage:
+pkg = Packaging3D('bottle',
+body_radius=(5, 'cm'),
+body_height=(20, 'cm'),
+neck_radius=(1.5, 'cm'),
+neck_height=(5, 'cm'))
+vol, area = pkg.get_volume_and_area()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Packaging3D:
+    &#34;&#34;&#34;
+    High-level interface that creates a shape/composite shape by name
+    and provides volume &amp; surface area in SI units.
+
+    usage:
+      pkg = Packaging3D(&#39;bottle&#39;,
+                        body_radius=(5, &#39;cm&#39;),
+                        body_height=(20, &#39;cm&#39;),
+                        neck_radius=(1.5, &#39;cm&#39;),
+                        neck_height=(5, &#39;cm&#39;))
+      vol, area = pkg.get_volume_and_area()
+    &#34;&#34;&#34;
+    def __init__(self, geometry_name, **dimensions):
+        self.geometry_name = geometry_name
+        self.shape = create_shape_by_name(geometry_name, **dimensions)
+
+    def get_volume_and_area(self):
+        &#34;&#34;&#34;
+        Returns: (volume_in_m3, surface_area_in_m2)
+        &#34;&#34;&#34;
+        return (self.shape.volume(), self.shape.surface_area())
+
+    def __repr__(self):
+        &#34;&#34;&#34;String representation of Packaging3D, including the nested shape.&#34;&#34;&#34;
+        print(f&#34;Packaging3D(geometry_name=&#39;{self.geometry_name}&#39;, shape=\n{repr(self.shape)})&#34;)
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted string representation of the Packaging 3D&#34;&#34;&#34;
+        return f&#34;&lt;{self.__class__.__name__}: {self.geometry_name}&gt;&#34;
+
+
+    # --------------------------------------------------------------------
+    # For convenience, several operators have been overloaded
+    #   packaging &gt;&gt; medium      # sets the volume and the surfacearea
+    # --------------------------------------------------------------------
+
+    # method: medium._to(material) and its associated operator &gt;&gt;
+    def _to(self,other=None):
+        &#34;&#34;&#34;Propagates volume and area to a food instance&#34;&#34;&#34;
+        from patankar.food import foodphysics
+        if not isinstance(other,foodphysics):
+            raise TypeError(f&#34;other must be a foodphysics instance not a {type(other).__name__}&#34;)
+        other.volume,other.surfacearea = self.get_volume_and_area()
+        # we record in other the properties inherited and then transferable
+        other.acknowledge(what={&#34;volume&#34;,&#34;surfacearea&#34;},category=&#34;geometry&#34;)
+        return other
+
+    def __rshift__(self, other):
+        &#34;&#34;&#34;Overloads &gt;&gt; to propagate to other.&#34;&#34;&#34;
+        self._to(other)
+        return other</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry.Packaging3D.get_volume_and_area"><code class="name flex">
+<span>def <span class="ident">get_volume_and_area</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns: (volume_in_m3, surface_area_in_m2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_volume_and_area(self):
+    &#34;&#34;&#34;
+    Returns: (volume_in_m3, surface_area_in_m2)
+    &#34;&#34;&#34;
+    return (self.shape.volume(), self.shape.surface_area())</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry.RectangularPrism"><code class="flex name class">
+<span>class <span class="ident">RectangularPrism</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A rectangular prism with length=l, width=w, height=h.
+Has 6 connectors for each face.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RectangularPrism(Shape3D):
+    &#34;&#34;&#34;
+    A rectangular prism with length=l, width=w, height=h.
+    Has 6 connectors for each face.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return l * w * h
+
+    def _compute_surface_area(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return 2.0 * (l*w + w*h + h*l)
+
+    def _compute_connectors(self):
+        l = self.dimensions[&#39;length&#39;]
+        w = self.dimensions[&#39;width&#39;]
+        h = self.dimensions[&#39;height&#39;]
+
+        # areas
+        area_lw = l * w
+        area_wh = w * h
+        area_hl = h * l
+
+        # Each face axis.
+        # We&#39;ll define +z, -z, +y, -y, +x, -x as possible &#34;connectors&#34;.
+        return [
+            Connector(area=area_lw, axis=(0,0, 1), name=&#34;top_face&#34;),
+            Connector(area=area_lw, axis=(0,0,-1), name=&#34;bottom_face&#34;),
+            Connector(area=area_wh, axis=(0, 1,0), name=&#34;front_face&#34;),
+            Connector(area=area_wh, axis=(0,-1,0), name=&#34;back_face&#34;),
+            Connector(area=area_hl, axis=( 1,0,0), name=&#34;right_face&#34;),
+            Connector(area=area_hl, axis=(-1,0,0), name=&#34;left_face&#34;)
+        ]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.Shape3D"><code class="flex name class">
+<span>class <span class="ident">Shape3D</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for a 3D shape. Subclasses must implement:
+- _compute_volume()
+- _compute_surface_area()
+- _compute_connectors() -&gt; list of Connector objects</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Shape3D:
+    &#34;&#34;&#34;
+    Base class for a 3D shape. Subclasses must implement:
+      - _compute_volume()
+      - _compute_surface_area()
+      - _compute_connectors() -&gt; list of Connector objects
+    &#34;&#34;&#34;
+    def __init__(self, **dimensions):
+        # Convert every dimension to meters
+        self.dimensions = {k: _to_m(v) for k, v in dimensions.items()}
+
+    def volume(self):
+        return self._compute_volume()
+
+    def surface_area(self):
+        return self._compute_surface_area()
+
+    def connectors(self):
+        return self._compute_connectors()
+
+    def _compute_volume(self):
+        raise NotImplementedError
+
+    def _compute_surface_area(self):
+        raise NotImplementedError
+
+    def _compute_connectors(self):
+        &#34;&#34;&#34;
+        Return a list of Connector objects that represent the shape’s
+        possible connections. By default, shapes with no flat faces return [].
+        &#34;&#34;&#34;
+        return []
+
+    def __repr__(self):
+        &#34;&#34;&#34;String representation of the Shape3D object.&#34;&#34;&#34;
+        class_name = self.__class__.__name__
+
+        # Convert numpy arrays to scalars before formatting
+        dimensions_str = &#34;, &#34;.join(f&#34;{k}={v.item():.4g} m&#34; if isinstance(v, np.ndarray) else f&#34;{k}={v:.4f} m&#34;
+                                   for k, v in self.dimensions.items())
+
+        vol = self.volume()
+        surf = self.surface_area()
+        connectors = self.connectors()
+
+        connector_str = (
+            &#34;\n  - &#34;.join(repr(c) for c in connectors) if connectors else &#34;None&#34;
+        )
+
+        print(
+            f&#34;{class_name}(\n&#34;
+            f&#34;  Dimensions: {dimensions_str}\n&#34;
+            f&#34;  Volume: {vol.item():.4g} m³\n&#34;
+            f&#34;  Surface Area: {surf.item():.4g} m²\n&#34;
+            f&#34;  Connectors:\n  - {connector_str}\n&#34;
+            f&#34;)&#34;
+        )
+
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted string representing the 3D shape&#34;&#34;&#34;
+        n = len(self.connectors())
+        return f&#34;&lt;{self.__class__.__name__} with {n} connector{&#39;s&#39; if n&gt;1 else &#39;&#39;}&gt;&#34;</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="geometry.CompositeShape" href="#geometry.CompositeShape">CompositeShape</a></li>
+<li><a title="geometry.Cone" href="#geometry.Cone">Cone</a></li>
+<li><a title="geometry.Cylinder" href="#geometry.Cylinder">Cylinder</a></li>
+<li><a title="geometry.Hemisphere" href="#geometry.Hemisphere">Hemisphere</a></li>
+<li><a title="geometry.OpenCone" href="#geometry.OpenCone">OpenCone</a></li>
+<li><a title="geometry.OpenCylinder1" href="#geometry.OpenCylinder1">OpenCylinder1</a></li>
+<li><a title="geometry.OpenCylinder2" href="#geometry.OpenCylinder2">OpenCylinder2</a></li>
+<li><a title="geometry.OpenPrism1" href="#geometry.OpenPrism1">OpenPrism1</a></li>
+<li><a title="geometry.OpenPrism2" href="#geometry.OpenPrism2">OpenPrism2</a></li>
+<li><a title="geometry.OpenSquare1" href="#geometry.OpenSquare1">OpenSquare1</a></li>
+<li><a title="geometry.OpenSquare2" href="#geometry.OpenSquare2">OpenSquare2</a></li>
+<li><a title="geometry.RectangularPrism" href="#geometry.RectangularPrism">RectangularPrism</a></li>
+<li><a title="geometry.Sphere" href="#geometry.Sphere">Sphere</a></li>
+<li><a title="geometry.SquarePyramid" href="#geometry.SquarePyramid">SquarePyramid</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="geometry.Shape3D.connectors"><code class="name flex">
+<span>def <span class="ident">connectors</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connectors(self):
+    return self._compute_connectors()</code></pre>
+</details>
+</dd>
+<dt id="geometry.Shape3D.surface_area"><code class="name flex">
+<span>def <span class="ident">surface_area</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_area(self):
+    return self._compute_surface_area()</code></pre>
+</details>
+</dd>
+<dt id="geometry.Shape3D.volume"><code class="name flex">
+<span>def <span class="ident">volume</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def volume(self):
+    return self._compute_volume()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="geometry.Sphere"><code class="flex name class">
+<span>class <span class="ident">Sphere</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A sphere with radius=r.
+In a strict sense, no perfectly flat 'connector' faces exist.
+So we typically return [] for connectors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Sphere(Shape3D):
+    &#34;&#34;&#34;
+    A sphere with radius=r.
+    In a strict sense, no perfectly flat &#39;connector&#39; faces exist.
+    So we typically return [] for connectors.
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return (4.0/3.0)*math.pi*(r**3)
+
+    def _compute_surface_area(self):
+        r = self.dimensions[&#39;radius&#39;]
+        return 4.0*math.pi*(r**2)
+
+    def _compute_connectors(self):
+        # Spheres have no truly flat face to connect.
+        return []</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+<dt id="geometry.SquarePyramid"><code class="flex name class">
+<span>class <span class="ident">SquarePyramid</span></span>
+<span>(</span><span>**dimensions)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Square-based pyramid with side=a and height=h.
+Has 1 connectable face (square base) with normal -z (assuming apex up).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SquarePyramid(Shape3D):
+    &#34;&#34;&#34;
+    Square-based pyramid with side=a and height=h.
+    Has 1 connectable face (square base) with normal -z (assuming apex up).
+    &#34;&#34;&#34;
+    def _compute_volume(self):
+        a = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        return (a**2 * h) / 3.0
+
+    def _compute_surface_area(self):
+        a = self.dimensions[&#39;side&#39;]
+        h = self.dimensions[&#39;height&#39;]
+        base_area = a**2
+        # Slant height
+        slant = math.sqrt((a/2.0)**2 + h**2)
+        # Four triangular faces
+        lateral_area = a * slant * 2.0  # Because each triangle is (a*slant)/2, times 4 =&gt; 2*a*slant
+        return base_area + lateral_area
+
+    def _compute_connectors(self):
+        a = self.dimensions[&#39;side&#39;]
+        # The base area is a^2
+        return [Connector(area=a**2, axis=(0,0,-1), name=&#34;pyramid_base&#34;)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="geometry.check_units" href="#geometry.check_units">check_units</a></code></li>
+<li><code><a title="geometry.create_shape_by_name" href="#geometry.create_shape_by_name">create_shape_by_name</a></code></li>
+<li><code><a title="geometry.get_all_shapes_info" href="#geometry.get_all_shapes_info">get_all_shapes_info</a></code></li>
+<li><code><a title="geometry.get_geometries_and_synonyms" href="#geometry.get_geometries_and_synonyms">get_geometries_and_synonyms</a></code></li>
+<li><code><a title="geometry.help_geometry" href="#geometry.help_geometry">help_geometry</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="geometry.CompositeShape" href="#geometry.CompositeShape">CompositeShape</a></code></h4>
+<ul class="">
+<li><code><a title="geometry.CompositeShape.add_shape" href="#geometry.CompositeShape.add_shape">add_shape</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry.Cone" href="#geometry.Cone">Cone</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.Connector" href="#geometry.Connector">Connector</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.Cylinder" href="#geometry.Cylinder">Cylinder</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.Hemisphere" href="#geometry.Hemisphere">Hemisphere</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.OpenCone" href="#geometry.OpenCone">OpenCone</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.OpenCylinder1" href="#geometry.OpenCylinder1">OpenCylinder1</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.OpenCylinder2" href="#geometry.OpenCylinder2">OpenCylinder2</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.OpenPrism1" href="#geometry.OpenPrism1">OpenPrism1</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.OpenPrism2" href="#geometry.OpenPrism2">OpenPrism2</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.OpenSquare1" href="#geometry.OpenSquare1">OpenSquare1</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.OpenSquare2" href="#geometry.OpenSquare2">OpenSquare2</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.Packaging3D" href="#geometry.Packaging3D">Packaging3D</a></code></h4>
+<ul class="">
+<li><code><a title="geometry.Packaging3D.get_volume_and_area" href="#geometry.Packaging3D.get_volume_and_area">get_volume_and_area</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry.RectangularPrism" href="#geometry.RectangularPrism">RectangularPrism</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.Shape3D" href="#geometry.Shape3D">Shape3D</a></code></h4>
+<ul class="">
+<li><code><a title="geometry.Shape3D.connectors" href="#geometry.Shape3D.connectors">connectors</a></code></li>
+<li><code><a title="geometry.Shape3D.surface_area" href="#geometry.Shape3D.surface_area">surface_area</a></code></li>
+<li><code><a title="geometry.Shape3D.volume" href="#geometry.Shape3D.volume">volume</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="geometry.Sphere" href="#geometry.Sphere">Sphere</a></code></h4>
+</li>
+<li>
+<h4><code><a title="geometry.SquarePyramid" href="#geometry.SquarePyramid">SquarePyramid</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

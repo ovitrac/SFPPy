@@ -143,6 +143,16 @@ from datetime import datetime
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
 
+__all__ = ['CompoundIndex', 'dbdefault', 'get_compounds', 'migrant']
+
+__project__ = "SFPPy"
+__author__ = "Olivier Vitrac"
+__copyright__ = "Copyright 2022"
+__credits__ = ["Olivier Vitrac"]
+__license__ = "MIT"
+__maintainer__ = "Olivier Vitrac"
+__email__ = "olivier.vitrac@agroparistech.fr"
+__version__ = "1.2"
 # %% Core class (low-level)
 class CompoundIndex:
     """

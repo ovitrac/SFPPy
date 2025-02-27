@@ -323,5 +323,8 @@ printconfig = {"destinationfolder": outputfolder, "overwrite": True}
 collection_fig.print(**printconfig)
 
 # Export data
-collection.save_as_excel(filename="example3.xlsx", destinationfolder=outputfolder, overwrite=True)
 collection.save_as_csv(filename="example3.csv", destinationfolder=outputfolder, overwrite=True)
+
+# saving to Excel requires: openpyxl >= 3.0.10
+# (install it with `conda install openpyl` if you encounter an error message)
+collection.save_as_excel(filename="example3.xlsx", destinationfolder=outputfolder, overwrite=True)

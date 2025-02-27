@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 PubChemPy
 
@@ -17,7 +18,7 @@ import os
 import sys
 import time
 import warnings
-import binascii
+#import binascii # not used fixed by Olivier Vitrac
 
 try:
     from urllib.error import HTTPError
@@ -33,8 +34,12 @@ except ImportError:
     from itertools import izip_longest as zip_longest
 
 
-__author__ = 'Matt Swain'
-__email__ = 'm.swain@me.com'
+
+__all__ = ['Assay', 'Atom', 'BadRequestError', 'Bond', 'BondType', 'Compound', 'CompoundIdType', 'CoordinateType', 'MethodNotAllowedError', 'NotFoundError', 'ProjectCategory', 'PubChemHTTPError', 'PubChemPyDeprecationWarning', 'PubChemPyError', 'ResponseParseError', 'ServerError', 'Substance', 'TimeoutError', 'UnimplementedError', 'compounds_to_frame', 'deprecated', 'download', 'get', 'get_aids', 'get_all_sources', 'get_assays', 'get_cids', 'get_compounds', 'get_json', 'get_properties', 'get_sdf', 'get_sids', 'get_substances', 'get_synonyms', 'memoized_property', 'request', 'substances_to_frame']
+
+
+__author__ = 'Matt Swain (small fixes: Olivier Vitrac)'
+__email__ = 'm.swain@me.com, olivier.vitrac@agroparistech.fr'
 __version__ = '1.0.4'
 __license__ = 'MIT'
 
@@ -47,7 +52,7 @@ log.addHandler(logging.NullHandler())
 if sys.version_info[0] == 3:
     text_types = str, bytes
 else:
-    text_types = basestring,
+    text_types = basestring # Python 2 only (normal you seen an error in Python 3) - Olivier Vitrac
 
 
 class CompoundIdType(object):
@@ -560,7 +565,7 @@ class Atom(object):
         for coord in {'x', 'y', 'z'}:
             if getattr(self, coord) is not None:
                 data[coord] = getattr(self, coord)
-        if self.charge is not 0:
+        if self.charge != 0: # self.charge is not 0: (fixed Olivier Vitrac)
             data['charge'] = self.charge
         return data
 

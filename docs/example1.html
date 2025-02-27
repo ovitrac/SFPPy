@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>example1 API documentation</title>
+<meta name="description" content="SFPPy Example: mass transfer from monolayer materials
+…" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>example1</code></h1>
+</header>
+<section id="section-intro">
+<p>===============================================================================
+SFPPy Example: mass transfer from monolayer materials
+===============================================================================</p>
+<h1 id="example-1-migration-of-additives-from-ldpe-film-into-a-fatty-sandwich">Example 1: Migration of Additives from LDPE Film into a Fatty Sandwich</h1>
+<hr>
+<h2 id="overview">Overview</h2>
+<p>This script simulates <strong>1D mass transfer</strong> of <strong>Irganox 1076</strong> and <strong>Irgafos 168</strong>
+from a <strong>100 µm LDPE film</strong> into a <strong>fatty sandwich</strong>. The simulation covers <strong>10 days at 7°C</strong>.</p>
+<h3 id="simulation-steps">Simulation Steps:</h3>
+<ol>
+<li><strong>Define the sandwich geometry</strong> (cylindrical shape).</li>
+<li><strong>Set up the polymer layer</strong> (LDPE with additives).</li>
+<li><strong>Define the food properties</strong> (real, semisolid, fatty).</li>
+<li><strong>Simulate mass transfer</strong> for:</li>
+<li><strong>Irganox 1076 in LDPE</strong>.</li>
+<li><strong>Irgafos 168 in LDPE</strong>.</li>
+<li><strong>Compare migration kinetics</strong> between both cases.</li>
+<li><strong>Save and print all simulation results</strong>.</li>
+</ol>
+<h3 id="expected-outcomes">Expected Outcomes:</h3>
+<p>✅ <strong>Clear comparison of migration kinetics</strong> for both additives.
+✅ <strong>Understanding of additive behavior in food packaging</strong>.
+✅ <strong>Ready-to-use figures and reports for food safety analysis</strong>.</p>
+<hr>
+<p>@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\olivier.vitrac@agroparistech.fr
+@licence: MIT</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+===============================================================================
+SFPPy Example: mass transfer from monolayer materials
+===============================================================================
+
+
+# Example 1: Migration of Additives from LDPE Film into a Fatty Sandwich
+------------------------------------------------------------------------
+
+## Overview
+This script simulates **1D mass transfer** of **Irganox 1076** and **Irgafos 168**
+from a **100 µm LDPE film** into a **fatty sandwich**. The simulation covers **10 days at 7°C**.
+
+### Simulation Steps:
+1. **Define the sandwich geometry** (cylindrical shape).
+2. **Set up the polymer layer** (LDPE with additives).
+3. **Define the food properties** (real, semisolid, fatty).
+4. **Simulate mass transfer** for:
+   - **Irganox 1076 in LDPE**.
+   - **Irgafos 168 in LDPE**.
+5. **Compare migration kinetics** between both cases.
+6. **Save and print all simulation results**.
+
+### Expected Outcomes:
+✅ **Clear comparison of migration kinetics** for both additives.
+✅ **Understanding of additive behavior in food packaging**.
+✅ **Ready-to-use figures and reports for food safety analysis**.
+
+---
+
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\\olivier.vitrac@agroparistech.fr
+@licence: MIT
+&#34;&#34;&#34;
+# %% Import Dependencies
+# ----------------------
+import os
+from patankar.loadpubchem import migrant    # Migrant online database
+from patankar.geometry import Packaging3D   # 3D geometry module
+import patankar.food as food                # Food contact classes
+import patankar.layer as polymer            # Polymer database
+from patankar.migration import senspatankar as solver # Mass transfer solver
+from patankar.migration import CFSimulationContainer as store # Store results
+from patankar.migration import print_figure # Printing functions
+from patankar.layer import _toSI            # Convert units to SI
+
+# %% Output Folder
+# ----------------
+# Define the output directory to store results
+outputfolder = os.path.join(os.getcwd(), &#34;tmp&#34;)
+os.makedirs(outputfolder, exist_ok=True)  # Create folder if missing
+
+# %% Define Contact Conditions
+# ----------------------------
+# Store numbers with their units in a tuple
+contactTemperature = (7, &#34;degC&#34;)
+contactTime = (10, &#34;days&#34;)  # Contact duration
+
+# %% Set Parameters with Uncertainty
+# ----------------------------------
+# Concentrations are in arbitrary units (e.g., mg/kg)
+maxConcentration = 5000  # Maximum initial concentration in the polymer
+
+# %% Define Sandwich Geometry
+# ---------------------------
+&#34;&#34;&#34;
+Create a **cylindrical sandwich** modeled using `Packaging3D`.
+&#34;&#34;&#34;
+sandwich_geom = Packaging3D(
+    &#39;Cylinder&#39;,
+    height=(19, &#34;cm&#34;),  # Cylinder height (19 cm)
+    radius=(6, &#34;mm&#34;)    # Cylinder radius (6 mm)
+)
+
+# Compute internal volume (m³) and contact surface area (m²)
+internalvolume, contactsurface = sandwich_geom.get_volume_and_area()
+
+# %% Define the Migrant (Irganox 1076)
+# ------------------------------------
+# Retrieve chemical properties of the migrant (Irganox 1076)
+m1 = migrant(&#34;irganox 1076&#34;)
+
+# %% Define LDPE Film Wrapping the Sandwich
+# -----------------------------------------
+# Create a **100 µm thick LDPE layer** containing **Irganox 1076**
+LDPElayer_with_m1 = polymer.LDPE(
+    l=(100, &#34;um&#34;),    # Thickness: 100 µm
+    substance=m1,
+    C0=maxConcentration,  # Initial concentration in LDPE
+    T=contactTemperature  # Contact temperature
+)
+
+# %% Define Food Properties (Fatty Sandwich)
+# ------------------------------------------
+&#34;&#34;&#34;
+Define a **fatty sandwich** using multiple inheritance from `food.realfood`,
+`food.semisolid`, and `food.fat`.
+&#34;&#34;&#34;
+class sandwich(food.realfood, food.semisolid, food.fat):
+    name = &#34;sandwich&#34;
+
+# Instantiate the food layer
+FOODlayer = sandwich(
+    volume=internalvolume,
+    surfacearea=contactsurface,
+    contacttime=contactTime,
+    contacttemperature=contactTemperature
+)
+
+# %% Run Mass Transfer Simulation (Irganox 1076)
+# ---------------------------------------------
+# Simulate migration for **Irganox 1076** in LDPE
+simulation = solver(
+    LDPElayer_with_m1,  # LDPE containing Irganox 1076
+    FOODlayer,          # Fatty sandwich
+    name=&#34;I1076-LDPE-sandwich&#34;
+)
+
+# Display simulation details
+print(simulation)
+
+# Retrieve concentration at target time in SI units
+print(&#34;CF at time t=&#34;, simulation.ttarget, &#34;[s] = &#34;, simulation.CFtarget, &#34;[a.u.]&#34;)
+
+# %% Interpolate Concentrations at Specific Times
+# -----------------------------------------------
+&#34;&#34;&#34;
+Interpolates concentration values at **specific contact times** between 0 and **2 × ttarget**.
+Beyond `2 × ttarget`, extrapolation is required.
+&#34;&#34;&#34;
+tnew = _toSI(([3, 8, 9, 10, 12, 14, 18], &#34;days&#34;)).flatten()
+CF = simulation.interpolate_CF(tnew).flatten()
+
+# %% Generate Plots (Irganox 1076)
+# --------------------------------
+# Concentration profiles at ttarget
+simulation.plotCx()
+
+# Migration kinetics (CF vs time)
+hfig1 = simulation.plotCF(t=tnew)
+
+# %% Store Results for Comparison
+# -------------------------------
+# Store the simulation results for **Irganox 1076**
+allCF = store(name=&#34;sandwich&#34;)
+allCF.add(simulation, &#34;Irganox 1076&#34;, &#34;r&#34;)  # Assign red color &#34;r&#34;
+
+# %% Run Simulation for Irgafos 168
+# ---------------------------------
+# Retrieve chemical properties of the second migrant (Irgafos 168)
+m2 = migrant(&#34;irgafos 168&#34;)
+
+# Define the same LDPE film but containing Irgafos 168 instead
+LDPElayer_with_m2 = polymer.LDPE(
+    l=(100, &#34;um&#34;),
+    substance=m2,  # &lt;-- Updated substance
+    C0=maxConcentration,
+    T=contactTemperature
+)
+
+# Run migration simulation for **Irgafos 168**
+simulation2 = solver(
+    LDPElayer_with_m2,  # LDPE containing Irgafos 168
+    FOODlayer,          # Same sandwich as in previous case
+    name=&#34;I168-LDPE-sandwich&#34;
+)
+
+# Add the new simulation (Irgafos 168) to the results store
+allCF.add(simulation2, &#34;Irgafos 168&#34;, &#34;b&#34;)  # Assign blue color &#34;b&#34;
+
+# Generate the corresponding plot
+hfig2 = simulation2.plotCF(t=tnew)
+
+# %% Compare Migration Kinetics (Both Migrants)
+# ---------------------------------------------
+# Compare CF vs time for **Irganox 1076** and **Irgafos 168**
+hfig12 = allCF.plotCF()
+
+# %% Save and Print Figures
+# -------------------------
+printconfig = {&#34;destinationfolder&#34;: outputfolder, &#34;overwrite&#34;: True}
+print_figure(hfig1, **printconfig)
+print_figure(hfig2, **printconfig)
+print_figure(hfig12, **printconfig)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="example1.LDPElayer_with_m1"><code class="name">var <span class="ident">LDPElayer_with_m1</span></code></dt>
+<dd>
+<div class="desc"><p>Define a <strong>fatty sandwich</strong> using multiple inheritance from <code>food.realfood</code>,
+<code>food.semisolid</code>, and <code>food.fat</code>.</p></div>
+</dd>
+<dt id="example1.maxConcentration"><code class="name">var <span class="ident">maxConcentration</span></code></dt>
+<dd>
+<div class="desc"><p>Create a <strong>cylindrical sandwich</strong> modeled using <code>Packaging3D</code>.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="example1.sandwich"><code class="flex name class">
+<span>class <span class="ident">sandwich</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Core real food class (second level)</p>
+<p>general constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class sandwich(food.realfood, food.semisolid, food.fat):
+    name = &#34;sandwich&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>patankar.food.realfood</li>
+<li>patankar.food.foodproperty</li>
+<li>patankar.food.foodlayer</li>
+<li>patankar.food.semisolid</li>
+<li>patankar.food.texture</li>
+<li>patankar.food.fat</li>
+<li>patankar.food.chemicalaffinity</li>
+<li>patankar.food.foodphysics</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="example1.sandwich.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#example-1-migration-of-additives-from-ldpe-film-into-a-fatty-sandwich">Example 1: Migration of Additives from LDPE Film into a Fatty Sandwich</a><ul>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#simulation-steps">Simulation Steps:</a></li>
+<li><a href="#expected-outcomes">Expected Outcomes:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="example1.LDPElayer_with_m1" href="#example1.LDPElayer_with_m1">LDPElayer_with_m1</a></code></li>
+<li><code><a title="example1.maxConcentration" href="#example1.maxConcentration">maxConcentration</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="example1.sandwich" href="#example1.sandwich">sandwich</a></code></h4>
+<ul class="">
+<li><code><a title="example1.sandwich.name" href="#example1.sandwich.name">name</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

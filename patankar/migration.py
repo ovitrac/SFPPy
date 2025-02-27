@@ -112,6 +112,17 @@ import pandas as pd
 from patankar.layer import layer, check_units
 from patankar.food import foodphysics,foodlayer
 
+__all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'compute_fc_profile_PBC', 'compute_fv_profile', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_valid_figure', 'layer', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear']
+
+__project__ = "SFPPy"
+__author__ = "Olivier Vitrac"
+__copyright__ = "Copyright 2022"
+__credits__ = ["Olivier Vitrac"]
+__license__ = "MIT"
+__maintainer__ = "Olivier Vitrac"
+__email__ = "olivier.vitrac@agroparistech.fr"
+__version__ = "1.2"
+
 # Plot configuration (preferred units)
 plotconfig = {
     "tscale": 24 * 3600, # days used as time scale
@@ -122,7 +133,6 @@ plotconfig = {
     "Cunit": "a.u."
     }
 _fig_metadata_atrr_ = "__filename__"
-
 # %% Private functions and classes
 
 def autoname(nchars=6, charset="a-zA-Z0-9"):

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Pizza3 Matlab Documentation</title>
+<style>
+body {
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #f9f9f9; 
+    color: #333;
+}
+header {
+    background: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    position: relative; /* For positioning the toggle button */
+}
+header h1 {
+    margin: 0; 
+    font-size: 1.5em;
+    color: #fff; /* Explicitly set to white */
+    padding-left: 50px; /* Space for the toggle button */
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px); /* Adjusted for header height */
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+#nav {
+    width: 300px; /* Set a fixed width */
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: width 0.3s ease, padding 0.3s ease; /* Transition for smooth animations */
+    flex-shrink: 0; /* Prevent flexbox from shrinking */
+}
+#nav.collapsed {
+    width: 0; /* Hide the sidebar completely */
+    padding: 20px 0; /* Optionally adjust padding */
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+header .toggle-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    left: 10px; /* Place the button on the left */
+    background-color: #4CAF50; /* Green background */
+    border: none;
+    color: white; /* Ensure the hamburger icon is white */
+    padding: 10px 12px; /* Adjust padding for larger button */
+    cursor: pointer;
+    font-size: 1.2em; /* Increase font size for better visibility */
+    border-radius: 4px;
+    z-index: 1001; /* Ensure the button is above other elements */
+}
+header .toggle-btn:hover {
+    background-color: #45a049;
+}
+header .toggle-btn kbd {
+    font-family: 'Arial', sans-serif; /* Match the header font */
+    color: white; /* Ensure the hamburger icon is white */
+    font-size: 1.2em; /* Same size as the button text */
+    background: none; /* Remove any background styling from <kbd> */
+    border: none; /* Remove any borders from <kbd> */
+}
+h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+h2 {
+    color: #333; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 5px;
+}
+a {
+    text-decoration: none; 
+    color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul {
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+}
+li {
+    margin: 5px 0;
+}
+.folder-title {
+    font-weight: bold; 
+    color: #333; 
+    padding: 5px 0;
+    cursor: pointer;
+}
+.folder-content {
+    margin-left: 20px;
+    display: none; /* start collapsed */
+}
+.file {
+    margin-left: 20px;
+}
+hr {
+    margin: 20px 0; 
+    border: 1px solid #ddd;
+}
+footer {
+    font-size: 0.9em; 
+    color: #666; 
+    margin-top: 20px; 
+    text-align: center;
+}
+/* Enhanced Table Styling with Banded Colors */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+tr:nth-child(odd) {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green for odd rows */
+}
+/* Collapsible Code Section */
+.collapsible {
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+}
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+/* Minimal Syntax Highlighting */
+.code {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+.keyword {
+    color: #007BFF;
+    font-weight: bold;
+}
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+.string {
+    color: #a31515;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px; /* Height of the header */
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+    #nav.collapsed {
+        width: 0; /* Hide the sidebar completely */
+        padding: 20px 0; /* Adjust padding */
+    }
+    #main {
+        flex: 1;
+    }
+    /* Add overlay when sidebar is open on mobile */
+    body.nav-open::before {
+        content: "";
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 50px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+</style>
+</head>
+<body>
+<header>
+    <!-- Toggle Sidebar Button -->
+    <button class='toggle-btn' id='toggleSidebar' aria-label='Toggle Sidebar' aria-expanded='false'>
+        <kbd>&#9776;</kbd>
+    </button>
+    <h1>Pizza3 Documentation</h1>
+</header>
+<div id='content'>
+<div id='nav'>
+<p><strong>Version:</strong> Pizza3 v.1.2</p>
+<p><strong>Maintained by:</strong> INRAE\olivier.vitrac@agroparistech.fr</p>
+<hr>
+<ul class='folder-list'>
+<li class='folder'>
+<div class='folder-title' onclick='toggleFolder(this)'>patankar</div>
+<ul class='folder-content'>
+<li class='file'><a href='#testcase' onclick="loadDoc('testcase')">testcase</a></li>
+</ul>
+</li>
+<li class='folder'>
+<div class='folder-title' onclick='toggleFolder(this)'>sandbox</div>
+<ul class='folder-content'>
+<li class='file'><a href='#testcase' onclick="loadDoc('testcase')">testcase</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='main'>
+<div id='welcome-message'>
+<h2>Welcome to Pizza3 Matlab Documentation</h2>
+<p>Select a function in the left menu to view its documentation.</p>
+<p>POST examples are fully detailed <a href='post/index_post.html' target='_blank'>here</a>.</p>
+<p>Back to the <a href='index.html'>Python'Pizza3 documentation</a>.</p>
+<hr>
+<p><i>When no function is selected, you see this welcome page.</i></p>
+Generated on: 2025-02-27 14:44:37</div>
+<div id='testcase' class='doc-content' style='display: none;'>
+<h1>reference system</h1>
+<button class="collapsible">Show MATLAB Code</button>
+<div class="content"><pre class="code"><code class="language-matlab">
+<span class="comment">% reference system</span>
+F = struct(...
+         <span class="string">'Bi'</span>, 500000,...
+          <span class="string">'k'</span>, [1 1 ],...
+          <span class="string">'D'</span>, [1.0000e-14 1.0000e-14],...
+         <span class="string">'k0'</span>, 1,...
+          <span class="string">'l'</span>, [50e-6 50e-6],...
+          <span class="string">'L'</span>, 0.003, ...
+         <span class="string">'C0'</span>, [1000 1000], ...
+          <span class="string">'t'</span>, [0,6.912] ...
+        );
+
+S = senspatankar(F)
+figure
+plot(S.t,S.CF)</code></pre></div>
+</div>
+<div id='testcase' class='doc-content' style='display: none;'>
+<h1>reference system</h1>
+<button class="collapsible">Show MATLAB Code</button>
+<div class="content"><pre class="code"><code class="language-matlab">
+<span class="comment">% reference system</span>
+F = struct(...
+         <span class="string">'Bi'</span>, 500000,...
+          <span class="string">'k'</span>, [1 1 ],...
+          <span class="string">'D'</span>, [1.0000e-14 1.0000e-14],...
+         <span class="string">'k0'</span>, 1,...
+          <span class="string">'l'</span>, [50e-6 50e-6],...
+          <span class="string">'L'</span>, 0.003, ...
+         <span class="string">'C0'</span>, [1000 1000], ...
+          <span class="string">'t'</span>, [0,6.912] ...
+        );
+
+S = senspatankar(F)
+figure
+plot(S.t,S.CF)</code></pre></div>
+</div>
+</div>
+</div>
+<script>
+// Toggle visibility of folder contents
+function toggleFolder(el) {
+    var content = el.nextElementSibling;
+    if (content.style.display === "none" || content.style.display === "") {
+        content.style.display = "block";
+    } else {
+        content.style.display = "none";
+    }
+};
+
+// Load documentation into the main panel
+function loadDoc(id) {
+    // Hide all documentation sections
+    var docs = document.getElementsByClassName('doc-content');
+    for (var i = 0; i < docs.length; i++) {
+        docs[i].style.display = 'none';
+    }
+    // Hide the welcome message
+    var welcome = document.getElementById('welcome-message');
+    if (welcome) {
+        welcome.style.display = 'none';
+    }
+    // Show the selected documentation
+    var selectedDoc = document.getElementById(id);
+    if (selectedDoc) {
+        selectedDoc.style.display = 'block';
+    }
+    
+    // Reinitialize collapsible buttons within the displayed documentation
+    var coll = selectedDoc.getElementsByClassName("collapsible");
+    for (var i = 0; i < coll.length; i++) {
+        // Remove existing event listeners to prevent multiple bindings
+        coll[i].removeEventListener("click", toggleCollapsible);
+        // Add event listener
+        coll[i].addEventListener("click", toggleCollapsible);
+    }
+}
+
+// Function to toggle collapsible sections
+function toggleCollapsible() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
+    }
+}
+
+// Toggle Sidebar Functionality
+const toggleButton = document.getElementById('toggleSidebar');
+const nav = document.getElementById('nav');
+
+toggleButton.addEventListener('click', () => {
+    nav.classList.toggle('collapsed');
+    document.body.classList.toggle('nav-open'); // Toggle overlay on small screens
+    // Change icon based on sidebar state
+    if(nav.classList.contains('collapsed')) {
+        toggleButton.innerHTML = '<kbd>&#9776;</kbd>'; // Hamburger icon
+        toggleButton.setAttribute('aria-expanded', 'false');
+    } else {
+        toggleButton.innerHTML = '<kbd>&#10005;</kbd>'; // Close icon (X)
+        toggleButton.setAttribute('aria-expanded', 'true');
+    }
+});
+
+// Handle URL hash on page load to display the corresponding documentation or welcome page
+window.addEventListener('load', function() {
+    const hash = window.location.hash.substring(1);
+    const docs = document.querySelectorAll('.doc-content');
+    if(hash) {
+        docs.forEach(doc => {
+            if(doc.id === hash) {
+                doc.style.display = 'block';
+            } else {
+                doc.style.display = 'none';
+            }
+        });
+        // If sidebar is open on small screens, ensure it's visible
+        if (window.innerWidth <= 768 && !nav.classList.contains('collapsed')) {
+            document.body.classList.add('nav-open');
+        }
+    } else {
+        // Show welcome content if no hash is present
+        const welcome = document.getElementById('welcome-message');
+        if(welcome) {
+            welcome.style.display = 'block';
+        }
+    }
+});
+</script>
+</body>
+</html>

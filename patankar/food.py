@@ -50,6 +50,16 @@ from copy import deepcopy as duplicate
 
 from patankar.layer import check_units, NoUnits, layer # to convert units to SI
 
+__all__ = ['ambient', 'aqueous', 'boiling', 'check_units', 'chemicalaffinity', 'chilled', 'ethanol', 'ethanol50', 'fat', 'foodlayer', 'foodphysics', 'foodproperty', 'frozen', 'get_defined_init_params', 'help_food', 'hotfilled', 'intermediate', 'is_valid_classname', 'layer', 'liquid', 'list_food_classes', 'nofood', 'oven', 'pasteurization', 'perfectlymixed', 'realcontact', 'realfood', 'rolled', 'semisolid', 'setoff', 'simulant', 'solid', 'stacked', 'sterilization', 'tenax', 'testcontact', 'texture', 'water', 'wrap_text', 'yogurt']
+
+__project__ = "SFPPy"
+__author__ = "Olivier Vitrac"
+__copyright__ = "Copyright 2022"
+__credits__ = ["Olivier Vitrac"]
+__license__ = "MIT"
+__maintainer__ = "Olivier Vitrac"
+__email__ = "olivier.vitrac@agroparistech.fr"
+__version__ = "1.2"
 #%% Private Properties and functions
 
 # List of the default SI units used by physical quantity

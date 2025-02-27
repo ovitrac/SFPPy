@@ -1,0 +1,2257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>loadpubchem API documentation</title>
+<meta name="description" content="SFPPy Module: LoadPubChem
+Retrieves and caches molecular properties from PubChem for use in migration modeling.
+Stores both detailed (`full.json`) …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>loadpubchem</code></h1>
+</header>
+<section id="section-intro">
+<p>===============================================================================
+SFPPy Module: LoadPubChem
+===============================================================================
+Retrieves and caches molecular properties from PubChem for use in migration modeling.
+Stores both detailed (<code>full.json</code>) and lightweight (<code>simple.json</code>) records.</p>
+<p><strong>Main Components:</strong>
+- <strong><code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code></strong> (Manages the local PubChem database)
+- Caches compound information to avoid repeated queries
+- Uses a local JSON index for fast lookups by name, CAS, or structure
+- Automatically fetches missing compounds from PubChem
+- <strong><code><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></code></strong> (Links chemical compounds to migration properties)
+- Retrieves and stores diffusion (<code>D</code>) and partition (<code>K</code>) coefficients from <code>property.py</code>
+- Supports surrogate or theoretical migrants if missing from PubChem
+- Used directly in <code>layer.py</code> to define migrating substances in packaging materials</p>
+<p><strong>Integration with SFPPy Modules:</strong>
+- Used in <code>layer.py</code> to define a migrating chemical with associated properties.
+- Calls <code>property.py</code> when PubChem does not provide required mass transfer parameters.</p>
+<p>Example:</p>
+<pre><code class="language-python">from loadpubchem import migrant
+m = migrant(name=&quot;anisole&quot;)
+D_value = m.D.evaluate(polymer=&quot;LDPE&quot;, T=60)
+</code></pre>
+<p>===============================================================================
+Details
+===============================================================================
+This module offers a simple mechanism to retrieve molecular properties from the US-NIH Pubchem website.
+The data are cached locally for efficiency and can be used off-line.
+The high-level class migrant connects the attributes of the chemical with predictions available in the
+module <code>property.py</code> including diffusivities and partitioning.</p>
+<h2 id="overview-of-compound-index">Overview Of Compound Index</h2>
+<p>This module provides a <code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code> class that allows you to locally cache chemical data retrieved from PubChem, saving each record in two JSON-based formats:</p>
+<ol>
+<li><strong>Full JSON</strong> (cidXXXX.full.json) – A comprehensive snapshot of all PubChem properties for a given compound (e.g., synonyms, IUPAC name, molecular weight, 3D data, etc.).</li>
+<li><strong>Simple JSON</strong> (cidXXXX.simple.json) – A minimal “lightweight” record containing only the most essential fields, such as:</li>
+<li>CID, name, synonyms, CAS numbers, molecular weight, formula, SMILES, InChI, InChIKey, and date.</li>
+</ol>
+<p>Each record is indexed by any recognized synonym (including CAS, IUPAC names, common names, etc.), so that subsequent searches by any of these identifiers will pull up the same compound. A local synonyms→[CIDs] mapping is stored in a single JSON index file (default: pubchem_index.json).</p>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li><strong>Local Cache</strong>: Creates and maintains a folder (default: <code>cache.PubChem</code>) where each compound is stored in two forms:</li>
+<li><strong><code>cidXXXX.full.json</code></strong> – Contains all available properties from PubChem.</li>
+<li>
+<p><strong><code>cidXXXX.simple.json</code></strong> – A lighter record used for quick lookups and indexing.</p>
+</li>
+<li>
+<p><strong>Synonym Indexing</strong>: All synonyms (including IUPAC name, title, and anything else treated as a synonym) are captured and mapped to the compound’s CID in a local dictionary, serialized as <code>pubchem_index.json</code>. As soon as a new compound is retrieved from PubChem, these synonyms are added to the index so that future searches for any of those synonyms will immediately return the correct record from the local cache.</p>
+</li>
+<li>
+<p><strong>Refreshable Index</strong>: If the index does not exist or is invalid, the module scans all <code>*.full.json</code> files in the cache folder, regenerates each <code>*.simple.json</code> (if missing or outdated), and rebuilds the synonyms index.</p>
+</li>
+<li>
+<p><strong>PubChem Queries</strong>: When a requested compound is <em>not</em> in the local index, the code automatically queries PubChem via your private <code>pubchempy</code> library (<code><a title="loadpubchem.get_compounds" href="#loadpubchem.get_compounds">get_compounds()</a>(&hellip;)</code>). The first match is saved locally, indexed, and returned. If no match is found, an empty result is returned.</p>
+</li>
+<li>
+<p><strong>Flexible Searching</strong>: You can search by compound name, CAS, SMILES, or any other string recognized by PubChem’s "name" lookup. The local index supports direct substring equality (lowercased). You can easily extend or adapt the code for fuzzy matches or partial synonyms.</p>
+</li>
+</ul>
+<h2 id="usage-example">Usage Example</h2>
+<p>Below is a minimal example of how you might use the <code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code> class once the module is imported:</p>
+<p>.. code-block:: python</p>
+<pre><code>from compound_cache import CompoundIndex
+
+# Instantiate and automatically load or build the index
+db = CompoundIndex()
+
+# Search for anisole in "simple" mode
+result_simple = db.find("anisole", output_format="simple")
+print("Simple record:\n", result_simple)
+
+# Retrieve the full record for anisole
+result_full = db.find("anisole", output_format="full")
+print("Full record:\n", result_full)
+</code></pre>
+<p>When you search for a compound, the class:
+1. Checks if that query (in lowercase) is in the local synonyms index.
+2. If it is found, loads either the <code>*.simple.json</code> or <code>*.full.json</code> (depending on output_format) and returns one or more results in a pandas DataFrame.
+3. If not found, queries PubChem once, saves the new record locally in both file formats, adds synonyms to the index, and returns a one-row DataFrame.</p>
+<h2 id="class-summary">Class Summary</h2>
+<p><strong><code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code></strong>
+- <strong><code>__init__(cache_dir='cache.PubChem', index_file='pubchem_index.json')</code></strong>
+Prepares the local cache folder, loads or refreshes the synonyms index.</p>
+<ul>
+<li>
+<p><strong><code>refresh_index()</code></strong>
+Rebuilds the index by scanning all <code>*.full.json</code> files in the local cache. Re-creates any missing <code>*.simple.json</code> from the full data.</p>
+</li>
+<li>
+<p><strong><code>find(query, output_format='simple')</code></strong>
+Main user-facing method. Returns a pandas DataFrame of matching records (possibly multiple rows if synonyms map to multiple CIDs). If no local match is found, it queries PubChem, stores the record, and updates the index.</p>
+</li>
+<li>
+<p><strong>Internal Helper Methods</strong></p>
+</li>
+<li><strong><code>_extract_all_pubchem_properties(compound_obj)</code></strong>: Extracts every property from the <code>pubchempy.Compound</code> object, calling each property accessor (cid, synonyms, iupac_name, etc.).</li>
+<li><strong><code>_generate_simple_dict(full_data, synonyms_set=None)</code></strong>: Produces the minimal “light” dictionary saved to <code>cidXXXX.simple.json</code>.</li>
+<li><strong><code>_gather_synonyms(full_data)</code></strong>: Merges synonyms (and other text fields, like <code>iupac_name</code>/<code>title</code>) into a unified set of strings.</li>
+<li><strong><code>_add_synonym_to_index(synonym, cid)</code></strong>: Inserts or updates the synonyms→[CIDs] mapping.</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li><strong><code>pandas</code></strong>: For returning results as DataFrame objects.</li>
+<li><strong><code>json</code></strong> &amp; <strong><code>os</code></strong> &amp; <strong><code>glob</code></strong> &amp; <strong><code>datetime</code></strong>: For file I/O, directory handling, indexing, caching.</li>
+<li><strong><code>re</code></strong>: For simple CAS pattern matching (e.g., <code>^\d{1,7}-\d{2}-\d$</code>).</li>
+<li><strong><code>private.pubchempy</code></strong>: A local (private) version of the PubChem Python client, providing the <code><a title="loadpubchem.get_compounds" href="#loadpubchem.get_compounds">get_compounds()</a>(&hellip;)</code> method and <code>Compound</code> property accessors.</li>
+</ul>
+<h2 id="note">Note</h2>
+<ul>
+<li>Large-scale usage: For large compound sets, consider optimizing the index or storing data in a more robust database.</li>
+<li>The synonyms approach: Default matching is <strong>exact</strong> (lowercased). Fuzzy or partial matches require custom logic.</li>
+</ul>
+<p>@version: 1.2
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-02-17
+@rev: 2025-02-21</p>
+<h2 id="version-history">Version History</h2>
+<ul>
+<li>1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.</li>
+</ul>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+r&#34;&#34;&#34;
+===============================================================================
+SFPPy Module: LoadPubChem
+===============================================================================
+Retrieves and caches molecular properties from PubChem for use in migration modeling.
+Stores both detailed (`full.json`) and lightweight (`simple.json`) records.
+
+**Main Components:**
+- **`CompoundIndex`** (Manages the local PubChem database)
+    - Caches compound information to avoid repeated queries
+    - Uses a local JSON index for fast lookups by name, CAS, or structure
+    - Automatically fetches missing compounds from PubChem
+- **`migrant`** (Links chemical compounds to migration properties)
+    - Retrieves and stores diffusion (`D`) and partition (`K`) coefficients from `property.py`
+    - Supports surrogate or theoretical migrants if missing from PubChem
+    - Used directly in `layer.py` to define migrating substances in packaging materials
+
+**Integration with SFPPy Modules:**
+- Used in `layer.py` to define a migrating chemical with associated properties.
+- Calls `property.py` when PubChem does not provide required mass transfer parameters.
+
+Example:
+```python
+from loadpubchem import migrant
+m = migrant(name=&#34;anisole&#34;)
+D_value = m.D.evaluate(polymer=&#34;LDPE&#34;, T=60)
+```
+
+
+===============================================================================
+Details
+===============================================================================
+This module offers a simple mechanism to retrieve molecular properties from the US-NIH Pubchem website.
+The data are cached locally for efficiency and can be used off-line.
+The high-level class migrant connects the attributes of the chemical with predictions available in the
+module `property.py` including diffusivities and partitioning.
+
+
+Overview of Compound Index
+---------------------------
+This module provides a `CompoundIndex` class that allows you to locally cache chemical data retrieved from PubChem, saving each record in two JSON-based formats:
+
+1. **Full JSON** (cidXXXX.full.json) – A comprehensive snapshot of all PubChem properties for a given compound (e.g., synonyms, IUPAC name, molecular weight, 3D data, etc.).
+2. **Simple JSON** (cidXXXX.simple.json) – A minimal “lightweight” record containing only the most essential fields, such as:
+   - CID, name, synonyms, CAS numbers, molecular weight, formula, SMILES, InChI, InChIKey, and date.
+
+Each record is indexed by any recognized synonym (including CAS, IUPAC names, common names, etc.), so that subsequent searches by any of these identifiers will pull up the same compound. A local synonyms→[CIDs] mapping is stored in a single JSON index file (default: pubchem_index.json).
+
+Key Features
+------------
+- **Local Cache**: Creates and maintains a folder (default: `cache.PubChem`) where each compound is stored in two forms:
+  1. **`cidXXXX.full.json`** – Contains all available properties from PubChem.
+  2. **`cidXXXX.simple.json`** – A lighter record used for quick lookups and indexing.
+
+- **Synonym Indexing**: All synonyms (including IUPAC name, title, and anything else treated as a synonym) are captured and mapped to the compound’s CID in a local dictionary, serialized as `pubchem_index.json`. As soon as a new compound is retrieved from PubChem, these synonyms are added to the index so that future searches for any of those synonyms will immediately return the correct record from the local cache.
+
+- **Refreshable Index**: If the index does not exist or is invalid, the module scans all `*.full.json` files in the cache folder, regenerates each `*.simple.json` (if missing or outdated), and rebuilds the synonyms index.
+
+- **PubChem Queries**: When a requested compound is *not* in the local index, the code automatically queries PubChem via your private `pubchempy` library (`get_compounds(...)`). The first match is saved locally, indexed, and returned. If no match is found, an empty result is returned.
+
+- **Flexible Searching**: You can search by compound name, CAS, SMILES, or any other string recognized by PubChem’s &#34;name&#34; lookup. The local index supports direct substring equality (lowercased). You can easily extend or adapt the code for fuzzy matches or partial synonyms.
+
+Usage Example
+-------------
+Below is a minimal example of how you might use the `CompoundIndex` class once the module is imported:
+
+.. code-block:: python
+
+    from compound_cache import CompoundIndex
+
+    # Instantiate and automatically load or build the index
+    db = CompoundIndex()
+
+    # Search for anisole in &#34;simple&#34; mode
+    result_simple = db.find(&#34;anisole&#34;, output_format=&#34;simple&#34;)
+    print(&#34;Simple record:\n&#34;, result_simple)
+
+    # Retrieve the full record for anisole
+    result_full = db.find(&#34;anisole&#34;, output_format=&#34;full&#34;)
+    print(&#34;Full record:\n&#34;, result_full)
+
+When you search for a compound, the class:
+1. Checks if that query (in lowercase) is in the local synonyms index.
+2. If it is found, loads either the `*.simple.json` or `*.full.json` (depending on output_format) and returns one or more results in a pandas DataFrame.
+3. If not found, queries PubChem once, saves the new record locally in both file formats, adds synonyms to the index, and returns a one-row DataFrame.
+
+Class Summary
+-------------
+**`CompoundIndex`**
+- **`__init__(cache_dir=&#39;cache.PubChem&#39;, index_file=&#39;pubchem_index.json&#39;)`**
+  Prepares the local cache folder, loads or refreshes the synonyms index.
+
+- **`refresh_index()`**
+  Rebuilds the index by scanning all `*.full.json` files in the local cache. Re-creates any missing `*.simple.json` from the full data.
+
+- **`find(query, output_format=&#39;simple&#39;)`**
+  Main user-facing method. Returns a pandas DataFrame of matching records (possibly multiple rows if synonyms map to multiple CIDs). If no local match is found, it queries PubChem, stores the record, and updates the index.
+
+- **Internal Helper Methods**
+  - **`_extract_all_pubchem_properties(compound_obj)`**: Extracts every property from the `pubchempy.Compound` object, calling each property accessor (cid, synonyms, iupac_name, etc.).
+  - **`_generate_simple_dict(full_data, synonyms_set=None)`**: Produces the minimal “light” dictionary saved to `cidXXXX.simple.json`.
+  - **`_gather_synonyms(full_data)`**: Merges synonyms (and other text fields, like `iupac_name`/`title`) into a unified set of strings.
+  - **`_add_synonym_to_index(synonym, cid)`**: Inserts or updates the synonyms→[CIDs] mapping.
+
+Dependencies
+------------
+- **`pandas`**: For returning results as DataFrame objects.
+- **`json`** &amp; **`os`** &amp; **`glob`** &amp; **`datetime`**: For file I/O, directory handling, indexing, caching.
+- **`re`**: For simple CAS pattern matching (e.g., `^\d{1,7}-\d{2}-\d$`).
+- **`private.pubchempy`**: A local (private) version of the PubChem Python client, providing the `get_compounds(...)` method and `Compound` property accessors.
+
+Note
+-----
+- Large-scale usage: For large compound sets, consider optimizing the index or storing data in a more robust database.
+- The synonyms approach: Default matching is **exact** (lowercased). Fuzzy or partial matches require custom logic.
+
+
+@version: 1.2
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-02-17
+@rev: 2025-02-21
+
+Version History
+---------------
+- 1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.
+
+&#34;&#34;&#34;
+
+
+import os
+import json
+import re
+import glob
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# private version of pubchempy
+from patankar.private.pubchempy import get_compounds
+
+__all__ = [&#39;CompoundIndex&#39;, &#39;dbdefault&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;]
+
+__project__ = &#34;SFPPy&#34;
+__author__ = &#34;Olivier Vitrac&#34;
+__copyright__ = &#34;Copyright 2022&#34;
+__credits__ = [&#34;Olivier Vitrac&#34;]
+__license__ = &#34;MIT&#34;
+__maintainer__ = &#34;Olivier Vitrac&#34;
+__email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
+__version__ = &#34;1.2&#34;
+# %% Core class (low-level)
+class CompoundIndex:
+    &#34;&#34;&#34;
+    Class to query chemical compounds by any synonym (name, CAS, etc.)
+    using a local PubChem cache, refreshing or populating it automatically
+    from actual PubChem queries if needed.
+    &#34;&#34;&#34;
+
+    def __init__(self, cache_dir=&#34;cache.PubChem&#34;, index_file=&#34;pubchem_index.json&#34;):
+        &#34;&#34;&#34;
+        Constructor: ensures cache directory and index file exist/are loaded.
+
+        :param cache_dir: path to local cache of *.json files
+        :param index_file: local JSON file holding synonyms → [cids] index
+        &#34;&#34;&#34;
+        self.cache_dir = cache_dir
+        os.makedirs(self.cache_dir, exist_ok=True)
+
+        self.index_file = os.path.join(cache_dir, index_file)
+        # Regex to identify CAS-like strings, e.g. &#34;1234-56-7&#34;
+        self._cas_regex = re.compile(r&#39;^\d{1,7}-\d{2}-\d$&#39;)
+
+        # Attempt to load existing index; if missing or invalid, rebuild
+        if not os.path.isfile(self.index_file):
+            self.refresh_index()
+        else:
+            with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                try:
+                    self.index = json.load(f)
+                except json.JSONDecodeError:
+                    self.index = {}
+            if not isinstance(self.index, dict) or not self.index:
+                self.refresh_index()
+
+    def refresh_index(self):
+        &#34;&#34;&#34;
+        Rebuild the synonyms→[cids] index by scanning *.full.json files
+        in the cache directory, and regenerating each *.simple.json if needed.
+        &#34;&#34;&#34;
+        self.index = {}
+        full_files = glob.glob(os.path.join(self.cache_dir, &#34;cid*.full.json&#34;))
+
+        for full_path in full_files:
+            filename = os.path.basename(full_path)  # e.g. &#34;cid12345.full.json&#34;
+            cid_str = filename.replace(&#34;cid&#34;, &#34;&#34;).replace(&#34;.full.json&#34;, &#34;&#34;)
+            try:
+                cid = int(cid_str)
+            except ValueError:
+                continue  # skip any weirdly named files
+
+            # Load full data
+            with open(full_path, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                try:
+                    full_data = json.load(f)
+                except:
+                    continue
+
+            # Gather synonyms from the &#34;full&#34; data
+            synonyms_set = self._gather_synonyms(full_data)
+
+            # Possibly regenerate the *.simple.json
+            simple_dict = self._generate_simple_dict(full_data, synonyms_set)
+            simple_path = os.path.join(self.cache_dir, f&#34;cid{cid}.simple.json&#34;)
+            with open(simple_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+                json.dump(simple_dict, fw, indent=2)
+
+            # Add synonyms to the index
+            for syn in simple_dict.get(&#34;synonyms&#34;, []):
+                self._add_synonym_to_index(syn, cid)
+
+        # Save updated index
+        with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+            json.dump(self.index, f, indent=2)
+
+    def _add_synonym_to_index(self, synonym, cid):
+        &#34;&#34;&#34;
+        Helper to map a single synonym→cid in self.index.
+        &#34;&#34;&#34;
+        syn_lower = synonym.strip().lower()
+        if syn_lower not in self.index:
+            self.index[syn_lower] = []
+        if cid not in self.index[syn_lower]:
+            self.index[syn_lower].append(cid)
+
+    def _gather_synonyms(self, full_data):
+        &#34;&#34;&#34;
+        Gathers synonyms from the loaded full-data dictionary.
+        We expect &#39;synonyms&#39; to be a list, plus possible extra fields.
+        Merge them into a single set for deduplication.
+        &#34;&#34;&#34;
+        synonyms_set = set()
+
+        # If your full_data includes a &#39;synonyms&#39; list
+        syn_list = full_data.get(&#34;synonyms&#34;, [])
+        if syn_list:
+            synonyms_set.update(syn_list)
+
+        # Also merge other textual fields that are effectively synonyms
+        iupac_name = full_data.get(&#34;iupac_name&#34;)
+        if iupac_name:
+            synonyms_set.add(iupac_name)
+
+        title = full_data.get(&#34;title&#34;)
+        if title:
+            synonyms_set.add(title)
+
+        # You can add more fields if you treat them as synonyms or common names
+        return synonyms_set
+
+    def _generate_simple_dict(self, full_data, synonyms_set=None):
+        &#34;&#34;&#34;
+        Builds a small &#34;light&#34; dictionary for quick searching:
+            CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date.
+        &#34;&#34;&#34;
+        if synonyms_set is None:
+            synonyms_set = set()
+
+        cid = full_data.get(&#34;cid&#34;, None)
+        synonyms_list = sorted(s.strip() for s in synonyms_set if s.strip())
+
+        # Identify CAS numbers within synonyms
+        cas_list = []
+        for syn in synonyms_list:
+            if self._cas_regex.match(syn):
+                cas_list.append(syn)
+
+        # Derive a main &#39;name&#39;
+        name = full_data.get(&#34;iupac_name&#34;) or (synonyms_list[0] if synonyms_list else &#34;&#34;)
+
+        # Some fields might be missing or None
+        record = {
+            &#34;CID&#34;: cid,
+            &#34;name&#34;: name,
+            &#34;synonyms&#34;: synonyms_list,
+            &#34;CAS&#34;: cas_list,
+            &#34;M&#34;: float(full_data.get(&#34;molecular_weight&#34;)),
+            &#34;formula&#34;: full_data.get(&#34;molecular_formula&#34;),
+            &#34;SMILES&#34;: full_data.get(&#34;canonical_smiles&#34;),
+            &#34;InChi&#34;: full_data.get(&#34;inchi&#34;),
+            &#34;InChiKey&#34;: full_data.get(&#34;inchikey&#34;),
+            &#34;logP&#34;: float(full_data.get(&#34;xlogp&#34;)),
+            &#34;date&#34;: datetime.now().strftime(&#34;%Y-%m-%d&#34;),
+        }
+        return record
+
+    def _extract_all_pubchem_properties(self, compound_obj):
+        &#34;&#34;&#34;
+        Uses your local pubchempy.Compound’s @property accessors to get
+        all available fields. This replicates the entire set of property
+        definitions you shared (cid, synonyms, iupac_name, xlogp, etc.),
+        then returns them in one dict.
+
+        We&#39;ll read each property from the compound_obj and store it.
+        If your code snippet has more 3D property calls, just do the same.
+        &#34;&#34;&#34;
+        d = {}
+
+        # Basic identifiers
+        d[&#34;cid&#34;] = compound_obj.cid
+        # synonyms is a memoized_property
+        # so if we do compound_obj.synonyms, it triggers an extra request for synonyms
+        d[&#34;synonyms&#34;] = compound_obj.synonyms or []
+
+        # Extract “static” properties
+        # Many parse data from compound_obj.record[&#39;props&#39;] or similar.
+        d[&#34;sids&#34;] = compound_obj.sids or []
+        d[&#34;aids&#34;] = compound_obj.aids or []
+        d[&#34;elements&#34;] = compound_obj.elements
+        d[&#34;atoms&#34;] = [self._atom_to_dict(a) for a in compound_obj.atoms]  # or just store them raw
+        d[&#34;bonds&#34;] = [self._bond_to_dict(b) for b in compound_obj.bonds]
+        d[&#34;coordinate_type&#34;] = compound_obj.coordinate_type
+        d[&#34;charge&#34;] = compound_obj.charge
+        d[&#34;molecular_formula&#34;] = compound_obj.molecular_formula
+        d[&#34;molecular_weight&#34;] = compound_obj.molecular_weight
+        d[&#34;canonical_smiles&#34;] = compound_obj.canonical_smiles
+        d[&#34;isomeric_smiles&#34;] = compound_obj.isomeric_smiles
+        d[&#34;inchi&#34;] = compound_obj.inchi
+        d[&#34;inchikey&#34;] = compound_obj.inchikey
+        d[&#34;iupac_name&#34;] = compound_obj.iupac_name
+        d[&#34;xlogp&#34;] = compound_obj.xlogp
+        d[&#34;exact_mass&#34;] = compound_obj.exact_mass
+        d[&#34;monoisotopic_mass&#34;] = compound_obj.monoisotopic_mass
+        d[&#34;tpsa&#34;] = compound_obj.tpsa
+        d[&#34;complexity&#34;] = compound_obj.complexity
+        d[&#34;h_bond_donor_count&#34;] = compound_obj.h_bond_donor_count
+        d[&#34;h_bond_acceptor_count&#34;] = compound_obj.h_bond_acceptor_count
+        d[&#34;rotatable_bond_count&#34;] = compound_obj.rotatable_bond_count
+        d[&#34;fingerprint&#34;] = compound_obj.fingerprint
+        # cactvs_fingerprint might be large but let&#39;s store it
+        d[&#34;cactvs_fingerprint&#34;] = compound_obj.cactvs_fingerprint
+        d[&#34;heavy_atom_count&#34;] = compound_obj.heavy_atom_count
+        d[&#34;isotope_atom_count&#34;] = compound_obj.isotope_atom_count
+        d[&#34;atom_stereo_count&#34;] = compound_obj.atom_stereo_count
+        d[&#34;defined_atom_stereo_count&#34;] = compound_obj.defined_atom_stereo_count
+        d[&#34;undefined_atom_stereo_count&#34;] = compound_obj.undefined_atom_stereo_count
+        d[&#34;bond_stereo_count&#34;] = compound_obj.bond_stereo_count
+        d[&#34;defined_bond_stereo_count&#34;] = compound_obj.defined_bond_stereo_count
+        d[&#34;undefined_bond_stereo_count&#34;] = compound_obj.undefined_bond_stereo_count
+        d[&#34;covalent_unit_count&#34;] = compound_obj.covalent_unit_count
+
+        # 3D data (if present)
+        d[&#34;volume_3d&#34;] = compound_obj.volume_3d
+        d[&#34;multipoles_3d&#34;] = compound_obj.multipoles_3d
+        d[&#34;conformer_rmsd_3d&#34;] = compound_obj.conformer_rmsd_3d
+        d[&#34;effective_rotor_count_3d&#34;] = compound_obj.effective_rotor_count_3d
+        d[&#34;pharmacophore_features_3d&#34;] = compound_obj.pharmacophore_features_3d
+        d[&#34;mmff94_partial_charges_3d&#34;] = compound_obj.mmff94_partial_charges_3d
+        d[&#34;mmff94_energy_3d&#34;] = compound_obj.mmff94_energy_3d
+        d[&#34;conformer_id_3d&#34;] = compound_obj.conformer_id_3d
+        d[&#34;shape_selfoverlap_3d&#34;] = compound_obj.shape_selfoverlap_3d
+        d[&#34;feature_selfoverlap_3d&#34;] = compound_obj.feature_selfoverlap_3d
+        d[&#34;shape_fingerprint_3d&#34;] = compound_obj.shape_fingerprint_3d
+
+        return d
+
+    def _atom_to_dict(self, atom_obj):
+        &#34;&#34;&#34;
+        Optional: convert a pubchempy.Atom instance to a small dict
+        with (aid, element, x, y, z, charge, ...).
+        &#34;&#34;&#34;
+        return {
+            &#34;aid&#34;: atom_obj.aid,
+            &#34;element&#34;: atom_obj.element,
+            &#34;x&#34;: atom_obj.x,
+            &#34;y&#34;: atom_obj.y,
+            &#34;z&#34;: atom_obj.z,
+            &#34;charge&#34;: atom_obj.charge,
+        }
+
+    def _bond_to_dict(self, bond_obj):
+        &#34;&#34;&#34;
+        Optional: convert a pubchempy.Bond instance to a small dict
+        with (aid1, aid2, order, etc.).
+        &#34;&#34;&#34;
+        return {
+            &#34;aid1&#34;: bond_obj.aid1,
+            &#34;aid2&#34;: bond_obj.aid2,
+            &#34;order&#34;: bond_obj.order,
+        }
+
+    def find(self, query, output_format=&#34;simple&#34;):
+        &#34;&#34;&#34;
+        Main method to find a compound from local index or from PubChem.
+        Returns a pd.DataFrame with matching records. If multiple CIDs
+        match that synonym, returns multiple rows.
+
+        :param query: string synonym/identifier (name, CAS, SMILES, etc.)
+        :param output_format: &#39;simple&#39; or &#39;full&#39;
+        :return: pd.DataFrame with the results (possibly multiple rows)
+        &#34;&#34;&#34;
+        qlower = query.strip().lower()
+
+        if qlower not in self.index:
+            # Not found locally =&gt; do a PubChem call
+            matches = get_compounds(query, &#39;name&#39;)
+            if not matches:
+                return pd.DataFrame()  # no hits at all
+
+            best = matches[0]
+            # Build the &#34;all-props&#34; dictionary from the pubchempy.Compound
+            best_dict = self._extract_all_pubchem_properties(best)
+
+            cid = best_dict.get(&#34;cid&#34;, None)
+            if cid is None:
+                return pd.DataFrame()  # some edge case with no cid
+
+            # Save the &#34;full&#34; record
+            full_name = f&#34;cid{cid}.full.json&#34;
+            full_path = os.path.join(self.cache_dir, full_name)
+            with open(full_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+                json.dump(best_dict, fw, indent=2)
+
+            # Now prepare the synonyms set from that new record
+            synonyms_set = self._gather_synonyms(best_dict)
+            # Generate the &#34;simple&#34; record
+            simple_dict = self._generate_simple_dict(best_dict, synonyms_set)
+
+            # Save the &#34;simple&#34; record
+            simple_name = f&#34;cid{cid}.simple.json&#34;
+            simple_path = os.path.join(self.cache_dir, simple_name)
+            with open(simple_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+                json.dump(simple_dict, fw, indent=2)
+
+            # Update the index with synonyms
+            for syn in simple_dict.get(&#34;synonyms&#34;, []):
+                self._add_synonym_to_index(syn, cid)
+            # Also index the raw query itself
+            self._add_synonym_to_index(query, cid)
+
+            with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+                json.dump(self.index, f, indent=2)
+
+            # Return a single-row DataFrame
+            if output_format == &#34;full&#34;:
+                return pd.DataFrame([best_dict])
+            else:
+                return pd.DataFrame([simple_dict])
+
+        else:
+            # Found in local index =&gt; load data from cache
+            cids = self.index[qlower]
+            results = []
+            for cid in cids:
+                if output_format == &#34;full&#34;:
+                    fpath = os.path.join(self.cache_dir, f&#34;cid{cid}.full.json&#34;)
+                else:
+                    fpath = os.path.join(self.cache_dir, f&#34;cid{cid}.simple.json&#34;)
+
+                if not os.path.isfile(fpath):
+                    continue  # skip if missing or corrupted
+                with open(fpath, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                    data = json.load(f)
+                results.append(data)
+
+            if not results:
+                return pd.DataFrame()
+
+            return pd.DataFrame(results)
+
+# %% Class migrant (high-level)
+
+# Main compound database
+dbdefault = CompoundIndex(cache_dir=&#34;cache.PubChem&#34;, index_file=&#34;pubchem_index.json&#34;)
+
+# Migrant class
+class migrant:
+    &#34;&#34;&#34;
+    A class representing a migrating chemical substance.
+
+    It can be initialized in three main ways:
+
+    1) Case (a) - By a textual name/CAS only (for a real compound search):
+       ---------------------------------------------------------
+       Example:
+           m = migrant(name=&#34;anisole&#34;, db=my_compound_index)
+           # or
+           m = migrant(name=&#34;anisole&#34;, db=my_compound_index, M=None)
+       In this mode:
+         • A lookup is performed using db.find(name), which may return one or more records.
+         • If multiple records match, data from each record is merged:
+             - compound  = The text used in the query (e.g. &#34;anisole&#34;)
+             - name      = Concatenation of all distinct names from the search results
+             - CAS       = Concatenation of all CAS numbers from the search results
+             - M         = The minimum of all found molecular weights, stored in self.M (a numpy array also keeps the full set)
+             - formula   = The first formula
+             - logP      = All logP values concatenated into a numpy array (self.logP_array).
+                           The main attribute self.logP will be the same array or you may pick a single representative.
+
+    2) Case (b) - By numeric molecular weight(s) alone (generic substance):
+       ---------------------------------------------------------
+       Example:
+           m = migrant(M=200)
+           m = migrant(M=[100, 500])  # Possibly a range
+       In this mode:
+         • No search is performed.
+         • name = &#34;generic&#34; (unless you override it).
+         • compound = &#34;single molecular weight&#34; if 1 entry in M, or
+                      &#34;list of molecular weights ranging from X to Y&#34; if multiple.
+         • CAS = None
+         • M   = the minimum of all provided M values (also stored in a numpy array)
+         • logP = None by default, or can be supplied explicitly as an array
+
+    3) Case (c) - Name + numeric M/logP =&gt; Surrogate / hypothetical:
+       ---------------------------------------------------------
+       Example:
+           m = migrant(name=&#34;mySurrogate&#34;, M=[200, 250], logP=[2.5, 3.0])
+         or
+           m = migrant(name=&#34;surrogate&#34;, M=200)
+       In this mode:
+         • No lookup is performed. This is a “fake” compound not found in PubChem.
+         • compound = &#34;single molecular weight&#34; or
+                      &#34;list of molecular weights ranging from X to Y&#34; if multiple.
+         • name = whatever user provides
+         • CAS = None
+         • M   = min of the provided M array, stored in a numpy array
+         • logP = user-provided array or single float, stored in a numpy array
+
+    Attributes
+    ----------
+    compound : str
+        For case (a) =&gt; the search text;
+        For case (b,c) =&gt; textual description of the numeric M array.
+    name : str or list
+        For case (a) =&gt; aggregated list of all found names (string-joined);
+        For case (b) =&gt; &#34;generic&#34; or user-supplied name;
+        For case (c) =&gt; user-supplied name.
+    CAS : list or None
+        For case (a) =&gt; aggregated CAS from search results;
+        For case (b,c) =&gt; None.
+    M : float
+        The *minimum* M from either the search results or the user-supplied array.
+    M_array : numpy.ndarray
+        The full array of all M values found or provided.
+    logP : float or numpy.ndarray or None
+        For case (a) =&gt; an array of all logP from the search results (or None if not found);
+        For case (b) =&gt; None or user-supplied value/array;
+        For case (c) =&gt; user-supplied value/array.
+    &#34;&#34;&#34;
+
+    # class attribute, maximum width
+    _maxdisplay = 40
+
+    def __init__(self, name=None, M=None, logP=None,
+                 Dmodel = &#34;Piringer&#34;,
+                 Dtemplate = {&#34;polymer&#34;:&#34;LLDPE&#34;, &#34;M&#34;:50, &#34;T&#34;:40}, # do not use None
+                 kmodel = None,
+                 ktemplate = {},
+                 db=dbdefault):
+        &#34;&#34;&#34;
+        Create a new migrant instance.
+
+        Parameters
+        ----------
+        name : str or None
+            - A textual name for the substance to be looked up in PubChem (case a),
+              or a custom name for a surrogate (case c).
+            - If None, and M is given, we treat it as a numeric-only initialization (case b).
+        M : float or list/ndarray of float or None
+            - For case (a): If provided as None, we do a PubChem search by name.
+            - For case (b): The numeric molecular weight(s). No search is performed if name is None.
+            - For case (c): Combined name and numeric M =&gt; a surrogate with no search.
+        logP : float or list/ndarray of float or None
+            - For case (a): Typically None. If the PubChem search returns logP, it’s stored automatically.
+            - For case (b,c): user can supply. If given, stored in self.logP as a numpy array.
+        db : instance of CompoundIndex or similar, optional
+            - If you want to perform a PubChem search (case a) automatically, pass an instance.
+            - If omitted or None, no search is attempted, even if name is given.
+
+        Advanced Parameters
+        -------------------
+        Property models from MigrationPropertyModels can be directly attached to the substance.
+        Based on the current version of migration.py two models are proposed:
+            - Set a diffusivity model using
+                    - Dmodel=&#34;model name&#34;
+                      default =&#34;Piringer&#34;
+                    - Dtemplate=template dict coding for the key:value parameters
+                      (e.g, to bed used Diringer(key1=value1...))
+                      note: the template needs to be valid (do not use None)
+                      default = {&#34;polymer&#34;:None, &#34;M&#34;:None, &#34;T&#34;:None}
+            - Set a Henri-like model using
+                    - kmodel=&#34;model name&#34;
+                      default =None
+                    - ktemplate=template dict coding for the key:value parameters
+                      default = {}
+            other models could be implemented in the future, read the module property.py for details.
+
+        Example of usage of Dpiringer
+            m = migrant(name=&#39;limonene&#39;)
+            # without the helper function
+            Dvalue = m.D.evaluate(**dict(m.Dtemplate,polymer=&#34;LDPE&#34;,T=60))
+            # with the helper function
+            Dvalue = m.Deval(polymer=&#34;LDPE&#34;,T=60)
+
+        Raises
+        ------
+        ValueError if insufficient arguments are provided for any scenario.
+        &#34;&#34;&#34;
+
+        # local import
+        # import implicity property migration models (e.g., Dpiringer)
+        from patankar.property import MigrationPropertyModels, MigrationPropertyModel_validator
+
+        self.compound = None   # str
+        self.name = None       # str or list
+        self.CAS = None        # list or None
+        self.M = None          # float
+        self.M_array = None    # np.ndarray
+        self.logP = None       # float / np.ndarray / None
+
+        # special case
+        if name==M==None:
+            name = &#39;toluene&#39;
+
+        # Convert M to a numpy array if given
+        if M is not None:
+            if isinstance(M, (float, int)):
+                M_array = np.array([float(M)], dtype=float)
+            else:
+                # Convert to array
+                M_array = np.array(M, dtype=float)
+        else:
+            M_array = None
+
+        # Similarly, convert logP to array if provided
+        if logP is not None:
+            if isinstance(logP, (float, int)):
+                logP_array = np.array([float(logP)], dtype=float)
+            else:
+                logP_array = np.array(logP, dtype=float)
+        else:
+            logP_array = None
+
+        # Case (a): name is provided, M=None =&gt; real compound lookup
+        if (name is not None) and (M is None):
+            if db is None:
+                raise ValueError(&#34;A db instance is required for searching by name when M is None.&#34;)
+
+            df = db.find(name, output_format=&#34;simple&#34;)
+            if df.empty:
+                # No record found
+                self.compound = name
+                self.name = [name]
+                self.CAS = []
+                self.M_array = np.array([], dtype=float)
+                self.M = None
+                self.formula = None
+                self.logP = None
+            else:
+                # Possibly multiple matching rows
+                self.compound = name
+
+                all_names = []
+                all_cas = []
+                all_m = []
+                all_formulas = []
+                all_logP = []
+
+                for _, row in df.iterrows():
+                    # Gather a list/set of names
+                    row_names = row.get(&#34;name&#34;, [])
+                    if isinstance(row_names, str):
+                        row_names = [row_names]
+                    row_syns = row.get(&#34;synonyms&#34;, [])
+                    combined_names = set(row_names) | set(row_syns)
+                    all_names.extend(list(combined_names))
+
+                    # CAS
+                    row_cas = row.get(&#34;CAS&#34;, [])
+                    if row_cas:
+                        all_cas.extend(row_cas)
+
+                    # M
+                    row_m = row.get(&#34;M&#34;, None)
+                    if row_m is not None:
+                        try:
+                            all_m.append(float(row_m))
+                        except:
+                            all_m.append(np.nan)
+                    else:
+                        all_m.append(np.nan)
+
+                    # logP
+                    row_logp = row.get(&#34;logP&#34;, None)
+                    if row_logp not in (None, &#34;&#34;):
+                        try:
+                            all_logP.append(float(row_logp))
+                        except:
+                            all_logP.append(np.nan)
+                    else:
+                        all_logP.append(np.nan)
+
+                    # formula (as a string)
+                    row_formula = row.get(&#34;formula&#34;, None)
+                    # Even if None, we append so the index lines up with M
+                    all_formulas.append(row_formula)
+
+                # Convert to arrays
+                arr_m = np.array(all_m, dtype=float)
+                arr_logp = np.array(all_logP, dtype=float)
+
+                # Some dedup / cleaning
+                unique_names = list(set(all_names))
+                unique_cas = list(set(all_cas))
+
+                # Store results in the migrant object
+                self.name = unique_names
+                self.CAS = unique_cas if unique_cas else None
+                self.M_array = arr_m
+                # Minimum M
+                if np.isnan(arr_m).all():
+                    self.M = None
+                    self.formula = None
+                else:
+                    idx_min = np.nanargmin(arr_m)    # index of min M
+                    self.M = arr_m[idx_min]         # pick that M
+                    self.formula = all_formulas[idx_min]  # pick formula from same record
+
+                # Valid logP
+                valid_logp = arr_logp[~np.isnan(arr_logp)]
+                if valid_logp.size &gt; 0:
+                    self.logP = valid_logp  # or store as a list/mean/etc.
+                else:
+                    self.logP = None
+
+        # Case (b): name is None, M is provided =&gt; generic substance
+        # ----------------------------------------------------------------
+        elif (name is None) and (M_array is not None):
+            # No search performed
+            if M_array.size == 1:
+                self.compound = &#34;single molecular weight&#34;
+            else:
+                self.compound = (f&#34;list of molecular weights ranging from &#34;
+                                 f&#34;{float(np.min(M_array))} to {float(np.max(M_array))}&#34;)
+
+            # name =&gt; &#34;generic&#34; or if user explicitly set name=..., handle it here
+            self.name = &#34;generic&#34;  # from instructions
+            self.CAS = None
+            self.M_array = M_array
+            self.M = float(np.min(M_array))
+            self.formula = None
+            self.logP = logP_array  # user-supplied or None
+
+        # Case (c): name is not None and M is provided =&gt; surrogate
+        # ----------------------------------------------------------------
+        elif (name is not None) and (M_array is not None):
+            # No search is done, it doesn&#39;t exist in PubChem
+            if M_array.size == 1:
+                self.compound = &#34;single molecular weight&#34;
+            else:
+                self.compound = (f&#34;list of molecular weights ranging from &#34;
+                                 f&#34;{float(np.min(M_array))} to {float(np.max(M_array))}&#34;)
+
+            self.name = name
+            self.CAS = None
+            self.M_array = M_array
+            self.M = float(np.min(M_array))
+            self.formula = None
+            self.logP = logP_array
+
+        else:
+            # If none of these scenarios apply, user gave incomplete or conflicting args
+            raise ValueError(&#34;Invalid arguments. Provide either name for search (case a), &#34;
+                             &#34;or M for a generic (case b), or both for a surrogate (case c).&#34;)
+
+
+        # Model validation and paramameterization
+        # ----------------------------------------
+
+        # Diffusivity model
+        if Dmodel is not None:
+            if not isinstance(Dmodel,str):
+                raise TypeError(f&#34;Dmodel should be str not a {type(Dmodel).__name__}&#34;)
+            if Dmodel not in MigrationPropertyModels[&#34;D&#34;]:
+                raise ValueError(f&#39;The diffusivity model &#34;{Dmodel}&#34; does not exist&#39;)
+            Dmodelclass = MigrationPropertyModels[&#34;D&#34;][Dmodel]
+            if not MigrationPropertyModel_validator(Dmodelclass,Dmodel,&#34;D&#34;):
+                raise TypeError(f&#39;The diffusivity model &#34;{Dmodel}&#34; is corrupted&#39;)
+            if Dtemplate is None:
+                Dtemplate = {}
+            if not isinstance(Dtemplate,dict):
+                raise TypeError(f&#34;Dtemplate should be a dict not a {type(Dtemplate).__name__}&#34;)
+            self.D  = Dmodelclass
+            self.Dtemplate = Dtemplate.copy()
+            self.Dtemplate.update(M=self.M,logP=self.logP)
+        else:
+            self.D = None
+            self.Dtemplate = None
+
+        # Henri-like model
+        if kmodel is not None:
+            if not isinstance(kmodel,str):
+                raise TypeError(f&#34;kmodel should be str not a {type(kmodel).__name__}&#34;)
+            if kmodel not in MigrationPropertyModels[&#34;k&#34;]:
+                raise ValueError(f&#39;The Henri-like model &#34;{kmodel}&#34; does not exist&#39;)
+            kmodelclass = MigrationPropertyModels[&#34;k&#34;][kmodel]
+            if not MigrationPropertyModel_validator(kmodelclass,Dmodel,&#34;k&#34;):
+                raise TypeError(f&#39;The Henri-like model &#34;{kmodel}&#34; is corrupted&#39;)
+            if ktemplate is None:
+                ktemplate = {}
+            if not isinstance(ktemplate,dict):
+                raise TypeError(f&#34;ktemplate should be a dict not a {type(ktemplate).__name__}&#34;)
+            self.k  = kmodelclass
+            self.ktemplate = ktemplate.copy()
+            self.ktemplate.update(M=self.M,logP=self.logP)
+        else:
+            self.k = None
+            self.ktemplate = None
+
+    # helper property to combine D and Dtemplate
+    @property
+    def Deval(self):
+        &#34;&#34;&#34;Return a callable function that evaluates D with updated parameters.&#34;&#34;&#34;
+        if self.D is None:
+            return lambda **kwargs: None  # Return a function that always returns None
+        def func(**kwargs):
+            updated_template = dict(self.Dtemplate, **kwargs)
+            return self.D.evaluate(**updated_template)
+        return func
+
+    # helper property to combine k and ktemplate
+    @property
+    def keval(self):
+        &#34;&#34;&#34;Return a callable function that evaluates k with updated parameters.&#34;&#34;&#34;
+        if self.k is None:
+            return lambda **kwargs: None  # Return a function that always returns None
+        def func(**kwargs):
+            updated_template = dict(self.ktemplate, **kwargs)
+            return self.k.evaluate(**updated_template)
+        return func
+
+
+
+    def __repr__(self):
+        &#34;&#34;&#34;Formatted string representation summarizing key attributes.&#34;&#34;&#34;
+        # Define header
+        info = [f&#34;&lt;{self.__class__.__name__} object&gt;&#34;]
+        # Collect attributes
+        attributes = {
+            &#34;Compound&#34;: self.compound,
+            &#34;Name&#34;: self.name,
+            &#34;CAS&#34;: self.CAS,
+            &#34;M (min)&#34;: self.M,
+            &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
+            &#34;formula&#34;: self.formula,
+            &#34;logP&#34;: self.logP
+        }
+        # Determine column width based on longest attribute name
+        key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
+        # Format attributes with indentation
+        for key, value in attributes.items():
+            formatted_key = f&#34;{key}:&#34;.rjust(key_width)
+            formatted_value = self.dispmax(value)
+            info.append(f&#34;  {formatted_key} {formatted_value}&#34;)
+        # Print formatted representation
+        repr_str = &#34;\n&#34;.join(info)
+        print(repr_str)
+        # Return a short summary for interactive use
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted string representing the migrant&#34;&#34;&#34;
+        onename = self.name[0] if isinstance(self.name,list) else self.name
+        return f&#34;&lt;{self.__class__.__name__}: {self.dispmax(onename,16)} - M={self.M} g/mol&gt;&#34;
+
+    def dispmax(self,content,maxwidth=None):
+        &#34;&#34;&#34; optimize display &#34;&#34;&#34;
+        strcontent = str(content)
+        maxwidth = self._maxdisplay if maxwidth is None else min(maxwidth,self._maxdisplay)
+        if len(strcontent)&gt;maxwidth:
+            nchar = round(maxwidth/2)
+            return strcontent[:nchar]+&#34; [...] &#34;+strcontent[-nchar:]
+        else:
+            return content
+
+
+# ==========================
+# Usage example:
+# ==========================
+if __name__ == &#34;__main__&#34;:
+    db = CompoundIndex()
+    df_simple = db.find(&#34;limonene&#34;, output_format=&#34;simple&#34;)
+    df_simple = db.find(&#34;aspirin&#34;, output_format=&#34;simple&#34;)
+    df_simple = db.find(&#34;irganox 1076&#34;, output_format=&#34;simple&#34;)
+    df_simple = db.find(&#34;anisole&#34;, output_format=&#34;simple&#34;)
+    print(&#34;Simple result:\n&#34;, df_simple)
+
+    df_full = db.find(&#34;anisole&#34;, output_format=&#34;full&#34;)
+    print(&#34;Full result:\n&#34;, df_full)
+
+    # for migration modeling
+    m = migrant(name=&#39;anisole&#39;)
+    print(m)
+    m = migrant(name=&#39;limonene&#39;)
+    print(m)
+    m = migrant(name=&#39;irganox 1076&#39;)
+    print(m)
+    m = migrant(name=&#39;irgafos 168&#39;)
+    print(m)
+    m = migrant() # toluene
+    print(m)
+    # Piringer D value (several models can be implemented in module property.py)
+    Dval = m.Deval(polymer=&#34;PET&#34;,T=20)
+    print(Dval)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="loadpubchem.get_compounds"><code class="name flex">
+<span>def <span class="ident">get_compounds</span></span>(<span>identifier, namespace='cid', searchtype=None, as_dataframe=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve the specified compound records from PubChem.</p>
+<p>:param identifier: The compound identifier to use as a search query.
+:param namespace: (optional) The identifier type, one of cid, name, smiles, sdf, inchi, inchikey or formula.
+:param searchtype: (optional) The advanced search type, one of substructure, superstructure or similarity.
+:param as_dataframe: (optional) Automatically extract the :class:<code>~pubchempy.Compound</code> properties into a pandas
+:class:<code>~pandas.DataFrame</code> and return that.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_compounds(identifier, namespace=&#39;cid&#39;, searchtype=None, as_dataframe=False, **kwargs):
+    &#34;&#34;&#34;Retrieve the specified compound records from PubChem.
+
+    :param identifier: The compound identifier to use as a search query.
+    :param namespace: (optional) The identifier type, one of cid, name, smiles, sdf, inchi, inchikey or formula.
+    :param searchtype: (optional) The advanced search type, one of substructure, superstructure or similarity.
+    :param as_dataframe: (optional) Automatically extract the :class:`~pubchempy.Compound` properties into a pandas
+                         :class:`~pandas.DataFrame` and return that.
+    &#34;&#34;&#34;
+    results = get_json(identifier, namespace, searchtype=searchtype, **kwargs)
+    compounds = [Compound(r) for r in results[&#39;PC_Compounds&#39;]] if results else []
+    if as_dataframe:
+        return compounds_to_frame(compounds)
+    return compounds</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="loadpubchem.CompoundIndex"><code class="flex name class">
+<span>class <span class="ident">CompoundIndex</span></span>
+<span>(</span><span>cache_dir='cache.PubChem', index_file='pubchem_index.json')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class to query chemical compounds by any synonym (name, CAS, etc.)
+using a local PubChem cache, refreshing or populating it automatically
+from actual PubChem queries if needed.</p>
+<p>Constructor: ensures cache directory and index file exist/are loaded.</p>
+<p>:param cache_dir: path to local cache of *.json files
+:param index_file: local JSON file holding synonyms → [cids] index</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CompoundIndex:
+    &#34;&#34;&#34;
+    Class to query chemical compounds by any synonym (name, CAS, etc.)
+    using a local PubChem cache, refreshing or populating it automatically
+    from actual PubChem queries if needed.
+    &#34;&#34;&#34;
+
+    def __init__(self, cache_dir=&#34;cache.PubChem&#34;, index_file=&#34;pubchem_index.json&#34;):
+        &#34;&#34;&#34;
+        Constructor: ensures cache directory and index file exist/are loaded.
+
+        :param cache_dir: path to local cache of *.json files
+        :param index_file: local JSON file holding synonyms → [cids] index
+        &#34;&#34;&#34;
+        self.cache_dir = cache_dir
+        os.makedirs(self.cache_dir, exist_ok=True)
+
+        self.index_file = os.path.join(cache_dir, index_file)
+        # Regex to identify CAS-like strings, e.g. &#34;1234-56-7&#34;
+        self._cas_regex = re.compile(r&#39;^\d{1,7}-\d{2}-\d$&#39;)
+
+        # Attempt to load existing index; if missing or invalid, rebuild
+        if not os.path.isfile(self.index_file):
+            self.refresh_index()
+        else:
+            with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                try:
+                    self.index = json.load(f)
+                except json.JSONDecodeError:
+                    self.index = {}
+            if not isinstance(self.index, dict) or not self.index:
+                self.refresh_index()
+
+    def refresh_index(self):
+        &#34;&#34;&#34;
+        Rebuild the synonyms→[cids] index by scanning *.full.json files
+        in the cache directory, and regenerating each *.simple.json if needed.
+        &#34;&#34;&#34;
+        self.index = {}
+        full_files = glob.glob(os.path.join(self.cache_dir, &#34;cid*.full.json&#34;))
+
+        for full_path in full_files:
+            filename = os.path.basename(full_path)  # e.g. &#34;cid12345.full.json&#34;
+            cid_str = filename.replace(&#34;cid&#34;, &#34;&#34;).replace(&#34;.full.json&#34;, &#34;&#34;)
+            try:
+                cid = int(cid_str)
+            except ValueError:
+                continue  # skip any weirdly named files
+
+            # Load full data
+            with open(full_path, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                try:
+                    full_data = json.load(f)
+                except:
+                    continue
+
+            # Gather synonyms from the &#34;full&#34; data
+            synonyms_set = self._gather_synonyms(full_data)
+
+            # Possibly regenerate the *.simple.json
+            simple_dict = self._generate_simple_dict(full_data, synonyms_set)
+            simple_path = os.path.join(self.cache_dir, f&#34;cid{cid}.simple.json&#34;)
+            with open(simple_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+                json.dump(simple_dict, fw, indent=2)
+
+            # Add synonyms to the index
+            for syn in simple_dict.get(&#34;synonyms&#34;, []):
+                self._add_synonym_to_index(syn, cid)
+
+        # Save updated index
+        with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+            json.dump(self.index, f, indent=2)
+
+    def _add_synonym_to_index(self, synonym, cid):
+        &#34;&#34;&#34;
+        Helper to map a single synonym→cid in self.index.
+        &#34;&#34;&#34;
+        syn_lower = synonym.strip().lower()
+        if syn_lower not in self.index:
+            self.index[syn_lower] = []
+        if cid not in self.index[syn_lower]:
+            self.index[syn_lower].append(cid)
+
+    def _gather_synonyms(self, full_data):
+        &#34;&#34;&#34;
+        Gathers synonyms from the loaded full-data dictionary.
+        We expect &#39;synonyms&#39; to be a list, plus possible extra fields.
+        Merge them into a single set for deduplication.
+        &#34;&#34;&#34;
+        synonyms_set = set()
+
+        # If your full_data includes a &#39;synonyms&#39; list
+        syn_list = full_data.get(&#34;synonyms&#34;, [])
+        if syn_list:
+            synonyms_set.update(syn_list)
+
+        # Also merge other textual fields that are effectively synonyms
+        iupac_name = full_data.get(&#34;iupac_name&#34;)
+        if iupac_name:
+            synonyms_set.add(iupac_name)
+
+        title = full_data.get(&#34;title&#34;)
+        if title:
+            synonyms_set.add(title)
+
+        # You can add more fields if you treat them as synonyms or common names
+        return synonyms_set
+
+    def _generate_simple_dict(self, full_data, synonyms_set=None):
+        &#34;&#34;&#34;
+        Builds a small &#34;light&#34; dictionary for quick searching:
+            CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date.
+        &#34;&#34;&#34;
+        if synonyms_set is None:
+            synonyms_set = set()
+
+        cid = full_data.get(&#34;cid&#34;, None)
+        synonyms_list = sorted(s.strip() for s in synonyms_set if s.strip())
+
+        # Identify CAS numbers within synonyms
+        cas_list = []
+        for syn in synonyms_list:
+            if self._cas_regex.match(syn):
+                cas_list.append(syn)
+
+        # Derive a main &#39;name&#39;
+        name = full_data.get(&#34;iupac_name&#34;) or (synonyms_list[0] if synonyms_list else &#34;&#34;)
+
+        # Some fields might be missing or None
+        record = {
+            &#34;CID&#34;: cid,
+            &#34;name&#34;: name,
+            &#34;synonyms&#34;: synonyms_list,
+            &#34;CAS&#34;: cas_list,
+            &#34;M&#34;: float(full_data.get(&#34;molecular_weight&#34;)),
+            &#34;formula&#34;: full_data.get(&#34;molecular_formula&#34;),
+            &#34;SMILES&#34;: full_data.get(&#34;canonical_smiles&#34;),
+            &#34;InChi&#34;: full_data.get(&#34;inchi&#34;),
+            &#34;InChiKey&#34;: full_data.get(&#34;inchikey&#34;),
+            &#34;logP&#34;: float(full_data.get(&#34;xlogp&#34;)),
+            &#34;date&#34;: datetime.now().strftime(&#34;%Y-%m-%d&#34;),
+        }
+        return record
+
+    def _extract_all_pubchem_properties(self, compound_obj):
+        &#34;&#34;&#34;
+        Uses your local pubchempy.Compound’s @property accessors to get
+        all available fields. This replicates the entire set of property
+        definitions you shared (cid, synonyms, iupac_name, xlogp, etc.),
+        then returns them in one dict.
+
+        We&#39;ll read each property from the compound_obj and store it.
+        If your code snippet has more 3D property calls, just do the same.
+        &#34;&#34;&#34;
+        d = {}
+
+        # Basic identifiers
+        d[&#34;cid&#34;] = compound_obj.cid
+        # synonyms is a memoized_property
+        # so if we do compound_obj.synonyms, it triggers an extra request for synonyms
+        d[&#34;synonyms&#34;] = compound_obj.synonyms or []
+
+        # Extract “static” properties
+        # Many parse data from compound_obj.record[&#39;props&#39;] or similar.
+        d[&#34;sids&#34;] = compound_obj.sids or []
+        d[&#34;aids&#34;] = compound_obj.aids or []
+        d[&#34;elements&#34;] = compound_obj.elements
+        d[&#34;atoms&#34;] = [self._atom_to_dict(a) for a in compound_obj.atoms]  # or just store them raw
+        d[&#34;bonds&#34;] = [self._bond_to_dict(b) for b in compound_obj.bonds]
+        d[&#34;coordinate_type&#34;] = compound_obj.coordinate_type
+        d[&#34;charge&#34;] = compound_obj.charge
+        d[&#34;molecular_formula&#34;] = compound_obj.molecular_formula
+        d[&#34;molecular_weight&#34;] = compound_obj.molecular_weight
+        d[&#34;canonical_smiles&#34;] = compound_obj.canonical_smiles
+        d[&#34;isomeric_smiles&#34;] = compound_obj.isomeric_smiles
+        d[&#34;inchi&#34;] = compound_obj.inchi
+        d[&#34;inchikey&#34;] = compound_obj.inchikey
+        d[&#34;iupac_name&#34;] = compound_obj.iupac_name
+        d[&#34;xlogp&#34;] = compound_obj.xlogp
+        d[&#34;exact_mass&#34;] = compound_obj.exact_mass
+        d[&#34;monoisotopic_mass&#34;] = compound_obj.monoisotopic_mass
+        d[&#34;tpsa&#34;] = compound_obj.tpsa
+        d[&#34;complexity&#34;] = compound_obj.complexity
+        d[&#34;h_bond_donor_count&#34;] = compound_obj.h_bond_donor_count
+        d[&#34;h_bond_acceptor_count&#34;] = compound_obj.h_bond_acceptor_count
+        d[&#34;rotatable_bond_count&#34;] = compound_obj.rotatable_bond_count
+        d[&#34;fingerprint&#34;] = compound_obj.fingerprint
+        # cactvs_fingerprint might be large but let&#39;s store it
+        d[&#34;cactvs_fingerprint&#34;] = compound_obj.cactvs_fingerprint
+        d[&#34;heavy_atom_count&#34;] = compound_obj.heavy_atom_count
+        d[&#34;isotope_atom_count&#34;] = compound_obj.isotope_atom_count
+        d[&#34;atom_stereo_count&#34;] = compound_obj.atom_stereo_count
+        d[&#34;defined_atom_stereo_count&#34;] = compound_obj.defined_atom_stereo_count
+        d[&#34;undefined_atom_stereo_count&#34;] = compound_obj.undefined_atom_stereo_count
+        d[&#34;bond_stereo_count&#34;] = compound_obj.bond_stereo_count
+        d[&#34;defined_bond_stereo_count&#34;] = compound_obj.defined_bond_stereo_count
+        d[&#34;undefined_bond_stereo_count&#34;] = compound_obj.undefined_bond_stereo_count
+        d[&#34;covalent_unit_count&#34;] = compound_obj.covalent_unit_count
+
+        # 3D data (if present)
+        d[&#34;volume_3d&#34;] = compound_obj.volume_3d
+        d[&#34;multipoles_3d&#34;] = compound_obj.multipoles_3d
+        d[&#34;conformer_rmsd_3d&#34;] = compound_obj.conformer_rmsd_3d
+        d[&#34;effective_rotor_count_3d&#34;] = compound_obj.effective_rotor_count_3d
+        d[&#34;pharmacophore_features_3d&#34;] = compound_obj.pharmacophore_features_3d
+        d[&#34;mmff94_partial_charges_3d&#34;] = compound_obj.mmff94_partial_charges_3d
+        d[&#34;mmff94_energy_3d&#34;] = compound_obj.mmff94_energy_3d
+        d[&#34;conformer_id_3d&#34;] = compound_obj.conformer_id_3d
+        d[&#34;shape_selfoverlap_3d&#34;] = compound_obj.shape_selfoverlap_3d
+        d[&#34;feature_selfoverlap_3d&#34;] = compound_obj.feature_selfoverlap_3d
+        d[&#34;shape_fingerprint_3d&#34;] = compound_obj.shape_fingerprint_3d
+
+        return d
+
+    def _atom_to_dict(self, atom_obj):
+        &#34;&#34;&#34;
+        Optional: convert a pubchempy.Atom instance to a small dict
+        with (aid, element, x, y, z, charge, ...).
+        &#34;&#34;&#34;
+        return {
+            &#34;aid&#34;: atom_obj.aid,
+            &#34;element&#34;: atom_obj.element,
+            &#34;x&#34;: atom_obj.x,
+            &#34;y&#34;: atom_obj.y,
+            &#34;z&#34;: atom_obj.z,
+            &#34;charge&#34;: atom_obj.charge,
+        }
+
+    def _bond_to_dict(self, bond_obj):
+        &#34;&#34;&#34;
+        Optional: convert a pubchempy.Bond instance to a small dict
+        with (aid1, aid2, order, etc.).
+        &#34;&#34;&#34;
+        return {
+            &#34;aid1&#34;: bond_obj.aid1,
+            &#34;aid2&#34;: bond_obj.aid2,
+            &#34;order&#34;: bond_obj.order,
+        }
+
+    def find(self, query, output_format=&#34;simple&#34;):
+        &#34;&#34;&#34;
+        Main method to find a compound from local index or from PubChem.
+        Returns a pd.DataFrame with matching records. If multiple CIDs
+        match that synonym, returns multiple rows.
+
+        :param query: string synonym/identifier (name, CAS, SMILES, etc.)
+        :param output_format: &#39;simple&#39; or &#39;full&#39;
+        :return: pd.DataFrame with the results (possibly multiple rows)
+        &#34;&#34;&#34;
+        qlower = query.strip().lower()
+
+        if qlower not in self.index:
+            # Not found locally =&gt; do a PubChem call
+            matches = get_compounds(query, &#39;name&#39;)
+            if not matches:
+                return pd.DataFrame()  # no hits at all
+
+            best = matches[0]
+            # Build the &#34;all-props&#34; dictionary from the pubchempy.Compound
+            best_dict = self._extract_all_pubchem_properties(best)
+
+            cid = best_dict.get(&#34;cid&#34;, None)
+            if cid is None:
+                return pd.DataFrame()  # some edge case with no cid
+
+            # Save the &#34;full&#34; record
+            full_name = f&#34;cid{cid}.full.json&#34;
+            full_path = os.path.join(self.cache_dir, full_name)
+            with open(full_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+                json.dump(best_dict, fw, indent=2)
+
+            # Now prepare the synonyms set from that new record
+            synonyms_set = self._gather_synonyms(best_dict)
+            # Generate the &#34;simple&#34; record
+            simple_dict = self._generate_simple_dict(best_dict, synonyms_set)
+
+            # Save the &#34;simple&#34; record
+            simple_name = f&#34;cid{cid}.simple.json&#34;
+            simple_path = os.path.join(self.cache_dir, simple_name)
+            with open(simple_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+                json.dump(simple_dict, fw, indent=2)
+
+            # Update the index with synonyms
+            for syn in simple_dict.get(&#34;synonyms&#34;, []):
+                self._add_synonym_to_index(syn, cid)
+            # Also index the raw query itself
+            self._add_synonym_to_index(query, cid)
+
+            with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+                json.dump(self.index, f, indent=2)
+
+            # Return a single-row DataFrame
+            if output_format == &#34;full&#34;:
+                return pd.DataFrame([best_dict])
+            else:
+                return pd.DataFrame([simple_dict])
+
+        else:
+            # Found in local index =&gt; load data from cache
+            cids = self.index[qlower]
+            results = []
+            for cid in cids:
+                if output_format == &#34;full&#34;:
+                    fpath = os.path.join(self.cache_dir, f&#34;cid{cid}.full.json&#34;)
+                else:
+                    fpath = os.path.join(self.cache_dir, f&#34;cid{cid}.simple.json&#34;)
+
+                if not os.path.isfile(fpath):
+                    continue  # skip if missing or corrupted
+                with open(fpath, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                    data = json.load(f)
+                results.append(data)
+
+            if not results:
+                return pd.DataFrame()
+
+            return pd.DataFrame(results)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="loadpubchem.CompoundIndex.find"><code class="name flex">
+<span>def <span class="ident">find</span></span>(<span>self, query, output_format='simple')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Main method to find a compound from local index or from PubChem.
+Returns a pd.DataFrame with matching records. If multiple CIDs
+match that synonym, returns multiple rows.</p>
+<p>:param query: string synonym/identifier (name, CAS, SMILES, etc.)
+:param output_format: 'simple' or 'full'
+:return: pd.DataFrame with the results (possibly multiple rows)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find(self, query, output_format=&#34;simple&#34;):
+    &#34;&#34;&#34;
+    Main method to find a compound from local index or from PubChem.
+    Returns a pd.DataFrame with matching records. If multiple CIDs
+    match that synonym, returns multiple rows.
+
+    :param query: string synonym/identifier (name, CAS, SMILES, etc.)
+    :param output_format: &#39;simple&#39; or &#39;full&#39;
+    :return: pd.DataFrame with the results (possibly multiple rows)
+    &#34;&#34;&#34;
+    qlower = query.strip().lower()
+
+    if qlower not in self.index:
+        # Not found locally =&gt; do a PubChem call
+        matches = get_compounds(query, &#39;name&#39;)
+        if not matches:
+            return pd.DataFrame()  # no hits at all
+
+        best = matches[0]
+        # Build the &#34;all-props&#34; dictionary from the pubchempy.Compound
+        best_dict = self._extract_all_pubchem_properties(best)
+
+        cid = best_dict.get(&#34;cid&#34;, None)
+        if cid is None:
+            return pd.DataFrame()  # some edge case with no cid
+
+        # Save the &#34;full&#34; record
+        full_name = f&#34;cid{cid}.full.json&#34;
+        full_path = os.path.join(self.cache_dir, full_name)
+        with open(full_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+            json.dump(best_dict, fw, indent=2)
+
+        # Now prepare the synonyms set from that new record
+        synonyms_set = self._gather_synonyms(best_dict)
+        # Generate the &#34;simple&#34; record
+        simple_dict = self._generate_simple_dict(best_dict, synonyms_set)
+
+        # Save the &#34;simple&#34; record
+        simple_name = f&#34;cid{cid}.simple.json&#34;
+        simple_path = os.path.join(self.cache_dir, simple_name)
+        with open(simple_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+            json.dump(simple_dict, fw, indent=2)
+
+        # Update the index with synonyms
+        for syn in simple_dict.get(&#34;synonyms&#34;, []):
+            self._add_synonym_to_index(syn, cid)
+        # Also index the raw query itself
+        self._add_synonym_to_index(query, cid)
+
+        with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+            json.dump(self.index, f, indent=2)
+
+        # Return a single-row DataFrame
+        if output_format == &#34;full&#34;:
+            return pd.DataFrame([best_dict])
+        else:
+            return pd.DataFrame([simple_dict])
+
+    else:
+        # Found in local index =&gt; load data from cache
+        cids = self.index[qlower]
+        results = []
+        for cid in cids:
+            if output_format == &#34;full&#34;:
+                fpath = os.path.join(self.cache_dir, f&#34;cid{cid}.full.json&#34;)
+            else:
+                fpath = os.path.join(self.cache_dir, f&#34;cid{cid}.simple.json&#34;)
+
+            if not os.path.isfile(fpath):
+                continue  # skip if missing or corrupted
+            with open(fpath, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                data = json.load(f)
+            results.append(data)
+
+        if not results:
+            return pd.DataFrame()
+
+        return pd.DataFrame(results)</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.CompoundIndex.refresh_index"><code class="name flex">
+<span>def <span class="ident">refresh_index</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rebuild the synonyms→[cids] index by scanning <em>.full.json files
+in the cache directory, and regenerating each </em>.simple.json if needed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def refresh_index(self):
+    &#34;&#34;&#34;
+    Rebuild the synonyms→[cids] index by scanning *.full.json files
+    in the cache directory, and regenerating each *.simple.json if needed.
+    &#34;&#34;&#34;
+    self.index = {}
+    full_files = glob.glob(os.path.join(self.cache_dir, &#34;cid*.full.json&#34;))
+
+    for full_path in full_files:
+        filename = os.path.basename(full_path)  # e.g. &#34;cid12345.full.json&#34;
+        cid_str = filename.replace(&#34;cid&#34;, &#34;&#34;).replace(&#34;.full.json&#34;, &#34;&#34;)
+        try:
+            cid = int(cid_str)
+        except ValueError:
+            continue  # skip any weirdly named files
+
+        # Load full data
+        with open(full_path, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+            try:
+                full_data = json.load(f)
+            except:
+                continue
+
+        # Gather synonyms from the &#34;full&#34; data
+        synonyms_set = self._gather_synonyms(full_data)
+
+        # Possibly regenerate the *.simple.json
+        simple_dict = self._generate_simple_dict(full_data, synonyms_set)
+        simple_path = os.path.join(self.cache_dir, f&#34;cid{cid}.simple.json&#34;)
+        with open(simple_path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fw:
+            json.dump(simple_dict, fw, indent=2)
+
+        # Add synonyms to the index
+        for syn in simple_dict.get(&#34;synonyms&#34;, []):
+            self._add_synonym_to_index(syn, cid)
+
+    # Save updated index
+    with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+        json.dump(self.index, f, indent=2)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="loadpubchem.migrant"><code class="flex name class">
+<span>class <span class="ident">migrant</span></span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50, 'T': 40}, kmodel=None, ktemplate={}, db=&lt;loadpubchem.CompoundIndex object&gt;)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class representing a migrating chemical substance.</p>
+<p>It can be initialized in three main ways:</p>
+<p>1) Case (a) - By a textual name/CAS only (for a real compound search):</p>
+<hr>
+<p>Example:
+m = migrant(name="anisole", db=my_compound_index)
+# or
+m = migrant(name="anisole", db=my_compound_index, M=None)
+In this mode:
+• A lookup is performed using db.find(name), which may return one or more records.
+• If multiple records match, data from each record is merged:
+- compound
+= The text used in the query (e.g. "anisole")
+- name
+= Concatenation of all distinct names from the search results
+- CAS
+= Concatenation of all CAS numbers from the search results
+- M
+= The minimum of all found molecular weights, stored in self.M (a numpy array also keeps the full set)
+- formula
+= The first formula
+- logP
+= All logP values concatenated into a numpy array (self.logP_array).
+The main attribute self.logP will be the same array or you may pick a single representative.</p>
+<p>2) Case (b) - By numeric molecular weight(s) alone (generic substance):</p>
+<hr>
+<p>Example:
+m = migrant(M=200)
+m = migrant(M=[100, 500])
+# Possibly a range
+In this mode:
+• No search is performed.
+• name = "generic" (unless you override it).
+• compound = "single molecular weight" if 1 entry in M, or
+"list of molecular weights ranging from X to Y" if multiple.
+• CAS = None
+• M
+= the minimum of all provided M values (also stored in a numpy array)
+• logP = None by default, or can be supplied explicitly as an array</p>
+<p>3) Case (c) - Name + numeric M/logP =&gt; Surrogate / hypothetical:</p>
+<hr>
+<p>Example:
+m = migrant(name="mySurrogate", M=[200, 250], logP=[2.5, 3.0])
+or
+m = migrant(name="surrogate", M=200)
+In this mode:
+• No lookup is performed. This is a “fake” compound not found in PubChem.
+• compound = "single molecular weight" or
+"list of molecular weights ranging from X to Y" if multiple.
+• name = whatever user provides
+• CAS = None
+• M
+= min of the provided M array, stored in a numpy array
+• logP = user-provided array or single float, stored in a numpy array</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>compound</code></strong> :&ensp;<code>str</code></dt>
+<dd>For case (a) =&gt; the search text;
+For case (b,c) =&gt; textual description of the numeric M array.</dd>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code> or <code>list</code></dt>
+<dd>For case (a) =&gt; aggregated list of all found names (string-joined);
+For case (b) =&gt; "generic" or user-supplied name;
+For case (c) =&gt; user-supplied name.</dd>
+<dt><strong><code>CAS</code></strong> :&ensp;<code>list</code> or <code>None</code></dt>
+<dd>For case (a) =&gt; aggregated CAS from search results;
+For case (b,c) =&gt; None.</dd>
+<dt><strong><code>M</code></strong> :&ensp;<code>float</code></dt>
+<dd>The <em>minimum</em> M from either the search results or the user-supplied array.</dd>
+<dt><strong><code>M_array</code></strong> :&ensp;<code>numpy.ndarray</code></dt>
+<dd>The full array of all M values found or provided.</dd>
+<dt><strong><code>logP</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> or <code>None</code></dt>
+<dd>For case (a) =&gt; an array of all logP from the search results (or None if not found);
+For case (b) =&gt; None or user-supplied value/array;
+For case (c) =&gt; user-supplied value/array.</dd>
+</dl>
+<p>Create a new migrant instance.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code> or <code>None</code></dt>
+<dd>
+<ul>
+<li>A textual name for the substance to be looked up in PubChem (case a),
+or a custom name for a surrogate (case c).</li>
+<li>If None, and M is given, we treat it as a numeric-only initialization (case b).</li>
+</ul>
+</dd>
+<dt><strong><code>M</code></strong> :&ensp;<code>float</code> or <code>list/ndarray</code> of <code>float</code> or <code>None</code></dt>
+<dd>
+<ul>
+<li>For case (a): If provided as None, we do a PubChem search by name.</li>
+<li>For case (b): The numeric molecular weight(s). No search is performed if name is None.</li>
+<li>For case (c): Combined name and numeric M =&gt; a surrogate with no search.</li>
+</ul>
+</dd>
+<dt><strong><code>logP</code></strong> :&ensp;<code>float</code> or <code>list/ndarray</code> of <code>float</code> or <code>None</code></dt>
+<dd>
+<ul>
+<li>For case (a): Typically None. If the PubChem search returns logP, it’s stored automatically.</li>
+<li>For case (b,c): user can supply. If given, stored in self.logP as a numpy array.</li>
+</ul>
+</dd>
+<dt><strong><code>db</code></strong> :&ensp;<code>instance</code> of <code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code> or <code>similar</code>, optional</dt>
+<dd>
+<ul>
+<li>If you want to perform a PubChem search (case a) automatically, pass an instance.</li>
+<li>If omitted or None, no search is attempted, even if name is given.</li>
+</ul>
+</dd>
+</dl>
+<h2 id="advanced-parameters">Advanced Parameters</h2>
+<p>Property models from MigrationPropertyModels can be directly attached to the substance.
+Based on the current version of migration.py two models are proposed:
+- Set a diffusivity model using
+- Dmodel="model name"
+default ="Piringer"
+- Dtemplate=template dict coding for the key:value parameters
+(e.g, to bed used Diringer(key1=value1&hellip;))
+note: the template needs to be valid (do not use None)
+default = {"polymer":None, "M":None, "T":None}
+- Set a Henri-like model using
+- kmodel="model name"
+default =None
+- ktemplate=template dict coding for the key:value parameters
+default = {}
+other models could be implemented in the future, read the module property.py for details.</p>
+<p>Example of usage of Dpiringer
+m = migrant(name='limonene')
+# without the helper function
+Dvalue = m.D.evaluate(**dict(m.Dtemplate,polymer="LDPE",T=60))
+# with the helper function
+Dvalue = m.Deval(polymer="LDPE",T=60)</p>
+<h2 id="raises">Raises</h2>
+<p>ValueError if insufficient arguments are provided for any scenario.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class migrant:
+    &#34;&#34;&#34;
+    A class representing a migrating chemical substance.
+
+    It can be initialized in three main ways:
+
+    1) Case (a) - By a textual name/CAS only (for a real compound search):
+       ---------------------------------------------------------
+       Example:
+           m = migrant(name=&#34;anisole&#34;, db=my_compound_index)
+           # or
+           m = migrant(name=&#34;anisole&#34;, db=my_compound_index, M=None)
+       In this mode:
+         • A lookup is performed using db.find(name), which may return one or more records.
+         • If multiple records match, data from each record is merged:
+             - compound  = The text used in the query (e.g. &#34;anisole&#34;)
+             - name      = Concatenation of all distinct names from the search results
+             - CAS       = Concatenation of all CAS numbers from the search results
+             - M         = The minimum of all found molecular weights, stored in self.M (a numpy array also keeps the full set)
+             - formula   = The first formula
+             - logP      = All logP values concatenated into a numpy array (self.logP_array).
+                           The main attribute self.logP will be the same array or you may pick a single representative.
+
+    2) Case (b) - By numeric molecular weight(s) alone (generic substance):
+       ---------------------------------------------------------
+       Example:
+           m = migrant(M=200)
+           m = migrant(M=[100, 500])  # Possibly a range
+       In this mode:
+         • No search is performed.
+         • name = &#34;generic&#34; (unless you override it).
+         • compound = &#34;single molecular weight&#34; if 1 entry in M, or
+                      &#34;list of molecular weights ranging from X to Y&#34; if multiple.
+         • CAS = None
+         • M   = the minimum of all provided M values (also stored in a numpy array)
+         • logP = None by default, or can be supplied explicitly as an array
+
+    3) Case (c) - Name + numeric M/logP =&gt; Surrogate / hypothetical:
+       ---------------------------------------------------------
+       Example:
+           m = migrant(name=&#34;mySurrogate&#34;, M=[200, 250], logP=[2.5, 3.0])
+         or
+           m = migrant(name=&#34;surrogate&#34;, M=200)
+       In this mode:
+         • No lookup is performed. This is a “fake” compound not found in PubChem.
+         • compound = &#34;single molecular weight&#34; or
+                      &#34;list of molecular weights ranging from X to Y&#34; if multiple.
+         • name = whatever user provides
+         • CAS = None
+         • M   = min of the provided M array, stored in a numpy array
+         • logP = user-provided array or single float, stored in a numpy array
+
+    Attributes
+    ----------
+    compound : str
+        For case (a) =&gt; the search text;
+        For case (b,c) =&gt; textual description of the numeric M array.
+    name : str or list
+        For case (a) =&gt; aggregated list of all found names (string-joined);
+        For case (b) =&gt; &#34;generic&#34; or user-supplied name;
+        For case (c) =&gt; user-supplied name.
+    CAS : list or None
+        For case (a) =&gt; aggregated CAS from search results;
+        For case (b,c) =&gt; None.
+    M : float
+        The *minimum* M from either the search results or the user-supplied array.
+    M_array : numpy.ndarray
+        The full array of all M values found or provided.
+    logP : float or numpy.ndarray or None
+        For case (a) =&gt; an array of all logP from the search results (or None if not found);
+        For case (b) =&gt; None or user-supplied value/array;
+        For case (c) =&gt; user-supplied value/array.
+    &#34;&#34;&#34;
+
+    # class attribute, maximum width
+    _maxdisplay = 40
+
+    def __init__(self, name=None, M=None, logP=None,
+                 Dmodel = &#34;Piringer&#34;,
+                 Dtemplate = {&#34;polymer&#34;:&#34;LLDPE&#34;, &#34;M&#34;:50, &#34;T&#34;:40}, # do not use None
+                 kmodel = None,
+                 ktemplate = {},
+                 db=dbdefault):
+        &#34;&#34;&#34;
+        Create a new migrant instance.
+
+        Parameters
+        ----------
+        name : str or None
+            - A textual name for the substance to be looked up in PubChem (case a),
+              or a custom name for a surrogate (case c).
+            - If None, and M is given, we treat it as a numeric-only initialization (case b).
+        M : float or list/ndarray of float or None
+            - For case (a): If provided as None, we do a PubChem search by name.
+            - For case (b): The numeric molecular weight(s). No search is performed if name is None.
+            - For case (c): Combined name and numeric M =&gt; a surrogate with no search.
+        logP : float or list/ndarray of float or None
+            - For case (a): Typically None. If the PubChem search returns logP, it’s stored automatically.
+            - For case (b,c): user can supply. If given, stored in self.logP as a numpy array.
+        db : instance of CompoundIndex or similar, optional
+            - If you want to perform a PubChem search (case a) automatically, pass an instance.
+            - If omitted or None, no search is attempted, even if name is given.
+
+        Advanced Parameters
+        -------------------
+        Property models from MigrationPropertyModels can be directly attached to the substance.
+        Based on the current version of migration.py two models are proposed:
+            - Set a diffusivity model using
+                    - Dmodel=&#34;model name&#34;
+                      default =&#34;Piringer&#34;
+                    - Dtemplate=template dict coding for the key:value parameters
+                      (e.g, to bed used Diringer(key1=value1...))
+                      note: the template needs to be valid (do not use None)
+                      default = {&#34;polymer&#34;:None, &#34;M&#34;:None, &#34;T&#34;:None}
+            - Set a Henri-like model using
+                    - kmodel=&#34;model name&#34;
+                      default =None
+                    - ktemplate=template dict coding for the key:value parameters
+                      default = {}
+            other models could be implemented in the future, read the module property.py for details.
+
+        Example of usage of Dpiringer
+            m = migrant(name=&#39;limonene&#39;)
+            # without the helper function
+            Dvalue = m.D.evaluate(**dict(m.Dtemplate,polymer=&#34;LDPE&#34;,T=60))
+            # with the helper function
+            Dvalue = m.Deval(polymer=&#34;LDPE&#34;,T=60)
+
+        Raises
+        ------
+        ValueError if insufficient arguments are provided for any scenario.
+        &#34;&#34;&#34;
+
+        # local import
+        # import implicity property migration models (e.g., Dpiringer)
+        from patankar.property import MigrationPropertyModels, MigrationPropertyModel_validator
+
+        self.compound = None   # str
+        self.name = None       # str or list
+        self.CAS = None        # list or None
+        self.M = None          # float
+        self.M_array = None    # np.ndarray
+        self.logP = None       # float / np.ndarray / None
+
+        # special case
+        if name==M==None:
+            name = &#39;toluene&#39;
+
+        # Convert M to a numpy array if given
+        if M is not None:
+            if isinstance(M, (float, int)):
+                M_array = np.array([float(M)], dtype=float)
+            else:
+                # Convert to array
+                M_array = np.array(M, dtype=float)
+        else:
+            M_array = None
+
+        # Similarly, convert logP to array if provided
+        if logP is not None:
+            if isinstance(logP, (float, int)):
+                logP_array = np.array([float(logP)], dtype=float)
+            else:
+                logP_array = np.array(logP, dtype=float)
+        else:
+            logP_array = None
+
+        # Case (a): name is provided, M=None =&gt; real compound lookup
+        if (name is not None) and (M is None):
+            if db is None:
+                raise ValueError(&#34;A db instance is required for searching by name when M is None.&#34;)
+
+            df = db.find(name, output_format=&#34;simple&#34;)
+            if df.empty:
+                # No record found
+                self.compound = name
+                self.name = [name]
+                self.CAS = []
+                self.M_array = np.array([], dtype=float)
+                self.M = None
+                self.formula = None
+                self.logP = None
+            else:
+                # Possibly multiple matching rows
+                self.compound = name
+
+                all_names = []
+                all_cas = []
+                all_m = []
+                all_formulas = []
+                all_logP = []
+
+                for _, row in df.iterrows():
+                    # Gather a list/set of names
+                    row_names = row.get(&#34;name&#34;, [])
+                    if isinstance(row_names, str):
+                        row_names = [row_names]
+                    row_syns = row.get(&#34;synonyms&#34;, [])
+                    combined_names = set(row_names) | set(row_syns)
+                    all_names.extend(list(combined_names))
+
+                    # CAS
+                    row_cas = row.get(&#34;CAS&#34;, [])
+                    if row_cas:
+                        all_cas.extend(row_cas)
+
+                    # M
+                    row_m = row.get(&#34;M&#34;, None)
+                    if row_m is not None:
+                        try:
+                            all_m.append(float(row_m))
+                        except:
+                            all_m.append(np.nan)
+                    else:
+                        all_m.append(np.nan)
+
+                    # logP
+                    row_logp = row.get(&#34;logP&#34;, None)
+                    if row_logp not in (None, &#34;&#34;):
+                        try:
+                            all_logP.append(float(row_logp))
+                        except:
+                            all_logP.append(np.nan)
+                    else:
+                        all_logP.append(np.nan)
+
+                    # formula (as a string)
+                    row_formula = row.get(&#34;formula&#34;, None)
+                    # Even if None, we append so the index lines up with M
+                    all_formulas.append(row_formula)
+
+                # Convert to arrays
+                arr_m = np.array(all_m, dtype=float)
+                arr_logp = np.array(all_logP, dtype=float)
+
+                # Some dedup / cleaning
+                unique_names = list(set(all_names))
+                unique_cas = list(set(all_cas))
+
+                # Store results in the migrant object
+                self.name = unique_names
+                self.CAS = unique_cas if unique_cas else None
+                self.M_array = arr_m
+                # Minimum M
+                if np.isnan(arr_m).all():
+                    self.M = None
+                    self.formula = None
+                else:
+                    idx_min = np.nanargmin(arr_m)    # index of min M
+                    self.M = arr_m[idx_min]         # pick that M
+                    self.formula = all_formulas[idx_min]  # pick formula from same record
+
+                # Valid logP
+                valid_logp = arr_logp[~np.isnan(arr_logp)]
+                if valid_logp.size &gt; 0:
+                    self.logP = valid_logp  # or store as a list/mean/etc.
+                else:
+                    self.logP = None
+
+        # Case (b): name is None, M is provided =&gt; generic substance
+        # ----------------------------------------------------------------
+        elif (name is None) and (M_array is not None):
+            # No search performed
+            if M_array.size == 1:
+                self.compound = &#34;single molecular weight&#34;
+            else:
+                self.compound = (f&#34;list of molecular weights ranging from &#34;
+                                 f&#34;{float(np.min(M_array))} to {float(np.max(M_array))}&#34;)
+
+            # name =&gt; &#34;generic&#34; or if user explicitly set name=..., handle it here
+            self.name = &#34;generic&#34;  # from instructions
+            self.CAS = None
+            self.M_array = M_array
+            self.M = float(np.min(M_array))
+            self.formula = None
+            self.logP = logP_array  # user-supplied or None
+
+        # Case (c): name is not None and M is provided =&gt; surrogate
+        # ----------------------------------------------------------------
+        elif (name is not None) and (M_array is not None):
+            # No search is done, it doesn&#39;t exist in PubChem
+            if M_array.size == 1:
+                self.compound = &#34;single molecular weight&#34;
+            else:
+                self.compound = (f&#34;list of molecular weights ranging from &#34;
+                                 f&#34;{float(np.min(M_array))} to {float(np.max(M_array))}&#34;)
+
+            self.name = name
+            self.CAS = None
+            self.M_array = M_array
+            self.M = float(np.min(M_array))
+            self.formula = None
+            self.logP = logP_array
+
+        else:
+            # If none of these scenarios apply, user gave incomplete or conflicting args
+            raise ValueError(&#34;Invalid arguments. Provide either name for search (case a), &#34;
+                             &#34;or M for a generic (case b), or both for a surrogate (case c).&#34;)
+
+
+        # Model validation and paramameterization
+        # ----------------------------------------
+
+        # Diffusivity model
+        if Dmodel is not None:
+            if not isinstance(Dmodel,str):
+                raise TypeError(f&#34;Dmodel should be str not a {type(Dmodel).__name__}&#34;)
+            if Dmodel not in MigrationPropertyModels[&#34;D&#34;]:
+                raise ValueError(f&#39;The diffusivity model &#34;{Dmodel}&#34; does not exist&#39;)
+            Dmodelclass = MigrationPropertyModels[&#34;D&#34;][Dmodel]
+            if not MigrationPropertyModel_validator(Dmodelclass,Dmodel,&#34;D&#34;):
+                raise TypeError(f&#39;The diffusivity model &#34;{Dmodel}&#34; is corrupted&#39;)
+            if Dtemplate is None:
+                Dtemplate = {}
+            if not isinstance(Dtemplate,dict):
+                raise TypeError(f&#34;Dtemplate should be a dict not a {type(Dtemplate).__name__}&#34;)
+            self.D  = Dmodelclass
+            self.Dtemplate = Dtemplate.copy()
+            self.Dtemplate.update(M=self.M,logP=self.logP)
+        else:
+            self.D = None
+            self.Dtemplate = None
+
+        # Henri-like model
+        if kmodel is not None:
+            if not isinstance(kmodel,str):
+                raise TypeError(f&#34;kmodel should be str not a {type(kmodel).__name__}&#34;)
+            if kmodel not in MigrationPropertyModels[&#34;k&#34;]:
+                raise ValueError(f&#39;The Henri-like model &#34;{kmodel}&#34; does not exist&#39;)
+            kmodelclass = MigrationPropertyModels[&#34;k&#34;][kmodel]
+            if not MigrationPropertyModel_validator(kmodelclass,Dmodel,&#34;k&#34;):
+                raise TypeError(f&#39;The Henri-like model &#34;{kmodel}&#34; is corrupted&#39;)
+            if ktemplate is None:
+                ktemplate = {}
+            if not isinstance(ktemplate,dict):
+                raise TypeError(f&#34;ktemplate should be a dict not a {type(ktemplate).__name__}&#34;)
+            self.k  = kmodelclass
+            self.ktemplate = ktemplate.copy()
+            self.ktemplate.update(M=self.M,logP=self.logP)
+        else:
+            self.k = None
+            self.ktemplate = None
+
+    # helper property to combine D and Dtemplate
+    @property
+    def Deval(self):
+        &#34;&#34;&#34;Return a callable function that evaluates D with updated parameters.&#34;&#34;&#34;
+        if self.D is None:
+            return lambda **kwargs: None  # Return a function that always returns None
+        def func(**kwargs):
+            updated_template = dict(self.Dtemplate, **kwargs)
+            return self.D.evaluate(**updated_template)
+        return func
+
+    # helper property to combine k and ktemplate
+    @property
+    def keval(self):
+        &#34;&#34;&#34;Return a callable function that evaluates k with updated parameters.&#34;&#34;&#34;
+        if self.k is None:
+            return lambda **kwargs: None  # Return a function that always returns None
+        def func(**kwargs):
+            updated_template = dict(self.ktemplate, **kwargs)
+            return self.k.evaluate(**updated_template)
+        return func
+
+
+
+    def __repr__(self):
+        &#34;&#34;&#34;Formatted string representation summarizing key attributes.&#34;&#34;&#34;
+        # Define header
+        info = [f&#34;&lt;{self.__class__.__name__} object&gt;&#34;]
+        # Collect attributes
+        attributes = {
+            &#34;Compound&#34;: self.compound,
+            &#34;Name&#34;: self.name,
+            &#34;CAS&#34;: self.CAS,
+            &#34;M (min)&#34;: self.M,
+            &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
+            &#34;formula&#34;: self.formula,
+            &#34;logP&#34;: self.logP
+        }
+        # Determine column width based on longest attribute name
+        key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
+        # Format attributes with indentation
+        for key, value in attributes.items():
+            formatted_key = f&#34;{key}:&#34;.rjust(key_width)
+            formatted_value = self.dispmax(value)
+            info.append(f&#34;  {formatted_key} {formatted_value}&#34;)
+        # Print formatted representation
+        repr_str = &#34;\n&#34;.join(info)
+        print(repr_str)
+        # Return a short summary for interactive use
+        return str(self)
+
+    def __str__(self):
+        &#34;&#34;&#34;Formatted string representing the migrant&#34;&#34;&#34;
+        onename = self.name[0] if isinstance(self.name,list) else self.name
+        return f&#34;&lt;{self.__class__.__name__}: {self.dispmax(onename,16)} - M={self.M} g/mol&gt;&#34;
+
+    def dispmax(self,content,maxwidth=None):
+        &#34;&#34;&#34; optimize display &#34;&#34;&#34;
+        strcontent = str(content)
+        maxwidth = self._maxdisplay if maxwidth is None else min(maxwidth,self._maxdisplay)
+        if len(strcontent)&gt;maxwidth:
+            nchar = round(maxwidth/2)
+            return strcontent[:nchar]+&#34; [...] &#34;+strcontent[-nchar:]
+        else:
+            return content</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="loadpubchem.migrant.Deval"><code class="name">var <span class="ident">Deval</span></code></dt>
+<dd>
+<div class="desc"><p>Return a callable function that evaluates D with updated parameters.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Deval(self):
+    &#34;&#34;&#34;Return a callable function that evaluates D with updated parameters.&#34;&#34;&#34;
+    if self.D is None:
+        return lambda **kwargs: None  # Return a function that always returns None
+    def func(**kwargs):
+        updated_template = dict(self.Dtemplate, **kwargs)
+        return self.D.evaluate(**updated_template)
+    return func</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.keval"><code class="name">var <span class="ident">keval</span></code></dt>
+<dd>
+<div class="desc"><p>Return a callable function that evaluates k with updated parameters.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def keval(self):
+    &#34;&#34;&#34;Return a callable function that evaluates k with updated parameters.&#34;&#34;&#34;
+    if self.k is None:
+        return lambda **kwargs: None  # Return a function that always returns None
+    def func(**kwargs):
+        updated_template = dict(self.ktemplate, **kwargs)
+        return self.k.evaluate(**updated_template)
+    return func</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="loadpubchem.migrant.dispmax"><code class="name flex">
+<span>def <span class="ident">dispmax</span></span>(<span>self, content, maxwidth=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>optimize display</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispmax(self,content,maxwidth=None):
+    &#34;&#34;&#34; optimize display &#34;&#34;&#34;
+    strcontent = str(content)
+    maxwidth = self._maxdisplay if maxwidth is None else min(maxwidth,self._maxdisplay)
+    if len(strcontent)&gt;maxwidth:
+        nchar = round(maxwidth/2)
+        return strcontent[:nchar]+&#34; [...] &#34;+strcontent[-nchar:]
+    else:
+        return content</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#overview-of-compound-index">Overview of Compound Index</a></li>
+<li><a href="#key-features">Key Features</a></li>
+<li><a href="#usage-example">Usage Example</a></li>
+<li><a href="#class-summary">Class Summary</a></li>
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#note">Note</a></li>
+<li><a href="#version-history">Version History</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="loadpubchem.get_compounds" href="#loadpubchem.get_compounds">get_compounds</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code></h4>
+<ul class="">
+<li><code><a title="loadpubchem.CompoundIndex.find" href="#loadpubchem.CompoundIndex.find">find</a></code></li>
+<li><code><a title="loadpubchem.CompoundIndex.refresh_index" href="#loadpubchem.CompoundIndex.refresh_index">refresh_index</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></code></h4>
+<ul class="">
+<li><code><a title="loadpubchem.migrant.Deval" href="#loadpubchem.migrant.Deval">Deval</a></code></li>
+<li><code><a title="loadpubchem.migrant.dispmax" href="#loadpubchem.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="loadpubchem.migrant.keval" href="#loadpubchem.migrant.keval">keval</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -56,6 +56,16 @@ The name or CAS of the substance will trigger the predictions for the considered
 
 import math
 
+__all__ = ['ActivityCoeffcicients', 'Diffusivities', 'Dpiringer', 'HenriLikeCoeffcicients', 'MigrationPropertyModel_validator', 'PartitionCoeffcicients', 'migrationProperty']
+
+__project__ = "SFPPy"
+__author__ = "Olivier Vitrac"
+__copyright__ = "Copyright 2022"
+__credits__ = ["Olivier Vitrac"]
+__license__ = "MIT"
+__maintainer__ = "Olivier Vitrac"
+__email__ = "olivier.vitrac@agroparistech.fr"
+__version__ = "1.2"
 # %% Top classes for any property
 # level 0
 class migrationProperty:
