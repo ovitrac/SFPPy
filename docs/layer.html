@@ -1,0 +1,2208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>layer API documentation</title>
+<meta name="description" content="Layer builder for patankar package
+general object is layer()
+derived ones LDPE(),HDPE(),PP()...air() …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>layer</code></h1>
+</header>
+<section id="section-intro">
+<h1 id="layer-builder-for-patankar-package">Layer builder for patankar package</h1>
+<h1 id="general-object-is-layer">general object is layer()</h1>
+<h1 id="derived-ones-ldpehdpeppair">derived ones LDPE(),HDPE(),PP()&hellip;air()</h1>
+<p>@author: olivier.vitrac@agroparistech.fr</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+# Layer builder for patankar package
+# general object is layer()
+# derived ones LDPE(),HDPE(),PP()...air()
+
+@author: olivier.vitrac@agroparistech.fr
+
+&#34;&#34;&#34;
+
+# -- History ----
+# Created on Tue Jan 18 09:14:34 2022
+# 2022-01-19 RC
+# 2022-01-20 full indexing and simplification
+# 2022-01-21 add split()
+# 2022-01-22 add child classes for common polymers
+# 2022-01-23 full implementation of units 
+# 2022-01-26 mesh() method generating mesh objects
+
+
+oneline = &#34;Build multilayer objects&#34;
+
+docstr = &#34;&#34;&#34;
+Build layer(s) for SENSPATANKAR
+
+Example of caller:
+    from patankar.layer import layer
+    A=layer(D=1e-14,l=50e-6)
+    A
+
+&#34;&#34;&#34;
+
+
+# Package Dependencies 
+# ====================
+# &lt;--  generic packages  --&gt;
+import numpy as np
+from copy import deepcopy as duplicate
+# &lt;--  Internal to patankar package (note they are local)  --&gt;
+from private.struct import struct
+if &#39;SIbase&#39; not in dir():
+    from private.pint import UnitRegistry as SIbase
+    from private.pint import set_application_registry as fixSIbase
+    
+# Initialize unit conversion (intensive initialization)
+# NB: degC and kelvin must be used for temperature
+# conversion as obj,valueSI,unitSI = toSI(qSI(numvalue,&#34;unit&#34;))
+# conversion as obj,valueSI,unitSI = toSI(qSI(&#34;value unit&#34;))
+def toSI(q): q=q.to_base_units(); return q,q.m,str(q.u)
+NoUnits = &#39;a.u.&#39;    # value for arbitrary unit
+if (&#34;SI&#34; not in locals()) or (&#34;qSI&#34; not in locals()):
+    SI = SIbase()      # unit engine
+    fixSIbase(SI)      # keep the same instance between calls
+    qSI = SI.Quantity  # main unit consersion method from string 
+    # constants (usable in layer object methods)
+    # define R,T0K,R*T0K,1/(R*T0K) with there SI units
+    constants = struct()
+    R,constants.R,constants.Runit = toSI(qSI(1,&#39;avogadro_number*boltzmann_constant&#39;))
+    T0K,constants.T0K,constants.T0Kunit = toSI(qSI(0,&#39;degC&#39;))
+    RT0K,constants.RT0K,constants.RT0Kunit = toSI(R*T0K)
+    iRT0K,constants.iRT0K,constants.iRT0Kunit = toSI(1/RT0K)
+
+# Concise data validator with unit convertor to SI
+def check_units(value,ProvidedUnits,ExpectedUnits):
+    &#34;&#34;&#34; check numeric inputs and convert them to SI units &#34;&#34;&#34;
+    if (ProvidedUnits==ExpectedUnits) or (ProvidedUnits==NoUnits) or (ExpectedUnits==None):
+        conversion =1               # no conversion needed
+        units = ExpectedUnits
+    else:
+        q0,conversion,units = toSI(qSI(1,ProvidedUnits))
+    return np.array([value*conversion]),units
+    
+
+# default values (usable in layer object methods)
+# these default values can be moved in a configuration file
+default = struct(l=1e-6,
+                 D=1e-14,
+                 k=1,
+                 C0=1000,
+                 T=25,                   # default temperature (°C)
+                 lunit=&#39;m&#39;,              # do not change them
+                 Dunit=&#39;m**2/s&#39;,         # do not change them
+                 kunit=NoUnits,
+                 Cunit=NoUnits,
+                 layername=&#34;my layer&#34;,
+                 layertype=&#34;unknown type&#34;,
+                 layermaterial=&#34;unknown material&#34;,
+                 nmeshmin = 10,
+                 nmesh = 200
+                        )
+
+
+# Main class definition
+# =======================
+class layer:
+    &#34;&#34;&#34; 
+        layer class from patankar package
+        ...
+        strings properties: layername, layertype, layermaterial
+        scalar properties: D,k,l,C0
+        ...
+        Example:
+            A = layer(D=1e-14,l=50e-6,layername=&#34;layer A&#34;,layertype=&#34;polymer&#34;,layermaterial=&#34;PP&#34;)
+    &#34;&#34;&#34;
+    # --------------------------------------------------------------------
+    # PRIVATE PROPERTIES (cannot be changed by the user)
+    # __ read only properties
+    #  _ private properties (not public)
+    # --------------------------------------------------------------------
+    __description = &#34;LAYER object&#34;                # description
+    __version = 0.2                               # version of sens
+    __contact = &#34;olivier.vitrac@agroparistech.fr&#34; # contact person
+    _printformat = &#34;%0.4g&#34;   # format to display D, k, l values
+    
+    # --------------------------------------------------------------------
+    # CONSTRUCTOR OF INSTANCE PROPERTIES
+    # None = missing numeric value (managed by default)
+    # --------------------------------------------------------------------
+    def __init__(self,
+                 l=None, D=None, k=None, C0=None, # default values will be assigned
+                 lunit=None, Dunit=None, kunit=None, Cunit=None,
+                 layername=default.layername,
+                 layertype=default.layertype,
+                 layermaterial=default.layermaterial,
+                 nmesh=None, nmeshmin=None):
+        &#34;&#34;&#34;
+        
+        Parameters
+        ----------
+        
+        layername : TYPE, optional, string
+                    DESCRIPTION. Layer Name. The default is &#34;my layer&#34;.
+        layertype : TYPE, optional, string
+                    DESCRIPTION. Layer Type. The default is &#34;unknown type&#34;.
+        layermaterial : TYPE, optional, string
+                        DESCRIPTION. Material identification . The default is &#34;unknown material&#34;. 
+        PHYSICAL QUANTITIES
+        l : TYPE, optional, scalar
+            DESCRIPTION. Thickness. The default is 50e-6 (m).
+        D : TYPE, optional, scalar
+            DESCRIPTION. Diffusivity. The default is 1e-14 (m^2/s).
+        k : TYPE, optional, scalar
+            DESCRIPTION. Henry-like coefficient. The default is 1 (a.u.).
+        C0 : TYPE, optional, scalar
+            DESCRIPTION. Initial concentration. The default is 1000 (a.u.).
+        PHYSICAL UNITS
+        lunit : TYPE, optional, string
+                DESCRIPTION. Length units. The default unit is &#34;m.
+        Dunit : TYPE, optional, string
+                DESCRIPTION. Diffusivity units. The default unit is 1e-14 &#34;m^2/s&#34;.
+        kunit : TYPE, optional, string
+                DESCRIPTION. Henry-like coefficient. The default unit is &#34;a.u.&#34;.
+        Cunit : TYPE, optional, string
+                DESCRIPTION. Initial concentration. The default unit is &#34;a.u.&#34;.
+        Returns
+        -------
+        a monolayer object which can be assembled into a multilayer structure
+
+        &#34;&#34;&#34;
+        if l==None: l=default.l
+        if D==None: D=default.D
+        if k==None: k=default.k
+        if C0==None: C0=default.C0
+        if lunit==None: lunit=default.lunit
+        if Dunit==None: Dunit=default.Dunit
+        if kunit==None: kunit=default.kunit
+        if Cunit==None: Cunit=default.Cunit
+        if nmesh==None: nmesh=default.nmesh
+        if nmeshmin==None: nmeshmin=default.nmeshmin        
+        l,lunit = check_units(l,lunit,default.lunit)
+        D,Dunit = check_units(D,Dunit,default.Dunit)
+        k,kunit = check_units(k,kunit,default.kunit)
+        C0,Cunit = check_units(C0,Cunit,default.Cunit)
+        self._name = [layername]
+        self._type = [layertype]
+        self._material = [layermaterial]
+        self._nlayer = 1
+        self._l = l[:1]
+        self._D = D[:1]
+        self._k = k[:1]
+        self._C0 = C0[:1]
+        self._lunit = lunit
+        self._Dunit = Dunit
+        self._kunit = kunit
+        self._Cunit = Cunit
+        self._nmesh = nmesh
+        self._nmeshmin = nmeshmin
+        
+    # --------------------------------------------------------------------
+    # overloading binary addition (note that the output is of type layer)
+    # --------------------------------------------------------------------
+    def __add__(self,other):
+        &#34;&#34;&#34; C=A+B | overload + operator &#34;&#34;&#34;
+        if isinstance(other, layer):
+            res = duplicate(self)
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_nlayer&#34;]:
+                setattr(res,p,getattr(self,p)+getattr(other,p))
+            for p in [&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+                setattr(res,p,np.concatenate((getattr(self,p),getattr(other,p))))
+            return res
+        else: raise ValueError(&#34;invalid layer object&#34;)
+
+
+    # --------------------------------------------------------------------
+    # overloading binary multiplication (note that the output is of type layer)
+    # --------------------------------------------------------------------
+    def __mul__(self,ntimes):
+        &#34;&#34;&#34; nA = A*n | overload * operator &#34;&#34;&#34;
+        if isinstance(ntimes, int) and ntimes&gt;0:
+            res = duplicate(self)
+            if ntimes&gt;1:
+                for n in range(1,ntimes): res += self
+            return res
+        else: raise ValueError(&#34;multiplicator should be a strictly positive integer&#34;)
+
+
+    # --------------------------------------------------------------------
+    # len method
+    # --------------------------------------------------------------------   
+    def __len__(self):
+        &#34;&#34;&#34; length method &#34;&#34;&#34;
+        return self._nlayer
+    
+    # --------------------------------------------------------------------
+    # object indexing (get,set) method
+    # --------------------------------------------------------------------
+    def __getitem__(self,i):
+        &#34;&#34;&#34; get indexing method &#34;&#34;&#34;
+        res = duplicate(self)
+        # check indices
+        isscalar = isinstance(i,int)
+        if isinstance(i,slice):
+            if i.step==None: j = list(range(i.start,i.stop))
+            else: j = list(range(i.start,i.stop,i.step))
+            res._nlayer = len(j)
+        if isinstance(i,int): res._nlayer = 1
+        # pick indices for each property
+        for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+            content = getattr(self,p)
+            try:
+                if isscalar: setattr(res,p,content[i:i+1])
+                else: setattr(res,p,content[i])
+            except IndexError as err:
+                print(&#34;bad layer object indexing: &#34;,err)
+        return res
+    
+    def __setitem__(self,i,other):
+        &#34;&#34;&#34; set indexing method &#34;&#34;&#34;
+        # check indices
+        if isinstance(i,slice):
+            if i.step==None: j = list(range(i.start,i.stop))
+            else: j = list(range(i.start,i.stop,i.step))
+        elif isinstance(i,int): j = [i]
+        else:raise IndexError(&#34;invalid index&#34;)        
+        islayer = isinstance(other,layer)
+        isempty = not islayer and isinstance(other,list) and len(other)&lt;1
+        if isempty:         # empty right hand side
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+                content = getattr(self,p)
+                try:
+                    newcontent = [content[k] for k in range(self._nlayer) if k not in j]
+                except IndexError as err:
+                    print(&#34;bad layer object indexing: &#34;,err)
+                if isinstance(content,np.ndarray) and not isinstance(newcontent,np.ndarray):
+                    newcontent = np.array(newcontent)
+                setattr(self,p,newcontent)
+            self._nlayer = len(newcontent)
+        elif islayer:        # islayer right hand side
+            nk1 = len(j)
+            nk2 = other._nlayer
+            if nk1 != nk2:
+                raise IndexError(&#34;the number of elements does not match the number of indices&#34;)
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+                content1 = getattr(self,p)
+                content2 = getattr(other,p)
+                for k in range(nk1):
+                    try:
+                        content1[j[k]] = content2[k]
+                    except IndexError as err:
+                        print(&#34;bad layer object indexing: &#34;,err)
+                setattr(self,p,content1)            
+        else:
+            raise ValueError(&#34;only [] or layer object are accepted&#34;)
+    
+    
+    # --------------------------------------------------------------------
+    # Getter methods (show private/hidden properties and meta-properties)
+    # --------------------------------------------------------------------
+    @property
+    def name(self): return self._name
+    @property
+    def type(self): return self._type
+    @property
+    def material(self): return self._material
+    @property
+    def l(self): return self._l
+    @property
+    def D(self): return self._D
+    @property
+    def k(self): return self._k
+    @property
+    def C0(self): return self._C0
+    @property
+    def lunit(self): return self._lunit
+    @property
+    def Dunit(self): return self._Dunit
+    @property
+    def kunit(self): return self._kunit
+    @property
+    def Cunit(self): return self._Cunit
+    @property
+    def n(self): return self._nlayer
+    @property
+    def nmesh(self): return self._nmesh
+    @property
+    def nmeshmin(self): return self._nmeshmin
+    @property
+    def resistance(self): return self.l*self.k/self.D
+    @property
+    def permeability(self): return self.D/(self.l*self.k)
+    @property
+    def lag(self): return self.l**2/(6*self.D)
+    @property
+    def pressure(self): return self.k*self.C0
+    @property
+    def thickness(self): return sum(self.l)
+    @property
+    def concentration(self): return sum(self.l*self.C0)/self.thickness
+    @property
+    def relative_thickness(self): return self.l/self.thickness
+    @property
+    def relative_resistance(self): return self.resistance/sum(self.resistance)
+    @property
+    def rank(self): return np.flip(np.argsort(np.array(self.resistance))+1).tolist()
+    @property
+    def referencelayer(self): return np.argmax(self.resistance)
+    @property
+    def lreferencelayer(self): return self.l[self.referencelayer]
+    @property
+    def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2
+    
+    # --------------------------------------------------------------------
+    # comparators based resistance
+    # --------------------------------------------------------------------
+    def __eq__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1==value2
+    
+    def __ne__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1!=value2
+    
+    def __lt__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&lt;value2
+
+    def __gt__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&gt;value2
+
+    def __le__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&lt;=value2
+
+    def __ge__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&gt;=value2
+
+    
+    # --------------------------------------------------------------------
+    # remesh generates mesh
+    # --------------------------------------------------------------------
+    def mesh(self,nmesh=None,nmeshmin=None):
+        &#34;&#34;&#34; nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) &#34;&#34;&#34;
+        if nmesh==None: nmesh = self.nmesh
+        if nmeshmin==None: nmeshmin = self.nmeshmin
+        if nmeshmin&gt;nmesh: nmeshmin,nmesh = nmesh, nmeshmin
+        # X = mesh distribution (number of nodes per layer)
+        X = np.ones(self._nlayer)
+        for i in range(1,self._nlayer):
+           X[i] = X[i-1]*(self.permeability[i-1]*self.l[i])/(self.permeability[i]*self.l[i-1])
+        X = np.maximum(nmeshmin,np.ceil(nmesh*X/sum(X)))
+        X = np.round((X/sum(X))*nmesh)
+        # do the mesh
+        x0 = 0
+        mymesh = []
+        for i in range(self._nlayer):
+            mymesh.append(mesh(self.l[i],int(X[i]),x0))
+            x0 += self.l[i]
+        return mymesh
+        
+    # --------------------------------------------------------------------
+    # Getter methods and tools to validate inputs checknumvalue and checktextvalue
+    # --------------------------------------------------------------------
+    def checknumvalue(self,value):
+        &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
+        if isinstance(value,int): value = float(value)
+        if isinstance(value,float): value = np.array([value])
+        if isinstance(value,list): value = np.array(value)
+        if len(value)&gt;self._nlayer:
+            value = value[:self._nlayer]
+            print(&#39;dimension mismatch, the extra value(s) has been removed&#39;)
+        elif len(value)&lt;self._nlayer:
+            value = np.concatenate((value,value[-1:]*np.ones(self._nlayer-len(value))))
+            print(&#39;dimension mismatch, the last value has been repeated&#39;)
+        return value
+
+    def checktextvalue(self,value):
+        &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
+        if not isinstance(value,list): value = [value]
+        if len(value)&gt;self._nlayer:
+            value = value[:self._nlayer]
+            print(&#39;dimension mismatch, the extra entry(ies) has been removed&#39;)
+        elif len(value)&lt;self._nlayer:
+            value = value + value[-1:]*(self._nlayer-len(value))
+            print(&#39;dimension mismatch, the last entry has been repeated&#39;)
+        return value        
+        
+    @l.setter
+    def l(self,value): self._l =self.checknumvalue(value)
+    @D.setter
+    def D(self,value): self._D=self.checknumvalue(value)
+    @k.setter
+    def k(self,value): self._k =self.checknumvalue(value)
+    @C0.setter
+    def C0(self,value): self._C0 =self.checknumvalue(value)
+    @name.setter
+    def name(self,value): self._name =self.checktextvalue(value)
+    @type.setter
+    def type(self,value): self._type =self.checktextvalue(value)
+    @material.setter
+    def material(self,value): self._material =self.checktextvalue(value)
+    @nmesh.setter
+    def nmesh(self,value): self._nmesh = max(value,self._nlayer*self._nmeshmin)
+    @nmeshmin.setter
+    def nmeshmin(self,value): self._nmeshmin = max(value,round(self._nmesh/(2*self._nlayer)))
+
+        
+    # --------------------------------------------------------------------
+    # hash methods (assembly and layer-by-layer)
+    # note that list needs to be converted into tuples to be hashed
+    # --------------------------------------------------------------------
+    def __hash__(self):
+        &#34;&#34;&#34; hash layer-object (assembly) method &#34;&#34;&#34;
+        return hash((tuple(self._name),
+                     tuple(self._type),
+                     tuple(self._material),
+                     tuple(self._l),
+                     tuple(self._D),
+                     tuple(self.k),
+                     tuple(self._C0)))
+    
+    # layer-by-layer @property = decoration to consider it 
+    # as a property instead of a method/attribute
+    # comprehension for n in range(self._nlayer) applies it to all layers
+    @property
+    def hashlayer(self):
+        &#34;&#34;&#34; hash layer (layer-by-layer) method &#34;&#34;&#34;
+        return [hash((self._name[n],
+                      self._type[n],
+                      self._material[n],
+                      self._l[n],
+                      self._D[n],
+                      self.k[n],
+                      self._C0[n]))
+                for n in range(self._nlayer)
+                ]
+ 
+    
+    # --------------------------------------------------------------------
+    # disp method (since the getter are defined, the &#39;_&#39; is dropped)
+    # --------------------------------------------------------------------
+    def __repr__(self):
+        &#34;&#34;&#34; disp method &#34;&#34;&#34;
+        print(&#34;[%s version=%0.4g, contact=%s]&#34; % (self.__description,self.__version,self.__contact))
+        if self._nlayer==0:
+            ret=&#34;empty %s&#34; % (self.__description)
+        else:
+            for n in range(1,self._nlayer+1):
+                print(&#39;-- [ layer %d of %d ] ---------- barrier rank=%d --------------&#39;
+                      % (n,self._nlayer,self.rank[n-1]))
+                for p in [&#34;name&#34;,&#34;type&#34;,&#34;material&#34;]:
+                    v = getattr(self,p)
+                    print(&#39;%10s: &#34;%s&#34;&#39; % (p,v[n-1]),flush=True)
+                for p in [&#34;l&#34;,&#34;D&#34;,&#34;k&#34;,&#34;C0&#34;]:
+                    v = getattr(self,p)                 # value
+                    vunit = getattr(self,p[0]+&#34;unit&#34;)   # value unit
+                    print((&#39;%10s: &#39;+self._printformat+&#34; [%s]&#34;)
+                          % (p,v[n-1],vunit),flush=True)
+            if self._nlayer==1:
+                ret=(&#39;monolayer of %s&#39; % self.__description)
+            else:
+                ret=(&#39;%d-multilayer of %s&#39; % (self._nlayer,self.__description))
+        return ret        
+
+    # --------------------------------------------------------------------
+    # STRUCT method - returns the equivalent dictionary from an object
+    # source: https://stackoverflow.com/questions/61517/python-dictionary-from-an-objects-fields
+    # --------------------------------------------------------------------        
+    def struct(self):
+        &#34;&#34;&#34; returns the equivalent dictionary from an object &#34;&#34;&#34;
+        return dict((key, getattr(self, key)) for key in dir(self) if key not in dir(self.__class__))
+    # --------------------------------------------------------------------
+    
+    # --------------------------------------------------------------------
+    # SIMPLIFY method ny collecting similar layers
+    # --------------------------------------------------------------------        
+    def simplify(self):
+        &#34;&#34;&#34; merge continuous layers of the same type &#34;&#34;&#34;
+        nlayer = self._nlayer
+        if nlayer&gt;1:
+           res = self[0]
+           ires = 0
+           ireshash = res.hashlayer[0]
+           for i in range(1,nlayer):
+               if self.hashlayer[i]==ireshash:
+                   res.l[ires] = res.l[ires]+self.l[i]
+               else:
+                   res = res + self[i]
+                   ires = ires+1
+                   ireshash = self.hashlayer[i]
+        else:
+             res = duplicate(self)
+        return res
+    
+    # --------------------------------------------------------------------
+    # Split layers into a tuple
+    # --------------------------------------------------------------------        
+    def split(self):
+        &#34;&#34;&#34; split layers &#34;&#34;&#34;
+        out = ()
+        if self._nlayer&gt;0:
+            for i in range(self._nlayer):
+                out = out + (self[i],) # (,) special syntax for tuple singleton
+        return out
+
+
+# Mesh classX
+# =======================
+class mesh():
+    &#34;&#34;&#34; simple nodes class for finite-volume methods &#34;&#34;&#34;
+    def __init__(self,l,n,x0=0):
+       self.x0 = x0
+       self.l = l
+       self.n = n
+       de = dw = l/(2*n)
+       self.de = np.ones(n)*de
+       self.dw = np.ones(n)*dw
+       self.xmesh = np.linspace(0+dw,l-de,n) # nodes positions
+       self.w = self.xmesh - dw
+       self.e = self.xmesh + de
+       
+    def __repr__(self):
+        print(&#34;-- mesh object --&#34;)
+        print(&#34;%25s = %0.4g&#34; % (&#34;start at x0&#34;, self.x0))
+        print(&#34;%25s = %0.4g&#34; % (&#34;domain length l&#34;, self.l))
+        print(&#34;%25s = %0.4g&#34; % (&#34;number of nodes n&#34;, self.n))
+        print(&#34;%25s = %0.4g&#34; % (&#34;dw&#34;, self.dw[0]))
+        print(&#34;%25s = %0.4g&#34; % (&#34;de&#34;, self.de[0]))
+        return &#34;mesh%d=[%0.4g %0.4g]&#34; % \
+            (self.n,self.x0+self.xmesh[0],self.x0+self.xmesh[-1])
+
+
+&#34;&#34;&#34;
+=======================================================
+Child classes derived from layer
+this section can be extended to define specific layers
+    * polymer
+    * ink
+    * air
+    * paper and board
+  
+These classes are more flexible than the parent class layer.
+They can include temperature dependence, refined tunning, etc.    
+  
+Properties taken from
+    * linear thermal expansoin
+    https://omnexus.specialchem.com/polymer-properties/properties/coefficient-of-linear-thermal-expansion  
+  
+Once the layers are incorporated in a multilayer structure,
+they loose their original subclass and become only an object
+layer. These subclasses are therefore useful to refine the
+properties of each layer before standarizing them.
+
+=========================================================
+&#34;&#34;&#34;
+
+# &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; P O L Y O L E F I N S &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+# &lt;-- LDPE polymer ----------------------------------&gt;
+class LDPE(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for low-density polyethylene LDPE  &#34;&#34;&#34;
+    def __init__(self,l=100e-6,D=1e-12,
+                 k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
+                 layername=&#34;layer in LDPE&#34;):
+        &#34;&#34;&#34; LDPE layer constructor &#34;&#34;&#34;
+        layer.__init__(self,
+                       l=l,D=D,k=k,C0=C0,
+                       lunit=lunit,Dunit=Dunit,kunit=kunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;polymer&#34;, # set by default at inititialization
+                       layermaterial=&#34;low-density polyethylene&#34;)
+    def density(self,T=25):
+        &#34;&#34;&#34; density of LDPE: density(T in K) &#34;&#34;&#34;
+        return 920 *(1-3*(T-default.T)*20e-5),&#34;kg/m**3&#34; # lowest temperature
+    @property
+    def Tg(self):
+        &#34;&#34;&#34; glass transition temperature of LDPE &#34;&#34;&#34;
+        return -130,&#34;C&#34; # lowest temperature
+
+        
+# &lt;-- HDPE polymer ----------------------------------&gt;
+class HDPE(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for high-density polyethylene HDPE  &#34;&#34;&#34;
+    def __init__(self,l=500e-6,D=1e-13,
+                 k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
+                 layername=&#34;layer in HDPE&#34;):
+        &#34;&#34;&#34; HDPE layer constructor &#34;&#34;&#34;
+        layer.__init__(self,
+                       l=l,D=D,k=k,C0=C0,
+                       lunit=lunit,Dunit=Dunit,kunit=kunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;polymer&#34;, # set by default at inititialization
+                       layermaterial=&#34;high-density polyethylene&#34;)
+    def density(self,T=25):
+        &#34;&#34;&#34; density of HDPE: density(T in K) &#34;&#34;&#34;
+        return 940 *(1-3*(T-default.T)*11e-5),&#34;kg/m**3&#34; # lowest temperature
+    @property
+    def Tg(self):
+        &#34;&#34;&#34; glass transition temperature of HDPE &#34;&#34;&#34;
+        return -100,&#34;C&#34; # highest temperature
+        
+# &lt;-- PP polymer ----------------------------------&gt;
+class PP(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for isotactic polypropylene PP  &#34;&#34;&#34;
+    def __init__(self,l=300e-6,D=1e-14,
+                 k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
+                 layername=&#34;layer in PP&#34;):
+        &#34;&#34;&#34; PP layer constructor &#34;&#34;&#34;
+        layer.__init__(self,
+                       l=l,D=D,k=k,C0=C0,
+                       lunit=lunit,Dunit=Dunit,kunit=kunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;polymer&#34;, # set by default at inititialization
+                       layermaterial=&#34;isotatic polypropylene&#34;)
+    def density(self,T=25):
+        &#34;&#34;&#34; density of PP: density(T in K) &#34;&#34;&#34;
+        return 910 *(1-3*(T-default.T)*7e-5),&#34;kg/m**3&#34; # lowest temperature
+    @property
+    def Tg(self):
+        &#34;&#34;&#34; glass transition temperature of PP &#34;&#34;&#34;
+        return 0,&#34;C&#34; # highest temperature        
+
+
+# &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; G A S E S  &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+# &lt;-- air | ideal gas layer ----------------------------------&gt;
+class air(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for ideal gases such as air &#34;&#34;&#34;
+    def __init__(self,l=1e-2,D=1e-6,T=25,
+                 lunit=None,Dunit=None,Cunit=None,
+                 layername=&#34;air layer&#34;):
+        &#34;&#34;&#34; air layer constructor &#34;&#34;&#34;
+        kair = 1/(constants.R *(T+constants.T0K))
+        kairunit = constants.iRT0Kunit
+        layer.__init__(self,
+                       l=l,D=D,k=kair,C0=0,
+                       lunit=lunit,Dunit=Dunit,kunit=kairunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;air&#34;, # set by default at inititialization
+                       layermaterial=&#34;ideal gas&#34;)
+  
+    
+# ===================================================   
+# main()
+# ===================================================   
+# for debugging purposes (code called as a script)
+# the code is called from here
+# ===================================================
+if __name__ == &#39;__main__&#39;:
+    G = air(T=60)
+    P = LDPE(D=1e-8,Dunit=&#39;cm**2/s&#39;)
+    A = LDPE()
+    A=layer(D=1e-14,l=50e-6)
+    print(A)
+    A
+    B=A*3
+    D = B[1:2]
+    B=A+A
+    C=B[1]
+    B.l = [1,2]
+    A.struct()
+    E = B*4
+    #E[1:4]=[]
+    E
+    # ======
+    A = layer(layername = &#34;layer A&#34;)
+    B = layer(layername = &#34;layer B&#34;)
+    C = layer(layername = &#34;layer C&#34;)
+    D = layer(layername = &#34;layer D&#34;)
+    # test = A+B+C+D
+    # test[2] = test[0]
+    # test[3] = []
+    # test
+    test = A+A+B+B+B+C
+    print(test)
+    testsimple = test.simplify()
+    print(testsimple)
+    testsimple.mesh()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="layer.check_units"><code class="name flex">
+<span>def <span class="ident">check_units</span></span>(<span>value, ProvidedUnits, ExpectedUnits)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>check numeric inputs and convert them to SI units</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_units(value,ProvidedUnits,ExpectedUnits):
+    &#34;&#34;&#34; check numeric inputs and convert them to SI units &#34;&#34;&#34;
+    if (ProvidedUnits==ExpectedUnits) or (ProvidedUnits==NoUnits) or (ExpectedUnits==None):
+        conversion =1               # no conversion needed
+        units = ExpectedUnits
+    else:
+        q0,conversion,units = toSI(qSI(1,ProvidedUnits))
+    return np.array([value*conversion]),units</code></pre>
+</details>
+</dd>
+<dt id="layer.toSI"><code class="name flex">
+<span>def <span class="ident">toSI</span></span>(<span>q)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toSI(q): q=q.to_base_units(); return q,q.m,str(q.u)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="layer.HDPE"><code class="flex name class">
+<span>class <span class="ident">HDPE</span></span>
+<span>(</span><span>l=0.0005, D=1e-13, k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None, layername='layer in HDPE')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>extended pantankar.layer for high-density polyethylene HDPE
+</p>
+<p>HDPE layer constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HDPE(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for high-density polyethylene HDPE  &#34;&#34;&#34;
+    def __init__(self,l=500e-6,D=1e-13,
+                 k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
+                 layername=&#34;layer in HDPE&#34;):
+        &#34;&#34;&#34; HDPE layer constructor &#34;&#34;&#34;
+        layer.__init__(self,
+                       l=l,D=D,k=k,C0=C0,
+                       lunit=lunit,Dunit=Dunit,kunit=kunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;polymer&#34;, # set by default at inititialization
+                       layermaterial=&#34;high-density polyethylene&#34;)
+    def density(self,T=25):
+        &#34;&#34;&#34; density of HDPE: density(T in K) &#34;&#34;&#34;
+        return 940 *(1-3*(T-default.T)*11e-5),&#34;kg/m**3&#34; # lowest temperature
+    @property
+    def Tg(self):
+        &#34;&#34;&#34; glass transition temperature of HDPE &#34;&#34;&#34;
+        return -100,&#34;C&#34; # highest temperature</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="layer.layer" href="#layer.layer">layer</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="layer.HDPE.Tg"><code class="name">var <span class="ident">Tg</span></code></dt>
+<dd>
+<div class="desc"><p>glass transition temperature of HDPE</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Tg(self):
+    &#34;&#34;&#34; glass transition temperature of HDPE &#34;&#34;&#34;
+    return -100,&#34;C&#34; # highest temperature</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="layer.HDPE.density"><code class="name flex">
+<span>def <span class="ident">density</span></span>(<span>self, T=25)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>density of HDPE: density(T in K)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def density(self,T=25):
+    &#34;&#34;&#34; density of HDPE: density(T in K) &#34;&#34;&#34;
+    return 940 *(1-3*(T-default.T)*11e-5),&#34;kg/m**3&#34; # lowest temperature</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="layer.layer" href="#layer.layer">layer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
+<li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
+<li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
+<li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
+<li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
+<li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="layer.LDPE"><code class="flex name class">
+<span>class <span class="ident">LDPE</span></span>
+<span>(</span><span>l=0.0001, D=1e-12, k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None, layername='layer in LDPE')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>extended pantankar.layer for low-density polyethylene LDPE
+</p>
+<p>LDPE layer constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LDPE(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for low-density polyethylene LDPE  &#34;&#34;&#34;
+    def __init__(self,l=100e-6,D=1e-12,
+                 k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
+                 layername=&#34;layer in LDPE&#34;):
+        &#34;&#34;&#34; LDPE layer constructor &#34;&#34;&#34;
+        layer.__init__(self,
+                       l=l,D=D,k=k,C0=C0,
+                       lunit=lunit,Dunit=Dunit,kunit=kunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;polymer&#34;, # set by default at inititialization
+                       layermaterial=&#34;low-density polyethylene&#34;)
+    def density(self,T=25):
+        &#34;&#34;&#34; density of LDPE: density(T in K) &#34;&#34;&#34;
+        return 920 *(1-3*(T-default.T)*20e-5),&#34;kg/m**3&#34; # lowest temperature
+    @property
+    def Tg(self):
+        &#34;&#34;&#34; glass transition temperature of LDPE &#34;&#34;&#34;
+        return -130,&#34;C&#34; # lowest temperature</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="layer.layer" href="#layer.layer">layer</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="layer.LDPE.Tg"><code class="name">var <span class="ident">Tg</span></code></dt>
+<dd>
+<div class="desc"><p>glass transition temperature of LDPE</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Tg(self):
+    &#34;&#34;&#34; glass transition temperature of LDPE &#34;&#34;&#34;
+    return -130,&#34;C&#34; # lowest temperature</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="layer.LDPE.density"><code class="name flex">
+<span>def <span class="ident">density</span></span>(<span>self, T=25)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>density of LDPE: density(T in K)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def density(self,T=25):
+    &#34;&#34;&#34; density of LDPE: density(T in K) &#34;&#34;&#34;
+    return 920 *(1-3*(T-default.T)*20e-5),&#34;kg/m**3&#34; # lowest temperature</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="layer.layer" href="#layer.layer">layer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
+<li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
+<li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
+<li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
+<li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
+<li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="layer.PP"><code class="flex name class">
+<span>class <span class="ident">PP</span></span>
+<span>(</span><span>l=0.0003, D=1e-14, k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None, layername='layer in PP')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>extended pantankar.layer for isotactic polypropylene PP
+</p>
+<p>PP layer constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PP(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for isotactic polypropylene PP  &#34;&#34;&#34;
+    def __init__(self,l=300e-6,D=1e-14,
+                 k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
+                 layername=&#34;layer in PP&#34;):
+        &#34;&#34;&#34; PP layer constructor &#34;&#34;&#34;
+        layer.__init__(self,
+                       l=l,D=D,k=k,C0=C0,
+                       lunit=lunit,Dunit=Dunit,kunit=kunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;polymer&#34;, # set by default at inititialization
+                       layermaterial=&#34;isotatic polypropylene&#34;)
+    def density(self,T=25):
+        &#34;&#34;&#34; density of PP: density(T in K) &#34;&#34;&#34;
+        return 910 *(1-3*(T-default.T)*7e-5),&#34;kg/m**3&#34; # lowest temperature
+    @property
+    def Tg(self):
+        &#34;&#34;&#34; glass transition temperature of PP &#34;&#34;&#34;
+        return 0,&#34;C&#34; # highest temperature        </code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="layer.layer" href="#layer.layer">layer</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="layer.PP.Tg"><code class="name">var <span class="ident">Tg</span></code></dt>
+<dd>
+<div class="desc"><p>glass transition temperature of PP</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Tg(self):
+    &#34;&#34;&#34; glass transition temperature of PP &#34;&#34;&#34;
+    return 0,&#34;C&#34; # highest temperature        </code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="layer.PP.density"><code class="name flex">
+<span>def <span class="ident">density</span></span>(<span>self, T=25)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>density of PP: density(T in K)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def density(self,T=25):
+    &#34;&#34;&#34; density of PP: density(T in K) &#34;&#34;&#34;
+    return 910 *(1-3*(T-default.T)*7e-5),&#34;kg/m**3&#34; # lowest temperature</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="layer.layer" href="#layer.layer">layer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
+<li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
+<li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
+<li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
+<li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
+<li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="layer.air"><code class="flex name class">
+<span>class <span class="ident">air</span></span>
+<span>(</span><span>l=0.01, D=1e-06, T=25, lunit=None, Dunit=None, Cunit=None, layername='air layer')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>extended pantankar.layer for ideal gases such as air </p>
+<p>air layer constructor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class air(layer):
+    &#34;&#34;&#34;  extended pantankar.layer for ideal gases such as air &#34;&#34;&#34;
+    def __init__(self,l=1e-2,D=1e-6,T=25,
+                 lunit=None,Dunit=None,Cunit=None,
+                 layername=&#34;air layer&#34;):
+        &#34;&#34;&#34; air layer constructor &#34;&#34;&#34;
+        kair = 1/(constants.R *(T+constants.T0K))
+        kairunit = constants.iRT0Kunit
+        layer.__init__(self,
+                       l=l,D=D,k=kair,C0=0,
+                       lunit=lunit,Dunit=Dunit,kunit=kairunit,Cunit=Cunit,
+                       layername=layername,
+                       layertype=&#34;air&#34;, # set by default at inititialization
+                       layermaterial=&#34;ideal gas&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="layer.layer" href="#layer.layer">layer</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="layer.layer" href="#layer.layer">layer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
+<li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
+<li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
+<li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
+<li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
+<li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="layer.layer"><code class="flex name class">
+<span>class <span class="ident">layer</span></span>
+<span>(</span><span>l=None, D=None, k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None, layername='my layer', layertype='unknown type', layermaterial='unknown material', nmesh=None, nmeshmin=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>layer class from patankar package
+&hellip;
+strings properties: layername, layertype, layermaterial
+scalar properties: D,k,l,C0
+&hellip;</p>
+<h2 id="example">Example</h2>
+<p>A = layer(D=1e-14,l=50e-6,layername="layer A",layertype="polymer",layermaterial="PP")</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>layername</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
+<dd>DESCRIPTION. Layer Name. The default is "my layer".</dd>
+<dt><strong><code>layertype</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
+<dd>DESCRIPTION. Layer Type. The default is "unknown type".</dd>
+<dt><strong><code>layermaterial</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
+<dd>DESCRIPTION. Material identification . The default is "unknown material".</dd>
+<dt>PHYSICAL QUANTITIES</dt>
+<dt><strong><code>l</code></strong> :&ensp;<code>TYPE</code>, optional<code>, scalar</code></dt>
+<dd>DESCRIPTION. Thickness. The default is 50e-6 (m).</dd>
+<dt><strong><code>D</code></strong> :&ensp;<code>TYPE</code>, optional<code>, scalar</code></dt>
+<dd>DESCRIPTION. Diffusivity. The default is 1e-14 (m^2/s).</dd>
+<dt><strong><code>k</code></strong> :&ensp;<code>TYPE</code>, optional<code>, scalar</code></dt>
+<dd>DESCRIPTION. Henry-like coefficient. The default is 1 (a.u.).</dd>
+<dt><strong><code>C0</code></strong> :&ensp;<code>TYPE</code>, optional<code>, scalar</code></dt>
+<dd>DESCRIPTION. Initial concentration. The default is 1000 (a.u.).</dd>
+<dt>PHYSICAL UNITS</dt>
+<dt><strong><code>lunit</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
+<dd>DESCRIPTION. Length units. The default unit is "m.</dd>
+<dt><strong><code>Dunit</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
+<dd>DESCRIPTION. Diffusivity units. The default unit is 1e-14 "m^2/s".</dd>
+<dt><strong><code>kunit</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
+<dd>DESCRIPTION. Henry-like coefficient. The default unit is "a.u.".</dd>
+<dt><strong><code>Cunit</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
+<dd>DESCRIPTION. Initial concentration. The default unit is "a.u.".</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>a monolayer object which can be assembled into a multilayer structure</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class layer:
+    &#34;&#34;&#34; 
+        layer class from patankar package
+        ...
+        strings properties: layername, layertype, layermaterial
+        scalar properties: D,k,l,C0
+        ...
+        Example:
+            A = layer(D=1e-14,l=50e-6,layername=&#34;layer A&#34;,layertype=&#34;polymer&#34;,layermaterial=&#34;PP&#34;)
+    &#34;&#34;&#34;
+    # --------------------------------------------------------------------
+    # PRIVATE PROPERTIES (cannot be changed by the user)
+    # __ read only properties
+    #  _ private properties (not public)
+    # --------------------------------------------------------------------
+    __description = &#34;LAYER object&#34;                # description
+    __version = 0.2                               # version of sens
+    __contact = &#34;olivier.vitrac@agroparistech.fr&#34; # contact person
+    _printformat = &#34;%0.4g&#34;   # format to display D, k, l values
+    
+    # --------------------------------------------------------------------
+    # CONSTRUCTOR OF INSTANCE PROPERTIES
+    # None = missing numeric value (managed by default)
+    # --------------------------------------------------------------------
+    def __init__(self,
+                 l=None, D=None, k=None, C0=None, # default values will be assigned
+                 lunit=None, Dunit=None, kunit=None, Cunit=None,
+                 layername=default.layername,
+                 layertype=default.layertype,
+                 layermaterial=default.layermaterial,
+                 nmesh=None, nmeshmin=None):
+        &#34;&#34;&#34;
+        
+        Parameters
+        ----------
+        
+        layername : TYPE, optional, string
+                    DESCRIPTION. Layer Name. The default is &#34;my layer&#34;.
+        layertype : TYPE, optional, string
+                    DESCRIPTION. Layer Type. The default is &#34;unknown type&#34;.
+        layermaterial : TYPE, optional, string
+                        DESCRIPTION. Material identification . The default is &#34;unknown material&#34;. 
+        PHYSICAL QUANTITIES
+        l : TYPE, optional, scalar
+            DESCRIPTION. Thickness. The default is 50e-6 (m).
+        D : TYPE, optional, scalar
+            DESCRIPTION. Diffusivity. The default is 1e-14 (m^2/s).
+        k : TYPE, optional, scalar
+            DESCRIPTION. Henry-like coefficient. The default is 1 (a.u.).
+        C0 : TYPE, optional, scalar
+            DESCRIPTION. Initial concentration. The default is 1000 (a.u.).
+        PHYSICAL UNITS
+        lunit : TYPE, optional, string
+                DESCRIPTION. Length units. The default unit is &#34;m.
+        Dunit : TYPE, optional, string
+                DESCRIPTION. Diffusivity units. The default unit is 1e-14 &#34;m^2/s&#34;.
+        kunit : TYPE, optional, string
+                DESCRIPTION. Henry-like coefficient. The default unit is &#34;a.u.&#34;.
+        Cunit : TYPE, optional, string
+                DESCRIPTION. Initial concentration. The default unit is &#34;a.u.&#34;.
+        Returns
+        -------
+        a monolayer object which can be assembled into a multilayer structure
+
+        &#34;&#34;&#34;
+        if l==None: l=default.l
+        if D==None: D=default.D
+        if k==None: k=default.k
+        if C0==None: C0=default.C0
+        if lunit==None: lunit=default.lunit
+        if Dunit==None: Dunit=default.Dunit
+        if kunit==None: kunit=default.kunit
+        if Cunit==None: Cunit=default.Cunit
+        if nmesh==None: nmesh=default.nmesh
+        if nmeshmin==None: nmeshmin=default.nmeshmin        
+        l,lunit = check_units(l,lunit,default.lunit)
+        D,Dunit = check_units(D,Dunit,default.Dunit)
+        k,kunit = check_units(k,kunit,default.kunit)
+        C0,Cunit = check_units(C0,Cunit,default.Cunit)
+        self._name = [layername]
+        self._type = [layertype]
+        self._material = [layermaterial]
+        self._nlayer = 1
+        self._l = l[:1]
+        self._D = D[:1]
+        self._k = k[:1]
+        self._C0 = C0[:1]
+        self._lunit = lunit
+        self._Dunit = Dunit
+        self._kunit = kunit
+        self._Cunit = Cunit
+        self._nmesh = nmesh
+        self._nmeshmin = nmeshmin
+        
+    # --------------------------------------------------------------------
+    # overloading binary addition (note that the output is of type layer)
+    # --------------------------------------------------------------------
+    def __add__(self,other):
+        &#34;&#34;&#34; C=A+B | overload + operator &#34;&#34;&#34;
+        if isinstance(other, layer):
+            res = duplicate(self)
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_nlayer&#34;]:
+                setattr(res,p,getattr(self,p)+getattr(other,p))
+            for p in [&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+                setattr(res,p,np.concatenate((getattr(self,p),getattr(other,p))))
+            return res
+        else: raise ValueError(&#34;invalid layer object&#34;)
+
+
+    # --------------------------------------------------------------------
+    # overloading binary multiplication (note that the output is of type layer)
+    # --------------------------------------------------------------------
+    def __mul__(self,ntimes):
+        &#34;&#34;&#34; nA = A*n | overload * operator &#34;&#34;&#34;
+        if isinstance(ntimes, int) and ntimes&gt;0:
+            res = duplicate(self)
+            if ntimes&gt;1:
+                for n in range(1,ntimes): res += self
+            return res
+        else: raise ValueError(&#34;multiplicator should be a strictly positive integer&#34;)
+
+
+    # --------------------------------------------------------------------
+    # len method
+    # --------------------------------------------------------------------   
+    def __len__(self):
+        &#34;&#34;&#34; length method &#34;&#34;&#34;
+        return self._nlayer
+    
+    # --------------------------------------------------------------------
+    # object indexing (get,set) method
+    # --------------------------------------------------------------------
+    def __getitem__(self,i):
+        &#34;&#34;&#34; get indexing method &#34;&#34;&#34;
+        res = duplicate(self)
+        # check indices
+        isscalar = isinstance(i,int)
+        if isinstance(i,slice):
+            if i.step==None: j = list(range(i.start,i.stop))
+            else: j = list(range(i.start,i.stop,i.step))
+            res._nlayer = len(j)
+        if isinstance(i,int): res._nlayer = 1
+        # pick indices for each property
+        for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+            content = getattr(self,p)
+            try:
+                if isscalar: setattr(res,p,content[i:i+1])
+                else: setattr(res,p,content[i])
+            except IndexError as err:
+                print(&#34;bad layer object indexing: &#34;,err)
+        return res
+    
+    def __setitem__(self,i,other):
+        &#34;&#34;&#34; set indexing method &#34;&#34;&#34;
+        # check indices
+        if isinstance(i,slice):
+            if i.step==None: j = list(range(i.start,i.stop))
+            else: j = list(range(i.start,i.stop,i.step))
+        elif isinstance(i,int): j = [i]
+        else:raise IndexError(&#34;invalid index&#34;)        
+        islayer = isinstance(other,layer)
+        isempty = not islayer and isinstance(other,list) and len(other)&lt;1
+        if isempty:         # empty right hand side
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+                content = getattr(self,p)
+                try:
+                    newcontent = [content[k] for k in range(self._nlayer) if k not in j]
+                except IndexError as err:
+                    print(&#34;bad layer object indexing: &#34;,err)
+                if isinstance(content,np.ndarray) and not isinstance(newcontent,np.ndarray):
+                    newcontent = np.array(newcontent)
+                setattr(self,p,newcontent)
+            self._nlayer = len(newcontent)
+        elif islayer:        # islayer right hand side
+            nk1 = len(j)
+            nk2 = other._nlayer
+            if nk1 != nk2:
+                raise IndexError(&#34;the number of elements does not match the number of indices&#34;)
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+                content1 = getattr(self,p)
+                content2 = getattr(other,p)
+                for k in range(nk1):
+                    try:
+                        content1[j[k]] = content2[k]
+                    except IndexError as err:
+                        print(&#34;bad layer object indexing: &#34;,err)
+                setattr(self,p,content1)            
+        else:
+            raise ValueError(&#34;only [] or layer object are accepted&#34;)
+    
+    
+    # --------------------------------------------------------------------
+    # Getter methods (show private/hidden properties and meta-properties)
+    # --------------------------------------------------------------------
+    @property
+    def name(self): return self._name
+    @property
+    def type(self): return self._type
+    @property
+    def material(self): return self._material
+    @property
+    def l(self): return self._l
+    @property
+    def D(self): return self._D
+    @property
+    def k(self): return self._k
+    @property
+    def C0(self): return self._C0
+    @property
+    def lunit(self): return self._lunit
+    @property
+    def Dunit(self): return self._Dunit
+    @property
+    def kunit(self): return self._kunit
+    @property
+    def Cunit(self): return self._Cunit
+    @property
+    def n(self): return self._nlayer
+    @property
+    def nmesh(self): return self._nmesh
+    @property
+    def nmeshmin(self): return self._nmeshmin
+    @property
+    def resistance(self): return self.l*self.k/self.D
+    @property
+    def permeability(self): return self.D/(self.l*self.k)
+    @property
+    def lag(self): return self.l**2/(6*self.D)
+    @property
+    def pressure(self): return self.k*self.C0
+    @property
+    def thickness(self): return sum(self.l)
+    @property
+    def concentration(self): return sum(self.l*self.C0)/self.thickness
+    @property
+    def relative_thickness(self): return self.l/self.thickness
+    @property
+    def relative_resistance(self): return self.resistance/sum(self.resistance)
+    @property
+    def rank(self): return np.flip(np.argsort(np.array(self.resistance))+1).tolist()
+    @property
+    def referencelayer(self): return np.argmax(self.resistance)
+    @property
+    def lreferencelayer(self): return self.l[self.referencelayer]
+    @property
+    def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2
+    
+    # --------------------------------------------------------------------
+    # comparators based resistance
+    # --------------------------------------------------------------------
+    def __eq__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1==value2
+    
+    def __ne__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1!=value2
+    
+    def __lt__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&lt;value2
+
+    def __gt__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&gt;value2
+
+    def __le__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&lt;=value2
+
+    def __ge__(self, o):
+        value1 = self.resistance if self._nlayer&gt;1 else self.resistance[0]
+        if isinstance(o,layer):
+            value2 = o.resistance if o._nlayer&gt;1 else o.resistance[0]
+        else:
+            value2 = o
+        return value1&gt;=value2
+
+    
+    # --------------------------------------------------------------------
+    # remesh generates mesh
+    # --------------------------------------------------------------------
+    def mesh(self,nmesh=None,nmeshmin=None):
+        &#34;&#34;&#34; nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) &#34;&#34;&#34;
+        if nmesh==None: nmesh = self.nmesh
+        if nmeshmin==None: nmeshmin = self.nmeshmin
+        if nmeshmin&gt;nmesh: nmeshmin,nmesh = nmesh, nmeshmin
+        # X = mesh distribution (number of nodes per layer)
+        X = np.ones(self._nlayer)
+        for i in range(1,self._nlayer):
+           X[i] = X[i-1]*(self.permeability[i-1]*self.l[i])/(self.permeability[i]*self.l[i-1])
+        X = np.maximum(nmeshmin,np.ceil(nmesh*X/sum(X)))
+        X = np.round((X/sum(X))*nmesh)
+        # do the mesh
+        x0 = 0
+        mymesh = []
+        for i in range(self._nlayer):
+            mymesh.append(mesh(self.l[i],int(X[i]),x0))
+            x0 += self.l[i]
+        return mymesh
+        
+    # --------------------------------------------------------------------
+    # Getter methods and tools to validate inputs checknumvalue and checktextvalue
+    # --------------------------------------------------------------------
+    def checknumvalue(self,value):
+        &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
+        if isinstance(value,int): value = float(value)
+        if isinstance(value,float): value = np.array([value])
+        if isinstance(value,list): value = np.array(value)
+        if len(value)&gt;self._nlayer:
+            value = value[:self._nlayer]
+            print(&#39;dimension mismatch, the extra value(s) has been removed&#39;)
+        elif len(value)&lt;self._nlayer:
+            value = np.concatenate((value,value[-1:]*np.ones(self._nlayer-len(value))))
+            print(&#39;dimension mismatch, the last value has been repeated&#39;)
+        return value
+
+    def checktextvalue(self,value):
+        &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
+        if not isinstance(value,list): value = [value]
+        if len(value)&gt;self._nlayer:
+            value = value[:self._nlayer]
+            print(&#39;dimension mismatch, the extra entry(ies) has been removed&#39;)
+        elif len(value)&lt;self._nlayer:
+            value = value + value[-1:]*(self._nlayer-len(value))
+            print(&#39;dimension mismatch, the last entry has been repeated&#39;)
+        return value        
+        
+    @l.setter
+    def l(self,value): self._l =self.checknumvalue(value)
+    @D.setter
+    def D(self,value): self._D=self.checknumvalue(value)
+    @k.setter
+    def k(self,value): self._k =self.checknumvalue(value)
+    @C0.setter
+    def C0(self,value): self._C0 =self.checknumvalue(value)
+    @name.setter
+    def name(self,value): self._name =self.checktextvalue(value)
+    @type.setter
+    def type(self,value): self._type =self.checktextvalue(value)
+    @material.setter
+    def material(self,value): self._material =self.checktextvalue(value)
+    @nmesh.setter
+    def nmesh(self,value): self._nmesh = max(value,self._nlayer*self._nmeshmin)
+    @nmeshmin.setter
+    def nmeshmin(self,value): self._nmeshmin = max(value,round(self._nmesh/(2*self._nlayer)))
+
+        
+    # --------------------------------------------------------------------
+    # hash methods (assembly and layer-by-layer)
+    # note that list needs to be converted into tuples to be hashed
+    # --------------------------------------------------------------------
+    def __hash__(self):
+        &#34;&#34;&#34; hash layer-object (assembly) method &#34;&#34;&#34;
+        return hash((tuple(self._name),
+                     tuple(self._type),
+                     tuple(self._material),
+                     tuple(self._l),
+                     tuple(self._D),
+                     tuple(self.k),
+                     tuple(self._C0)))
+    
+    # layer-by-layer @property = decoration to consider it 
+    # as a property instead of a method/attribute
+    # comprehension for n in range(self._nlayer) applies it to all layers
+    @property
+    def hashlayer(self):
+        &#34;&#34;&#34; hash layer (layer-by-layer) method &#34;&#34;&#34;
+        return [hash((self._name[n],
+                      self._type[n],
+                      self._material[n],
+                      self._l[n],
+                      self._D[n],
+                      self.k[n],
+                      self._C0[n]))
+                for n in range(self._nlayer)
+                ]
+ 
+    
+    # --------------------------------------------------------------------
+    # disp method (since the getter are defined, the &#39;_&#39; is dropped)
+    # --------------------------------------------------------------------
+    def __repr__(self):
+        &#34;&#34;&#34; disp method &#34;&#34;&#34;
+        print(&#34;[%s version=%0.4g, contact=%s]&#34; % (self.__description,self.__version,self.__contact))
+        if self._nlayer==0:
+            ret=&#34;empty %s&#34; % (self.__description)
+        else:
+            for n in range(1,self._nlayer+1):
+                print(&#39;-- [ layer %d of %d ] ---------- barrier rank=%d --------------&#39;
+                      % (n,self._nlayer,self.rank[n-1]))
+                for p in [&#34;name&#34;,&#34;type&#34;,&#34;material&#34;]:
+                    v = getattr(self,p)
+                    print(&#39;%10s: &#34;%s&#34;&#39; % (p,v[n-1]),flush=True)
+                for p in [&#34;l&#34;,&#34;D&#34;,&#34;k&#34;,&#34;C0&#34;]:
+                    v = getattr(self,p)                 # value
+                    vunit = getattr(self,p[0]+&#34;unit&#34;)   # value unit
+                    print((&#39;%10s: &#39;+self._printformat+&#34; [%s]&#34;)
+                          % (p,v[n-1],vunit),flush=True)
+            if self._nlayer==1:
+                ret=(&#39;monolayer of %s&#39; % self.__description)
+            else:
+                ret=(&#39;%d-multilayer of %s&#39; % (self._nlayer,self.__description))
+        return ret        
+
+    # --------------------------------------------------------------------
+    # STRUCT method - returns the equivalent dictionary from an object
+    # source: https://stackoverflow.com/questions/61517/python-dictionary-from-an-objects-fields
+    # --------------------------------------------------------------------        
+    def struct(self):
+        &#34;&#34;&#34; returns the equivalent dictionary from an object &#34;&#34;&#34;
+        return dict((key, getattr(self, key)) for key in dir(self) if key not in dir(self.__class__))
+    # --------------------------------------------------------------------
+    
+    # --------------------------------------------------------------------
+    # SIMPLIFY method ny collecting similar layers
+    # --------------------------------------------------------------------        
+    def simplify(self):
+        &#34;&#34;&#34; merge continuous layers of the same type &#34;&#34;&#34;
+        nlayer = self._nlayer
+        if nlayer&gt;1:
+           res = self[0]
+           ires = 0
+           ireshash = res.hashlayer[0]
+           for i in range(1,nlayer):
+               if self.hashlayer[i]==ireshash:
+                   res.l[ires] = res.l[ires]+self.l[i]
+               else:
+                   res = res + self[i]
+                   ires = ires+1
+                   ireshash = self.hashlayer[i]
+        else:
+             res = duplicate(self)
+        return res
+    
+    # --------------------------------------------------------------------
+    # Split layers into a tuple
+    # --------------------------------------------------------------------        
+    def split(self):
+        &#34;&#34;&#34; split layers &#34;&#34;&#34;
+        out = ()
+        if self._nlayer&gt;0:
+            for i in range(self._nlayer):
+                out = out + (self[i],) # (,) special syntax for tuple singleton
+        return out</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="layer.HDPE" href="#layer.HDPE">HDPE</a></li>
+<li><a title="layer.LDPE" href="#layer.LDPE">LDPE</a></li>
+<li><a title="layer.PP" href="#layer.PP">PP</a></li>
+<li><a title="layer.air" href="#layer.air">air</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="layer.layer.C0"><code class="name">var <span class="ident">C0</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def C0(self): return self._C0</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.Cunit"><code class="name">var <span class="ident">Cunit</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Cunit(self): return self._Cunit</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.D"><code class="name">var <span class="ident">D</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def D(self): return self._D</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.Dunit"><code class="name">var <span class="ident">Dunit</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Dunit(self): return self._Dunit</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.Foscale"><code class="name">var <span class="ident">Foscale</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.concentration"><code class="name">var <span class="ident">concentration</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def concentration(self): return sum(self.l*self.C0)/self.thickness</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.hashlayer"><code class="name">var <span class="ident">hashlayer</span></code></dt>
+<dd>
+<div class="desc"><p>hash layer (layer-by-layer) method</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hashlayer(self):
+    &#34;&#34;&#34; hash layer (layer-by-layer) method &#34;&#34;&#34;
+    return [hash((self._name[n],
+                  self._type[n],
+                  self._material[n],
+                  self._l[n],
+                  self._D[n],
+                  self.k[n],
+                  self._C0[n]))
+            for n in range(self._nlayer)
+            ]</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.k"><code class="name">var <span class="ident">k</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def k(self): return self._k</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.kunit"><code class="name">var <span class="ident">kunit</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def kunit(self): return self._kunit</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.l"><code class="name">var <span class="ident">l</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def l(self): return self._l</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.lag"><code class="name">var <span class="ident">lag</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def lag(self): return self.l**2/(6*self.D)</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.lreferencelayer"><code class="name">var <span class="ident">lreferencelayer</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def lreferencelayer(self): return self.l[self.referencelayer]</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.lunit"><code class="name">var <span class="ident">lunit</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def lunit(self): return self._lunit</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.material"><code class="name">var <span class="ident">material</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def material(self): return self._material</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.n"><code class="name">var <span class="ident">n</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def n(self): return self._nlayer</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def name(self): return self._name</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.nmesh"><code class="name">var <span class="ident">nmesh</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def nmesh(self): return self._nmesh</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.nmeshmin"><code class="name">var <span class="ident">nmeshmin</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def nmeshmin(self): return self._nmeshmin</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.permeability"><code class="name">var <span class="ident">permeability</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def permeability(self): return self.D/(self.l*self.k)</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.pressure"><code class="name">var <span class="ident">pressure</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def pressure(self): return self.k*self.C0</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.rank"><code class="name">var <span class="ident">rank</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def rank(self): return np.flip(np.argsort(np.array(self.resistance))+1).tolist()</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.referencelayer"><code class="name">var <span class="ident">referencelayer</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def referencelayer(self): return np.argmax(self.resistance)</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.relative_resistance"><code class="name">var <span class="ident">relative_resistance</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def relative_resistance(self): return self.resistance/sum(self.resistance)</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.relative_thickness"><code class="name">var <span class="ident">relative_thickness</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def relative_thickness(self): return self.l/self.thickness</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.resistance"><code class="name">var <span class="ident">resistance</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def resistance(self): return self.l*self.k/self.D</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.thickness"><code class="name">var <span class="ident">thickness</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def thickness(self): return sum(self.l)</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.type"><code class="name">var <span class="ident">type</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def type(self): return self._type</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="layer.layer.checknumvalue"><code class="name flex">
+<span>def <span class="ident">checknumvalue</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns a validate value to set properties</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def checknumvalue(self,value):
+    &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
+    if isinstance(value,int): value = float(value)
+    if isinstance(value,float): value = np.array([value])
+    if isinstance(value,list): value = np.array(value)
+    if len(value)&gt;self._nlayer:
+        value = value[:self._nlayer]
+        print(&#39;dimension mismatch, the extra value(s) has been removed&#39;)
+    elif len(value)&lt;self._nlayer:
+        value = np.concatenate((value,value[-1:]*np.ones(self._nlayer-len(value))))
+        print(&#39;dimension mismatch, the last value has been repeated&#39;)
+    return value</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.checktextvalue"><code class="name flex">
+<span>def <span class="ident">checktextvalue</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns a validate value to set properties</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def checktextvalue(self,value):
+    &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
+    if not isinstance(value,list): value = [value]
+    if len(value)&gt;self._nlayer:
+        value = value[:self._nlayer]
+        print(&#39;dimension mismatch, the extra entry(ies) has been removed&#39;)
+    elif len(value)&lt;self._nlayer:
+        value = value + value[-1:]*(self._nlayer-len(value))
+        print(&#39;dimension mismatch, the last entry has been repeated&#39;)
+    return value        </code></pre>
+</details>
+</dd>
+<dt id="layer.layer.mesh"><code class="name flex">
+<span>def <span class="ident">mesh</span></span>(<span>self, nmesh=None, nmeshmin=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh(self,nmesh=None,nmeshmin=None):
+    &#34;&#34;&#34; nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) &#34;&#34;&#34;
+    if nmesh==None: nmesh = self.nmesh
+    if nmeshmin==None: nmeshmin = self.nmeshmin
+    if nmeshmin&gt;nmesh: nmeshmin,nmesh = nmesh, nmeshmin
+    # X = mesh distribution (number of nodes per layer)
+    X = np.ones(self._nlayer)
+    for i in range(1,self._nlayer):
+       X[i] = X[i-1]*(self.permeability[i-1]*self.l[i])/(self.permeability[i]*self.l[i-1])
+    X = np.maximum(nmeshmin,np.ceil(nmesh*X/sum(X)))
+    X = np.round((X/sum(X))*nmesh)
+    # do the mesh
+    x0 = 0
+    mymesh = []
+    for i in range(self._nlayer):
+        mymesh.append(mesh(self.l[i],int(X[i]),x0))
+        x0 += self.l[i]
+    return mymesh</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.simplify"><code class="name flex">
+<span>def <span class="ident">simplify</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>merge continuous layers of the same type</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simplify(self):
+    &#34;&#34;&#34; merge continuous layers of the same type &#34;&#34;&#34;
+    nlayer = self._nlayer
+    if nlayer&gt;1:
+       res = self[0]
+       ires = 0
+       ireshash = res.hashlayer[0]
+       for i in range(1,nlayer):
+           if self.hashlayer[i]==ireshash:
+               res.l[ires] = res.l[ires]+self.l[i]
+           else:
+               res = res + self[i]
+               ires = ires+1
+               ireshash = self.hashlayer[i]
+    else:
+         res = duplicate(self)
+    return res</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.split"><code class="name flex">
+<span>def <span class="ident">split</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>split layers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split(self):
+    &#34;&#34;&#34; split layers &#34;&#34;&#34;
+    out = ()
+    if self._nlayer&gt;0:
+        for i in range(self._nlayer):
+            out = out + (self[i],) # (,) special syntax for tuple singleton
+    return out</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.struct"><code class="name flex">
+<span>def <span class="ident">struct</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns the equivalent dictionary from an object</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def struct(self):
+    &#34;&#34;&#34; returns the equivalent dictionary from an object &#34;&#34;&#34;
+    return dict((key, getattr(self, key)) for key in dir(self) if key not in dir(self.__class__))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="layer.mesh"><code class="flex name class">
+<span>class <span class="ident">mesh</span></span>
+<span>(</span><span>l, n, x0=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>simple nodes class for finite-volume methods</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class mesh():
+    &#34;&#34;&#34; simple nodes class for finite-volume methods &#34;&#34;&#34;
+    def __init__(self,l,n,x0=0):
+       self.x0 = x0
+       self.l = l
+       self.n = n
+       de = dw = l/(2*n)
+       self.de = np.ones(n)*de
+       self.dw = np.ones(n)*dw
+       self.xmesh = np.linspace(0+dw,l-de,n) # nodes positions
+       self.w = self.xmesh - dw
+       self.e = self.xmesh + de
+       
+    def __repr__(self):
+        print(&#34;-- mesh object --&#34;)
+        print(&#34;%25s = %0.4g&#34; % (&#34;start at x0&#34;, self.x0))
+        print(&#34;%25s = %0.4g&#34; % (&#34;domain length l&#34;, self.l))
+        print(&#34;%25s = %0.4g&#34; % (&#34;number of nodes n&#34;, self.n))
+        print(&#34;%25s = %0.4g&#34; % (&#34;dw&#34;, self.dw[0]))
+        print(&#34;%25s = %0.4g&#34; % (&#34;de&#34;, self.de[0]))
+        return &#34;mesh%d=[%0.4g %0.4g]&#34; % \
+            (self.n,self.x0+self.xmesh[0],self.x0+self.xmesh[-1])</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#layer-builder-for-patankar-package">Layer builder for patankar package</a></li>
+<li><a href="#general-object-is-layer">general object is layer()</a></li>
+<li><a href="#derived-ones-ldpehdpeppair">derived ones LDPE(),HDPE(),PP()&hellip;air()</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="layer.check_units" href="#layer.check_units">check_units</a></code></li>
+<li><code><a title="layer.toSI" href="#layer.toSI">toSI</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="layer.HDPE" href="#layer.HDPE">HDPE</a></code></h4>
+<ul class="">
+<li><code><a title="layer.HDPE.Tg" href="#layer.HDPE.Tg">Tg</a></code></li>
+<li><code><a title="layer.HDPE.density" href="#layer.HDPE.density">density</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="layer.LDPE" href="#layer.LDPE">LDPE</a></code></h4>
+<ul class="">
+<li><code><a title="layer.LDPE.Tg" href="#layer.LDPE.Tg">Tg</a></code></li>
+<li><code><a title="layer.LDPE.density" href="#layer.LDPE.density">density</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="layer.PP" href="#layer.PP">PP</a></code></h4>
+<ul class="">
+<li><code><a title="layer.PP.Tg" href="#layer.PP.Tg">Tg</a></code></li>
+<li><code><a title="layer.PP.density" href="#layer.PP.density">density</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="layer.air" href="#layer.air">air</a></code></h4>
+</li>
+<li>
+<h4><code><a title="layer.layer" href="#layer.layer">layer</a></code></h4>
+<ul class="two-column">
+<li><code><a title="layer.layer.C0" href="#layer.layer.C0">C0</a></code></li>
+<li><code><a title="layer.layer.Cunit" href="#layer.layer.Cunit">Cunit</a></code></li>
+<li><code><a title="layer.layer.D" href="#layer.layer.D">D</a></code></li>
+<li><code><a title="layer.layer.Dunit" href="#layer.layer.Dunit">Dunit</a></code></li>
+<li><code><a title="layer.layer.Foscale" href="#layer.layer.Foscale">Foscale</a></code></li>
+<li><code><a title="layer.layer.checknumvalue" href="#layer.layer.checknumvalue">checknumvalue</a></code></li>
+<li><code><a title="layer.layer.checktextvalue" href="#layer.layer.checktextvalue">checktextvalue</a></code></li>
+<li><code><a title="layer.layer.concentration" href="#layer.layer.concentration">concentration</a></code></li>
+<li><code><a title="layer.layer.hashlayer" href="#layer.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="layer.layer.k" href="#layer.layer.k">k</a></code></li>
+<li><code><a title="layer.layer.kunit" href="#layer.layer.kunit">kunit</a></code></li>
+<li><code><a title="layer.layer.l" href="#layer.layer.l">l</a></code></li>
+<li><code><a title="layer.layer.lag" href="#layer.layer.lag">lag</a></code></li>
+<li><code><a title="layer.layer.lreferencelayer" href="#layer.layer.lreferencelayer">lreferencelayer</a></code></li>
+<li><code><a title="layer.layer.lunit" href="#layer.layer.lunit">lunit</a></code></li>
+<li><code><a title="layer.layer.material" href="#layer.layer.material">material</a></code></li>
+<li><code><a title="layer.layer.mesh" href="#layer.layer.mesh">mesh</a></code></li>
+<li><code><a title="layer.layer.n" href="#layer.layer.n">n</a></code></li>
+<li><code><a title="layer.layer.name" href="#layer.layer.name">name</a></code></li>
+<li><code><a title="layer.layer.nmesh" href="#layer.layer.nmesh">nmesh</a></code></li>
+<li><code><a title="layer.layer.nmeshmin" href="#layer.layer.nmeshmin">nmeshmin</a></code></li>
+<li><code><a title="layer.layer.permeability" href="#layer.layer.permeability">permeability</a></code></li>
+<li><code><a title="layer.layer.pressure" href="#layer.layer.pressure">pressure</a></code></li>
+<li><code><a title="layer.layer.rank" href="#layer.layer.rank">rank</a></code></li>
+<li><code><a title="layer.layer.referencelayer" href="#layer.layer.referencelayer">referencelayer</a></code></li>
+<li><code><a title="layer.layer.relative_resistance" href="#layer.layer.relative_resistance">relative_resistance</a></code></li>
+<li><code><a title="layer.layer.relative_thickness" href="#layer.layer.relative_thickness">relative_thickness</a></code></li>
+<li><code><a title="layer.layer.resistance" href="#layer.layer.resistance">resistance</a></code></li>
+<li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
+<li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
+<li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.thickness" href="#layer.layer.thickness">thickness</a></code></li>
+<li><code><a title="layer.layer.type" href="#layer.layer.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="layer.mesh" href="#layer.mesh">mesh</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
