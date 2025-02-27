@@ -729,7 +729,7 @@ cat > "$index_file" <<EOF
     <div id="notification-banner" class="notification-banner">
         <span>
             If you are looking for the concepts of migration modeling and risk assessment, please follow this 
-            <a href="./MigrationModeling/" target="_book">link</a>.
+            <a href="MigrationModeling/" target="_book">link</a>.
         </span>
         <button class="close-button" onclick="closeBanner()">&times;</button>
     </div>

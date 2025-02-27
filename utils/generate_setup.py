@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Generates setup.py for SETUP
+Generates setup.py, requirements and environment.yml for SETUP
 
 The following project structure is assumed.
 
@@ -47,28 +47,25 @@ Author:
 
     """
 
-
 import os
 import sys
 import re
 from pathlib import Path
 
-# Define dependencies (same for pip and Conda)
+# Define dependencies
 dependencies = [
-    "numpy>=1.21.0",      # Matrix computations (finite-volume method)
-    "matplotlib>=3.4.0",  # Modern plotting functions
-    "scipy>=1.7.0",       # Numerical integration and solvers
-    "pandas>=1.3.0",      # Data manipulation and Excel support
-    "openpyxl>=3.0.10"    # Save to .xlsx format
+    "numpy>=1.21.0",
+    "matplotlib>=3.4.0",
+    "scipy>=1.7.0",
+    "pandas>=1.3.0",
+    "openpyxl>=3.0.10"
 ]
 
-conda_channels = ["conda-forge", "defaults"]  # Recommended Conda channels
-
+conda_channels = ["conda-forge", "defaults"]
 
 def is_utils_directory(current_path):
     """Verify that the script is run from the 'utils/' directory."""
     return current_path.name == 'utils'
-
 
 def get_version(parent_dir):
     """Extract the version number of SFPPy from VERSION.txt."""
@@ -76,7 +73,7 @@ def get_version(parent_dir):
     if not version_file.exists():
         sys.stderr.write(f"Error: {version_file} not found. Please create a file with content: version=\"XX.YY.ZZ\"\n")
         sys.exit(1)
-    
+
     with open(version_file, "r") as f:
         for line in f:
             match = re.match(r'^version\s*=\s*"(.*?)"$', line.strip())
@@ -85,7 +82,6 @@ def get_version(parent_dir):
 
     sys.stderr.write(f"Error: No valid version string found in {version_file}. Ensure it contains: version=\"XX.YY.ZZ\"\n")
     sys.exit(1)
-
 
 def prompt_overwrite(file_path):
     """Prompt the user to overwrite an existing file."""
@@ -97,7 +93,6 @@ def prompt_overwrite(file_path):
             return False
         else:
             print("Please enter 'Y' or 'N'.")
-
 
 def generate_setup_py(parent_dir, dependencies):
     """Generate setup.py with specified dependencies."""
@@ -133,9 +128,8 @@ setup(
 
     with open(setup_path, 'w') as f:
         f.write(setup_content)
-    
-    print(f"✔ setup.py created successfully in '{parent_dir}'.")
 
+    print(f"✔ setup.py created successfully in '{parent_dir}'.")
 
 def generate_environment_yml(parent_dir, dependencies, conda_channels):
     """Generate environment.yml for Conda users."""
@@ -145,42 +139,49 @@ def generate_environment_yml(parent_dir, dependencies, conda_channels):
         print("Skipping environment.yml generation.")
         return
 
-    # Convert dependencies for Conda (removes version constraints if necessary)
     conda_deps = [dep.replace(">=", "=") for dep in dependencies]
 
     env_content = f"""name: sfppy
-    channels:
-    {chr(10).join(f"  - {channel}" for channel in conda_channels)}
-    dependencies:
-    - python=3.10
-    {chr(10).join(f"  - {dep}" for dep in conda_deps)}
-    """
-
+channels:
+{chr(10).join(f"  - {channel}" for channel in conda_channels)}
+dependencies:
+- python=3.10
+{chr(10).join(f"  - {dep}" for dep in conda_deps)}
+"""
 
     with open(env_path, 'w') as f:
         f.write(env_content)
 
     print(f"✔ environment.yml created successfully in '{parent_dir}'.")
 
+def generate_requirements_txt(parent_dir, dependencies):
+    """Generate requirements.txt for pip users."""
+    req_path = parent_dir / "requirements.txt"
+
+    if req_path.exists() and not prompt_overwrite(req_path):
+        print("Skipping requirements.txt generation.")
+        return
+
+    req_content = "\n".join(dependencies)
+
+    with open(req_path, 'w') as f:
+        f.write(req_content)
+
+    print(f"✔ requirements.txt created successfully in '{parent_dir}'.")
 
 def main():
     """Main script execution."""
     current_dir = Path.cwd()
 
-    # Ensure the script is run from 'utils/'
     if not is_utils_directory(current_dir):
         print("Error: This script must be run from the 'utils/' directory of the SFPPy project.")
         sys.exit(1)
 
-    # Define parent project directory
     parent_dir = current_dir.parent
 
-    # Generate setup.py
     generate_setup_py(parent_dir, dependencies)
-
-    # Generate environment.yml
     generate_environment_yml(parent_dir, dependencies, conda_channels)
-
+    generate_requirements_txt(parent_dir, dependencies)
 
 if __name__ == '__main__':
     main()

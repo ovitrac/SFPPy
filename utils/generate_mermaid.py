@@ -31,7 +31,7 @@ ConfigurationPreambule = """
 ## **Running SFPPy**
 
 > **SFPPy** enables the **compliance assessment of food contact materials** and facilitates **risk assessments** through **migration modeling**.  
-> The term *"[Migration Modeling]("./MigrationModeling/")"* refers to the **simulation of mass transfer** (primarily diffusive) from packaging materials into food.
+> The term *"[Migration Modeling]("MigrationModeling/")"* refers to the **simulation of mass transfer** (primarily diffusive) from packaging materials into food.
 
 #### **What this guide covers:**
 1. **Running SFPPy/example1.py** (or `example2.py`, `example3.py`) immediately after cloning the repository.
@@ -45,7 +45,7 @@ For the best experience, we recommend using [Jupyter](https://docs.jupyter.org/e
 ### **📌 Prerequisites**
 Before running SFPPy, make sure you have:
 
-✅ **A basic understanding of Migration Modeling** → Read this [document]("./MigrationModeling/").  
+✅ **A basic understanding of Migration Modeling** → Read this [document]("MigrationModeling/").  
 ✅ **Python 3.x (≥3.8) installed**.  
 ✅ **Dependencies installed**:
    - If your Python distribution does **not include scientific libraries** (NumPy, SciPy, Matplotlib, Pandas), install them using:
