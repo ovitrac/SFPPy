@@ -1,0 +1,203 @@
+:root {
+    --side-bar-bg-color: #ffffff; /* Darker background for margins: 2c2c2c */
+    --paper-bg-color: #ffffff; /* White background for main content */
+    --text-color: #322289;
+    --control-text-color: #777;
+    --link-color: #c6392e;
+    --link-hover-color: #a52723; /* 10% darker than --link-color */
+    --font-family-base: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+    --font-family-mono: 'Roboto Mono', Monaco, Courier, monospace;
+    --font-size-base: 16px;
+    --line-height-base: 1.6;
+    --padding-base: 20px;
+    --shadow-color: rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+    --border-color: #ddd;
+    --max-content-width: 1200px; /* Maximum width for the content area */
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+}
+
+html {
+    font-size: var(--font-size-base);
+    background-color: var(--side-bar-bg-color);
+}
+
+body {
+    font-family: var(--font-family-base);
+    color: var(--text-color);
+    line-height: var(--line-height-base);
+    margin: 0;
+    padding: 60px; /* 60px padding to create margins */
+    background-color: var(--side-bar-bg-color);
+    transition: background-color 0.3s ease;
+}
+
+article {
+    background-color: var(--paper-bg-color);
+    max-width: var(--max-content-width); /* Limit the maximum width */
+    width: 100%; /* Full width up to max-width */
+    margin: 0 auto; /* Center horizontally */
+    padding: var(--padding-base);
+    box-shadow: 0 4px 20px var(--shadow-color); /* Enhanced shadow */
+    border-radius: 5px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        padding: 30px; /* Reduced padding on smaller screens */
+    }
+
+    article {
+        max-width: 95%; /* Adjust max-width for smaller screens */
+        padding: 15px;
+        box-shadow: 0 2px 10px var(--shadow-color); /* Slightly reduced shadow */
+    }
+}
+
+/* Text Elements */
+p {
+    margin: 1.5rem 0;
+    line-height: var(--line-height-base);
+    word-spacing: 0.05rem;
+}
+
+blockquote {
+    border-left: 4px solid var(--link-color);
+    padding: 1rem;
+    color: var(--control-text-color);
+    background-color: rgba(198, 57, 46, 0.05); /* Lighter background for better readability */
+    margin: 1.5rem 0;
+}
+
+code, tt {
+    font-family: var(--font-family-mono);
+    font-size: 0.92rem;
+    background-color: rgba(200, 200, 200, 0.2);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 1rem 0;
+}
+
+h1 {
+    font-size: 2.2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 1.8rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+
+h4 {
+    font-size: 1.2rem;
+}
+
+h5, h6 {
+    font-size: 1rem;
+    color: var(--control-text-color);
+}
+
+/* Lists */
+ul, ol {
+    margin: 1.5rem 0;
+    padding-left: 1.5rem;
+}
+
+ul li, ol li {
+    margin-bottom: 0.5rem;
+}
+
+/* Links */
+a {
+    color: var(--link-color);
+    text-decoration: underline; /* Underline for better visibility */
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--link-hover-color); /* Use the defined hover color */
+    text-decoration: underline; /* Maintain underline on hover */
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+}
+
+table th, table td {
+    border: 1px solid var(--border-color);
+    padding: 0.8rem;
+    text-align: left;
+}
+
+thead th {
+    background-color: #f2f2f2;
+}
+
+/* Horizontal Rules */
+hr {
+    border: 0;
+    height: 2px;
+    background: var(--border-color);
+    margin: 2rem 0;
+}
+
+/* Responsive Adjustments for Print */
+@media print {
+    html {
+        font-size: 13px;
+    }
+
+    table, pre {
+        page-break-inside: avoid;
+    }
+
+    body {
+        padding: 0; /* Remove padding for print */
+        background-color: #fff; /* White background for print */
+    }
+
+    article {
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    a {
+        color: black;
+        text-decoration: underline;
+    }
+
+    blockquote {
+        background-color: rgba(198, 57, 46, 0.05);
+    }
+}
+
+/* Font Smoothing */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

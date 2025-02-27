@@ -1,0 +1,27 @@
+# VERSION.txt
+# This file defines the version of SFPPy, used across both Bash and Python scripts.
+# Only the first non-commented line is read, which must contain the version as a string.
+# Example: version="XX.YY.ZZ"
+#
+# Format:
+# - Lines starting with '#' are ignored as comments.
+# - The version string should follow the format: version="major.minor.patch" (e.g., version="1.00.0").
+# - The version format is free-form but must be enclosed in double quotes.
+#
+# Notes:
+# - This file is critical for consistent version/documentation management in SPFFy.
+# - If missing, an error will be raised, and instructions to recreate it will be displayed.
+#
+# For developers, to read version use:
+# in Bash: __version__=$(grep -m 1 '^version=' "$version_file" | sed -E 's/version\s*=\s*"([^"]+)"/\1/')
+# in Python: match = re.match(r'^version\s*=\s*"(.*?)"$', line); if match: __version__=match.group(1)
+#
+#
+#   List of versions:
+#       - 1.20: full release
+#
+#
+# Author: INRAE\olivier.vitrac@agroparistech.fr
+# Revision: 2025-02-26
+#
+version="1.2"
