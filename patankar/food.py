@@ -7,12 +7,12 @@ SFPPy Module: Food Layer
 ===============================================================================
 Defines **food materials** for migration simulations. Models food as a **0D layer** with:
 - **Mass transfer resistance (`h`)**
-- **Partitioning (`k0`)**
+- **Partitioning (`k`)**
 - **Contact time & temperature**
 
 **Main Components:**
 - **Base Class: `foodphysics`** (Stores all food-related parameters)
-    - Defines mass transfer properties (`h`, `k0`)
+    - Defines mass transfer properties (`h`, `k`)
     - Implements property propagation (`food >> layer`)
 - **Subclasses:**
     - `foodlayer`: General food layer model
@@ -32,12 +32,12 @@ medium = foodlayer(name="ethanol", contacttemperature=(40, "degC"))
 ```
 
 
-@version: 1.2
+@version: 1.22
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2023-01-25
-@rev: 2025-02-14
+@rev: 2025-03-03
 
 """
 
@@ -49,6 +49,7 @@ import numpy as np
 from copy import deepcopy as duplicate
 
 from patankar.layer import check_units, NoUnits, layer # to convert units to SI
+from patankar.loadpubchem import migrant
 
 __all__ = ['ambient', 'aqueous', 'boiling', 'check_units', 'chemicalaffinity', 'chilled', 'ethanol', 'ethanol50', 'fat', 'foodlayer', 'foodphysics', 'foodproperty', 'frozen', 'get_defined_init_params', 'help_food', 'hotfilled', 'intermediate', 'is_valid_classname', 'layer', 'liquid', 'list_food_classes', 'nofood', 'oven', 'pasteurization', 'perfectlymixed', 'realcontact', 'realfood', 'rolled', 'semisolid', 'setoff', 'simulant', 'solid', 'stacked', 'sterilization', 'tenax', 'testcontact', 'texture', 'water', 'wrap_text', 'yogurt']
 
@@ -59,7 +60,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.2"
+__version__ = "1.21"
 #%% Private Properties and functions
 
 # List of the default SI units used by physical quantity
@@ -68,7 +69,8 @@ parametersWithUnits = {"volume":"m**3",
                        "density":"kg/m**3",
                        "contacttemperature":"degC",
                        "h":"m/s",
-                       "k0":NoUnits,
+                       "k":NoUnits,  # user (preferred)
+                       "k0":NoUnits, # alias (can be used after instantiation)
                        "CF0":NoUnits,
                        "contacttime":"s"
                        }
@@ -204,6 +206,16 @@ class foodphysics:
     name = "food physics"
     level = "base"
 
+    # Low-level prediction properties (F=contact medium, i=solute/migrant)
+    # these @properties are defined by foodlayer, they should be duplicated
+    _lowLevelPredictionPropertyList = [
+        "chemicalsubstance","simulant","polarityindex","ispolymer","issolid", # F: common with patankar.layer
+        "physicalstate","chemicalclass", # phase F properties
+        "substance","migrant","solute", # i properties with synonyms substance=migrant=solute
+        # users use "k", but internally we use k0, keep _kmodel in the instance
+        "k0","k0unit","kmodel","_compute_kmodel" # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        ]
+
     # ------------------------------------------------------
     # Transfer rules for food1 >> food2 and food1 >> result
     # ------------------------------------------------------
@@ -213,10 +225,17 @@ class foodphysics:
         "contacttemperature": "contact",
         "contacttime": "contact",
         "surfacearea": "geometry",
-        "volume": "geometry"
+        "volume": "geometry",
+        "substance": "substance",
+        "medium": "medium"
     }
 
-    # Rules for property transfer based on object type
+    # Rules for property transfer wtih >> or @ based on object type
+    # ["property name"]["name of the destination class"][attr]
+    #   - if onlyifinherited, only inherited values are transferred
+    #   - if checkNmPy, the value will be transferred as a np.ndarray
+    #   - name is the name of the property in the destination class (use "" to keep the same name)
+    #   - prototype is the class itself (available only after instantiation, keep None here)
     _transferable_properties = {
         "contacttemperature": {
             "foodphysics": {
@@ -224,7 +243,6 @@ class foodphysics:
                 "checkNumPy": False,
                 "as": "",
                 "prototype": None,
-                "category": "contact"
             },
             "layer": {
                 "onlyifinherited": False,
@@ -238,7 +256,7 @@ class foodphysics:
                 "onlyifinherited": True,
                 "checkNumPy": True,
                 "as": "",
-                "prototype": None
+                "prototype": None,
             },
             "SensPatankarResult": {
                 "onlyifinherited": False,
@@ -262,7 +280,29 @@ class foodphysics:
                 "as": "",
                 "prototype": None
             }
-        }
+        },
+        "substance": {
+            "foodlayer": {
+                "onlyifinherited": False,
+                "checkNumPy": False,
+                "as": "",
+                "prototype": None,
+            },
+            "layer": {
+                "onlyifinherited": False,
+                "checkNumPy": False,
+                "as": "",
+                "prototype": None
+            }
+        },
+        "medium": {
+            "layer": {
+                "onlyifinherited": False,
+                "checkNumPy": False,
+                "as": "",
+                "prototype": None
+            }
+        },
     }
 
 
@@ -288,7 +328,7 @@ class foodphysics:
             # For each attribute defined at the class level,
             # if it is not 'description', not callable, and not a dunder, set it as an instance attribute.
             for key, value in cls.__dict__.items(): # we loop on class attributes
-                if key in ("description","level") or key.startswith("__") or callable(value):
+                if key in ("description","level") or key in self._lowLevelPredictionPropertyList or key.startswith("__") or key.startswith("_") or callable(value):
                     continue
                 if key not in kwargs:
                     setattr(self, key, numvalidator(key,value))
@@ -299,6 +339,9 @@ class foodphysics:
                 setattr(self, key, value)
         # we initialize the acknowlegment process for future property propagation
         self._hasbeeninherited = {}
+        # we initialize _kmodel if _compute_kmodel exists
+        if hasattr(self,"_compute_kmodel"):
+            self._kmodel = "default" # do not initialize at self._compute_kmodel (default forces refresh)
         # we initialize the _simstate storing the last simulation result available
         self._simstate = None # simulation results
         self._inpstate = None # their inputs
@@ -312,6 +355,9 @@ class foodphysics:
             self.__class__._transferable_properties["contacttime"]["SensPatankarResult"]["prototype"] = SensPatankarResult
             self.__class__._transferable_properties["surfacearea"]["foodphysics"]["prototype"] = foodphysics
             self.__class__._transferable_properties["volume"]["foodphysics"]["prototype"] = foodphysics
+            self.__class__._transferable_properties["substance"]["foodlayer"]["prototype"] = migrant
+            self.__class__._transferable_properties["substance"]["layer"]["prototype"] = layer
+            self.__class__._transferable_properties["medium"]["layer"]["prototype"] = layer
 
     # ------- [properties to access/modify simstate] --------
     @property
@@ -398,7 +444,7 @@ class foodphysics:
             - contacttime (float or tuple): Contact time (can be tuple like (1, "h")).
             - contacttemperature (float or tuple): Temperature (can be tuple like (25, "degC")).
             - h (float or tuple): Mass transfer coefficient (can be tuple like (1e-6,"m/s")).
-            - k0 (float or tuple): Henri-like coefficient for the food (can be tuple like (1,"a.u.")).
+            - k (float or tuple): Henry-like coefficient for the food (can be tuple like (1,"a.u.")).
 
         """
         if not kwargs:  # shortcut
@@ -422,6 +468,29 @@ class foodphysics:
             if key in kwargs:
                 value = kwargs[key]
                 setattr(self, key, checkunits(value))  # Ensure NumPy array in SI
+        # Update medium, migrant (they accept aliases)
+        lex = {
+            "substance": ("substance", "migrant", "chemical", "solute"),
+            "medium": ("medium", "simulant", "food", "contact"),
+        }
+        used_aliases = {}
+        def get_value(canonical_key):
+            """Find the correct alias in kwargs and return its value, or None if not found."""
+            found_key = None
+            for alias in lex.get(canonical_key, ()):  # Get aliases, default to empty tuple
+                if alias in kwargs:
+                    if alias in used_aliases:
+                        raise ValueError(f"Alias '{alias}' is used for multiple canonical keys!")
+                    found_key = alias
+                    used_aliases[alias] = canonical_key
+                    break  # Stop at the first match
+            return kwargs.get(found_key, None)  # Return value if found, else None
+        # Assign values only if found in kwargs
+        new_substance = get_value("substance")
+        new_medium = get_value("medium")
+        if new_substance is not None: self.substance = new_substance
+        if new_medium is not None:self.medium = new_medium
+        # return
         return self  # Return self for method chaining if needed
 
     def get_param(self, key, default=None, acceptNone=True):
@@ -453,12 +522,11 @@ class foodphysics:
         raise KeyError(f'Use getattr("{key}") to retrieve the value of {key}')
 
     def __repr__(self):
-        """Formatted string representation of the foodphysics object."""
-        # refresh all definitions
+        """Formatted string representation of the FOODlayer object."""
+        # Refresh all definitions
         self.refresh()
         # Header with name and description
         repr_str = f'Food object "{self.name}" ({self.description}) with properties:\n'
-
         # Helper function to extract a numerical value safely
         def format_value(value):
             """Ensure the value is a float or a single-item NumPy array."""
@@ -467,15 +535,30 @@ class foodphysics:
             elif value is None:
                 return value
             return float(value)
-        # Loop through parameters that should be printed
+        # Collect defined properties and their formatted values
+        properties = []
+        excluded = ("k") if self.haskmodel else ("k0")
         for key, unit in parametersWithUnits.items():
-            if hasattr(self, key):  # Print only defined parameters
+            if hasattr(self, key) and key not in excluded:  # Include only defined parameters
                 value = format_value(getattr(self, key))
-                unit_str = self.get_param(key+"Units", parametersWithUnits[key])  # Retrieve unit safely
+                unit_str = self.get_param(f"{key}Units", unit)  # Retrieve unit safely
                 if value is not None:
-                    repr_str += f"{key:15s}: {value:0.8g} [{unit_str}]\n"
-        print(repr_str.strip())  # Remove trailing newline
-        return str(self)
+                    properties.append((key, f"{value:0.8g}", unit_str))
+
+        # Sort properties alphabetically
+        properties.sort(key=lambda x: x[0])
+
+        # Determine max width for right-aligned names
+        max_key_length = max(len(key) for key, _, _ in properties) if properties else 0
+        # Construct formatted property list
+        for key, value, unit_str in properties:
+            repr_str += f"{key.rjust(max_key_length)}: {value} [{unit_str}]\n"
+            if key == "k0":
+                extra_info = f"{self._substance.k.__name__}(<{self.chemicalsubstance}>,{self._substance})"
+                repr_str += f"{' ' * (max_key_length)}= {extra_info}\n"
+        print(repr_str.strip())  # Print formatted output
+        return str(self)  # Simplified representation for repr()
+
 
 
     def __str__(self):
@@ -491,16 +574,24 @@ class foodphysics:
     @property
     def PBC(self):
         """
-        Returns true if h is not defined or None
-            This property is used to identified periodic boundary condition also called setoff mass transfer.
+        Returns True if h is not defined or None
+        This property is used to identified periodic boundary condition also called setoff mass transfer.
 
         """
         if not hasattr(self,"h"):
-            return None
+            return False # None
         htmp = getattr(self,"h")
         if isinstance(htmp,np.ndarray):
             htmp = htmp.item()
         return htmp is None
+
+    @property
+    def hassubstance(self):
+        """Returns True if substance is defined (class migrant)"""
+        if not hasattr(self, "_substance"):
+            return False
+        return isinstance(self._substance,migrant)
+
 
 
     # --------------------------------------------------------------------
@@ -572,16 +663,39 @@ class foodphysics:
 
     def __rshift__(self, other):
         """Overloads >> to propagate to other."""
+        # inherit substance/migrant from other if self.migrant is None
+        if isinstance(other,(layer,foodlayer)):
+            if isinstance(self,foodlayer):
+                if self.substance is None and other.substance is not None:
+                    self.substance = other.substance
+        return self._to(other) # propagates
+
+    def __matmul__(self, other):
+        """Overload @: equivalent to >> if other is a layer."""
+        if not isinstance(other, layer):
+            raise TypeError(f"Right operand must be a layer not a {type(other).__name__}")
         return self._to(other)
 
     # migration method
     def migration(self,material,**kwargs):
+        """interface to simulation engine: senspantankar"""
         from patankar.migration import senspatankar
         self._to(material) # propagate contact conditions first
         return senspatankar(material,self,**kwargs)
 
     def contact(self,material,**kwargs):
+        """alias to migration method"""
         return self.migration(self,material,**kwargs)
+
+    @property
+    def haskmodel(self):
+        """Returns True if a kmodel has been defined"""
+        if hasattr(self, "_compute_kmodel"):
+            if self._compute_kmodel() is not None:
+                return True
+            elif callable(self.kmodel):
+                return self.kmodel() is not None
+        return False
 
 
 # %% Root classes
@@ -601,7 +715,7 @@ class foodlayer(foodphysics):
     applicable to materials in contact.
     Since mass transfer are much faster in the food than in the materials in contact, food is represented
     as an almost 0D layer. Only a mass transfer resistance is applied at the food-material interface
-    controlled by the mass transfer coefficient h. A Henri-like coefficient k0 controls the eventual
+    controlled by the mass transfer coefficient h. A Henry-like coefficient k controls the eventual
     partitioning of the substance between the food and the layer of the materials.
 
     Food are geometrically defined by their volume and surface area in contact with the material.
@@ -612,12 +726,162 @@ class foodlayer(foodphysics):
     level = "root"
     description = "root food class"  # Remains as class attribute
     name = "generic food layer"
+    # -----------------------------------------------------------------------------
+    # Class attributes that can be overidden in instances.
+    # Their default values are set in classes and overriden with similar
+    # instance properties with @property.setter.
+    # These values cannot be set during construction, but only after instantiation.
+    # A common scale for polarity index for solvents is from 0 to 10:
+    #     - 0-3: Non-polar solvents (e.g., hexane)
+    #     - 4-6: Moderately polar solvents (e.g., acetone)
+    #     - 7-10: Polar solvents (e.g., water)
+    # -----------------------------------------------------------------------------
+    # These properties are essential for model predictions, they cannot be customized
+    # beyond the rules accepted by the model predictors (they are not metadata)
+    # note: similar attributes exist for patanaker.layer objects (similar possible values)
+    _physicalstate = "liquid"   # solid, liquid (default), gas, porous
+    _chemicalclass = "other"    # polymer, other (default)
+    _chemicalsubstance = None   # None (default), monomer for polymers
+    _polarityindex = 0.0        # polarity index (roughly: 0=hexane, 10=water)
+    # -----------------------------------------------------------------------------
+    # Class attributes duplicated as instance parameters
+    # -----------------------------------------------------------------------------
     volume,volumeUnits = check_units((1,"dm**3"))
     surfacearea,surfaceareaUnits = check_units((6,"dm**2"))
     density,densityUnits = check_units((1000,"kg/m**3"))
     CF0,CF0units = check_units((0,NoUnits))  # initial concentration (arbitrary units)
     contacttime, contacttime_units = check_units((10,"days"))
-    contactemperature,contactemperatureUnits = check_units((40,"degC"),ExpectedUnits="degC") # temperature ALWAYS in °C
+    contactemperature,contactemperatureUnits = check_units((40,"degC"),ExpectedUnits="degC") # temperature in °C
+    _substance = None # substance container / similar construction in pantankar.layer = migrant
+    _k0model = None
+    # -----------------------------------------------------------------------------
+    # Getter methods for class/instance properties: same definitions as in patankar.layer (mandatory)
+    # medium properties
+    # -----------------------------------------------------------------------------
+    # PHASE PROPERTIES  (attention chemicalsubstance=F substance, substance=i substance)
+    @property
+    def physicalstate(self): return self._physicalstate
+    @property
+    def chemicalclass(self): return self._chemicalclass
+    @property
+    def chemicalsubstance(self): return self._chemicalsubstance
+    @property
+    def simulant(self): return self._chemicalsubstance # simulant is an alias of chemicalsubstance
+    @property
+    def polarityindex(self): return self._polarityindex
+    @property
+    def ispolymer(self): return self.physicalstate == "polymer"
+    @property
+    def issolid(self): return self.solid == "solid"
+    # SUBSTANCE/SOLUTE/MIGRANT properties  (attention chemicalsubstance=F substance, substance=i substance)
+    @property
+    def substance(self): return self._substance # substance can be ambiguous
+    @property
+    def migrant(self): return self.substance    # synonym
+    @property
+    def solute(self): return self.substance     # synonym
+
+    # -----------------------------------------------------------------------------
+    # Setter methods for class/instance properties: same definitions as in patankar.layer (mandatory)
+    # -----------------------------------------------------------------------------
+    # PHASE PROPERTIES  (attention chemicalsubstance=F substance, substance=i substance)
+    @physicalstate.setter
+    def physicalstate(self,value):
+        if value not in ("solid","liquid","gas","supercritical"):
+            raise ValueError(f"physicalstate must be solid/liduid/gas/supercritical and not {value}")
+        self._physicalstate = value
+    @chemicalclass.setter
+    def chemicalclass(self,value):
+        if value not in ("polymer","other"):
+            raise ValueError(f"chemicalclass must be polymer/oher and not {value}")
+        self._chemicalclass= value
+    @chemicalsubstance.setter
+    def chemicalsubstance(self,value):
+        if not isinstance(value,str):
+            raise ValueError("chemicalsubtance must be str not a {type(value).__name__}")
+        self._chemicalsubstance= value
+    @simulant.setter
+    def simulant(self,value):
+        self.chemicalsubstance = value # simulant is an alias of chemicalcalsubstance
+    @polarityindex.setter
+    def polarityindex(self,value):
+        if not isinstance(value,(float,int)):
+            raise ValueError("polarity index must be float not a {type(value).__name__}")
+        # rescaled to match predictions - standard scale [0,10.2] - predicted scale [0,7.12]
+        return self._polarityindex * migrant("water").polarityindex/10.2
+    # SUBSTANCE/SOLUTE/MIGRANT properties  (attention chemicalsubstance=F substance, substance=i substance)
+    @substance.setter
+    def substance(self,value):
+        if isinstance(value,str):
+            value = migrant(value)
+        if not isinstance(value,migrant):
+            raise TypeError(f"substance/migrant/solute must be a migrant not a {type(value).__name__}")
+        self._substance = value
+    @migrant.setter
+    def migrant(self,value):
+        self.substance = value
+    @solute.setter
+    def solute(self,value):
+        self.substance = value
+    # -----------------------------------------------------------------------------
+    # Henry-like coefficient k and its alias k0 (internal use)
+    # -----------------------------------------------------------------------------
+    #   - k is the name of the Henry-like property for food (as set and seen by the user)
+    #   - k0 is the property operated by migration
+    #   - k0 = k except if kmodel (lambda function) does not returns None
+    #   - kmodel returns None if _substance is not set (proper migrant)
+    #   - kmodel = None will override any existing kmodel
+    #   - kmodel must be intialized to "default" to refresh its definition with self
+    # note: The implementation is almost symmetric with kmodel in patankar.layer.
+    # The main difference are:
+    #    - food classes are instantiated by foodphysics
+    #    - k is used to store the value of k0 (not _k or _k0)
+    # -----------------------------------------------------------------------------
+    # layer substance (of class migrant or None)
+    # k0 and k0units (k and kunits are user inputs)
+    @property
+    def k0(self):
+        ktmp = None
+        if self.kmodel == "default": # default behavior
+            ktmp = self._compute_kmodel()
+        elif callable(self.kmodel): # user override (not the default function)
+            ktmp = self.kmodel()
+        if ktmp:
+            return np.full_like(self.k, ktmp,dtype=np.float64)
+        return self.k
+    @k0.setter
+    def k0(self,value):
+        if not isinstance(value,(int,float,np.ndarray)):
+            TypeError("k0 must be int, float or np.ndarray")
+        if isinstance(self.k,int): self.k = float(self.k)
+        self.k = np.full_like(self.k,value,dtype=np.float64)
+    @property
+    def kmodel(self):
+        return self._kmodel
+    @kmodel.setter
+    def kmodel(self,value):
+        if value is None or callable(value):
+            self._kmodel = value
+        else:
+            raise ValueError("kmodel must be None or a callable function")
+    @property
+    def _compute_kmodel(self):
+        """Return a callable function that evaluates k with updated parameters."""
+        if not isinstance(self._substance,migrant) or self._substance.keval() is None or self.chemicalsubstance is None:
+            return lambda **kwargs: None  # Return a function that always returns None
+        template = self._substance.ktemplate.copy()
+        # add solute (i) properties: Pi and Vi have been set by loadpubchem already
+        template.update(ispolymer = False)
+        def func(**kwargs):
+            if self.chemicalsubstance:
+                simulant = migrant(self.chemicalsubstance)
+                template.update(Pk = simulant.polarityindex,
+                                Vk = simulant.molarvolumeMiller)
+                k = self._substance.k.evaluate(**dict(template, **kwargs))
+                return k
+            else:
+                self.k
+        return func # we return a callable function not a value
 
 
 class texture(foodphysics):
@@ -632,7 +896,7 @@ class chemicalaffinity(foodphysics):
     description = "default chemical affinity"
     name = "undefined"
     level = "root"
-    k0 = 1
+    k = 1.0
 
 class nofood(foodphysics):
     """Impervious boundary condition"""
@@ -686,6 +950,7 @@ class simulant(foodproperty):
 
 class solid(foodproperty):
     """Solid food texture"""
+    _physicalstate = "solid"    # it will be enforced if solid is defined first (see obj.mro())
     name = "solid food"
     description = "solid food products"
     [h,hUnits] = check_units((1e-8,"m/s"))
@@ -712,29 +977,21 @@ class fat(chemicalaffinity):
     """Fat contact"""
     name = "fat contact"
     description = "maximize mass transfer"
-    [k0,k0Units] = check_units((1,NoUnits))
+    [k,kUnits] = check_units((1,NoUnits))
 
 class aqueous(chemicalaffinity):
     """Aqueous food contact"""
     name = "aqueous contact"
     description = "minimize mass transfer"
-    [k0,k0Units] = check_units((1000,NoUnits))
+    [k,kUnits] = check_units((1000,NoUnits))
 
 class intermediate(chemicalaffinity):
     """Intermediate chemical affinity"""
     name = "intermediate"
     description = "intermediate chemical affinity"
-    [k0,k0Units] = check_units((10,NoUnits))
+    [k,kUnits] = check_units((10,NoUnits))
 
 # Contact conditions
-
-class chilled(realcontact):
-    """real contact conditions"""
-    description = "ambient storage conditions"
-    name = "ambient"
-    level = "contact"
-    [contacttime,contacttimeUnits] = check_units((30,"days"))
-    [contacttemperature,contacttemperatureUnits] = check_units((4,"degC"))
 
 class frozen(realcontact):
     """real contact conditions"""
@@ -744,13 +1001,37 @@ class frozen(realcontact):
     [contacttime,contacttimeUnits] = check_units((6,"months"))
     [contacttemperature,contacttemperatureUnits] = check_units((-20,"degC"))
 
+class chilled(realcontact):
+    """real contact conditions"""
+    description = "ambient storage conditions"
+    name = "ambient"
+    level = "contact"
+    [contacttime,contacttimeUnits] = check_units((30,"days"))
+    [contacttemperature,contacttemperatureUnits] = check_units((4,"degC"))
+
 class ambient(realcontact):
     """real contact conditions"""
     description = "ambient storage conditions"
     name = "ambient"
     level = "contact"
-    #[contacttime,contacttimeUnits] = check_units((200,"days"))
-    #[contacttemperature,contacttemperatureUnits] = check_units((25,"degC"))
+    [contacttime,contacttimeUnits] = check_units((200,"days"))
+    [contacttemperature,contacttemperatureUnits] = check_units((25,"degC"))
+
+class transportation(realcontact):
+    """hot transportation contact conditions"""
+    description = "hot transportation storage conditions"
+    name = "hot transportation"
+    level = "contact"
+    [contacttime,contacttimeUnits] = check_units((1,"month"))
+    [contacttemperature,contacttemperatureUnits] = check_units((40,"degC"))
+
+class hotambient(realcontact):
+    """real contact conditions"""
+    description = "hot ambient storage conditions"
+    name = "hot ambient"
+    level = "contact"
+    [contacttime,contacttimeUnits] = check_units((2,"months"))
+    [contacttemperature,contacttemperatureUnits] = check_units((40,"degC"))
 
 class hotfilled(realcontact):
     """real contact conditions"""
@@ -759,6 +1040,14 @@ class hotfilled(realcontact):
     level = "contact"
     [contacttime,contacttimeUnits] = check_units((20,"min"))
     [contacttemperature,contacttemperatureUnits] = check_units((80,"degC"))
+
+class microwave(realcontact):
+    """real contact conditions"""
+    description = "microwave-oven conditions"
+    name = "microwave"
+    level = "contact"
+    [contacttime,contacttimeUnits] = check_units((10,"min"))
+    [contacttemperature,contacttemperatureUnits] = check_units((100,"degC"))
 
 class boiling(realcontact):
     """real contact conditions"""
@@ -784,6 +1073,23 @@ class sterilization(realcontact):
     [contacttime,contacttimeUnits] = check_units((20,"min"))
     [contacttemperature,contacttemperatureUnits] = check_units((121,"degC"))
 
+class panfrying(realcontact):
+    """real contact conditions"""
+    description = "panfrying conditions"
+    name = "panfrying"
+    level = "contact"
+    [contacttime,contacttimeUnits] = check_units((20,"min"))
+    [contacttemperature,contacttemperatureUnits] = check_units((120,"degC"))
+
+
+class frying(realcontact):
+    """real contact conditions"""
+    description = "frying conditions"
+    name = "frying"
+    level = "contact"
+    [contacttime,contacttimeUnits] = check_units((10,"min"))
+    [contacttemperature,contacttemperatureUnits] = check_units((160,"degC"))
+
 class oven(realcontact):
     """real contact conditions"""
     description = "oven conditions"
@@ -791,6 +1097,14 @@ class oven(realcontact):
     level = "contact"
     [contacttime,contacttimeUnits] = check_units((1,"hour"))
     [contacttemperature,contacttemperatureUnits] = check_units((180,"degC"))
+
+class hotoven(realcontact):
+    """real contact conditions"""
+    description = "hot oven conditions"
+    name = "hot oven"
+    level = "contact"
+    [contacttime,contacttimeUnits] = check_units((30,"min"))
+    [contacttemperature,contacttemperatureUnits] = check_units((230,"degC"))
 
 
 # %% End-User classes
@@ -811,26 +1125,75 @@ class rolled(setoff):
     description = "storage in rolls"
     level = "user"
 
+class isooctane(simulant, perfectlymixed, fat):
+    """Isoactane food simulant"""
+    _chemicalsubstance = "isooctane"
+    _polarityindex = 1.0 # Very non-polar hydrocarbon. Dielectric constant ~1.9.
+    name = "isooctane"
+    description = "isooctane food simulant"
+    level = "user"
+
+class oiliveoil(simulant, perfectlymixed, fat):
+    """Isoactane food simulant"""
+    _chemicalsubstance = "methyl stearate"
+    _polarityindex = 1.0 # Primarily triacylglycerides; still quite non-polar, though it contains some polar headgroups (the glycerol backbone).
+    name = "olive oil"
+    description = "olive oil food simulant"
+    level = "user"
+class oil(oiliveoil): pass # synonym of oliveoil
+
 class ethanol(simulant, perfectlymixed, fat):
     """Ethanol food simulant"""
+    _chemicalsubstance = "ethanol"
+    _polarityindex = 5.0 # Polar protic solvent; dielectric constant ~24.5. Lower polarity than methanol.
     name = "ethanol"
     description = "ethanol = from pure ethanol down to ethanol 95%"
     level = "user"
+class ethanol95(ethanol): pass # synonym of ethanol
 
 class ethanol50(simulant, perfectlymixed, intermediate):
-    """Ethanol 50 food simulant"""
+    """Ethanol 50% food simulant"""
+    _chemicalsubstance = "ethanol"
+    _polarityindex = 7.0 # Intermediate polarity between ethanol and water.
     name = "ethanol 50"
     description = "ethanol 50, food simulant of dairy products"
     level = "user"
 
+class acetonitrile(simulant, perfectlymixed, aqueous):
+    """Acetonitrile food simulant"""
+    _chemicalsubstance = "acetonitrile"
+    _polarityindex = 6.8 # Polar aprotic solvent; dielectric constant ~36. Comparable to methanol in some polarity rankings.
+    name = "acetonitrile"
+    description = "acetonitrile"
+    level = "user"
+
+class methanol(simulant, perfectlymixed, aqueous):
+    """Methanol food simulant"""
+    _chemicalsubstance = "methanol"
+    _polarityindex = 8.1 # Polar protic, dielectric constant ~33. Highly capable of hydrogen bonding, but still less so than water.
+    name = "methanol"
+    description = "methanol"
+    level = "user"
+
 class water(simulant, perfectlymixed, aqueous):
     """Water food simulant"""
+    _chemicalsubstance = "water"
+    _polarityindex = 10.2
     name = "water"
     description = "water food simulant"
     level = "user"
 
+class water3aceticacid(simulant, perfectlymixed, aqueous):
+    """Water food simulant"""
+    _chemicalsubstance = "water"
+    _polarityindex = 10.0 # Essentially still dominated by water’s polarity; 3% acetic acid does not drastically lower overall polarity.
+    name = "water 3% acetic acid"
+    description = "water 3% acetic acid - simulant for acidic aqueous foods"
+    level = "user"
+
 class tenax(simulant, solid, fat):
     """Tenax(r) food simulant"""
+    _physicalstate = "porous"    # it will be enforced if tenax is defined first (see obj.mro())
     name = "Tenax"
     description = "simulant of dry food products"
     level = "user"
@@ -839,7 +1202,7 @@ class yogurt(realfood, semisolid, ethanol50):
     """Yogurt as an example of real food"""
     description = "yogurt"
     level = "user"
-    [k0,k0Units] = check_units((1,NoUnits))
+    [k,kUnits] = check_units((1,NoUnits))
     volume,volumeUnits = check_units((125,"mL"))
 
     # def __init__(self, name="no brand", volume=None, **kwargs):

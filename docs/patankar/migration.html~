@@ -1116,7 +1116,10 @@ class SensPatankarResult:
             t_values = t_values[:nmax]
 
         # Normalize time for colormap (Ensure at least one valid value)
-        norm = mcolors.Normalize(vmin=t_values.min(), vmax=t_values.max()) if len(t_values) &gt; 1 else mcolors.Normalize(vmin=self.t.min(), vmax=self.t.max())
+        norm = mcolors.Normalize(vmin=t_values.min()/plotconfig[&#34;tscale&#34;],
+                                 vmax=t_values.max()/plotconfig[&#34;tscale&#34;]) if len(t_values) &gt; 1 \
+            else mcolors.Normalize(vmin=self.t.min()/plotconfig[&#34;tscale&#34;],
+                                   vmax=self.t.max()/plotconfig[&#34;tscale&#34;])
         cmap = plt.get_cmap(&#39;viridis&#39;, nmax)  # &#39;viridis&#39; is similar to Parula
 
         fig, ax = plt.subplots(figsize=(8, 6))  # Explicitly create a figure and axis
@@ -1124,7 +1127,7 @@ class SensPatankarResult:
         # Plot all valid concentration profiles with time-based colormap
         for tC in t_values:
             C = self.interp_Cx(tC)
-            color = tooclear(cmap(norm(tC)))  # Get color from colormap
+            color = tooclear(cmap(norm(tC/plotconfig[&#34;tscale&#34;])))  # Get color from colormap
             ax.plot(self.x / plotconfig[&#34;lscale&#34;], C / plotconfig[&#34;Cscale&#34;],
                     color=color, alpha=0.9, label=f&#39;t={tC / plotconfig[&#34;tscale&#34;]:.3g} {plotconfig[&#34;tunit&#34;]}&#39;)
 
@@ -1892,7 +1895,7 @@ def compute_fv_profile(xmesh, dw, de, C_dimless, k_mesh, D_mesh, hw, he, CF_diml
     xe = xmesh + de - xtol  # Shift east interface
 
     # Build full spatial profile
-    xfull = np.empty(3 * num_nodes)
+    xfull = np.empty(3 * num_nodes,dtype=np.float64)
     xfull[::3] = xw      # Every 3rd position is xw
     xfull[1::3] = xmesh  # Every 3rd position (offset by 1) is xmesh
     xfull[2::3] = xe     # Every 3rd position (offset by 2) is xe
@@ -1924,7 +1927,7 @@ def compute_fv_profile(xmesh, dw, de, C_dimless, k_mesh, D_mesh, hw, he, CF_diml
     )).flatten()  # Ensure correct shape
 
     # Interleave concentration values instead of using np.hstack and reshape
-    Cfull_dimless = np.empty((num_timesteps, 3 * num_nodes))
+    Cfull_dimless = np.empty((num_timesteps, 3 * num_nodes),dtype=np.float64)
     Cfull_dimless[:, ::3] = Cw.T      # Every 3rd column is Cw
     Cfull_dimless[:, 1::3] = C_dimless.T  # Every 3rd column (offset by 1) is C
     Cfull_dimless[:, 2::3] = Ce.T      # Every 3rd column (offset by 2) is Ce
@@ -1954,7 +1957,7 @@ def compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh, xreltol=0):
     Cw = C + (dw[:, None] * hw[:, None] * ((k_west / k[:, None]) * C_west - C) / D[:, None])
 
     # Create full concentration matrix with interfaces
-    Cfull = np.empty((num_timesteps, 3*num_nodes))
+    Cfull = np.empty((num_timesteps, 3*num_nodes),dtype=np.float64)
 
     # Compute positional tolerances
     xtol = np.min([np.min(de), np.min(dw)]) * xreltol
@@ -1967,7 +1970,7 @@ def compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh, xreltol=0):
     Cfull[:, 2::3] = Ce.T
 
     # Create full position vector
-    xfull = np.empty(3*num_nodes)
+    xfull = np.empty(3*num_nodes,dtype=np.float64)
     xfull[::3] = xw
     xfull[1::3] = xmesh
     xfull[2::3] = xe
@@ -2157,7 +2160,7 @@ if __name__ == &#39;__main__&#39;:
     Cw = C + (dw[:, None] * hw[:, None] * ((k_west / k[:, None]) * C_west - C) / D[:, None])
 
     # Create full concentration matrix with interfaces
-    Cfull = np.empty((num_timesteps, 3*num_nodes))
+    Cfull = np.empty((num_timesteps, 3*num_nodes),dtype=np.float64)
 
     # Compute positional tolerances
     xtol = np.min([np.min(de), np.min(dw)]) * xreltol
@@ -2170,7 +2173,7 @@ if __name__ == &#39;__main__&#39;:
     Cfull[:, 2::3] = Ce.T
 
     # Create full position vector
-    xfull = np.empty(3*num_nodes)
+    xfull = np.empty(3*num_nodes,dtype=np.float64)
     xfull[::3] = xw
     xfull[1::3] = xmesh
     xfull[2::3] = xe
@@ -2237,7 +2240,7 @@ Cfull_dimless (np.ndarray): Full concentration profile.</p></div>
     xe = xmesh + de - xtol  # Shift east interface
 
     # Build full spatial profile
-    xfull = np.empty(3 * num_nodes)
+    xfull = np.empty(3 * num_nodes,dtype=np.float64)
     xfull[::3] = xw      # Every 3rd position is xw
     xfull[1::3] = xmesh  # Every 3rd position (offset by 1) is xmesh
     xfull[2::3] = xe     # Every 3rd position (offset by 2) is xe
@@ -2269,7 +2272,7 @@ Cfull_dimless (np.ndarray): Full concentration profile.</p></div>
     )).flatten()  # Ensure correct shape
 
     # Interleave concentration values instead of using np.hstack and reshape
-    Cfull_dimless = np.empty((num_timesteps, 3 * num_nodes))
+    Cfull_dimless = np.empty((num_timesteps, 3 * num_nodes),dtype=np.float64)
     Cfull_dimless[:, ::3] = Cw.T      # Every 3rd column is Cw
     Cfull_dimless[:, 1::3] = C_dimless.T  # Every 3rd column (offset by 1) is C
     Cfull_dimless[:, 2::3] = Ce.T      # Every 3rd column (offset by 2) is Ce
@@ -2498,7 +2501,7 @@ Cfull_dimless (np.ndarray): Full concentration profile.</p></div>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:y1fCdu', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:sVgxLp', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -4757,7 +4760,10 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
             t_values = t_values[:nmax]
 
         # Normalize time for colormap (Ensure at least one valid value)
-        norm = mcolors.Normalize(vmin=t_values.min(), vmax=t_values.max()) if len(t_values) &gt; 1 else mcolors.Normalize(vmin=self.t.min(), vmax=self.t.max())
+        norm = mcolors.Normalize(vmin=t_values.min()/plotconfig[&#34;tscale&#34;],
+                                 vmax=t_values.max()/plotconfig[&#34;tscale&#34;]) if len(t_values) &gt; 1 \
+            else mcolors.Normalize(vmin=self.t.min()/plotconfig[&#34;tscale&#34;],
+                                   vmax=self.t.max()/plotconfig[&#34;tscale&#34;])
         cmap = plt.get_cmap(&#39;viridis&#39;, nmax)  # &#39;viridis&#39; is similar to Parula
 
         fig, ax = plt.subplots(figsize=(8, 6))  # Explicitly create a figure and axis
@@ -4765,7 +4771,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         # Plot all valid concentration profiles with time-based colormap
         for tC in t_values:
             C = self.interp_Cx(tC)
-            color = tooclear(cmap(norm(tC)))  # Get color from colormap
+            color = tooclear(cmap(norm(tC/plotconfig[&#34;tscale&#34;])))  # Get color from colormap
             ax.plot(self.x / plotconfig[&#34;lscale&#34;], C / plotconfig[&#34;Cscale&#34;],
                     color=color, alpha=0.9, label=f&#39;t={tC / plotconfig[&#34;tscale&#34;]:.3g} {plotconfig[&#34;tunit&#34;]}&#39;)
 
@@ -5069,7 +5075,10 @@ If None, time values are selected using sqrt-spaced distribution.</dd>
         t_values = t_values[:nmax]
 
     # Normalize time for colormap (Ensure at least one valid value)
-    norm = mcolors.Normalize(vmin=t_values.min(), vmax=t_values.max()) if len(t_values) &gt; 1 else mcolors.Normalize(vmin=self.t.min(), vmax=self.t.max())
+    norm = mcolors.Normalize(vmin=t_values.min()/plotconfig[&#34;tscale&#34;],
+                             vmax=t_values.max()/plotconfig[&#34;tscale&#34;]) if len(t_values) &gt; 1 \
+        else mcolors.Normalize(vmin=self.t.min()/plotconfig[&#34;tscale&#34;],
+                               vmax=self.t.max()/plotconfig[&#34;tscale&#34;])
     cmap = plt.get_cmap(&#39;viridis&#39;, nmax)  # &#39;viridis&#39; is similar to Parula
 
     fig, ax = plt.subplots(figsize=(8, 6))  # Explicitly create a figure and axis
@@ -5077,7 +5086,7 @@ If None, time values are selected using sqrt-spaced distribution.</dd>
     # Plot all valid concentration profiles with time-based colormap
     for tC in t_values:
         C = self.interp_Cx(tC)
-        color = tooclear(cmap(norm(tC)))  # Get color from colormap
+        color = tooclear(cmap(norm(tC/plotconfig[&#34;tscale&#34;])))  # Get color from colormap
         ax.plot(self.x / plotconfig[&#34;lscale&#34;], C / plotconfig[&#34;Cscale&#34;],
                 color=color, alpha=0.9, label=f&#39;t={tC / plotconfig[&#34;tscale&#34;]:.3g} {plotconfig[&#34;tunit&#34;]}&#39;)
 
@@ -5262,7 +5271,7 @@ medium to set a different medium (food) in contact</p></div>
 applicable to materials in contact.
 Since mass transfer are much faster in the food than in the materials in contact, food is represented
 as an almost 0D layer. Only a mass transfer resistance is applied at the food-material interface
-controlled by the mass transfer coefficient h. A Henri-like coefficient k0 controls the eventual
+controlled by the mass transfer coefficient h. A Henry-like coefficient k controls the eventual
 partitioning of the substance between the food and the layer of the materials.</p>
 <p>Food are geometrically defined by their volume and surface area in contact with the material.</p>
 <p>Contact time (contacttime) and contact temperature (contacttemperature) are defined via foodlayer.</p>
@@ -5277,7 +5286,7 @@ partitioning of the substance between the food and the layer of the materials.</
     applicable to materials in contact.
     Since mass transfer are much faster in the food than in the materials in contact, food is represented
     as an almost 0D layer. Only a mass transfer resistance is applied at the food-material interface
-    controlled by the mass transfer coefficient h. A Henri-like coefficient k0 controls the eventual
+    controlled by the mass transfer coefficient h. A Henry-like coefficient k controls the eventual
     partitioning of the substance between the food and the layer of the materials.
 
     Food are geometrically defined by their volume and surface area in contact with the material.
@@ -5288,12 +5297,162 @@ partitioning of the substance between the food and the layer of the materials.</
     level = &#34;root&#34;
     description = &#34;root food class&#34;  # Remains as class attribute
     name = &#34;generic food layer&#34;
+    # -----------------------------------------------------------------------------
+    # Class attributes that can be overidden in instances.
+    # Their default values are set in classes and overriden with similar
+    # instance properties with @property.setter.
+    # These values cannot be set during construction, but only after instantiation.
+    # A common scale for polarity index for solvents is from 0 to 10:
+    #     - 0-3: Non-polar solvents (e.g., hexane)
+    #     - 4-6: Moderately polar solvents (e.g., acetone)
+    #     - 7-10: Polar solvents (e.g., water)
+    # -----------------------------------------------------------------------------
+    # These properties are essential for model predictions, they cannot be customized
+    # beyond the rules accepted by the model predictors (they are not metadata)
+    # note: similar attributes exist for patanaker.layer objects (similar possible values)
+    _physicalstate = &#34;liquid&#34;   # solid, liquid (default), gas, porous
+    _chemicalclass = &#34;other&#34;    # polymer, other (default)
+    _chemicalsubstance = None   # None (default), monomer for polymers
+    _polarityindex = 0.0        # polarity index (roughly: 0=hexane, 10=water)
+    # -----------------------------------------------------------------------------
+    # Class attributes duplicated as instance parameters
+    # -----------------------------------------------------------------------------
     volume,volumeUnits = check_units((1,&#34;dm**3&#34;))
     surfacearea,surfaceareaUnits = check_units((6,&#34;dm**2&#34;))
     density,densityUnits = check_units((1000,&#34;kg/m**3&#34;))
     CF0,CF0units = check_units((0,NoUnits))  # initial concentration (arbitrary units)
     contacttime, contacttime_units = check_units((10,&#34;days&#34;))
-    contactemperature,contactemperatureUnits = check_units((40,&#34;degC&#34;),ExpectedUnits=&#34;degC&#34;) # temperature ALWAYS in °C</code></pre>
+    contactemperature,contactemperatureUnits = check_units((40,&#34;degC&#34;),ExpectedUnits=&#34;degC&#34;) # temperature in °C
+    _substance = None # substance container / similar construction in pantankar.layer = migrant
+    _k0model = None
+    # -----------------------------------------------------------------------------
+    # Getter methods for class/instance properties: same definitions as in patankar.layer (mandatory)
+    # medium properties
+    # -----------------------------------------------------------------------------
+    # PHASE PROPERTIES  (attention chemicalsubstance=F substance, substance=i substance)
+    @property
+    def physicalstate(self): return self._physicalstate
+    @property
+    def chemicalclass(self): return self._chemicalclass
+    @property
+    def chemicalsubstance(self): return self._chemicalsubstance
+    @property
+    def simulant(self): return self._chemicalsubstance # simulant is an alias of chemicalsubstance
+    @property
+    def polarityindex(self): return self._polarityindex
+    @property
+    def ispolymer(self): return self.physicalstate == &#34;polymer&#34;
+    @property
+    def issolid(self): return self.solid == &#34;solid&#34;
+    # SUBSTANCE/SOLUTE/MIGRANT properties  (attention chemicalsubstance=F substance, substance=i substance)
+    @property
+    def substance(self): return self._substance # substance can be ambiguous
+    @property
+    def migrant(self): return self.substance    # synonym
+    @property
+    def solute(self): return self.substance     # synonym
+
+    # -----------------------------------------------------------------------------
+    # Setter methods for class/instance properties: same definitions as in patankar.layer (mandatory)
+    # -----------------------------------------------------------------------------
+    # PHASE PROPERTIES  (attention chemicalsubstance=F substance, substance=i substance)
+    @physicalstate.setter
+    def physicalstate(self,value):
+        if value not in (&#34;solid&#34;,&#34;liquid&#34;,&#34;gas&#34;,&#34;supercritical&#34;):
+            raise ValueError(f&#34;physicalstate must be solid/liduid/gas/supercritical and not {value}&#34;)
+        self._physicalstate = value
+    @chemicalclass.setter
+    def chemicalclass(self,value):
+        if value not in (&#34;polymer&#34;,&#34;other&#34;):
+            raise ValueError(f&#34;chemicalclass must be polymer/oher and not {value}&#34;)
+        self._chemicalclass= value
+    @chemicalsubstance.setter
+    def chemicalsubstance(self,value):
+        if not isinstance(value,str):
+            raise ValueError(&#34;chemicalsubtance must be str not a {type(value).__name__}&#34;)
+        self._chemicalsubstance= value
+    @simulant.setter
+    def simulant(self,value):
+        self.chemicalsubstance = value # simulant is an alias of chemicalcalsubstance
+    @polarityindex.setter
+    def polarityindex(self,value):
+        if not isinstance(value,(float,int)):
+            raise ValueError(&#34;polarity index must be float not a {type(value).__name__}&#34;)
+        # rescaled to match predictions - standard scale [0,10.2] - predicted scale [0,7.12]
+        return self._polarityindex * migrant(&#34;water&#34;).polarityindex/10.2
+    # SUBSTANCE/SOLUTE/MIGRANT properties  (attention chemicalsubstance=F substance, substance=i substance)
+    @substance.setter
+    def substance(self,value):
+        if isinstance(value,str):
+            value = migrant(value)
+        if not isinstance(value,migrant):
+            raise TypeError(f&#34;substance/migrant/solute must be a migrant not a {type(value).__name__}&#34;)
+        self._substance = value
+    @migrant.setter
+    def migrant(self,value):
+        self.substance = value
+    @solute.setter
+    def solute(self,value):
+        self.substance = value
+    # -----------------------------------------------------------------------------
+    # Henry-like coefficient k and its alias k0 (internal use)
+    # -----------------------------------------------------------------------------
+    #   - k is the name of the Henry-like property for food (as set and seen by the user)
+    #   - k0 is the property operated by migration
+    #   - k0 = k except if kmodel (lambda function) does not returns None
+    #   - kmodel returns None if _substance is not set (proper migrant)
+    #   - kmodel = None will override any existing kmodel
+    #   - kmodel must be intialized to &#34;default&#34; to refresh its definition with self
+    # note: The implementation is almost symmetric with kmodel in patankar.layer.
+    # The main difference are:
+    #    - food classes are instantiated by foodphysics
+    #    - k is used to store the value of k0 (not _k or _k0)
+    # -----------------------------------------------------------------------------
+    # layer substance (of class migrant or None)
+    # k0 and k0units (k and kunits are user inputs)
+    @property
+    def k0(self):
+        ktmp = None
+        if self.kmodel == &#34;default&#34;: # default behavior
+            ktmp = self._compute_kmodel()
+        elif callable(self.kmodel): # user override (not the default function)
+            ktmp = self.kmodel()
+        if ktmp:
+            return np.full_like(self.k, ktmp,dtype=np.float64)
+        return self.k
+    @k0.setter
+    def k0(self,value):
+        if not isinstance(value,(int,float,np.ndarray)):
+            TypeError(&#34;k0 must be int, float or np.ndarray&#34;)
+        if isinstance(self.k,int): self.k = float(self.k)
+        self.k = np.full_like(self.k,value,dtype=np.float64)
+    @property
+    def kmodel(self):
+        return self._kmodel
+    @kmodel.setter
+    def kmodel(self,value):
+        if value is None or callable(value):
+            self._kmodel = value
+        else:
+            raise ValueError(&#34;kmodel must be None or a callable function&#34;)
+    @property
+    def _compute_kmodel(self):
+        &#34;&#34;&#34;Return a callable function that evaluates k with updated parameters.&#34;&#34;&#34;
+        if not isinstance(self._substance,migrant) or self._substance.keval() is None or self.chemicalsubstance is None:
+            return lambda **kwargs: None  # Return a function that always returns None
+        template = self._substance.ktemplate.copy()
+        # add solute (i) properties: Pi and Vi have been set by loadpubchem already
+        template.update(ispolymer = False)
+        def func(**kwargs):
+            if self.chemicalsubstance:
+                simulant = migrant(self.chemicalsubstance)
+                template.update(Pk = simulant.polarityindex,
+                                Vk = simulant.molarvolumeMiller)
+                k = self._substance.k.evaluate(**dict(template, **kwargs))
+                return k
+            else:
+                self.k
+        return func # we return a callable function not a value</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -5366,6 +5525,150 @@ partitioning of the substance between the food and the layer of the materials.</
 <div class="desc"></div>
 </dd>
 </dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="migration.foodlayer.chemicalclass"><code class="name">var <span class="ident">chemicalclass</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def chemicalclass(self): return self._chemicalclass</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.chemicalsubstance"><code class="name">var <span class="ident">chemicalsubstance</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def chemicalsubstance(self): return self._chemicalsubstance</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.ispolymer"><code class="name">var <span class="ident">ispolymer</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ispolymer(self): return self.physicalstate == &#34;polymer&#34;</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.issolid"><code class="name">var <span class="ident">issolid</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def issolid(self): return self.solid == &#34;solid&#34;</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.k0"><code class="name">var <span class="ident">k0</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def k0(self):
+    ktmp = None
+    if self.kmodel == &#34;default&#34;: # default behavior
+        ktmp = self._compute_kmodel()
+    elif callable(self.kmodel): # user override (not the default function)
+        ktmp = self.kmodel()
+    if ktmp:
+        return np.full_like(self.k, ktmp,dtype=np.float64)
+    return self.k</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.kmodel"><code class="name">var <span class="ident">kmodel</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def kmodel(self):
+    return self._kmodel</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.migrant"><code class="name">var <span class="ident">migrant</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def migrant(self): return self.substance    # synonym</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.physicalstate"><code class="name">var <span class="ident">physicalstate</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def physicalstate(self): return self._physicalstate</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.polarityindex"><code class="name">var <span class="ident">polarityindex</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def polarityindex(self): return self._polarityindex</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.simulant"><code class="name">var <span class="ident">simulant</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def simulant(self): return self._chemicalsubstance # simulant is an alias of chemicalsubstance</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.solute"><code class="name">var <span class="ident">solute</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def solute(self): return self.substance     # synonym</code></pre>
+</details>
+</dd>
+<dt id="migration.foodlayer.substance"><code class="name">var <span class="ident">substance</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def substance(self): return self._substance # substance can be ambiguous</code></pre>
+</details>
+</dd>
+</dl>
 </dd>
 <dt id="migration.foodphysics"><code class="flex name class">
 <span>class <span class="ident">foodphysics</span></span>
@@ -5409,6 +5712,16 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
     name = &#34;food physics&#34;
     level = &#34;base&#34;
 
+    # Low-level prediction properties (F=contact medium, i=solute/migrant)
+    # these @properties are defined by foodlayer, they should be duplicated
+    _lowLevelPredictionPropertyList = [
+        &#34;chemicalsubstance&#34;,&#34;simulant&#34;,&#34;polarityindex&#34;,&#34;ispolymer&#34;,&#34;issolid&#34;, # F: common with patankar.layer
+        &#34;physicalstate&#34;,&#34;chemicalclass&#34;, # phase F properties
+        &#34;substance&#34;,&#34;migrant&#34;,&#34;solute&#34;, # i properties with synonyms substance=migrant=solute
+        # users use &#34;k&#34;, but internally we use k0, keep _kmodel in the instance
+        &#34;k0&#34;,&#34;k0unit&#34;,&#34;kmodel&#34;,&#34;_compute_kmodel&#34; # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        ]
+
     # ------------------------------------------------------
     # Transfer rules for food1 &gt;&gt; food2 and food1 &gt;&gt; result
     # ------------------------------------------------------
@@ -5418,10 +5731,17 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
         &#34;contacttemperature&#34;: &#34;contact&#34;,
         &#34;contacttime&#34;: &#34;contact&#34;,
         &#34;surfacearea&#34;: &#34;geometry&#34;,
-        &#34;volume&#34;: &#34;geometry&#34;
+        &#34;volume&#34;: &#34;geometry&#34;,
+        &#34;substance&#34;: &#34;substance&#34;,
+        &#34;medium&#34;: &#34;medium&#34;
     }
 
-    # Rules for property transfer based on object type
+    # Rules for property transfer wtih &gt;&gt; or @ based on object type
+    # [&#34;property name&#34;][&#34;name of the destination class&#34;][attr]
+    #   - if onlyifinherited, only inherited values are transferred
+    #   - if checkNmPy, the value will be transferred as a np.ndarray
+    #   - name is the name of the property in the destination class (use &#34;&#34; to keep the same name)
+    #   - prototype is the class itself (available only after instantiation, keep None here)
     _transferable_properties = {
         &#34;contacttemperature&#34;: {
             &#34;foodphysics&#34;: {
@@ -5429,7 +5749,6 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
                 &#34;checkNumPy&#34;: False,
                 &#34;as&#34;: &#34;&#34;,
                 &#34;prototype&#34;: None,
-                &#34;category&#34;: &#34;contact&#34;
             },
             &#34;layer&#34;: {
                 &#34;onlyifinherited&#34;: False,
@@ -5443,7 +5762,7 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
                 &#34;onlyifinherited&#34;: True,
                 &#34;checkNumPy&#34;: True,
                 &#34;as&#34;: &#34;&#34;,
-                &#34;prototype&#34;: None
+                &#34;prototype&#34;: None,
             },
             &#34;SensPatankarResult&#34;: {
                 &#34;onlyifinherited&#34;: False,
@@ -5467,7 +5786,29 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
                 &#34;as&#34;: &#34;&#34;,
                 &#34;prototype&#34;: None
             }
-        }
+        },
+        &#34;substance&#34;: {
+            &#34;foodlayer&#34;: {
+                &#34;onlyifinherited&#34;: False,
+                &#34;checkNumPy&#34;: False,
+                &#34;as&#34;: &#34;&#34;,
+                &#34;prototype&#34;: None,
+            },
+            &#34;layer&#34;: {
+                &#34;onlyifinherited&#34;: False,
+                &#34;checkNumPy&#34;: False,
+                &#34;as&#34;: &#34;&#34;,
+                &#34;prototype&#34;: None
+            }
+        },
+        &#34;medium&#34;: {
+            &#34;layer&#34;: {
+                &#34;onlyifinherited&#34;: False,
+                &#34;checkNumPy&#34;: False,
+                &#34;as&#34;: &#34;&#34;,
+                &#34;prototype&#34;: None
+            }
+        },
     }
 
 
@@ -5493,7 +5834,7 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
             # For each attribute defined at the class level,
             # if it is not &#39;description&#39;, not callable, and not a dunder, set it as an instance attribute.
             for key, value in cls.__dict__.items(): # we loop on class attributes
-                if key in (&#34;description&#34;,&#34;level&#34;) or key.startswith(&#34;__&#34;) or callable(value):
+                if key in (&#34;description&#34;,&#34;level&#34;) or key in self._lowLevelPredictionPropertyList or key.startswith(&#34;__&#34;) or key.startswith(&#34;_&#34;) or callable(value):
                     continue
                 if key not in kwargs:
                     setattr(self, key, numvalidator(key,value))
@@ -5504,6 +5845,9 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
                 setattr(self, key, value)
         # we initialize the acknowlegment process for future property propagation
         self._hasbeeninherited = {}
+        # we initialize _kmodel if _compute_kmodel exists
+        if hasattr(self,&#34;_compute_kmodel&#34;):
+            self._kmodel = &#34;default&#34; # do not initialize at self._compute_kmodel (default forces refresh)
         # we initialize the _simstate storing the last simulation result available
         self._simstate = None # simulation results
         self._inpstate = None # their inputs
@@ -5517,6 +5861,9 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
             self.__class__._transferable_properties[&#34;contacttime&#34;][&#34;SensPatankarResult&#34;][&#34;prototype&#34;] = SensPatankarResult
             self.__class__._transferable_properties[&#34;surfacearea&#34;][&#34;foodphysics&#34;][&#34;prototype&#34;] = foodphysics
             self.__class__._transferable_properties[&#34;volume&#34;][&#34;foodphysics&#34;][&#34;prototype&#34;] = foodphysics
+            self.__class__._transferable_properties[&#34;substance&#34;][&#34;foodlayer&#34;][&#34;prototype&#34;] = migrant
+            self.__class__._transferable_properties[&#34;substance&#34;][&#34;layer&#34;][&#34;prototype&#34;] = layer
+            self.__class__._transferable_properties[&#34;medium&#34;][&#34;layer&#34;][&#34;prototype&#34;] = layer
 
     # ------- [properties to access/modify simstate] --------
     @property
@@ -5603,7 +5950,7 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
             - contacttime (float or tuple): Contact time (can be tuple like (1, &#34;h&#34;)).
             - contacttemperature (float or tuple): Temperature (can be tuple like (25, &#34;degC&#34;)).
             - h (float or tuple): Mass transfer coefficient (can be tuple like (1e-6,&#34;m/s&#34;)).
-            - k0 (float or tuple): Henri-like coefficient for the food (can be tuple like (1,&#34;a.u.&#34;)).
+            - k (float or tuple): Henry-like coefficient for the food (can be tuple like (1,&#34;a.u.&#34;)).
 
         &#34;&#34;&#34;
         if not kwargs:  # shortcut
@@ -5627,6 +5974,29 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
             if key in kwargs:
                 value = kwargs[key]
                 setattr(self, key, checkunits(value))  # Ensure NumPy array in SI
+        # Update medium, migrant (they accept aliases)
+        lex = {
+            &#34;substance&#34;: (&#34;substance&#34;, &#34;migrant&#34;, &#34;chemical&#34;, &#34;solute&#34;),
+            &#34;medium&#34;: (&#34;medium&#34;, &#34;simulant&#34;, &#34;food&#34;, &#34;contact&#34;),
+        }
+        used_aliases = {}
+        def get_value(canonical_key):
+            &#34;&#34;&#34;Find the correct alias in kwargs and return its value, or None if not found.&#34;&#34;&#34;
+            found_key = None
+            for alias in lex.get(canonical_key, ()):  # Get aliases, default to empty tuple
+                if alias in kwargs:
+                    if alias in used_aliases:
+                        raise ValueError(f&#34;Alias &#39;{alias}&#39; is used for multiple canonical keys!&#34;)
+                    found_key = alias
+                    used_aliases[alias] = canonical_key
+                    break  # Stop at the first match
+            return kwargs.get(found_key, None)  # Return value if found, else None
+        # Assign values only if found in kwargs
+        new_substance = get_value(&#34;substance&#34;)
+        new_medium = get_value(&#34;medium&#34;)
+        if new_substance is not None: self.substance = new_substance
+        if new_medium is not None:self.medium = new_medium
+        # return
         return self  # Return self for method chaining if needed
 
     def get_param(self, key, default=None, acceptNone=True):
@@ -5658,12 +6028,11 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
         raise KeyError(f&#39;Use getattr(&#34;{key}&#34;) to retrieve the value of {key}&#39;)
 
     def __repr__(self):
-        &#34;&#34;&#34;Formatted string representation of the foodphysics object.&#34;&#34;&#34;
-        # refresh all definitions
+        &#34;&#34;&#34;Formatted string representation of the FOODlayer object.&#34;&#34;&#34;
+        # Refresh all definitions
         self.refresh()
         # Header with name and description
         repr_str = f&#39;Food object &#34;{self.name}&#34; ({self.description}) with properties:\n&#39;
-
         # Helper function to extract a numerical value safely
         def format_value(value):
             &#34;&#34;&#34;Ensure the value is a float or a single-item NumPy array.&#34;&#34;&#34;
@@ -5672,15 +6041,30 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
             elif value is None:
                 return value
             return float(value)
-        # Loop through parameters that should be printed
+        # Collect defined properties and their formatted values
+        properties = []
+        excluded = (&#34;k&#34;) if self.haskmodel else (&#34;k0&#34;)
         for key, unit in parametersWithUnits.items():
-            if hasattr(self, key):  # Print only defined parameters
+            if hasattr(self, key) and key not in excluded:  # Include only defined parameters
                 value = format_value(getattr(self, key))
-                unit_str = self.get_param(key+&#34;Units&#34;, parametersWithUnits[key])  # Retrieve unit safely
+                unit_str = self.get_param(f&#34;{key}Units&#34;, unit)  # Retrieve unit safely
                 if value is not None:
-                    repr_str += f&#34;{key:15s}: {value:0.8g} [{unit_str}]\n&#34;
-        print(repr_str.strip())  # Remove trailing newline
-        return str(self)
+                    properties.append((key, f&#34;{value:0.8g}&#34;, unit_str))
+
+        # Sort properties alphabetically
+        properties.sort(key=lambda x: x[0])
+
+        # Determine max width for right-aligned names
+        max_key_length = max(len(key) for key, _, _ in properties) if properties else 0
+        # Construct formatted property list
+        for key, value, unit_str in properties:
+            repr_str += f&#34;{key.rjust(max_key_length)}: {value} [{unit_str}]\n&#34;
+            if key == &#34;k0&#34;:
+                extra_info = f&#34;{self._substance.k.__name__}(&lt;{self.chemicalsubstance}&gt;,{self._substance})&#34;
+                repr_str += f&#34;{&#39; &#39; * (max_key_length)}= {extra_info}\n&#34;
+        print(repr_str.strip())  # Print formatted output
+        return str(self)  # Simplified representation for repr()
+
 
 
     def __str__(self):
@@ -5696,16 +6080,24 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
     @property
     def PBC(self):
         &#34;&#34;&#34;
-        Returns true if h is not defined or None
-            This property is used to identified periodic boundary condition also called setoff mass transfer.
+        Returns True if h is not defined or None
+        This property is used to identified periodic boundary condition also called setoff mass transfer.
 
         &#34;&#34;&#34;
         if not hasattr(self,&#34;h&#34;):
-            return None
+            return False # None
         htmp = getattr(self,&#34;h&#34;)
         if isinstance(htmp,np.ndarray):
             htmp = htmp.item()
         return htmp is None
+
+    @property
+    def hassubstance(self):
+        &#34;&#34;&#34;Returns True if substance is defined (class migrant)&#34;&#34;&#34;
+        if not hasattr(self, &#34;_substance&#34;):
+            return False
+        return isinstance(self._substance,migrant)
+
 
 
     # --------------------------------------------------------------------
@@ -5777,16 +6169,39 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
 
     def __rshift__(self, other):
         &#34;&#34;&#34;Overloads &gt;&gt; to propagate to other.&#34;&#34;&#34;
+        # inherit substance/migrant from other if self.migrant is None
+        if isinstance(other,(layer,foodlayer)):
+            if isinstance(self,foodlayer):
+                if self.substance is None and other.substance is not None:
+                    self.substance = other.substance
+        return self._to(other) # propagates
+
+    def __matmul__(self, other):
+        &#34;&#34;&#34;Overload @: equivalent to &gt;&gt; if other is a layer.&#34;&#34;&#34;
+        if not isinstance(other, layer):
+            raise TypeError(f&#34;Right operand must be a layer not a {type(other).__name__}&#34;)
         return self._to(other)
 
     # migration method
     def migration(self,material,**kwargs):
+        &#34;&#34;&#34;interface to simulation engine: senspantankar&#34;&#34;&#34;
         from patankar.migration import senspatankar
         self._to(material) # propagate contact conditions first
         return senspatankar(material,self,**kwargs)
 
     def contact(self,material,**kwargs):
-        return self.migration(self,material,**kwargs)</code></pre>
+        &#34;&#34;&#34;alias to migration method&#34;&#34;&#34;
+        return self.migration(self,material,**kwargs)
+
+    @property
+    def haskmodel(self):
+        &#34;&#34;&#34;Returns True if a kmodel has been defined&#34;&#34;&#34;
+        if hasattr(self, &#34;_compute_kmodel&#34;):
+            if self._compute_kmodel() is not None:
+                return True
+            elif callable(self.kmodel):
+                return self.kmodel() is not None
+        return False</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -5817,7 +6232,7 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
 <dl>
 <dt id="migration.foodphysics.PBC"><code class="name">var <span class="ident">PBC</span></code></dt>
 <dd>
-<div class="desc"><p>Returns true if h is not defined or None
+<div class="desc"><p>Returns True if h is not defined or None
 This property is used to identified periodic boundary condition also called setoff mass transfer.</p></div>
 <details class="source">
 <summary>
@@ -5826,16 +6241,34 @@ This property is used to identified periodic boundary condition also called seto
 <pre><code class="python">@property
 def PBC(self):
     &#34;&#34;&#34;
-    Returns true if h is not defined or None
-        This property is used to identified periodic boundary condition also called setoff mass transfer.
+    Returns True if h is not defined or None
+    This property is used to identified periodic boundary condition also called setoff mass transfer.
 
     &#34;&#34;&#34;
     if not hasattr(self,&#34;h&#34;):
-        return None
+        return False # None
     htmp = getattr(self,&#34;h&#34;)
     if isinstance(htmp,np.ndarray):
         htmp = htmp.item()
     return htmp is None</code></pre>
+</details>
+</dd>
+<dt id="migration.foodphysics.haskmodel"><code class="name">var <span class="ident">haskmodel</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if a kmodel has been defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def haskmodel(self):
+    &#34;&#34;&#34;Returns True if a kmodel has been defined&#34;&#34;&#34;
+    if hasattr(self, &#34;_compute_kmodel&#34;):
+        if self._compute_kmodel() is not None:
+            return True
+        elif callable(self.kmodel):
+            return self.kmodel() is not None
+    return False</code></pre>
 </details>
 </dd>
 <dt id="migration.foodphysics.hassimulation"><code class="name">var <span class="ident">hassimulation</span></code></dt>
@@ -5849,6 +6282,21 @@ def PBC(self):
 def hassimulation(self):
     &#34;&#34;&#34;Returns True if a simulation exists&#34;&#34;&#34;
     return self.lastsimulation is not None</code></pre>
+</details>
+</dd>
+<dt id="migration.foodphysics.hassubstance"><code class="name">var <span class="ident">hassubstance</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if substance is defined (class migrant)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hassubstance(self):
+    &#34;&#34;&#34;Returns True if substance is defined (class migrant)&#34;&#34;&#34;
+    if not hasattr(self, &#34;_substance&#34;):
+        return False
+    return isinstance(self._substance,migrant)</code></pre>
 </details>
 </dd>
 <dt id="migration.foodphysics.lastinput"><code class="name">var <span class="ident">lastinput</span></code></dt>
@@ -5937,12 +6385,13 @@ The category under which the properties are grouped.</p>
 <span>def <span class="ident">contact</span></span>(<span>self, material, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>alias to migration method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def contact(self,material,**kwargs):
+    &#34;&#34;&#34;alias to migration method&#34;&#34;&#34;
     return self.migration(self,material,**kwargs)</code></pre>
 </details>
 </dd>
@@ -6002,12 +6451,13 @@ The category under which the properties are grouped.</p>
 <span>def <span class="ident">migration</span></span>(<span>self, material, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>interface to simulation engine: senspantankar</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def migration(self,material,**kwargs):
+    &#34;&#34;&#34;interface to simulation engine: senspantankar&#34;&#34;&#34;
     from patankar.migration import senspatankar
     self._to(material) # propagate contact conditions first
     return senspatankar(material,self,**kwargs)</code></pre>
@@ -6049,7 +6499,7 @@ The category under which the properties are grouped.</p>
 - contacttime (float or tuple): Contact time (can be tuple like (1, "h")).
 - contacttemperature (float or tuple): Temperature (can be tuple like (25, "degC")).
 - h (float or tuple): Mass transfer coefficient (can be tuple like (1e-6,"m/s")).
-- k0 (float or tuple): Henri-like coefficient for the food (can be tuple like (1,"a.u.")).</p></div>
+- k (float or tuple): Henry-like coefficient for the food (can be tuple like (1,"a.u.")).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -6068,7 +6518,7 @@ The category under which the properties are grouped.</p>
         - contacttime (float or tuple): Contact time (can be tuple like (1, &#34;h&#34;)).
         - contacttemperature (float or tuple): Temperature (can be tuple like (25, &#34;degC&#34;)).
         - h (float or tuple): Mass transfer coefficient (can be tuple like (1e-6,&#34;m/s&#34;)).
-        - k0 (float or tuple): Henri-like coefficient for the food (can be tuple like (1,&#34;a.u.&#34;)).
+        - k (float or tuple): Henry-like coefficient for the food (can be tuple like (1,&#34;a.u.&#34;)).
 
     &#34;&#34;&#34;
     if not kwargs:  # shortcut
@@ -6092,6 +6542,29 @@ The category under which the properties are grouped.</p>
         if key in kwargs:
             value = kwargs[key]
             setattr(self, key, checkunits(value))  # Ensure NumPy array in SI
+    # Update medium, migrant (they accept aliases)
+    lex = {
+        &#34;substance&#34;: (&#34;substance&#34;, &#34;migrant&#34;, &#34;chemical&#34;, &#34;solute&#34;),
+        &#34;medium&#34;: (&#34;medium&#34;, &#34;simulant&#34;, &#34;food&#34;, &#34;contact&#34;),
+    }
+    used_aliases = {}
+    def get_value(canonical_key):
+        &#34;&#34;&#34;Find the correct alias in kwargs and return its value, or None if not found.&#34;&#34;&#34;
+        found_key = None
+        for alias in lex.get(canonical_key, ()):  # Get aliases, default to empty tuple
+            if alias in kwargs:
+                if alias in used_aliases:
+                    raise ValueError(f&#34;Alias &#39;{alias}&#39; is used for multiple canonical keys!&#34;)
+                found_key = alias
+                used_aliases[alias] = canonical_key
+                break  # Stop at the first match
+        return kwargs.get(found_key, None)  # Return value if found, else None
+    # Assign values only if found in kwargs
+    new_substance = get_value(&#34;substance&#34;)
+    new_medium = get_value(&#34;medium&#34;)
+    if new_substance is not None: self.substance = new_substance
+    if new_medium is not None:self.medium = new_medium
+    # return
     return self  # Return self for method chaining if needed</code></pre>
 </details>
 </dd>
@@ -6099,7 +6572,7 @@ The category under which the properties are grouped.</p>
 </dd>
 <dt id="migration.layer"><code class="flex name class">
 <span>class <span class="ident">layer</span></span>
-<span>(</span><span>l=None, D=None, k=None, C0=None, rho=None, T=None, lunit=None, Dunit=None, kunit=None, Cunit=None, rhounit=None, Tunit=None, layername=None, layertype=None, layermaterial=None, layercode=None, substance=None, Dmodel=None, kmodel=None, nmesh=None, nmeshmin=None, verbose=None, verbosity=2, **unresolved)</span>
+<span>(</span><span>l=None, D=None, k=None, C0=None, rho=None, T=None, lunit=None, Dunit=None, kunit=None, Cunit=None, rhounit=None, Tunit=None, layername=None, layertype=None, layermaterial=None, layercode=None, substance=None, medium=None, nmesh=None, nmeshmin=None, verbose=None, verbosity=2, **unresolved)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>layer class from patankar package
@@ -6155,6 +6628,24 @@ scalar properties: D,k,l,C0
         Example:
             A = layer(D=1e-14,l=50e-6,layername=&#34;layer A&#34;,layertype=&#34;polymer&#34;,layermaterial=&#34;PP&#34;)
     &#34;&#34;&#34;
+
+    # -----------------------------------------------------------------------------
+    # Class attributes that can be overidden in instances.
+    # Their default values are set in classes and overriden with similar
+    # instance properties with @property.setter.
+    # These values cannot be set during construction, but only after instantiation.
+    # -----------------------------------------------------------------------------
+    # These properties are essential for model predictions, they cannot be customized
+    # beyond the rules accepted by the model predictors (they are not metadata)
+    _physicalstate = &#34;solid&#34;        # solid (default), liquid, gas, porous
+    _chemicalclass = &#34;polymer&#34;      # polymer (default), other
+    _chemicalsubstance = None       # None (default), monomer for polymers
+    _polarityindex = 0.0            # polarity index (roughly: 0=hexane, 10=water)
+
+    # Low-level prediction properties (these properties are common with patankar.food)
+    _lowLevelPredictionPropertyList = [&#34;physicalstate&#34;,&#34;chemicalclass&#34;,
+                                       &#34;chemicalsubstance&#34;,&#34;polarityindex&#34;,&#34;ispolymer&#34;,&#34;issolid&#34;]
+
     # --------------------------------------------------------------------
     # PRIVATE PROPERTIES (cannot be changed by the user)
     # __ read only attributes
@@ -6170,6 +6661,7 @@ scalar properties: D,k,l,C0
     # these synonyms can be used during construction
     _synonyms = {
         &#34;substance&#34;: {&#34;migrant&#34;, &#34;compound&#34;, &#34;chemical&#34;,&#34;molecule&#34;,&#34;solute&#34;},
+        &#34;medium&#34;: {&#34;food&#34;,&#34;simulant&#34;,&#34;fluid&#34;,&#34;liquid&#34;,&#34;contactmedium&#34;},
         &#34;C0&#34;: {&#34;CP0&#34;, &#34;Cp0&#34;},
         &#34;l&#34;: {&#34;lp&#34;, &#34;lP&#34;},
         &#34;D&#34;: {&#34;Dp&#34;, &#34;DP&#34;},
@@ -6203,6 +6695,7 @@ scalar properties: D,k,l,C0
         &#34;nmesh&#34;: 600,
         # Substance
         &#34;substance&#34;: None,
+        &#34;simulant&#34;: None,
         # Other parameters
         &#34;verbose&#34;: None,
         &#34;verbosity&#34;: 2
@@ -6251,7 +6744,8 @@ scalar properties: D,k,l,C0
                  l=None, D=None, k=None, C0=None, rho=None, T=None,
                  lunit=None, Dunit=None, kunit=None, Cunit=None, rhounit=None, Tunit=None,
                  layername=None,layertype=None,layermaterial=None,layercode=None,
-                 substance = None, Dmodel = None, kmodel = None,
+                 substance = None, medium = None,
+                 # Dmodel = None, kmodel = None, they are defined via migrant (future overrides)
                  nmesh=None, nmeshmin=None,
                  verbose=None, verbosity=2,**unresolved):
         &#34;&#34;&#34;
@@ -6290,6 +6784,7 @@ scalar properties: D,k,l,C0
         &#34;&#34;&#34;
         # resolve alternative names used by end-users
         substance = layer.resolvename(substance,&#34;substance&#34;,**unresolved)
+        medium = layer.resolvename(medium, &#34;medium&#34;, **unresolved)
         C0 = layer.resolvename(C0,&#34;C0&#34;,**unresolved)
         l = layer.resolvename(l,&#34;l&#34;,**unresolved)
         D = layer.resolvename(D,&#34;D&#34;,**unresolved)
@@ -6349,11 +6844,24 @@ scalar properties: D,k,l,C0
         self._nmesh = nmesh
         self._nmeshmin = nmeshmin
 
-        # set substance and property models
+        # set substance, medium and related D and k models
+        if isinstance(substance,str):
+            substance = migrant(substance)
+        if substance is not None and not isinstance(substance,migrant):
+            raise ValueError(f&#34;subtance must be None a or a migrant not a {type(substance).__name__}&#34;)
         self._substance = substance
+        if medium is not None:
+            from patankar.food import foodlayer # local import only if needed
+            if not isinstance(medium,foodlayer):
+                raise ValueError(f&#34;medium must be None or a foodlayer not a {type(medium).__name__}&#34;)
+        self._medium = medium
+        self._Dmodel = &#34;default&#34;  # do not use directly self._compute_Dmodel (force refresh)
+        self._kmodel = &#34;default&#34;  # do not use directly self._compute_kmodel (force refresh)
 
         # set history for all layers merged with +
         self._layerclass_history = []
+        self._ispolymer_history = []
+        self._chemicalsubstance_history = []
 
         # set verbosity attributes
         self.verbosity = 0 if verbosity is None else verbosity
@@ -6493,6 +7001,8 @@ scalar properties: D,k,l,C0
                 setattr(res,p,np.concatenate((getattr(self,p),getattr(other,p))))
             # we add the history of all layers
             res._layerclass_history = self.layerclass_history + other.layerclass_history
+            res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
+            res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
             return res
         else: raise ValueError(&#34;invalid layer object&#34;)
 
@@ -6585,9 +7095,30 @@ scalar properties: D,k,l,C0
     # --------------------------------------------------------------------
     # Getter methods (show private/hidden properties and meta-properties)
     # --------------------------------------------------------------------
+    # Return class or instance attributes
+    @property
+    def physicalstate(self): return self._physicalstate
+    @property
+    def chemicalclass(self): return self._chemicalclass
+    @property
+    def chemicalsubstance(self): return self._chemicalsubstance
+    @property
+    def polarityindex(self):
+        # rescaled to match predictions - standard scale [0,10.2] - predicted scale [0,7.12]
+        return self._polarityindex * migrant(&#34;water&#34;).polarityindex/10.2
+    @property
+    def ispolymer(self): return self.chemicalclass == &#34;polymer&#34;
+    @property
+    def issolid(self): return self.physicalstate == &#34;solid&#34;
     @property
     def layerclass_history(self):
         return self._layerclass_history if self._layerclass_history != [] else [self.layerclass]
+    @property
+    def ispolymer_history(self):
+        return self._ispolymer_history if self._ispolymer_history != [] else [self.ispolymer]
+    @property
+    def chemicalsubstance_history(self):
+        return self._chemicalsubstance_history if self._chemicalsubstance_history != [] else [self.chemicalsubstance]
     @property
     def layerclass(self): return type(self).__name__
     @property
@@ -6602,18 +7133,24 @@ scalar properties: D,k,l,C0
     def l(self): return self._l
     @property
     def D(self):
-        Dtmp = self.Dmodel()
+        Dtmp = None
+        if self.Dmodel == &#34;default&#34;: # default behavior
+            Dtmp = self._compute_Dmodel()
+        elif callable(self.Dmodel): # user override
+            Dtmp = self.Dmodel()
         if Dtmp is not None:
-            return np.full_like(self._D, Dtmp)
-        else:
-            return self._D
+            return np.full_like(self._D, Dtmp,dtype=np.float64)
+        return self._D
     @property
     def k(self):
-        ktmp = self.kmodel()
-        if ktmp:
-            return np.full_like(self._D, ktmp)
-        else:
-            return self._k
+        ktmp = None
+        if self.kmodel == &#34;default&#34;: # default behavior
+            ktmp = self._compute_kmodel()
+        elif callable(self.kmodel): # user override
+            ktmp = self.kmodel()
+        if ktmp is not None:
+            return np.full_like(self._k, ktmp,dtype=np.float64)
+        return self._k
     @property
     def C0(self): return self._C0
     @property
@@ -6659,7 +7196,7 @@ scalar properties: D,k,l,C0
     @property
     def relative_resistance(self): return self.resistance/sum(self.resistance)
     @property
-    def rank(self): return np.flip(np.argsort(np.array(self.resistance))+1).tolist()
+    def rank(self): return (self.n-np.argsort(np.array(self.resistance))).tolist()
     @property
     def referencelayer(self): return np.argmax(self.resistance)
     @property
@@ -6667,14 +7204,33 @@ scalar properties: D,k,l,C0
     @property
     def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2
 
-    # layer substance (of class migrant or None)
+    # substance/solute/migrant/chemical (of class migrant or None)
     @property
     def substance(self): return self._substance
+    @property
+    def migrant(self): return self.substance # alias/synonym of substance
+    @property
+    def solute(self): return self.substance # alias/synonym of substance
+    @property
+    def chemical(self): return self.substance # alias/synonym of substance
+    # medium (of class foodlayer or None)
+    @property
+    def medium(self): return self._medium
 
     # Dmodel and kmodel returned as properties (they are lambda functions)
+    # Note about the implementation: They are attributes that remain None or a callable function
     # polymer and mass are udpdated on the fly (the code loops over all layers)
     @property
     def Dmodel(self):
+        return self._Dmodel
+    @Dmodel.setter
+    def Dmodel(self,value):
+        if value is None or callable(value):
+            self._Dmodel = value
+        else:
+            raise ValueError(&#34;Dmodel must be None or a callable function&#34;)
+    @property
+    def _compute_Dmodel(self):
         &#34;&#34;&#34;Return a callable function that evaluates D with updated parameters.&#34;&#34;&#34;
         if not isinstance(self._substance,migrant) or self._substance.Deval() is None:
             return lambda **kwargs: None  # Return a function that always returns None
@@ -6687,23 +7243,60 @@ scalar properties: D,k,l,C0
                 # inherit eventual user parameters
                 D[i] = self._substance.D.evaluate(**dict(template, **kwargs))
             return D
-        return func
+        return func # we return a callable function not a value
 
+    # polarity index and molar volume are updated on the fly
     @property
     def kmodel(self):
+        return self._kmodel
+    @kmodel.setter
+    def kmodel(self,value):
+        if value is None or callable(value):
+            self._kmodel = value
+        else:
+            raise ValueError(&#34;kmodel must be None or a callable function&#34;)
+    @property
+    def _compute_kmodel(self):
         &#34;&#34;&#34;Return a callable function that evaluates k with updated parameters.&#34;&#34;&#34;
         if not isinstance(self._substance,migrant) or self._substance.keval() is None:
             return lambda **kwargs: None  # Return a function that always returns None
         template = self._substance.ktemplate.copy()
-        template.update()
+        # add solute (i) properties: Pi and Vi have been set by loadpubchem already
+        template.update(ispolymer = True)
         def func(**kwargs):
-            k = np.empty_like(self._k)
+            k = np.full_like(self._k,self._k,dtype=np.float64)
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
-                template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
+                if not self.ispolymer_history[i]: # k can be evaluated only in polymes via FH theory
+                    continue # we keep the existing k value
+                # add/update monomer properties
+                monomer = migrant(self.chemicalsubstance_history[i])
+                template.update(Pk = monomer.polarityindex,
+                                Vk = monomer.molarvolumeMiller)
                 # inherit eventual user parameters
                 k[i] = self._substance.k.evaluate(**dict(template, **kwargs))
             return k
-        return func
+        return func # we return a callable function not a value
+
+
+    @property
+    def hasDmodel(self):
+        &#34;&#34;&#34;Returns True if a Dmodel has been defined&#34;&#34;&#34;
+        if hasattr(self, &#34;_compute_Dmodel&#34;):
+            if self._compute_Dmodel() is not None:
+                return True
+            elif callable(self.Dmodel):
+                return self.Dmodel() is not None
+        return False
+
+    @property
+    def haskmodel(self):
+        &#34;&#34;&#34;Returns True if a kmodel has been defined&#34;&#34;&#34;
+        if hasattr(self, &#34;_compute_kmodel&#34;):
+            if self._compute_kmodel() is not None:
+                return True
+            elif callable(self.kmodel):
+                return self.kmodel() is not None
+        return False
 
 
     # --------------------------------------------------------------------
@@ -6781,8 +7374,29 @@ scalar properties: D,k,l,C0
         return mymesh
 
     # --------------------------------------------------------------------
-    # Getter methods and tools to validate inputs checknumvalue and checktextvalue
+    # Setter methods and tools to validate inputs checknumvalue and checktextvalue
     # --------------------------------------------------------------------
+    @physicalstate.setter
+    def physicalstate(self,value):
+        if value not in (&#34;solid&#34;,&#34;liquid&#34;,&#34;gas&#34;,&#34;supercritical&#34;):
+            raise ValueError(f&#34;physicalstate must be solid/liduid/gas/supercritical and not {value}&#34;)
+        self._physicalstate = value
+    @chemicalclass.setter
+    def chemicalclass(self,value):
+        if value not in (&#34;polymer&#34;,&#34;other&#34;):
+            raise ValueError(f&#34;chemicalclass must be polymer/oher and not {value}&#34;)
+        self._chemicalclass= value
+    @chemicalsubstance.setter
+    def chemicalsubstance(self,value):
+        if not isinstance(value,str):
+            raise ValueError(&#34;chemicalsubtance must be str not a {type(value).__name__}&#34;)
+        self._chemicalsubstance= value
+    @polarityindex.setter
+    def polarityindex(self,value):
+        if not isinstance(value,(float,int)):
+            raise ValueError(&#34;polarity index must be float not a {type(value).__name__}&#34;)
+        self._polarityindex= value
+
     def checknumvalue(self,value,ExpectedUnits=None):
         &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
         if isinstance(value,tuple):
@@ -6837,9 +7451,26 @@ scalar properties: D,k,l,C0
     def nmeshmin(self,value): self._nmeshmin = max(value,round(self._nmesh/(2*self._nlayer)))
     @substance.setter
     def substance(self,value):
+        if isinstance(value,str):
+            value = migrant(value)
         if not isinstance(value,migrant):
-            raise TypeError(f&#34;value must be a migrant class not a {type(value).__name__}&#34;)
+            raise TypeError(f&#34;value must be a migrant not a {type(value).__name__}&#34;)
         self._substance = value
+    @migrant.setter
+    def migrant(self,value):
+        self.substance = value
+    @chemical.setter
+    def chemical(self,value):
+        self.substance = value
+    @solute.setter
+    def solute(self,value):
+        self.substance = value
+    @medium.setter
+    def medium(self,value):
+        from patankar.food import foodlayer
+        if not isinstance(value,foodlayer):
+            raise TypeError(f&#34;value must be a foodlayer not a {type(value).__name__}&#34;)
+        self._medium = value
 
 
     # --------------------------------------------------------------------
@@ -6885,8 +7516,8 @@ scalar properties: D,k,l,C0
         if self._nlayer==0:
             print(&#34;empty %s&#34; % (self.__description))
         else:
-            hasDmodel = self.Dmodel() is not None
-            haskmodel = self.kmodel() is not None
+            hasDmodel = self._compute_Dmodel() is not None or self.Dmodel() is not None
+            haskmodel = self._compute_kmodel() is not None or self.kmodel() is not None
             properties_ = {&#34;l&#34;:False,&#34;D&#34;:hasDmodel,&#34;k&#34;:haskmodel,&#34;C0&#34;:False}
             if hasDmodel or haskmodel:
                 properties_[&#34;T&#34;] = False
@@ -6899,7 +7530,7 @@ scalar properties: D,k,l,C0
             for n in range(1,self._nlayer+1):
                 modelinfo = {
                     &#34;D&#34;: f&#34;{self._substance.D.__name__}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})&#34; if hasDmodel else &#34;&#34;,
-                    &#34;k&#34;: f&#34;{self._substance.k.__name__}({self.layerclass_history[n-1]},{self._substance} g/mol,T={float(self.T[0])} {self.Tunit})&#34; if haskmodel else &#34;&#34;,
+                    &#34;k&#34;: f&#34;{self._substance.k.__name__}(&lt;{self.chemicalsubstance_history[n-1]}&gt;,{self._substance})&#34; if haskmodel else &#34;&#34;,
                     }
                 print(&#39;-- [ layer %d of %d ] ---------- barrier rank=%d --------------&#39;
                       % (n,self._nlayer,self.rank[n-1]))
@@ -6975,21 +7606,34 @@ scalar properties: D,k,l,C0
     # --------------------------------------------------------------------
     # update contact conditions from a foodphysics instance (or do the reverse)
     # material &lt;&lt; medium
+    # material@medium
     # --------------------------------------------------------------------
     def _from(self,medium=None):
         &#34;&#34;&#34;Propagates contact conditions from food instance&#34;&#34;&#34;
-        from patankar.food import foodphysics
+        from patankar.food import foodphysics, foodlayer
         if not isinstance(medium,foodphysics):
             raise TypeError(f&#34;medium must be a foodphysics, foodlayer not a {type(medium).__name__}&#34;)
         if not hasattr(medium, &#34;contacttemperature&#34;):
             medium.contacttemperature = self.T[0]
-        T = self.get_param(&#34;contacttemperature&#34;,40,acceptNone=False)
-        self.T = np.full_like(self.T,T)
+        T = medium.get_param(&#34;contacttemperature&#34;,40,acceptNone=False)
+        self.T = np.full_like(self.T,T,dtype=np.float64)
+        if medium.substance is not None:
+            self.substance = medium.substance
+        else:
+            medium.substance = self.substance # do the reverse if substance is not defined in medium
+        # inherit fully medium only if it is a foodlayer (foodphysics is too restrictive)
+        if isinstance(medium,foodlayer):
+            self.medium = medium
 
-    # overloading operation
+    # overload operator &lt;&lt;
     def __lshift__(self, medium):
         &#34;&#34;&#34;Overloads &lt;&lt; to propagate contact conditions from food.&#34;&#34;&#34;
         self._from(medium)
+    # overload operator @ (same as &lt;&lt;)
+    def __matmul__(self, medium):
+        &#34;&#34;&#34;Overloads @ to propagate contact conditions from food.&#34;&#34;&#34;
+        self._from(medium)
+
 
     # --------------------------------------------------------------------
     # Inheritance registration mechanism associated with food &gt;&gt; layer
@@ -7025,10 +7669,17 @@ scalar properties: D,k,l,C0
     # The result is stored in food.lastsimulation
     # --------------------------------------------------------------------
     def contact(self,medium,**kwargs):
+        &#34;&#34;&#34;alias to migration method&#34;&#34;&#34;
         return self.migration(medium,**kwargs)
 
-    def migration(self,medium,**kwargs):
+    def migration(self,medium=None,**kwargs):
+        &#34;&#34;&#34;interface to simulation engine: senspantankar&#34;&#34;&#34;
+        from patankar.food import foodphysics
         from patankar.migration import senspatankar
+        if medium is None:
+            medium = self.medium
+        if not isinstance(medium,foodphysics):
+            raise TypeError(f&#34;medium must be a foodphysics not a {type(medium).__name__}&#34;)
         sim = senspatankar(self,medium,**kwargs)
         medium.lastsimulation = sim # store the last simulation result in medium
         medium.lastinput = self # store the last input (self)
@@ -7349,35 +8000,26 @@ def Cunit(self): return self._Cunit</code></pre>
 </summary>
 <pre><code class="python">@property
 def D(self):
-    Dtmp = self.Dmodel()
+    Dtmp = None
+    if self.Dmodel == &#34;default&#34;: # default behavior
+        Dtmp = self._compute_Dmodel()
+    elif callable(self.Dmodel): # user override
+        Dtmp = self.Dmodel()
     if Dtmp is not None:
-        return np.full_like(self._D, Dtmp)
-    else:
-        return self._D</code></pre>
+        return np.full_like(self._D, Dtmp,dtype=np.float64)
+    return self._D</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.Dmodel"><code class="name">var <span class="ident">Dmodel</span></code></dt>
 <dd>
-<div class="desc"><p>Return a callable function that evaluates D with updated parameters.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def Dmodel(self):
-    &#34;&#34;&#34;Return a callable function that evaluates D with updated parameters.&#34;&#34;&#34;
-    if not isinstance(self._substance,migrant) or self._substance.Deval() is None:
-        return lambda **kwargs: None  # Return a function that always returns None
-    template = self._substance.Dtemplate.copy()
-    template.update()
-    def func(**kwargs):
-        D = np.empty_like(self._D)
-        for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
-            template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
-            # inherit eventual user parameters
-            D[i] = self._substance.D.evaluate(**dict(template, **kwargs))
-        return D
-    return func</code></pre>
+    return self._Dmodel</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.Dunit"><code class="name">var <span class="ident">Dunit</span></code></dt>
@@ -7446,6 +8088,51 @@ def TKunit(self): return &#34;K&#34;</code></pre>
 def Tunit(self): return self._Tunit</code></pre>
 </details>
 </dd>
+<dt id="migration.layer.chemical"><code class="name">var <span class="ident">chemical</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def chemical(self): return self.substance # alias/synonym of substance</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.chemicalclass"><code class="name">var <span class="ident">chemicalclass</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def chemicalclass(self): return self._chemicalclass</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.chemicalsubstance"><code class="name">var <span class="ident">chemicalsubstance</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def chemicalsubstance(self): return self._chemicalsubstance</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.chemicalsubstance_history"><code class="name">var <span class="ident">chemicalsubstance_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def chemicalsubstance_history(self):
+    return self._chemicalsubstance_history if self._chemicalsubstance_history != [] else [self.chemicalsubstance]</code></pre>
+</details>
+</dd>
 <dt id="migration.layer.code"><code class="name">var <span class="ident">code</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -7466,6 +8153,24 @@ def code(self): return self._code</code></pre>
 </summary>
 <pre><code class="python">@property
 def concentration(self): return sum(self.l*self.C0)/self.thickness</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.hasDmodel"><code class="name">var <span class="ident">hasDmodel</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if a Dmodel has been defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasDmodel(self):
+    &#34;&#34;&#34;Returns True if a Dmodel has been defined&#34;&#34;&#34;
+    if hasattr(self, &#34;_compute_Dmodel&#34;):
+        if self._compute_Dmodel() is not None:
+            return True
+        elif callable(self.Dmodel):
+            return self.Dmodel() is not None
+    return False</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.hashlayer"><code class="name">var <span class="ident">hashlayer</span></code></dt>
@@ -7490,6 +8195,58 @@ def hashlayer(self):
             ]</code></pre>
 </details>
 </dd>
+<dt id="migration.layer.haskmodel"><code class="name">var <span class="ident">haskmodel</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if a kmodel has been defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def haskmodel(self):
+    &#34;&#34;&#34;Returns True if a kmodel has been defined&#34;&#34;&#34;
+    if hasattr(self, &#34;_compute_kmodel&#34;):
+        if self._compute_kmodel() is not None:
+            return True
+        elif callable(self.kmodel):
+            return self.kmodel() is not None
+    return False</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.ispolymer"><code class="name">var <span class="ident">ispolymer</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ispolymer(self): return self.chemicalclass == &#34;polymer&#34;</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.ispolymer_history"><code class="name">var <span class="ident">ispolymer_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ispolymer_history(self):
+    return self._ispolymer_history if self._ispolymer_history != [] else [self.ispolymer]</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.issolid"><code class="name">var <span class="ident">issolid</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def issolid(self): return self.physicalstate == &#34;solid&#34;</code></pre>
+</details>
+</dd>
 <dt id="migration.layer.k"><code class="name">var <span class="ident">k</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -7499,35 +8256,26 @@ def hashlayer(self):
 </summary>
 <pre><code class="python">@property
 def k(self):
-    ktmp = self.kmodel()
-    if ktmp:
-        return np.full_like(self._D, ktmp)
-    else:
-        return self._k</code></pre>
+    ktmp = None
+    if self.kmodel == &#34;default&#34;: # default behavior
+        ktmp = self._compute_kmodel()
+    elif callable(self.kmodel): # user override
+        ktmp = self.kmodel()
+    if ktmp is not None:
+        return np.full_like(self._k, ktmp,dtype=np.float64)
+    return self._k</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.kmodel"><code class="name">var <span class="ident">kmodel</span></code></dt>
 <dd>
-<div class="desc"><p>Return a callable function that evaluates k with updated parameters.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def kmodel(self):
-    &#34;&#34;&#34;Return a callable function that evaluates k with updated parameters.&#34;&#34;&#34;
-    if not isinstance(self._substance,migrant) or self._substance.keval() is None:
-        return lambda **kwargs: None  # Return a function that always returns None
-    template = self._substance.ktemplate.copy()
-    template.update()
-    def func(**kwargs):
-        k = np.empty_like(self._k)
-        for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
-            template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
-            # inherit eventual user parameters
-            k[i] = self._substance.k.evaluate(**dict(template, **kwargs))
-        return k
-    return func</code></pre>
+    return self._kmodel</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.kunit"><code class="name">var <span class="ident">kunit</span></code></dt>
@@ -7619,6 +8367,28 @@ def lunit(self): return self._lunit</code></pre>
 def material(self): return self._material</code></pre>
 </details>
 </dd>
+<dt id="migration.layer.medium"><code class="name">var <span class="ident">medium</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def medium(self): return self._medium</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.migrant"><code class="name">var <span class="ident">migrant</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def migrant(self): return self.substance # alias/synonym of substance</code></pre>
+</details>
+</dd>
 <dt id="migration.layer.n"><code class="name">var <span class="ident">n</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -7674,6 +8444,30 @@ def nmeshmin(self): return self._nmeshmin</code></pre>
 def permeability(self): return self.D/(self.l*self.k)</code></pre>
 </details>
 </dd>
+<dt id="migration.layer.physicalstate"><code class="name">var <span class="ident">physicalstate</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def physicalstate(self): return self._physicalstate</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.polarityindex"><code class="name">var <span class="ident">polarityindex</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def polarityindex(self):
+    # rescaled to match predictions - standard scale [0,10.2] - predicted scale [0,7.12]
+    return self._polarityindex * migrant(&#34;water&#34;).polarityindex/10.2</code></pre>
+</details>
+</dd>
 <dt id="migration.layer.pressure"><code class="name">var <span class="ident">pressure</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -7693,7 +8487,7 @@ def pressure(self): return self.k*self.C0</code></pre>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def rank(self): return np.flip(np.argsort(np.array(self.resistance))+1).tolist()</code></pre>
+def rank(self): return (self.n-np.argsort(np.array(self.resistance))).tolist()</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.referencelayer"><code class="name">var <span class="ident">referencelayer</span></code></dt>
@@ -7760,6 +8554,17 @@ def rho(self): return self._rho</code></pre>
 </summary>
 <pre><code class="python">@property
 def rhounit(self): return self._rhounit</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.solute"><code class="name">var <span class="ident">solute</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def solute(self): return self.substance # alias/synonym of substance</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.substance"><code class="name">var <span class="ident">substance</span></code></dt>
@@ -7890,12 +8695,13 @@ The category under which the properties are grouped.</p></div>
 <span>def <span class="ident">contact</span></span>(<span>self, medium, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>alias to migration method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def contact(self,medium,**kwargs):
+    &#34;&#34;&#34;alias to migration method&#34;&#34;&#34;
     return self.migration(medium,**kwargs)</code></pre>
 </details>
 </dd>
@@ -7950,16 +8756,22 @@ The category under which the properties are grouped.</p></div>
 </details>
 </dd>
 <dt id="migration.layer.migration"><code class="name flex">
-<span>def <span class="ident">migration</span></span>(<span>self, medium, **kwargs)</span>
+<span>def <span class="ident">migration</span></span>(<span>self, medium=None, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>interface to simulation engine: senspantankar</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def migration(self,medium,**kwargs):
+<pre><code class="python">def migration(self,medium=None,**kwargs):
+    &#34;&#34;&#34;interface to simulation engine: senspantankar&#34;&#34;&#34;
+    from patankar.food import foodphysics
     from patankar.migration import senspatankar
+    if medium is None:
+        medium = self.medium
+    if not isinstance(medium,foodphysics):
+        raise TypeError(f&#34;medium must be a foodphysics not a {type(medium).__name__}&#34;)
     sim = senspatankar(self,medium,**kwargs)
     medium.lastsimulation = sim # store the last simulation result in medium
     medium.lastinput = self # store the last input (self)
@@ -8395,6 +9207,8 @@ def copy(cls, what):
 <ul class="">
 <li><code><a title="migration.foodlayer.CF0" href="#migration.foodlayer.CF0">CF0</a></code></li>
 <li><code><a title="migration.foodlayer.CF0units" href="#migration.foodlayer.CF0units">CF0units</a></code></li>
+<li><code><a title="migration.foodlayer.chemicalclass" href="#migration.foodlayer.chemicalclass">chemicalclass</a></code></li>
+<li><code><a title="migration.foodlayer.chemicalsubstance" href="#migration.foodlayer.chemicalsubstance">chemicalsubstance</a></code></li>
 <li><code><a title="migration.foodlayer.contactemperature" href="#migration.foodlayer.contactemperature">contactemperature</a></code></li>
 <li><code><a title="migration.foodlayer.contactemperatureUnits" href="#migration.foodlayer.contactemperatureUnits">contactemperatureUnits</a></code></li>
 <li><code><a title="migration.foodlayer.contacttime" href="#migration.foodlayer.contacttime">contacttime</a></code></li>
@@ -8402,8 +9216,18 @@ def copy(cls, what):
 <li><code><a title="migration.foodlayer.density" href="#migration.foodlayer.density">density</a></code></li>
 <li><code><a title="migration.foodlayer.densityUnits" href="#migration.foodlayer.densityUnits">densityUnits</a></code></li>
 <li><code><a title="migration.foodlayer.description" href="#migration.foodlayer.description">description</a></code></li>
+<li><code><a title="migration.foodlayer.ispolymer" href="#migration.foodlayer.ispolymer">ispolymer</a></code></li>
+<li><code><a title="migration.foodlayer.issolid" href="#migration.foodlayer.issolid">issolid</a></code></li>
+<li><code><a title="migration.foodlayer.k0" href="#migration.foodlayer.k0">k0</a></code></li>
+<li><code><a title="migration.foodlayer.kmodel" href="#migration.foodlayer.kmodel">kmodel</a></code></li>
 <li><code><a title="migration.foodlayer.level" href="#migration.foodlayer.level">level</a></code></li>
+<li><code><a title="migration.foodlayer.migrant" href="#migration.foodlayer.migrant">migrant</a></code></li>
 <li><code><a title="migration.foodlayer.name" href="#migration.foodlayer.name">name</a></code></li>
+<li><code><a title="migration.foodlayer.physicalstate" href="#migration.foodlayer.physicalstate">physicalstate</a></code></li>
+<li><code><a title="migration.foodlayer.polarityindex" href="#migration.foodlayer.polarityindex">polarityindex</a></code></li>
+<li><code><a title="migration.foodlayer.simulant" href="#migration.foodlayer.simulant">simulant</a></code></li>
+<li><code><a title="migration.foodlayer.solute" href="#migration.foodlayer.solute">solute</a></code></li>
+<li><code><a title="migration.foodlayer.substance" href="#migration.foodlayer.substance">substance</a></code></li>
 <li><code><a title="migration.foodlayer.surfacearea" href="#migration.foodlayer.surfacearea">surfacearea</a></code></li>
 <li><code><a title="migration.foodlayer.surfaceareaUnits" href="#migration.foodlayer.surfaceareaUnits">surfaceareaUnits</a></code></li>
 <li><code><a title="migration.foodlayer.volume" href="#migration.foodlayer.volume">volume</a></code></li>
@@ -8419,7 +9243,9 @@ def copy(cls, what):
 <li><code><a title="migration.foodphysics.copy" href="#migration.foodphysics.copy">copy</a></code></li>
 <li><code><a title="migration.foodphysics.description" href="#migration.foodphysics.description">description</a></code></li>
 <li><code><a title="migration.foodphysics.get_param" href="#migration.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="migration.foodphysics.haskmodel" href="#migration.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="migration.foodphysics.hassimulation" href="#migration.foodphysics.hassimulation">hassimulation</a></code></li>
+<li><code><a title="migration.foodphysics.hassubstance" href="#migration.foodphysics.hassubstance">hassubstance</a></code></li>
 <li><code><a title="migration.foodphysics.lastinput" href="#migration.foodphysics.lastinput">lastinput</a></code></li>
 <li><code><a title="migration.foodphysics.lastsimulation" href="#migration.foodphysics.lastsimulation">lastsimulation</a></code></li>
 <li><code><a title="migration.foodphysics.level" href="#migration.foodphysics.level">level</a></code></li>
@@ -8431,7 +9257,7 @@ def copy(cls, what):
 </li>
 <li>
 <h4><code><a title="migration.layer" href="#migration.layer">layer</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="migration.layer.C0" href="#migration.layer.C0">C0</a></code></li>
 <li><code><a title="migration.layer.Cunit" href="#migration.layer.Cunit">Cunit</a></code></li>
 <li><code><a title="migration.layer.D" href="#migration.layer.D">D</a></code></li>
@@ -8445,12 +9271,21 @@ def copy(cls, what):
 <li><code><a title="migration.layer.acknowledge" href="#migration.layer.acknowledge">acknowledge</a></code></li>
 <li><code><a title="migration.layer.checknumvalue" href="#migration.layer.checknumvalue">checknumvalue</a></code></li>
 <li><code><a title="migration.layer.checktextvalue" href="#migration.layer.checktextvalue">checktextvalue</a></code></li>
+<li><code><a title="migration.layer.chemical" href="#migration.layer.chemical">chemical</a></code></li>
+<li><code><a title="migration.layer.chemicalclass" href="#migration.layer.chemicalclass">chemicalclass</a></code></li>
+<li><code><a title="migration.layer.chemicalsubstance" href="#migration.layer.chemicalsubstance">chemicalsubstance</a></code></li>
+<li><code><a title="migration.layer.chemicalsubstance_history" href="#migration.layer.chemicalsubstance_history">chemicalsubstance_history</a></code></li>
 <li><code><a title="migration.layer.code" href="#migration.layer.code">code</a></code></li>
 <li><code><a title="migration.layer.concentration" href="#migration.layer.concentration">concentration</a></code></li>
 <li><code><a title="migration.layer.contact" href="#migration.layer.contact">contact</a></code></li>
 <li><code><a title="migration.layer.copy" href="#migration.layer.copy">copy</a></code></li>
+<li><code><a title="migration.layer.hasDmodel" href="#migration.layer.hasDmodel">hasDmodel</a></code></li>
 <li><code><a title="migration.layer.hashlayer" href="#migration.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="migration.layer.haskmodel" href="#migration.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="migration.layer.help" href="#migration.layer.help">help</a></code></li>
+<li><code><a title="migration.layer.ispolymer" href="#migration.layer.ispolymer">ispolymer</a></code></li>
+<li><code><a title="migration.layer.ispolymer_history" href="#migration.layer.ispolymer_history">ispolymer_history</a></code></li>
+<li><code><a title="migration.layer.issolid" href="#migration.layer.issolid">issolid</a></code></li>
 <li><code><a title="migration.layer.k" href="#migration.layer.k">k</a></code></li>
 <li><code><a title="migration.layer.kmodel" href="#migration.layer.kmodel">kmodel</a></code></li>
 <li><code><a title="migration.layer.kunit" href="#migration.layer.kunit">kunit</a></code></li>
@@ -8461,13 +9296,17 @@ def copy(cls, what):
 <li><code><a title="migration.layer.lreferencelayer" href="#migration.layer.lreferencelayer">lreferencelayer</a></code></li>
 <li><code><a title="migration.layer.lunit" href="#migration.layer.lunit">lunit</a></code></li>
 <li><code><a title="migration.layer.material" href="#migration.layer.material">material</a></code></li>
+<li><code><a title="migration.layer.medium" href="#migration.layer.medium">medium</a></code></li>
 <li><code><a title="migration.layer.mesh" href="#migration.layer.mesh">mesh</a></code></li>
+<li><code><a title="migration.layer.migrant" href="#migration.layer.migrant">migrant</a></code></li>
 <li><code><a title="migration.layer.migration" href="#migration.layer.migration">migration</a></code></li>
 <li><code><a title="migration.layer.n" href="#migration.layer.n">n</a></code></li>
 <li><code><a title="migration.layer.name" href="#migration.layer.name">name</a></code></li>
 <li><code><a title="migration.layer.nmesh" href="#migration.layer.nmesh">nmesh</a></code></li>
 <li><code><a title="migration.layer.nmeshmin" href="#migration.layer.nmeshmin">nmeshmin</a></code></li>
 <li><code><a title="migration.layer.permeability" href="#migration.layer.permeability">permeability</a></code></li>
+<li><code><a title="migration.layer.physicalstate" href="#migration.layer.physicalstate">physicalstate</a></code></li>
+<li><code><a title="migration.layer.polarityindex" href="#migration.layer.polarityindex">polarityindex</a></code></li>
 <li><code><a title="migration.layer.pressure" href="#migration.layer.pressure">pressure</a></code></li>
 <li><code><a title="migration.layer.rank" href="#migration.layer.rank">rank</a></code></li>
 <li><code><a title="migration.layer.referencelayer" href="#migration.layer.referencelayer">referencelayer</a></code></li>
@@ -8478,6 +9317,7 @@ def copy(cls, what):
 <li><code><a title="migration.layer.rho" href="#migration.layer.rho">rho</a></code></li>
 <li><code><a title="migration.layer.rhounit" href="#migration.layer.rhounit">rhounit</a></code></li>
 <li><code><a title="migration.layer.simplify" href="#migration.layer.simplify">simplify</a></code></li>
+<li><code><a title="migration.layer.solute" href="#migration.layer.solute">solute</a></code></li>
 <li><code><a title="migration.layer.split" href="#migration.layer.split">split</a></code></li>
 <li><code><a title="migration.layer.substance" href="#migration.layer.substance">substance</a></code></li>
 <li><code><a title="migration.layer.thickness" href="#migration.layer.thickness">thickness</a></code></li>

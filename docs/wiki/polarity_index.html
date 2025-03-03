@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>polarity_index API documentation</title>
+<meta name="description" content="SFPPy: Approximate Correlation Between Polarity Index (P&#39;) and logP
+**Objective**:
+Build a *qualitative* correlation between an approximate …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>polarity_index</code></h1>
+</header>
+<section id="section-intro">
+<p>===============================================================================
+SFPPy: Approximate Correlation Between Polarity Index (P') and logP
+===============================================================================
+<strong>Objective</strong>:
+Build a <em>qualitative</em> correlation between an approximate "polarity index"
+(P') and logP (octanol-water partition coefficient) values. This script
+demonstrates how to:</p>
+<pre><code>1) Fit a *quadratic* model using a small, "tuned" dataset that covers a
+   range of polarities from n-Hexane to Water.
+2) Validate it (roughly) with an extended dataset of ~35 solvents.
+3) Provide a function to invert the model and estimate P' from logP values,
+   for classification or for ranking in subsequent Henry-like or partition
+   coefficient models in SFPPy.
+</code></pre>
+<p><strong>Disclaimer</strong>:
+- This correlation is <em>qualitative</em> and based on an intentionally <em>small</em>
+dataset, hand-tuned for a few representative solvents (non-polar to very
+polar).
+- Do <strong>not</strong> expect high accuracy. The goal is to produce a rough scale (P')
+that loosely tracks how "polar" or "non-polar" a compound might be.
+- The script demonstrates the approach rather than guaranteeing a universal
+model.</p>
+<p><strong>References &amp; Data</strong>:
+- Data for Polarity Index (P') adapted from various solvent polarity tables:
+LSU Macromolecular Resources, HPLC Solvent Guides, and additional web
+resources.
+- logP values drawn from typical reference tables (PubChem, various
+compiled datasheets).</p>
+<p><strong>Motivation</strong>:
+We wish to provide a "fast" way to guess an ordering of polarity from logP,
+which is widely available for many chemicals (e.g., in PubChem). P' is then
+used within SFPPy to set or guess Henry-like coefficients or Flory–Huggins
+parameters in patankar.layer and patankar.food modules.</p>
+<hr>
+<p>Created on Fri Feb 28 12:01:56 2025
+@author: olivi (community)</p>
+<hr>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+===============================================================================
+SFPPy: Approximate Correlation Between Polarity Index (P&#39;) and logP
+===============================================================================
+**Objective**:
+    Build a *qualitative* correlation between an approximate &#34;polarity index&#34;
+    (P&#39;) and logP (octanol-water partition coefficient) values. This script
+    demonstrates how to:
+
+    1) Fit a *quadratic* model using a small, &#34;tuned&#34; dataset that covers a
+       range of polarities from n-Hexane to Water.
+    2) Validate it (roughly) with an extended dataset of ~35 solvents.
+    3) Provide a function to invert the model and estimate P&#39; from logP values,
+       for classification or for ranking in subsequent Henry-like or partition
+       coefficient models in SFPPy.
+
+**Disclaimer**:
+    - This correlation is *qualitative* and based on an intentionally *small*
+      dataset, hand-tuned for a few representative solvents (non-polar to very
+      polar).
+    - Do **not** expect high accuracy. The goal is to produce a rough scale (P&#39;)
+      that loosely tracks how &#34;polar&#34; or &#34;non-polar&#34; a compound might be.
+    - The script demonstrates the approach rather than guaranteeing a universal
+      model.
+
+**References &amp; Data**:
+    - Data for Polarity Index (P&#39;) adapted from various solvent polarity tables:
+      LSU Macromolecular Resources, HPLC Solvent Guides, and additional web
+      resources.
+    - logP values drawn from typical reference tables (PubChem, various
+      compiled datasheets).
+
+**Motivation**:
+    We wish to provide a &#34;fast&#34; way to guess an ordering of polarity from logP,
+    which is widely available for many chemicals (e.g., in PubChem). P&#39; is then
+    used within SFPPy to set or guess Henry-like coefficients or Flory–Huggins
+    parameters in patankar.layer and patankar.food modules.
+
+----------------------------------------------------------------------------
+Created on Fri Feb 28 12:01:56 2025
+@author: olivi (community)
+----------------------------------------------------------------------------
+&#34;&#34;&#34;
+
+# %% Import libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+# %% Tuned Reference Dataset
+&#34;&#34;&#34;
+This small set of 8 solvents is carefully chosen to span from n-Hexane (non-polar)
+to Water (very polar). Polarity Index (P&#39;) values are lightly &#39;tweaked&#39; to get a
+smooth progression. The logP values come from known literature data.
+&#34;&#34;&#34;
+
+solvents = [
+    &#34;Water&#34;, &#34;Methanol&#34;, &#34;Ethanol&#34;, &#34;Acetone&#34;, &#34;Acetonitrile&#34;,
+    &#34;Dichloromethane&#34;, &#34;Toluene&#34;, &#34;n-Hexane&#34;
+]
+
+# Polarity Index (P&#39;) with minor manual adjustments (denoted +)
+polarity_index = [10.2,          # Water
+                  5.1+3,         # Methanol (5.1 + 3 = 8.1)
+                  4.3+0.7,       # Ethanol (4.3 + 0.7 = 5.0)
+                  5.1+0.5,       # Acetone (5.1 + 0.5 = 5.6)
+                  5.8+1,         # Acetonitrile (5.8 + 1 = 6.8)
+                  3.1,           # Dichloromethane
+                  2.4,           # Toluene
+                  0.0            # n-Hexane
+                 ]
+
+# logP reference data
+logP_values = [-1.38,  # Water
+               -0.77,  # Methanol
+               -0.24,  # Ethanol
+               -0.21,  # Acetone
+               -0.22,  # Acetonitrile
+                1.25,  # Dichloromethane
+                2.73,  # Toluene
+                3.90   # n-Hexane
+              ]
+
+# %% Extended Dataset for Validation
+&#34;&#34;&#34;
+This larger set (~35 solvents) is used to see if the small dataset&#39;s fit
+extends (qualitatively) to other solvents. We exclude the ones already in
+the small set to avoid double-counting.
+&#34;&#34;&#34;
+
+ext_solvents = [
+    &#34;Pentane&#34;, &#34;1,1,2-Trichlorotrifluoroethane&#34;, &#34;Cyclopentane&#34;, &#34;Heptane&#34;, &#34;Hexane&#34;,
+    &#34;Iso-Octane&#34;, &#34;Petroleum Ether&#34;, &#34;Cyclohexane&#34;, &#34;n-Butyl Chloride&#34;, &#34;Toluene&#34;,
+    &#34;Methyl t-Butyl Ether&#34;, &#34;o-Xylene&#34;, &#34;Chlorobenzene&#34;, &#34;o-Dichlorobenzene&#34;, &#34;Ethyl Ether&#34;,
+    &#34;Dichloromethane&#34;, &#34;Ethylene Dichloride&#34;, &#34;n-Butyl Alcohol&#34;, &#34;Isopropyl Alcohol&#34;,
+    &#34;n-Butyl Acetate&#34;, &#34;Isobutyl Alcohol&#34;, &#34;Methyl Isoamyl Ketone&#34;, &#34;n-Propyl Alcohol&#34;,
+    &#34;Tetrahydrofuran&#34;, &#34;Chloroform&#34;, &#34;Methyl Isobutyl Ketone&#34;, &#34;Ethyl Acetate&#34;,
+    &#34;Methyl n-Propyl Ketone&#34;, &#34;Methyl Ethyl Ketone&#34;, &#34;1,4-Dioxane&#34;, &#34;Acetone&#34;, &#34;Methanol&#34;,
+    &#34;Pyridine&#34;, &#34;2-Methoxyethanol&#34;, &#34;Acetonitrile&#34;, &#34;Propylene Carbonate&#34;, &#34;N,N-Dimethylformamide&#34;,
+    &#34;Dimethyl Acetamide&#34;, &#34;N-Methylpyrrolidone&#34;, &#34;Dimethyl Sulfoxide&#34;, &#34;Water&#34;
+]
+
+ext_polarity_index = [
+    0.0, 0.0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 1.0, 2.4, 2.5, 2.5, 2.7, 2.7, 2.8,
+    3.1, 3.5, 3.9, 3.9, 4.0, 4.0, 4.0, 4.0, 4.0, 4.1, 4.2, 4.4, 4.5, 4.7, 4.8,
+    5.1, 5.1, 5.3, 5.5, 5.8, 6.1, 6.4, 6.5, 6.7, 7.2, 10.2
+]
+
+ext_logP_values = [
+    3.39, 4.30, 3.20, 4.66, 3.90, 4.50, 3.50, 3.44, 2.70, 2.73, 1.20, 3.12, 2.84, 3.38, 0.83,
+    1.25, 1.48, 0.88, 0.05, 1.82, 0.79, 1.98, 0.25, 0.46, 1.97, 1.31, 0.73, 1.50, 0.29, -0.27,
+    -0.24, -0.77, 0.65, -0.77, -0.22, -0.41, -1.01, -0.77, -0.38, -1.35, -1.38
+]
+
+# Filter out solvents that appear in the tuned dataset
+validation_solvents = []
+validation_polarity_index = []
+validation_logP_values = []
+
+for i, solvent in enumerate(ext_solvents):
+    if solvent not in solvents:
+        validation_solvents.append(solvent)
+        validation_polarity_index.append(ext_polarity_index[i])
+        validation_logP_values.append(ext_logP_values[i])
+
+# Create DataFrames for easy inspection
+df = pd.DataFrame({
+    &#34;Solvent&#34;: solvents,
+    &#34;Polarity Index (P&#39;)&#34;: polarity_index,
+    &#34;logP&#34;: logP_values
+}).sort_values(by=&#34;Polarity Index (P&#39;)&#34;, ascending=True)
+
+df_validation = pd.DataFrame({
+    &#34;Solvent&#34;: validation_solvents,
+    &#34;Polarity Index (P&#39;)&#34;: validation_polarity_index,
+    &#34;logP&#34;: validation_logP_values
+}).sort_values(by=&#34;Polarity Index (P&#39;)&#34;, ascending=True)
+
+
+# %% Quick Visualization of the Tuned Data
+plt.figure(figsize=(8, 5))
+plt.scatter(polarity_index, logP_values, color=&#39;blue&#39;, label=&#34;Reference Data (Tuned)&#34;)
+for i, solvent in enumerate(solvents):
+    plt.annotate(solvent, (polarity_index[i], logP_values[i]),
+                 fontsize=9, xytext=(5,5), textcoords=&#39;offset points&#39;)
+
+plt.xlabel(&#34;Polarity Index (P&#39;)&#34;)
+plt.ylabel(&#34;logP&#34;)
+plt.title(&#34;Polarity Index (P&#39;) vs. logP (Tuned Dataset)&#34;)
+plt.axhline(0, color=&#39;gray&#39;, linestyle=&#39;--&#39;, linewidth=0.8)  # Zero line for logP
+plt.grid(True, linestyle=&#39;--&#39;, alpha=0.6)
+plt.legend()
+plt.show()
+
+
+# %% Fit a Quadratic Model
+&#34;&#34;&#34;
+We assume a model:
+
+    logP = a * (P&#39;)^2 + b * P&#39; + c
+
+We&#39;ll use np.polyfit() with degree=2. Then we compare it with
+the extended validation set.
+&#34;&#34;&#34;
+coefficients = np.polyfit(polarity_index, logP_values, 2)
+quadratic_model = np.poly1d(coefficients)
+
+# For plotting a smooth curve:
+x_range = np.linspace(min(polarity_index), max(polarity_index), 100)
+y_fitted = quadratic_model(x_range)
+quad_eq_str = (f&#34;logP ≈ {coefficients[0]:.4f} * (P&#39;)² &#34;
+               f&#34;+ {coefficients[1]:.4f} * (P&#39;) &#34;
+               f&#34;+ {coefficients[2]:.4f}&#34;)
+
+print(&#34;Fitted coefficients (a, b, c):&#34;, coefficients)
+print(&#34;Quadratic equation =&gt;&#34;, quad_eq_str)
+
+
+# %% Compare with Extended Validation Dataset
+plt.figure(figsize=(8, 5))
+
+# Plot the tuned set
+plt.scatter(polarity_index, logP_values, color=&#39;Crimson&#39;, label=&#34;Tuned (8 solvents)&#34;)
+for i, solvent in enumerate(solvents):
+    plt.annotate(solvent, (polarity_index[i], logP_values[i]),
+                 fontsize=8, xytext=(5,5), textcoords=&#39;offset points&#39;)
+
+# Plot the validation set
+plt.scatter(validation_polarity_index, validation_logP_values,
+            color=&#39;DeepSkyBlue&#39;, label=&#34;Validation (~35 solvents)&#34;)
+for i, solvent in enumerate(validation_solvents):
+    plt.annotate(solvent, (validation_polarity_index[i], validation_logP_values[i]),
+                 fontsize=6, xytext=(5,5), textcoords=&#39;offset points&#39;)
+
+# Plot the fitted curve
+plt.plot(x_range, y_fitted, color=&#39;Crimson&#39;, linestyle=&#39;--&#39;, label=&#34;Quadratic Fit&#34;)
+
+plt.xlabel(&#34;Polarity Index (P&#39;)&#34;)
+plt.ylabel(&#34;logP&#34;)
+plt.title(&#34;Polarity Index (P&#39;) vs. logP\nQuadratic Model Fit &amp; Validation&#34;)
+plt.axhline(0, color=&#39;gray&#39;, linestyle=&#39;--&#39;, linewidth=0.8)
+plt.grid(True, linestyle=&#39;--&#39;, alpha=0.6)
+plt.legend()
+plt.show()
+
+
+# %% Final implementation
+import numpy as np
+
+def polarity_index_from_logP(logP,
+                             A=0.04426556625879231,
+                             B=-0.9796466111259537,
+                             C=4.086222276379432):
+    &#34;&#34;&#34;
+    Computes the polarity index (P&#39;) from a given logP value
+    as the positive root of the quadratic fitted equation:
+
+        logP = A * (P&#39;)² + B * P&#39; + C
+        P&#39; = (-B - sqrt(B² - 4A(C - logP))) / (2A)
+
+    Parameters:
+    ----------
+    logP : float, list, or np.ndarray
+        The logP value(s) for which to compute the polarity index P&#39;.
+
+    Returns:
+    -------
+    float or np.ndarray
+        The calculated polarity index P&#39; corresponding to the input logP.
+        If logP is out of the valid range, returns:
+        - 10.2 for very polar solvents (beyond water)
+        - 0 for extremely hydrophobic solvents (beyond n-Hexane)
+
+    Example Usage:
+    -------------
+    &gt;&gt;&gt; polarity_index_from_logP(-0.5)
+    8.34  # Example output
+
+    &gt;&gt;&gt; polarity_index_from_logP([-1.0, 0.5, 2.0])
+    array([9.2, 4.5, 1.8])  # Example outputs
+    &#34;&#34;&#34;
+
+    # Define valid logP range based on quadratic model limits
+    logPmin = C - B**2 / (4*A)  # ≈ -1.334 (theoretical minimum logP)
+    logPmax = C                  # 4.086 (theoretical maximum logP)
+    Pmax = 10.2 # value for water
+
+    def compute_P(logP_value):
+        &#34;&#34;&#34;Computes P&#39; for a single logP value after input validation.&#34;&#34;&#34;
+        if logP_value &lt; logPmin:
+            return Pmax  # Most polar (beyond water)
+        if logP_value &gt; logPmax:
+            return 0.0  # Most hydrophobic (beyond n-Hexane)
+
+        discriminant = B**2 - 4*A*(C - logP_value)
+        sqrt_discriminant = np.sqrt(discriminant)
+        P2root = (-B - sqrt_discriminant) / (2*A)  # Always select P2
+        return P2root if P2root&lt;=Pmax else Pmax
+
+    # Handle both single and multiple values efficiently
+    if isinstance(logP, (list, tuple, np.ndarray)):
+        return np.vectorize(compute_P)(logP)  # Vectorized for multiple inputs
+    else:
+        return compute_P(logP)
+
+
+# %% Demonstration
+print(&#34;\n=== Demonstration of polarity_index_from_logP ===&#34;)
+demo_values = [-1.5, -0.5, 0.5, 5.0]
+results = polarity_index_from_logP(demo_values)
+for lv, r in zip(demo_values, results):
+    print(f&#34;logP={lv:&gt;5.2f} =&gt; P&#39;={r:&gt;5.2f}&#34;)
+
+
+# %% Final Plot - Extended
+plt.figure(figsize=(8, 5))
+plt.scatter(ext_polarity_index, ext_logP_values, color=&#39;Teal&#39;, label=&#34;Extended Solvents&#34;)
+for i, solvent in enumerate(ext_solvents):
+    plt.annotate(solvent, (ext_polarity_index[i], ext_logP_values[i]),
+                 fontsize=7, xytext=(5,5), textcoords=&#39;offset points&#39;)
+
+logP_range = np.linspace(-4, 6, 1000)
+p_estimated = polarity_index_from_logP(logP_range)
+plt.plot(p_estimated, logP_range, color=&#39;Crimson&#39;, linestyle=&#39;-.&#39;,
+         label=&#34;Inverse Quadratic Model (P&#39;(logP))&#34;)
+
+plt.xlabel(&#34;Polarity Index (P&#39;)&#34;)
+plt.ylabel(&#34;logP&#34;)
+plt.title(&#34;Approximate Mapping: P&#39; &lt;-&gt; logP (Extended View)&#34;)
+plt.axhline(0, color=&#39;gray&#39;, linestyle=&#39;--&#39;, linewidth=0.8)
+plt.grid(True, linestyle=&#39;--&#39;, alpha=0.6)
+plt.legend()
+plt.show()
+
+&#34;&#34;&#34;
+===============================================================================
+Summary &amp; Notes:
+----------------
+1) We fitted a simple quadratic (logP ~ a(P&#39;)² + bP&#39; + c) to a small set
+   of 8 solvents. The shape is roughly correct for a wide range of polarities.
+
+2) The extended dataset (~35 solvents) is used for a rough *visual* validation.
+   There&#39;s no guarantee of accuracy, especially for more exotic or borderline
+   solvents.
+
+3) The final function `polarity_index_from_logP()` is the main deliverable.
+   - It clamps P&#39; between 0.0 (extremely non-polar) and 10.2 (extremely polar).
+   - Perfect for a quick rank-based approach or a first-guess at how &#34;polar&#34;
+     an unknown solvent might be relative to water, methanol, or hexane.
+
+4) Additional disclaimers:
+   - The model is purely *empirical*.
+   - Use at your own risk for approximate classification or quick bounding.
+
+===============================================================================
+&#34;&#34;&#34;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="polarity_index.logP_values"><code class="name">var <span class="ident">logP_values</span></code></dt>
+<dd>
+<div class="desc"><p>This larger set (~35 solvents) is used to see if the small dataset's fit
+extends (qualitatively) to other solvents. We exclude the ones already in
+the small set to avoid double-counting.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="polarity_index.polarity_index_from_logP"><code class="name flex">
+<span>def <span class="ident">polarity_index_from_logP</span></span>(<span>logP, A=0.04426556625879231, B=-0.9796466111259537, C=4.086222276379432)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the polarity index (P') from a given logP value
+as the positive root of the quadratic fitted equation:</p>
+<pre><code>logP = A * (P')² + B * P' + C
+P' = (-B - sqrt(B² - 4A(C - logP))) / (2A)
+</code></pre>
+<h2 id="parameters">Parameters:</h2>
+<p>logP : float, list, or np.ndarray
+The logP value(s) for which to compute the polarity index P'.</p>
+<h2 id="returns">Returns:</h2>
+<p>float or np.ndarray
+The calculated polarity index P' corresponding to the input logP.
+If logP is out of the valid range, returns:
+- 10.2 for very polar solvents (beyond water)
+- 0 for extremely hydrophobic solvents (beyond n-Hexane)</p>
+<h2 id="example-usage">Example Usage:</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; polarity_index_from_logP(-0.5)
+8.34  # Example output
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; polarity_index_from_logP([-1.0, 0.5, 2.0])
+array([9.2, 4.5, 1.8])  # Example outputs
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polarity_index_from_logP(logP,
+                             A=0.04426556625879231,
+                             B=-0.9796466111259537,
+                             C=4.086222276379432):
+    &#34;&#34;&#34;
+    Computes the polarity index (P&#39;) from a given logP value
+    as the positive root of the quadratic fitted equation:
+
+        logP = A * (P&#39;)² + B * P&#39; + C
+        P&#39; = (-B - sqrt(B² - 4A(C - logP))) / (2A)
+
+    Parameters:
+    ----------
+    logP : float, list, or np.ndarray
+        The logP value(s) for which to compute the polarity index P&#39;.
+
+    Returns:
+    -------
+    float or np.ndarray
+        The calculated polarity index P&#39; corresponding to the input logP.
+        If logP is out of the valid range, returns:
+        - 10.2 for very polar solvents (beyond water)
+        - 0 for extremely hydrophobic solvents (beyond n-Hexane)
+
+    Example Usage:
+    -------------
+    &gt;&gt;&gt; polarity_index_from_logP(-0.5)
+    8.34  # Example output
+
+    &gt;&gt;&gt; polarity_index_from_logP([-1.0, 0.5, 2.0])
+    array([9.2, 4.5, 1.8])  # Example outputs
+    &#34;&#34;&#34;
+
+    # Define valid logP range based on quadratic model limits
+    logPmin = C - B**2 / (4*A)  # ≈ -1.334 (theoretical minimum logP)
+    logPmax = C                  # 4.086 (theoretical maximum logP)
+    Pmax = 10.2 # value for water
+
+    def compute_P(logP_value):
+        &#34;&#34;&#34;Computes P&#39; for a single logP value after input validation.&#34;&#34;&#34;
+        if logP_value &lt; logPmin:
+            return Pmax  # Most polar (beyond water)
+        if logP_value &gt; logPmax:
+            return 0.0  # Most hydrophobic (beyond n-Hexane)
+
+        discriminant = B**2 - 4*A*(C - logP_value)
+        sqrt_discriminant = np.sqrt(discriminant)
+        P2root = (-B - sqrt_discriminant) / (2*A)  # Always select P2
+        return P2root if P2root&lt;=Pmax else Pmax
+
+    # Handle both single and multiple values efficiently
+    if isinstance(logP, (list, tuple, np.ndarray)):
+        return np.vectorize(compute_P)(logP)  # Vectorized for multiple inputs
+    else:
+        return compute_P(logP)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="polarity_index.logP_values" href="#polarity_index.logP_values">logP_values</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="polarity_index.polarity_index_from_logP" href="#polarity_index.polarity_index_from_logP">polarity_index_from_logP</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

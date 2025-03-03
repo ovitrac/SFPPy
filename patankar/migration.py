@@ -1013,7 +1013,10 @@ class SensPatankarResult:
             t_values = t_values[:nmax]
 
         # Normalize time for colormap (Ensure at least one valid value)
-        norm = mcolors.Normalize(vmin=t_values.min(), vmax=t_values.max()) if len(t_values) > 1 else mcolors.Normalize(vmin=self.t.min(), vmax=self.t.max())
+        norm = mcolors.Normalize(vmin=t_values.min()/plotconfig["tscale"],
+                                 vmax=t_values.max()/plotconfig["tscale"]) if len(t_values) > 1 \
+            else mcolors.Normalize(vmin=self.t.min()/plotconfig["tscale"],
+                                   vmax=self.t.max()/plotconfig["tscale"])
         cmap = plt.get_cmap('viridis', nmax)  # 'viridis' is similar to Parula
 
         fig, ax = plt.subplots(figsize=(8, 6))  # Explicitly create a figure and axis
@@ -1021,7 +1024,7 @@ class SensPatankarResult:
         # Plot all valid concentration profiles with time-based colormap
         for tC in t_values:
             C = self.interp_Cx(tC)
-            color = tooclear(cmap(norm(tC)))  # Get color from colormap
+            color = tooclear(cmap(norm(tC/plotconfig["tscale"])))  # Get color from colormap
             ax.plot(self.x / plotconfig["lscale"], C / plotconfig["Cscale"],
                     color=color, alpha=0.9, label=f't={tC / plotconfig["tscale"]:.3g} {plotconfig["tunit"]}')
 
@@ -1789,7 +1792,7 @@ def compute_fv_profile(xmesh, dw, de, C_dimless, k_mesh, D_mesh, hw, he, CF_diml
     xe = xmesh + de - xtol  # Shift east interface
 
     # Build full spatial profile
-    xfull = np.empty(3 * num_nodes)
+    xfull = np.empty(3 * num_nodes,dtype=np.float64)
     xfull[::3] = xw      # Every 3rd position is xw
     xfull[1::3] = xmesh  # Every 3rd position (offset by 1) is xmesh
     xfull[2::3] = xe     # Every 3rd position (offset by 2) is xe
@@ -1821,7 +1824,7 @@ def compute_fv_profile(xmesh, dw, de, C_dimless, k_mesh, D_mesh, hw, he, CF_diml
     )).flatten()  # Ensure correct shape
 
     # Interleave concentration values instead of using np.hstack and reshape
-    Cfull_dimless = np.empty((num_timesteps, 3 * num_nodes))
+    Cfull_dimless = np.empty((num_timesteps, 3 * num_nodes),dtype=np.float64)
     Cfull_dimless[:, ::3] = Cw.T      # Every 3rd column is Cw
     Cfull_dimless[:, 1::3] = C_dimless.T  # Every 3rd column (offset by 1) is C
     Cfull_dimless[:, 2::3] = Ce.T      # Every 3rd column (offset by 2) is Ce
@@ -1851,7 +1854,7 @@ def compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh, xreltol=0):
     Cw = C + (dw[:, None] * hw[:, None] * ((k_west / k[:, None]) * C_west - C) / D[:, None])
 
     # Create full concentration matrix with interfaces
-    Cfull = np.empty((num_timesteps, 3*num_nodes))
+    Cfull = np.empty((num_timesteps, 3*num_nodes),dtype=np.float64)
 
     # Compute positional tolerances
     xtol = np.min([np.min(de), np.min(dw)]) * xreltol
@@ -1864,7 +1867,7 @@ def compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh, xreltol=0):
     Cfull[:, 2::3] = Ce.T
 
     # Create full position vector
-    xfull = np.empty(3*num_nodes)
+    xfull = np.empty(3*num_nodes,dtype=np.float64)
     xfull[::3] = xw
     xfull[1::3] = xmesh
     xfull[2::3] = xe

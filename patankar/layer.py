@@ -275,6 +275,24 @@ class layer:
         Example:
             A = layer(D=1e-14,l=50e-6,layername="layer A",layertype="polymer",layermaterial="PP")
     """
+
+    # -----------------------------------------------------------------------------
+    # Class attributes that can be overidden in instances.
+    # Their default values are set in classes and overriden with similar
+    # instance properties with @property.setter.
+    # These values cannot be set during construction, but only after instantiation.
+    # -----------------------------------------------------------------------------
+    # These properties are essential for model predictions, they cannot be customized
+    # beyond the rules accepted by the model predictors (they are not metadata)
+    _physicalstate = "solid"        # solid (default), liquid, gas, porous
+    _chemicalclass = "polymer"      # polymer (default), other
+    _chemicalsubstance = None       # None (default), monomer for polymers
+    _polarityindex = 0.0            # polarity index (roughly: 0=hexane, 10=water)
+
+    # Low-level prediction properties (these properties are common with patankar.food)
+    _lowLevelPredictionPropertyList = ["physicalstate","chemicalclass",
+                                       "chemicalsubstance","polarityindex","ispolymer","issolid"]
+
     # --------------------------------------------------------------------
     # PRIVATE PROPERTIES (cannot be changed by the user)
     # __ read only attributes
@@ -290,6 +308,7 @@ class layer:
     # these synonyms can be used during construction
     _synonyms = {
         "substance": {"migrant", "compound", "chemical","molecule","solute"},
+        "medium": {"food","simulant","fluid","liquid","contactmedium"},
         "C0": {"CP0", "Cp0"},
         "l": {"lp", "lP"},
         "D": {"Dp", "DP"},
@@ -323,6 +342,7 @@ class layer:
         "nmesh": 600,
         # Substance
         "substance": None,
+        "simulant": None,
         # Other parameters
         "verbose": None,
         "verbosity": 2
@@ -371,7 +391,8 @@ class layer:
                  l=None, D=None, k=None, C0=None, rho=None, T=None,
                  lunit=None, Dunit=None, kunit=None, Cunit=None, rhounit=None, Tunit=None,
                  layername=None,layertype=None,layermaterial=None,layercode=None,
-                 substance = None, Dmodel = None, kmodel = None,
+                 substance = None, medium = None,
+                 # Dmodel = None, kmodel = None, they are defined via migrant (future overrides)
                  nmesh=None, nmeshmin=None,
                  verbose=None, verbosity=2,**unresolved):
         """
@@ -410,6 +431,7 @@ class layer:
         """
         # resolve alternative names used by end-users
         substance = layer.resolvename(substance,"substance",**unresolved)
+        medium = layer.resolvename(medium, "medium", **unresolved)
         C0 = layer.resolvename(C0,"C0",**unresolved)
         l = layer.resolvename(l,"l",**unresolved)
         D = layer.resolvename(D,"D",**unresolved)
@@ -469,11 +491,24 @@ class layer:
         self._nmesh = nmesh
         self._nmeshmin = nmeshmin
 
-        # set substance and property models
+        # set substance, medium and related D and k models
+        if isinstance(substance,str):
+            substance = migrant(substance)
+        if substance is not None and not isinstance(substance,migrant):
+            raise ValueError(f"subtance must be None a or a migrant not a {type(substance).__name__}")
         self._substance = substance
+        if medium is not None:
+            from patankar.food import foodlayer # local import only if needed
+            if not isinstance(medium,foodlayer):
+                raise ValueError(f"medium must be None or a foodlayer not a {type(medium).__name__}")
+        self._medium = medium
+        self._Dmodel = "default"  # do not use directly self._compute_Dmodel (force refresh)
+        self._kmodel = "default"  # do not use directly self._compute_kmodel (force refresh)
 
         # set history for all layers merged with +
         self._layerclass_history = []
+        self._ispolymer_history = []
+        self._chemicalsubstance_history = []
 
         # set verbosity attributes
         self.verbosity = 0 if verbosity is None else verbosity
@@ -613,6 +648,8 @@ class layer:
                 setattr(res,p,np.concatenate((getattr(self,p),getattr(other,p))))
             # we add the history of all layers
             res._layerclass_history = self.layerclass_history + other.layerclass_history
+            res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
+            res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
             return res
         else: raise ValueError("invalid layer object")
 
@@ -705,9 +742,30 @@ class layer:
     # --------------------------------------------------------------------
     # Getter methods (show private/hidden properties and meta-properties)
     # --------------------------------------------------------------------
+    # Return class or instance attributes
+    @property
+    def physicalstate(self): return self._physicalstate
+    @property
+    def chemicalclass(self): return self._chemicalclass
+    @property
+    def chemicalsubstance(self): return self._chemicalsubstance
+    @property
+    def polarityindex(self):
+        # rescaled to match predictions - standard scale [0,10.2] - predicted scale [0,7.12]
+        return self._polarityindex * migrant("water").polarityindex/10.2
+    @property
+    def ispolymer(self): return self.chemicalclass == "polymer"
+    @property
+    def issolid(self): return self.physicalstate == "solid"
     @property
     def layerclass_history(self):
         return self._layerclass_history if self._layerclass_history != [] else [self.layerclass]
+    @property
+    def ispolymer_history(self):
+        return self._ispolymer_history if self._ispolymer_history != [] else [self.ispolymer]
+    @property
+    def chemicalsubstance_history(self):
+        return self._chemicalsubstance_history if self._chemicalsubstance_history != [] else [self.chemicalsubstance]
     @property
     def layerclass(self): return type(self).__name__
     @property
@@ -722,18 +780,24 @@ class layer:
     def l(self): return self._l
     @property
     def D(self):
-        Dtmp = self.Dmodel()
+        Dtmp = None
+        if self.Dmodel == "default": # default behavior
+            Dtmp = self._compute_Dmodel()
+        elif callable(self.Dmodel): # user override
+            Dtmp = self.Dmodel()
         if Dtmp is not None:
-            return np.full_like(self._D, Dtmp)
-        else:
-            return self._D
+            return np.full_like(self._D, Dtmp,dtype=np.float64)
+        return self._D
     @property
     def k(self):
-        ktmp = self.kmodel()
-        if ktmp:
-            return np.full_like(self._D, ktmp)
-        else:
-            return self._k
+        ktmp = None
+        if self.kmodel == "default": # default behavior
+            ktmp = self._compute_kmodel()
+        elif callable(self.kmodel): # user override
+            ktmp = self.kmodel()
+        if ktmp is not None:
+            return np.full_like(self._k, ktmp,dtype=np.float64)
+        return self._k
     @property
     def C0(self): return self._C0
     @property
@@ -779,7 +843,7 @@ class layer:
     @property
     def relative_resistance(self): return self.resistance/sum(self.resistance)
     @property
-    def rank(self): return np.flip(np.argsort(np.array(self.resistance))+1).tolist()
+    def rank(self): return (self.n-np.argsort(np.array(self.resistance))).tolist()
     @property
     def referencelayer(self): return np.argmax(self.resistance)
     @property
@@ -787,14 +851,33 @@ class layer:
     @property
     def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2
 
-    # layer substance (of class migrant or None)
+    # substance/solute/migrant/chemical (of class migrant or None)
     @property
     def substance(self): return self._substance
+    @property
+    def migrant(self): return self.substance # alias/synonym of substance
+    @property
+    def solute(self): return self.substance # alias/synonym of substance
+    @property
+    def chemical(self): return self.substance # alias/synonym of substance
+    # medium (of class foodlayer or None)
+    @property
+    def medium(self): return self._medium
 
     # Dmodel and kmodel returned as properties (they are lambda functions)
+    # Note about the implementation: They are attributes that remain None or a callable function
     # polymer and mass are udpdated on the fly (the code loops over all layers)
     @property
     def Dmodel(self):
+        return self._Dmodel
+    @Dmodel.setter
+    def Dmodel(self,value):
+        if value is None or callable(value):
+            self._Dmodel = value
+        else:
+            raise ValueError("Dmodel must be None or a callable function")
+    @property
+    def _compute_Dmodel(self):
         """Return a callable function that evaluates D with updated parameters."""
         if not isinstance(self._substance,migrant) or self._substance.Deval() is None:
             return lambda **kwargs: None  # Return a function that always returns None
@@ -807,23 +890,60 @@ class layer:
                 # inherit eventual user parameters
                 D[i] = self._substance.D.evaluate(**dict(template, **kwargs))
             return D
-        return func
+        return func # we return a callable function not a value
 
+    # polarity index and molar volume are updated on the fly
     @property
     def kmodel(self):
+        return self._kmodel
+    @kmodel.setter
+    def kmodel(self,value):
+        if value is None or callable(value):
+            self._kmodel = value
+        else:
+            raise ValueError("kmodel must be None or a callable function")
+    @property
+    def _compute_kmodel(self):
         """Return a callable function that evaluates k with updated parameters."""
         if not isinstance(self._substance,migrant) or self._substance.keval() is None:
             return lambda **kwargs: None  # Return a function that always returns None
         template = self._substance.ktemplate.copy()
-        template.update()
+        # add solute (i) properties: Pi and Vi have been set by loadpubchem already
+        template.update(ispolymer = True)
         def func(**kwargs):
-            k = np.empty_like(self._k)
+            k = np.full_like(self._k,self._k,dtype=np.float64)
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
-                template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
+                if not self.ispolymer_history[i]: # k can be evaluated only in polymes via FH theory
+                    continue # we keep the existing k value
+                # add/update monomer properties
+                monomer = migrant(self.chemicalsubstance_history[i])
+                template.update(Pk = monomer.polarityindex,
+                                Vk = monomer.molarvolumeMiller)
                 # inherit eventual user parameters
                 k[i] = self._substance.k.evaluate(**dict(template, **kwargs))
             return k
-        return func
+        return func # we return a callable function not a value
+
+
+    @property
+    def hasDmodel(self):
+        """Returns True if a Dmodel has been defined"""
+        if hasattr(self, "_compute_Dmodel"):
+            if self._compute_Dmodel() is not None:
+                return True
+            elif callable(self.Dmodel):
+                return self.Dmodel() is not None
+        return False
+
+    @property
+    def haskmodel(self):
+        """Returns True if a kmodel has been defined"""
+        if hasattr(self, "_compute_kmodel"):
+            if self._compute_kmodel() is not None:
+                return True
+            elif callable(self.kmodel):
+                return self.kmodel() is not None
+        return False
 
 
     # --------------------------------------------------------------------
@@ -901,8 +1021,29 @@ class layer:
         return mymesh
 
     # --------------------------------------------------------------------
-    # Getter methods and tools to validate inputs checknumvalue and checktextvalue
+    # Setter methods and tools to validate inputs checknumvalue and checktextvalue
     # --------------------------------------------------------------------
+    @physicalstate.setter
+    def physicalstate(self,value):
+        if value not in ("solid","liquid","gas","supercritical"):
+            raise ValueError(f"physicalstate must be solid/liduid/gas/supercritical and not {value}")
+        self._physicalstate = value
+    @chemicalclass.setter
+    def chemicalclass(self,value):
+        if value not in ("polymer","other"):
+            raise ValueError(f"chemicalclass must be polymer/oher and not {value}")
+        self._chemicalclass= value
+    @chemicalsubstance.setter
+    def chemicalsubstance(self,value):
+        if not isinstance(value,str):
+            raise ValueError("chemicalsubtance must be str not a {type(value).__name__}")
+        self._chemicalsubstance= value
+    @polarityindex.setter
+    def polarityindex(self,value):
+        if not isinstance(value,(float,int)):
+            raise ValueError("polarity index must be float not a {type(value).__name__}")
+        self._polarityindex= value
+
     def checknumvalue(self,value,ExpectedUnits=None):
         """ returns a validate value to set properties """
         if isinstance(value,tuple):
@@ -957,9 +1098,26 @@ class layer:
     def nmeshmin(self,value): self._nmeshmin = max(value,round(self._nmesh/(2*self._nlayer)))
     @substance.setter
     def substance(self,value):
+        if isinstance(value,str):
+            value = migrant(value)
         if not isinstance(value,migrant):
-            raise TypeError(f"value must be a migrant class not a {type(value).__name__}")
+            raise TypeError(f"value must be a migrant not a {type(value).__name__}")
         self._substance = value
+    @migrant.setter
+    def migrant(self,value):
+        self.substance = value
+    @chemical.setter
+    def chemical(self,value):
+        self.substance = value
+    @solute.setter
+    def solute(self,value):
+        self.substance = value
+    @medium.setter
+    def medium(self,value):
+        from patankar.food import foodlayer
+        if not isinstance(value,foodlayer):
+            raise TypeError(f"value must be a foodlayer not a {type(value).__name__}")
+        self._medium = value
 
 
     # --------------------------------------------------------------------
@@ -1005,8 +1163,8 @@ class layer:
         if self._nlayer==0:
             print("empty %s" % (self.__description))
         else:
-            hasDmodel = self.Dmodel() is not None
-            haskmodel = self.kmodel() is not None
+            hasDmodel = self._compute_Dmodel() is not None or self.Dmodel() is not None
+            haskmodel = self._compute_kmodel() is not None or self.kmodel() is not None
             properties_ = {"l":False,"D":hasDmodel,"k":haskmodel,"C0":False}
             if hasDmodel or haskmodel:
                 properties_["T"] = False
@@ -1019,7 +1177,7 @@ class layer:
             for n in range(1,self._nlayer+1):
                 modelinfo = {
                     "D": f"{self._substance.D.__name__}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})" if hasDmodel else "",
-                    "k": f"{self._substance.k.__name__}({self.layerclass_history[n-1]},{self._substance} g/mol,T={float(self.T[0])} {self.Tunit})" if haskmodel else "",
+                    "k": f"{self._substance.k.__name__}(<{self.chemicalsubstance_history[n-1]}>,{self._substance})" if haskmodel else "",
                     }
                 print('-- [ layer %d of %d ] ---------- barrier rank=%d --------------'
                       % (n,self._nlayer,self.rank[n-1]))
@@ -1095,21 +1253,34 @@ class layer:
     # --------------------------------------------------------------------
     # update contact conditions from a foodphysics instance (or do the reverse)
     # material << medium
+    # material@medium
     # --------------------------------------------------------------------
     def _from(self,medium=None):
         """Propagates contact conditions from food instance"""
-        from patankar.food import foodphysics
+        from patankar.food import foodphysics, foodlayer
         if not isinstance(medium,foodphysics):
             raise TypeError(f"medium must be a foodphysics, foodlayer not a {type(medium).__name__}")
         if not hasattr(medium, "contacttemperature"):
             medium.contacttemperature = self.T[0]
-        T = self.get_param("contacttemperature",40,acceptNone=False)
-        self.T = np.full_like(self.T,T)
+        T = medium.get_param("contacttemperature",40,acceptNone=False)
+        self.T = np.full_like(self.T,T,dtype=np.float64)
+        if medium.substance is not None:
+            self.substance = medium.substance
+        else:
+            medium.substance = self.substance # do the reverse if substance is not defined in medium
+        # inherit fully medium only if it is a foodlayer (foodphysics is too restrictive)
+        if isinstance(medium,foodlayer):
+            self.medium = medium
 
-    # overloading operation
+    # overload operator <<
     def __lshift__(self, medium):
         """Overloads << to propagate contact conditions from food."""
         self._from(medium)
+    # overload operator @ (same as <<)
+    def __matmul__(self, medium):
+        """Overloads @ to propagate contact conditions from food."""
+        self._from(medium)
+
 
     # --------------------------------------------------------------------
     # Inheritance registration mechanism associated with food >> layer
@@ -1145,10 +1316,17 @@ class layer:
     # The result is stored in food.lastsimulation
     # --------------------------------------------------------------------
     def contact(self,medium,**kwargs):
+        """alias to migration method"""
         return self.migration(medium,**kwargs)
 
-    def migration(self,medium,**kwargs):
+    def migration(self,medium=None,**kwargs):
+        """interface to simulation engine: senspantankar"""
+        from patankar.food import foodphysics
         from patankar.migration import senspatankar
+        if medium is None:
+            medium = self.medium
+        if not isinstance(medium,foodphysics):
+            raise TypeError(f"medium must be a foodphysics not a {type(medium).__name__}")
         sim = senspatankar(self,medium,**kwargs)
         medium.lastsimulation = sim # store the last simulation result in medium
         medium.lastinput = self # store the last input (self)
@@ -1321,6 +1499,12 @@ they loose their original subclass and become only an object
 layer. These subclasses are therefore useful to refine the
 properties of each layer before standarizing them.
 
+Polarity index is used as an helper to set Henri-like coefficients.
+A common scale for polarity index for solvents is from 0 to 10:
+- 0-3: Non-polar solvents (e.g., hexane)
+- 4-6: Moderately polar solvents (e.g., acetone)
+- 7-10: Polar solvents (e.g., water)
+We consider that polymers are solid solvents.
 =========================================================
 """
 
@@ -1329,6 +1513,8 @@ properties of each layer before standarizing them.
 # <-- LDPE polymer ---------------------------------->
 class LDPE(layer):
     """  extended pantankar.layer for low-density polyethylene LDPE  """
+    _chemicalsubstance = "ethylene" # monomer for polymers
+    _polarityindex = 1.0  # Very non-polar (typical for polyolefins)
     def __init__(self,l=100e-6,D=1e-12,T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
                  layername="layer in LDPE",**extra):
@@ -1355,6 +1541,8 @@ class LDPE(layer):
 # <-- HDPE polymer ---------------------------------->
 class HDPE(layer):
     """  extended pantankar.layer for high-density polyethylene HDPE  """
+    _chemicalsubstance = "ethylene" # monomer for polymers
+    _polarityindex = 2.0 # Non-polar, slightly higher density, similar overall polarity to LDPE
     def __init__(self,l=500e-6,D=1e-13, T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
                  layername="layer in HDPE",**extra):
@@ -1380,6 +1568,8 @@ class HDPE(layer):
 # <-- LLDPE polymer ---------------------------------->
 class LLDPE(layer):
     """ extended pantankar.layer for linear low-density polyethylene LLDPE """
+    _chemicalsubstance = "ethylene" # monomer for polymers
+    _polarityindex = 1.5 # Similar to LDPE, can be slightly more polar if co-monomer is present
     def __init__(self, l=80e-6, D=1e-12, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in LLDPE",**extra):
@@ -1415,6 +1605,8 @@ class LLDPE(layer):
 
 # <-- PP polymer ---------------------------------->
 class PP(layer):
+    _chemicalsubstance = "propylene" # monomer for polymers
+    _polarityindex = 1.0  # Among the least polar, similar to PE
     """  extended pantankar.layer for isotactic polypropylene PP  """
     def __init__(self,l=300e-6,D=1e-14, T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
@@ -1440,6 +1632,8 @@ class PP(layer):
 
 # -- PPrubber (atactic polypropylene) ---------------------------------
 class PPrubber(layer):
+    _chemicalsubstance = "propylene" # monomer for polymers
+    _polarityindex = 1.0  # Also very non-polar
     """ extended pantankar.layer for atactic (rubbery) polypropylene PP """
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1472,6 +1666,8 @@ class PPrubber(layer):
 # -- oPP (bioriented polypropylene) ------------------------------------
 class oPP(layer):
     """ extended pantankar.layer for bioriented polypropylene oPP """
+    _chemicalsubstance = "propylene" # monomer for polymers
+    _polarityindex = 1.0   # Non-polar, but oriented film might have slight morphological differences
     def __init__(self, l=40e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in oPP",**extra):
@@ -1504,6 +1700,8 @@ class oPP(layer):
 # -- PS (polystyrene) -----------------------------------------------
 class PS(layer):
     """ extended pantankar.layer for polystyrene (PS) """
+    _chemicalsubstance = "styrene" # monomer for polymers
+    _polarityindex = 3.0  # Slightly more polar than polyolefins, but still considered relatively non-polar
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in PS",**extra):
@@ -1533,6 +1731,8 @@ class PS(layer):
 # -- HIPS (high-impact polystyrene) -----------------------------------
 class HIPS(layer):
     """ extended pantankar.layer for high-impact polystyrene (HIPS) """
+    _chemicalsubstance = "styrene" # monomer for polymers
+    _polarityindex = 3.0  # Similar or very close to PS in polarity
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in HIPS",**extra):
@@ -1561,6 +1761,8 @@ class HIPS(layer):
 
 # -- PBS (assuming a styrene-based polymer) ---------------------------
 class SBS(layer):
+    _chemicalsubstance = "styrene" # Styrene + butadiene
+    _polarityindex = 3.5  # Non-polar but somewhat more interactive than pure PE/PP due to styrene units
     """
     extended pantankar.layer for a styrene-based SBS
     Adjust Tg/density as needed for your scenario.
@@ -1594,6 +1796,8 @@ class SBS(layer):
 # -- rigidPVC ---------------------------------------------------------
 class rigidPVC(layer):
     """ extended pantankar.layer for rigid PVC """
+    _chemicalsubstance = "vinyl chloride" # monomer for polymers
+    _polarityindex = 4.0  # Chlorine substituents give moderate polarity.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in rigid PVC",**extra):
@@ -1623,6 +1827,8 @@ class rigidPVC(layer):
 # -- plasticizedPVC ---------------------------------------------------
 class plasticizedPVC(layer):
     """ extended pantankar.layer for plasticized PVC """
+    _chemicalsubstance = "vinyl chloride" # monomer for polymers
+    _polarityindex = 4.5  # Plasticizers can slightly change overall polarity/solubility.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in plasticized PVC",**extra):
@@ -1654,6 +1860,8 @@ class plasticizedPVC(layer):
 # -- gPET (glassy PET, T < 76°C) --------------------------------------
 class gPET(layer):
     """ extended pantankar.layer for PET in its glassy state (below ~76°C) """
+    _chemicalsubstance = "ethylene terephthalate" # monomer for polymers
+    _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in gPET",**extra):
@@ -1683,6 +1891,8 @@ class gPET(layer):
 # -- rPET (rubbery PET, T > 76°C) --------------------------------------
 class rPET(layer):
     """ extended pantankar.layer for PET in its rubbery state (above ~76°C) """
+    _chemicalsubstance = "ethylene terephthalate" # monomer for polymers
+    _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in rPET",**extra):
@@ -1713,6 +1923,8 @@ class rPET(layer):
 # -- PBT --------------------------------------------------------------
 class PBT(layer):
     """ extended pantankar.layer for polybutylene terephthalate (PBT) """
+    _chemicalsubstance = "Buthylene terephthalate" # monomer for polymers
+    _polarityindex = 5.5  # Similar to PET, slight structural differences
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="layer in PBT",**extra):
@@ -1741,6 +1953,8 @@ class PBT(layer):
 
 # -- PEN --------------------------------------------------------------
 class PEN(layer):
+    _chemicalsubstance = "Buthylene terephthalate" # monomer for polymers
+    _polarityindex = 6  # More aromatic than PET, often better barrier properties
     """ extended pantankar.layer for polyethylene naphthalate (PEN) """
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1772,6 +1986,8 @@ class PEN(layer):
 
 # -- PA6 --------------------------------------------------------------
 class PA6(layer):
+    _chemicalsubstance = "caprolactam" # monomer for polymers
+    _polarityindex = 7.5  # Strong hydrogen-bonding, thus quite polar.
     """ extended pantankar.layer for polyamide 6 (PA6) """
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1801,6 +2017,8 @@ class PA6(layer):
 
 # -- PA66 -------------------------------------------------------------
 class PA66(layer):
+    _chemicalsubstance = "hexamethylenediamine" # monomer for polymers
+    _polarityindex = 7.5  # Similar to PA6, strongly polar with hydrogen bonds.
     """ extended pantankar.layer for polyamide 66 (PA66) """
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1832,6 +2050,8 @@ class PA66(layer):
 
 # -- AdhesiveNaturalRubber --------------------------------------------
 class AdhesiveNaturalRubber(layer):
+    _chemicalsubstance = "cis-1,4-polyisoprene" # monomer for polymers
+    _polarityindex = 2  # Mostly non-polar; elasticity from cis-isoprene chains.
     """ extended pantankar.layer for natural rubber adhesives """
     def __init__(self, l=20e-6, D=1e-13, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1859,6 +2079,8 @@ class AdhesiveNaturalRubber(layer):
 
 # -- AdhesiveSyntheticRubber ------------------------------------------
 class AdhesiveSyntheticRubber(layer):
+    _chemicalsubstance = "cis-1,4-polyisoprene" # styrene-butadiene rubber (SBR) or similar
+    _polarityindex = 2.0  # non-polar or slightly polar, depending on rubber type.
     """ extended pantankar.layer for synthetic rubber adhesives """
     def __init__(self, l=20e-6, D=1e-13, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1886,6 +2108,8 @@ class AdhesiveSyntheticRubber(layer):
 
 # -- AdhesiveEVA (ethylene-vinyl acetate) ------------------------------
 class AdhesiveEVA(layer):
+    _chemicalsubstance = "ethylene" # Ethylene + vinyl acetate
+    _polarityindex = 2.5  # Mostly non-polar backbone with some polar acetate groups.
     """ extended pantankar.layer for EVA-based adhesives """
     def __init__(self, l=20e-6, D=1e-13, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1911,6 +2135,8 @@ class AdhesiveEVA(layer):
 
 # -- AdhesiveVAE (vinyl acetate-ethylene) -----------------------------
 class AdhesiveVAE(layer):
+    _chemicalsubstance = "vinyl acetate" # Ethylene + vinyl acetate
+    _polarityindex = 4.0  # More polar than EVA (larger fraction of acetate).
     """ extended pantankar.layer for VAE adhesives """
     def __init__(self, l=20e-6, D=1e-13, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -1935,8 +2161,11 @@ class AdhesiveVAE(layer):
 
 
 # -- AdhesivePVAC (polyvinyl acetate) ---------------------------------
+
 class AdhesivePVAC(layer):
     """ extended pantankar.layer for PVAc adhesives """
+    _chemicalsubstance = "vinyl acetate" # Vinyl acetate (CH₂=CHO–Ac)
+    _polarityindex = 7.0  # PVAc is fairly polar (acetate groups)
     def __init__(self, l=20e-6, D=1e-13, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="adhesive PVAc",**extra):
@@ -1962,6 +2191,8 @@ class AdhesivePVAC(layer):
 # -- AdhesiveAcrylate -------------------------------------------------
 class AdhesiveAcrylate(layer):
     """ extended pantankar.layer for acrylate adhesives """
+    _chemicalsubstance = "n-butyl acrylate" # Acrylic esters (e.g. n-butyl acrylate)
+    _polarityindex = 6.0  # Ester groups confer moderate polarity
     def __init__(self, l=20e-6, D=1e-13, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="adhesive acrylate",**extra):
@@ -1987,6 +2218,8 @@ class AdhesiveAcrylate(layer):
 # -- AdhesivePU (polyurethane) ----------------------------------------
 class AdhesivePU(layer):
     """ extended pantankar.layer for polyurethane adhesives """
+    _chemicalsubstance = "diisocyanate" # Diisocyanate + polyol (–NH–CO–O–)
+    _polarityindex = 5.0  # Can vary widely by chemistry; moderate polarity.
     def __init__(self, l=20e-6, D=1e-13, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="adhesive PU",**extra):
@@ -2014,6 +2247,10 @@ class AdhesivePU(layer):
 # -- Paper ------------------------------------------------------------
 class Paper(layer):
     """ extended pantankar.layer for paper (cellulose-based) """
+    _physicalstate = "porous"       # solid (default), liquid, gas, porous
+    _chemicalclass = "other"       # polymer (default), other
+    _chemicalsubstance = "cellulose" # Cellulose (β-D-glucopyranose units)
+    _polarityindex = 8.5  # Highly polar, strong hydrogen-bonding.
     def __init__(self, l=80e-6, D=1e-15, T=None,  # a guess for barrier properties
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="paper layer",**extra):
@@ -2046,6 +2283,10 @@ class Paper(layer):
 # -- Cardboard --------------------------------------------------------
 class Cardboard(layer):
     """ extended pantankar.layer for cardboard (cellulose-based) """
+    _physicalstate = "porous"       # solid (default), liquid, gas, porous
+    _chemicalclass = "other"       # polymer (default), other
+    _chemicalsubstance = "cellulose"
+    _polarityindex = 8.0  # Can vary widely by chemistry; moderate polarity.
     def __init__(self, l=500e-6, D=1e-15, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
                  layername="cardboard layer",**extra):
@@ -2082,6 +2323,8 @@ class Cardboard(layer):
 # <-- air | ideal gas layer ---------------------------------->
 class air(layer):
     """  extended pantankar.layer for ideal gases such as air """
+    _physicalstate = "gas"       # solid (default), liquid, gas, porous
+    _chemicalclass = "other"       # polymer (default), other
     def __init__(self,l=1e-2,D=1e-6,T=None,
                  lunit=None,Dunit=None,Cunit=None,
                  layername="air layer",layercode="air",**extra):

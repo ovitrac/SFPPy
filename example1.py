@@ -26,12 +26,17 @@ from a **100 µm LDPE film** into a **fatty sandwich**. The simulation covers **
 ✅ **Understanding of additive behavior in food packaging**.
 ✅ **Ready-to-use figures and reports for food safety analysis**.
 
+### Updates
+✅ **Substances are populated in the "foodlayer" to benefit estimates of partition coefficients**
+
+
 ---
 
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 """
+
 # %% Import Dependencies
 # ----------------------
 import os
@@ -89,7 +94,6 @@ LDPElayer_with_m1 = polymer.LDPE(
     C0=maxConcentration,  # Initial concentration in LDPE
     T=contactTemperature  # Contact temperature
 )
-
 # %% Define Food Properties (Fatty Sandwich)
 # ------------------------------------------
 """
@@ -104,7 +108,10 @@ FOODlayer = sandwich(
     volume=internalvolume,
     surfacearea=contactsurface,
     contacttime=contactTime,
-    contacttemperature=contactTemperature
+    contacttemperature=contactTemperature,
+    # omit these two lines if you want to test with default values
+    substance=m1,        # required to predict partition coefficients
+    simulant="ethanol"   # required to predict partition coefficients
 )
 
 # %% Run Mass Transfer Simulation (Irganox 1076)
@@ -161,7 +168,7 @@ LDPElayer_with_m2 = polymer.LDPE(
 # Run migration simulation for **Irgafos 168**
 simulation2 = solver(
     LDPElayer_with_m2,  # LDPE containing Irgafos 168
-    FOODlayer,          # Same sandwich as in previous case
+    FOODlayer.update(substance=m2),      # Same sandwich with updated substance
     name="I168-LDPE-sandwich"
 )
 
@@ -170,6 +177,13 @@ allCF.add(simulation2, "Irgafos 168", "b")  # Assign blue color "b"
 
 # Generate the corresponding plot
 hfig2 = simulation2.plotCF(t=tnew)
+
+# %% Display the partition coefficients used for m1 and m2
+# Food-to-polymer partition coefficients (KFP)
+# In this case, the partition coefficients are identical
+KFP_m1 = LDPElayer_with_m1.k/FOODlayer.update(substance=m1).k0
+KFP_m2 = LDPElayer_with_m2.k/FOODlayer.update(substance=m2).k0
+print(f"m1:I1076 KF/P = {KFP_m1}","\n",f"m2:I168 KF/P = {KFP_m2}")
 
 # %% Compare Migration Kinetics (Both Migrants)
 # ---------------------------------------------

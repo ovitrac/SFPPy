@@ -33,8 +33,8 @@ Currently implements the <strong>Piringer model</strong> for worst-case migratio
 - <strong>Base Class: <code><a title="property.migrationProperty" href="#property.migrationProperty">migrationProperty</a></code></strong> (Holds generic attributes for any mass transfer property)
 - <strong>Subclasses for Specific Properties:</strong>
 - <code><a title="property.Diffusivities" href="#property.Diffusivities">Diffusivities</a></code>: Defines diffusion coefficients (D)
-- <code><a title="property.HenriLikeCoeffcicients" href="#property.HenriLikeCoeffcicients">HenriLikeCoeffcicients</a></code>: Defines Henry-like coefficients (k)
-- <code><a title="property.ActivityCoeffcicients" href="#property.ActivityCoeffcicients">ActivityCoeffcicients</a></code>: Defines activity coefficients (γ)
+- <code>HenriLikeCoeffcicients</code>: Defines Henry-like coefficients (k)
+- <code>ActivityCoeffcicients</code>: Defines activity coefficients (γ)
 - <code><a title="property.PartitionCoeffcicients" href="#property.PartitionCoeffcicients">PartitionCoeffcicients</a></code>: Defines partition coefficients (K)
 - <strong>Piringer Model (<code><a title="property.Dpiringer" href="#property.Dpiringer">Dpiringer</a></code>)</strong>
 - Empirical overestimation model for polymer diffusion
@@ -57,12 +57,12 @@ to calculate them.</p>
 for risk assessment.</p>
 <p>This class is used directly by loadpubchem without involving any user operation.
 The name or CAS of the substance will trigger the predictions for the considered application.</p>
-<p>@version: 1.2
+<p>@version: 1.21
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-07-21
-@rev: 2025-02-21</p>
+@rev: 2025-03-03</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -114,18 +114,18 @@ This class is used directly by loadpubchem without involving any user operation.
 The name or CAS of the substance will trigger the predictions for the considered application.
 
 
-@version: 1.2
+@version: 1.21
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-07-21
-@rev: 2025-02-21
+@rev: 2025-03-03
 
 &#34;&#34;&#34;
 
-import math
+import numpy as np
 
-__all__ = [&#39;ActivityCoeffcicients&#39;, &#39;Diffusivities&#39;, &#39;Dpiringer&#39;, &#39;HenriLikeCoeffcicients&#39;, &#39;MigrationPropertyModel_validator&#39;, &#39;PartitionCoeffcicients&#39;, &#39;migrationProperty&#39;]
+__all__ = [&#39;ActivityCoefficients&#39;, &#39;Diffusivities&#39;, &#39;Dpiringer&#39;, &#39;HenryLikeCoefficients&#39;, &#39;MigrationPropertyModel_validator&#39;, &#39;PartitionCoeffcicients&#39;, &#39;gFHP&#39;, &#39;kFHP&#39;, &#39;migrationProperty&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -134,7 +134,8 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.2&#34;
+__version__ = &#34;1.21&#34;
+
 # %% Top classes for any property
 # level 0
 class migrationProperty:
@@ -152,7 +153,7 @@ class migrationProperty:
     _source = &#34;&#34;
     _author = &#34;olivier.vitrac@agroparistech.fr&#34;
     _license = &#34;MIT&#34;
-    _version = 0.1
+    _version = 1.21
     _available_to_import = False
 
 
@@ -194,13 +195,13 @@ class Diffusivities(migrationProperty):
     description = &#34;Mathematical model to estimate diffusivities&#34;
     SIunits = &#34;m**2/s&#34;
 
-class HenriLikeCoeffcicients(migrationProperty):
+class HenryLikeCoefficients(migrationProperty):
     property = &#34;Henri-like coefficient&#34;
     notation = &#34;k&#34;
     description = &#34;Mathematical model to estimate Henri-like coefficients&#34;
     SIunits = None
 
-class ActivityCoeffcicients(migrationProperty):
+class ActivityCoefficients(migrationProperty):
     property = &#34;Activity coefficient&#34;
     notation = &#34;g&#34;
     description = &#34;Mathematical model to estimate activity coefficients&#34;
@@ -211,6 +212,101 @@ class PartitionCoeffcicients(migrationProperty):
     notation = &#34;K&#34;
     description = &#34;Mathematical model to estimate partition coefficients&#34;
     SIunits = None
+
+
+# %% Simplified Flory-Huggins model of Henry-like coefficients built on gFHP
+class kFHP(HenryLikeCoefficients):
+    &#34;&#34;&#34;
+        Simplified model to estimate Henry-like coefficients based on gFHP class
+            ki,k = Vi * Pi gik(P&#39;i,P&#39;k,Vi,Vk)
+
+            i: solute
+            k: P or F
+            P&#39;i and P&#39;k: Polarity index (e.g.: migrant(&#34;solute&#34;).polarityindex)
+            Vi, Vk: molar volumes (e.g. migrant(&#34;solute&#34;).molarvolumeMiller)
+            ispolymer: True for polymers
+            alpha: scaling constant for chiik (default=0.14=1/migrant(&#34;water&#34;).polarityindex)
+            lngmin: minimum value (default=0)
+            gscale: activity coefficient (default=Vi*Psat)
+            Psat: vapor saturation pressure
+
+        Only a static evaluate is proposed.
+
+        Note use: scaling = False to get activity coefficients instead of Henry-like ones
+
+    &#34;&#34;&#34;
+    name = &#34;kFHP&#34;
+    description = &#34;Flory-Huggins model of Henry-likecoefficients from P&#39; and V at infinite dilution in k&#34;
+    model = &#34;semi-empirical&#34;
+    theory = &#34;Flory-Huggins&#34;
+    parameters = {&#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                  &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                  &#34;Psat&#34;: {&#34;description&#34;: &#34;vapor saturation pressure of i&#34;,&#34;units&#34;: &#34;Pa&#34;}
+                }
+    _available_to_import = True # this model can be imported
+
+    @classmethod
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+        &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+        if scaling: # (default behavior)
+            return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                        alpha=alpha,lngmin=lngmin,
+                        gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --&gt; [m**3/kg]
+                        )
+        else:
+            return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                        alpha=alpha,lngmin=lngmin,
+                        gscale=1
+                        )
+
+# %% Simplified Flory-Huggins model of activity coefficients
+class gFHP(ActivityCoefficients):
+    &#34;&#34;&#34;
+        Simplified model to estimate activity coefficients gik from P&#39;i, P&#39;k, Vi, Vk
+            i: solute
+            k: P or F
+            P&#39;i and P&#39;k: Polarity index (e.g.: migrant(&#34;solute&#34;).polarityindex)
+            Vi, Vk: molar volumes (e.g. migrant(&#34;solute&#34;).molarvolumeMiller)
+            ispolymer: True for polymers
+            alpha: scaling constant for chiik (default=0.14=1/migrant(&#34;water&#34;).polarityindex)
+            lngmin: minimum value (default=0)
+            gscale: activity coefficient (default=1.0)
+
+            Use gscale to enforce gik&lt;=1
+
+        Only a static evaluate is proposed.
+
+    &#34;&#34;&#34;
+    name = &#34;gFHP&#34;
+    description = &#34;Flory-Huggins model of activity coefficients from P&#39; and V at infinite dilution in k&#34;
+    model = &#34;semi-empirical&#34;
+    theory = &#34;Flory-Huggins&#34;
+    parameters = {&#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume of i&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;-&#34;}
+                }
+    _available_to_import = True # this model can be imported
+
+    @classmethod
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
+                 alpha=0.14,lngmin=0.0,gscale=1.0):
+        &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+        if ispolymer:
+            rik = 0.0
+            nik = 0.0
+            chimin = 0.25
+        else:
+            rik = Vi/Vk
+            nik = (rik - 5)/5
+            chimin = 0
+        chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
+        lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
+        return gscale * np.exp(lngik)
+
+
 
 # %% Piringer model
 class Dpiringer(Diffusivities):
@@ -570,7 +666,7 @@ class Dpiringer(Diffusivities):
                     - 0.135 * (M ** (2.0 / 3.0))
                     + 0.003 * M
                     - 10454.0 / TK)
-        return math.exp(exponent)
+        return np.exp(exponent)
 
 
     @classmethod
@@ -713,7 +809,7 @@ class Dpiringer(Diffusivities):
         # Piringer expression for D in m^2/s
         # D = exp( Ap - 0.135 * M^(2/3) + 0.003 * M - 10454 / TK )
         exponent = Ap - 0.135 * (M ** (2.0 / 3.0)) + 0.003 * M - 10454.0 / TK
-        D = math.exp(exponent)
+        D = np.exp(exponent)
         return D
 
 # %% Available models to expose to layer.py and food.py
@@ -728,8 +824,10 @@ MigrationPropertyModels = {
         &#34;Piringer&#34;: Dpiringer
         },
     &#34;k&#34;:{
+        &#34;kFHP&#34;: kFHP
         },
     &#34;g&#34;:{
+        &#34;gFHP&#34;: gFHP
         },
     &#34;K&#34;:{
         },
@@ -740,7 +838,7 @@ def MigrationPropertyModel_validator(model=None,name=None,notation=None):
     &#34;&#34;&#34; Returns True if the proposed model is valid for the requested migraton property &#34;&#34;&#34;
     rootclass = &#34;migrationProperty&#34;
     expectedpropclass = {&#34;D&#34;:&#34;Diffusivities&#34;,
-                     &#34;k&#34;:&#34;HenriLikeCoefficients&#34;,
+                     &#34;k&#34;:&#34;HenryLikeCoefficients&#34;,
                      &#34;g&#34;:&#34;ActivityCoefficients&#34;,
                      &#34;K&#34;:&#34;PartitionCoefficients&#34;}
 
@@ -807,7 +905,7 @@ if __name__ == &#34;__main__&#34;:
     &#34;&#34;&#34; Returns True if the proposed model is valid for the requested migraton property &#34;&#34;&#34;
     rootclass = &#34;migrationProperty&#34;
     expectedpropclass = {&#34;D&#34;:&#34;Diffusivities&#34;,
-                     &#34;k&#34;:&#34;HenriLikeCoefficients&#34;,
+                     &#34;k&#34;:&#34;HenryLikeCoefficients&#34;,
                      &#34;g&#34;:&#34;ActivityCoefficients&#34;,
                      &#34;K&#34;:&#34;PartitionCoefficients&#34;}
 
@@ -843,8 +941,8 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="property.ActivityCoeffcicients"><code class="flex name class">
-<span>class <span class="ident">ActivityCoeffcicients</span></span>
+<dt id="property.ActivityCoefficients"><code class="flex name class">
+<span>class <span class="ident">ActivityCoefficients</span></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class to hold general properties used for migration of substances.</p></div>
@@ -852,7 +950,7 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class ActivityCoeffcicients(migrationProperty):
+<pre><code class="python">class ActivityCoefficients(migrationProperty):
     property = &#34;Activity coefficient&#34;
     notation = &#34;g&#34;
     description = &#34;Mathematical model to estimate activity coefficients&#34;
@@ -862,21 +960,25 @@ if __name__ == &#34;__main__&#34;:
 <ul class="hlist">
 <li><a title="property.migrationProperty" href="#property.migrationProperty">migrationProperty</a></li>
 </ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="property.gFHP" href="#property.gFHP">gFHP</a></li>
+</ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="property.ActivityCoeffcicients.SIunits"><code class="name">var <span class="ident">SIunits</span></code></dt>
+<dt id="property.ActivityCoefficients.SIunits"><code class="name">var <span class="ident">SIunits</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="property.ActivityCoeffcicients.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dt id="property.ActivityCoefficients.description"><code class="name">var <span class="ident">description</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="property.ActivityCoeffcicients.notation"><code class="name">var <span class="ident">notation</span></code></dt>
+<dt id="property.ActivityCoefficients.notation"><code class="name">var <span class="ident">notation</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="property.ActivityCoeffcicients.property"><code class="name">var <span class="ident">property</span></code></dt>
+<dt id="property.ActivityCoefficients.property"><code class="name">var <span class="ident">property</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1300,7 +1402,7 @@ are looked up and stored as instance attributes.</p></div>
                     - 0.135 * (M ** (2.0 / 3.0))
                     + 0.003 * M
                     - 10454.0 / TK)
-        return math.exp(exponent)
+        return np.exp(exponent)
 
 
     @classmethod
@@ -1443,7 +1545,7 @@ are looked up and stored as instance attributes.</p></div>
         # Piringer expression for D in m^2/s
         # D = exp( Ap - 0.135 * M^(2/3) + 0.003 * M - 10454 / TK )
         exponent = Ap - 0.135 * (M ** (2.0 / 3.0)) + 0.003 * M - 10454.0 / TK
-        D = math.exp(exponent)
+        D = np.exp(exponent)
         return D</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -1545,7 +1647,7 @@ def evaluate(cls, polymer=&#34;LLDPE&#34;, M=100.0, T=40.0, **extra):
     # Piringer expression for D in m^2/s
     # D = exp( Ap - 0.135 * M^(2/3) + 0.003 * M - 10454 / TK )
     exponent = Ap - 0.135 * (M ** (2.0 / 3.0)) + 0.003 * M - 10454.0 / TK
-    D = math.exp(exponent)
+    D = np.exp(exponent)
     return D</code></pre>
 </details>
 </dd>
@@ -1764,13 +1866,13 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
                 - 0.135 * (M ** (2.0 / 3.0))
                 + 0.003 * M
                 - 10454.0 / TK)
-    return math.exp(exponent)</code></pre>
+    return np.exp(exponent)</code></pre>
 </details>
 </dd>
 </dl>
 </dd>
-<dt id="property.HenriLikeCoeffcicients"><code class="flex name class">
-<span>class <span class="ident">HenriLikeCoeffcicients</span></span>
+<dt id="property.HenryLikeCoefficients"><code class="flex name class">
+<span>class <span class="ident">HenryLikeCoefficients</span></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class to hold general properties used for migration of substances.</p></div>
@@ -1778,7 +1880,7 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class HenriLikeCoeffcicients(migrationProperty):
+<pre><code class="python">class HenryLikeCoefficients(migrationProperty):
     property = &#34;Henri-like coefficient&#34;
     notation = &#34;k&#34;
     description = &#34;Mathematical model to estimate Henri-like coefficients&#34;
@@ -1788,21 +1890,25 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 <ul class="hlist">
 <li><a title="property.migrationProperty" href="#property.migrationProperty">migrationProperty</a></li>
 </ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="property.kFHP" href="#property.kFHP">kFHP</a></li>
+</ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="property.HenriLikeCoeffcicients.SIunits"><code class="name">var <span class="ident">SIunits</span></code></dt>
+<dt id="property.HenryLikeCoefficients.SIunits"><code class="name">var <span class="ident">SIunits</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="property.HenriLikeCoeffcicients.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dt id="property.HenryLikeCoefficients.description"><code class="name">var <span class="ident">description</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="property.HenriLikeCoeffcicients.notation"><code class="name">var <span class="ident">notation</span></code></dt>
+<dt id="property.HenryLikeCoefficients.notation"><code class="name">var <span class="ident">notation</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="property.HenriLikeCoeffcicients.property"><code class="name">var <span class="ident">property</span></code></dt>
+<dt id="property.HenryLikeCoefficients.property"><code class="name">var <span class="ident">property</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1847,6 +1953,252 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 </dd>
 </dl>
 </dd>
+<dt id="property.gFHP"><code class="flex name class">
+<span>class <span class="ident">gFHP</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simplified model to estimate activity coefficients gik from P'i, P'k, Vi, Vk
+i: solute
+k: P or F
+P'i and P'k: Polarity index (e.g.: migrant("solute").polarityindex)
+Vi, Vk: molar volumes (e.g. migrant("solute").molarvolumeMiller)
+ispolymer: True for polymers
+alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
+lngmin: minimum value (default=0)
+gscale: activity coefficient (default=1.0)</p>
+<pre><code>Use gscale to enforce gik&lt;=1
+</code></pre>
+<p>Only a static evaluate is proposed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class gFHP(ActivityCoefficients):
+    &#34;&#34;&#34;
+        Simplified model to estimate activity coefficients gik from P&#39;i, P&#39;k, Vi, Vk
+            i: solute
+            k: P or F
+            P&#39;i and P&#39;k: Polarity index (e.g.: migrant(&#34;solute&#34;).polarityindex)
+            Vi, Vk: molar volumes (e.g. migrant(&#34;solute&#34;).molarvolumeMiller)
+            ispolymer: True for polymers
+            alpha: scaling constant for chiik (default=0.14=1/migrant(&#34;water&#34;).polarityindex)
+            lngmin: minimum value (default=0)
+            gscale: activity coefficient (default=1.0)
+
+            Use gscale to enforce gik&lt;=1
+
+        Only a static evaluate is proposed.
+
+    &#34;&#34;&#34;
+    name = &#34;gFHP&#34;
+    description = &#34;Flory-Huggins model of activity coefficients from P&#39; and V at infinite dilution in k&#34;
+    model = &#34;semi-empirical&#34;
+    theory = &#34;Flory-Huggins&#34;
+    parameters = {&#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume of i&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;-&#34;}
+                }
+    _available_to_import = True # this model can be imported
+
+    @classmethod
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
+                 alpha=0.14,lngmin=0.0,gscale=1.0):
+        &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+        if ispolymer:
+            rik = 0.0
+            nik = 0.0
+            chimin = 0.25
+        else:
+            rik = Vi/Vk
+            nik = (rik - 5)/5
+            chimin = 0
+        chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
+        lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
+        return gscale * np.exp(lngik)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="property.ActivityCoefficients" href="#property.ActivityCoefficients">ActivityCoefficients</a></li>
+<li><a title="property.migrationProperty" href="#property.migrationProperty">migrationProperty</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="property.gFHP.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.gFHP.model"><code class="name">var <span class="ident">model</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.gFHP.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.gFHP.parameters"><code class="name">var <span class="ident">parameters</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.gFHP.theory"><code class="name">var <span class="ident">theory</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="property.gFHP.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer=False, alpha=0.14, lngmin=0.0, gscale=1.0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
+             alpha=0.14,lngmin=0.0,gscale=1.0):
+    &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+    if ispolymer:
+        rik = 0.0
+        nik = 0.0
+        chimin = 0.25
+    else:
+        rik = Vi/Vk
+        nik = (rik - 5)/5
+        chimin = 0
+    chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
+    lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
+    return gscale * np.exp(lngik)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="property.kFHP"><code class="flex name class">
+<span>class <span class="ident">kFHP</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simplified model to estimate Henry-like coefficients based on gFHP class
+ki,k = Vi * Pi gik(P'i,P'k,Vi,Vk)</p>
+<pre><code>i: solute
+k: P or F
+P'i and P'k: Polarity index (e.g.: migrant("solute").polarityindex)
+Vi, Vk: molar volumes (e.g. migrant("solute").molarvolumeMiller)
+ispolymer: True for polymers
+alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
+lngmin: minimum value (default=0)
+gscale: activity coefficient (default=Vi*Psat)
+Psat: vapor saturation pressure
+</code></pre>
+<p>Only a static evaluate is proposed.</p>
+<p>Note use: scaling = False to get activity coefficients instead of Henry-like ones</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class kFHP(HenryLikeCoefficients):
+    &#34;&#34;&#34;
+        Simplified model to estimate Henry-like coefficients based on gFHP class
+            ki,k = Vi * Pi gik(P&#39;i,P&#39;k,Vi,Vk)
+
+            i: solute
+            k: P or F
+            P&#39;i and P&#39;k: Polarity index (e.g.: migrant(&#34;solute&#34;).polarityindex)
+            Vi, Vk: molar volumes (e.g. migrant(&#34;solute&#34;).molarvolumeMiller)
+            ispolymer: True for polymers
+            alpha: scaling constant for chiik (default=0.14=1/migrant(&#34;water&#34;).polarityindex)
+            lngmin: minimum value (default=0)
+            gscale: activity coefficient (default=Vi*Psat)
+            Psat: vapor saturation pressure
+
+        Only a static evaluate is proposed.
+
+        Note use: scaling = False to get activity coefficients instead of Henry-like ones
+
+    &#34;&#34;&#34;
+    name = &#34;kFHP&#34;
+    description = &#34;Flory-Huggins model of Henry-likecoefficients from P&#39; and V at infinite dilution in k&#34;
+    model = &#34;semi-empirical&#34;
+    theory = &#34;Flory-Huggins&#34;
+    parameters = {&#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
+                  &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                  &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                  &#34;Psat&#34;: {&#34;description&#34;: &#34;vapor saturation pressure of i&#34;,&#34;units&#34;: &#34;Pa&#34;}
+                }
+    _available_to_import = True # this model can be imported
+
+    @classmethod
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+        &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+        if scaling: # (default behavior)
+            return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                        alpha=alpha,lngmin=lngmin,
+                        gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --&gt; [m**3/kg]
+                        )
+        else:
+            return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                        alpha=alpha,lngmin=lngmin,
+                        gscale=1
+                        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="property.HenryLikeCoefficients" href="#property.HenryLikeCoefficients">HenryLikeCoefficients</a></li>
+<li><a title="property.migrationProperty" href="#property.migrationProperty">migrationProperty</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="property.kFHP.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.kFHP.model"><code class="name">var <span class="ident">model</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.kFHP.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.kFHP.parameters"><code class="name">var <span class="ident">parameters</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.kFHP.theory"><code class="name">var <span class="ident">theory</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="property.kFHP.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer=False, alpha=0.14, lngmin=0.0, Psat=1.0, scaling=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+    &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+    if scaling: # (default behavior)
+        return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                    alpha=alpha,lngmin=lngmin,
+                    gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --&gt; [m**3/kg]
+                    )
+    else:
+        return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                    alpha=alpha,lngmin=lngmin,
+                    gscale=1
+                    )</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="property.migrationProperty"><code class="flex name class">
 <span>class <span class="ident">migrationProperty</span></span>
 </code></dt>
@@ -1871,7 +2223,7 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
     _source = &#34;&#34;
     _author = &#34;olivier.vitrac@agroparistech.fr&#34;
     _license = &#34;MIT&#34;
-    _version = 0.1
+    _version = 1.21
     _available_to_import = False
 
 
@@ -1907,9 +2259,9 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="property.ActivityCoeffcicients" href="#property.ActivityCoeffcicients">ActivityCoeffcicients</a></li>
+<li><a title="property.ActivityCoefficients" href="#property.ActivityCoefficients">ActivityCoefficients</a></li>
 <li><a title="property.Diffusivities" href="#property.Diffusivities">Diffusivities</a></li>
-<li><a title="property.HenriLikeCoeffcicients" href="#property.HenriLikeCoeffcicients">HenriLikeCoeffcicients</a></li>
+<li><a title="property.HenryLikeCoefficients" href="#property.HenryLikeCoefficients">HenryLikeCoefficients</a></li>
 <li><a title="property.PartitionCoeffcicients" href="#property.PartitionCoeffcicients">PartitionCoeffcicients</a></li>
 </ul>
 <h3>Class variables</h3>
@@ -1957,12 +2309,12 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="property.ActivityCoeffcicients" href="#property.ActivityCoeffcicients">ActivityCoeffcicients</a></code></h4>
+<h4><code><a title="property.ActivityCoefficients" href="#property.ActivityCoefficients">ActivityCoefficients</a></code></h4>
 <ul class="">
-<li><code><a title="property.ActivityCoeffcicients.SIunits" href="#property.ActivityCoeffcicients.SIunits">SIunits</a></code></li>
-<li><code><a title="property.ActivityCoeffcicients.description" href="#property.ActivityCoeffcicients.description">description</a></code></li>
-<li><code><a title="property.ActivityCoeffcicients.notation" href="#property.ActivityCoeffcicients.notation">notation</a></code></li>
-<li><code><a title="property.ActivityCoeffcicients.property" href="#property.ActivityCoeffcicients.property">property</a></code></li>
+<li><code><a title="property.ActivityCoefficients.SIunits" href="#property.ActivityCoefficients.SIunits">SIunits</a></code></li>
+<li><code><a title="property.ActivityCoefficients.description" href="#property.ActivityCoefficients.description">description</a></code></li>
+<li><code><a title="property.ActivityCoefficients.notation" href="#property.ActivityCoefficients.notation">notation</a></code></li>
+<li><code><a title="property.ActivityCoefficients.property" href="#property.ActivityCoefficients.property">property</a></code></li>
 </ul>
 </li>
 <li>
@@ -1994,12 +2346,12 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 </ul>
 </li>
 <li>
-<h4><code><a title="property.HenriLikeCoeffcicients" href="#property.HenriLikeCoeffcicients">HenriLikeCoeffcicients</a></code></h4>
+<h4><code><a title="property.HenryLikeCoefficients" href="#property.HenryLikeCoefficients">HenryLikeCoefficients</a></code></h4>
 <ul class="">
-<li><code><a title="property.HenriLikeCoeffcicients.SIunits" href="#property.HenriLikeCoeffcicients.SIunits">SIunits</a></code></li>
-<li><code><a title="property.HenriLikeCoeffcicients.description" href="#property.HenriLikeCoeffcicients.description">description</a></code></li>
-<li><code><a title="property.HenriLikeCoeffcicients.notation" href="#property.HenriLikeCoeffcicients.notation">notation</a></code></li>
-<li><code><a title="property.HenriLikeCoeffcicients.property" href="#property.HenriLikeCoeffcicients.property">property</a></code></li>
+<li><code><a title="property.HenryLikeCoefficients.SIunits" href="#property.HenryLikeCoefficients.SIunits">SIunits</a></code></li>
+<li><code><a title="property.HenryLikeCoefficients.description" href="#property.HenryLikeCoefficients.description">description</a></code></li>
+<li><code><a title="property.HenryLikeCoefficients.notation" href="#property.HenryLikeCoefficients.notation">notation</a></code></li>
+<li><code><a title="property.HenryLikeCoefficients.property" href="#property.HenryLikeCoefficients.property">property</a></code></li>
 </ul>
 </li>
 <li>
@@ -2009,6 +2361,28 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 <li><code><a title="property.PartitionCoeffcicients.description" href="#property.PartitionCoeffcicients.description">description</a></code></li>
 <li><code><a title="property.PartitionCoeffcicients.notation" href="#property.PartitionCoeffcicients.notation">notation</a></code></li>
 <li><code><a title="property.PartitionCoeffcicients.property" href="#property.PartitionCoeffcicients.property">property</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="property.gFHP" href="#property.gFHP">gFHP</a></code></h4>
+<ul class="two-column">
+<li><code><a title="property.gFHP.description" href="#property.gFHP.description">description</a></code></li>
+<li><code><a title="property.gFHP.evaluate" href="#property.gFHP.evaluate">evaluate</a></code></li>
+<li><code><a title="property.gFHP.model" href="#property.gFHP.model">model</a></code></li>
+<li><code><a title="property.gFHP.name" href="#property.gFHP.name">name</a></code></li>
+<li><code><a title="property.gFHP.parameters" href="#property.gFHP.parameters">parameters</a></code></li>
+<li><code><a title="property.gFHP.theory" href="#property.gFHP.theory">theory</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="property.kFHP" href="#property.kFHP">kFHP</a></code></h4>
+<ul class="two-column">
+<li><code><a title="property.kFHP.description" href="#property.kFHP.description">description</a></code></li>
+<li><code><a title="property.kFHP.evaluate" href="#property.kFHP.evaluate">evaluate</a></code></li>
+<li><code><a title="property.kFHP.model" href="#property.kFHP.model">model</a></code></li>
+<li><code><a title="property.kFHP.name" href="#property.kFHP.name">name</a></code></li>
+<li><code><a title="property.kFHP.parameters" href="#property.kFHP.parameters">parameters</a></code></li>
+<li><code><a title="property.kFHP.theory" href="#property.kFHP.theory">theory</a></code></li>
 </ul>
 </li>
 <li>

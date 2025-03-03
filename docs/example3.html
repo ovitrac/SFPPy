@@ -337,6 +337,7 @@ Chain operations using `&gt;&gt;`:
 1. Transfer temperature from `medium1` to `ABA`
 2. Simulate mass transfer from `ABA` to `medium1`
 &#34;&#34;&#34;
+medium1 &gt;&gt; ABA
 medium1 &gt;&gt; ABA &gt;&gt; medium1
 
 # Verify simulation results
@@ -374,7 +375,7 @@ Repeat all steps using toluene instead of limonene.
 m2 = migrant(&#34;toluene&#34;)  # Retrieve new migrant
 
 # Restart the simulation pipeline with updated migrant
-medium1 &gt;&gt; ABA.update(solute=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+medium1 @ ABA.update(solute=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
 
 # Store results
 sol123_variant1 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
@@ -399,8 +400,10 @@ sol123_variant2 = medium1.lastsimulation + medium2.lastsimulation + medium3.last
 Use both modifications:
 - Toluene as the migrant
 - Reduced PET layer thickness
+
+Here @ replaces the first &gt;&gt;, they are equivalent
 &#34;&#34;&#34;
-medium1 &gt;&gt; ABA.copy(l=newthickness, migrant=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+medium1 @ ABA.copy(l=newthickness, migrant=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
 sol123_variant3 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
 
 # %% Compare Reference and Variants
@@ -487,7 +490,8 @@ to all food-contact conditions.</p>
 <dd>
 <div class="desc"><p>Use both modifications:
 - Toluene as the migrant
-- Reduced PET layer thickness</p></div>
+- Reduced PET layer thickness</p>
+<p>Here @ replaces the first &gt;&gt;, they are equivalent</p></div>
 </dd>
 <dt id="example3.sol123_variant3"><code class="name">var <span class="ident">sol123_variant3</span></code></dt>
 <dd>

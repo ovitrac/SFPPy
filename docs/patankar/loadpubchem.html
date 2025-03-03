@@ -139,10 +139,12 @@ Main user-facing method. Returns a pandas DataFrame of matching records (possibl
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-02-17
-@rev: 2025-02-21</p>
+@rev: 2025-03-01</p>
 <h2 id="version-history">Version History</h2>
 <ul>
 <li>1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.</li>
+<li>1.2: Production</li>
+<li>1.21: PubChem cap rate enforced (urgent request)</li>
 </ul>
 <details class="source">
 <summary>
@@ -273,11 +275,13 @@ Note
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-02-17
-@rev: 2025-02-21
+@rev: 2025-03-01
 
 Version History
 ---------------
 - 1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.
+- 1.2: Production
+- 1.21: PubChem cap rate enforced (urgent request)
 
 &#34;&#34;&#34;
 
@@ -289,11 +293,12 @@ import glob
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import time
 
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
 
-__all__ = [&#39;CompoundIndex&#39;, &#39;dbdefault&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;]
+__all__ = [&#39;CompoundIndex&#39;, &#39;dbdefault&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;, &#39;polarity_index&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -302,7 +307,120 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.2&#34;
+__version__ = &#34;1.21&#34;
+
+# %% Private functions and constants (used by estimators)
+
+# Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
+PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
+PubChem_lastQueryTime = 0 # global variable
+
+# returns polarity index from logP and V
+def polarity_index(logP=None, V=None, name=None,
+                   Vw=19.588376948550433,  # migrant(&#34;water&#34;).molarvolumeMiller
+                   Vo=150.26143432234372,  # migrant(&#34;octanol&#34;).molarvolumeMiller
+                   A=0.18161296829146106,
+                   B=-3.412678660396018,
+                   C=14.813767205916765):
+    &#34;&#34;&#34;
+    Computes the polarity index (P&#39;) from a given logP value and molar volume V.
+    This is done using a quadratic model fitted to experimental data:
+
+        E = A * (P&#39;)² + B * P&#39; + C
+        P&#39; = (-B - sqrt(B² - 4A(C - E))) / (2A)
+
+        where:
+        - E = logP * ln(10) - S = Xw - Xo
+        - S = entropy contribution = - (V/Vw - V/Vo)
+
+    Parameters
+    ----------
+    logP : float, list, or np.ndarray
+        The logP value(s) for which to compute the polarity index P&#39;.
+    V : float, list, or np.ndarray
+        The molar volume(s) corresponding to logP. Must be either:
+        - The same size as `logP`, or
+        - A single scalar value that will be applied to all logP values.
+    name : str, optional
+        A solvent name (instead of providing logP and V). If given, logP and V
+        will be fetched from the `migrant` database.
+    Vw : float, optional
+        Molar volume of water (default: 19.59).
+    Vo : float, optional
+        Molar volume of octanol (default: 150.26).
+    A, B, C : float, optional
+        Coefficients for the quadratic equation.
+
+    Returns
+    -------
+    float or np.ndarray
+        The calculated polarity index P&#39;. If logP is out of the valid range:
+        - Returns **10.2** for very polar solvents (beyond water).
+        - Returns **0** for extremely hydrophobic solvents (beyond n-Hexane).
+
+    Raises
+    ------
+    ValueError
+        If both `logP` and `V` are not provided, or if their lengths do not match.
+
+    Example Usage
+    -------------
+    &gt;&gt;&gt; logP = migrant(&#34;anisole&#34;).logP
+    &gt;&gt;&gt; V = migrant(&#34;anisole&#34;).molarvolumeMiller
+    &gt;&gt;&gt; polarity_index(logP, V)
+    8.34  # Example output
+
+    &gt;&gt;&gt; polarity_index(logP=[-1.0, 0.5, 2.0], V=50)
+    array([9.2, 4.5, 1.8])  # Example outputs
+    &#34;&#34;&#34;
+
+    # Define valid logP range based on quadratic model limits
+    Emin = C - B**2 / (4*A)  # ≈ -2.78 (theoretical minimum lnKow=E)
+    Emax = C                 # ≈ 14.81 (theoretical maximum logP)
+    Pmax = 10.2  # Saturation value for highly polar solvents
+
+    # Fetch logP and V if `name` is given
+    if logP is None or V is None:
+        if name is None:
+            raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
+        from patankar.loadpubchem import migrant
+        tmp = migrant(name)
+        logP, V = tmp.logP, tmp.molarvolumeMiller
+
+    # Convert inputs to NumPy arrays for consistency
+    logP = np.asarray(logP, dtype=np.float64)
+    if np.isscalar(V):
+        V = np.full_like(logP, V, dtype=np.float64)  # Broadcast scalar V
+    else:
+        V = np.asarray(V, dtype=np.float64)
+
+    # Ensure logP and V have matching sizes
+    if logP.shape != V.shape:
+        raise ValueError(&#34;logP and V must have the same shape or V must be a scalar.&#34;)
+
+    def compute_P(logP_value, V_value):
+        &#34;&#34;&#34;Computes P&#39; for a single logP and V value after input validation.&#34;&#34;&#34;
+        S = - (1/Vw - 1/Vo) * V_value
+        E = logP_value * 2.302585092994046 - S  # Convert logP to natural log (ln)
+
+        # Handle extreme values
+        if E &lt; Emin:
+            return Pmax  # Very polar solvents
+        if E &gt; Emax:
+            return 0.0  # Extremely hydrophobic solvents
+
+        # Solve quadratic equation
+        discriminant = B**2 - 4*A*(C - E)
+        sqrt_discriminant = np.sqrt(discriminant)
+        P2root = (-B - sqrt_discriminant) / (2*A)  # Always select P2
+
+        return P2root if P2root &lt;= Pmax else Pmax
+
+    # Vectorized computation for arrays
+    return np.vectorize(compute_P)(logP, V)
+
+
+
 # %% Core class (low-level)
 class CompoundIndex:
     &#34;&#34;&#34;
@@ -331,8 +449,12 @@ class CompoundIndex:
         else:
             with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
                 try:
+                    # for debugging, we split reading and parsing
+                    #rawjson = f.read()
+                    #self.index = json.loads(rawjson)
                     self.index = json.load(f)
                 except json.JSONDecodeError:
+                    print(&#34;LOADPUBCHEM: JSON ERROR in {self.index_file}, the current index is discarded.&#34;)
                     self.index = {}
             if not isinstance(self.index, dict) or not self.index:
                 self.refresh_index()
@@ -553,11 +675,19 @@ class CompoundIndex:
         :param output_format: &#39;simple&#39; or &#39;full&#39;
         :return: pd.DataFrame with the results (possibly multiple rows)
         &#34;&#34;&#34;
+        global PubChem_lastQueryTime
         qlower = query.strip().lower()
 
         if qlower not in self.index:
-            # Not found locally =&gt; do a PubChem call
+            # Not found locally =&gt; do a PubChem call while respecting cap limit
+            # doing more than 3 queries per second will ban you for a day or so
+            elapsed = time.time() - PubChem_lastQueryTime # time elapsed since last request
+            if elapsed &lt; PubChem_MIN_DELAY:
+                wait_time = PubChem_MIN_DELAY - elapsed
+                print(f&#34;LOADPUBCHEM: Rate limit reached. Waiting {wait_time:.2f} s...&#34;)
+                time.sleep(wait_time)
             matches = get_compounds(query, &#39;name&#39;)
+            PubChem_lastQueryTime - time.time() # update last request time
             if not matches:
                 return pd.DataFrame()  # no hits at all
 
@@ -705,12 +835,16 @@ class migrant:
     # class attribute, maximum width
     _maxdisplay = 40
 
-    def __init__(self, name=None, M=None, logP=None,
+    # migrant constructor
+    def __init__(self, name=None,
+                 M=None, logP=None,
                  Dmodel = &#34;Piringer&#34;,
                  Dtemplate = {&#34;polymer&#34;:&#34;LLDPE&#34;, &#34;M&#34;:50, &#34;T&#34;:40}, # do not use None
-                 kmodel = None,
-                 ktemplate = {},
-                 db=dbdefault):
+                 kmodel = &#34;kFHP&#34;,
+                 ktemplate = {&#34;Pi&#34;:1.41, &#34;Pk&#34;:3.97, &#34;Vi&#34;:124.1, &#34;Vk&#34;:30.9, &#34;ispolymer&#34;:True,
+                              &#34;alpha&#34;:0.14, &#34;lngmin&#34;:0.0,&#34;Psat&#34;:1.0}, # do not use None
+                 db=dbdefault,
+                 raiseerror=True):
         &#34;&#34;&#34;
         Create a new migrant instance.
 
@@ -730,6 +864,8 @@ class migrant:
         db : instance of CompoundIndex or similar, optional
             - If you want to perform a PubChem search (case a) automatically, pass an instance.
             - If omitted or None, no search is attempted, even if name is given.
+        raiseerror : bool (default=True), optional
+            Raise an error if name is not found
 
         Advanced Parameters
         -------------------
@@ -742,11 +878,11 @@ class migrant:
                       (e.g, to bed used Diringer(key1=value1...))
                       note: the template needs to be valid (do not use None)
                       default = {&#34;polymer&#34;:None, &#34;M&#34;:None, &#34;T&#34;:None}
-            - Set a Henri-like model using
+            - Set a Henry-like model using
                     - kmodel=&#34;model name&#34;
                       default =None
                     - ktemplate=template dict coding for the key:value parameters
-                      default = {}
+                      default =  {&#34;Pi&#34;:1.41, &#34;Pk&#34;:3.97, &#34;Vi&#34;:124.1, &#34;Vk&#34;:30.9, &#34;ispolymer&#34;:True, &#34;alpha&#34;:0.14, &#34;lngmin&#34;:0.0,&#34;Psat&#34;:1.0}
             other models could be implemented in the future, read the module property.py for details.
 
         Example of usage of Dpiringer
@@ -802,6 +938,9 @@ class migrant:
 
             df = db.find(name, output_format=&#34;simple&#34;)
             if df.empty:
+                if raiseerror:
+                    raise ValueError(f&#34;&lt;{name}&gt; not found&#34;)
+                print(f&#34;LOADPUBCHEM ERRROR: &lt;{name}&gt; not found - empty object returned&#34;)
                 # No record found
                 self.compound = name
                 self.name = [name]
@@ -951,22 +1090,22 @@ class migrant:
             self.D = None
             self.Dtemplate = None
 
-        # Henri-like model
+        # Henry-like model
         if kmodel is not None:
             if not isinstance(kmodel,str):
                 raise TypeError(f&#34;kmodel should be str not a {type(kmodel).__name__}&#34;)
             if kmodel not in MigrationPropertyModels[&#34;k&#34;]:
-                raise ValueError(f&#39;The Henri-like model &#34;{kmodel}&#34; does not exist&#39;)
+                raise ValueError(f&#39;The Henry-like model &#34;{kmodel}&#34; does not exist&#39;)
             kmodelclass = MigrationPropertyModels[&#34;k&#34;][kmodel]
-            if not MigrationPropertyModel_validator(kmodelclass,Dmodel,&#34;k&#34;):
-                raise TypeError(f&#39;The Henri-like model &#34;{kmodel}&#34; is corrupted&#39;)
+            if not MigrationPropertyModel_validator(kmodelclass,kmodel,&#34;k&#34;):
+                raise TypeError(f&#39;The Henry-like model &#34;{kmodel}&#34; is corrupted&#39;)
             if ktemplate is None:
                 ktemplate = {}
             if not isinstance(ktemplate,dict):
                 raise TypeError(f&#34;ktemplate should be a dict not a {type(ktemplate).__name__}&#34;)
             self.k  = kmodelclass
             self.ktemplate = ktemplate.copy()
-            self.ktemplate.update(M=self.M,logP=self.logP)
+            self.ktemplate.update(Pi=self.polarityindex,Vi=self.molarvolumeMiller)
         else:
             self.k = None
             self.ktemplate = None
@@ -1007,7 +1146,8 @@ class migrant:
             &#34;M (min)&#34;: self.M,
             &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
             &#34;formula&#34;: self.formula,
-            &#34;logP&#34;: self.logP
+            &#34;logP&#34;: self.logP,
+            &#34;P&#39; (calc)&#34;: self.polarityindex
         }
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
@@ -1037,11 +1177,117 @@ class migrant:
         else:
             return content
 
+    # calculated propeties (rough estimates)
+    @property
+    def polarityindex(self,logP=None,V=None):
+        &#34;&#34;&#34;
+            Computes the polarity index (P&#39;) of the compound.
 
+            The polarity index (P&#39;) is derived from the compound&#39;s logP value and
+            its molar volume V(), using an empirical (fitted) quadratic equation:
+
+                E = logP * ln(10) - S
+                P&#39; = (-B - sqrt(B² - 4A(C - E))) / (2A)
+
+            where:
+                - S is the entropy contribution, calculated from molar volume.
+                - A, B, C are empirical coefficients.
+
+            Returns
+            -------
+            float
+                The estimated polarity index P&#39; based on logP and molar volume.
+
+            Notes
+            -----
+            - For highly polar solvents (beyond water), P&#39; saturates at **10.2**.
+            - For extremely hydrophobic solvents (beyond n-Hexane), P&#39; is **0**.
+            - Accuracy is dependent on the reliability of logP and molar volume models.
+
+            Example
+            -------
+            &gt;&gt;&gt; compound.polarityindex
+            8.34  # Example output
+        &#34;&#34;&#34;
+        return polarity_index(logP=self.logP if logP is None else logP,
+                              V=self.molarvolumeMiller if V is None else V)
+
+    @property
+    def molarvolumeMiller(self, a=0.997, b=1.03):
+        &#34;&#34;&#34;
+        Estimates molar volume using the Miller empirical model.
+
+        The molar volume (V_m) is calculated based on molecular weight (M)
+        using the empirical formula:
+
+            V_m = a * M^b  (cm³/mol)
+
+        where:
+            - `a = 0.997`, `b = 1.03` are empirically derived constants.
+            - `M` is the molecular weight (g/mol).
+            - `V_m` is the molar volume (cm³/mol).
+
+        Returns
+        -------
+        float
+            Estimated molar volume in cm³/mol.
+
+        Notes
+        -----
+        - This is an approximate model and may not be accurate for all compounds.
+        - Alternative models include the **Yalkowsky &amp; Valvani method**.
+
+        Example
+        -------
+        &gt;&gt;&gt; compound.molarvolumeMiller
+        130.5  # Example output
+        &#34;&#34;&#34;
+        return a * self.M**b
+
+
+    @property
+    def molarvolumeLinear(self):
+        &#34;&#34;&#34;
+        Estimates molar volume using a simple linear approximation.
+
+        This method provides a rough estimate of molar volume, particularly
+        useful for small to mid-sized non-ionic organic molecules. It is based on:
+
+            V_m = 0.935 * M + 14.2  (cm³/mol)
+
+        where:
+            - `M` is the molecular weight (g/mol).
+            - `V_m` is the estimated molar volume (cm³/mol).
+            - Empirical coefficients are derived from **Yalkowsky &amp; Valvani (1980s)**.
+
+        Returns
+        -------
+        float
+            Estimated molar volume in cm³/mol.
+
+        Notes
+        -----
+        - This method is often *&#34;okay&#34;* for non-ionic organic compounds.
+        - Accuracy decreases for very large, ionic, or highly branched molecules.
+        - More precise alternatives include **Miller&#39;s model** or **group contribution methods**.
+
+        Example
+        -------
+        &gt;&gt;&gt; compound.molarvolumeLinear
+        120.7  # Example output
+        &#34;&#34;&#34;
+        return 0.935 * self.M + 14.2
+
+
+# %% debug
 # ==========================
 # Usage example:
 # ==========================
 if __name__ == &#34;__main__&#34;:
+    # debug
+    m=migrant(&#34;water&#34;)
+    m.polarityindex
+    # examples
     db = CompoundIndex()
     df_simple = db.find(&#34;limonene&#34;, output_format=&#34;simple&#34;)
     df_simple = db.find(&#34;aspirin&#34;, output_format=&#34;simple&#34;)
@@ -1105,6 +1351,166 @@ if __name__ == &#34;__main__&#34;:
     return compounds</code></pre>
 </details>
 </dd>
+<dt id="loadpubchem.polarity_index"><code class="name flex">
+<span>def <span class="ident">polarity_index</span></span>(<span>logP=None, V=None, name=None, Vw=19.588376948550433, Vo=150.26143432234372, A=0.18161296829146106, B=-3.412678660396018, C=14.813767205916765)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the polarity index (P') from a given logP value and molar volume V.
+This is done using a quadratic model fitted to experimental data:</p>
+<pre><code>E = A * (P')² + B * P' + C
+P' = (-B - sqrt(B² - 4A(C - E))) / (2A)
+
+where:
+- E = logP * ln(10) - S = Xw - Xo
+- S = entropy contribution = - (V/Vw - V/Vo)
+</code></pre>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>logP</code></strong> :&ensp;<code>float, list,</code> or <code>np.ndarray</code></dt>
+<dd>The logP value(s) for which to compute the polarity index P'.</dd>
+<dt><strong><code>V</code></strong> :&ensp;<code>float, list,</code> or <code>np.ndarray</code></dt>
+<dd>The molar volume(s) corresponding to logP. Must be either:
+- The same size as <code>logP</code>, or
+- A single scalar value that will be applied to all logP values.</dd>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>A solvent name (instead of providing logP and V). If given, logP and V
+will be fetched from the <code><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></code> database.</dd>
+<dt><strong><code>Vw</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>Molar volume of water (default: 19.59).</dd>
+<dt><strong><code>Vo</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>Molar volume of octanol (default: 150.26).</dd>
+<dt><strong><code>A</code></strong>, <strong><code>B</code></strong>, <strong><code>C</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>Coefficients for the quadratic equation.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code> or <code>np.ndarray</code></dt>
+<dd>The calculated polarity index P'. If logP is out of the valid range:
+- Returns <strong>10.2</strong> for very polar solvents (beyond water).
+- Returns <strong>0</strong> for extremely hydrophobic solvents (beyond n-Hexane).</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If both <code>logP</code> and <code>V</code> are not provided, or if their lengths do not match.</dd>
+</dl>
+<h2 id="example-usage">Example Usage</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; logP = migrant(&quot;anisole&quot;).logP
+&gt;&gt;&gt; V = migrant(&quot;anisole&quot;).molarvolumeMiller
+&gt;&gt;&gt; polarity_index(logP, V)
+8.34  # Example output
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; polarity_index(logP=[-1.0, 0.5, 2.0], V=50)
+array([9.2, 4.5, 1.8])  # Example outputs
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polarity_index(logP=None, V=None, name=None,
+                   Vw=19.588376948550433,  # migrant(&#34;water&#34;).molarvolumeMiller
+                   Vo=150.26143432234372,  # migrant(&#34;octanol&#34;).molarvolumeMiller
+                   A=0.18161296829146106,
+                   B=-3.412678660396018,
+                   C=14.813767205916765):
+    &#34;&#34;&#34;
+    Computes the polarity index (P&#39;) from a given logP value and molar volume V.
+    This is done using a quadratic model fitted to experimental data:
+
+        E = A * (P&#39;)² + B * P&#39; + C
+        P&#39; = (-B - sqrt(B² - 4A(C - E))) / (2A)
+
+        where:
+        - E = logP * ln(10) - S = Xw - Xo
+        - S = entropy contribution = - (V/Vw - V/Vo)
+
+    Parameters
+    ----------
+    logP : float, list, or np.ndarray
+        The logP value(s) for which to compute the polarity index P&#39;.
+    V : float, list, or np.ndarray
+        The molar volume(s) corresponding to logP. Must be either:
+        - The same size as `logP`, or
+        - A single scalar value that will be applied to all logP values.
+    name : str, optional
+        A solvent name (instead of providing logP and V). If given, logP and V
+        will be fetched from the `migrant` database.
+    Vw : float, optional
+        Molar volume of water (default: 19.59).
+    Vo : float, optional
+        Molar volume of octanol (default: 150.26).
+    A, B, C : float, optional
+        Coefficients for the quadratic equation.
+
+    Returns
+    -------
+    float or np.ndarray
+        The calculated polarity index P&#39;. If logP is out of the valid range:
+        - Returns **10.2** for very polar solvents (beyond water).
+        - Returns **0** for extremely hydrophobic solvents (beyond n-Hexane).
+
+    Raises
+    ------
+    ValueError
+        If both `logP` and `V` are not provided, or if their lengths do not match.
+
+    Example Usage
+    -------------
+    &gt;&gt;&gt; logP = migrant(&#34;anisole&#34;).logP
+    &gt;&gt;&gt; V = migrant(&#34;anisole&#34;).molarvolumeMiller
+    &gt;&gt;&gt; polarity_index(logP, V)
+    8.34  # Example output
+
+    &gt;&gt;&gt; polarity_index(logP=[-1.0, 0.5, 2.0], V=50)
+    array([9.2, 4.5, 1.8])  # Example outputs
+    &#34;&#34;&#34;
+
+    # Define valid logP range based on quadratic model limits
+    Emin = C - B**2 / (4*A)  # ≈ -2.78 (theoretical minimum lnKow=E)
+    Emax = C                 # ≈ 14.81 (theoretical maximum logP)
+    Pmax = 10.2  # Saturation value for highly polar solvents
+
+    # Fetch logP and V if `name` is given
+    if logP is None or V is None:
+        if name is None:
+            raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
+        from patankar.loadpubchem import migrant
+        tmp = migrant(name)
+        logP, V = tmp.logP, tmp.molarvolumeMiller
+
+    # Convert inputs to NumPy arrays for consistency
+    logP = np.asarray(logP, dtype=np.float64)
+    if np.isscalar(V):
+        V = np.full_like(logP, V, dtype=np.float64)  # Broadcast scalar V
+    else:
+        V = np.asarray(V, dtype=np.float64)
+
+    # Ensure logP and V have matching sizes
+    if logP.shape != V.shape:
+        raise ValueError(&#34;logP and V must have the same shape or V must be a scalar.&#34;)
+
+    def compute_P(logP_value, V_value):
+        &#34;&#34;&#34;Computes P&#39; for a single logP and V value after input validation.&#34;&#34;&#34;
+        S = - (1/Vw - 1/Vo) * V_value
+        E = logP_value * 2.302585092994046 - S  # Convert logP to natural log (ln)
+
+        # Handle extreme values
+        if E &lt; Emin:
+            return Pmax  # Very polar solvents
+        if E &gt; Emax:
+            return 0.0  # Extremely hydrophobic solvents
+
+        # Solve quadratic equation
+        discriminant = B**2 - 4*A*(C - E)
+        sqrt_discriminant = np.sqrt(discriminant)
+        P2root = (-B - sqrt_discriminant) / (2*A)  # Always select P2
+
+        return P2root if P2root &lt;= Pmax else Pmax
+
+    # Vectorized computation for arrays
+    return np.vectorize(compute_P)(logP, V)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -1152,8 +1558,12 @@ from actual PubChem queries if needed.</p>
         else:
             with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
                 try:
+                    # for debugging, we split reading and parsing
+                    #rawjson = f.read()
+                    #self.index = json.loads(rawjson)
                     self.index = json.load(f)
                 except json.JSONDecodeError:
+                    print(&#34;LOADPUBCHEM: JSON ERROR in {self.index_file}, the current index is discarded.&#34;)
                     self.index = {}
             if not isinstance(self.index, dict) or not self.index:
                 self.refresh_index()
@@ -1374,11 +1784,19 @@ from actual PubChem queries if needed.</p>
         :param output_format: &#39;simple&#39; or &#39;full&#39;
         :return: pd.DataFrame with the results (possibly multiple rows)
         &#34;&#34;&#34;
+        global PubChem_lastQueryTime
         qlower = query.strip().lower()
 
         if qlower not in self.index:
-            # Not found locally =&gt; do a PubChem call
+            # Not found locally =&gt; do a PubChem call while respecting cap limit
+            # doing more than 3 queries per second will ban you for a day or so
+            elapsed = time.time() - PubChem_lastQueryTime # time elapsed since last request
+            if elapsed &lt; PubChem_MIN_DELAY:
+                wait_time = PubChem_MIN_DELAY - elapsed
+                print(f&#34;LOADPUBCHEM: Rate limit reached. Waiting {wait_time:.2f} s...&#34;)
+                time.sleep(wait_time)
             matches = get_compounds(query, &#39;name&#39;)
+            PubChem_lastQueryTime - time.time() # update last request time
             if not matches:
                 return pd.DataFrame()  # no hits at all
 
@@ -1469,11 +1887,19 @@ match that synonym, returns multiple rows.</p>
     :param output_format: &#39;simple&#39; or &#39;full&#39;
     :return: pd.DataFrame with the results (possibly multiple rows)
     &#34;&#34;&#34;
+    global PubChem_lastQueryTime
     qlower = query.strip().lower()
 
     if qlower not in self.index:
-        # Not found locally =&gt; do a PubChem call
+        # Not found locally =&gt; do a PubChem call while respecting cap limit
+        # doing more than 3 queries per second will ban you for a day or so
+        elapsed = time.time() - PubChem_lastQueryTime # time elapsed since last request
+        if elapsed &lt; PubChem_MIN_DELAY:
+            wait_time = PubChem_MIN_DELAY - elapsed
+            print(f&#34;LOADPUBCHEM: Rate limit reached. Waiting {wait_time:.2f} s...&#34;)
+            time.sleep(wait_time)
         matches = get_compounds(query, &#39;name&#39;)
+        PubChem_lastQueryTime - time.time() # update last request time
         if not matches:
             return pd.DataFrame()  # no hits at all
 
@@ -1594,7 +2020,7 @@ in the cache directory, and regenerating each </em>.simple.json if needed.</p></
 </dd>
 <dt id="loadpubchem.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50, 'T': 40}, kmodel=None, ktemplate={}, db=&lt;loadpubchem.CompoundIndex object&gt;)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50, 'T': 40}, kmodel='kFHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0}, db=&lt;loadpubchem.CompoundIndex object&gt;, raiseerror=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -1705,6 +2131,8 @@ or a custom name for a surrogate (case c).</li>
 <li>If omitted or None, no search is attempted, even if name is given.</li>
 </ul>
 </dd>
+<dt><strong><code>raiseerror</code></strong> :&ensp;<code>bool (default=True)</code>, optional</dt>
+<dd>Raise an error if name is not found</dd>
 </dl>
 <h2 id="advanced-parameters">Advanced Parameters</h2>
 <p>Property models from MigrationPropertyModels can be directly attached to the substance.
@@ -1716,11 +2144,12 @@ default ="Piringer"
 (e.g, to bed used Diringer(key1=value1&hellip;))
 note: the template needs to be valid (do not use None)
 default = {"polymer":None, "M":None, "T":None}
-- Set a Henri-like model using
+- Set a Henry-like model using
 - kmodel="model name"
 default =None
 - ktemplate=template dict coding for the key:value parameters
-default = {}
+default =
+{"Pi":1.41, "Pk":3.97, "Vi":124.1, "Vk":30.9, "ispolymer":True, "alpha":0.14, "lngmin":0.0,"Psat":1.0}
 other models could be implemented in the future, read the module property.py for details.</p>
 <p>Example of usage of Dpiringer
 m = migrant(name='limonene')
@@ -1811,12 +2240,16 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     # class attribute, maximum width
     _maxdisplay = 40
 
-    def __init__(self, name=None, M=None, logP=None,
+    # migrant constructor
+    def __init__(self, name=None,
+                 M=None, logP=None,
                  Dmodel = &#34;Piringer&#34;,
                  Dtemplate = {&#34;polymer&#34;:&#34;LLDPE&#34;, &#34;M&#34;:50, &#34;T&#34;:40}, # do not use None
-                 kmodel = None,
-                 ktemplate = {},
-                 db=dbdefault):
+                 kmodel = &#34;kFHP&#34;,
+                 ktemplate = {&#34;Pi&#34;:1.41, &#34;Pk&#34;:3.97, &#34;Vi&#34;:124.1, &#34;Vk&#34;:30.9, &#34;ispolymer&#34;:True,
+                              &#34;alpha&#34;:0.14, &#34;lngmin&#34;:0.0,&#34;Psat&#34;:1.0}, # do not use None
+                 db=dbdefault,
+                 raiseerror=True):
         &#34;&#34;&#34;
         Create a new migrant instance.
 
@@ -1836,6 +2269,8 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         db : instance of CompoundIndex or similar, optional
             - If you want to perform a PubChem search (case a) automatically, pass an instance.
             - If omitted or None, no search is attempted, even if name is given.
+        raiseerror : bool (default=True), optional
+            Raise an error if name is not found
 
         Advanced Parameters
         -------------------
@@ -1848,11 +2283,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                       (e.g, to bed used Diringer(key1=value1...))
                       note: the template needs to be valid (do not use None)
                       default = {&#34;polymer&#34;:None, &#34;M&#34;:None, &#34;T&#34;:None}
-            - Set a Henri-like model using
+            - Set a Henry-like model using
                     - kmodel=&#34;model name&#34;
                       default =None
                     - ktemplate=template dict coding for the key:value parameters
-                      default = {}
+                      default =  {&#34;Pi&#34;:1.41, &#34;Pk&#34;:3.97, &#34;Vi&#34;:124.1, &#34;Vk&#34;:30.9, &#34;ispolymer&#34;:True, &#34;alpha&#34;:0.14, &#34;lngmin&#34;:0.0,&#34;Psat&#34;:1.0}
             other models could be implemented in the future, read the module property.py for details.
 
         Example of usage of Dpiringer
@@ -1908,6 +2343,9 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
             df = db.find(name, output_format=&#34;simple&#34;)
             if df.empty:
+                if raiseerror:
+                    raise ValueError(f&#34;&lt;{name}&gt; not found&#34;)
+                print(f&#34;LOADPUBCHEM ERRROR: &lt;{name}&gt; not found - empty object returned&#34;)
                 # No record found
                 self.compound = name
                 self.name = [name]
@@ -2057,22 +2495,22 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             self.D = None
             self.Dtemplate = None
 
-        # Henri-like model
+        # Henry-like model
         if kmodel is not None:
             if not isinstance(kmodel,str):
                 raise TypeError(f&#34;kmodel should be str not a {type(kmodel).__name__}&#34;)
             if kmodel not in MigrationPropertyModels[&#34;k&#34;]:
-                raise ValueError(f&#39;The Henri-like model &#34;{kmodel}&#34; does not exist&#39;)
+                raise ValueError(f&#39;The Henry-like model &#34;{kmodel}&#34; does not exist&#39;)
             kmodelclass = MigrationPropertyModels[&#34;k&#34;][kmodel]
-            if not MigrationPropertyModel_validator(kmodelclass,Dmodel,&#34;k&#34;):
-                raise TypeError(f&#39;The Henri-like model &#34;{kmodel}&#34; is corrupted&#39;)
+            if not MigrationPropertyModel_validator(kmodelclass,kmodel,&#34;k&#34;):
+                raise TypeError(f&#39;The Henry-like model &#34;{kmodel}&#34; is corrupted&#39;)
             if ktemplate is None:
                 ktemplate = {}
             if not isinstance(ktemplate,dict):
                 raise TypeError(f&#34;ktemplate should be a dict not a {type(ktemplate).__name__}&#34;)
             self.k  = kmodelclass
             self.ktemplate = ktemplate.copy()
-            self.ktemplate.update(M=self.M,logP=self.logP)
+            self.ktemplate.update(Pi=self.polarityindex,Vi=self.molarvolumeMiller)
         else:
             self.k = None
             self.ktemplate = None
@@ -2113,7 +2551,8 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             &#34;M (min)&#34;: self.M,
             &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
             &#34;formula&#34;: self.formula,
-            &#34;logP&#34;: self.logP
+            &#34;logP&#34;: self.logP,
+            &#34;P&#39; (calc)&#34;: self.polarityindex
         }
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
@@ -2141,7 +2580,108 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             nchar = round(maxwidth/2)
             return strcontent[:nchar]+&#34; [...] &#34;+strcontent[-nchar:]
         else:
-            return content</code></pre>
+            return content
+
+    # calculated propeties (rough estimates)
+    @property
+    def polarityindex(self,logP=None,V=None):
+        &#34;&#34;&#34;
+            Computes the polarity index (P&#39;) of the compound.
+
+            The polarity index (P&#39;) is derived from the compound&#39;s logP value and
+            its molar volume V(), using an empirical (fitted) quadratic equation:
+
+                E = logP * ln(10) - S
+                P&#39; = (-B - sqrt(B² - 4A(C - E))) / (2A)
+
+            where:
+                - S is the entropy contribution, calculated from molar volume.
+                - A, B, C are empirical coefficients.
+
+            Returns
+            -------
+            float
+                The estimated polarity index P&#39; based on logP and molar volume.
+
+            Notes
+            -----
+            - For highly polar solvents (beyond water), P&#39; saturates at **10.2**.
+            - For extremely hydrophobic solvents (beyond n-Hexane), P&#39; is **0**.
+            - Accuracy is dependent on the reliability of logP and molar volume models.
+
+            Example
+            -------
+            &gt;&gt;&gt; compound.polarityindex
+            8.34  # Example output
+        &#34;&#34;&#34;
+        return polarity_index(logP=self.logP if logP is None else logP,
+                              V=self.molarvolumeMiller if V is None else V)
+
+    @property
+    def molarvolumeMiller(self, a=0.997, b=1.03):
+        &#34;&#34;&#34;
+        Estimates molar volume using the Miller empirical model.
+
+        The molar volume (V_m) is calculated based on molecular weight (M)
+        using the empirical formula:
+
+            V_m = a * M^b  (cm³/mol)
+
+        where:
+            - `a = 0.997`, `b = 1.03` are empirically derived constants.
+            - `M` is the molecular weight (g/mol).
+            - `V_m` is the molar volume (cm³/mol).
+
+        Returns
+        -------
+        float
+            Estimated molar volume in cm³/mol.
+
+        Notes
+        -----
+        - This is an approximate model and may not be accurate for all compounds.
+        - Alternative models include the **Yalkowsky &amp; Valvani method**.
+
+        Example
+        -------
+        &gt;&gt;&gt; compound.molarvolumeMiller
+        130.5  # Example output
+        &#34;&#34;&#34;
+        return a * self.M**b
+
+
+    @property
+    def molarvolumeLinear(self):
+        &#34;&#34;&#34;
+        Estimates molar volume using a simple linear approximation.
+
+        This method provides a rough estimate of molar volume, particularly
+        useful for small to mid-sized non-ionic organic molecules. It is based on:
+
+            V_m = 0.935 * M + 14.2  (cm³/mol)
+
+        where:
+            - `M` is the molecular weight (g/mol).
+            - `V_m` is the estimated molar volume (cm³/mol).
+            - Empirical coefficients are derived from **Yalkowsky &amp; Valvani (1980s)**.
+
+        Returns
+        -------
+        float
+            Estimated molar volume in cm³/mol.
+
+        Notes
+        -----
+        - This method is often *&#34;okay&#34;* for non-ionic organic compounds.
+        - Accuracy decreases for very large, ionic, or highly branched molecules.
+        - More precise alternatives include **Miller&#39;s model** or **group contribution methods**.
+
+        Example
+        -------
+        &gt;&gt;&gt; compound.molarvolumeLinear
+        120.7  # Example output
+        &#34;&#34;&#34;
+        return 0.935 * self.M + 14.2</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -2179,6 +2719,197 @@ def keval(self):
         updated_template = dict(self.ktemplate, **kwargs)
         return self.k.evaluate(**updated_template)
     return func</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.molarvolumeLinear"><code class="name">var <span class="ident">molarvolumeLinear</span></code></dt>
+<dd>
+<div class="desc"><p>Estimates molar volume using a simple linear approximation.</p>
+<p>This method provides a rough estimate of molar volume, particularly
+useful for small to mid-sized non-ionic organic molecules. It is based on:</p>
+<pre><code>V_m = 0.935 * M + 14.2  (cm³/mol)
+</code></pre>
+<p>where:
+- <code>M</code> is the molecular weight (g/mol).
+- <code>V_m</code> is the estimated molar volume (cm³/mol).
+- Empirical coefficients are derived from <strong>Yalkowsky &amp; Valvani (1980s)</strong>.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Estimated molar volume in cm³/mol.</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>This method is often <em>"okay"</em> for non-ionic organic compounds.</li>
+<li>Accuracy decreases for very large, ionic, or highly branched molecules.</li>
+<li>More precise alternatives include <strong>Miller's model</strong> or <strong>group contribution methods</strong>.</li>
+</ul>
+<h2 id="example">Example</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; compound.molarvolumeLinear
+120.7  # Example output
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def molarvolumeLinear(self):
+    &#34;&#34;&#34;
+    Estimates molar volume using a simple linear approximation.
+
+    This method provides a rough estimate of molar volume, particularly
+    useful for small to mid-sized non-ionic organic molecules. It is based on:
+
+        V_m = 0.935 * M + 14.2  (cm³/mol)
+
+    where:
+        - `M` is the molecular weight (g/mol).
+        - `V_m` is the estimated molar volume (cm³/mol).
+        - Empirical coefficients are derived from **Yalkowsky &amp; Valvani (1980s)**.
+
+    Returns
+    -------
+    float
+        Estimated molar volume in cm³/mol.
+
+    Notes
+    -----
+    - This method is often *&#34;okay&#34;* for non-ionic organic compounds.
+    - Accuracy decreases for very large, ionic, or highly branched molecules.
+    - More precise alternatives include **Miller&#39;s model** or **group contribution methods**.
+
+    Example
+    -------
+    &gt;&gt;&gt; compound.molarvolumeLinear
+    120.7  # Example output
+    &#34;&#34;&#34;
+    return 0.935 * self.M + 14.2</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.molarvolumeMiller"><code class="name">var <span class="ident">molarvolumeMiller</span></code></dt>
+<dd>
+<div class="desc"><p>Estimates molar volume using the Miller empirical model.</p>
+<p>The molar volume (V_m) is calculated based on molecular weight (M)
+using the empirical formula:</p>
+<pre><code>V_m = a * M^b  (cm³/mol)
+</code></pre>
+<p>where:
+- <code>a = 0.997</code>, <code>b = 1.03</code> are empirically derived constants.
+- <code>M</code> is the molecular weight (g/mol).
+- <code>V_m</code> is the molar volume (cm³/mol).</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Estimated molar volume in cm³/mol.</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>This is an approximate model and may not be accurate for all compounds.</li>
+<li>Alternative models include the <strong>Yalkowsky &amp; Valvani method</strong>.</li>
+</ul>
+<h2 id="example">Example</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; compound.molarvolumeMiller
+130.5  # Example output
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def molarvolumeMiller(self, a=0.997, b=1.03):
+    &#34;&#34;&#34;
+    Estimates molar volume using the Miller empirical model.
+
+    The molar volume (V_m) is calculated based on molecular weight (M)
+    using the empirical formula:
+
+        V_m = a * M^b  (cm³/mol)
+
+    where:
+        - `a = 0.997`, `b = 1.03` are empirically derived constants.
+        - `M` is the molecular weight (g/mol).
+        - `V_m` is the molar volume (cm³/mol).
+
+    Returns
+    -------
+    float
+        Estimated molar volume in cm³/mol.
+
+    Notes
+    -----
+    - This is an approximate model and may not be accurate for all compounds.
+    - Alternative models include the **Yalkowsky &amp; Valvani method**.
+
+    Example
+    -------
+    &gt;&gt;&gt; compound.molarvolumeMiller
+    130.5  # Example output
+    &#34;&#34;&#34;
+    return a * self.M**b</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.polarityindex"><code class="name">var <span class="ident">polarityindex</span></code></dt>
+<dd>
+<div class="desc"><p>Computes the polarity index (P') of the compound.</p>
+<p>The polarity index (P') is derived from the compound's logP value and
+its molar volume V(), using an empirical (fitted) quadratic equation:</p>
+<pre><code>E = logP * ln(10) - S
+P' = (-B - sqrt(B² - 4A(C - E))) / (2A)
+</code></pre>
+<p>where:
+- S is the entropy contribution, calculated from molar volume.
+- A, B, C are empirical coefficients.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>The estimated polarity index P' based on logP and molar volume.</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>For highly polar solvents (beyond water), P' saturates at <strong>10.2</strong>.</li>
+<li>For extremely hydrophobic solvents (beyond n-Hexane), P' is <strong>0</strong>.</li>
+<li>Accuracy is dependent on the reliability of logP and molar volume models.</li>
+</ul>
+<h2 id="example">Example</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; compound.polarityindex
+8.34  # Example output
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def polarityindex(self,logP=None,V=None):
+    &#34;&#34;&#34;
+        Computes the polarity index (P&#39;) of the compound.
+
+        The polarity index (P&#39;) is derived from the compound&#39;s logP value and
+        its molar volume V(), using an empirical (fitted) quadratic equation:
+
+            E = logP * ln(10) - S
+            P&#39; = (-B - sqrt(B² - 4A(C - E))) / (2A)
+
+        where:
+            - S is the entropy contribution, calculated from molar volume.
+            - A, B, C are empirical coefficients.
+
+        Returns
+        -------
+        float
+            The estimated polarity index P&#39; based on logP and molar volume.
+
+        Notes
+        -----
+        - For highly polar solvents (beyond water), P&#39; saturates at **10.2**.
+        - For extremely hydrophobic solvents (beyond n-Hexane), P&#39; is **0**.
+        - Accuracy is dependent on the reliability of logP and molar volume models.
+
+        Example
+        -------
+        &gt;&gt;&gt; compound.polarityindex
+        8.34  # Example output
+    &#34;&#34;&#34;
+    return polarity_index(logP=self.logP if logP is None else logP,
+                          V=self.molarvolumeMiller if V is None else V)</code></pre>
 </details>
 </dd>
 </dl>
@@ -2226,6 +2957,7 @@ def keval(self):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="loadpubchem.get_compounds" href="#loadpubchem.get_compounds">get_compounds</a></code></li>
+<li><code><a title="loadpubchem.polarity_index" href="#loadpubchem.polarity_index">polarity_index</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -2239,10 +2971,13 @@ def keval(self):
 </li>
 <li>
 <h4><code><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="loadpubchem.migrant.Deval" href="#loadpubchem.migrant.Deval">Deval</a></code></li>
 <li><code><a title="loadpubchem.migrant.dispmax" href="#loadpubchem.migrant.dispmax">dispmax</a></code></li>
 <li><code><a title="loadpubchem.migrant.keval" href="#loadpubchem.migrant.keval">keval</a></code></li>
+<li><code><a title="loadpubchem.migrant.molarvolumeLinear" href="#loadpubchem.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
+<li><code><a title="loadpubchem.migrant.molarvolumeMiller" href="#loadpubchem.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
+<li><code><a title="loadpubchem.migrant.polarityindex" href="#loadpubchem.migrant.polarityindex">polarityindex</a></code></li>
 </ul>
 </li>
 </ul>

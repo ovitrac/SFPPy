@@ -229,6 +229,7 @@ Chain operations using `>>`:
 1. Transfer temperature from `medium1` to `ABA`
 2. Simulate mass transfer from `ABA` to `medium1`
 """
+medium1 >> ABA
 medium1 >> ABA >> medium1
 
 # Verify simulation results
@@ -266,7 +267,7 @@ Repeat all steps using toluene instead of limonene.
 m2 = migrant("toluene")  # Retrieve new migrant
 
 # Restart the simulation pipeline with updated migrant
-medium1 >> ABA.update(solute=m2) >> medium1 >> medium2 >> medium3
+medium1 @ ABA.update(solute=m2) >> medium1 >> medium2 >> medium3
 
 # Store results
 sol123_variant1 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
@@ -291,8 +292,10 @@ sol123_variant2 = medium1.lastsimulation + medium2.lastsimulation + medium3.last
 Use both modifications:
 - Toluene as the migrant
 - Reduced PET layer thickness
+
+Here @ replaces the first >>, they are equivalent
 """
-medium1 >> ABA.copy(l=newthickness, migrant=m2) >> medium1 >> medium2 >> medium3
+medium1 @ ABA.copy(l=newthickness, migrant=m2) >> medium1 >> medium2 >> medium3
 sol123_variant3 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
 
 # %% Compare Reference and Variants

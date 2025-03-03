@@ -45,18 +45,18 @@ This class is used directly by loadpubchem without involving any user operation.
 The name or CAS of the substance will trigger the predictions for the considered application.
 
 
-@version: 1.2
+@version: 1.21
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-07-21
-@rev: 2025-02-21
+@rev: 2025-03-03
 
 """
 
-import math
+import numpy as np
 
-__all__ = ['ActivityCoeffcicients', 'Diffusivities', 'Dpiringer', 'HenriLikeCoeffcicients', 'MigrationPropertyModel_validator', 'PartitionCoeffcicients', 'migrationProperty']
+__all__ = ['ActivityCoefficients', 'Diffusivities', 'Dpiringer', 'HenryLikeCoefficients', 'MigrationPropertyModel_validator', 'PartitionCoeffcicients', 'migrationProperty']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -65,7 +65,8 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.2"
+__version__ = "1.21"
+
 # %% Top classes for any property
 # level 0
 class migrationProperty:
@@ -83,7 +84,7 @@ class migrationProperty:
     _source = ""
     _author = "olivier.vitrac@agroparistech.fr"
     _license = "MIT"
-    _version = 0.1
+    _version = 1.21
     _available_to_import = False
 
 
@@ -125,13 +126,13 @@ class Diffusivities(migrationProperty):
     description = "Mathematical model to estimate diffusivities"
     SIunits = "m**2/s"
 
-class HenriLikeCoeffcicients(migrationProperty):
+class HenryLikeCoefficients(migrationProperty):
     property = "Henri-like coefficient"
     notation = "k"
     description = "Mathematical model to estimate Henri-like coefficients"
     SIunits = None
 
-class ActivityCoeffcicients(migrationProperty):
+class ActivityCoefficients(migrationProperty):
     property = "Activity coefficient"
     notation = "g"
     description = "Mathematical model to estimate activity coefficients"
@@ -142,6 +143,101 @@ class PartitionCoeffcicients(migrationProperty):
     notation = "K"
     description = "Mathematical model to estimate partition coefficients"
     SIunits = None
+
+
+# %% Simplified Flory-Huggins model of Henry-like coefficients built on gFHP
+class kFHP(HenryLikeCoefficients):
+    """
+        Simplified model to estimate Henry-like coefficients based on gFHP class
+            ki,k = Vi * Pi gik(P'i,P'k,Vi,Vk)
+
+            i: solute
+            k: P or F
+            P'i and P'k: Polarity index (e.g.: migrant("solute").polarityindex)
+            Vi, Vk: molar volumes (e.g. migrant("solute").molarvolumeMiller)
+            ispolymer: True for polymers
+            alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
+            lngmin: minimum value (default=0)
+            gscale: activity coefficient (default=Vi*Psat)
+            Psat: vapor saturation pressure
+
+        Only a static evaluate is proposed.
+
+        Note use: scaling = False to get activity coefficients instead of Henry-like ones
+
+    """
+    name = "kFHP"
+    description = "Flory-Huggins model of Henry-likecoefficients from P' and V at infinite dilution in k"
+    model = "semi-empirical"
+    theory = "Flory-Huggins"
+    parameters = {"Pi": {"description": "polarity index of solute i","units": "-"},
+                  "Pk": {"description": "polarity index of continuous phase k","units": "-"},
+                  "Vi": {"description": "molar volume","units": "g/cm**3"},
+                  "Vk": {"description": "molar volume of k","units": "g/cm**3"},
+                  "Psat": {"description": "vapor saturation pressure of i","units": "Pa"}
+                }
+    _available_to_import = True # this model can be imported
+
+    @classmethod
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+        """evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)"""
+        if scaling: # (default behavior)
+            return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                        alpha=alpha,lngmin=lngmin,
+                        gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --> [m**3/kg]
+                        )
+        else:
+            return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
+                        alpha=alpha,lngmin=lngmin,
+                        gscale=1
+                        )
+
+# %% Simplified Flory-Huggins model of activity coefficients
+class gFHP(ActivityCoefficients):
+    """
+        Simplified model to estimate activity coefficients gik from P'i, P'k, Vi, Vk
+            i: solute
+            k: P or F
+            P'i and P'k: Polarity index (e.g.: migrant("solute").polarityindex)
+            Vi, Vk: molar volumes (e.g. migrant("solute").molarvolumeMiller)
+            ispolymer: True for polymers
+            alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
+            lngmin: minimum value (default=0)
+            gscale: activity coefficient (default=1.0)
+
+            Use gscale to enforce gik<=1
+
+        Only a static evaluate is proposed.
+
+    """
+    name = "gFHP"
+    description = "Flory-Huggins model of activity coefficients from P' and V at infinite dilution in k"
+    model = "semi-empirical"
+    theory = "Flory-Huggins"
+    parameters = {"Pi": {"description": "polarity index of solute i","units": "-"},
+                  "Pk": {"description": "polarity index of continuous phase k","units": "-"},
+                  "Vi": {"description": "molar volume of i","units": "-"},
+                  "Vk": {"description": "molar volume of k","units": "-"}
+                }
+    _available_to_import = True # this model can be imported
+
+    @classmethod
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
+                 alpha=0.14,lngmin=0.0,gscale=1.0):
+        """evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)"""
+        if ispolymer:
+            rik = 0.0
+            nik = 0.0
+            chimin = 0.25
+        else:
+            rik = Vi/Vk
+            nik = (rik - 5)/5
+            chimin = 0
+        chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
+        lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
+        return gscale * np.exp(lngik)
+
+
 
 # %% Piringer model
 class Dpiringer(Diffusivities):
@@ -501,7 +597,7 @@ class Dpiringer(Diffusivities):
                     - 0.135 * (M ** (2.0 / 3.0))
                     + 0.003 * M
                     - 10454.0 / TK)
-        return math.exp(exponent)
+        return np.exp(exponent)
 
 
     @classmethod
@@ -644,7 +740,7 @@ class Dpiringer(Diffusivities):
         # Piringer expression for D in m^2/s
         # D = exp( Ap - 0.135 * M^(2/3) + 0.003 * M - 10454 / TK )
         exponent = Ap - 0.135 * (M ** (2.0 / 3.0)) + 0.003 * M - 10454.0 / TK
-        D = math.exp(exponent)
+        D = np.exp(exponent)
         return D
 
 # %% Available models to expose to layer.py and food.py
@@ -659,8 +755,10 @@ MigrationPropertyModels = {
         "Piringer": Dpiringer
         },
     "k":{
+        "kFHP": kFHP
         },
     "g":{
+        "gFHP": gFHP
         },
     "K":{
         },
@@ -671,7 +769,7 @@ def MigrationPropertyModel_validator(model=None,name=None,notation=None):
     """ Returns True if the proposed model is valid for the requested migraton property """
     rootclass = "migrationProperty"
     expectedpropclass = {"D":"Diffusivities",
-                     "k":"HenriLikeCoefficients",
+                     "k":"HenryLikeCoefficients",
                      "g":"ActivityCoefficients",
                      "K":"PartitionCoefficients"}
 
