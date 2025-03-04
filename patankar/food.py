@@ -51,7 +51,7 @@ from copy import deepcopy as duplicate
 from patankar.layer import check_units, NoUnits, layer # to convert units to SI
 from patankar.loadpubchem import migrant
 
-__all__ = ['ambient', 'aqueous', 'boiling', 'check_units', 'chemicalaffinity', 'chilled', 'ethanol', 'ethanol50', 'fat', 'foodlayer', 'foodphysics', 'foodproperty', 'frozen', 'get_defined_init_params', 'help_food', 'hotfilled', 'intermediate', 'is_valid_classname', 'layer', 'liquid', 'list_food_classes', 'nofood', 'oven', 'pasteurization', 'perfectlymixed', 'realcontact', 'realfood', 'rolled', 'semisolid', 'setoff', 'simulant', 'solid', 'stacked', 'sterilization', 'tenax', 'testcontact', 'texture', 'water', 'wrap_text', 'yogurt']
+__all__ = ['acetonitrile', 'ambient', 'aqueous', 'boiling', 'check_units', 'chemicalaffinity', 'chilled', 'ethanol', 'ethanol50', 'ethanol95', 'fat', 'foodlayer', 'foodphysics', 'foodproperty', 'frozen', 'frying', 'get_defined_init_params', 'help_food', 'hotambient', 'hotfilled', 'hotoven', 'intermediate', 'is_valid_classname', 'isooctane', 'layer', 'liquid', 'list_food_classes', 'methanol', 'microwave', 'migrant', 'nofood', 'oil', 'oiliveoil', 'oven', 'panfrying', 'pasteurization', 'perfectlymixed', 'realcontact', 'realfood', 'rolled', 'semisolid', 'setoff', 'simulant', 'solid', 'stacked', 'sterilization', 'tenax', 'testcontact', 'texture', 'transportation', 'water', 'water3aceticacid', 'wrap_text', 'yogurt']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -60,7 +60,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.21"
+__version__ = "1.22"
 #%% Private Properties and functions
 
 # List of the default SI units used by physical quantity
@@ -187,18 +187,87 @@ def help_food():
 # -------------------------------------------------------------------
 class foodphysics:
     """
-    Base class that automatically assigns instance attributes from class defaults,
-    except for the 'description' attribute.
-    Check the physical meaning of quantities with units.
+    ===============================================================================
+    SFPPy Module: Food Physics (Base Class)
+    ===============================================================================
+    `foodphysics` serves as the **base class** for all food-related objects in mass
+    transfer simulations. It defines key parameters for food interaction with packaging
+    materials and implements dynamic property propagation for simulation models.
 
-    Implemented methods include:
-        - refresh() validates all quantities before a simulation
-        - update(name="new name", description="new description",parameter1=value)
-          assigns new values to physical parameters and attributes
-        - getparam() returns physical parameters even if they undefined
-    Available properties:
-        PBC returns True in periodic boundary conditions are enforced (setoff)
-        impervious returns True if impervious boundary condition is appled (no food)
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    - Defines **mass transfer properties**:
+      - `h`: Mass transfer coefficient (m/s)
+      - `k`: Partition coefficient (dimensionless)
+    - Implements **contact conditions**:
+      - `contacttime`: Duration of food-packaging contact
+      - `contacttemperature`: Temperature of the contact interface
+    - Supports **inheritance and property propagation** to layers.
+    - Provides **physical state representation** (`solid`, `liquid`, `gas`).
+    - Allows **customization of mass transfer coefficients** via `kmodel`.
+
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `h`: Mass transfer coefficient (m/s) defining resistance at the interface.
+    - `k`: Henry-like partition coefficient between the food and the material.
+    - `contacttime`: Time duration of the packaging-food interaction.
+    - `contacttemperature`: Temperature at the packaging interface (°C).
+    - `surfacearea`: Contact surface area between packaging and food (m²).
+    - `volume`: Volume of the food medium (m³).
+    - `density`: Density of the food medium (kg/m³).
+    - `substance`: The migrating substance (e.g., a chemical compound).
+    - `medium`: The food medium in contact with packaging.
+    - `kmodel`: Custom partitioning model (can be overridden by the user).
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__rshift__(self, other)`: Propagates food properties to a layer (`food >> layer`).
+    - `__matmul__(self, other)`: Equivalent to `>>`, enables `food @ layer`.
+    - `migration(self, material, **kwargs)`: Simulates migration into a packaging layer.
+    - `contact(self, material, **kwargs)`: Alias for `migration()`.
+    - `update(self, **kwargs)`: Dynamically updates food properties.
+    - `get_param(self, key, default=None, acceptNone=True)`: Retrieves a parameter safely.
+    - `refresh(self)`: Ensures all properties are validated before simulation.
+    - `acknowledge(self, what, category)`: Tracks inherited properties.
+    - `copy(self, **kwargs)`: Creates a deep copy of the food object.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Works with `migration.py` to define the **left-side boundary condition**.
+    - Interfaces with `layer.py` to apply contact temperature propagation.
+    - Connects with `geometry.py` for food-contacting packaging surfaces.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.food import foodphysics
+    from patankar.layer import layer
+
+    medium = foodphysics(contacttemperature=(40, "degC"), h=(1e-6, "m/s"))
+    packaging_layer = layer(D=1e-14, l=50e-6)
+
+    # Propagate food properties to the layer
+    medium >> packaging_layer
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    solution = senspatankar(packaging_layer, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - The `foodphysics` class is the parent of `foodlayer`, `nofood`, `setoff`,
+      `realcontact`, and `testcontact`.
+    - The `PBC` property identifies periodic boundary conditions (used in `setoff`).
+    - This class provides **dynamic inheritance** for mass transfer properties.
+
     """
 
     # General descriptors
@@ -711,16 +780,88 @@ class foodphysics:
 
 class foodlayer(foodphysics):
     """
-    Foodlayer class is a generic class to define food as a 1D layer in a symmetric manner with layer class
-    applicable to materials in contact.
-    Since mass transfer are much faster in the food than in the materials in contact, food is represented
-    as an almost 0D layer. Only a mass transfer resistance is applied at the food-material interface
-    controlled by the mass transfer coefficient h. A Henry-like coefficient k controls the eventual
-    partitioning of the substance between the food and the layer of the materials.
+    ===============================================================================
+    SFPPy Module: Food Layer
+    ===============================================================================
+    `foodlayer` models food as a **0D layer** in mass transfer simulations, serving
+    as the primary class for defining the medium in contact with a packaging material.
 
-    Food are geometrically defined by their volume and surface area in contact with the material.
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    - Models food as a **zero-dimensional (0D) medium** with:
+      - A **mass transfer resistance (`h`)** at the interface.
+      - A **partitioning behavior (`k`)** between food and packaging.
+      - **Contact time (`contacttime`) and temperature (`contacttemperature`)**.
+    - Defines **food geometry**:
+      - `surfacearea`: Contact area with the material (m²).
+      - `volume`: Total volume of the food medium (m³).
+    - Supports **impervious (`nofood`) and periodic (`setoff`) conditions**.
 
-    Contact time (contacttime) and contact temperature (contacttemperature) are defined via foodlayer.
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `h`: Mass transfer coefficient (m/s) defining resistance at the interface.
+    - `k`: Partition coefficient describing substance solubility in food.
+    - `contacttime`: Time duration of the packaging-food interaction.
+    - `contacttemperature`: Temperature at the packaging interface (°C).
+    - `surfacearea`: Contact surface area between packaging and food (m²).
+    - `volume`: Volume of the food medium (m³).
+    - `density`: Density of the food medium (kg/m³).
+    - `substance`: Migrant (chemical) diffusing into food.
+    - `medium`: Food medium in contact with packaging.
+    - `impervious`: `True` if no mass transfer occurs (`nofood` class).
+    - `PBC`: `True` if periodic boundary conditions apply (`setoff` class).
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__rshift__(self, other)`: Propagates food properties to a packaging layer (`food >> layer`).
+    - `__matmul__(self, other)`: Equivalent to `>>`, enables `food @ layer`.
+    - `migration(self, material, **kwargs)`: Simulates migration into a packaging layer.
+    - `contact(self, material, **kwargs)`: Alias for `migration()`.
+    - `update(self, **kwargs)`: Dynamically updates food properties.
+    - `get_param(self, key, default=None, acceptNone=True)`: Retrieves a parameter safely.
+    - `refresh(self)`: Ensures all properties are validated before simulation.
+    - `acknowledge(self, what, category)`: Tracks inherited properties.
+    - `copy(self, **kwargs)`: Creates a deep copy of the food object.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Used as the **left-side boundary** in `migration.py` simulations.
+    - Interacts with `layer.py` to propagate temperature and partitioning effects.
+    - Interfaces with `geometry.py` for food-contacting packaging simulations.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.food import foodlayer
+    medium = foodlayer(name="ethanol", contacttemperature=(40, "degC"))
+
+    from patankar.layer import LDPE
+    packaging = LDPE(l=50e-6, D=1e-14)
+
+    # Propagate food properties to the packaging
+    medium >> packaging
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    solution = senspatankar(packaging, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - The `foodlayer` class extends `foodphysics` and provides a physical
+      representation of food in contact with packaging.
+    - Subclasses include:
+      - `setoff`: Periodic boundary conditions (stacked packaging).
+      - `nofood`: Impervious boundary (no mass transfer).
+      - `realcontact`, `testcontact`: Standardized food contact conditions.
+    - The `h` parameter determines if the medium is **well-mixed** or **diffusion-limited**.
 
     """
     level = "root"

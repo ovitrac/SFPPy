@@ -141,8 +141,9 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.2"
-# %% Private functions
+__version__ = "1.23"
+
+# %% Private functions and classes
 
 # Initialize unit conversion (intensive initialization with old Python versions)
 # NB: degC and kelvin must be used for temperature
@@ -256,8 +257,644 @@ def help_layer():
         print(row_format.format(*row))
 
 
+# generic class to store linked parameter values in a sparse manner
+class layerLink:
+    """
+    A sparse representation of properties (`D`, `k`, `C0`) used in `layer` instances.
+
+    This class allows storing and manipulating selected values of a property (`D`, `k`, or `C0`)
+    while keeping a sparse structure. It enables seamless interaction with `layer` objects
+    by overriding values dynamically and ensuring efficient memory usage.
+
+    The primary use case is to fit and control property values externally while keeping
+    the `layer` representation internally consistent.
+
+    Attributes
+    ----------
+    property : str
+        The name of the property linked (`"D"`, `"k"`, or `"C0"`).
+    indices : np.ndarray
+        A NumPy array storing the indices of explicitly defined values.
+    values : np.ndarray
+        A NumPy array storing the corresponding values at `indices`.
+    length : int
+        The total length of the sparse vector, ensuring coverage of all indices.
+    replacement : str, optional
+        Defines how missing values are handled:
+        - `"repeat"`: Propagates the last known value beyond `length`.
+        - `"periodic"`: Cycles through known values beyond `length`.
+        - Default: No automatic replacement within `length`.
+
+    Methods
+    -------
+    set(index, value)
+        Sets values at specific indices. If `None` or `np.nan` is provided, the index is removed.
+    get(index=None)
+        Retrieves values at the given indices. Returns `NaN` for missing values.
+    getandreplace(indices, altvalues)
+        Similar to `get()`, but replaces `NaN` values with corresponding values from `altvalues`.
+    getfull(altvalues)
+        Returns the full vector using `getandreplace(None, altvalues)`.
+    lengthextension()
+        Ensures `length` covers all stored indices (`max(indices) + 1`).
+    rename(new_property_name)
+        Renames the `property` associated with this `layerLink`.
+    nzcount()
+        Returns the number of explicitly stored (nonzero) elements.
+    __getitem__(index)
+        Allows retrieval using `D_link[index]`, equivalent to `get(index)`.
+    __setitem__(index, value)
+        Allows assignment using `D_link[index] = value`, equivalent to `set(index, value)`.
+    __add__(other)
+        Concatenates two `layerLink` instances with the same property.
+    __mul__(n)
+        Repeats the `layerLink` instance `n` times, shifting indices accordingly.
+
+    Examples
+    --------
+    Create a `layerLink` for `D` and manipulate its values:
+
+    ```python
+    D_link = layerLink("D")
+    D_link.set([0, 2], [1e-14, 3e-14])
+    print(D_link.get())  # Expected: array([1e-14, nan, 3e-14])
+
+    D_link[1] = 2e-14
+    print(D_link.get())  # Expected: array([1e-14, 2e-14, 3e-14])
+    ```
+
+    Concatenating two `layerLink` instances:
+
+    ```python
+    A = layerLink("D")
+    A.set([0, 2], [1e-14, 3e-14])
+
+    B = layerLink("D")
+    B.set([1, 3], [2e-14, 4e-14])
+
+    C = A + B  # Concatenates while shifting indices
+    print(C.get())  # Expected: array([1e-14, 3e-14, nan, nan, 2e-14, 4e-14])
+    ```
+
+    Handling missing values with `getandreplace()`:
+
+    ```python
+    alt_values = np.array([5e-14, 6e-14, 7e-14, 8e-14])
+    print(D_link.getandreplace([0, 1, 2, 3], alt_values))
+    # Expected: array([1e-14, 2e-14, 3e-14, 8e-14])  # Fills NaNs from alt_values
+    ```
+
+    Ensuring correct behavior for `*`:
+
+    ```python
+    B = A * 3  # Repeats A three times
+    print(B.indices)  # Expected: [0, 2, 4, 6, 8, 10]
+    print(B.values)   # Expected: [1e-14, 3e-14, 1e-14, 3e-14, 1e-14, 3e-14]
+    print(B.length)   # Expected: 3 * A.length
+    ```
 
 
+    Other Examples:
+    ----------------
+
+    ### **Creating a Link**
+    D_link = layerLink("D", indices=[1, 3], values=[5e-14, 7e-14], length=4)
+    print(D_link)  # <Link for D: 2 of 4 replacement values>
+
+    ### **Retrieving Values**
+    print(D_link.get())       # Full vector with None in unspecified indices
+    print(D_link.get(1))      # Returns 5e-14
+    print(D_link.get([0,2]))  # Returns [None, None]
+
+    ### **Setting Values**
+    D_link.set(2, 6e-14)
+    print(D_link.get())  # Now index 2 is replaced
+
+    ### **Resetting with a Prototype**
+    prototype = [None, 5e-14, None, 7e-14, 8e-14]
+    D_link.reset(prototype)
+    print(D_link.get())  # Now follows the new structure
+
+    ### **Getting and Setting Values with []**
+    D_link = layerLink("D", indices=[1, 3, 5], values=[5e-14, 7e-14, 6e-14], length=10)
+    print(D_link[3])      # ✅ Returns 7e-14
+    print(D_link[:5])     # ✅ Returns first 5 elements (with NaNs where undefined)
+    print(D_link[[1, 3]]) # ✅ Returns [5e-14, 7e-14]
+    D_link[2] = 9e-14     # ✅ Sets D[2] to 9e-14
+    D_link[0:4:2] = [1e-14, 2e-14]  # ✅ Sets D[0] = 1e-14, D[2] = 2e-14
+    print(len(D_link))    # ✅ Returns 10 (full vector length)
+
+    ###**Practical Syntaxes**
+    D_link = layerLink("D")
+    D_link[2] = 3e-14  # ✅ single value
+    D_link[0] = 1e-14
+    print(D_link.get())
+    print(D_link[1])
+    print(repr(D_link))
+    D_link[:4] = 1e-16  # ✅ Fills indices 0,1,2,3 with 1e-16
+    print(D_link.get())  # ✅ Outputs: [1e-16, 1e-16, 1e-16, 1e-16, nan, 1e-14]
+    D_link[[1,2]] = None  # ✅ Fills indices 0,1,2,3 with 1e-16
+    print(D_link.get())  # ✅ Outputs: [1e-16, 1e-16, 1e-16, 1e-16, nan, 1e-14]
+    D_link[[0]] = 1e-10
+    print(D_link.get())
+
+    ###**How it works inside layer: a short simulation**
+    # layerLink created by user
+    duser = layerLink()
+    duser.getfull([1e-15,2e-15,3e-15])
+    duser[0] = 1e-10
+    duser.getfull([1e-15,2e-15,3e-15])
+    duser[1]=1e-9
+    duser.getfull([1e-15,2e-15,3e-15])
+    # layerLink used internally
+    dalias=duser
+    dalias[1]=2e-11
+    duser.getfull([1e-15,2e-15,3e-15,4e-15])
+    dalias[1]=2.1e-11
+    duser.getfull([1e-15,2e-15,3e-15,4e-15])
+
+    ###**Combining layerLinks instances**
+    A = layerLink("D")
+    A.set([0, 2], [1e-11, 3e-11])  # length=3
+    B = layerLink("D")
+    B.set([1, 3], [2e-14, 4e-12])  # length=4
+    C = A + B
+    print(C.indices)  # Expected: [0, 2, 4, 6]
+    print(C.values)   # Expected: [1.e-11 3.e-11 2.e-14 4.e-12]
+    print(C.length)   # Expected: 3 + 4 = 7
+
+
+    TEST CASES:
+    -----------
+
+    print("🔹 Test 1: Initialize empty layerLink")
+    D_link = layerLink("D")
+    print(D_link.get())  # Expected: array([]) or array([nan, nan, nan]) if length is pre-set
+    print(repr(D_link))  # Expected: No indices set
+
+    print("\n🔹 Test 2: Assigning values at specific indices")
+    D_link[2] = 3e-14
+    D_link[0] = 1e-14
+    print(D_link.get())  # Expected: array([1.e-14, nan, 3.e-14])
+    print(D_link[1])     # Expected: nan
+
+    print("\n🔹 Test 3: Assign multiple values at once")
+    D_link[[1, 4]] = [2e-14, 5e-14]
+    print(D_link.get())  # Expected: array([1.e-14, 2.e-14, 3.e-14, nan, 5.e-14])
+
+    print("\n🔹 Test 4: Remove a single index")
+    D_link[1] = None
+    print(D_link.get())  # Expected: array([1.e-14, nan, 3.e-14, nan, 5.e-14])
+
+    print("\n🔹 Test 5: Remove multiple indices at once")
+    D_link[[0, 2]] = None
+    print(D_link.get())  # Expected: array([nan, nan, nan, nan, 5.e-14])
+
+    print("\n🔹 Test 6: Removing indices using a slice")
+    D_link[3:5] = None
+    print(D_link.get())  # Expected: array([nan, nan, nan, nan, nan])
+
+    print("\n🔹 Test 7: Assign new values after removals")
+    D_link[1] = 7e-14
+    D_link[3] = 8e-14
+    print(D_link.get())  # Expected: array([nan, 7.e-14, nan, 8.e-14, nan])
+
+    print("\n🔹 Test 8: Check periodic replacement")
+    D_link = layerLink("D", replacement="periodic")
+    D_link[2] = 3e-14
+    D_link[0] = 1e-14
+    print(D_link[5])  # Expected: 1e-14 (since 5 mod 2 = 0)
+
+    print("\n🔹 Test 9: Check repeat replacement")
+    D_link = layerLink("D", replacement="repeat")
+    D_link[2] = 3e-14
+    D_link[0] = 1e-14
+    print(D_link.get())  # Expected: array([1.e-14, nan, 3.e-14])
+    print(D_link[3])     # Expected: 3e-14 (repeat last known value)
+
+    print("\n🔹 Test 10: Resetting with a prototype")
+    D_link.reset([None, 5e-14, None, 7e-14])
+    print(D_link.get())  # Expected: array([nan, 5.e-14, nan, 7.e-14])
+
+    print("\n🔹 Test 11: Edge case - Assigning nan explicitly")
+    D_link[1] = np.nan
+    print(D_link.get())  # Expected: array([nan, nan, nan, 7.e-14])
+
+    print("\n🔹 Test 12: Assigning a range with a scalar value (broadcasting)")
+    D_link[0:3] = 9e-14
+    print(D_link.get())  # Expected: array([9.e-14, 9.e-14, 9.e-14, 7.e-14])
+
+    print("\n🔹 Test 13: Assigning a slice with a list of values")
+    D_link[1:4] = [6e-14, 5e-14, 4e-14]
+    print(D_link.get())  # Expected: array([9.e-14, 6.e-14, 5.e-14, 4.e-14])
+
+    print("\n🔹 Test 14: Length updates correctly after removals")
+    D_link[[1, 2]] = None
+    print(len(D_link))   # Expected: 4 (since max index is 3)
+
+    print("\n🔹 Test 15: Setting index beyond length auto-extends")
+    D_link[6] = 2e-14
+    print(len(D_link))   # Expected: 7 (since max index is 6)
+    print(D_link.get())  # Expected: array([9.e-14, nan, nan, 4.e-14, nan, nan, 2.e-14])
+
+    """
+
+    def __init__(self, property="D", indices=None, values=None, length=None,
+                 replacement="repeat", dtype=np.float64, maxlength=None):
+        """constructs a link"""
+        self.property = property  # "D", "k", or "C0"
+        self.replacement = replacement
+        self.dtype = dtype
+        self._maxlength = maxlength
+        if isinstance(indices,(int,float)): indices = [indices]
+        if isinstance(values,(int,float)): values = [values]
+
+        if indices is None or values is None:
+            self.indices = np.array([], dtype=int)
+            self.values = np.array([], dtype=dtype)
+        else:
+            self.indices = np.array(indices, dtype=int)
+            self.values = np.array(values, dtype=dtype)
+
+        self.length = length if length is not None else (self.indices.max() + 1 if self.indices.size > 0 else 0)
+        self._validate()
+
+    def _validate(self):
+        """Ensures consistency between indices and values."""
+        if len(self.indices) != len(self.values):
+            raise ValueError("indices and values must have the same length.")
+        if self.indices.size > 0 and self.length < self.indices.max() + 1:
+            raise ValueError("length must be at least max(indices) + 1.")
+
+    def reset(self, prototypevalues):
+        """
+        Resets the link instance based on the prototype values.
+
+        - Stores only non-None values.
+        - Updates `indices`, `values`, and `length` accordingly.
+        """
+        self.indices = np.array([i for i, v in enumerate(prototypevalues) if v is not None], dtype=int)
+        self.values = np.array([v for v in prototypevalues if v is not None], dtype=self.dtype)
+        self.length = len(prototypevalues)  # Update the total length
+
+    def get(self, index=None):
+        """
+        Retrieves values based on index or returns the full vector.
+
+        Rules:
+        - If `index=None`, returns the full vector with overridden values (no replacement applied).
+        - If `index` is a scalar, returns the corresponding value, applying replacement rules if needed.
+        - If `index` is an array, returns an array of the requested indices, applying replacement rules.
+
+        Returns:
+        - NumPy array with requested values.
+        """
+        if index is None:
+            # Return the full vector WITHOUT applying any replacement
+            full_vector = np.full(self.length, np.nan, dtype=self.dtype)
+            full_vector[self.indices] = self.values  # Set known values
+            return full_vector
+
+        if np.isscalar(index):
+            return self._get_single(index)
+
+        # Ensure index is an array
+        index = np.array(index, dtype=int)
+        return np.array([self._get_single(i) for i in index], dtype=self.dtype)
+
+    def _get_single(self, i):
+        """Retrieves the value for a single index, applying rules if necessary."""
+        if i in self.indices:
+            return self.values[np.where(self.indices == i)[0][0]]
+
+        if i >= self.length:  # Apply replacement *only* for indices beyond length
+            if self.replacement == "periodic":
+                return self.values[i % len(self.values)]
+            elif self.replacement == "repeat":
+                return self._get_single(self.length - 1)  # Repeat last known value
+
+        return np.nan  # Default case for undefined in-bounds indices
+
+
+    def set(self, index, value):
+        """
+        Sets values at specific indices.
+
+        - If `index=None`, resets the link with `value`.
+        - If `index` is a scalar, updates or inserts the value.
+        - If `index` is an array, updates corresponding values.
+        - If `value` is `None` or `np.nan`, removes the corresponding index.
+        """
+        if index is None:
+            self.reset(value)
+            return
+
+        index = np.array(index, dtype=int)
+        value = np.array(value, dtype=self.dtype)
+
+        # check against _maxlength if defined
+        if self._maxlength is not None:
+            if np.any(index>=self._maxlength):
+                raise IndexError(f"index cannot exceeds the number of layers-1 {self._maxlength-1}")
+
+        # Handle scalars properly
+        if np.isscalar(index):
+            index = np.array([index])
+            value = np.array([value])
+
+        # Detect None or NaN values and remove those indices
+        mask = np.isnan(value) if value.dtype.kind == 'f' else np.array([v is None for v in value])
+        if np.any(mask):
+            self._remove_indices(index[mask])  # Remove these indices
+            index, value = index[~mask], value[~mask]  # Keep only valid values
+
+        if index.size > 0:  # If there are remaining valid values, store them
+            for i, v in zip(index, value):
+                if i in self.indices:
+                    self.values[np.where(self.indices == i)[0][0]] = v
+                else:
+                    self.indices = np.append(self.indices, i)
+                    self.values = np.append(self.values, v)
+
+        # Update length to ensure it remains valid
+        if self.indices.size > 0:
+            self.length = max(self.indices) + 1  # Adjust length based on max index
+        else:
+            self.length = 0  # Reset to 0 if empty
+
+        self._validate()
+
+    def _remove_indices(self, indices):
+        """
+        Removes indices from `self.indices` and `self.values` and updates length.
+        """
+        mask = np.isin(self.indices, indices, invert=True)
+        self.indices = self.indices[mask]
+        self.values = self.values[mask]
+
+        # Update length after removal
+        if self.indices.size > 0:
+            self.length = max(self.indices) + 1  # Adjust length based on remaining max index
+        else:
+            self.length = 0  # Reset to 0 if no indices remain
+
+    def reshape(self, new_length):
+        """
+        Reshapes the link instance to a new length.
+
+        - If indices exceed new_length-1, they are removed with a warning.
+        - If replacement operates beyond new_length-1, a warning is issued.
+        """
+        if new_length < self.length:
+            invalid_indices = self.indices[self.indices >= new_length]
+            if invalid_indices.size > 0:
+                print(f"⚠️ Warning: Indices {invalid_indices.tolist()} are outside new length {new_length}. They will be removed.")
+                mask = self.indices < new_length
+                self.indices = self.indices[mask]
+                self.values = self.values[mask]
+
+        # Check if replacement would be applied beyond the new length
+        if self.replacement == "repeat" and self.indices.size > 0 and self.length > new_length:
+            print(f"⚠️ Warning: Repeat rule was defined for indices beyond {new_length-1}, but will not be used.")
+
+        if self.replacement == "periodic" and self.indices.size > 0 and self.length > new_length:
+            print(f"⚠️ Warning: Periodic rule was defined for indices beyond {new_length-1}, but will not be used.")
+
+        self.length = new_length
+
+    def __repr__(self):
+        """Returns a detailed string representation."""
+        txt = (f"Link(property='{self.property}', indices={self.indices.tolist()}, "
+                f"values={self.values.tolist()}, length={self.length}, replacement='{self.replacement}')")
+        print(txt)
+        return(str(self))
+
+    def __str__(self):
+        """Returns a compact summary string."""
+        return f"<{self.property}:{self.__class__.__name__}: {len(self.indices)}/{self.length}  values>"
+
+    # Override `len()`
+    def __len__(self):
+        """Returns the length of the vector managed by the link object."""
+        return self.length
+
+    # Override `getitem` (support for indexing and slicing)
+    def __getitem__(self, index):
+        """
+        Allows `D_link[index]` or `D_link[slice]` to retrieve values.
+
+        - If `index` is an integer, returns a single value.
+        - If `index` is a slice or list/array, returns a NumPy array of values.
+        """
+        if isinstance(index, slice):
+            return self.get(np.arange(index.start or 0, index.stop or self.length, index.step or 1))
+        return self.get(index)
+
+    # Override `setitem` (support for indexing and slicing)
+    def __setitem__(self, index, value):
+        """
+        Allows `D_link[index] = value` or `D_link[slice] = list/scalar`.
+
+        - If `index` is an integer, updates or inserts a single value.
+        - If `index` is a slice or list/array, updates multiple values.
+        - If `value` is `None` or `np.nan`, removes the corresponding index.
+        """
+        if isinstance(index, slice):
+            indices = np.arange(index.start or 0, index.stop or self.length, index.step or 1)
+
+        elif isinstance(index, (list, np.ndarray)):  # Handle non-contiguous indices
+            indices = np.array(index, dtype=int)
+
+        elif np.isscalar(index):  # Single index assignment
+            indices = np.array([index], dtype=int)
+
+        else:
+            raise TypeError(f"Unsupported index type: {type(index)}")
+
+        if value is None or (isinstance(value, float) and np.isnan(value)):  # Remove these indices
+            self._remove_indices(indices)
+        else:
+            values = np.full_like(indices, value, dtype=self.dtype) if np.isscalar(value) else np.array(value, dtype=self.dtype)
+            if len(indices) != len(values):
+                raise ValueError(f"Cannot assign {len(values)} values to {len(indices)} indices.")
+            self.set(indices, values)
+
+    def getandreplace(self, indices=None, altvalues=None):
+        """
+        Retrieves values for the given indices, replacing NaN values with corresponding values from altvalues.
+
+        - If `indices` is None or empty, it defaults to `[0, 1, ..., self.length - 1]`
+        - altvalues should be a NumPy array with the same dtype as self.values.
+        - altvalues **can be longer than** self.length, but **cannot be shorter than the highest requested index**.
+        - If an index is undefined (`NaN` in get()), it is replaced with altvalues[index].
+
+        Parameters:
+        ----------
+        indices : list or np.ndarray (default: None)
+            The indices to retrieve values for. If None, defaults to full range `[0, ..., self.length - 1]`.
+        altvalues : list or np.ndarray
+            Alternative values to use where `get()` returns `NaN`.
+
+        Returns:
+        -------
+        np.ndarray
+            A NumPy array of values, with NaNs replaced by altvalues.
+        """
+        if indices is None or len(indices) == 0:
+            indices = np.arange(self.length)  # Default to full range
+
+        indices = np.array(indices, dtype=int)
+        altvalues = np.array(altvalues, dtype=self.dtype)
+
+        max_requested_index = indices.max() if indices.size > 0 else 0
+        if max_requested_index >= altvalues.shape[0]:  # Ensure altvalues covers all requested indices
+            raise ValueError(
+                f"altvalues is too short! It has length {altvalues.shape[0]}, but requested index {max_requested_index}."
+            )
+        # Get original values
+        original_values = self.get(indices)
+        # Replace NaN values with corresponding values from altvalues
+        mask_nan = np.isnan(original_values)
+        original_values[mask_nan] = altvalues[indices[mask_nan]]
+        return original_values
+
+
+    def getfull(self, altvalues):
+        """
+        Retrieves the full vector using `getandreplace(None, altvalues)`.
+
+        - If `length == 0`, returns `altvalues` as a NumPy array of the correct dtype.
+        - Extends `self.length` to match `altvalues` if it's shorter.
+        - Supports multidimensional `altvalues` by flattening it.
+
+        Parameters:
+        ----------
+        altvalues : list or np.ndarray
+            Alternative values to use where `get()` returns `NaN`.
+
+        Returns:
+        -------
+        np.ndarray
+            Full vector with NaNs replaced by altvalues.
+        """
+        # Convert altvalues to a NumPy array and flatten if needed
+        altvalues = np.array(altvalues, dtype=self.dtype).flatten()
+
+        # If self has no length, return altvalues directly
+        if self.length == 0:
+            return altvalues
+
+        # Extend self.length to match altvalues if needed
+        if self.length < altvalues.shape[0]:
+            self.length = altvalues.shape[0]
+
+        return self.getandreplace(None, altvalues)
+
+
+    def nzlength(self):
+        """
+        Returns the number of stored nonzero elements (i.e., indices with values).
+        """
+        return len(self.indices)
+
+    def lengthextension(self):
+        """
+        Ensures that the length of the layerLink instance is at least `max(indices) + 1`.
+
+        - If there are no indices, the length remains unchanged.
+        - If `length` is already sufficient, nothing happens.
+        - Otherwise, it extends `length` to `max(indices) + 1`.
+        """
+        if self.indices.size > 0:  # Only extend if there are indices
+            self.length = max(self.length, max(self.indices) + 1)
+
+    def rename(self, new_property_name):
+        """
+        Renames the property associated with this link.
+
+        Parameters:
+        ----------
+        new_property_name : str
+            The new property name.
+
+        Raises:
+        -------
+        TypeError:
+            If `new_property_name` is not a string.
+        """
+        if not isinstance(new_property_name, str):
+            raise TypeError(f"Property name must be a string, got {type(new_property_name).__name__}.")
+        self.property = new_property_name
+
+
+    def __add__(self, other):
+        """
+        Concatenates two layerLink instances.
+
+        - Only allowed if both instances have the same property.
+        - Calls `lengthextension()` on both instances before summing lengths.
+        - Shifts `other`'s indices by `self.length` to maintain sparsity.
+        - Concatenates values and indices.
+
+        Returns:
+        -------
+        layerLink
+            A new concatenated layerLink instance.
+        """
+        if not isinstance(other, layerLink):
+            raise TypeError(f"Cannot concatenate {type(self).__name__} with {type(other).__name__}")
+
+        if self.property != other.property:
+            raise ValueError(f"Cannot concatenate: properties do not match ('{self.property}' vs. '{other.property}')")
+
+        # Ensure lengths are properly extended before computing new length
+        self.lengthextension()
+        other.lengthextension()
+
+        # Create a new instance for the result
+        result = layerLink(self.property)
+
+        # Copy self's values
+        result.indices = np.array(self.indices, dtype=int)
+        result.values = np.array(self.values, dtype=self.dtype)
+
+        # Adjust other’s indices and add them
+        shifted_other_indices = np.array(other.indices) + self.length
+        result.indices = np.concatenate([result.indices, shifted_other_indices])
+        result.values = np.concatenate([result.values, np.array(other.values, dtype=self.dtype)])
+
+        # ✅ Correct length calculation: Sum of the two lengths (assuming lengths are extended)
+        result.length = self.length + other.length
+
+        return result
+
+
+    def __mul__(self, n):
+        """
+        Repeats the layerLink instance `n` times.
+
+        - Uses `+` to concatenate multiple copies with shifted indices.
+        - Each repetition gets indices shifted by `self.length * i`.
+
+        Returns:
+        -------
+        layerLink
+            A new layerLink instance with repeated data.
+        """
+        if not isinstance(n, int) or n <= 0:
+            raise ValueError("Multiplication factor must be a positive integer")
+
+        result = layerLink(self.property)
+        for i in range(n):
+            shifted_instance = layerLink(self.property)
+            shifted_instance.indices = np.array(self.indices) + i * self.length
+            shifted_instance.values = np.array(self.values, dtype=self.dtype)
+            shifted_instance.length = self.length
+            result += shifted_instance  # Use `+` to merge each repetition
+
+        return result
+
+layerLink("D",indices=1,values=1e-14)
 # %% Core class: layer
 # default values (usable in layer object methods)
 # these default values can be moved in a configuration file
@@ -267,13 +904,80 @@ def help_layer():
 # =======================
 class layer:
     """
-        layer class from patankar package
-        ...
-        strings properties: layername, layertype, layermaterial
-        scalar properties: D,k,l,C0
-        ...
-        Example:
-            A = layer(D=1e-14,l=50e-6,layername="layer A",layertype="polymer",layermaterial="PP")
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    This class models layers in food packaging, handling mass transfer, partitioning,
+    and meshing for finite-volume simulations using a modified Patankar method.
+    Layers can be assembled into multilayers via the `+` operator and support
+    dynamic property linkage using `layerLink`.
+
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `l`: Thickness of the layer (m)
+    - `D`: Diffusion coefficient (m²/s)
+    - `k`: Partition coefficient (dimensionless)
+    - `C0`: Initial concentration (arbitrary units)
+    - `rho`: Density (kg/m³)
+    - `T`: Contact temperature (°C)
+    - `substance`: Migrant/substance modeled for diffusion
+    - `medium`: The food medium in contact with the layer
+    - `Dmodel`, `kmodel`: Callable models for diffusion and partitioning
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__add__(self, other)`: Combines two layers into a multilayer structure.
+    - `__mul__(self, n)`: Duplicates a layer `n` times to create a multilayer.
+    - `__getitem__(self, i)`: Retrieves a sublayer from a multilayer.
+    - `__setitem__(self, i, other)`: Replaces sublayers in a multilayer structure.
+    - `mesh(self)`: Generates a numerical mesh for finite-volume simulations.
+    - `struct(self)`: Returns a dictionary representation of the layer properties.
+    - `resolvename(param_value, param_key, **unresolved)`: Resolves synonyms for parameter names.
+    - `help(cls)`: Displays a dynamically formatted summary of input parameters.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Works with `migration.py` for mass transfer simulations.
+    - Interfaces with `food.py` to define food-contact conditions.
+    - Uses `property.py` for predicting diffusion (`D`) and partitioning (`k`).
+    - Connects with `geometry.py` for 3D packaging simulations.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.layer import LDPE, PP, layerLink
+
+    # Define a polymer layer with default properties
+    A = LDPE(l=50e-6, D=1e-14)
+
+    # Create a multilayer structure
+    B = PP(l=200e-6, D=1e-15)
+    multilayer = A + B
+
+    # Assign dynamic property linkage
+    k_link = layerLink("k", indices=[1], values=[10])  # Assign partition coefficient to the second layer
+    multilayer.klink = k_link
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    from patankar.food import ethanol
+    medium = ethanol()
+    solution = senspatankar(multilayer, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - This class supports dynamic property inheritance, meaning `D` and `k` can be computed
+      based on the substance defined in `substance` and `medium`.
+    - The `layerLink` mechanism allows parameter adjustments without modifying the core object.
+    - The modified finite-volume meshing ensures **accurate steady-state and transient** behavior.
+
     """
 
     # -----------------------------------------------------------------------------
@@ -393,7 +1097,9 @@ class layer:
                  layername=None,layertype=None,layermaterial=None,layercode=None,
                  substance = None, medium = None,
                  # Dmodel = None, kmodel = None, they are defined via migrant (future overrides)
-                 nmesh=None, nmeshmin=None,
+                 nmesh=None, nmeshmin=None, # simulation parametes
+                 # link properties (for fitting)
+                 Dlink=None, klink=None, C0link=None, Tlink=None, # see documentation of layerLink
                  verbose=None, verbosity=2,**unresolved):
         """
 
@@ -491,6 +1197,12 @@ class layer:
         self._nmesh = nmesh
         self._nmeshmin = nmeshmin
 
+        # intialize links
+        self._Dlink  = self._initialize_link(Dlink, "D")
+        self._klink  = self._initialize_link(klink, "k")
+        self._C0link = self._initialize_link(C0link, "C0")
+        self._Tlink  = self._initialize_link(Tlink, "T")
+
         # set substance, medium and related D and k models
         if isinstance(substance,str):
             substance = migrant(substance)
@@ -516,6 +1228,42 @@ class layer:
 
         # we initialize the acknowlegment process for future property propagation
         self._hasbeeninherited = {}
+
+
+    # --------------------------------------------------------------------
+    # Helper method: initializes and validates layerLink attributes (Dlink, klink, C0link, Tlink)
+    # --------------------------------------------------------------------
+    def _initialize_link(self, link, expected_property):
+        """
+        Initializes and validates a layerLink attribute.
+
+        Parameters:
+        ----------
+        link : layerLink or None
+            The `layerLink` instance to be assigned.
+        expected_property : str
+            The expected property name (e.g., "D", "k", "C0", "T").
+
+        Returns:
+        -------
+        layerLink or None
+            The validated `layerLink` instance or None.
+
+        Raises:
+        -------
+        TypeError:
+            If `link` is not a `layerLink` or `None`.
+        ValueError:
+            If `link.property` does not match `expected_property`.
+        """
+        if link is None:
+            return None
+        if isinstance(link, layerLink):
+            if link.property == expected_property:
+                return link
+            raise ValueError(f'{expected_property}link.property should be "{expected_property}" not "{link.property}"')
+        raise TypeError(f"{expected_property}link must be a layerLink not a {type(link).__name__}")
+
 
     # --------------------------------------------------------------------
     # Class method returning help() for the end user
@@ -580,7 +1328,7 @@ class layer:
 
 
     # --------------------------------------------------------------------
-    # Class method to handle ambiguous definition from end-user
+    # Class method to handle ambiguous definitions from end-user
     # --------------------------------------------------------------------
     @classmethod
     def resolvename(cls, param_value, param_key, **unresolved):
@@ -627,31 +1375,56 @@ class layer:
     # --------------------------------------------------------------------
     # overloading binary addition (note that the output is of type layer)
     # --------------------------------------------------------------------
-    def __add__(self,other):
-        """ C=A+B | overload + operator """
+    def __add__(self, other):
+        """ C = A + B | overload + operator """
         if isinstance(other, layer):
             res = duplicate(self)
-            res._nmeshmin = min(self._nmeshmin,other._nmeshmin)
-            # propage substance
+            res._nmeshmin = min(self._nmeshmin, other._nmeshmin)
+            # Propagate substance
             if self._substance is None:
                 res._substance = other._substance
             else:
-                if isinstance(self._substance,migrant) and isinstance(other._substance,migrant):
+                if isinstance(self._substance, migrant) and isinstance(other._substance, migrant):
                     if self._substance.M != other._substance.M:
-                        print("Warning: the smallest subtance is propagated everywhere")
-                    res._substance = self._substance if self._substance.M<=other._substance.M else other._substance
+                        print("Warning: the smallest substance is propagated everywhere")
+                    res._substance = self._substance if self._substance.M <= other._substance.M else other._substance
                 else:
                     res._substance = None
-            for p in ["_name","_type","_material","_code","_nlayer"]:
-                setattr(res,p,getattr(self,p)+getattr(other,p))
-            for p in ["_l","_D","_k","_C0","_rho","_T"]:
-                setattr(res,p,np.concatenate((getattr(self,p),getattr(other,p))))
-            # we add the history of all layers
+            # Concatenate general attributes
+            for p in ["_name", "_type", "_material", "_code", "_nlayer"]:
+                setattr(res, p, getattr(self, p) + getattr(other, p))
+            # Concatenate numeric arrays
+            for p in ["_l", "_D", "_k", "_C0", "_rho", "_T"]:
+                setattr(res, p, np.concatenate((getattr(self, p), getattr(other, p))))
+            # Handle history tracking
             res._layerclass_history = self.layerclass_history + other.layerclass_history
             res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
             res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
+            # Manage layerLink attributes (Dlink, klink, C0link, Tlink)
+            property_map = {
+                "Dlink": ("D", self.Dlink, other.Dlink),
+                "klink": ("k", self.klink, other.klink),
+                "C0link": ("C0", self.C0link, other.C0link),
+                "Tlink": ("T", self.Tlink, other.Tlink),
+            }
+            for attr, (prop, self_link, other_link) in property_map.items():
+                if (self_link is not None) and (other_link is not None):
+                    # Case 1: Both have a link → Apply `+`
+                    setattr(res, '_'+attr, self_link + other_link)
+                elif self_link is not None:
+                    # Case 2: Only self has a link → Use as-is
+                    setattr(res, '_'+attr, self_link)
+                elif other_link is not None:
+                    # Case 3: Only other has a link → Shift indices and use
+                    shifted_link = duplicate(other_link)
+                    shifted_link.indices += len(getattr(self, prop))
+                    setattr(res, '_'+attr, shifted_link)
+                else:
+                    # Case 4: Neither has a link → Result is None
+                    setattr(res, '_'+attr, None)
             return res
-        else: raise ValueError("invalid layer object")
+        else:
+            raise ValueError("Invalid layer object")
 
 
     # --------------------------------------------------------------------
@@ -786,8 +1559,12 @@ class layer:
         elif callable(self.Dmodel): # user override
             Dtmp = self.Dmodel()
         if Dtmp is not None:
-            return np.full_like(self._D, Dtmp,dtype=np.float64)
-        return self._D
+            Dtmp = np.full_like(self._D, Dtmp,dtype=np.float64)
+            if self.hasDlink:
+                return self.Dlink.getfull(Dtmp) # substitution rules are applied as defined in Dlink
+            else:
+                return Dtmp
+        return self._D if not self.hasDlink else self.Dlink.getfull(self._D)
     @property
     def k(self):
         ktmp = None
@@ -796,14 +1573,18 @@ class layer:
         elif callable(self.kmodel): # user override
             ktmp = self.kmodel()
         if ktmp is not None:
-            return np.full_like(self._k, ktmp,dtype=np.float64)
-        return self._k
+            ktmp = np.full_like(self._k, ktmp,dtype=np.float64)
+            if self.hasklink:
+                return self.klink.getfull(ktmp) # substitution rules are applied as defined in klink
+            else:
+                return ktmp
+        return self._k if not self.hasklink else self.klink.getfull(self._k)
     @property
-    def C0(self): return self._C0
+    def C0(self): return self._C0 if not self.hasC0link else self.COlink.getfull(self._C0)
     @property
     def rho(self): return self._rho
     @property
-    def T(self): return self._T
+    def T(self): return self._T if not self.hasTlink else self.Tlink.getfull(self._T)
     @property
     def TK(self): return self._T+T0K
     @property
@@ -1119,6 +1900,61 @@ class layer:
             raise TypeError(f"value must be a foodlayer not a {type(value).__name__}")
         self._medium = value
 
+    # --------------------------------------------------------------------
+    #  getter and setter for links: Dlink, klink, C0link and Tlink
+    # --------------------------------------------------------------------
+    @property
+    def Dlink(self):
+        """Getter for Dlink"""
+        return self._Dlink
+    @Dlink.setter
+    def Dlink(self, value):
+        """Setter for Dlink"""
+        self._Dlink = self._initialize_link(value, "D")
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def klink(self):
+        """Getter for klink"""
+        return self._klink
+    @klink.setter
+    def klink(self, value):
+        """Setter for klink"""
+        self._klink = self._initialize_link(value, "k")
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def C0link(self):
+        """Getter for C0link"""
+        return self._C0link
+    @C0link.setter
+    def C0link(self, value):
+        """Setter for C0link"""
+        self._C0link = self._initialize_link(value, "C0")
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def Tlink(self):
+        """Getter for Tlink"""
+        return self._Tlink
+    @Tlink.setter
+    def Tlink(self, value):
+        """Setter for Tlink"""
+        self._Tlink = self._initialize_link(value, "T")
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def hasDlink(self):
+        """Returns True if Dlink is defined"""
+        return self.Dlink is not None
+    @property
+    def hasklink(self):
+        """Returns True if klink is defined"""
+        return self.klink is not None
+    @property
+    def hasC0link(self):
+        """Returns True if C0link is defined"""
+        return self.C0link is not None
+    @property
+    def hasTlink(self):
+        """Returns True if Tlink is defined"""
+        return self.Tlink is not None
 
     # --------------------------------------------------------------------
     # hash methods (assembly and layer-by-layer)
@@ -1163,11 +1999,12 @@ class layer:
         if self._nlayer==0:
             print("empty %s" % (self.__description))
         else:
-            hasDmodel = self._compute_Dmodel() is not None or self.Dmodel() is not None
-            haskmodel = self._compute_kmodel() is not None or self.kmodel() is not None
-            properties_ = {"l":False,"D":hasDmodel,"k":haskmodel,"C0":False}
+            hasDmodel, haskmodel = self.hasDmodel, self.haskmodel
+            hasDlink, hasklink, hasC0link, hasTlink = self.hasDlink, self.hasklink, self.hasC0link, self.hasTlink
+            properties_hasmodel = {"l":False,"D":hasDmodel,"k":haskmodel,"C0":False}
+            properties_haslink = {"l":False,"D":hasDlink,"k":hasklink,"C0":hasC0link,"T":hasTlink}
             if hasDmodel or haskmodel:
-                properties_["T"] = False
+                properties_hasmodel["T"] = False
             fmtval = '%10s: '+self._printformat+" [%s]"
             fmtstr = '%10s= %s'
             if self._nlayer==1:
@@ -1184,11 +2021,16 @@ class layer:
                 for p in ["name","type","material","code"]:
                     v = getattr(self,p)
                     print('%10s: "%s"' % (p,v[n-1]),flush=True)
-                for p in properties_.keys():
+                for p in properties_hasmodel.keys():
                     v = getattr(self,p)                 # value
                     vunit = getattr(self,p[0]+"unit")   # value unit
                     print(fmtval % (p,v[n-1],vunit),flush=True)
-                    if properties_[p]:
+                    isoverridenbylink = False
+                    if properties_haslink[p]:
+                        isoverridenbylink = not np.isnan(getattr(self,p+"link").get(n-1))
+                    if isoverridenbylink:
+                        print(fmtstr % ("",f"value controlled by {p}link[{n-1}] (external)"),flush=True)
+                    elif properties_hasmodel[p]:
                         print(fmtstr % ("",modelinfo[p]),flush=True)
         return str(self)
 
@@ -1448,6 +2290,14 @@ class layer:
                              "Use only one synonym per parameter.")
 
         return self # to enable chaining
+
+    # Basic tool for debugging
+    # --------------------------------------------------------------------
+    # STRUCT method - returns the equivalent dictionary from an object
+    # --------------------------------------------------------------------
+    def struct(self):
+        """ returns the equivalent dictionary from an object """
+        return dict((key, getattr(self, key)) for key in dir(self) if key not in dir(self.__class__))
 
 # %% Mesh class
 # Mesh class
