@@ -1,9 +1,13 @@
-## **🔬 Predicting Partition Coefficients from $logP$ Using the Polarity Index $P'$ 🌊**  
+## **🔬 🌊Predicting Partition Coefficients from $logP$ Using the Polarity Index $P'$ **  🍏⏩🍎
 
 ### **📌 Synopsis**  
 Directly substituting partition coefficients or Henry-like constants ($k$) with **$logP$ values** is ❌ **theoretically unsound**, as no established framework supports such an approach.  
 
 This document presents a **✅ generalized method** based on **Flory-Huggins theory** 📖, introducing a **robust polarity index ($P'$) 🔢**. By deriving **$P'$ from $logP$ and molecular mass ($M$) ⚖️**, this approach provides a **🔍 more consistent and predictive** framework for estimating partition coefficients **across different systems 🌎**.
+
+***
+
+[TOC]
 
 ***
 
@@ -173,3 +177,12 @@ $$
 ⚠ Alternative functional forms for $P’$ may improve accuracy.
 
 ⚠ The empirical scaling factor ($\alpha$) and correction function ($n(r)$) should be tested for robustness.
+
+***
+
+<div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-weight: bold;">
+  <span style="font-size: 20px;">🍏⏩🍎 <strong>SFPPy for Food Contact Compliance and Risk Assessment</strong></span><br>
+  Contact <a href="mailto:olivier.vitrac@gmail.com" style="color: #fff; text-decoration: underline;">Olivier Vitrac</a> for questions |
+  <a href="https://github.com/ovitrac/SFPPy" style="color: #fff; text-decoration: underline;">Website</a> |
+  <a href="https://ovitrac.github.io/SFPPy/" style="color: #fff; text-decoration: underline;">Documentation</a>
+</div>

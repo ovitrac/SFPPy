@@ -83,12 +83,12 @@ Example
     sol.plotC()
 ```
 
-@version: 1.0
+@version: 1.24
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-01-17
-@rev: 2025-02-24
+@rev: 2025-03-05
 
 """
 # Dependencies
@@ -97,19 +97,23 @@ import random
 import re
 from datetime import datetime
 from copy import deepcopy as duplicate
+# math libraries
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.sparse import diags, coo_matrix
 from scipy.interpolate import interp1d
 from scipy.integrate import simpson, cumulative_trapezoid
+from scipy.optimize import minimize
+# plot libraries
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 from matplotlib.figure import Figure
+# data libraries
 import pandas as pd
 
 # Local dependencies
-from patankar.layer import layer, check_units
+from patankar.layer import layer, check_units, layerLink
 from patankar.food import foodphysics,foodlayer
 
 __all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'compute_fc_profile_PBC', 'compute_fv_profile', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_valid_figure', 'layer', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear']
@@ -121,7 +125,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.2"
+__version__ = "1.24"
 
 # Plot configuration (preferred units)
 plotconfig = {
@@ -372,6 +376,58 @@ def rgb():
     plt.tight_layout()
     plt.show()
 
+# return colormaps
+def colormap(name="viridis", ncolors=16, tooclearflag=True, reverse=False):
+    """
+    Generates a list of `ncolors` colors from the specified colormap.
+
+    Parameters:
+    -----------
+    name : str, optional (default="viridis")
+        Name of the Matplotlib colormap to use.
+    ncolors : int, optional (default=16)
+        Number of colors to generate.
+    tooclearflag : bool, optional (default=True)
+        If True, applies `tooclear` function to adjust brightness.
+    reverse : bool, optional (default=False)
+        If True, reverses the colormap.
+
+    Supported colormaps:
+    --------------------
+    - "viridis"
+    - "jet"
+    - "plasma"
+    - "inferno"
+    - "magma"
+    - "cividis"
+    - "turbo"
+    - "coolwarm"
+    - "spring"
+    - "summer"
+    - "autumn"
+    - "winter"
+    - "twilight"
+    - "rainbow"
+    - "hsv"
+
+    Returns:
+    --------
+    list of tuples
+        List of RGB(A) colors in [0,1] range.
+
+    Raises:
+    -------
+    ValueError
+        If the colormap name is not recognized.
+    """
+    cmap_name = name + "_r" if reverse else name  # Append "_r" to reverse colormap
+    # Check if the colormap exists
+    if cmap_name not in plt.colormaps():
+        raise ValueError(f"Invalid colormap name '{cmap_name}'. Use one from: {list(plt.colormaps())}")
+
+    cmap = plt.colormaps.get_cmap(cmap_name)  # Fetch the colormap
+    colors = [cmap(i / (ncolors - 1)) for i in range(ncolors)]  # Normalize colors
+    return [tooclear(c) if tooclearflag else c[:3] for c in colors]  # Apply tooclear if enabled
 
 # Define PrintableFigure class
 class PrintableFigure(Figure):
@@ -410,7 +466,44 @@ plt.rcParams['figure.figsize'] = (8, 6)  # Optional default size
 # %% Generic Classes to manipulate results
 class Cprofile:
     """
-    Class to store and interpolate a concentration profile (C(x)).
+    A class representing a concentration profile C(x) for migration simulations.
+
+    This class allows storing, interpolating, and analyzing the concentration of a
+    migrating substance across a spatial domain.
+
+    Attributes:
+    -----------
+    x : np.ndarray
+        1D array of spatial positions.
+    Cx : np.ndarray
+        1D array of corresponding concentration values at `x`.
+
+    Methods:
+    --------
+    interp(x_new)
+        Interpolates the concentration at new spatial positions.
+    integrate()
+        Computes the integral of the concentration profile.
+    mean_concentration()
+        Computes the mean concentration over the spatial domain.
+    find_indices_xrange(x_range)
+        Returns indices where `x` falls within a specified range.
+    find_indices_Cxrange(Cx_range)
+        Returns indices where `Cx` falls within a specified concentration range.
+    assign_values(indices, values)
+        Assigns new concentration values at specified indices.
+
+    Example:
+    --------
+    ```python
+    x = np.linspace(0, 1, 10)
+    Cx = np.exp(-x)
+    profile = Cprofile(x, Cx)
+
+    # Interpolating at new points
+    new_x = np.linspace(0, 1, 50)
+    interpolated_Cx = profile.interp(new_x)
+    ```
     """
 
     def __init__(self, x=None, Cx=None):
@@ -580,13 +673,12 @@ class SensPatankarResult:
     restart : restartfile_senspatankar object
         Restart object (see restartfile_senspatankar doc)
 
-
     """
 
-    def __init__(self, name, description, ttarget, t, C, CF, fc, f, x, Cx, tC, C0eq, timebase,restart,xi,Cxi,_plotconfig=None):
-        """constructor using positional arguments"""
-        # xi and Cxi are close to x and Cx but they can be interpolated
-        # their values are not saved but used to built Cprofile
+    def __init__(self, name, description, ttarget, t, C, CF, fc, f, x, Cx, tC, C0eq, timebase,
+                 restart,restart_unsecure,xi,Cxi,
+                 _plotconfig=None, createcontainer=True, container=None, discrete=False):
+        """Constructor for simulation results."""
         self.name = name
         self.description = description
         self.ttarget = ttarget
@@ -600,27 +692,248 @@ class SensPatankarResult:
         self.tC = tC
         self.C0eq = C0eq
         self.timebase = timebase
-        # Interpolated CF at ttarget
+        self.discrete = discrete  # New flag for discrete data
+
+        # Interpolation for CF and Cx
         self.interp_CF = interp1d(t, CF, kind="linear", fill_value="extrapolate")
         self.CFtarget = self.interp_CF(ttarget)
-        # Interpolated concentration profile at ttarget
         self.interp_Cx = interp1d(t, Cx.T, kind="linear", axis=1, fill_value="extrapolate")
         self.Cxtarget = self.interp_Cx(ttarget)
-        # Restart information including restults at ttarget
-        # xi and Cxi are available only from a fresh simulation
-        # these data are missing from operation +, in this case we use restart as supplied
+
+        # Restart handling
         if xi is not None and Cxi is not None:
             Cxi_interp = interp1d(t, Cxi.T, kind="linear", axis=1, fill_value="extrapolate")
-            Cxi_at_t = Cxi_interp(ttarget) # this profile has inceasing xi using xreltol
-            restart.freezeCF(ttarget,self.CFtarget)
-            restart.freezeCx(xi,Cxi_at_t)
-        self.restart = restart
-        if _plotconfig is None:
-            self._plotconfig = plotconfig # fresh simulation
+            Cxi_at_t = Cxi_interp(ttarget)
+            restart.freezeCF(ttarget, self.CFtarget)
+            restart.freezeCx(xi, Cxi_at_t)
+        self.restart = restart # secure restart file (cannot be modified from outside)
+        self.restart_unsecure = restart_unsecure # unsecure one (can be modified from outside)
+
+        # Plot configuration
+        self._plotconfig = _plotconfig if _plotconfig else plotconfig
+
+        # Store state for simulation chaining
+        self.savestate(self.restart.inputs["multilayer"], self.restart.inputs["medium"])
+
+        # Default container for results comparison
+        if createcontainer:
+            if container is None:
+                self.comparison = CFSimulationContainer(name=name)
+                currentname = "reference"
+            elif isinstance(container, CFSimulationContainer):
+                self.comparison = container
+                currentname = name
+            else:
+                raise TypeError(f"container must be a CFSimulationContainer, not {type(container).__name__}")
+            self.comparison.add(self, label=currentname, color="Crimson", linestyle="-", linewidth=2)
+
+        # Distance pair
+        self._distancepair = None
+
+
+    def pseudoexperiment(self, npoints=25, std_relative=0.05, randomtime=False, autorecord=False, seed=None, t=None, CF=None, scale='linear'):
+        """
+        Generates discrete pseudo-experimental data from high-resolution simulated results.
+
+        Parameters
+        ----------
+        npoints : int, optional
+            Number of discrete time points to select (default: 25).
+        std_relative : float, optional
+            Relative standard deviation for added noise (default: 0.05).
+        randomtime : bool, optional
+            If True, picks random time points; otherwise, uses uniform spacing or a sqrt scale (default: False).
+        autorecord : bool, optional
+            If True, automatically adds the generated result to the container (default: False).
+        seed : int, optional
+            Random seed for reproducibility.
+        t : list or np.ndarray, optional
+            Specific time points to use instead of generated ones. If provided, `CF` must also be supplied.
+        CF : list or np.ndarray, optional
+            Specific CF values to use at the provided `t` time points. Must have the same length as `t`.
+        scale : str, optional
+            Determines how time points are distributed when `randomtime=False`:
+            - "linear" (default): Uniformly spaced time points.
+            - "sqrt": Time points are distributed more densely at the beginning using a square root scale.
+
+        Returns
+        -------
+        SensPatankarResult
+            A new SensPatankarResult object flagged as discrete.
+
+        Raises
+        ------
+        ValueError
+            If `t` and `CF` are provided but have mismatched lengths.
+        """
+
+        if seed is not None:
+            np.random.seed(seed)
+
+        if t is not None:
+            t_discrete = np.array(t, dtype=float)
+            if CF is None or len(CF) != len(t_discrete):
+                raise ValueError("When providing t, CF values must be provided and have the same length.")
+            CF_discrete_noisy = np.array(CF, dtype=float)
         else:
-            self._plotconfig = _plotconfig # if from an existing SensPatankarResult
-        # for simulation chaining
-        self.savestate(self.restart.inputs["multilayer"],self.restart.inputs["medium"])
+            if randomtime:
+                t_discrete = np.sort(np.random.uniform(self.t.min(), self.t.max(), npoints))
+            else:
+                if scale == 'sqrt':
+                    t_discrete = np.linspace(np.sqrt(self.t.min()), np.sqrt(self.t.max()), npoints) ** 2
+                else:
+                    t_discrete = np.linspace(self.t.min(), self.t.max(), npoints)
+
+            CF_discrete = self.interp_CF(t_discrete)
+            noise = np.random.normal(loc=0, scale=std_relative * CF_discrete)
+            CF_discrete_noisy = CF_discrete + noise
+            CF_discrete_noisy = np.clip(CF_discrete_noisy, a_min=0, a_max=None)
+
+        discrete_result = SensPatankarResult(
+            name=f"{self.name}_discrete",
+            description=f"Discrete pseudo-experimental data from {self.name}",
+            ttarget=self.ttarget,
+            t=t_discrete,
+            C=np.zeros_like(t_discrete),
+            CF=CF_discrete_noisy,
+            fc=np.zeros_like(t_discrete),
+            f=np.zeros_like(t_discrete),
+            x=self.x,
+            Cx=np.zeros((len(t_discrete), len(self.x))),
+            tC=self.tC,
+            C0eq=self.C0eq,
+            timebase=self.timebase,
+            restart=self.restart,
+            restart_unsecure=self.restart_unsecure,
+            xi=None,
+            Cxi=None,
+            _plotconfig=self._plotconfig,
+            discrete=True
+        )
+        if autorecord:
+            self.comparison.add(discrete_result, label="pseudo-experiment", color="black", marker='o', discrete=True)
+        return discrete_result
+
+    @property
+    def currrentdistance(self):
+        """returns the square distance to the last distance pair"""
+        return self.distanceSq(self._distancepair) if self._distancepair is not None else None
+
+    def __sub__(self, other):
+        """Overloads the operator - for returning a square distance function"""
+        return lambda: self.distanceSq(other)
+
+    def distanceSq(self, other, std_relative=0.05, npoints=100, cum=True):
+        """
+        Compute the squared distance between two SensPatankarResult instances.
+
+        Parameters
+        ----------
+        other : SensPatankarResult
+            The other instance to compare against.
+        std_relative : float, optional
+            Relative standard deviation for normalization (default: 0.05).
+        npoints : int, optional
+            Number of points for interpolation if both are continuous (default: 100).
+        cum : bool, optional
+            If True, return the cumulative sum; otherwise, return pointwise values.
+
+        Returns
+        -------
+        float or np.ndarray
+            The squared normalized error.
+
+        Raises
+        ------
+        TypeError
+            If `other` is not an instance of SensPatankarResult.
+        ValueError
+            If the time ranges do not overlap or if discrete instances have different time points.
+        """
+        if not isinstance(other, SensPatankarResult):
+            raise TypeError(f"other must be a SensPatankarResult not a {type(other).__name__}")
+
+        # refresh
+        self._distancepair = other # used for distance evaluation as self.currentdistance
+        # Find common time range
+        tmin, tmax = max(self.t.min(), other.t.min()), min(self.t.max(), other.t.max())
+        if tmin >= tmax:
+            raise ValueError("No overlapping time range between instances.")
+        if not self.discrete and not other.discrete:
+            # Case 1: Both are continuous
+            t_common = np.linspace(tmin, tmax, npoints)
+            CF_self = self.interp_CF(t_common)
+            CF_other = other.interp_CF(t_common)
+        elif self.discrete and not other.discrete:
+            # Case 2: self is discrete, other is continuous
+            t_common = self.t
+            CF_self = self.CF
+            CF_other = other.interp_CF(self.t)
+        elif not self.discrete and other.discrete:
+            # Case 3: self is continuous, other is discrete
+            t_common = other.t
+            CF_self = self.interp_CF(other.t)
+            CF_other = other.CF
+        else:
+            # Case 4: Both are discrete
+            if not np.array_equal(self.t, other.t):
+                raise ValueError("Discrete instances must have the same time points.")
+            t_common = self.t
+            CF_self = self.CF
+            CF_other = other.CF
+        # Compute squared normalized error
+        m = (CF_self + CF_other) / 2
+        m[m == 0] = 1  # Avoid division by zero, results in zero error where both are zero
+        e2 = ((CF_self - CF_other) / (m * std_relative)) ** 2
+        return np.sum(e2) if cum else e2
+
+    def fit(self,other,disp=True,std_relative=0.05,maxiter=100,xatol=1e-3,fatol=1e-3):
+        """Fits simulation parameters D and k to fit a discrete CF data"""
+        if not isinstance(other,SensPatankarResult):
+            raise TypeError(f"other must be a SensPatankarResult not a {type(other).__name__}")
+        if self.discrete:
+            raise ValueError("the current instance contains discrete data, use it as other")
+        if not other.discrete:
+            raise ValueError("only discrete CF results can be fitted")
+        # retrieve current Dlink and klink
+        Dlink = self.restart_unsecure.inputs["multilayer"].Dlink
+        klink = self.restart_unsecure.inputs["multilayer"].klink
+        if Dlink is None and klink is None:
+            raise ValueError("provide at least a Dlink or klink object")
+        if Dlink is not None and not isinstance(Dlink,layerLink):
+            raise TypeError(f"Dlink must be a layerLink not a {type(Dlink).__name__}")
+        if klink is not None and not isinstance(klink,layerLink):
+            raise TypeError(f"klink must be a layerLink not a {type(klink).__name__}")
+        # options for the optimizer
+        optimOptions = {"disp": disp, "maxiter": maxiter, "xatol": xatol, "fatol": fatol}
+        # params is assembled by concatenating -log(Dlink.values) and log(klink.values)
+        params_initial = np.concatenate((-np.log(Dlink.values),np.log(klink.values)))
+        maskD = np.concatenate((np.ones(Dlink.nzlength, dtype=bool), np.zeros(klink.nzlength, dtype=bool)))
+        maskk = np.concatenate((np.zeros(Dlink.nzlength, dtype=bool), np.ones(klink.nzlength, dtype=bool)))
+        # distance criterion
+        d2 = lambda: self.distanceSq(other, std_relative=0.05) # d2 = lambda: self - other works also
+        def objective(params):
+            """objective function, all parameters are passed via layerLink"""
+            logD = params[maskD]
+            logk = params[maskk]
+            Dlink.values = np.exp(-logD)
+            klink.values = np.exp(logk)
+            self.rerun(name="optimizer",color="OrangeRed",linewidth=4)
+            return d2()
+        def callback(params):
+            """Called at each iteration to display current values."""
+            Dtmp, ktmp = np.exp(-params[maskD]), np.exp(params[maskk])
+            print("Fitting Iteration:\n",f"D={Dtmp} [m²/s]\n",f"k={ktmp} [a.u.]\n")
+        # do the optimization
+        result = minimize(objective,
+                          params_initial,
+                          method='Nelder-Mead',
+                          callback=callback,
+                          options=optimOptions)
+        # extract the solution, be sure it is updated
+        Dlink.values, klink.values = np.exp(-result.x[maskD]), np.exp(result.x[maskk])
+        return result
+
 
     def savestate(self,multilayer,medium):
         """Saves senspantankar inputs for simulation chaining"""
@@ -673,6 +986,59 @@ class SensPatankarResult:
         return self  # Return self for method chaining if needed
 
 
+    def rerun(self,name=None,color=None,linestyle=None,linewidth=None, container=None, **kwargs):
+        """
+        Rerun the simulation (while keeping everything unchanged)
+            This function is intended to be used with layerLinks for updating internally the parameters.
+            R.rerun() stores the updated simulation results in R
+            Rupdate = R.rerun() returns a copy of R while updating R
+
+        note: Use R.resume() to resume/continue a simulation not rerun, to be used for sensitivity analysis/fitting.
+        """
+        F = self._lastmedium
+        P = self._lastmultilayer
+        if not isinstance(F, foodphysics):
+            raise TypeError(f"the current object is corrupted, _lastmedium is {type(self._lastmedium).__name__}")
+        if not isinstance(P, layer):
+            raise TypeError(f"the current object is corrupted, _lastmultilayer is {type(self._lastmultilayer).__name__}")
+        container = self.comparison if container is None else container
+        if not isinstance(container,CFSimulationContainer):
+            raise TypeError(f"the container should be a CFSimulationContainer not a {type(CFSimulationContainer).__name__}")
+        # rerun the simulation using unsecure restart data
+        inputs = self.restart_unsecure.inputs # all previous inputs
+        R = senspatankar(multilayer=inputs["multilayer"],
+                              medium=inputs["medium"],
+                              name=name if name is not None else inputs["name"],
+                              description=kwargs.get("description",inputs["description"]),
+                              t=kwargs.get("t",inputs["t"]),
+                              autotime=kwargs.get("autotime",inputs["autotime"]),
+                              timescale=kwargs.get("timescale",inputs["timescale"]),
+                              Cxprevious=inputs["Cxprevious"],
+                              ntimes=kwargs.get("ntimes",inputs["ntimes"]),
+                              RelTol=kwargs.get("RelTol",inputs["RelTol"]),
+                              AbsTol=kwargs.get("AbsTol",inputs["AbsTol"]),
+                              container=container)
+        # Update numeric data in self whith those in R
+        self.t = R.t
+        self.C = R.C
+        self.CF = R.CF
+        self.fc = R.fc
+        self.f = R.f
+        self.x = R.x
+        self.Cx = R.Cx
+        self.tC = R.tC
+        self.C0eq = R.C0eq
+        self.timebase = R.timebase
+        self.discrete = R.discrete
+        self.interp_CF = R.interp_CF
+        self.CFtarget = R.CFtarget
+        self.interp_Cx = R.interp_Cx
+        self.Cxtarget = R.Cxtarget
+        # Update label, color, linestyle, linewidth for the new curve (-1: last in the container)
+        # note if name already exists, the previous content is replaced
+        self.comparison.update(-1, label=name, color=color, linestyle=linestyle, linewidth=linewidth)
+        return self # for chaining
+
 
     def resume(self,t=None,**kwargs):
         """
@@ -720,6 +1086,38 @@ class SensPatankarResult:
                               RelTol=kwargs.get("RelTol",inputs["RelTol"]),
                               AbsTol=kwargs.get("AbsTol",inputs["AbsTol"]))
         return newsol
+
+
+    def copy(self):
+        """
+        Creates a deep copy of the current SensPatankarResult instance.
+
+        Returns
+        -------
+        SensPatankarResult
+            A new instance with identical attributes as the original.
+        """
+        return SensPatankarResult(
+            name=self.name,
+            description=self.description,
+            ttarget=self.ttarget,
+            t=self.t.copy(),
+            C=self.C.copy(),
+            CF=self.CF.copy(),
+            fc=self.fc.copy(),
+            f=self.f.copy(),
+            x=self.x.copy(),
+            Cx=self.Cx.copy(),
+            tC=self.tC.copy(),
+            C0eq=self.C0eq,
+            timebase=self.timebase,
+            restart=self.restart,
+            restart_unsecure=self.restart_unsecure,
+            xi=None,
+            Cxi=None,
+            _plotconfig=self._plotconfig,
+            discrete=self.discrete
+        )
 
     def chaining(self,multilayer,medium,**kwargs):
         sim = self.resume(multilayer=multilayer,medium=medium,**kwargs)
@@ -796,6 +1194,7 @@ class SensPatankarResult:
             C0eq=self.C0eq,  # Keep self.C0eq
             timebase=other.timebase,  # Take timebase from other
             restart=other.restart,  # Take restart from other (the last valid one)
+            restart_unsecure=other.restart_unsecure,  # Take restart from other (the last valid one)
             xi=None,  # xi and Cxi values are available
             Cxi=None  # only from a fresh simulation
         )
@@ -868,7 +1267,11 @@ class SensPatankarResult:
 
     def plotCF(self, t=None, trange=None):
         """
-        Plot the concentration in the food (CF) as a function of time and highlight the target time(s).
+        Plot the concentration in the food (CF) as a function of time.
+
+        - If `self.discrete` is True, plots discrete points.
+        - If `self.discrete` is False, plots a continuous curve.
+        - Highlights the target time(s).
 
         Parameters
         ----------
@@ -878,28 +1281,25 @@ class SensPatankarResult:
         trange : None, float, or list [t_min, t_max], optional
             If None, the full profile is shown.
             If a float, it is treated as an upper bound (lower bound assumed 0).
-            If a list `[t_min, t_max]`, the profile is interpolated between these values.
+            If a list `[t_min, t_max]`, the profile is limited to that range.
         """
-
-        # extract plotconfig
+        plt.rc('text', usetex=False) # Enable LaTeX formatting for Matplotlib
+        # Extract plot configuration
         plotconfig = self._plotconfig
-
         # Ensure t is a list (even if a single value is given)
         if t is None:
             t_values = [self.ttarget]
         elif isinstance(t, (int, float)):
             t_values = [t]
-        elif isinstance(t,np.ndarray):
+        elif isinstance(t, np.ndarray):
             t_values = t.flatten()
-        elif isinstance(t,tuple):
+        elif isinstance(t, tuple):
             t_values = check_units(t)[0]
         else:
             t_values = np.array(t)  # Convert to array
-
         # Interpolate CF values at given times
         CF_t_values = self.interp_CF(t_values)
-
-        # Handle trange interpolation
+        # Handle trange selection
         if trange is None:
             t_plot = self.t
             CF_plot = self.CF
@@ -909,62 +1309,58 @@ class SensPatankarResult:
                 trange = [0, trange]  # Assume lower bound is 0
             elif len(trange) != 2:
                 raise ValueError("trange must be None, a single float (upper bound), or a list of two values [t_min, t_max]")
-
             # Validate range
             t_min, t_max = trange
             if t_min < self.t.min() or t_max > self.t.max():
                 print("Warning: trange values are outside the available time range and may cause extrapolation.")
-
-            # Generate interpolated time values
-            t_plot = np.linspace(t_min, t_max, 500)
-            CF_plot = self.interp_CF(t_plot)  # Interpolated CF values
-
-        # Set up colormap for multiple t values
+            # Generate time values within range
+            mask = (self.t >= t_min) & (self.t <= t_max)
+            t_plot = self.t[mask]
+            CF_plot = self.CF[mask]
+        # Set up colormap for multiple target values
         cmap = plt.get_cmap('viridis', len(t_values))
         norm = mcolors.Normalize(vmin=min(t_values), vmax=max(t_values))
-
         # Create the figure
         fig, ax = plt.subplots(figsize=(8, 6))
-
-        # Plot CF curve (either original or interpolated)
-        ax.plot(t_plot / plotconfig["tscale"], CF_plot / plotconfig["Cscale"],
-                label='Concentration in Food', color='b')
-
+        # Plot behavior depends on whether data is discrete
+        if self.discrete:
+            ax.scatter(t_plot / plotconfig["tscale"], CF_plot / plotconfig["Cscale"],
+                       color='b', label='Concentration in Food (Discrete)', marker='o', alpha=0.7)
+        else:
+            ax.plot(t_plot / plotconfig["tscale"], CF_plot / plotconfig["Cscale"],
+                    label='Concentration in Food', color='b')
         # Highlight each target time
         for i, tC in enumerate(t_values):
-            color = tooclear(cmap(norm(tC))) if len(t_values) > 1 else 'r'  # Use color map only if multiple t values
+            color = tooclear(cmap(norm(tC))) if len(t_values) > 1 else 'r'  # Use colormap only if multiple t values
 
             # Vertical and horizontal lines
             ax.axvline(tC / plotconfig["tscale"], color=color, linestyle='--', linewidth=1)
             ax.axhline(CF_t_values[i] / plotconfig["Cscale"], color=color, linestyle='--', linewidth=1)
-
-            # Intersection point
+            # Highlight points
             ax.scatter(tC / plotconfig["tscale"], CF_t_values[i] / plotconfig["Cscale"],
-                       color=color, zorder=3)
-
+                       color=color, edgecolor='black', zorder=3, marker='D')
             # Annotate time
             ax.text(tC / plotconfig["tscale"], min(CF_plot) / plotconfig["Cscale"],
                     f'{(tC / plotconfig["tscale"]).item():.2f} {plotconfig["tunit"]}',
                     verticalalignment='bottom', horizontalalignment='right', rotation=90, fontsize=10, color=color)
-
             # Annotate concentration
             ax.text(min(t_plot) / plotconfig["tscale"], CF_t_values[i] / plotconfig["Cscale"],
                     f'{(CF_t_values[i] / plotconfig["Cscale"]).item():.2f} {plotconfig["Cunit"]}',
                     verticalalignment='bottom', horizontalalignment='left', fontsize=10, color=color)
-
         # Labels and title
         ax.set_xlabel(f'Time [{plotconfig["tunit"]}]')
         ax.set_ylabel(f'Concentration in Food [{plotconfig["Cunit"]}]')
         title_main = "Concentration in Food vs. Time"
+        if self.discrete:
+            title_main += " (Discrete Data)"
         title_sub = rf"$\bf{{{self.name}}}$" + (f": {self.description}" if self.description else "")
         ax.set_title(f"{title_main}\n{title_sub}", fontsize=10)
         ax.text(0.5, 1.05, title_sub, fontsize=8, ha="center", va="bottom", transform=ax.transAxes)
-        ax.set_title(title_main)
         ax.legend()
         ax.grid(True)
         plt.show()
-        # store metadata
-        setattr(fig,_fig_metadata_atrr_,f"pltCF_{self.name}")
+        # Store metadata
+        setattr(fig, _fig_metadata_atrr_, f"pltCF_{self.name}")
         return fig
 
 
@@ -983,11 +1379,13 @@ class SensPatankarResult:
         nmax : int, optional
             Maximum number of profiles to plot. The default is 15.
         """
-
+        plt.rc('text', usetex=False) # Enable LaTeX formatting for Matplotlib
+        # short circuit
+        if self.discrete:
+            print("discrete SensPatankarResult instance does not contain profile data, nothing to plot.")
+            return None
         # extract plotconfig
         plotconfig = self._plotconfig
-
-
         # Ensure time values are within the available time range
         if t is None:
             # Default: Select `nmax` time values using sqrt-spacing
@@ -1011,33 +1409,28 @@ class SensPatankarResult:
                 return
             # If more than `nmax`, keep the first `nmax` values
             t_values = t_values[:nmax]
-
         # Normalize time for colormap (Ensure at least one valid value)
         norm = mcolors.Normalize(vmin=t_values.min()/plotconfig["tscale"],
                                  vmax=t_values.max()/plotconfig["tscale"]) if len(t_values) > 1 \
             else mcolors.Normalize(vmin=self.t.min()/plotconfig["tscale"],
                                    vmax=self.t.max()/plotconfig["tscale"])
         cmap = plt.get_cmap('viridis', nmax)  # 'viridis' is similar to Parula
-
+        # new figure
         fig, ax = plt.subplots(figsize=(8, 6))  # Explicitly create a figure and axis
-
         # Plot all valid concentration profiles with time-based colormap
         for tC in t_values:
             C = self.interp_Cx(tC)
             color = tooclear(cmap(norm(tC/plotconfig["tscale"])))  # Get color from colormap
             ax.plot(self.x / plotconfig["lscale"], C / plotconfig["Cscale"],
                     color=color, alpha=0.9, label=f't={tC / plotconfig["tscale"]:.3g} {plotconfig["tunit"]}')
-
         # Highlight concentration profile at `ttarget`
         ax.plot(self.x / plotconfig["lscale"], self.Cxtarget / plotconfig["Cscale"], 'k-', linewidth=3,
                 label=f't={self.ttarget[0] / plotconfig["tscale"]:.2g} {plotconfig["tunit"]} (target)')
-
         # Create ScalarMappable and add colorbar
         sm = cm.ScalarMappable(cmap=cmap, norm=norm)
         sm.set_array([])  # Needed for colorbar
         cbar = fig.colorbar(sm, ax=ax)  # Explicitly associate colorbar with axis
         cbar.set_label(f'Time [{plotconfig["tunit"]}]')
-
         ax.set_xlabel(f'Position [{plotconfig["lunit"]}]')
         ax.set_ylabel(f'Concentration in Packaging [{plotconfig["Cunit"]}]')
         title_main = "Concentration Profiles in Packaging vs. Position"
@@ -1064,10 +1457,16 @@ class CFSimulationContainer:
         Stores CF results with unique keys. Each entry contains:
         - 'label': Label used for legend.
         - 'tmin', 'tmax': Time range of the simulation.
-        - 'interpolant': Interpolated CF function.
+        - 'interpolant': Interpolated CF function (if continuous).
+        - 'times': Discrete time points (if discrete).
+        - 'values': Discrete CF values (if discrete).
         - 'color': Assigned color for plotting.
         - 'linestyle': Line style (default is '-').
         - 'linewidth': Line width (default is 2).
+        - 'marker': Marker style for discrete data.
+        - 'markerfacecolor': Marker face color.
+        - 'markersize': Marker size.
+        - 'discrete': Boolean indicating discrete data.
     """
 
     def __init__(self,name="",description=""):
@@ -1086,89 +1485,226 @@ class CFSimulationContainer:
         return self._description or f"comparison of {len(self.curves)} curves"
 
 
-    def add(self, simulation_result, label=None, color=None, linestyle="-", linewidth=2):
+    def add(self, simulation_result, label=None, color=None, linestyle="-", linewidth=2,
+            marker='o', markerfacecolor='auto', markeredgecolor='black', markersize=6, discrete=False):
         """
-        Add a new CF result to the container.
+        Add a CF result to the container.
 
         Parameters
         ----------
         simulation_result : SensPatankarResult
-            The simulation result to store.
-        label : str, optional
-            Label for the curve (used in legend). Defaults to 'plot1', 'plot2', etc.
-        color : str or tuple, optional
-            Color for the curve. Defaults to automatic colormap.
-        linestyle : str, optional
-            Line style for the plot (e.g., '-', '--', '-.', ':'). Default is '-'.
-        linewidth : float, optional
-            Line width for the plot. Default is 2.
+            The simulation result.
+        discrete : bool, optional
+            Whether the data is discrete.
         """
-
-        # Check input
-        if not isinstance(simulation_result,SensPatankarResult):
-            raise TypeError(f"simulation_result should be a SensPatankarResult object not a {type(simulation_result).__name__}")
-
-        # Auto-generate a label if not provided
-        label = label or self.name
+        if not isinstance(simulation_result, SensPatankarResult):
+            raise TypeError(f"Expected SensPatankarResult, got {type(simulation_result).__name__}")
         label = label or f"plot{len(self.curves) + 1}"
-
-        # Generate a unique key (first 40 letters of label)
-        key = label[:40] # 40 max
-
-        # Create the interpolant function
-        interpolant = interp1d(simulation_result.t, simulation_result.CF,
-                               kind="linear", fill_value="extrapolate", bounds_error=False)
-
-        # Assign color from a colormap if not provided
+        key = label[:80]
         if color is None:
             cmap = cm.get_cmap("tab10", len(self.curves) + 1)
-            color = cmap(len(self.curves) % 10)  # Cycle through colors
-
-        # Store the result in the dictionary (replacing existing key if necessary)
+            color = cmap(len(self.curves) % 10)
+        if markerfacecolor == 'auto':
+            markerfacecolor = color
         self.curves[key] = {
             "label": label,
-             "name": simulation_result.name,
-      "description": simulation_result.description,
-             "tmin": simulation_result.t.min(),
-             "tmax": simulation_result.t.max(),
-      "interpolant": interpolant,
             "color": color,
-        "linestyle": linestyle,
-        "linewidth": linewidth
+            "linestyle": linestyle,
+            "linewidth": linewidth,
+            "marker": marker,
+            "markerfacecolor": markerfacecolor,
+            "markeredgecolor": markeredgecolor,
+            "markersize": markersize,
+            "discrete": discrete
         }
+        if discrete:
+            self.curves[key].update({
+                "times": simulation_result.t,
+                "values": simulation_result.CF
+            })
+        else:
+            self.curves[key].update({
+                "tmin": simulation_result.t.min(),
+                "tmax": simulation_result.t.max(),
+                "interpolant": simulation_result.interp_CF
+            })
 
-    def delete(self, label):
+    def delete(self, identifier):
         """
-        Remove a stored curve by its label.
+        Remove a stored curve by its index (int) or label (str).
 
         Parameters
         ----------
-        label : str
-            Label of the curve to delete.
+        identifier : int or str
+            - If `int`, removes the curve at the specified index.
+            - If `str`, removes the curve with the matching label.
         """
-        key = label[:10]
-        if key in self.curves:
-            del self.curves[key]
-            print(f"Deleted curve '{label}'")
+        if isinstance(identifier, int):
+            key = self._get_key_by_index(identifier)
+        elif isinstance(identifier, str):
+            key = identifier[:40]  # Match the label-based key
+            if key not in self.curves:
+                print(f"No curve found with label '{identifier}'")
+                return
         else:
-            print(f"No curve found with label '{label}'")
+            raise TypeError("Identifier must be an integer (index) or a string (label).")
 
     def __repr__(self):
-        """Return a summary of stored CF curves."""
+        """Return a summary of stored CF curves including index numbers."""
         if not self.curves:
             return "<CFSimulationContainer: No stored curves>"
-
         repr_str = "<CFSimulationContainer: Stored CF Curves>\n"
         repr_str += "--------------------------------------------------\n"
-        for key, data in self.curves.items():
-            repr_str += (f"[{data['label']}] "
-                         f"Name: {data['name']} | "
-                         f"Descr: {data['description']} | "
+        for index, (key, data) in enumerate(self.curves.items()):
+            repr_str += (f"[{index}] Label: {data['label']} | "
                          f"Time: [{data['tmin']:.2e}, {data['tmax']:.2e}] s | "
                          f"Color: {data['color']} | "
                          f"Style: {data['linestyle']} | "
                          f"Width: {data['linewidth']}\n")
         return repr_str
+
+    def _validate_indices(self, indices):
+        """Helper function to check if indices are valid."""
+        if isinstance(indices, int):
+            indices = [indices]
+        if not all(isinstance(i, int) and 0 <= i < len(self.curves) for i in indices):
+            raise IndexError(f"Invalid index in {indices}. Must be between 0 and {len(self.curves) - 1}.")
+        return indices
+
+    def _get_keys_by_indices(self, indices):
+        """Helper function to retrieve keys based on indices."""
+        if isinstance(indices, (int, str)):
+            indices = [indices]
+        keys = []
+        all_keys = list(self.curves.keys())
+        for idx in indices:
+            if isinstance(idx, int):
+                if idx < 0:
+                    idx += len(all_keys)
+                if idx < 0 or idx >= len(all_keys):
+                    raise IndexError(f"Index {idx} is out of range for curves.")
+                keys.append(all_keys[idx])
+            elif isinstance(idx, str):
+                if idx not in self.curves:
+                    raise KeyError(f"Key '{idx}' does not exist in curves.")
+                keys.append(idx)
+            else:
+                raise TypeError("Index must be an int, str, or a list of both.")
+        return keys
+
+    def update(self, index, label=None, linestyle=None, linewidth=None, color=None,
+               marker=None, markersize=None, markerfacecolor=None, markeredgecolor=None):
+        """
+        Update properties of one or multiple curves.
+
+        Parameters
+        ----------
+        index : int or list of int
+            Index or indices of the curve(s) to update.
+        label : str, optional
+            New label for the curve(s).
+        linestyle : str, optional
+            New linestyle for the curve(s).
+        linewidth : float, optional
+            New linewidth for the curve(s).
+        color : str or tuple, optional
+            New color for the curve(s).
+        marker : str, optional
+            New marker style for discrete data.
+        markersize : float, optional
+            New marker size for discrete data.
+        markerfacecolor : str or tuple, optional
+            New marker face color.
+        markeredgecolor : str or tuple, optional
+            New marker edge color.
+        """
+        keys = self._get_keys_by_indices(index)
+
+        for key in keys:
+            if label is not None:
+                self.curves[key]["label"] = label
+            if linestyle is not None:
+                self.curves[key]["linestyle"] = linestyle
+            if linewidth is not None:
+                self.curves[key]["linewidth"] = linewidth
+            if color is not None:
+                self.curves[key]["color"] = color
+            if marker is not None:
+                self.curves[key]["marker"] = marker
+            if markersize is not None:
+                self.curves[key]["markersize"] = markersize
+            if markerfacecolor is not None:
+                self.curves[key]["markerfacecolor"] = markerfacecolor
+            if markeredgecolor is not None:
+                self.curves[key]["markeredgecolor"] = markeredgecolor
+
+
+    def label(self, index, new_label):
+        """Change the label of one or multiple curves."""
+        self.update(index, label=new_label)
+
+    def linewidth(self, index, new_value):
+        """Change the linewidth of one or multiple curves."""
+        self.update(index, linewidth=new_value)
+
+    def linestyle(self, index, new_style):
+        """Change the linestyle of one or multiple curves."""
+        self.update(index, linestyle=new_style)
+
+    def color(self, index, new_color):
+        """Change the color of one or multiple curves."""
+        self.update(index, color=new_color)
+
+    def marker(self, index, new_marker):
+        """Change the marker style of one or multiple curves."""
+        self.update(index, marker=new_marker)
+
+    def markersize(self, index, new_size):
+        """Change the marker size of one or multiple curves."""
+        self.update(index, markersize=new_size)
+
+    def markerfacecolor(self, index, new_facecolor):
+        """Change the marker face color of one or multiple curves."""
+        self.update(index, markerfacecolor=new_facecolor)
+
+    def markeredgecolor(self, index, new_edgecolor):
+        """Change the marker edge color of one or multiple curves."""
+        self.update(index, markeredgecolor=new_edgecolor)
+
+    def colormap(self, name="viridis", ncolors=16, tooclearflag=True, reverse=False):
+        """
+        Generates a list of `ncolors` colors from the specified colormap.
+
+        Parameters:
+        -----------
+        name : str, optional (default="viridis")
+            Name of the Matplotlib colormap to use.
+        ncolors : int, optional (default=16)
+            Number of colors to generate.
+        tooclearflag : bool, optional (default=True)
+            If True, applies `tooclear` function to adjust brightness.
+        reverse : bool, optional (default=False)
+            If True, reverses the colormap.
+
+        Returns:
+        --------
+        list of tuples
+            List of RGB(A) colors in [0,1] range.
+
+        Raises:
+        -------
+        ValueError
+            If the colormap name is not recognized.
+        """
+        return colormap(name, ncolors, tooclear, reverse)
+
+    def viridis(self, ncolors=16, tooclear=True, reverse=False):
+        """Generates colors from the Viridis colormap."""
+        return colormap("viridis", ncolors, tooclear, reverse)
+
+    def jet(self, ncolors=16, tooclear=True, reverse=False):
+        """Generates colors from the Jet colormap."""
+        return colormap("jet", ncolors, tooclear, reverse)
 
 
     def plotCF(self, t_range=None):
@@ -1186,7 +1722,7 @@ class CFSimulationContainer:
             - "tscale": Time scaling factor.
             - "Cscale": Concentration scaling factor.
         """
-
+        plt.rc('text', usetex=True) # Enable LaTeX formatting for Matplotlib
         # extract plotconfig
         plotconfig = self._plotconfig
 
@@ -1197,23 +1733,22 @@ class CFSimulationContainer:
         fig, ax = plt.subplots(figsize=(8, 6))
 
         for data in self.curves.values():
-            # Determine the time range
-            t_min, t_max = data["tmin"], data["tmax"]
-            if t_range:
-                t_min, t_max = max(t_min, t_range[0]), min(t_max, t_range[1])
+            if data["discrete"]:
+                # Discrete data plotting
+                ax.scatter(data["times"], data["values"], label=data["label"],
+                           color=data["color"], marker=data["marker"],
+                           facecolor=data["markerfacecolor"], edgecolor=data["markeredgecolor"],
+                           s=data["markersize"]**2)
+            else:
+                # Continuous data plotting
+                t_min, t_max = data["tmin"], data["tmax"]
+                if t_range:
+                    t_min, t_max = max(t_min, t_range[0]), min(t_max, t_range[1])
 
-            # Generate interpolated values
-            t_plot = np.linspace(t_min, t_max, 500)
-            CF_plot = data["interpolant"](t_plot)
-
-            # Apply unit scaling if plotconfig is provided
-            if plotconfig:
-                t_plot /= plotconfig.get("tscale", 1)
-                CF_plot /= plotconfig.get("Cscale", 1)
-
-            # Plot the curve
-            ax.plot(t_plot, CF_plot, label=data["label"],
-                    color=data["color"], linestyle=data["linestyle"], linewidth=data["linewidth"])
+                t_plot = np.linspace(t_min, t_max, 500)
+                CF_plot = data["interpolant"](t_plot)
+                ax.plot(t_plot, CF_plot, label=data["label"],
+                        color=data["color"], linestyle=data["linestyle"], linewidth=data["linewidth"])
 
         # Configure the plot
         ax.set_xlabel(f'Time [{plotconfig["tunit"]}]' if plotconfig else "Time")
@@ -1325,13 +1860,29 @@ class CFSimulationContainer:
 
     def rgb(self):
         """Displays a categorized color chart with properly aligned headers."""
+        plt.rc('text', usetex=False) # Enable LaTeX formatting for Matplotlib
         rgb()
 
 
 # restartfile
 class restartfile:
     """
-    Containter for the restartfile
+    A container class for storing simulation restart data.
+
+    This class facilitates storing and restoring simulation parameters and results,
+    allowing simulations to be resumed or analyzed after computation.
+
+    Methods:
+    --------
+    copy(what)
+        Creates a deep copy of various data types to ensure safety in storage.
+
+    Example:
+    --------
+    ```python
+    restart = restartfile()
+    copy_data = restart.copy([1, 2, 3])
+    ```
     """
     @classmethod
     def copy(cls, what):
@@ -1350,25 +1901,68 @@ class restartfile:
 # specific restartfile for senspatankar
 class restartfile_senspantakar(restartfile):
     """
-    Containter for the restartfile
+    Specialized restart file container for the `senspatankar` migration solver.
+
+    This class stores the simulation inputs and computed results, enabling
+    the resumption of a simulation from a saved state.
+
+    Attributes:
+    -----------
+    inputs : dict
+        Stores all initial simulation inputs.
+    t : float or None
+        Simulation time at the stored state.
+    CF : float or None
+        Concentration in food at the stored state.
+    Cprofile : Cprofile or None
+        Concentration profile at the stored state.
+
+    Methods:
+    --------
+    freezeCF(t, CF)
+        Saves the food concentration `CF` at time `t`.
+    freezeCx(x, Cx)
+        Saves the concentration profile `Cx` over `x`.
+
+    Example:
+    --------
+    ```python
+    restart = restartfile_senspatankar(multilayer, medium, name, description, ...)
+    restart.freezeCF(t=1000, CF=0.05)
+    ```
     """
     def __init__(self,multilayer,medium,name,description,
                  t,autotime,timescale,Cxprevious,
-                 ntimes,RelTol,AbsTol):
+                 ntimes,RelTol,AbsTol,deepcopy=True):
         """constructor to be called at the intialization"""
-        inputs = {
-            "multilayer":multilayer.copy(),
-            "medium":medium.copy(),
-            "name":restartfile.copy(name),
-            "description":restartfile.copy(description),
-            "t":restartfile.copy(t), # t is a duration not absolute time (it should not be reused)
-            "autotime":restartfile.copy(autotime),
-            "timescale":restartfile.copy(timescale),
-            "Cxprevious":Cxprevious,
-            "ntimes":restartfile.copy(ntimes),
-            "RelTol":restartfile.copy(RelTol),
-            "AbsTol":restartfile.copy(AbsTol)
-            }
+        if deepcopy:
+            inputs = {
+                "multilayer":multilayer.copy(),
+                "medium":medium.copy(),
+                "name":restartfile.copy(name),
+                "description":restartfile.copy(description),
+                "t":restartfile.copy(t), # t is a duration not absolute time (it should not be reused)
+                "autotime":restartfile.copy(autotime),
+                "timescale":restartfile.copy(timescale),
+                "Cxprevious":Cxprevious,
+                "ntimes":restartfile.copy(ntimes),
+                "RelTol":restartfile.copy(RelTol),
+                "AbsTol":restartfile.copy(AbsTol)
+                }
+        else:
+            inputs = {
+                "multilayer":multilayer,
+                "medium":medium,
+                "name":name,
+                "description":description,
+                "t":t, # t is a duration not absolute time (it should not be reused)
+                "autotime":autotime,
+                "timescale":timescale,
+                "Cxprevious":Cxprevious,
+                "ntimes":ntimes,
+                "RelTol":RelTol,
+                "AbsTol":AbsTol
+                }
         # inputs
         self.inputs = inputs
         # outputs
@@ -1405,7 +1999,8 @@ class restartfile_senspantakar(restartfile):
 def senspatankar(multilayer=None, medium=None,
                  name=f"senspatantkar:{autoname(6)}", description="",
                  t=None, autotime=True, timescale="sqrt", Cxprevious=None,
-                 ntimes=1e3, RelTol=1e-6, AbsTol=1e-6):
+                 ntimes=1e3, RelTol=1e-6, AbsTol=1e-6,
+                 container=None):
     """
     Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
     packaging structure into a food medium (or liquid medium). This solver uses a finite-volume
@@ -1513,9 +2108,12 @@ def senspatankar(multilayer=None, medium=None,
     # extract the PBC flag (True for setoff)
     PBC = medium.PBC
 
-    # Restart file initialization (all parameters are saved)
+    # Restart file initialization (all parameters are saved - and cannot be changed)
     restart = restartfile_senspantakar(multilayer, medium, name,
-            description, t, autotime, timescale, Cxprevious, ntimes, RelTol, AbsTol)
+            description, t, autotime, timescale, Cxprevious, ntimes, RelTol, AbsTol,deepcopy=True)
+    # Restart file (unsecure version without deepcoy)
+    restart_unsecure = restartfile_senspantakar(multilayer, medium, name,
+            description, t, autotime, timescale, Cxprevious, ntimes, RelTol, AbsTol,deepcopy=False)
 
     # Contact medium properties
     CF0 = medium.get_param("CF0",0) # instead of medium.CF0 to get a fallback mechanism with nofood and setoff
@@ -1753,8 +2351,11 @@ def senspatankar(multilayer=None, medium=None,
         C0eq=C0eq,
         timebase=timebase,
         restart=restart, # <--- restart info (inputs only)
+        restart_unsecure=restart_unsecure,
         xi=xfulli*l_ref, # for restart only
-        Cxi=Cfull_dimlessi*C0eq # for restart only
+        Cxi=Cfull_dimlessi*C0eq, # for restart only
+        createcontainer = True,
+        container=container
     )
 
 
@@ -1833,7 +2434,55 @@ def compute_fv_profile(xmesh, dw, de, C_dimless, k_mesh, D_mesh, hw, he, CF_diml
 
 
 def compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh, xreltol=0):
-    """Calculate interface concentrations with periodic boundary conditions"""
+    """
+    Computes the full concentration profile, including interface concentrations,
+    for a system with periodic boundary conditions (PBC).
+
+    This function calculates the concentrations at the east (`Ce`) and west (`Cw`)
+    interfaces of each finite volume node, ensuring periodicity in the domain.
+
+    Parameters
+    ----------
+    C : np.ndarray, shape (num_nodes, num_timesteps)
+        Concentration values at each node for all time steps.
+    t : np.ndarray, shape (num_timesteps,)
+        Time points at which concentration profiles are computed.
+    de : np.ndarray, shape (num_nodes,)
+        Eastward diffusion lengths at each node.
+    dw : np.ndarray, shape (num_nodes,)
+        Westward diffusion lengths at each node.
+    he : np.ndarray, shape (num_nodes,)
+        Eastward mass transfer coefficients.
+    hw : np.ndarray, shape (num_nodes,)
+        Westward mass transfer coefficients.
+    k : np.ndarray, shape (num_nodes,)
+        Partition coefficients at each node.
+    D : np.ndarray, shape (num_nodes,)
+        Diffusion coefficients at each node.
+    xmesh : np.ndarray, shape (num_nodes,)
+        Spatial positions of the mesh points.
+    xreltol : float, optional, default=0
+        Relative tolerance applied to spatial positions to adjust interface locations.
+
+    Returns
+    -------
+    xfull : np.ndarray, shape (3 * num_nodes,)
+        Full spatial positions including center nodes and interface positions.
+    Cfull : np.ndarray, shape (num_timesteps, 3 * num_nodes)
+        Full concentration profiles, including node and interface values.
+
+    Notes
+    -----
+    - This function enforces periodic boundary conditions by shifting indices in `C` and `k`.
+    - Concentrations at the interfaces (`Ce` and `Cw`) are computed using the finite volume approach.
+    - The result `Cfull` contains interleaved values: [Cw, C, Ce] for each node.
+
+    Example
+    -------
+    ```python
+    xfull, Cfull = compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh)
+    ```
+    """
 
     num_nodes, num_timesteps = C.shape  # Extract dimensions
 

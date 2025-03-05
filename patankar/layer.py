@@ -83,12 +83,12 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.2
+@version: 1.24
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-02-14
+@rev. 2025-03-04
 
 """
 
@@ -141,7 +141,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.23"
+__version__ = "1.24"
 
 # %% Private functions and classes
 
@@ -206,6 +206,66 @@ def _toSI(value=None):
         raise ValueError('value must be (currentvalue,"unit") - for example: (10,"days")')
     return check_units(value)[0]
 
+
+# formatsci equivalent
+def format_scientific_latex(value, numdigits=4, units=None, prefix="",mathmode="$"):
+    """
+    Formats a number in scientific notation only when necessary, using LaTeX.
+
+    Parameters:
+    -----------
+    value : float
+        The number to format.
+    numdigits : int, optional (default=4)
+        Number of significant digits for formatting.
+    units : str, optional (default=None)
+        LaTeX representation of units. If None, no units are added.
+    prefix: str, optional (default="")
+    mathmode: str, optional (default="$")
+
+    Returns:
+    --------
+    str
+        The formatted number in standard or LaTeX scientific notation.
+
+    Examples:
+    ---------
+    >>> format_scientific_latex(1e-12)
+    '$10^{-12}$'
+
+    >>> format_scientific_latex(1.5e-3)
+    '0.0015'
+
+    >>> format_scientific_latex(1.3e10)
+    '$1.3 \\cdot 10^{10}$'
+
+    >>> format_scientific_latex(0.00341)
+    '0.00341'
+
+    >>> format_scientific_latex(3.41e-6)
+    '$3.41 \\cdot 10^{-6}$'
+    """
+
+    if value == 0:
+        return "$0$" if units is None else rf"$0 \, {units}$"
+    # Get formatted number using Matlab-like %g behavior
+    formatted = f"{value:.{numdigits}g}"
+    # If the formatting results in an `e` notation, convert to LaTeX
+    if "e" in formatted or "E" in formatted:
+        coefficient, exponent = formatted.split("e")
+        exponent = int(exponent)  # Convert exponent to integer
+        # Remove trailing zeros in coefficient
+        coefficient = coefficient.rstrip("0").rstrip(".")  # Ensures "1.00" -> "1"
+        # LaTeX scientific format
+        sci_notation = rf"{prefix}{coefficient} \cdot 10^{{{exponent}}}"
+        return sci_notation if units is None else rf"{mathmode}{sci_notation} \, {units}{mathmode}"
+    # Otherwise, return standard notation
+    return formatted if units is None else rf"{mathmode}{prefix}{formatted} \, {units}{mathmode}"
+
+
+
+
+# helper function to list all classes
 def list_layer_subclasses():
     """
     Lists all classes in this module that derive from 'layer',
@@ -236,6 +296,7 @@ def list_layer_subclasses():
     return subclasses_info
 
 
+# general help for layer
 def help_layer():
     """
     Print all subclasses with their type/material info in a Markdown table with dynamic column widths.
@@ -790,7 +851,7 @@ class layerLink:
 
         return self.getandreplace(None, altvalues)
 
-
+    @property
     def nzlength(self):
         """
         Returns the number of stored nonzero elements (i.e., indices with values).
@@ -894,7 +955,6 @@ class layerLink:
 
         return result
 
-layerLink("D",indices=1,values=1e-14)
 # %% Core class: layer
 # default values (usable in layer object methods)
 # these default values can be moved in a configuration file
@@ -1098,8 +1158,8 @@ class layer:
                  substance = None, medium = None,
                  # Dmodel = None, kmodel = None, they are defined via migrant (future overrides)
                  nmesh=None, nmeshmin=None, # simulation parametes
-                 # link properties (for fitting)
-                 Dlink=None, klink=None, C0link=None, Tlink=None, # see documentation of layerLink
+                 # link properties (for fitting and linking properties across simulations)
+                 Dlink=None, klink=None, C0link=None, Tlink=None, llink=None,
                  verbose=None, verbosity=2,**unresolved):
         """
 
@@ -1197,11 +1257,13 @@ class layer:
         self._nmesh = nmesh
         self._nmeshmin = nmeshmin
 
-        # intialize links
+        # intialize links for X = D,k,C0,T,l (see documentation of layerLink)
+        # A link enables the values of X to be defined and controlled outside the instance
         self._Dlink  = self._initialize_link(Dlink, "D")
         self._klink  = self._initialize_link(klink, "k")
         self._C0link = self._initialize_link(C0link, "C0")
         self._Tlink  = self._initialize_link(Tlink, "T")
+        self._llink  = self._initialize_link(llink, "l")
 
         # set substance, medium and related D and k models
         if isinstance(substance,str):
@@ -1231,7 +1293,8 @@ class layer:
 
 
     # --------------------------------------------------------------------
-    # Helper method: initializes and validates layerLink attributes (Dlink, klink, C0link, Tlink)
+    # Helper method: initializes and validates layerLink attributes
+    # (Dlink, klink, C0link, Tlink, llink)
     # --------------------------------------------------------------------
     def _initialize_link(self, link, expected_property):
         """
@@ -1400,12 +1463,13 @@ class layer:
             res._layerclass_history = self.layerclass_history + other.layerclass_history
             res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
             res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
-            # Manage layerLink attributes (Dlink, klink, C0link, Tlink)
+            # Manage layerLink attributes (Dlink, klink, C0link, Tlink, llink)
             property_map = {
                 "Dlink": ("D", self.Dlink, other.Dlink),
                 "klink": ("k", self.klink, other.klink),
                 "C0link": ("C0", self.C0link, other.C0link),
                 "Tlink": ("T", self.Tlink, other.Tlink),
+                "llink": ("l", self.llink, other.llink),
             }
             for attr, (prop, self_link, other_link) in property_map.items():
                 if (self_link is not None) and (other_link is not None):
@@ -1550,7 +1614,7 @@ class layer:
     @property
     def code(self): return self._code
     @property
-    def l(self): return self._l
+    def l(self): return self._l if not self.hasllink else self.llink.getfull(self._l)
     @property
     def D(self):
         Dtmp = None
@@ -1881,7 +1945,7 @@ class layer:
     def substance(self,value):
         if isinstance(value,str):
             value = migrant(value)
-        if not isinstance(value,migrant):
+        if not isinstance(value,migrant) and value is not None:
             raise TypeError(f"value must be a migrant not a {type(value).__name__}")
         self._substance = value
     @migrant.setter
@@ -1901,7 +1965,7 @@ class layer:
         self._medium = value
 
     # --------------------------------------------------------------------
-    #  getter and setter for links: Dlink, klink, C0link and Tlink
+    #  getter and setter for links: Dlink, klink, C0link, Tlink, llink
     # --------------------------------------------------------------------
     @property
     def Dlink(self):
@@ -1940,6 +2004,15 @@ class layer:
         self._Tlink = self._initialize_link(value, "T")
         if isinstance(value,layerLink): value._maxlength = self.n
     @property
+    def llink(self):
+        """Getter for llink"""
+        return self._llink
+    @llink.setter
+    def llink(self, value):
+        """Setter for llink"""
+        self._llink = self._initialize_link(value, "l")
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
     def hasDlink(self):
         """Returns True if Dlink is defined"""
         return self.Dlink is not None
@@ -1955,6 +2028,29 @@ class layer:
     def hasTlink(self):
         """Returns True if Tlink is defined"""
         return self.Tlink is not None
+    @property
+    def hasllink(self):
+        """Returns True if llink is defined"""
+        return self.llink is not None
+
+    # --------------------------------------------------------------------
+    # returned LaTeX-formated properties
+    # --------------------------------------------------------------------
+    def Dlatex(self, numdigits=4, units=r"\mathrm{m^2 \cdot s^{-1}}",prefix="D=",mathmode="$"):
+        """Returns diffusivity values (D) formatted in LaTeX scientific notation."""
+        return [format_scientific_latex(D, numdigits, units, prefix,mathmode) for D in self.D]
+
+    def klatex(self, numdigits=4, units="a.u.",prefix="k=",mathmode="$"):
+        """Returns Henry-like values (k) formatted in LaTeX scientific notation."""
+        return [format_scientific_latex(k, numdigits, units, prefix,mathmode) for k in self.k]
+
+    def llatex(self, numdigits=4, units="m",prefix="l=",mathmode="$"):
+        """Returns thickness values (k) formatted in LaTeX scientific notation."""
+        return [format_scientific_latex(l, numdigits, units, prefix,mathmode) for l in self.l]
+
+    def C0latex(self, numdigits=4, units="a.u.",prefix="C0=",mathmode="$"):
+        """Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation."""
+        return [format_scientific_latex(c, numdigits, units, prefix,mathmode) for c in self.C0]
 
     # --------------------------------------------------------------------
     # hash methods (assembly and layer-by-layer)
@@ -2000,9 +2096,9 @@ class layer:
             print("empty %s" % (self.__description))
         else:
             hasDmodel, haskmodel = self.hasDmodel, self.haskmodel
-            hasDlink, hasklink, hasC0link, hasTlink = self.hasDlink, self.hasklink, self.hasC0link, self.hasTlink
+            hasDlink, hasklink, hasC0link, hasTlink, hasllink = self.hasDlink, self.hasklink, self.hasC0link, self.hasTlink, self.hasllink
             properties_hasmodel = {"l":False,"D":hasDmodel,"k":haskmodel,"C0":False}
-            properties_haslink = {"l":False,"D":hasDlink,"k":hasklink,"C0":hasC0link,"T":hasTlink}
+            properties_haslink = {"l":hasllink,"D":hasDlink,"k":hasklink,"C0":hasC0link,"T":hasTlink}
             if hasDmodel or haskmodel:
                 properties_hasmodel["T"] = False
             fmtval = '%10s: '+self._printformat+" [%s]"

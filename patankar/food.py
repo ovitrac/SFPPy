@@ -750,7 +750,11 @@ class foodphysics:
         """interface to simulation engine: senspantankar"""
         from patankar.migration import senspatankar
         self._to(material) # propagate contact conditions first
-        return senspatankar(material,self,**kwargs)
+        sim = senspatankar(material,self,**kwargs)
+        self.lastsimulation = sim # store the last simulation result in medium
+        self.lastinput = material # store the last input (material)
+        sim.savestate(material,self) # store store the inputs in sim for chaining
+        return sim
 
     def contact(self,material,**kwargs):
         """alias to migration method"""

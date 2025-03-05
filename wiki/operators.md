@@ -1,4 +1,10 @@
-# **SFPPy Syntax: Operators `+` and `>>` in Migration Simulations** 🚀
+# 🚀**SFPPy Syntax: Operators `+` and `>>` in Migration Simulations** 🍏⏩🍎
+
+***
+
+[TOC]
+
+***
 
 ## **Introduction**
 
@@ -135,3 +141,12 @@ This example demonstrates how **minimal syntax** manages complex simulation step
 ## **Conclusion** 🎯
 
 SFPPy’s `+` and `>>` operators provide a powerful, intuitive syntax for modeling **mass transfer simulations** in food packaging systems. By leveraging these operators, users can **reduce code complexity while preserving flexibility**. 🏆
+
+***
+
+<div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-weight: bold;">
+  <span style="font-size: 20px;">🍏⏩🍎 <strong>SFPPy for Food Contact Compliance and Risk Assessment</strong></span><br>
+  Contact <a href="mailto:olivier.vitrac@gmail.com" style="color: #fff; text-decoration: underline;">Olivier Vitrac</a> for questions |
+  <a href="https://github.com/ovitrac/SFPPy" style="color: #fff; text-decoration: underline;">Website</a> |
+  <a href="https://ovitrac.github.io/SFPPy/" style="color: #fff; text-decoration: underline;">Documentation</a>
+</div>
