@@ -123,7 +123,7 @@ Note
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-02-17
-@rev: 2025-03-01
+@rev: 2025-03-06
 
 Version History
 ---------------
@@ -146,7 +146,7 @@ import time
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
 
-__all__ = ['CompoundIndex', 'dbdefault', 'get_compounds', 'migrant']
+__all__ = ['CompoundIndex', 'dbdefault', 'get_compounds', 'migrant', 'polarity_index']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -155,7 +155,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.21"
+__version__ = "1.24"
 
 # %% Private functions and constants (used by estimators)
 
@@ -796,6 +796,7 @@ class migrant:
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
+                self.smiles = None
                 self.logP = None
             else:
                 # Possibly multiple matching rows
@@ -805,6 +806,7 @@ class migrant:
                 all_cas = []
                 all_m = []
                 all_formulas = []
+                all_smiles = []
                 all_logP = []
 
                 for _, row in df.iterrows():
@@ -846,6 +848,11 @@ class migrant:
                     # Even if None, we append so the index lines up with M
                     all_formulas.append(row_formula)
 
+                    # SMILES (as a string)
+                    row_smiles = row.get("SMILES", None)
+                    # Even if None, we append so the index lines up with M
+                    all_smiles.append(row_smiles)
+
                 # Convert to arrays
                 arr_m = np.array(all_m, dtype=float)
                 arr_logp = np.array(all_logP, dtype=float)
@@ -862,10 +869,12 @@ class migrant:
                 if np.isnan(arr_m).all():
                     self.M = None
                     self.formula = None
+                    self.smiles = None
                 else:
-                    idx_min = np.nanargmin(arr_m)    # index of min M
-                    self.M = arr_m[idx_min]         # pick that M
+                    idx_min = np.nanargmin(arr_m)         # index of min M
+                    self.M = arr_m[idx_min]               # pick that M
                     self.formula = all_formulas[idx_min]  # pick formula from same record
+                    self.smiles = all_smiles[idx_min]     # pick smilesfrom same record
 
                 # Valid logP
                 valid_logp = arr_logp[~np.isnan(arr_logp)]
@@ -890,6 +899,7 @@ class migrant:
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array  # user-supplied or None
 
         # Case (c): name is not None and M is provided => surrogate
@@ -907,6 +917,7 @@ class migrant:
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array
 
         else:
@@ -994,6 +1005,7 @@ class migrant:
             "M (min)": self.M,
             "M_array": self.M_array if self.M_array is not None else "N/A",
             "formula": self.formula,
+            "smiles": self.smiles if hasattr(self,"smiles") else "N/A",
             "logP": self.logP,
             "P' (calc)": self.polarityindex
         }
@@ -1133,6 +1145,7 @@ class migrant:
 # ==========================
 if __name__ == "__main__":
     # debug
+    m=migrant("bisphenol A")
     m=migrant("water")
     m.polarityindex
     # examples

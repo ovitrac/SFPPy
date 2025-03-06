@@ -1355,7 +1355,7 @@ class SensPatankarResult:
             title_main += " (Discrete Data)"
         title_sub = rf"$\bf{{{self.name}}}$" + (f": {self.description}" if self.description else "")
         ax.set_title(f"{title_main}\n{title_sub}", fontsize=10)
-        ax.text(0.5, 1.05, title_sub, fontsize=8, ha="center", va="bottom", transform=ax.transAxes)
+        #ax.text(0.5, 1.05, title_sub, fontsize=8, ha="center", va="bottom", transform=ax.transAxes)
         ax.legend()
         ax.grid(True)
         plt.show()

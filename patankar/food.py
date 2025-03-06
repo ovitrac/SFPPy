@@ -1278,14 +1278,14 @@ class isooctane(simulant, perfectlymixed, fat):
     description = "isooctane food simulant"
     level = "user"
 
-class oiliveoil(simulant, perfectlymixed, fat):
+class oliveoil(simulant, perfectlymixed, fat):
     """Isoactane food simulant"""
     _chemicalsubstance = "methyl stearate"
     _polarityindex = 1.0 # Primarily triacylglycerides; still quite non-polar, though it contains some polar headgroups (the glycerol backbone).
     name = "olive oil"
     description = "olive oil food simulant"
     level = "user"
-class oil(oiliveoil): pass # synonym of oliveoil
+class oil(oliveoil): pass # synonym of oliveoil
 
 class ethanol(simulant, perfectlymixed, fat):
     """Ethanol food simulant"""
