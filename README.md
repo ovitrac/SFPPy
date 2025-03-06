@@ -81,9 +81,9 @@ solution.comparison.save_as_excel("myresult.xlsx") # Excel format
 
 ![CF](demo1.png)![Cx](demo2.png)
 
+
+
 </details>
-
-
 
 ### Snippet 2️⃣ | Retrieving Molecular Properties and Toxicological Data
 
@@ -138,15 +138,13 @@ substance = migrantToxtree("formaldehyde")
       alert 1: Alert For Schiff Bas [...] Formation Identified
 Out: <migrantToxtree: Oplossin [...]  [Dutch] - M=30.026 g/mol>
 ```
-
-
-
-</details>
-
 <small>💡 A local installation of Toxtree (java) is included with SFPPy</small> 
 
 > For the European FCM and Articles Regulation, Annex I - Authorised Substances, use the ECHA [webpage](https://echa.europa.eu/plastic-material-food-contact)
 
+
+
+</details>
 
 
 ### Snippet 3️⃣ | Defining a Custom Packaging Shape
@@ -170,9 +168,9 @@ print("Surface Area (m²):", area)
 
 <small>🔍 The `geometry.py` module provides tools to compute **surface-area-to-volume ratios**, extract wall thicknesses, and generate equivalent **1D models** for mass transfer simulations.</small>
 
+
+
 </details>
-
-
 
 ### Snippet 4️⃣ | Using  **⏩**  as Mass Transfer Operator in Chained Simulations
 <details>
@@ -243,13 +241,11 @@ Each **contact class** inherits attributes from **multiple base classes**, allow
    - `liquid`: Specifies that the food is a liquid  
    - `fat`: Indicates a fatty food, influencing partitioning behavior  
 
-
-
 <small>🔬 **By combining these components, SFPPy allows streamlined, physics-based simulations with minimal code.** 🚀</small>
 
+
+
 </details>
-
-
 
 ### Snippet 5️⃣ | Parameter linking **🔗** via `layerLink`
 
@@ -268,9 +264,6 @@ fb_thicknesses[0] = 12e-6 # 12 µm
 medium1.lastsimulation.rerun()
 # [...]
 ```
-
-</details>
-
 <small>💡 Dynamic parameter binding using `layerLink` connections allows: 
 ✅ Dynamic updates of $D$, $k$, $l$, $C_0$ abd $T$ for specific layers only ( index `[i]` refers to the layer `i+1`).
 ✅ Seamless integration of simulation and optimization tasks.
@@ -279,7 +272,7 @@ medium1.lastsimulation.rerun()
 
 
 
-
+</details>
 
 ## 📖 Case Studies
 
