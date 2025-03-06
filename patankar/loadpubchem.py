@@ -135,6 +135,8 @@ Version History
 
 
 import os
+import subprocess
+import requests
 import json
 import re
 import glob
@@ -142,6 +144,12 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import time
+
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
 
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
@@ -155,7 +163,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.24"
+__version__ = "1.29"
 
 # %% Private functions and constants (used by estimators)
 
@@ -751,8 +759,11 @@ class migrant:
 
         self.compound = None   # str
         self.name = None       # str or list
+        self.cid = None        # int or list
         self.CAS = None        # list or None
         self.M = None          # float
+        self.formula = None
+        self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
 
@@ -792,6 +803,7 @@ class migrant:
                 # No record found
                 self.compound = name
                 self.name = [name]
+                self.cid = []
                 self.CAS = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
@@ -801,8 +813,8 @@ class migrant:
             else:
                 # Possibly multiple matching rows
                 self.compound = name
-
                 all_names = []
+                all_cid = []
                 all_cas = []
                 all_m = []
                 all_formulas = []
@@ -810,6 +822,7 @@ class migrant:
                 all_logP = []
 
                 for _, row in df.iterrows():
+
                     # Gather a list/set of names
                     row_names = row.get("name", [])
                     if isinstance(row_names, str):
@@ -817,6 +830,11 @@ class migrant:
                     row_syns = row.get("synonyms", [])
                     combined_names = set(row_names) | set(row_syns)
                     all_names.extend(list(combined_names))
+
+                    # CID
+                    row_cid = row.get("CID", [])
+                    if row_cid:
+                        all_cid.append(row_cid)
 
                     # CAS
                     row_cas = row.get("CAS", [])
@@ -859,10 +877,12 @@ class migrant:
 
                 # Some dedup / cleaning
                 unique_names = list(set(all_names))
+                unique_cid = list(set(all_cid))
                 unique_cas = list(set(all_cas))
 
                 # Store results in the migrant object
                 self.name = unique_names
+                self.cid = unique_cid[0] if len(unique_cid)==1 else unique_cid
                 self.CAS = unique_cas if unique_cas else None
                 self.M_array = arr_m
                 # Minimum M
@@ -895,6 +915,7 @@ class migrant:
 
             # name => "generic" or if user explicitly set name=..., handle it here
             self.name = "generic"  # from instructions
+            self.cid = None
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
@@ -913,6 +934,7 @@ class migrant:
                                  f"{float(np.min(M_array))} to {float(np.max(M_array))}")
 
             self.name = name
+            self.cid
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
@@ -1001,6 +1023,7 @@ class migrant:
         attributes = {
             "Compound": self.compound,
             "Name": self.name,
+            "cid": self.cid,
             "CAS": self.CAS,
             "M (min)": self.M,
             "M_array": self.M_array if self.M_array is not None else "N/A",
@@ -1009,6 +1032,22 @@ class migrant:
             "logP": self.logP,
             "P' (calc)": self.polarityindex
         }
+        if isinstance(self,migrantToxtree):
+            attributes["Compound"] = self.ToxTree["IUPACTraditionalName"]
+            attributes["Name"] = self.ToxTree["IUPACName"]
+            attributes["Toxicology"] = self.CramerClass
+            attributes["TTC"] = f"{self.TTC} {self.TTCunits}"
+            attributes["CF TTC"] = f"{self.CFTTC} {self.CFTTCunits}"
+            alerts = self.alerts
+            # Process alerts
+            alert_index = 0
+            for key, value in alerts.items():
+                if key.startswith("Alert") and key != "Alertscounter" and value.upper() == "YES":
+                    alert_index += 1
+                    # Convert key name to readable format (split at capital letters)
+                    alert_text = ''.join([' ' + char if char.isupper() and i > 0 else char for i, char in enumerate(key)])
+                    attributes[f"alert {alert_index}"] = alert_text.strip()  # Remove leading space
+
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
         # Format attributes with indentation
@@ -1138,6 +1177,293 @@ class migrant:
         """
         return 0.935 * self.M + 14.2
 
+# %% Class migrantToxtree extending migrant class with Toxtree data
+"""
+===============================================================================
+SFPPy loadpubchem extension: Interface to Toxtree
+===============================================================================
+This module extends SFPPy migrants with the capability to interface with Toxtree for toxicological assessments:
+- Cramer classification
+- Detection of structural alerts from SMILES
+
+The module leverages existing PubChem data managed by SFPPy.
+
+===============================================================================
+"""
+class migrantToxtree(migrant):
+    """
+    Extends the `migrant` class to integrate Toxtree for toxicological assessments.
+    This class retrieves chemical data from PubChem, caches results, and runs Toxtree
+    for toxicological classification.
+
+    Features:
+    - Downloads and caches molecular structure files (SDF) from PubChem.
+    - Interfaces with Toxtree to perform Cramer classification and detect toxicological alerts.
+    - Implements a multi-level cache system for efficiency.
+    - Cleans and standardizes field names for output consistency.
+    - Provides control flags for cache refresh and regeneration.
+
+    Attributes:
+        PUBCHEM_ROOT_URL (str): Base URL for PubChem compound data.
+        IMAGE_SIZE (tuple): Default image size for structure images.
+        TOXTREE_ENGINES (dict): Mapping of Toxtree engines to class names.
+        TOX_CLASSIFICATION (dict): Mapping of classification engines.
+        cache_folder (str): Directory to store cached Toxtree results.
+        structure_folder (str): Directory to store cached structure files.
+        structure_file (str): Path to the SDF file for the compound.
+        image_file (str): Path to the PNG image of the compound.
+        refresh (bool): If True, forces Toxtree reprocessing from CSV.
+        no_cache (bool): If True, forces full cache regeneration.
+
+    Methods:
+        __init__(compound_name, cache_folder='cache.ToxTree', structure_folder='structure', refresh=False, no_cache=False)
+            Initializes the class, retrieves chemical data, and runs Toxtree default classification.
+
+        _download_pubchem_data()
+            Downloads and caches the SDF structure file from PubChem.
+
+        _clean_field_names(data)
+            Cleans field names by removing 'PUBCHEM_' prefix and applying CamelCase.
+
+        _run_toxtree(engine)
+            Runs Toxtree for the specified engine, handling caching and errors.
+
+    Properties:
+        cramer: Runs Toxtree with the Cramer classification engine.
+        cramer2: Runs Toxtree with the Cramer2 classification engine.
+        cramer3: Runs Toxtree with the Cramer3 classification engine.
+        alerts: Runs Toxtree to detect toxicological alerts.
+        has_alerts: Checks if any toxicological alerts were detected.
+
+    Example:
+        >>> substance = migrantToxtree("limonene")
+        >>> c = substance.cramer
+        >>> c2 = substance.cramer2
+        >>> c3 = substance.cramer3
+        >>> print("Cramer Class:", c)
+        >>> print("Cramer2 Class:", c2)
+        >>> print("Cramer3 Class:", c3)
+    """
+
+    PUBCHEM_ROOT_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound"
+    IMAGE_SIZE = (640, 480)
+
+    TOXTREE_ENGINES = {
+        "default": "",
+        "cramer": "toxTree.tree.cramer.CramerRules",
+        "cramer2": "cramer2.CramerRulesWithExtensions",
+        "cramer3": "toxtree.tree.cramer3.RevisedCramerDecisionTree",
+        "kroes": "toxtree.plugins.kroes.Kroes1Tree",
+        "dnabinding": "toxtree.plugins.dnabinding.DNABindingPlugin",
+        "skin": "toxtree.plugins.skinsensitisation.SkinSensitisationPlugin",
+        "eye": "eye.EyeIrritationRules",
+        "Ames": "toxtree.plugins.ames.AmesMutagenicityRules"
+    }
+
+    TOX_CLASSIFICATION = {
+        "default": "CramerRules",
+        "cramer": "CramerRules",
+        "cramer2": "CramerRules_WithExtensions",
+        "cramer3": "RevisedCDT",
+        "kroes": "KroesTTCDecisionTree"
+    }
+
+    TTC = [0.0025, 1.5, 9.0 , 30] # µg/kg bw/day
+    TTCunits = "[µg/kg bw/day]"
+    CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
+    CFTTCunits = "[mg/kg food intake]"
+
+    def __init__(self, compound_name, cache_folder='cache.ToxTree', structure_folder='structure', refresh=False, no_cache=False):
+        super().__init__(compound_name)
+
+        if isinstance(self.cid, list):
+            if len(self.cid) != 1:
+                raise ValueError(f"Multiple CIDs found for {compound_name}. Provide a unique compound.")
+            self.cid = self.cid[0]
+        if isinstance(self.smiles, list):
+            if len(self.smiles) != 1:
+                raise ValueError(f"Multiple SMILES found for {compound_name}. Provide a unique SMILES.")
+            self.smiles = self.smiles[0]
+
+        self.toxtree_root = os.path.join(os.path.dirname(__file__), 'private', 'toxtree')
+        self.jar_path = os.path.join(self.toxtree_root, 'Toxtree-3.1.0.1851.jar')
+
+        if not os.path.isfile(self.jar_path):
+            raise FileNotFoundError(
+                f"The Toxtree executable '{self.jar_path}' cannot be found.\n"
+                f"Please follow the instructions in the README.md file located at '{self.toxtree_root}'."
+            )
+
+        self.cache_folder = os.path.join(os.path.dirname(os.getcwd()), cache_folder)
+        self.structure_folder = os.path.join(self.cache_folder, structure_folder)
+        os.makedirs(self.cache_folder, exist_ok=True)
+        os.makedirs(self.structure_folder, exist_ok=True)
+
+        self.structure_file = os.path.join(self.structure_folder, f'{self.cid}.sdf')
+        self.image_file = os.path.join(self.structure_folder, f'{self.cid}.png')
+        self.refresh = refresh
+        self.no_cache = no_cache
+
+        self._download_pubchem_data()
+        tmp = self._run_toxtree("default")
+        tmp["CramerValue"]=self.class_roman_to_int(tmp["CramerRules"])
+        self.ToxTree = tmp
+        self.CramerValue = tmp["CramerValue"]
+        self.CramerClass = tmp["CramerRules"]
+        self.TTC = self.TTC[self.CramerValue]
+        self.CFTTC = self.CFTTC[self.CramerValue]
+
+    def _download_pubchem_data(self):
+        """Downloads and caches the SDF structure file and PNG thumbnail from PubChem."""
+        if not os.path.isfile(self.structure_file) or self.no_cache:
+            sdf_url = f"{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF"
+            response = requests.get(sdf_url, timeout=60)
+            if response.status_code == 200:
+                with open(self.structure_file, 'wb') as f:
+                    f.write(response.content)
+            else:
+                raise ValueError(f"Failed to download SDF file for CID {self.cid}.")
+        if not os.path.isfile(self.image_file) or self.no_cache:
+            png_url = f"{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}"
+            response = requests.get(png_url, timeout=60)
+            if response.status_code == 200:
+                with open(self.image_file, 'wb') as f:
+                    f.write(response.content)
+                self._crop_image(self.image_file)
+
+    def _crop_image(self, image_path):
+        """Crops white background from the PNG image."""
+        if not PIL_AVAILABLE:
+            return
+        img = Image.open(image_path)
+        img = img.convert("RGBA")
+        bbox = img.getbbox()
+        if bbox:
+            img = img.crop(bbox)
+            img.save(image_path)
+
+
+    def _clean_field_names(self, data):
+        """Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word."""
+        cleaned_data = {}
+        substitutions = {
+            "iupac": "IUPAC",
+            "logp": "logP",
+            "cramer": "Cramer",
+            "cid": "CID",
+            "inchi": "InChi",
+            }
+        # Create a case-insensitive regex pattern
+        pattern = re.compile("|".join(re.escape(k) for k in substitutions.keys()), re.IGNORECASE)
+        # Function for case-insensitive substitution
+        def replace_case_insensitive(match):
+            return substitutions[match.group(0).lower()]  # Lookup in lowercase, replace as defined
+        for key, value in data.items():
+            # Remove PUBCHEM_ prefix
+            if key.startswith("PUBCHEM_"):
+                key = key.replace("PUBCHEM_", "")
+            # Split using multiple delimiters (space, underscore, comma)
+            words = re.split(r'[ ,_:\.]+', key)
+            # Capitalize each word
+            cleaned_key = ''.join(word.capitalize() for word in words)
+            # Apply case-sensitive substitutions
+            cleaned_key = pattern.sub(replace_case_insensitive, cleaned_key)
+            # Store in the cleaned dictionary
+            cleaned_data[cleaned_key] = value
+        return cleaned_data
+
+    def _run_toxtree(self, engine):
+        if engine not in self.TOXTREE_ENGINES:
+            raise ValueError(f"Unknown Toxtree engine: {engine}")
+
+        engine_class = self.TOXTREE_ENGINES[engine]
+        csv_file = os.path.join(self.cache_folder, f'{self.cid}.{engine}.csv')
+        json_file = os.path.join(self.cache_folder, f'{self.cid}.{engine}.json')
+
+        if os.path.isfile(json_file) and not self.refresh:
+            with open(json_file, 'r') as f:
+                return json.load(f)
+
+        if not os.path.isfile(csv_file) or self.no_cache:
+            cmd = ['java', '-jar', self.jar_path, '-n', '-i', self.structure_file, '-o', csv_file]
+            if engine_class:
+                cmd.extend(['-m', engine_class])
+            try:
+                current_dir = os.getcwd()
+                os.chdir(self.toxtree_root)
+                result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+                os.chdir(current_dir)
+                if not os.path.isfile(csv_file):
+                    raise RuntimeError(
+                        f"Error: Toxtree failed to generate the output file for {engine}.\n"
+                        f"Command: {' '.join(cmd)}\n"
+                        f"Output: {result.stdout}\n"
+                        f"Error: {result.stderr}"
+                    )
+            except subprocess.CalledProcessError as e:
+                os.chdir(current_dir)
+                raise RuntimeError(
+                    f"Error executing Toxtree for {engine}.\n"
+                    f"Command: {' '.join(cmd)}\n"
+                    f"Output: {e.stdout}\n"
+                    f"Error: {e.stderr}"
+                )
+
+        df = pd.read_csv(csv_file)
+        cleaned_data = self._clean_field_names(df.to_dict(orient='records')[0]) if not df.empty else {}
+        with open(json_file, 'w') as f:
+            json.dump(cleaned_data, f, indent=4)
+        return cleaned_data
+
+
+    def class_roman_to_int(self,text):
+        """Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive."""
+        # Define mapping of Roman numerals to integers
+        roman_to_int = {
+            "I": 1, "II": 2, "III": 3, "IV": 4, "V": 5
+        }
+        # Regex pattern to detect 'Class X' with valid Roman numerals
+        pattern = re.compile(r'\bClass\s+(I{1,3}|IV|V)\b', re.IGNORECASE)
+        # Search for pattern in text
+        match = pattern.search(text)
+        if match:
+            roman_numeral = match.group(1).upper()  # Extract and normalize the numeral
+            return roman_to_int.get(roman_numeral, None)  # Convert to int
+        return None  # Return None if no valid match
+
+
+    @property
+    def cramer(self):
+        tmp = self._run_toxtree('cramer')
+        tmp["CramerValue"]=self.class_roman_to_int(tmp["CramerRules"])
+        tmp["IsCramerFlag"] = not pd.isna(tmp["Cramerflags"]) if "Cramerflags" in tmp else None
+        return tmp
+
+    @property
+    def cramer2(self):
+        tmp = self._run_toxtree('cramer2')
+        tmp["CramerValue"] = self.class_roman_to_int(tmp["CramerRulesWithExtensions"]) \
+            if "CramerRulesWithExtensions" in tmp else None
+        tmp["IsCramerFlag"] = not pd.isna(tmp["Cramerflags"]) if "Cramerflags" in tmp else None
+        return tmp
+
+    @property
+    def cramer3(self):
+        tmp = self._run_toxtree('cramer3')
+        tmp["CramerValue"] = self.class_roman_to_int(tmp["CramerRulesWithExtensions"]) \
+            if "CramerRulesWithExtensions" in tmp else None
+        tmp["IsCramerFlag"] = not pd.isna(tmp["Cramerflags"]) if "Cramerflags" in tmp else None
+        return tmp
+
+    @property
+    def alerts(self):
+        return self._run_toxtree('skin')
+
+    @property
+    def has_alerts(self):
+        return len(self.alerts) > 0
+
+
 
 # %% debug
 # ==========================
@@ -1173,3 +1499,12 @@ if __name__ == "__main__":
     # Piringer D value (several models can be implemented in module property.py)
     Dval = m.Deval(polymer="PET",T=20)
     print(Dval)
+
+    # MigranToxtree tests
+    substance = migrantToxtree("limonene")
+    c = substance.cramer
+    c2 = substance.cramer2
+    c3 = substance.cramer3
+    print("Cramer Class:", c)
+    print("Cramer2 Class:", c2)
+    print("Cramer3 Class:", c3)
