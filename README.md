@@ -85,7 +85,7 @@ solution.comparison.save_as_excel("myresult.xlsx") # Excel format
 
 
 
-### Snippet 2️⃣ | Retrieving Molecular Properties
+### Snippet 2️⃣ | Retrieving Molecular Properties and Toxicological Data
 
 <details>
   <summary>🔍 Click to expand</summary>
@@ -111,7 +111,41 @@ print(KFP1,KFP2)      # [0.93498524] [0.00093499]
 
 <small>💡 The examples show how to inject `m` into  $F$=`food` (*various classes* ) and $P$=polymer `layer` (*various classes*) to get customized and conservative simulations for specific substances and polymers. All properties, diffusivities $D$, Henry-like coefficients $k$ are calculated automatically based from their names.</small> 
 
+**Add toxicological data from Toxtree**
+
+```python
+from patankar.loadpubchem import migrantToxtree # combine PubChem and ToxTree
+substance = migrantToxtree("formaldehyde")
+```
+
+`output`
+
+```python
+<migrantToxtree object>
+     Compound: formaldehyde
+         Name: formaldehyde
+          cid: 712
+          CAS: ['50-00-0', '8013-13 [...] 80-5', '30525-89-4']
+      M (min): 30.026
+      M_array: [30.026]
+      formula: CH2O
+       smiles: C=O
+         logP: [1.2]
+    P' (calc): [3.91591487]
+   Toxicology: Low (Class I)
+          TTC: 1.5 [µg/kg bw/day]
+       CF TTC: 0.09 [mg/kg food intake]
+      alert 1: Alert For Schiff Bas [...] Formation Identified
+Out: <migrantToxtree: Oplossin [...]  [Dutch] - M=30.026 g/mol>
+```
+
+
+
 </details>
+
+<small>💡 A local installation of Toxtree (java) is included with SFPPy</small> 
+
+> For the European FCM and Articles Regulation, Annex I - Authorised Substances, use the ECHA [webpage](https://echa.europa.eu/plastic-material-food-contact)
 
 
 
