@@ -2,7 +2,7 @@
 
 
 
-> This example illustrates how the diffusion coefficient (**D**) and partition coefficient (**k**) can be estimated from concentration kinetics in food simulants. 🧪
+> This example illustrates how the diffusion coefficient (**$D$**) and partition coefficient (**$k$**) can be estimated from concentration kinetics in food simulants. 🧪
 
 [TOC]
 
@@ -10,7 +10,7 @@
 
 The concept of **free parameters** is enforced by creating `layerLink` objects for specific layers and properties. `layerLink` enables modifying simulations with minimal code changes, making it ideal for **sensitivity analysis**. 📊
 
-The showcase describes the **desorption** from a **monolayer material (P)** into a **food simulant (F)**. By fixing an arbitrary **k = 1** for the food simulant (i.e., **`kF`**), we can consider **k in the material (`kP`)** as the partition coefficient between **F and P**:
+The showcase describes the **desorption** from a **monolayer material (<kbd>P</kbd>)** into a **food simulant (<kbd>F</kbd>)**. By fixing an arbitrary **$k = 1$** for the food simulant (i.e., $k_F$), we can consider **$k$ in the material ($k_P$)** as the partition coefficient between **<kbd>F</kbd> and <kbd>P</kbd>**:
 
 $$
 K_{F/P} = \frac{C_{Feq}}{C_{Peq}} = \frac{k_P}{k_F}
@@ -31,7 +31,8 @@ The `layerLink` mechanism also provides the flexibility to **optimize** `D` and 
 
 ### 🏗️ Creating and Running Simulations
 
-1. **Define a monolayer material (P) and a food layer (F)** with numerical data.
+1. **Define a monolayer material (<kbd>P</kbd>) and a food layer (<kbd>F</kbd>)** with numerical data.
+   
    - If a substance is inserted, all properties not defined by links are automatically calculated. 🤖
 2. **Define and attach **`layerLink`** objects** to an existing simulation.
 3. **Run a migration simulation** using:
@@ -79,16 +80,16 @@ from patankar.layer import layer, layerLink
 from patankar.food import foodlayer
 ```
 
-### 🏗️ Defining the Monolayer Material (P)
+### 🏗️ Defining the Monolayer Material (<kbd>P</kbd>)
 
 ```python
 P = layer(l=(100, "um"),
           D=(1e-10, "cm**2/s"), # note that non SI units will be converted automatically
           C0=1000,
-          k=10)
+          k=0.1) # k=0.1 means KF/P=0.1 by setting k=1 in Food
 ```
 
-### 🥣 Defining the Food Layer (F)
+### 🥣 Defining the Food Layer (<kbd>F</kbd>)
 
 ```python
 F = foodlayer(contacttime=(10, "days"),
@@ -116,7 +117,7 @@ R = F.migration(P) # R = P.migration(F) works also, R = P >> F is another option
 R.plotCF()
 ```
 
-<img src="./assets/image-20250305154054751.png" alt="image-20250305154054751" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306102009-856x803.png" alt="Screenshot-20250306102009-856x803" style="zoom:50%;" />
 
 ### 🎭 Generating Pseudo-Experimental Data
 
@@ -125,7 +126,7 @@ E = R.pseudoexperiment(npoints=30, std_relative=0.01) # +/- 2% errors
 E.plotCF()
 ```
 
-<img src="./assets/Screenshot-20250305154332-856x801.png" alt="Screenshot-20250305154332-856x801" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306101933-856x803.png" alt="Screenshot-20250306101933-856x803" style="zoom:50%;" />
 
 ### 📏 Evaluating the Distance Function
 
@@ -133,6 +134,14 @@ E.plotCF()
 d2 = R - E # "minus" means sum of squared errors (in this context)
 print(f"Initial squared distance (E - R)**2: {d2()}")
 ```
+
+`output`
+
+```python
+Initial squared distance (E-R)**2: 1.4563863866984994
+```
+
+
 
 ### 🎯 Sensitivity Analysis
 
@@ -148,6 +157,23 @@ for i in range(1, niterations + 1):
     print(f"[{i}/{niterations}]: Distance variation = {100 * d2() / d2_original - 100}%")
 ```
 
+`output`
+
+```python
+[1/10]: Distance variation = 472.22%
+[2/10]: Distance variation = 2064.67%
+[3/10]: Distance variation = 4976.16%
+[4/10]: Distance variation = 9413.49%
+[5/10]: Distance variation = 15587.15%
+[6/10]: Distance variation = 23706.21%
+[7/10]: Distance variation = 33972.40%
+[8/10]: Distance variation = 46573.86%
+[9/10]: Distance variation = 61678.86%
+[10/10]: Distance variation = 79430.02%
+```
+
+
+
 ### 📌 Adding Pseudo-Experiment to Comparison
 
 ```python
@@ -155,7 +181,7 @@ R.comparison.add(E, label='pseudo experiment', discrete=True)
 R.comparison.plotCF()
 ```
 
-<img src="./assets/Screenshot-20250305154914-856x803.png" alt="Screenshot-20250305154914-856x803" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306101845-856x803.png" alt="Screenshot-20250306101845-856x803" style="zoom:50%;" />
 
 ### 🎯 Fitting `D` and `k` to Recover Original Values
 
@@ -172,13 +198,58 @@ print(f'Dfitted = {D.values} [m²/s] vs. Doriginal = {Dreference} [m²/s]')
 print(f'kfitted = {k.values} [a.u.] vs. koriginal = {kreference} [a.u.]')
 ```
 
+`Output`
+
+```python
+Fitting Iteration:
+ D=[2.02660678e-14] [m²/s]
+ k=[0.24245056] [a.u.]
+
+Fitting Iteration:
+ D=[2.02660678e-14] [m²/s]
+ k=[0.24245056] [a.u.]
+
+Fitting Iteration:
+ D=[8.83937014e-15] [m²/s]
+ k=[0.25503568] [a.u.]
+
+Fitting Iteration:
+ D=[8.83937014e-15] [m²/s]
+ k=[0.23839508] [a.u.]
+    ............... omitted lines .................
+Fitting Iteration:
+ D=[9.98539667e-15] [m²/s]
+ k=[0.09908638] [a.u.]
+
+Fitting Iteration:
+ D=[9.98612124e-15] [m²/s]
+ k=[0.09901856] [a.u.]
+
+Fitting Iteration:
+ D=[9.98612124e-15] [m²/s]
+ k=[0.09901856] [a.u.]
+
+Optimization terminated successfully.
+         Current function value: 1.449892
+         Iterations: 36
+         Function evaluations: 69
+BEFORE OPTIMIZATION: Distance (E-R)**2 = 1158.2644200304899
+AFTER OPTIMIZATION: Distance (E-R)**2 = 1.4498919527284508
+Variation with original = -0.4459% [Overfitting detected]
+
+Fitted D = [9.98612124e-15] [m²/s] vs. Original D = [1.e-14] [m²/s]
+Fitted k = [0.09901856] [a.u.] vs. Original k = [0.1] [a.u.]
+```
+
+
+
 ### 📊 Final Comparison Plot
 
 ```python
 R.comparison.plotCF()
 ```
 
-<img src="./assets/Screenshot-20250305155109-856x803.png" alt="Screenshot-20250305155109-856x803" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306101756-856x803.png" alt="Screenshot-20250306101756-856x803" style="zoom:50%;" />
 
 ---
 
@@ -192,4 +263,3 @@ R.comparison.plotCF()
   <a href="https://github.com/ovitrac/SFPPy" style="color: #fff; text-decoration: underline;">Website</a> |
   <a href="https://ovitrac.github.io/SFPPy/" style="color: #fff; text-decoration: underline;">Documentation</a>
 </div>
-

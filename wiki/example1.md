@@ -61,7 +61,7 @@ sandwich_geom = Packaging3D(
 internalvolume, contactsurface = sandwich_geom.get_volume_and_area()
 ```
 
-### 3️⃣ Define the Migrant (Irganox 1076) 🏭
+### 3️⃣ Define the Migrant (<kbd>Irganox 1076</kbd>) 🏭
 ```python
 m1 = migrant("irganox 1076")
 ```
@@ -117,7 +117,7 @@ CF at time t= [864000] [s] =  [116.40897281] [a.u.]`
 
 <img src="./assets/Screenshot-20250305194706-856x803.png" alt="Screenshot-20250305194706-856x803" style="zoom:50%;" />
 
-### 7️⃣ Compare Migration for Two Additives 📊
+### 7️⃣ Compare Migration for Two Additives: <kbd>Irganox 1076</kbd> (`m1`) and <kbd>Irgafos 168</kbd> (`m2`) 📊
 
 ```python
 # define m2
@@ -152,13 +152,13 @@ print_figure(simulation.plotCF(), **printconfig)   # plot and print
 print_figure(simulation2.plotCF(), **printconfig)  # plot and print
 ```
 
-For `Irganox 10760`147:
+For `Irganox 1076`:
 
-<img src="./assets/Screenshot-20250305194826-1105x1150.png" alt="Screenshot-20250305194826-1105x1150" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306095629-856x803.png" alt="Screenshot-20250306095629-856x803" style="zoom:50%;" />
 
 For `Irgafos 168`:
 
-<img src="./assets/Screenshot-20250305204726-1111x1155.png" alt="Screenshot-20250305204726-1111x1155" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306095730-856x803.png" alt="Screenshot-20250306095730-856x803" style="zoom:50%;" />
 
 ### 9️⃣ **Results** 📉
 

@@ -182,11 +182,13 @@ contact2.lastsimulation.plotCF() # hot-filling
 contact3.lastsimulation.plotCF() # food storage
 ```
 
-<img src="./assets/Screenshot-20250305165601-1494x892.png" alt="Screenshot-20250305165601-1494x892" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306100421-856x803.png" alt="Screenshot-20250306100421-856x803" style="zoom:50%;" />
 
-<img src="./assets/Screenshot-20250305170737-1125x1237.png" alt="Screenshot-20250305170737-1125x1237" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306100311-856x803.png" alt="Screenshot-20250306100311-856x803" style="zoom:50%;" />
 
-<img src="./assets/Screenshot-20250305170743-1131x1237.png" alt="Screenshot-20250305170743-1131x1237" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306100342-856x803.png" alt="Screenshot-20250306100342-856x803" style="zoom:50%;" />
+
+
 
 
 
@@ -225,7 +227,7 @@ collection.add(contact1.lastsimulation + contact2.lastsimulation + contact3.last
 
 collection.plotCF()  # Plot all cases together
 ```
-<img src="./assets/Screenshot-20250305171017-963x902.png" alt="Screenshot-20250305171017-963x902" style="zoom: 67%;" />
+<img src="./assets/Screenshot-20250305171017-963x902.png" alt="Screenshot-20250305171017-963x902" style="zoom: 50%;" />
 
 
 

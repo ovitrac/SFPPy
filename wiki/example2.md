@@ -159,7 +159,7 @@ ref_simulation = solver(
 ref_simulation.plotCx()
 ```
 
-<img src="./assets/Screenshot-20250305185553-1077x998.png" alt="Screenshot-20250305185553-1077x998" style="zoom: 40%;" />
+<img src="./assets/Screenshot-20250306100008-856x803.png" alt="Screenshot-20250306100008-856x803" style="zoom:50%;" />
 
 📈 **Plot migration kinetics**:
 
@@ -167,7 +167,9 @@ ref_simulation.plotCx()
 ref_simulation.plotCF()
 ```
 
-<img src="./assets/Screenshot-20250305185653-1100x1228.png" alt="Screenshot-20250305185653-1100x1228" style="zoom:40%;" />
+<img src="./assets/Screenshot-20250306100049-856x803.png" alt="Screenshot-20250306100049-856x803" style="zoom:50%;" />
+
+
 
 ---
 
@@ -212,7 +214,9 @@ fb_simulation.plotCx()
 fb_simulation.plotCF()
 ```
 
-<img src="./assets/Screenshot-20250305192913-856x803.png" alt="Screenshot-20250305192913-856x803" style="zoom:50%;" />
+<img src="./assets/Screenshot-20250306100135-856x803.png" alt="Screenshot-20250306100135-856x803" style="zoom:50%;" />
+
+
 
 ---
 

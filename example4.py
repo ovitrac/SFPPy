@@ -53,7 +53,7 @@ P = layer(
     l=(100, "um"),
     D=(1e-10, "cm**2/s"),  # Diffusivity in cm²/s (internally converted to SI)
     C0=1000,  # Initial concentration (arbitrary units)
-    k=10  # Partition coefficient
+    k=0.1  # Partition coefficient
 )
 
 # %% Define a Generic Contact Medium (F)
