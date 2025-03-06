@@ -31,6 +31,8 @@ This project **translates well-established chemical migration models** from MATL
 
 </details>
 
+
+
 ## 🚀 Quick Start
 
 ```bash
@@ -42,9 +44,13 @@ cd SFPPy
 pip install -r requirements.txt
 ```
 
+
+
 ## 💡 Usage Snippets
 
 SFPPy is fully object-oriented and supports multiple syntax styles, ranging from a functional approach to a more abstract, operator-driven paradigm—all in a **Pythonic** manner. The snippets below demonstrate both approaches.
+
+
 
 ### Snippet 1️⃣ | Simple Migration Simulation
 
@@ -77,6 +83,8 @@ solution.comparison.save_as_excel("myresult.xlsx") # Excel format
 
 </details>
 
+
+
 ### Snippet 2️⃣ | Retrieving Molecular Properties
 
 <details>
@@ -105,6 +113,8 @@ print(KFP1,KFP2)      # [0.93498524] [0.00093499]
 
 </details>
 
+
+
 ### Snippet 3️⃣ | Defining a Custom Packaging Shape
 
 <details>
@@ -127,6 +137,8 @@ print("Surface Area (m²):", area)
 <small>🔍 The `geometry.py` module provides tools to compute **surface-area-to-volume ratios**, extract wall thicknesses, and generate equivalent **1D models** for mass transfer simulations.</small>
 
 </details>
+
+
 
 ### Snippet 4️⃣ | Using  **⏩**  as Mass Transfer Operator in Chained Simulations
 <details>
@@ -203,7 +215,9 @@ Each **contact class** inherits attributes from **multiple base classes**, allow
 
 </details>
 
-### Snippet 4️⃣ | Parameter linking **🔗** via `layerLink`
+
+
+### Snippet 5️⃣ | Parameter linking **🔗** via `layerLink`
 
 <details>
  <summary>📦 Click to expand</summary>
@@ -229,6 +243,10 @@ medium1.lastsimulation.rerun()
 ✅ Robust handling of parameter uncertainties in complex simulation scenarios.
 </small> 
 
+
+
+
+
 ## 📖 Case Studies
 
 The project includes four detailed examples (`example1.py`, `example2.py`, `example3.py`, and `**example4.py**`), showcasing real-world scenarios with various materials, substances, food types, geometries, and usage conditions.
@@ -238,10 +256,14 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 - 🥪 Simulates the migration of <kbd>**Irganox 1076**</kbd> and <kbd>**Irgafos 168**</kbd> from a **100 µm <kbd>LDPE</kbd>film** into a **fatty <kbd>sandwich</kbd>** 🥖over **10 days at 7°C**.
 - 📈 Evaluates **migration kinetics** and their implications for food safety.
 
+
+
 ### Example <kbd>2</kbd> |  **Mass Transfer in ♻️ Recycled <kbd>PP</kbd> Bottles**
 
 - 🍼 Investigates **<kbd>toluene</kbd>kbd< migration** from a **300 µm thick recycled <kbd>PP</kbd> bottle** into a **<kbd>fatty liquid</kbd> food**.
 - 🛡️ Assesses the **effect of a <kbd>PET</kbd> functional barrier** (<kbd>FB</kbd>) of varying thickness on reducing migration.
+
+
 
 ### Example <kbd>3</kbd> |  **Advanced Migration Simulation ⛓️ with Variants**
 
@@ -250,11 +272,14 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 - ⚙️ Explores **variants** where the migrant and layer thickness are modified to assess performance.
 - 🍏⏩🍎 Example 3 showcases the mass transfer operator ⏩.
 
+
+
 ### Example <kbd>4</kbd> | Parameter Fitting and Optimization ⚙️
 
 - ✅ **Fit diffusivities ($D$) and partitioning coefficients ($\frac{k}{k_0}$)** from migration kinetic data 📈.
 - ✅ Utilize **dynamic parameter linking** 🔗🧲 with `layerLink`.
 - ✅ Integrate simulation results directly with experiments for sensitivity analysis and optimization
+- 
 
 > ⚠️ **Disclaimer**: These examples do not discuss sources of uncertainty. Please refer to our publications for details on the limitations of the presented approaches and assumptions.
 
@@ -271,9 +296,13 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 
 🔬 **SFPPy powers scalable, real-world safe food packaging simulations.**
 
+
+
 ## 📜 License
 
 **MIT License**
+
+
 
 ## 🤝 Contributors
 
@@ -281,6 +310,10 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 *This project is part of the SFPPy initiative, aiming to bring the SafeFoodPackaging Portal version 3 (SFPP3) to the general public.*
 
 $2025-02-12$
+
+
+
+
 
 ---
 *For further details, consult the [online documentation](https://ovitrac.github.io/SFPPy/) and the [release page](https://github.com/ovitrac/SFPPy/releases) for new capabilities.*
