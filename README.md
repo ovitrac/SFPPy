@@ -46,7 +46,7 @@ pip install -r requirements.txt
 
 SFPPy is fully object-oriented and supports multiple syntax styles, ranging from a functional approach to a more abstract, operator-driven paradigm—all in a **Pythonic** manner. The snippets below demonstrate both approaches.
 
-### Snippet 1: Simple Migration Simulation
+### Snippet 1️⃣ | Simple Migration Simulation
 
 <details>
   <summary>📜 Click to expand</summary>
@@ -54,51 +54,68 @@ SFPPy is fully object-oriented and supports multiple syntax styles, ranging from
 ```python
 from patankar.food import ethanol  # food database
 from patankar.layer import layer  # material database
-from patankar.migration import senspatankar  # solver
 
-# Define medium and layers
-simulant = ethanol()
-A = layer(layername="layer 1 (contact)", D=1e-15, l=50e-6, C0=0)  # SI units
-B = layer(layername="layer 2", D=(1e-9, "cm**2/s"), l=(100, "um"))
+# Define the food contact medium and layers
+simulant = ethanol() # here a food simulant
+A = layer(layername="layer 1 (contact)", D=1e-15, l=50e-6, C0=0, k=1)  # SI units
+B = layer(layername="layer 2", D=(1e-9, "cm**2/s"), l=(100, "um"),k=2)
 multilayer = A + B  # layer A is contact (food is on the left)
 
-# Run solver
-solution = senspatankar(multilayer, simulant)
-solution.plotCF()  # concentration kinetic in the simulant (F) for default times
-solution.plotCx()  # concentration profile in the multilayer packaging
+# Run solver, plot the migration kinetics CF(t) and concentration profiles in P Cx(x,t)
+solution = simulant.migration(multilayer)
+hCF = solution.plotCF()  # concentration kinetic in the simulant (F) for default times
+hCx = solution.plotCx()  # concentration profile in the multilayer packaging
+# Print in PDF and PNG, export to Excel
+hCF.print("myresult")
+solution.comparison.save_as_csv("myresult.csv") # CSV format
+solution.comparison.save_as_excel("myresult.xlsx") # Excel format
 ```
 
 📝 **Notations**: $D$ is the diffusivity, $l$ is the thickness layer, and $C_0$ is the initial concentration.
 
+![CF](demo1.png)![Cx](demo2.png)
+
 </details>
 
-### Snippet 2: Retrieving Molecular Properties
+### Snippet 2️⃣ | Retrieving Molecular Properties
 
 <details>
   <summary>🔍 Click to expand</summary>
 
 ```python
 from patankar.loadpubchem import migrant  # connect to pubchem for missing substances
+from patankar.food import oliveoil,water  # food simulants 
+from patankar.layer import gPET           # "glassy" PET (i.e., T<Tg)
+m = migrant("bisphenol A")                # bisphenol A = BPA
+# Print basic properties
+print(m.M, m.logP, m.polarityindex)       # Molecular weight, logP value, polarity Index P'
+print(m.smiles)                           # CC(C)(C1=CC=C(C=C1)O)C2=CC=C(C=C2)O
 
-m = migrant(name="bisphenol A")
-print(m.M, m.logP)  # Molecular weight & logP value
+# Add BPA to material (P) and food simulants (F1,F2) to calculate binary properties
+F1 = oliveoil(migrant=m)                  # F1 = food simulant oliver oil with BPA
+F2 = water(migrant=m)                     # F2 = water with BPA
+P = gPET(migrant=m)                       # P = PET with BPA
+KFP1 = P.k / F1.k     # F-to-P1 partition coefficient, k= Henry-like coefficients
+KFP2 = P.k / F2.k     # F-to-P2 partition coefficient, k= Henry-like coefficients
+# Print partition coefficients, with k values calculated from Flory-Huggins theory
+print(KFP1,KFP2)      # [0.93498524] [0.00093499]
 ```
 
-<small>💡 The examples show how to inject `m` into layers (e.g., `multilayer` in snippet 1) to get customized simulations for specific substances and polymers.</small>
+<small>💡 The examples show how to inject `m` into  $F$=`food` (*various classes* ) and $P$=polymer `layer` (*various classes*) to get customized and conservative simulations for specific substances and polymers. All properties, diffusivities $D$, Henry-like coefficients $k$ are calculated automatically based from their names.</small> 
 
 </details>
 
-### Snippet 3: Defining a Custom Packaging Shape
+### Snippet 3️⃣ | Defining a Custom Packaging Shape
 
 <details>
   <summary>📦 Click to expand</summary>
 
 ```python
-from patankar.geometry import Packaging3D
-
-pkg = Packaging3D('bottle', body_radius=(5, 'cm'), body_height=(0.2, 'm'),
+from patankar.geometry import Packaging3D  # import basic shapes
+pkg = Packaging3D('bottle', # bottle is a composite shape
+                  body_radius=(5, 'cm'), body_height=(0.2, 'm'),
                   neck_radius=(19, "mm"), neck_height=(40, "mm"))
-vol, area = pkg.get_volume_and_area()
+vol, area = pkg.get_volume_and_area() # extract volume and surface area
 print("Volume (m³):", vol)
 print("Surface Area (m²):", area)
 ```
@@ -111,7 +128,7 @@ print("Surface Area (m²):", area)
 
 </details>
 
-### Snippet 4: Using  **⏩**  as Mass Transfer Operator in Chained Simulations
+### Snippet 4️⃣ | Using  **⏩**  as Mass Transfer Operator in Chained Simulations
 <details>
  <summary>📦 Click to expand</summary>
 
@@ -164,6 +181,8 @@ sol123 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulatio
 sol123.plotCF()
 
 ```
+![CF](demo3.png)
+
 ### **🧩 How It Works**
 
 Each **contact class** inherits attributes from **multiple base classes**, allowing flexible combinations of:
@@ -184,30 +203,58 @@ Each **contact class** inherits attributes from **multiple base classes**, allow
 
 </details>
 
+### Snippet 4️⃣ | Parameter linking **🔗** via `layerLink`
 
+<details>
+ <summary>📦 Click to expand</summary>
+
+```python
+# Any numeric property can be attached to a simulation with layerLink
+from patankar.layer import layerLink
+# Attach a variable function barrier thickness to ABA
+fb_thickness = layerLink("l",indices=0) # index 0 = layer 1 (A) in contact with F
+# Reuse ABA from Snippet 3 [...]
+ABA.llink = fb_thicknesses
+# Change dynamically the simulation by changing fb_thicknesses[0]
+fb_thicknesses[0] = 12e-6 # 12 µm
+medium1.lastsimulation.rerun()
+# [...]
+```
+
+</details>
+
+<small>💡 Dynamic parameter binding using `layerLink` connections allows: 
+✅ Dynamic updates of $D$, $k$, $l$, $C_0$ abd $T$ for specific layers only ( index `[i]` refers to the layer `i+1`).
+✅ Seamless integration of simulation and optimization tasks.
+✅ Robust handling of parameter uncertainties in complex simulation scenarios.
+</small> 
 
 ## 📖 Case Studies
 
-The project includes three case studies: `example1.py`, `example2.py`, and `example3.py`, illustrating how real-world scenarios—featuring multiple materials, geometries, substances, food types, and usage conditions—can be numerically resolved.
+The project includes four detailed examples (`example1.py`, `example2.py`, `example3.py`, and `**example4.py**`), showcasing real-world scenarios with various materials, substances, food types, geometries, and usage conditions.
 
-### Example 1: **Mass Transfer from Monolayer Materials**
+### Example <kbd>1</kbd>: | **Mass Transfer from** ♶ **Monolayer Materials**
 
-- 🥪 Simulates the migration of **Irganox 1076** and **Irgafos 168** from a **100 µm LDPE film** into a **fatty sandwich** over **10 days at 7°C**.
+- 🥪 Simulates the migration of <kbd>**Irganox 1076**</kbd> and <kbd>**Irgafos 168**</kbd> from a **100 µm <kbd>LDPE</kbd>film** into a **fatty <kbd>sandwich</kbd>** 🥖over **10 days at 7°C**.
 - 📈 Evaluates **migration kinetics** and their implications for food safety.
 
-### Example 2: **Mass Transfer in Recycled PP Bottles**
+### Example <kbd>2</kbd> |  **Mass Transfer in ♻️ Recycled <kbd>PP</kbd> Bottles**
 
-- 🍼 Investigates **toluene migration** from a **300 µm thick recycled PP bottle** into a **fatty liquid food**.
-- 🛡️ Assesses the **effect of a PET functional barrier** (FB) of varying thickness on reducing migration.
+- 🍼 Investigates **<kbd>toluene</kbd>kbd< migration** from a **300 µm thick recycled <kbd>PP</kbd> bottle** into a **<kbd>fatty liquid</kbd> food**.
+- 🛡️ Assesses the **effect of a <kbd>PET</kbd> functional barrier** (<kbd>FB</kbd>) of varying thickness on reducing migration.
 
-### Example 3: **Advanced Migration Simulation with Variants**
+### Example <kbd>3</kbd> |  **Advanced Migration Simulation ⛓️ with Variants**
 
-- 📦 Simulates migration in a **trilayer (ABA) multilayer system**, with **PET (A) and recycled PP (B)**.
-- 🔥 Evaluates migration behavior across **storage with set-off, hot-filling, and long-term storage conditions**.
+- 📦 Simulates migration in a **trilayer (<kbd>ABA</kbd>) multilayer system**, with **<kbd>PET</kbd> (<kbd>A</kbd>) and recycled <kbd>PP</kbd> (<kbd>B</kbd>)**.
+- 🔥 Evaluates migration behavior across **<kbd>storage with set-off</kbd>, <kbd>hot-filling</kbd>, and <kbd>long-term storage</kbd> conditions**.
 - ⚙️ Explores **variants** where the migrant and layer thickness are modified to assess performance.
 - 🍏⏩🍎 Example 3 showcases the mass transfer operator ⏩.
 
+### Example <kbd>4</kbd> | Parameter Fitting and Optimization ⚙️
 
+- ✅ **Fit diffusivities ($D$) and partitioning coefficients ($\frac{k}{k_0}$)** from migration kinetic data 📈.
+- ✅ Utilize **dynamic parameter linking** 🔗🧲 with `layerLink`.
+- ✅ Integrate simulation results directly with experiments for sensitivity analysis and optimization
 
 > ⚠️ **Disclaimer**: These examples do not discuss sources of uncertainty. Please refer to our publications for details on the limitations of the presented approaches and assumptions.
 
@@ -226,7 +273,7 @@ The project includes three case studies: `example1.py`, `example2.py`, and `exam
 
 ## 📜 License
 
-This project is licensed under the **MIT License**.
+**MIT License**
 
 ## 🤝 Contributors
 
@@ -234,3 +281,20 @@ This project is licensed under the **MIT License**.
 *This project is part of the SFPPy initiative, aiming to bring the SafeFoodPackaging Portal version 3 (SFPP3) to the general public.*
 
 $2025-02-12$
+
+---
+*For further details, consult the [online documentation](https://ovitrac.github.io/SFPPy/) and the [release page](https://github.com/ovitrac/SFPPy/releases) for new capabilities.*
+
+***
+
+
+
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
+🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
+🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍽️🍎🍽️🍽️🍽️🍎🍽️🍽️🐍🍽️🍽️🍽️🐍🍽️
+🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️
+🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
+🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.24$
+
+*<small>Enlarge your window if you cannot read the logo. The snake is the totem for Python</small>*
