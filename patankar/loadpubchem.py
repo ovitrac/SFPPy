@@ -298,7 +298,7 @@ class CompoundIndex:
         self.cache_dir = os.path.join(_PATANKAR_FOLDER,cache_dir)
         os.makedirs(self.cache_dir, exist_ok=True)
 
-        self.index_file = os.path.join(cache_dir, index_file)
+        self.index_file = os.path.join(self.cache_dir, index_file)
         # Regex to identify CAS-like strings, e.g. "1234-56-7"
         self._cas_regex = re.compile(r'^\d{1,7}-\d{2}-\d$')
 
