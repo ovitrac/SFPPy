@@ -770,7 +770,7 @@ cat >> "$index_file" <<'EOF'
                     </i>
                 </p>
                 <p style="font-size: 1.2em; margin: 12px 0;margin-bottom: 16px;">🧭
-                    <a href="wikipages/" title="SFPPy Wiki Pages" style="color: #fff; text-decoration: underline; font-weight: bold;">LEARNING CENTER</a> for specific guidance ℹ️ on <b>migration modeling</b> 📐, substances and their properties ⌬, <b>recycled materials</b> ♻️, <b>curve fitting</b> 📈.
+                    <a href="wikipages/" title="SFPPy Wiki Pages" target="_wiki" style="color: #fff; text-decoration: underline; font-weight: bold;">LEARNING CENTER</a> for specific guidance ℹ️ on <b>migration modeling</b> 📐, substances and their properties ⌬, <b>recycled materials</b> ♻️, <b>curve fitting</b> 📈.
                 </p>
                 </div>
             <hr>
