@@ -47,31 +47,49 @@ Author:
 
     """
 
-import os
-import sys
-import re
-from pathlib import Path
-
 # Define dependencies
 dependencies = [
     "numpy>=1.21.0",
     "matplotlib>=3.4.0",
     "scipy>=1.7.0",
     "pandas>=1.3.0",
-    "openpyxl>=3.0.10"
+    "openpyxl>=3.0.10",
+    "Pillow>=8.0.0" 
 ]
 
 conda_channels = ["conda-forge", "defaults"]
 
-def is_utils_directory(current_path):
-    """Verify that the script is run from the 'utils/' directory."""
-    return current_path.name == 'utils'
+def find_sfppy_root():
+    """Find and return the SFPPy root directory (parent of patankar/)."""
+    current_dir = Path.cwd()
+    
+    while current_dir != current_dir.parent:
+        if (current_dir / "patankar").is_dir():
+            return current_dir
+        current_dir = current_dir.parent
+    
+    sys.stderr.write("Error: Could not locate SFPPy root containing 'patankar/'.\n")
+    sys.exit(1)
 
-def get_version(parent_dir):
+def ensure_sfppy_in_pythonpath(sfppy_root):
+    """Ensure SFPPy root is in sys.path and save the path in .sfppy_path."""
+    sfppy_path_file = sfppy_root / ".sfppy_path"
+
+    if str(sfppy_root) not in sys.path:
+        sys.path.insert(0, str(sfppy_root))
+
+    # Save the path for future reference
+    with open(sfppy_path_file, "w") as f:
+        f.write(str(sfppy_root) + "\n")
+
+    print(f"✔ SFPPy root '{sfppy_root}' added to Python path and saved in '.sfppy_path'.")
+
+def get_version(sfppy_root):
     """Extract the version number of SFPPy from VERSION.txt."""
-    version_file = parent_dir / "utils" / "VERSION.txt"
+    version_file = sfppy_root / "utils" / "VERSION.txt"
+    
     if not version_file.exists():
-        sys.stderr.write(f"Error: {version_file} not found. Please create a file with content: version=\"XX.YY.ZZ\"\n")
+        sys.stderr.write(f"Error: {version_file} not found. Please create VERSION.txt with content: version=\"X.Y.Z\"\n")
         sys.exit(1)
 
     with open(version_file, "r") as f:
@@ -80,7 +98,7 @@ def get_version(parent_dir):
             if match:
                 return match.group(1)
 
-    sys.stderr.write(f"Error: No valid version string found in {version_file}. Ensure it contains: version=\"XX.YY.ZZ\"\n")
+    sys.stderr.write(f"Error: No valid version string found in {version_file}.\n")
     sys.exit(1)
 
 def prompt_overwrite(file_path):
@@ -94,19 +112,26 @@ def prompt_overwrite(file_path):
         else:
             print("Please enter 'Y' or 'N'.")
 
-def generate_setup_py(parent_dir, dependencies):
+def generate_setup_py(sfppy_root, dependencies):
     """Generate setup.py with specified dependencies."""
-    setup_path = parent_dir / "setup.py"
+    setup_path = sfppy_root / "setup.py"
 
     if setup_path.exists() and not prompt_overwrite(setup_path):
         print("Skipping setup.py generation.")
         return
 
     setup_content = f"""from setuptools import setup, find_packages
+import sys
+import os
+
+# Ensure SFPPy root is in sys.path
+sfppy_root = os.path.dirname(os.path.abspath(__file__))
+if sfppy_root not in sys.path:
+    sys.path.insert(0, sfppy_root)
 
 setup(
     name="SFPPy",
-    version="{get_version(parent_dir)}",
+    version="{get_version(sfppy_root)}",
     description="Software Simulating Mass Transfer from Food Packaging",
     author="Olivier Vitrac",
     author_email="olivier.vitrac@agroparistech.fr",
@@ -129,11 +154,11 @@ setup(
     with open(setup_path, 'w') as f:
         f.write(setup_content)
 
-    print(f"✔ setup.py created successfully in '{parent_dir}'.")
+    print(f"✔ setup.py created successfully in '{sfppy_root}'.")
 
-def generate_environment_yml(parent_dir, dependencies, conda_channels):
+def generate_environment_yml(sfppy_root, dependencies, conda_channels):
     """Generate environment.yml for Conda users."""
-    env_path = parent_dir / "environment.yml"
+    env_path = sfppy_root / "environment.yml"
 
     if env_path.exists() and not prompt_overwrite(env_path):
         print("Skipping environment.yml generation.")
@@ -152,11 +177,11 @@ dependencies:
     with open(env_path, 'w') as f:
         f.write(env_content)
 
-    print(f"✔ environment.yml created successfully in '{parent_dir}'.")
+    print(f"✔ environment.yml created successfully in '{sfppy_root}'.")
 
-def generate_requirements_txt(parent_dir, dependencies):
+def generate_requirements_txt(sfppy_root, dependencies):
     """Generate requirements.txt for pip users."""
-    req_path = parent_dir / "requirements.txt"
+    req_path = sfppy_root / "requirements.txt"
 
     if req_path.exists() and not prompt_overwrite(req_path):
         print("Skipping requirements.txt generation.")
@@ -167,21 +192,23 @@ def generate_requirements_txt(parent_dir, dependencies):
     with open(req_path, 'w') as f:
         f.write(req_content)
 
-    print(f"✔ requirements.txt created successfully in '{parent_dir}'.")
+    print(f"✔ requirements.txt created successfully in '{sfppy_root}'.")
 
 def main():
     """Main script execution."""
     current_dir = Path.cwd()
 
-    if not is_utils_directory(current_dir):
-        print("Error: This script must be run from the 'utils/' directory of the SFPPy project.")
+    if current_dir.name != 'utils':
+        print("Error: This script must be run from the 'utils/' directory of SFPPy.")
         sys.exit(1)
 
-    parent_dir = current_dir.parent
+    sfppy_root = find_sfppy_root()
 
-    generate_setup_py(parent_dir, dependencies)
-    generate_environment_yml(parent_dir, dependencies, conda_channels)
-    generate_requirements_txt(parent_dir, dependencies)
+    # Ensure SFPPy root is added to Python path
+    ensure_sfppy_in_pythonpath(sfppy_root)
+    generate_setup_py(sfppy_root, dependencies)
+    generate_environment_yml(sfppy_root, dependencies, conda_channels)
+    generate_requirements_txt(sfppy_root, dependencies)
 
 if __name__ == '__main__':
     main()

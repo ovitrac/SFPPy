@@ -32,7 +32,7 @@ The `layerLink` mechanism also provides the flexibility to **optimize** `D` and 
 ### 🏗️ Creating and Running Simulations
 
 1. **Define a monolayer material (<kbd>P</kbd>) and a food layer (<kbd>F</kbd>)** with numerical data.
-   
+  
    - If a substance is inserted, all properties not defined by links are automatically calculated. 🤖
 2. **Define and attach **`layerLink`** objects** to an existing simulation.
 3. **Run a migration simulation** using:

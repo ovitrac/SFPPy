@@ -1,6 +1,14 @@
-# **SFPPy Syntax: Multiple Inheritance for Custom Contact Scenarios** 🏗️
+# 🏗️**SFPPy Syntax: Multiple Inheritance for Custom Contact Scenarios** 🍏⏩🍎
+
+
+***
+
+[TOC]
+
+***
 
 ## **Introduction**
+
 SFPPy leverages **multiple inheritance** to define **custom food contact scenarios** with minimal effort. This approach allows users to seamlessly **combine different properties** (e.g., temperature, texture, and chemical affinity) into a single class, making simulation setup both intuitive and flexible.
 
 This page explains how multiple inheritance enables:
@@ -105,3 +113,12 @@ sol123.plotCF()
 
 ## **Conclusion** 🎯
 SFPPy’s use of **multiple inheritance** makes it **easy to define custom contact conditions** with minimal code. By simply inheriting from **predefined classes**, users can construct **realistic and complex food contact scenarios** efficiently. 🚀
+
+***
+
+<div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-weight: bold;">
+  <span style="font-size: 20px;">🍏⏩🍎 <strong>SFPPy for Food Contact Compliance and Risk Assessment</strong></span><br>
+  Contact <a href="mailto:olivier.vitrac@gmail.com" style="color: #fff; text-decoration: underline;">Olivier Vitrac</a> for questions |
+  <a href="https://github.com/ovitrac/SFPPy" style="color: #fff; text-decoration: underline;">Website</a> |
+  <a href="https://ovitrac.github.io/SFPPy/" style="color: #fff; text-decoration: underline;">Documentation</a>
+</div>
