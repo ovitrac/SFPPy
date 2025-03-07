@@ -56,7 +56,7 @@ The name or CAS of the substance will trigger the predictions for the considered
 
 import numpy as np
 
-__all__ = ['ActivityCoefficients', 'Diffusivities', 'Dpiringer', 'HenryLikeCoefficients', 'MigrationPropertyModel_validator', 'PartitionCoeffcicients', 'migrationProperty']
+__all__ = ['ActivityCoefficients', 'Diffusivities', 'Dpiringer', 'HenryLikeCoefficients', 'MigrationPropertyModel_validator', 'PartitionCoeffcicients', 'gFHP', 'kFHP', 'migrationProperty']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"

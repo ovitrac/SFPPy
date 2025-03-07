@@ -50,7 +50,7 @@ def main():
         "help",
         "debug",
         "sandbox",
-        "draft",
+        #"draft",
         "src",
         "tmp",
         "trash",

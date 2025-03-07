@@ -189,6 +189,7 @@ fi
 # Check if the required scripts exist and are executable
 check_script "./generate_setup.py"
 check_script "./generate_all.py"
+check_script "./generate_wiki.py"
 check_script "./generate_matlab_docs.py"
 check_script "./generate_post_docs.py"
 check_script "./generate_diagrams.sh"
@@ -197,18 +198,18 @@ check_script "./pdocme.sh"
 
 # Run the documentation generation scripts with status messages
 echo "Launch 'generate_setup.py'to update the version (repored also in documentatation)..."
-./generate_matlab_docs.py
+./generate_setup.py
 echo "Completed 'generate_setup.py'."
 
 echo "Launch 'generate_all.py'to refresh all variables __all__..."
 ./generate_all.py
 echo "Completed 'generate_all.py'."
 
-# Commented (not used in SFPPy)
 # echo "Running 'generate_matlab_docs.py'..."
 # ./generate_matlab_docs.py
 # echo "Completed 'generate_matlab_docs.py'."
 # xdg-open ../html/index_matlab.html
+
 
 # Commented (not used in SFPPy)
 # echo "Running 'generate_post_docs.py'..."
@@ -224,6 +225,12 @@ echo "Running 'pdocme.sh'..."
 ./pdocme.sh
 echo "Completed 'pdocme.sh'."
 xdg-open ../html/index.html
+
+# do wikipages last, if not they will be renamed with ~
+echo "Running 'generate_wiki.py'..."
+./generate_wiki.py
+echo "Completed 'generate_wiki.py'."
+xdg-open ../html/wikipages/index.html
 
 # Step 4: Final Completion Message
 print_header "Step 3/3: Documentation refresh completed successfully"

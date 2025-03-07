@@ -1,8 +1,8 @@
 #!/bin/bash
-# generate_release.sh
-# This script creates a release package for Pizza3, based on a manifest file.
+# generate_mini_release.sh
+# This script creates a release package for SFPPy, based on a manifest file.
 #
-# Use ./generate_simple_manifest.py to refresh the manifest
+# Use ./generate_mini_manifest.py to refresh the manifest
 
 # Maintained by INRAE\olivier.vitrac@agroparistech.fr
 # Revision history: 2024-12-20
@@ -12,9 +12,9 @@
 #           INITIALIZATION
 # -----------------------------------
 
-# Ensure the script is run from the correct directory (Pizza3/utils/)
+# Ensure the script is run from the correct directory (SFPPy/utils/)
 if [[ ! -f "pdocme.sh" ]]; then
-    echo "Error: This script must be run from the Pizza3/utils/ directory."
+    echo "Error: This script must be run from the SFPPy/utils/ directory."
     exit 1
 fi
 
@@ -32,7 +32,7 @@ if [[ -z "$__version__" ]]; then
   echo "Error: No valid version string found in $version_file. Ensure it contains: version=\"XX.YY.ZZ\"" >&2
   exit 1
 fi
-echo "Pizza3 Version: $__version__"
+echo "SFPPy Version: $__version__"
 
 
 # -----------------------------------
@@ -40,11 +40,11 @@ echo "Pizza3 Version: $__version__"
 # -----------------------------------
 
 VERSION="${__version__}min"
-MANIFEST_FILE="$(realpath ../Pizza3.mini.manifest)"
+MANIFEST_FILE="$(realpath ../SFPPy.mini.manifest)"
 RELEASE_FOLDER="$(realpath ../release)"
-OUTPUT_FILE="Pizza3_v${VERSION}.zip"
+OUTPUT_FILE="SFPPy_v${VERSION}.zip"
 INFO_FILE="release.info.txt"
-RELEASE_NAME="Pizza3_v${VERSION}"
+RELEASE_NAME="SFPPy_v${VERSION}"
 
 
 # -----------------------------------
@@ -74,7 +74,7 @@ fi
 # Release Generation Process
 # -----------------------------------
 
-echo "Generating release package for Pizza3 (v${VERSION})..."
+echo "Generating release package for SFPPy (v${VERSION})..."
 
 # Create a temporary directory to collect files
 temp_dir=$(mktemp -d)
@@ -123,7 +123,7 @@ done < "$MANIFEST_FILE"
 # Create the release information file
 info_file_path="${release_dir}/${INFO_FILE}"
 {
-    echo "Pizza3 Release v${VERSION}"
+    echo "SFPPy Release v${VERSION}"
     echo "Generated on: $(date '+%Y-%m-%d %H:%M:%S')"
     echo "Contact: INRAE\\olivier.vitrac@agroparistech.fr"
     echo

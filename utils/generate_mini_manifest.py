@@ -39,11 +39,11 @@ def main():
         '.manifest', '.py~', '.sh~', '.pyc',
         '.sample', '.cache', '.xml', '.iml', '.zip', '.js',
         '.pdf', '.png', '.mp4', '.avi', '.html~', '.gitignore~',
-        '.gif', '.pptx','.fig','.egg-info'
+        '.gif', '.pptx','.fig','.egg-info', '.jar'
     ]
     
 
-        ignore_dirs = [
+    ignore_dirs = [
         ".env",
         ".venv",
         ".git",
@@ -52,7 +52,7 @@ def main():
         "help",
         "debug",
         "sandbox",
-        "draft",
+        #"draft",
         "src",
         "tmp",
         "trash",

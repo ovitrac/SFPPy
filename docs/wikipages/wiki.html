@@ -1,0 +1,1023 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+
+<style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color: #ffffff; --text-color: #333333; --select-text-bg-color: #B5D6FC; --select-text-font-color: auto; --monospace: "Lucida Console",Consolas,"Courier",monospace; --title-bar-height: 20px; }
+.mac-os-11 { --title-bar-height: 28px; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5 { white-space: pre-wrap; }
+body { margin: 0px; padding: 0px; height: auto; inset: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 36px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; position: relative; }
+#write svg h1, #write svg h2, #write svg h3, #write svg h4, #write svg h5, #write svg h6, #write svg p { position: static; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px; }
+thead, tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+svg { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li blockquote { margin: 1rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; border-color: transparent !important; padding-top: 0px !important; padding-bottom: 0px !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  .typora-export #write { break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+  .is-mac table { break-inside: avoid; }
+  #write > p:nth-child(1) { margin-top: 0px; }
+  .typora-export-show-outline .typora-export-sidebar { display: none; }
+  figure { overflow-x: visible; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+.MathJax_ref { fill: currentcolor; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.reversefootnote { font-family: ui-monospace, sans-serif; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.6; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+.md-expand mark .md-meta { opacity: 0.3 !important; }
+mark .md-meta { color: rgb(0, 0, 0); }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
+.md-diagram-panel .messageText { stroke: none !important; }
+.md-diagram-panel .start-state { fill: var(--node-fill); }
+.md-diagram-panel .edgeLabel rect { opacity: 1 !important; }
+.md-fences.md-fences-math { font-size: 1em; }
+.md-fences-advanced:not(.md-focus) { padding: 0px; white-space: nowrap; border: 0px; }
+.md-fences-advanced:not(.md-focus) { background: inherit; }
+.mermaid-svg { margin: auto; }
+.typora-export-show-outline .typora-export-content { max-width: 1440px; margin: auto; display: flex; flex-direction: row; }
+.typora-export-sidebar { width: 300px; font-size: 0.8rem; margin-top: 80px; margin-right: 18px; }
+.typora-export-show-outline #write { --webkit-flex: 2; flex: 2 1 0%; }
+.typora-export-sidebar .outline-content { position: fixed; top: 0px; max-height: 100%; overflow: hidden auto; padding-bottom: 30px; padding-top: 60px; width: 300px; }
+@media screen and (max-width: 1024px) {
+  .typora-export-sidebar, .typora-export-sidebar .outline-content { width: 240px; }
+}
+@media screen and (max-width: 800px) {
+  .typora-export-sidebar { display: none; }
+}
+.outline-content li, .outline-content ul { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; list-style: none; overflow-wrap: anywhere; }
+.outline-content ul { margin-top: 0px; margin-bottom: 0px; }
+.outline-content strong { font-weight: 400; }
+.outline-expander { width: 1rem; height: 1.42857rem; position: relative; display: table-cell; vertical-align: middle; cursor: pointer; padding-left: 4px; }
+.outline-expander::before { content: ""; position: relative; font-family: Ionicons; display: inline-block; font-size: 8px; vertical-align: middle; }
+.outline-item { padding-top: 3px; padding-bottom: 3px; cursor: pointer; }
+.outline-expander:hover::before { content: ""; }
+.outline-h1 > .outline-item { padding-left: 0px; }
+.outline-h2 > .outline-item { padding-left: 1em; }
+.outline-h3 > .outline-item { padding-left: 2em; }
+.outline-h4 > .outline-item { padding-left: 3em; }
+.outline-h5 > .outline-item { padding-left: 4em; }
+.outline-h6 > .outline-item { padding-left: 5em; }
+.outline-label { cursor: pointer; display: table-cell; vertical-align: middle; text-decoration: none; color: inherit; }
+.outline-label:hover { text-decoration: underline; }
+.outline-item:hover { border-color: rgb(245, 245, 245); background-color: var(--item-hover-bg-color); }
+.outline-item:hover { margin-left: -28px; margin-right: -28px; border-left: 28px solid transparent; border-right: 28px solid transparent; }
+.outline-item-single .outline-expander::before, .outline-item-single .outline-expander:hover::before { display: none; }
+.outline-item-open > .outline-item > .outline-expander::before { content: ""; }
+.outline-children { display: none; }
+.info-panel-tab-wrapper { display: none; }
+.outline-item-open > .outline-children { display: block; }
+.typora-export .outline-item { padding-top: 1px; padding-bottom: 1px; }
+.typora-export .outline-item:hover { margin-right: -8px; border-right: 8px solid transparent; }
+.typora-export .outline-expander::before { content: "+"; font-family: inherit; top: -1px; }
+.typora-export .outline-expander:hover::before, .typora-export .outline-item-open > .outline-item > .outline-expander::before { content: "−"; }
+.typora-export-collapse-outline .outline-children { display: none; }
+.typora-export-collapse-outline .outline-item-open > .outline-children, .typora-export-no-collapse-outline .outline-children { display: block; }
+.typora-export-no-collapse-outline .outline-expander::before { content: "" !important; }
+.typora-export-show-outline .outline-item-active > .outline-item .outline-label { font-weight: 700; }
+.md-inline-math-container mjx-container { zoom: 0.95; }
+mjx-container { break-inside: avoid; }
+.md-alert.md-alert-note { border-left-color: rgb(9, 105, 218); }
+.md-alert.md-alert-important { border-left-color: rgb(130, 80, 223); }
+.md-alert.md-alert-warning { border-left-color: rgb(154, 103, 0); }
+.md-alert.md-alert-tip { border-left-color: rgb(31, 136, 61); }
+.md-alert.md-alert-caution { border-left-color: rgb(207, 34, 46); }
+.md-alert { padding: 0px 1em; margin-bottom: 16px; color: inherit; border-left: 0.25em solid rgb(0, 0, 0); }
+.md-alert-text-note { color: rgb(9, 105, 218); }
+.md-alert-text-important { color: rgb(130, 80, 223); }
+.md-alert-text-warning { color: rgb(154, 103, 0); }
+.md-alert-text-tip { color: rgb(31, 136, 61); }
+.md-alert-text-caution { color: rgb(207, 34, 46); }
+.md-alert-text { font-size: 0.9rem; font-weight: 700; }
+.md-alert-text svg { fill: currentcolor; position: relative; top: 0.125em; margin-right: 1ch; overflow: visible; }
+.md-alert-text-container::after { content: attr(data-text); text-transform: capitalize; pointer-events: none; margin-right: 1ch; }
+
+
+.CodeMirror { height: auto; }
+.CodeMirror.cm-s-inner { background: inherit; }
+.CodeMirror-scroll { overflow: auto hidden; z-index: 3; }
+.CodeMirror-gutter-filler, .CodeMirror-scrollbar-filler { background-color: rgb(255, 255, 255); }
+.CodeMirror-gutters { border-right: 1px solid rgb(221, 221, 221); background: inherit; white-space: nowrap; }
+.CodeMirror-linenumber { padding: 0px 3px 0px 5px; text-align: right; color: rgb(153, 153, 153); }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-property { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-negative { color: rgb(221, 68, 68); }
+.cm-positive { color: rgb(34, 153, 34); }
+.cm-header, .cm-strong { font-weight: 700; }
+.cm-del { text-decoration: line-through; }
+.cm-em { font-style: italic; }
+.cm-link { text-decoration: underline; }
+.cm-error { color: red; }
+.cm-invalidchar { color: red; }
+.cm-constant { color: rgb(38, 139, 210); }
+.cm-defined { color: rgb(181, 137, 0); }
+div.CodeMirror span.CodeMirror-matchingbracket { color: rgb(0, 255, 0); }
+div.CodeMirror span.CodeMirror-nonmatchingbracket { color: rgb(255, 34, 34); }
+.cm-s-inner .CodeMirror-activeline-background { background: inherit; }
+.CodeMirror { position: relative; overflow: hidden; }
+.CodeMirror-scroll { height: 100%; outline: 0px; position: relative; box-sizing: content-box; background: inherit; }
+.CodeMirror-sizer { position: relative; }
+.CodeMirror-gutter-filler, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-vscrollbar { position: absolute; z-index: 6; display: none; outline: 0px; }
+.CodeMirror-vscrollbar { right: 0px; top: 0px; overflow: hidden; }
+.CodeMirror-hscrollbar { bottom: 0px; left: 0px; overflow: auto hidden; }
+.CodeMirror-scrollbar-filler { right: 0px; bottom: 0px; }
+.CodeMirror-gutter-filler { left: 0px; bottom: 0px; }
+.CodeMirror-gutters { position: absolute; left: 0px; top: 0px; padding-bottom: 10px; z-index: 3; overflow-y: hidden; }
+.CodeMirror-gutter { white-space: normal; height: 100%; box-sizing: content-box; padding-bottom: 30px; margin-bottom: -32px; display: inline-block; }
+.CodeMirror-gutter-wrapper { position: absolute; z-index: 4; background: 0px 0px !important; border: none !important; }
+.CodeMirror-gutter-background { position: absolute; top: 0px; bottom: 0px; z-index: 4; }
+.CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
+.CodeMirror-lines { cursor: text; }
+.CodeMirror pre { border-radius: 0px; border-width: 0px; background: 0px 0px; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; overflow-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; }
+.CodeMirror-wrap pre { overflow-wrap: break-word; white-space: pre-wrap; word-break: normal; }
+.CodeMirror-code pre { border-right: 30px solid transparent; width: fit-content; }
+.CodeMirror-wrap .CodeMirror-code pre { border-right: none; width: auto; }
+.CodeMirror-linebackground { position: absolute; inset: 0px; z-index: 0; }
+.CodeMirror-linewidget { position: relative; z-index: 2; overflow: auto; }
+.CodeMirror-wrap .CodeMirror-scroll { overflow-x: hidden; }
+.CodeMirror-measure { position: absolute; width: 100%; height: 0px; overflow: hidden; visibility: hidden; }
+.CodeMirror-measure pre { position: static; }
+.CodeMirror div.CodeMirror-cursor { position: absolute; visibility: hidden; border-right: none; width: 0px; }
+.CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+.CodeMirror-focused div.CodeMirror-cursor { visibility: inherit; }
+.cm-searching { background: rgba(255, 255, 0, 0.4); }
+span.cm-underlined { text-decoration: underline; }
+span.cm-strikethrough { text-decoration: line-through; }
+.cm-tw-syntaxerror { color: rgb(255, 255, 255); background-color: rgb(153, 0, 0); }
+.cm-tw-deleted { text-decoration: line-through; }
+.cm-tw-header5 { font-weight: 700; }
+.cm-tw-listitem:first-child { padding-left: 10px; }
+.cm-tw-box { border-style: solid; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-color: inherit; border-top-width: 0px !important; }
+.cm-tw-underline { text-decoration: underline; }
+@media print {
+  .CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+}
+
+
+:root {
+    --side-bar-bg-color: #fff;
+    --control-text-color: #777;
+}
+
+/* cyrillic-ext */
+/* cyrillic */
+/* greek-ext */
+/* greek */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+/* cyrillic-ext */
+/* cyrillic */
+/* greek-ext */
+/* greek */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+/* cyrillic-ext */
+/* cyrillic */
+/* greek-ext */
+/* greek */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+/* cyrillic-ext */
+/* cyrillic */
+/* greek-ext */
+/* greek */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: Source Sans Pro, Helvetica Neue, Arial, sans-serif !important;
+    color: #322289;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6rem;
+    letter-spacing: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+#write {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 30px 40px 30px;
+    padding-top: 20px;
+    padding-bottom: 100px;
+}
+
+#write p {
+    /* text-indent: 2rem; */
+    line-height: 1.6rem;
+    word-spacing: .05rem;
+}
+
+#write ol li {
+    padding-left: 0.5rem;
+}
+
+#write > ul:first-child,
+#write > ol:first-child {
+    margin-top: 30px;
+}
+
+body > *:first-child {
+    margin-top: 0 !important;
+}
+
+body > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+a {
+    color: #c6392e;
+    font-weight: 600;
+    padding: 0px 2px;
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    text-decoration: none;
+}
+
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+
+h2 a,
+h3 a {
+    color: #322289;
+}
+
+h3 a:before {
+    content: '#';
+    color: #c6392e;
+    position: absolute;;
+    left: -0.7em;
+    margin-top: -0.05em;
+    padding-right: 0.5em;
+    font-size: 1.2em;
+    line-height: 1;
+    font-weight: bold;
+}
+
+h1 {
+    padding-bottom: .4rem;
+    font-size: 2.2rem;
+    line-height: 1.3;
+}
+
+h2 {
+    font-size: 1.75rem;
+    line-height: 1.225;
+    margin: 35px 0px 15px 0px;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #ddd;
+}
+
+h3 {
+    font-size: 1.4rem;
+    line-height: 1.43;
+    margin: 20px 0px 7px 0px;
+}
+
+h4 {
+    font-size: 1.2rem;
+}
+
+h5 {
+    font-size: 1rem;
+}
+
+h6 {
+    font-size: 1rem;
+    color: #777;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+table {
+    margin: 0.8em 0;
+}
+
+li > ol,
+li > ul {
+    margin: 0 0;
+}
+
+hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+body > h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+body > h1:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+body > h3:first-child,
+body > h4:first-child,
+body > h5:first-child,
+body > h6:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+a:first-child h1,
+a:first-child h2,
+a:first-child h3,
+a:first-child h4,
+a:first-child h5,
+a:first-child h6 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+h1 p,
+h2 p,
+h3 p,
+h4 p,
+h5 p,
+h6 p {
+    margin-top: 0;
+}
+
+li p.first {
+    display: inline-block;
+}
+
+ul,
+ol {
+    padding-left: 30px;
+}
+
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+
+blockquote {
+    border-left: 4px solid #c6392e;
+    padding: 10px 0px 10px 15px;
+    color: #777;
+    background-color: rgba(207, 111, 28, .1);
+}
+
+table {
+    padding: 0;
+    word-break: initial;
+}
+
+table tr {
+    border-top: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+
+table tr:nth-child(2n),
+thead {
+    background-color: #fafafa;
+}
+
+table tr th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+
+table tr td {
+    border: 1px solid #dfe2e5;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+
+table tr th:first-child,
+table tr td:first-child {
+    margin-top: 0;
+}
+
+table tr th:last-child,
+table tr td:last-child {
+    margin-bottom: 0;
+}
+
+#write strong {
+    padding: 0px 1px 0 1px;
+}
+
+#write em {
+    padding: 0px 5px 0 2px;
+}
+
+#write table thead th {
+    background-color: #f2f2f2;
+}
+
+#write .CodeMirror-gutters {
+    border-right: none;
+}
+
+#write .md-fences {
+    border: 1px solid #F4F4F4;
+    -webkit-font-smoothing: initial;
+    margin: 0.8rem 0 !important;
+    padding: 0.3rem 0rem !important;
+    line-height: 1.43rem;
+    background-color: #F8F8F8 !important;
+    border-radius: 2px;
+    font-family: Roboto Mono, Source Sans Pro, Monaco, courier, monospace !important;
+    font-size: 0.85rem;
+    word-wrap: normal;
+}
+
+#write .CodeMirror-wrap .CodeMirror-code pre {
+    padding-left: 12px;
+}
+
+#write code, tt {
+    margin: 0 2px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-family: Source Sans Pro, Roboto Mono, Monaco, courier, monospace !important;
+    font-size: 0.92rem;
+    color: #e96900;
+    background-color: #f8f8f8;
+}
+
+#write .md-footnote {
+    background-color: #f8f8f8;
+    color: #e96900;
+}
+
+/* heighlight. */
+#write mark {
+    background-color: #EBFFEB;
+    border-radius: 2px;
+    padding: 2px 4px;
+    margin: 0 2px;
+    color: #222;
+    font-weight: 500;
+}
+
+#write del {
+    padding: 1px 2px;
+}
+
+.cm-s-inner .cm-link,
+.cm-s-inner.cm-link {
+    color: #22a2c9;
+}
+
+.cm-s-inner .cm-string {
+    color: #22a2c9;
+}
+
+.md-task-list-item > input {
+    margin-left: -1.3em;
+}
+
+@media screen and (min-width: 914px) {
+    /*body {
+        width: 854px;
+        margin: 0 auto;
+    }*/
+}
+
+@media print {
+    html {
+        font-size: 13px;
+    }
+
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+    background-color: #f8f8f8;
+}
+
+#write pre.md-meta-block {
+    padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block > .code-tooltip {
+    bottom: .375rem;
+}
+
+#write > h3.md-focus:before {
+    left: -1.5625rem;
+    top: .375rem;
+}
+
+#write > h4.md-focus:before {
+    left: -1.5625rem;
+    top: .285714286rem;
+}
+
+#write > h5.md-focus:before {
+    left: -1.5625rem;
+    top: .285714286rem;
+}
+
+#write > h6.md-focus:before {
+    left: -1.5625rem;
+    top: .285714286rem;
+}
+
+.md-image > .md-meta {
+    /*border: 1px solid #ddd;*/
+    border-radius: 3px;
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    padding: 2px 0px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag {
+    color: inherit;
+}
+
+.md-toc {
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.sidebar-tabs {
+    border-bottom: none;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#md-notification:before {
+    top: 10px;
+}
+
+/** focus mode */
+
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header,
+.context-menu,
+.megamenu-content,
+footer {
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state {
+    visibility: visible;
+}
+
+.mac-seamless-mode #typora-sidebar {
+    background-color: #fafafa;
+    background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+    color: #b4654d;
+}
+
+.html-for-mac .context-menu {
+    --item-hover-bg-color: #E6F0FE;
+}
+
+#write {
+  max-width: auto; /*adjust writing area position*/
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+#typora-source .CodeMirror-lines {
+  max-width: auto; /*or 1000px*/
+}
+
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG2"] path[data-c], mjx-container[jax="SVG2"] use[data-c] {
+  stroke-width: 3;
+}
+
+g[data-mml-node="xypic"] path {
+  stroke-width: inherit;
+}
+
+.MathJax g[data-mml-node="xypic"] path {
+  stroke-width: inherit;
+}
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+							stroke-width: 0;
+						} .typora-export li, .typora-export p, .typora-export,  .footnote-line {white-space: normal;} h1,h2,h3,h4,h5 {white-space:pre-line}
+</style><title>wiki</title>
+</head>
+<body class='typora-export'><div class='typora-export-content'>
+<div id='write'  class=''><h1 id='sfppy---python-framework-for-food-contact-compliance-and-risk-assessment-🍏⏩🍎'><span>SFPPy - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎</span></h1><hr /><p>&nbsp;</p><div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-weight: bold;">
+  <span style="font-size: 20px;">🍏⏩🍎 <strong>SFPPy for Food Contact Compliance and Risk Assessment</strong></span><br>
+  Contact <a href="mailto:olivier.vitrac@gmail.com" style="color: #fff; text-decoration: underline;">Olivier Vitrac</a> for questions |
+  <a href="https://github.com/ovitrac/SFPPy" style="color: #fff; text-decoration: underline;">Website</a> |
+  <a href="https://ovitrac.github.io/SFPPy/" style="color: #fff; text-decoration: underline;">Documentation</a>
+</div><p>&nbsp;</p><p><mark><em><span>Table of Contents</span></em></mark></p><div class='md-toc' mdtype='toc'><p class="md-toc-content" role="list"><span role="listitem" class="md-toc-item md-toc-h1" data-ref="n0"><a class="md-toc-inner" href="#sfppy---python-framework-for-food-contact-compliance-and-risk-assessment-🍏⏩🍎">SFPPy - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎</a></span><span role="listitem" class="md-toc-item md-toc-h2" data-ref="n9"><a class="md-toc-inner" href="#🛠️-overview">🛠️ <strong>Overview</strong></a></span><span role="listitem" class="md-toc-item md-toc-h2" data-ref="n26"><a class="md-toc-inner" href="#📁-main-modules-located-in-patankar">📁 <strong>Main Modules</strong> (Located in <code>patankar/</code>)</a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n49"><a class="md-toc-inner" href="#why-patankar">Why Patankar?</a></span><span role="listitem" class="md-toc-item md-toc-h2" data-ref="n55"><a class="md-toc-inner" href="#🚀-|-1-|-quick-start">🚀 | 1 | <strong>QUICK START</strong></a></span><span role="listitem" class="md-toc-item md-toc-h2" data-ref="n61"><a class="md-toc-inner" href="#💡-|-2-|-usage-snippets">💡 | 2 | <strong>USAGE SNIPPETS</strong></a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n65"><a class="md-toc-inner" href="#|-21-|-snippet-1️⃣-|-simple-migration-simulation">| 2.1 | Snippet 1️⃣ | Simple Migration Simulation</a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n73"><a class="md-toc-inner" href="#|-22-|-snippet-2️⃣-|-retrieving-molecular-properties-and-toxicological-data">| 2.2 | Snippet 2️⃣ | Retrieving Molecular Properties and Toxicological Data</a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n88"><a class="md-toc-inner" href="#|-23-|-snippet-3️⃣-|-defining-a-custom-packaging-shape">| 2.3 | Snippet 3️⃣ | Defining a Custom Packaging Shape</a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n96"><a class="md-toc-inner" href="#|-24-|-snippet-4️⃣-|-using--⏩--as-mass-transfer-operator-in-chained-simulations">| 2.4 | Snippet 4️⃣ | Using  <strong>⏩</strong>  as Mass Transfer Operator in Chained Simulations</a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n117"><a class="md-toc-inner" href="#🧩-how-it-works"><strong>🧩 How It Works</strong></a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n142"><a class="md-toc-inner" href="#|-25-|-snippet-5️⃣-|-parameter-linking-🔗-via-layerlink">| 2.5 | Snippet 5️⃣ | Parameter linking <strong>🔗</strong> via <code>layerLink</code></a></span><span role="listitem" class="md-toc-item md-toc-h2" data-ref="n149"><a class="md-toc-inner" href="#📖-|-3-|-case-studies">📖 | 3 | <strong>CASE STUDIES</strong></a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n152"><a class="md-toc-inner" href="#|-31-|-example-1-|-mass-transfer-from-♶-monolayer-materials">| 3.1 | Example 1: | <strong>Mass Transfer from</strong> ♶ <strong>Monolayer Materials</strong></a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n161"><a class="md-toc-inner" href="#|-32-|-example-2-|--mass-transfer-in-♻️-recycled-pp-bottles">| 3.2 | Example 2 |  <strong>Mass Transfer in ♻️ Recycled PP Bottles</strong></a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n170"><a class="md-toc-inner" href="#|-33-|-example-3-|--advanced-migration-simulation-⛓️-with-variants">| 3.3 | Example 3 |  <strong>Advanced Migration Simulation ⛓️ with Variants</strong></a></span><span role="listitem" class="md-toc-item md-toc-h3" data-ref="n183"><a class="md-toc-inner" href="#|-34-|-example-4-|-parameter-fitting-and-optimization-⚙️">| 3.4 | Example 4 | <strong>Parameter Fitting and Optimization</strong> ⚙️</a></span><span role="listitem" class="md-toc-item md-toc-h2" data-ref="n199"><a class="md-toc-inner" href="#🌟-|-3-|--why-sfppy"><strong>🌟 | 3 |  Why SFPPy?</strong></a></span></p></div><h2 id='🛠️-overview'><span>🛠️ </span><strong><span>Overview</span></strong></h2><p><code>SFPPy</code><span> is a Python-based framework for </span><strong><span>compliance testing of food contact materials</span></strong><span> and </span><strong><span>recycled plastic safety assessment</span></strong><span> under:</span></p><ul><li><p><span>🇺🇸 </span><strong><a href='https://www.fda.gov/food/food-packaging-other-substances-come-contact-food-information-consumers/understanding-how-fda-regulates-substances-come-contact-food'><span>US FDA regulations</span></a></strong></p></li><li><p><span>🇪🇺 </span><a href='https://food.ec.europa.eu/food-safety/chemical-safety/food-contact-materials_en'><strong><span>European Union regulations</span></strong></a><span> (EFSA, EU 10/2011, etc.)</span></p></li><li><p><span>🇨🇳 </span><strong><span>Chinese GB standards</span></strong></p></li><li><p><span>🌍 </span><strong><span>Other international guidelines</span></strong><span>. For example, for materials in contact with 💄💅cosmetics and 🧴 home care products read </span><a href='https://cospatox.com/publication/'><span>CosPaTox guidelines</span></a><span>.</span></p></li></ul><p>&nbsp;</p><p><span>This project </span><strong><span>translates well-established chemical migration models</span></strong><span> from MATLAB/Octave and other languages to </span><strong><span>pure Python</span></strong><span>🐍, ensuring minimal dependencies. </span></p><blockquote><p><span>💡 If you need background or training, please refer to 📕 </span><a href='https://ovitrac.github.io/SFPPy/MigrationModeling/'><span>this book</span></a><span> on </span><code>migration modeling</code><span> or the European training platform 👨🏼‍💻 </span><a href='https://fitness.agroparistech.fr/fitness/lectures/'><span>FitNESS</span></a><span>.</span></p><p><span>✨Note that can also fit your own experimental 🧫⏲🌡</span><code>migration kinetics</code><span>with SFPPy (see </span><code>example 4</code><span>) and explore new strategies to identify ⚗️ partition coefficients and 🎲 diffusivities from ⚛molecular structures.</span></p></blockquote><p>&nbsp;</p><h2 id='📁-main-modules-located-in-patankar'><span>📁 </span><strong><span>Main Modules</span></strong><span> (Located in </span><code>patankar/</code><span>)</span></h2><figure class='table-figure'><table><thead><tr><th style='text-align:right;' ><span>module</span></th><th><span>description</span></th></tr></thead><tbody><tr><td style='text-align:right;' ><strong><code>migration.py</code></strong><span> 🏗️</span></td><td><span>Core solver using a Patankar finite-volume method for mass transfer modeling.</span></td></tr><tr><td style='text-align:right;' ><strong><code>geometry.py</code></strong><span> 📐</span></td><td><span>Defines 3D packaging geometries and calculates volume/surface area.</span></td></tr><tr><td style='text-align:right;' ><strong><code>food.py</code></strong><span> 🍎</span></td><td><span>Models food layers and their interactions with packaging.</span></td></tr><tr><td style='text-align:right;' ><strong><code>layer.py</code></strong><span> 📜</span></td><td><span>Defines materials and layers for multilayer packaging.</span></td></tr><tr><td style='text-align:right;' ><strong><code>property.py</code></strong><span> 📊</span></td><td><span>Computes physical and chemical properties (e.g., diffusion, partitioning).</span></td></tr><tr><td style='text-align:right;' ><strong><code>loadpubchem.py</code></strong><span> 🔬</span></td><td><span>Retrieves molecular properties from </span><a href='https://pubchem.ncbi.nlm.nih.gov/search/search.cgi'><span>PubChem</span></a><span> and </span><a href='https://toxtree.sourceforge.net/'><span>ToxTree</span></a><span> (cached locally).</span></td></tr></tbody></table></figure><h3 id='why-patankar'><span>Why Patankar?</span></h3><blockquote><p><span>ⓘ The </span><code>patankar</code><span> folder is named in honor of 👨🏻‍💼</span><strong><span>Suhas V. Patankar</span></strong><span>, who developed and popularized the 🔢 </span><strong><a href='https://catatanstudi.wordpress.com/wp-content/uploads/2010/02/numerical-heat-transfer-and-fluid-flow.pdf'><span>finite volume method</span></a></strong><span>, which this project adapts for </span><strong><span>mass transfer problems with an arbitrary number of જ⁀➴ </span><a href='https://en.wikipedia.org/wiki/Rankine%E2%80%93Hugoniot_conditions'><span>Rankine discontinuities</span></a></strong><span>.</span></p><p><span>🔧 The modules include a 🧠</span><code>knowledge management system</code><span> via extensible 🐍</span><a href='https://www.w3schools.com/python/python_classes.asp'><span>Python classes</span></a><span>, allowing easy expansion to cover additional cases and implement new 🔮</span><code>prediction methods and models</code><span>. I recommend this </span><a href='https://docs.python.org/3/tutorial/classes.html'><span>reading</span></a><span> if you plan to ⌨ modify </span><code>SFFPy</code><span> for your own needs.</span></p></blockquote><p>&nbsp;</p><hr /><h2 id='🚀-|-1-|-quick-start'><span>🚀 | 1 | </span><strong><span>QUICK START</span></strong></h2><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="bash"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="bash"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Clone the repository</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">git</span> clone https://github.com/ovitrac/SFPPy.git</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">cd</span> SFPPy</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Install dependencies</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">pip install <span class="cm-attribute">-r</span> requirements.txt</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 137px;"></div><div class="CodeMirror-gutters" style="display: none; height: 137px;"></div></div></div></pre><p><em><small><code>🔧 SFPPy</code><span> is built on a minimum number of packages 📦📦, which are all standard. Customized libraries are included in 📁</span><code>patankar/private/</code><span> and do not require specific installation. </span></small></em></p><p>&nbsp;</p><hr /><p>&nbsp;</p><h2 id='💡-|-2-|-usage-snippets'><span>💡 | 2 | </span><strong><span>USAGE SNIPPETS</span></strong></h2><blockquote><p><span>ⓘ </span><code>SFPPy</code><span> is fully object-oriented and supports multiple syntax styles, ranging from a </span><a href='https://docs.python.org/3/howto/functional.html'><span>functional approach</span></a><span> to a more abstract, </span><a href='https://www.geeksforgeeks.org/operator-overloading-in-python/'><span>operator-driven</span></a><span> paradigm—all in a  🐍 </span><strong><span>Pythonic</span></strong><span> manner. The snippets below demonstrate both approaches.</span></p></blockquote><p>&nbsp;</p><h3 id='|-21-|-snippet-1️⃣-|-simple-migration-simulation'><span>| 2.1 | Snippet 1️⃣ | Simple Migration Simulation</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="python" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="python"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">food</span> <span class="cm-keyword">import</span> <span class="cm-variable">ethanol</span> &nbsp;<span class="cm-comment"># food database</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">layer</span> <span class="cm-keyword">import</span> <span class="cm-variable">layer</span> &nbsp;<span class="cm-comment"># material database</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Define the food contact medium and layers</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">simulant</span> <span class="cm-operator">=</span> <span class="cm-variable">ethanol</span>() <span class="cm-comment"># here a food simulant</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">A</span> <span class="cm-operator">=</span> <span class="cm-variable">layer</span>(<span class="cm-variable">layername</span><span class="cm-operator">=</span><span class="cm-string">"layer 1 (contact)"</span>, <span class="cm-variable">D</span><span class="cm-operator">=</span><span class="cm-number">1e-15</span>, <span class="cm-variable">l</span><span class="cm-operator">=</span><span class="cm-number">50e-6</span>, <span class="cm-variable">C0</span><span class="cm-operator">=</span><span class="cm-number">0</span>, <span class="cm-variable">k</span><span class="cm-operator">=</span><span class="cm-number">1</span>) &nbsp;<span class="cm-comment"># SI units</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">B</span> <span class="cm-operator">=</span> <span class="cm-variable">layer</span>(<span class="cm-variable">layername</span><span class="cm-operator">=</span><span class="cm-string">"layer 2"</span>, <span class="cm-variable">D</span><span class="cm-operator">=</span>(<span class="cm-number">1e-9</span>, <span class="cm-string">"cm**2/s"</span>), <span class="cm-variable">l</span><span class="cm-operator">=</span>(<span class="cm-number">100</span>, <span class="cm-string">"um"</span>),<span class="cm-variable">k</span><span class="cm-operator">=</span><span class="cm-number">2</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">multilayer</span> <span class="cm-operator">=</span> <span class="cm-variable">A</span> <span class="cm-operator">+</span> <span class="cm-variable">B</span> &nbsp;<span class="cm-comment"># layer A is contact (food is on the left)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Run solver, plot the migration kinetics CF(t) and concentration profiles in P Cx(x,t)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">solution</span> <span class="cm-operator">=</span> <span class="cm-variable">simulant</span>.<span class="cm-property">migration</span>(<span class="cm-variable">multilayer</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">hCF</span> <span class="cm-operator">=</span> <span class="cm-variable">solution</span>.<span class="cm-property">plotCF</span>() &nbsp;<span class="cm-comment"># concentration kinetic in the simulant (F) for default times</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">hCx</span> <span class="cm-operator">=</span> <span class="cm-variable">solution</span>.<span class="cm-property">plotCx</span>() &nbsp;<span class="cm-comment"># concentration profile in the multilayer packaging</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Print in PDF and PNG, export to Excel</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">hCF</span>.<span class="cm-property">print</span>(<span class="cm-string">"myresult"</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">solution</span>.<span class="cm-property">comparison</span>.<span class="cm-property">save_as_csv</span>(<span class="cm-string">"myresult.csv"</span>) <span class="cm-comment"># CSV format</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">solution</span>.<span class="cm-property">comparison</span>.<span class="cm-property">save_as_excel</span>(<span class="cm-string">"myresult.xlsx"</span>) <span class="cm-comment"># Excel format</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 389px;"></div><div class="CodeMirror-gutters" style="display: none; height: 389px;"></div></div></div></pre><p><span>📝 </span><strong><span>Notations</span></strong><span>: </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-13-TEX-I-1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D437" xlink:href="#MJX-13-TEX-I-1D437"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>D</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">D</script><span> is the diffusivity, </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="0.674ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 298 705" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.025ex;"><defs><path id="MJX-10-TEX-I-1D459" d="M117 59Q117 26 142 26Q179 26 205 131Q211 151 215 152Q217 153 225 153H229Q238 153 241 153T246 151T248 144Q247 138 245 128T234 90T214 43T183 6T137 -11Q101 -11 70 11T38 85Q38 97 39 102L104 360Q167 615 167 623Q167 626 166 628T162 632T157 634T149 635T141 636T132 637T122 637Q112 637 109 637T101 638T95 641T94 647Q94 649 96 661Q101 680 107 682T179 688Q194 689 213 690T243 693T254 694Q266 694 266 686Q266 675 193 386T118 83Q118 81 118 75T117 65V59Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D459" xlink:href="#MJX-10-TEX-I-1D459"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>l</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">l</script><span> is the thickness layer, and </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="2.605ex" height="1.97ex" role="img" focusable="false" viewBox="0 -705 1151.6 870.6" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.375ex;"><defs><path id="MJX-11-TEX-I-1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path><path id="MJX-11-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use data-c="1D436" xlink:href="#MJX-11-TEX-I-1D436"></use></g><g data-mml-node="mn" transform="translate(748,-150) scale(0.707)"><use data-c="30" xlink:href="#MJX-11-TEX-N-30"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>C</mi><mn>0</mn></msub></math></mjx-assistive-mml></mjx-container><script type="math/tex">C_0</script><span> is the initial concentration.</span></p><p><img src="./assets/demo1.png" alt="CF" style="zoom:50%;" /><img src="./assets/demo2.png" alt="Cx" style="zoom:50%;" /></p><p>&nbsp;</p><hr /><p>&nbsp;</p><h3 id='|-22-|-snippet-2️⃣-|-retrieving-molecular-properties-and-toxicological-data'><span>| 2.2 | Snippet 2️⃣ | Retrieving Molecular Properties and Toxicological Data</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="python" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="python"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">loadpubchem</span> <span class="cm-keyword">import</span> <span class="cm-variable">migrant</span> &nbsp;<span class="cm-comment"># connect to pubchem for missing substances</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">food</span> <span class="cm-keyword">import</span> <span class="cm-variable">oliveoil</span>,<span class="cm-variable">water</span> &nbsp;<span class="cm-comment"># food simulants </span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">layer</span> <span class="cm-keyword">import</span> <span class="cm-variable">gPET</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-comment"># "glassy" PET (i.e., T&lt;Tg)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">m</span> <span class="cm-operator">=</span> <span class="cm-variable">migrant</span>(<span class="cm-string">"bisphenol A"</span>) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-comment"># bisphenol A = BPA</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Print basic properties</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">print</span>(<span class="cm-variable">m</span>.<span class="cm-property">M</span>, <span class="cm-variable">m</span>.<span class="cm-property">logP</span>, <span class="cm-variable">m</span>.<span class="cm-property">polarityindex</span>) &nbsp; &nbsp; &nbsp; <span class="cm-comment"># Molecular weight, logP value, polarity Index P'</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">print</span>(<span class="cm-variable">m</span>.<span class="cm-property">smiles</span>) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-comment"># CC(C)(C1=CC=C(C=C1)O)C2=CC=C(C=C2)O</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Add BPA to material (P) and food simulants (F1,F2) to calculate binary properties</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">F1</span> <span class="cm-operator">=</span> <span class="cm-variable">oliveoil</span>(<span class="cm-variable">migrant</span><span class="cm-operator">=</span><span class="cm-variable">m</span>) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-comment"># F1 = food simulant oliver oil with BPA</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">F2</span> <span class="cm-operator">=</span> <span class="cm-variable">water</span>(<span class="cm-variable">migrant</span><span class="cm-operator">=</span><span class="cm-variable">m</span>) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-comment"># F2 = water with BPA</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">P</span> <span class="cm-operator">=</span> <span class="cm-variable">gPET</span>(<span class="cm-variable">migrant</span><span class="cm-operator">=</span><span class="cm-variable">m</span>) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-comment"># P = PET with BPA</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">KFP1</span> <span class="cm-operator">=</span> <span class="cm-variable">P</span>.<span class="cm-property">k</span> <span class="cm-operator">/</span> <span class="cm-variable">F1</span>.<span class="cm-property">k</span> &nbsp; &nbsp; <span class="cm-comment"># F-to-P1 partition coefficient, k= Henry-like coefficients</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">KFP2</span> <span class="cm-operator">=</span> <span class="cm-variable">P</span>.<span class="cm-property">k</span> <span class="cm-operator">/</span> <span class="cm-variable">F2</span>.<span class="cm-property">k</span> &nbsp; &nbsp; <span class="cm-comment"># F-to-P2 partition coefficient, k= Henry-like coefficients</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Print partition coefficients, with k values calculated from Flory-Huggins theory</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">print</span>(<span class="cm-variable">KFP1</span>,<span class="cm-variable">KFP2</span>) &nbsp; &nbsp; &nbsp;<span class="cm-comment"># [0.93498524] [0.00093499]</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 366px;"></div><div class="CodeMirror-gutters" style="display: none; height: 366px;"></div></div></div></pre><p><small><span>💡 The examples show how to inject </span><code>m</code><span> into  </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.695ex" height="1.538ex" role="img" focusable="false" viewBox="0 -680 749 680" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-4-TEX-I-1D439" d="M48 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H742Q749 676 749 669Q749 664 736 557T722 447Q720 440 702 440H690Q683 445 683 453Q683 454 686 477T689 530Q689 560 682 579T663 610T626 626T575 633T503 634H480Q398 633 393 631Q388 629 386 623Q385 622 352 492L320 363H375Q378 363 398 363T426 364T448 367T472 374T489 386Q502 398 511 419T524 457T529 475Q532 480 548 480H560Q567 475 567 470Q567 467 536 339T502 207Q500 200 482 200H470Q463 206 463 212Q463 215 468 234T473 274Q473 303 453 310T364 317H309L277 190Q245 66 245 60Q245 46 334 46H359Q365 40 365 39T363 19Q359 6 353 0H336Q295 2 185 2Q120 2 86 2T48 1Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D439" xlink:href="#MJX-4-TEX-I-1D439"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>F</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">F</script><span>=</span><code>food</code><span> (</span><em><span>various classes</span></em><span> ) and </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.699ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 751 683" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-5-TEX-I-1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D443" xlink:href="#MJX-5-TEX-I-1D443"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">P</script><span>=polymer </span><code>layer</code><span> (</span><em><span>various classes</span></em><span>) to get customized and conservative simulations for specific substances and polymers. All properties, diffusivities </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-13-TEX-I-1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D437" xlink:href="#MJX-13-TEX-I-1D437"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>D</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">D</script><span>, Henry-like coefficients </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.025ex;"><defs><path id="MJX-9-TEX-I-1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D458" xlink:href="#MJX-9-TEX-I-1D458"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">k</script><span> are calculated automatically based from their names.</span></small><span> </span></p><p>&nbsp;</p><p><strong><span>Add toxicological data from Toxtree</span></strong></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="python"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="python"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">loadpubchem</span> <span class="cm-keyword">import</span> <span class="cm-variable">migrantToxtree</span> <span class="cm-comment"># combine PubChem and ToxTree</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">substance</span> <span class="cm-operator">=</span> <span class="cm-variable">migrantToxtree</span>(<span class="cm-string">"formaldehyde"</span>)</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 46px;"></div><div class="CodeMirror-gutters" style="display: none; height: 46px;"></div></div></div></pre><p><code>output</code></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="python" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="python"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-operator">&lt;</span><span class="cm-variable">migrantToxtree</span> <span class="cm-builtin">object</span><span class="cm-operator">&gt;</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; <span class="cm-variable">Compound</span>: <span class="cm-variable">formaldehyde</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-variable">Name</span>: <span class="cm-variable">formaldehyde</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-variable">cid</span>: <span class="cm-number">712</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-variable cm-error">CAS</span>: [<span class="cm-string">'50-00-0'</span>, <span class="cm-string">'8013-13 [...] 80-5'</span>, <span class="cm-string">'30525-89-4'</span>]</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;<span class="cm-variable cm-error">M</span> (<span class="cm-builtin">min</span>): <span class="cm-number">30.026</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;<span class="cm-variable">M_array</span>: [<span class="cm-number">30.026</span>]</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;<span class="cm-variable cm-error">formula</span>: <span class="cm-variable">CH2O</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; <span class="cm-variable">smiles</span>: <span class="cm-variable">C</span><span class="cm-operator">=</span><span class="cm-variable">O</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-variable">logP</span>: [<span class="cm-number">1.2</span>]</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp;<span class="cm-variable">P</span><span class="cm-string">' (calc): [3.91591487]</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; <span class="cm-variable cm-error">Toxicology</span>: <span class="cm-variable">Low</span> (<span class="cm-variable">Class</span> <span class="cm-variable">I</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-variable">TTC</span>: <span class="cm-number">1.5</span> [<span class="cm-variable">µg</span><span class="cm-operator">/</span><span class="cm-variable">kg</span> <span class="cm-variable">bw</span><span class="cm-operator">/</span><span class="cm-variable">day</span>]</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; <span class="cm-variable">CF</span> <span class="cm-variable">TTC</span>: <span class="cm-number">0.09</span> [<span class="cm-variable">mg</span><span class="cm-operator">/</span><span class="cm-variable">kg</span> <span class="cm-variable">food</span> <span class="cm-variable">intake</span>]</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;<span class="cm-variable cm-error">alert</span> <span class="cm-number">1</span>: <span class="cm-variable">Alert</span> <span class="cm-variable">For</span> <span class="cm-variable">Schiff</span> <span class="cm-variable">Bas</span> [<span class="cm-operator">...</span>] <span class="cm-variable">Formation</span> <span class="cm-variable">Identified</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">Out</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">migrantToxtree</span>: <span class="cm-variable">Oplossin</span> [<span class="cm-operator">...</span>]  [<span class="cm-variable">Dutch</span>] <span class="cm-operator">-</span> <span class="cm-variable">M</span><span class="cm-operator">=</span><span class="cm-number">30.026</span> <span class="cm-variable">g</span><span class="cm-operator">/</span><span class="cm-variable">mol</span><span class="cm-operator">&gt;</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 366px;"></div><div class="CodeMirror-gutters" style="display: none; height: 366px;"></div></div></div></pre><p><small><span>💡 A local installation of Toxtree (java) is included with SFPPy</span></small><span> </span></p><p>&nbsp;</p><blockquote><p><span>For the European FCM and Articles Regulation, Annex I - Authorised Substances, use the ECHA </span><a href='https://echa.europa.eu/plastic-material-food-contact'><span>webpage</span></a></p></blockquote><p>&nbsp;</p><hr /><p>&nbsp;</p><h3 id='|-23-|-snippet-3️⃣-|-defining-a-custom-packaging-shape'><span>| 2.3 | Snippet 3️⃣ | Defining a Custom Packaging Shape</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="python"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="python"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">geometry</span> <span class="cm-keyword">import</span> <span class="cm-variable">Packaging3D</span> &nbsp;<span class="cm-comment"># import basic shapes</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">pkg</span> <span class="cm-operator">=</span> <span class="cm-variable">Packaging3D</span>(<span class="cm-string">'bottle'</span>, <span class="cm-comment"># bottle is a composite shape</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-variable">body_radius</span><span class="cm-operator">=</span>(<span class="cm-number">5</span>, <span class="cm-string">'cm'</span>), <span class="cm-variable">body_height</span><span class="cm-operator">=</span>(<span class="cm-number">0.2</span>, <span class="cm-string">'m'</span>),</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-variable">neck_radius</span><span class="cm-operator">=</span>(<span class="cm-number">19</span>, <span class="cm-string">"mm"</span>), <span class="cm-variable">neck_height</span><span class="cm-operator">=</span>(<span class="cm-number">40</span>, <span class="cm-string">"mm"</span>))</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">vol</span>, <span class="cm-variable">area</span> <span class="cm-operator">=</span> <span class="cm-variable">pkg</span>.<span class="cm-property">get_volume_and_area</span>() <span class="cm-comment"># extract volume and surface area</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">print</span>(<span class="cm-string">"Volume (m³):"</span>, <span class="cm-variable">vol</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">print</span>(<span class="cm-string">"Surface Area (m²):"</span>, <span class="cm-variable">area</span>)</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 160px;"></div><div class="CodeMirror-gutters" style="display: none; height: 160px;"></div></div></div></pre><p><small><span>💡 The examples show how to use either </span><code>pkg</code><span> or its properties to achieve mass transfer simulation for a specific geometry.</span></small></p><p><small><span>⚠️ </span><strong><span>Note</span></strong><span>: To efficiently simulate the migration of substances from packaging materials, SFPPy </span><strong><span>unfolds complex 3D packaging geometries</span></strong><span> into an equivalent </span><strong><span>1D representation</span></strong><span>. This transformation assumes that </span><strong><span>substance desorption is predominantly governed by diffusion within the walls</span></strong><span> of the packaging.</span></small></p><p><small><span>🔍 The </span><code>geometry.py</code><span> module provides tools to compute </span><strong><span>surface-area-to-volume ratios</span></strong><span>, extract wall thicknesses, and generate equivalent </span><strong><span>1D models</span></strong><span> for mass transfer simulations.</span></small></p><p>&nbsp;</p><hr /><p>&nbsp;</p><h3 id='|-24-|-snippet-4️⃣-|-using--⏩--as-mass-transfer-operator-in-chained-simulations'><span>| 2.4 | Snippet 4️⃣ | Using  </span><strong><span>⏩</span></strong><span>  as Mass Transfer Operator in Chained Simulations</span></h3><p><span>📌 </span><strong><span>SFPPy</span></strong><span> leverages </span><strong><span>multiple inheritance</span></strong><span> to define food contact conditions by combining </span><strong><span>storage conditions</span></strong><span>, </span><strong><span>food types</span></strong><span>, and </span><strong><span>physical properties</span></strong><span>.  </span></p><p><span>📌 Additionally, </span><strong><span>two operators</span></strong><span> play a key role in SFPPy’s intuitive syntax:  </span></p><ul><li><p><strong><span>➕</span></strong><span> for </span><strong><span>combining layers</span></strong><span> and </span><strong><span>merging results</span></strong><span>  </span></p></li><li><p><strong><span>⏩</span></strong><span> for naturally representing </span><strong><span>mass transfer</span></strong><span>  </span></p></li></ul><p><span>With these operators, </span><strong><span>mass transfer</span></strong><span> can be abstracted into a simple, visual representation:  </span></p><ol start='' ><li><p><strong><span>🍏⏩🍎</span></strong><span></span><br/><em><span>(Direct transfer from green to red, symbolizing migration.)</span></em><span>  </span></p></li><li><p><strong><span>🍏⏩🟠⏩🍎</span></strong><span></span><br/><em><span>(Includes an intermediate step, depicting progressive migration.)</span></em><span>  </span></p></li><li><p><strong><span>🍏⏩🟡⏩🟠⏩🍎</span></strong><span></span><br/><em><span>(More detailed, illustrating multiple contamination stages over time.)</span></em><span>  </span></p></li><li><p><strong><span>🍏⚡⏩🍎</span></strong><span></span><br/><em><span>(Emphasizes </span><strong><span>active food transformation</span></strong><span>, with accelerated mass transfer.)</span></em><span>  </span></p></li></ol><p><span>🌟 </span><strong><span>SFPPy</span></strong><span> makes this abstraction possible with simple, expressive code.</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="python" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="python"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">layer</span> <span class="cm-keyword">import</span> <span class="cm-variable">gPET</span>, <span class="cm-variable">PP</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">food</span> <span class="cm-keyword">import</span> <span class="cm-variable">ambient</span>, <span class="cm-variable">hotfilled</span>, <span class="cm-variable">realfood</span>, <span class="cm-variable">fat</span>, <span class="cm-variable">liquid</span>, <span class="cm-variable">stacked</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">loadpubchem</span> <span class="cm-keyword">import</span> <span class="cm-variable">migrant</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Define migrant and packaging layers (ABA: PET-PP-PET)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">m</span> <span class="cm-operator">=</span> <span class="cm-variable">migrant</span>(<span class="cm-string">"limonene"</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">A</span> <span class="cm-operator">=</span> <span class="cm-variable">gPET</span>(<span class="cm-variable">l</span><span class="cm-operator">=</span>(<span class="cm-number">20</span>, <span class="cm-string">"um"</span>), <span class="cm-variable">migrant</span><span class="cm-operator">=</span><span class="cm-variable">m</span>, <span class="cm-variable">C0</span><span class="cm-operator">=</span><span class="cm-number">0</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">B</span> <span class="cm-operator">=</span> <span class="cm-variable">PP</span>(<span class="cm-variable">l</span><span class="cm-operator">=</span>(<span class="cm-number">500</span>, <span class="cm-string">"um"</span>), <span class="cm-variable">migrant</span><span class="cm-operator">=</span><span class="cm-variable">m</span>, <span class="cm-variable">C0</span><span class="cm-operator">=</span><span class="cm-number">200</span>) &nbsp;</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">ABA</span> <span class="cm-operator">=</span> <span class="cm-variable">A</span> <span class="cm-operator">+</span> <span class="cm-variable">B</span> <span class="cm-operator">+</span> <span class="cm-variable">A</span> &nbsp;<span class="cm-comment"># the most left layer is contact (food on the left)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Define storage and processing conditions:</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># 1:storage in stacks &gt;&gt; 2:hot-filled container &gt;&gt; 3:long-term storage of packaged food</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">class</span> <span class="cm-def">contact1</span>(<span class="cm-variable">stacked</span>, <span class="cm-variable">ambient</span>): <span class="cm-variable">name</span> <span class="cm-operator">=</span> <span class="cm-string">"1:setoff"</span>; <span class="cm-variable">contacttime</span> <span class="cm-operator">=</span> (<span class="cm-number">4</span>, <span class="cm-string">"months"</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">class</span> <span class="cm-def">contact2</span>(<span class="cm-variable">hotfilled</span>, <span class="cm-variable">realfood</span>, <span class="cm-variable">liquid</span>, <span class="cm-variable">fat</span>): <span class="cm-variable">name</span> <span class="cm-operator">=</span> <span class="cm-string">"2:hotfilling"</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">class</span> <span class="cm-def">contact3</span>(<span class="cm-variable">ambient</span>, <span class="cm-variable">realfood</span>, <span class="cm-variable">liquid</span>, <span class="cm-variable">fat</span>): <span class="cm-variable">name</span> <span class="cm-operator">=</span> <span class="cm-string">"3:storage"</span>; <span class="cm-variable">contacttime</span> <span class="cm-operator">=</span> (<span class="cm-number">6</span>, <span class="cm-string">"months"</span>)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Instantiate and simulate with ⏩</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">medium1</span>, <span class="cm-variable">medium2</span>, <span class="cm-variable">medium3</span> <span class="cm-operator">=</span> <span class="cm-variable">contact1</span>(), <span class="cm-variable">contact2</span>(), <span class="cm-variable">contact3</span>()</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">medium1</span> <span class="cm-operator">&gt;&gt;</span> <span class="cm-variable">ABA</span> <span class="cm-operator">&gt;&gt;</span> <span class="cm-variable">medium1</span> <span class="cm-operator">&gt;&gt;</span> <span class="cm-variable">medium2</span> <span class="cm-operator">&gt;&gt;</span> <span class="cm-variable">medium3</span> &nbsp;<span class="cm-comment"># Automatic chaining</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Merge all kinetics into a single one and plot the migration kinetics</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">sol123</span> <span class="cm-operator">=</span> <span class="cm-variable">medium1</span>.<span class="cm-property">lastsimulation</span> <span class="cm-operator">+</span> <span class="cm-variable">medium2</span>.<span class="cm-property">lastsimulation</span> <span class="cm-operator">+</span> <span class="cm-variable">medium3</span>.<span class="cm-property">lastsimulation</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">sol123</span>.<span class="cm-property">plotCF</span>()</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 549px;"></div><div class="CodeMirror-gutters" style="display: none; height: 549px;"></div></div></div></pre><p><img src="./assets/demo3.png" alt="CF" style="zoom:50%;" /></p><h3 id='🧩-how-it-works'><strong><span>🧩 How It Works</span></strong></h3><p><span>Each </span><strong><span>contact class</span></strong><span> inherits attributes from </span><strong><span>multiple base classes</span></strong><span>, allowing flexible combinations of:</span></p><ol start='' ><li><p><strong><span>📌 Storage Conditions</span></strong><span>:  </span></p><ul><li><p><code>ambient</code><span>: Defines standard storage at room temperature  </span></p></li><li><p><code>hotfilled</code><span>: Represents high-temperature filling processes  </span></p></li><li><p><code>stacked</code><span>: Models setoff migration when packaging layers are stacked  </span></p></li></ul></li><li><p><strong><span>🥘 Food Types &amp; Interactions</span></strong><span>:  </span></p><ul><li><p><code>realfood</code><span>: Represents actual food matrices  </span></p></li><li><p><code>liquid</code><span>: Specifies that the food is a liquid  </span></p></li><li><p><code>fat</code><span>: Indicates a fatty food, influencing partitioning behavior  </span></p></li></ul></li></ol><p><small><span>🔬 </span><strong><span>By combining these components, SFPPy allows streamlined, physics-based simulations with minimal code.</span></strong><span> 🚀</span></small></p><p>&nbsp;</p><hr /><p>&nbsp;</p><h3 id='|-25-|-snippet-5️⃣-|-parameter-linking-🔗-via-layerlink'><span>| 2.5 | Snippet 5️⃣ | Parameter linking </span><strong><span>🔗</span></strong><span> via </span><code>layerLink</code></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="python"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="python"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.4375px; left: 12px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Any numeric property can be attached to a simulation with layerLink</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">from</span> <span class="cm-variable">patankar</span>.<span class="cm-property">layer</span> <span class="cm-keyword">import</span> <span class="cm-variable">layerLink</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Attach a variable function barrier thickness to ABA</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">fb_thickness</span> <span class="cm-operator">=</span> <span class="cm-variable">layerLink</span>(<span class="cm-string">"l"</span>,<span class="cm-variable">indices</span><span class="cm-operator">=</span><span class="cm-number">0</span>) <span class="cm-comment"># index 0 = layer 1 (A) in contact with F</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Reuse ABA from Snippet 3 [...]</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">ABA</span>.<span class="cm-property">llink</span> <span class="cm-operator">=</span> <span class="cm-variable">fb_thicknesses</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Change dynamically the simulation by changing fb_thicknesses[0]</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">fb_thicknesses</span>[<span class="cm-number">0</span>] <span class="cm-operator">=</span> <span class="cm-number">12e-6</span> <span class="cm-comment"># 12 µm</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">medium1</span>.<span class="cm-property">lastsimulation</span>.<span class="cm-property">rerun</span>()</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># [...]</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 229px;"></div><div class="CodeMirror-gutters" style="display: none; height: 229px;"></div></div></div></pre><p><small><span>💡 Dynamic parameter binding using </span><code>layerLink</code><span> connections allows: </span>
+<span>✅ Dynamic updates of </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-13-TEX-I-1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D437" xlink:href="#MJX-13-TEX-I-1D437"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>D</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">D</script><span>, </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.025ex;"><defs><path id="MJX-9-TEX-I-1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D458" xlink:href="#MJX-9-TEX-I-1D458"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">k</script><span>, </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="0.674ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 298 705" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.025ex;"><defs><path id="MJX-10-TEX-I-1D459" d="M117 59Q117 26 142 26Q179 26 205 131Q211 151 215 152Q217 153 225 153H229Q238 153 241 153T246 151T248 144Q247 138 245 128T234 90T214 43T183 6T137 -11Q101 -11 70 11T38 85Q38 97 39 102L104 360Q167 615 167 623Q167 626 166 628T162 632T157 634T149 635T141 636T132 637T122 637Q112 637 109 637T101 638T95 641T94 647Q94 649 96 661Q101 680 107 682T179 688Q194 689 213 690T243 693T254 694Q266 694 266 686Q266 675 193 386T118 83Q118 81 118 75T117 65V59Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D459" xlink:href="#MJX-10-TEX-I-1D459"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>l</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">l</script><span>, </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="2.605ex" height="1.97ex" role="img" focusable="false" viewBox="0 -705 1151.6 870.6" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.375ex;"><defs><path id="MJX-11-TEX-I-1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path><path id="MJX-11-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use data-c="1D436" xlink:href="#MJX-11-TEX-I-1D436"></use></g><g data-mml-node="mn" transform="translate(748,-150) scale(0.707)"><use data-c="30" xlink:href="#MJX-11-TEX-N-30"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>C</mi><mn>0</mn></msub></math></mjx-assistive-mml></mjx-container><script type="math/tex">C_0</script><span> abd </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-12-TEX-I-1D447" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D447" xlink:href="#MJX-12-TEX-I-1D447"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>T</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">T</script><span> for specific layers only ( index </span><code>[i]</code><span> refers to the layer </span><code>i+1</code><span>).</span>
+<span>✅ Seamless integration of simulation and optimization tasks.</span>
+<span>✅ Robust handling of parameter uncertainties in complex simulation scenarios.</span>
+</small><span> </span></p><p>&nbsp;</p><hr /><p>&nbsp;</p><h2 id='📖-|-3-|-case-studies'><span>📖 | 3 | </span><strong><span>CASE STUDIES</span></strong></h2><p><span>The project includes four detailed examples (</span><code>example1.py</code><span>, </span><code>example2.py</code><span>, </span><code>example3.py</code><span>, and </span><code>**example4.py**</code><span>), showcasing real-world scenarios with various materials, substances, food types, geometries, and usage conditions.</span></p><p>&nbsp;</p><h3 id='|-31-|-example-1-|-mass-transfer-from-♶-monolayer-materials'><span>| 3.1 | Example </span><kbd><span>1</span></kbd><span>: | </span><strong><span>Mass Transfer from</span></strong><span> ♶ </span><strong><span>Monolayer Materials</span></strong></h3><ul><li><p><span>🥪 Simulates the migration of </span><kbd><strong><span>Irganox 1076</span></strong></kbd><span> and </span><kbd><strong><span>Irgafos 168</span></strong></kbd><span> from a </span><strong><span>100 µm </span><kbd><span>LDPE</span></kbd><span>film</span></strong><span> into a </span><strong><span>fatty </span><kbd><span>sandwich</span></kbd></strong><span> 🥖over </span><strong><span>10 days at 7°C</span></strong><span>.</span></p></li><li><p><span>📈 Evaluates </span><strong><span>migration kinetics</span></strong><span> and their implications for food safety.</span></p></li><li><p>&nbsp;</p></li></ul><hr /><h3 id='|-32-|-example-2-|--mass-transfer-in-♻️-recycled-pp-bottles'><span>| 3.2 | Example </span><kbd><span>2</span></kbd><span> |  </span><strong><span>Mass Transfer in ♻️ Recycled </span><kbd><span>PP</span></kbd><span> Bottles</span></strong></h3><ul><li><p><span>🍼 Investigates </span><strong><kbd><span>toluene</span></kbd><span>kbd&lt; migration</span></strong><span> from a </span><strong><span>300 µm thick recycled </span><kbd><span>PP</span></kbd><span> bottle</span></strong><span> into a </span><strong><kbd><span>fatty liquid</span></kbd><span> food</span></strong><span>.</span></p></li><li><p><span>🛡️ Assesses the </span><strong><span>effect of a </span><kbd><span>PET</span></kbd><span> functional barrier</span></strong><span> (</span><kbd><span>FB</span></kbd><span>) of varying thickness on reducing migration.</span></p></li><li><p>&nbsp;</p></li></ul><hr /><h3 id='|-33-|-example-3-|--advanced-migration-simulation-⛓️-with-variants'><span>| 3.3 | Example </span><kbd><span>3</span></kbd><span> |  </span><strong><span>Advanced Migration Simulation ⛓️ with Variants</span></strong></h3><ul><li><p><span>📦 Simulates migration in a </span><strong><span>trilayer (</span><kbd><span>ABA</span></kbd><span>) multilayer system</span></strong><span>, with </span><strong><kbd><span>PET</span></kbd><span> (</span><kbd><span>A</span></kbd><span>) and recycled </span><kbd><span>PP</span></kbd><span> (</span><kbd><span>B</span></kbd><span>)</span></strong><span>.</span></p></li><li><p><span>🔥 Evaluates migration behavior across </span><strong><kbd><span>storage with set-off</span></kbd><span>, </span><kbd><span>hot-filling</span></kbd><span>, and </span><kbd><span>long-term storage</span></kbd><span> conditions</span></strong><span>.</span></p></li><li><p><span>⚙️ Explores </span><strong><span>variants</span></strong><span> where the migrant and layer thickness are modified to assess performance.</span></p></li><li><p><span>🍏⏩🍎 Example 3 showcases the mass transfer operator ⏩.</span></p></li><li><p>&nbsp;</p></li></ul><hr /><h3 id='|-34-|-example-4-|-parameter-fitting-and-optimization-⚙️'><span>| 3.4 | Example </span><kbd><span>4</span></kbd><span> | </span><strong><span>Parameter Fitting and Optimization</span></strong><span> ⚙️</span></h3><ul><li><p><span>✅ </span><strong><span>Fit diffusivities (</span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-13-TEX-I-1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D437" xlink:href="#MJX-13-TEX-I-1D437"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>D</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">D</script><span>) and partitioning coefficients (</span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="2.527ex" height="3.047ex" role="img" focusable="false" viewBox="0 -884.7 1117.1 1346.8" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -1.045ex;"><defs><path id="MJX-14-TEX-I-1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path><path id="MJX-14-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mfrac"><g data-mml-node="mi" transform="translate(374.3,394) scale(0.707)"><use data-c="1D458" xlink:href="#MJX-14-TEX-I-1D458"></use></g><g data-mml-node="msub" transform="translate(220,-345) scale(0.707)"><g data-mml-node="mi"><use data-c="1D458" xlink:href="#MJX-14-TEX-I-1D458"></use></g><g data-mml-node="mn" transform="translate(554,-150) scale(0.707)"><use data-c="30" xlink:href="#MJX-14-TEX-N-30"></use></g></g><rect width="877.1" height="60" x="120" y="220"></rect></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mi>k</mi><msub><mi>k</mi><mn>0</mn></msub></mfrac></math></mjx-assistive-mml></mjx-container><script type="math/tex">\frac{k}{k_0}</script><span>)</span></strong><span> from migration kinetic data 📈.</span></p></li><li><p><span>✅ Utilize </span><strong><span>dynamic parameter linking</span></strong><span> 🔗🧲 with </span><code>layerLink</code><span>.</span></p></li><li><p><span>✅ Integrate simulation results directly with experiments for sensitivity analysis and optimization</span></p></li></ul><p>&nbsp;</p><hr /><p>&nbsp;</p><blockquote><p><span>⚠️ </span><strong><span>Disclaimer</span></strong><span>: These examples do not discuss </span><a href='https://en.wikipedia.org/wiki/Uncertainty_quantification'><span>sources of uncertainty</span></a><span>. Please refer to our </span><a href='https://ovitrac.github.io/SFPPy/MigrationModeling/'><span>publications</span></a><span> for details on the limitations of the presented approaches and assumptions.</span></p></blockquote><p>&nbsp;</p><hr /><p>&nbsp;</p><h2 id='🌟-|-3-|--why-sfppy'><strong><span>🌟 | 3 |  Why SFPPy?</span></strong></h2><p><span>✔ </span><strong><code>SFPPy</code><span>:</span></strong><span> is </span><strong><span>free</span></strong><span> and </span><strong><span>opensource</span></strong><span>. </span>
+<span>✔ </span><strong><code>SFPPy</code><span>:</span></strong><span> accepts any unit as </span><code>(value,&quot;unit&quot;)</code><span> or </span><code>([value1,value2...],&quot;unit&quot;)</code><span>. </span>
+<span>✔ </span><strong><span>Operator-based chaining:</span></strong><span> </span><code>&gt;&gt;</code><span> handles </span><strong><span>automatic mass transfer and property propagation</span></strong>
+<span>✔ </span><strong><span>Minimal code for complex simulations:</span></strong><span> </span><code>+</code><span> joins layers and merges results across storage conditions</span>
+<span>✔ </span><strong><span>Pythonic abstraction:</span></strong><span> Works with </span><strong><span>PubChem</span></strong><span>, </span><strong><span>ToxTree</span></strong><span>, predefined </span><strong><span>polymer materials</span></strong><span>, and </span><strong><span>3D packaging geometries</span></strong>
+<span>✔ </span><strong><span>Built-in visualization &amp; export:</span></strong><span> Supports </span><strong><span>Excel (</span><code>.xlsx</code><span>), CSV, PDF, PNG</span></strong><span> and </span><strong><span>Matlab</span></strong><span> (if its really needed)</span></p><p><span>🔬 </span><strong><code>SFPPy</code><span> powers scalable, real-world safe food packaging simulations.</span></strong></p><p>&nbsp;</p><hr /><p><em><span>For further details, consult the </span><a href='https://ovitrac.github.io/SFPPy/'><span>online documentation</span></a><span> and the </span><a href='https://github.com/ovitrac/SFPPy/releases'><span>release page</span></a><span> for new capabilities.</span></em></p><hr /><p>&nbsp;</p><p><span>🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️</span><br/>
+<span>🍽️🍽️🍎🍎🍎🍎🍽️🍎🍎🍎🍎🍎🍽️🍏🍏🍏🍏🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️</span><br/>
+<span>🍽️🍎🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍎🍽️🍽️🍽️🍎🍽️🐍🍽️🍽️🍽️🐍🍽️</span><br/>
+<span>🍽️🍽️🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️</span><br/>
+<span>🍽️🍽️🍽️🍽️🍽️🍎🍽️🍎🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️</span><br/>
+<span>🍽️🍎🍎🍎🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️</span><br/>
+<span>🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="5.12ex" height="1.557ex" role="img" focusable="false" viewBox="0 -666 2263 688" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-15-TEX-I-1D463" d="M173 380Q173 405 154 405Q130 405 104 376T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Q21 294 29 316T53 368T97 419T160 441Q202 441 225 417T249 361Q249 344 246 335Q246 329 231 291T200 202T182 113Q182 86 187 69Q200 26 250 26Q287 26 319 60T369 139T398 222T409 277Q409 300 401 317T383 343T365 361T357 383Q357 405 376 424T417 443Q436 443 451 425T467 367Q467 340 455 284T418 159T347 40T241 -11Q177 -11 139 22Q102 54 102 117Q102 148 110 181T151 298Q173 362 173 380Z"></path><path id="MJX-15-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-15-TEX-N-2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path><path id="MJX-15-TEX-N-33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path><path id="MJX-15-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D463" xlink:href="#MJX-15-TEX-I-1D463"></use></g><g data-mml-node="mn" transform="translate(485,0)"><use data-c="31" xlink:href="#MJX-15-TEX-N-31"></use><use data-c="2E" xlink:href="#MJX-15-TEX-N-2E" transform="translate(500,0)"></use><use data-c="33" xlink:href="#MJX-15-TEX-N-33" transform="translate(778,0)"></use><use data-c="30" xlink:href="#MJX-15-TEX-N-30" transform="translate(1278,0)"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>v</mi><mn>1.30</mn></math></mjx-assistive-mml></mjx-container><script type="math/tex">v1.30</script><br/></p><p><em><small><span>Enlarge your window if you cannot read the logo. The snake is the totem for Python</span></small></em></p></div></div>
+</body>
+</html>

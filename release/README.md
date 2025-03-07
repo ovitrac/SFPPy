@@ -1,30 +1,50 @@
-## SFPPy <small>v1.3</small>  🍏⏩🍎  
+# SFPPy <small>v1.3</small> Releases  🍏⏩🍎  
 
-**SFPPy** is a **Python-based framework** for **compliance testing of food contact materials** and **recycled plastic safety assessment**, supporting regulations from:  
+***
+
+
+
+**SFPPy** is a **Python-based framework** for  𓌉◯𓇋   **Compliance Testing of Food Contact Materials** and 🎢⌬♻️ **Recycled Plastic Safety Assessment**, supporting regulations from:  
 
 - 🇺🇸 **US FDA regulations**  
+
 - 🇪🇺 **European Union (EFSA, EU 10/2011, etc.)**  
+
 - 🇨🇳 **Chinese GB standards**  
+
 - 🌍 **Other international guidelines**  
 
-SFPPy brings **well-established chemical migration models** to **pure Python**, offering **object-oriented** and **scalable** capabilities.  
-🔍 Read the detailed internal documentation [here](https://ovitrac.github.io/SFPPy).
+  
+
+`SFPPy` brings **well-established chemical migration models** to **pure Python**, offering **object-oriented** and **scalable** capabilities.  
 
 ---
 
 ## 📦 Download & Installation  
 
-- **Full version** (`< 1 MB` with documentation) - for Windows, Linux, macOS:  
-  📥 **[Download SFPP](https://github.com/ovitrac/SFPPy/releases/)**  
+``SFPPy`` is available as two versions. The light version is shipped without the private installation of Toxtree.  It is used by the class `patankar.loadpubchem.migrantToxtree` for advanced risk assessment. Without Toxtree, the class `patankar.loadpubchem.migrant` remain fully operational and is sufficient for routine simulation. Toxtree can be installed manally in `patankar/private/toxtree/` as indicated in `patankar/private/toxtree/README.md`.
+
+- **Full version** (`60 MB` with Toxtree) - for Windows, Linux, macOS:  
+  📥 **[Download SFPPy](https://github.com/ovitrac/SFPPy/releases/)**  
+- **Light version** (`< 10 MB` with full documentation) - for Windows, Linux, macOS:  
+  📥 **[Download SFPPymin](https://github.com/ovitrac/SFPPy/releases/)**  
+
+> Note that `Toxtree` requires a java runtime environment (`JRE`) for your system if it is not installed [https://www.java.com/en/download/manual.jsp]. 
+
+
 
 #### 📂 Example Files  
 
-Included in the **root folder**:  
+`SFFPy` is shipped with four examples located in the 📂root folder and documented in the 🔍[Wiki Pages](https://ovitrac.github.io/SFPPy/wikipages/).
 
-- `example1.py`  
-- `example2.py`  
-- `example3.py`  
-- `example4.py` 
+| Included in the **root folder**:                             | short description                                            |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [`example1.py` ](https://ovitrac.github.io/SFPPy/wikipages/#examples/example1.html) | monolayer materials                                          |
+| [`example2.py`](https://ovitrac.github.io/SFPPy/wikipages/#examples/example2.html) | recycled bottles with functional barrier                     |
+| [`example3.py`](https://ovitrac.github.io/SFPPy/wikipages/#examples/example3.html) | chained simulations with variants                            |
+| [`example4.py` ](https://ovitrac.github.io/SFPPy/wikipages/#examples/example4.html) | fitting experimental curves to extract diffusion and partition coefficiens |
+
+
 
 ---
 
@@ -32,7 +52,8 @@ Included in the **root folder**:
 
 📚 **Read the Online Documentation:**  
 
-- [SFPPy Documentation](https://ovitrac.github.io/Pizza3/) 
+- [SFPPy Documentation](https://ovitrac.github.io/SFPPy/)
+- [SFPPy Wiki pages](https://ovitrac.github.io/SFPPy/wiki/) 
 - [Migration Modeling Guide](https://ovitrac.github.io/SFPPy/MigrationModeling/) 
 - [FitNESS E-learning Platform](https://fitness.agroparistech.fr/) - ([Details](https://pubs.acs.org/doi/10.1021/acs.jchemed.4c00137))  
 
@@ -45,14 +66,10 @@ Included in the **root folder**:
 ```python
 from patankar.layer import gPET, PP
 from patankar.food import ambient, hotfilled, realfood, fat, liquid, stacked
-from patankar.loadpubchem import migrant
-
-# 🔬 Look up substances on PubChem
-m = migrant("limonene")
 
 # 🏗️ Create a multilayer material (ABA: PET-PP-PET)
-A = gPET(l=(20, "um"), migrant=m, C0=0)
-B = PP(l=(500, "um"), migrant=m, C0=200)  
+A = gPET(l=(20, "um"), migrant='bisphenol A', C0=0)
+B = PP(l=(500, "um"), migrant='bisphenol A', C0=200)  
 ABA = A + B + A  # The leftmost layer is in contact with food
 
 # 🍽️ Define contact & storage conditions
@@ -78,12 +95,14 @@ sol123.plotCF()
 ✅ **Regulation-Ready**: Supports compliance testing for **FDA, EFSA, and GB standards**  
 ✅ **Fast & Scalable**: Optimized finite-volume solver for **1D mass transfer modeling**  
 ✅ **Modular & Object-Oriented**: Easily define **multilayer materials & food contact conditions**  
-✅ **PubChem Integration**: Fetch molecular properties directly from **PubChem**  
+✅ **PubChem Integration**: Fetch molecular properties directly from **PubChem** and **ToxTree**  
 ✅ **Automatic Chaining**: Simulate multi-step processes effortlessly  
 
 🚀 **Try SFPPy now and streamline your food safety assessments!**  
 
 ---
+
+
 
 ### 🔗 Additional Resources  
 

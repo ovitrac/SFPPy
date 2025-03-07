@@ -111,7 +111,7 @@ from copy import deepcopy as duplicate
 from patankar.layer import check_units, NoUnits, layer # to convert units to SI
 from patankar.loadpubchem import migrant
 
-__all__ = [&#39;acetonitrile&#39;, &#39;ambient&#39;, &#39;aqueous&#39;, &#39;boiling&#39;, &#39;check_units&#39;, &#39;chemicalaffinity&#39;, &#39;chilled&#39;, &#39;ethanol&#39;, &#39;ethanol50&#39;, &#39;ethanol95&#39;, &#39;fat&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;foodproperty&#39;, &#39;frozen&#39;, &#39;frying&#39;, &#39;get_defined_init_params&#39;, &#39;help_food&#39;, &#39;hotambient&#39;, &#39;hotfilled&#39;, &#39;hotoven&#39;, &#39;intermediate&#39;, &#39;is_valid_classname&#39;, &#39;isooctane&#39;, &#39;layer&#39;, &#39;liquid&#39;, &#39;list_food_classes&#39;, &#39;methanol&#39;, &#39;microwave&#39;, &#39;migrant&#39;, &#39;nofood&#39;, &#39;oil&#39;, &#39;oiliveoil&#39;, &#39;oven&#39;, &#39;panfrying&#39;, &#39;pasteurization&#39;, &#39;perfectlymixed&#39;, &#39;realcontact&#39;, &#39;realfood&#39;, &#39;rolled&#39;, &#39;semisolid&#39;, &#39;setoff&#39;, &#39;simulant&#39;, &#39;solid&#39;, &#39;stacked&#39;, &#39;sterilization&#39;, &#39;tenax&#39;, &#39;testcontact&#39;, &#39;texture&#39;, &#39;transportation&#39;, &#39;water&#39;, &#39;water3aceticacid&#39;, &#39;wrap_text&#39;, &#39;yogurt&#39;]
+__all__ = [&#39;acetonitrile&#39;, &#39;ambient&#39;, &#39;aqueous&#39;, &#39;boiling&#39;, &#39;check_units&#39;, &#39;chemicalaffinity&#39;, &#39;chilled&#39;, &#39;ethanol&#39;, &#39;ethanol50&#39;, &#39;ethanol95&#39;, &#39;fat&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;foodproperty&#39;, &#39;frozen&#39;, &#39;frying&#39;, &#39;get_defined_init_params&#39;, &#39;help_food&#39;, &#39;hotambient&#39;, &#39;hotfilled&#39;, &#39;hotoven&#39;, &#39;intermediate&#39;, &#39;is_valid_classname&#39;, &#39;isooctane&#39;, &#39;layer&#39;, &#39;liquid&#39;, &#39;list_food_classes&#39;, &#39;methanol&#39;, &#39;microwave&#39;, &#39;migrant&#39;, &#39;nofood&#39;, &#39;oil&#39;, &#39;oliveoil&#39;, &#39;oven&#39;, &#39;panfrying&#39;, &#39;pasteurization&#39;, &#39;perfectlymixed&#39;, &#39;realcontact&#39;, &#39;realfood&#39;, &#39;rolled&#39;, &#39;semisolid&#39;, &#39;setoff&#39;, &#39;simulant&#39;, &#39;solid&#39;, &#39;stacked&#39;, &#39;sterilization&#39;, &#39;tenax&#39;, &#39;testcontact&#39;, &#39;texture&#39;, &#39;transportation&#39;, &#39;water&#39;, &#39;water3aceticacid&#39;, &#39;wrap_text&#39;, &#39;yogurt&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -120,7 +120,7 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.21&#34;
+__version__ = &#34;1.22&#34;
 #%% Private Properties and functions
 
 # List of the default SI units used by physical quantity
@@ -247,18 +247,87 @@ def help_food():
 # -------------------------------------------------------------------
 class foodphysics:
     &#34;&#34;&#34;
-    Base class that automatically assigns instance attributes from class defaults,
-    except for the &#39;description&#39; attribute.
-    Check the physical meaning of quantities with units.
+    ===============================================================================
+    SFPPy Module: Food Physics (Base Class)
+    ===============================================================================
+    `foodphysics` serves as the **base class** for all food-related objects in mass
+    transfer simulations. It defines key parameters for food interaction with packaging
+    materials and implements dynamic property propagation for simulation models.
 
-    Implemented methods include:
-        - refresh() validates all quantities before a simulation
-        - update(name=&#34;new name&#34;, description=&#34;new description&#34;,parameter1=value)
-          assigns new values to physical parameters and attributes
-        - getparam() returns physical parameters even if they undefined
-    Available properties:
-        PBC returns True in periodic boundary conditions are enforced (setoff)
-        impervious returns True if impervious boundary condition is appled (no food)
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    - Defines **mass transfer properties**:
+      - `h`: Mass transfer coefficient (m/s)
+      - `k`: Partition coefficient (dimensionless)
+    - Implements **contact conditions**:
+      - `contacttime`: Duration of food-packaging contact
+      - `contacttemperature`: Temperature of the contact interface
+    - Supports **inheritance and property propagation** to layers.
+    - Provides **physical state representation** (`solid`, `liquid`, `gas`).
+    - Allows **customization of mass transfer coefficients** via `kmodel`.
+
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `h`: Mass transfer coefficient (m/s) defining resistance at the interface.
+    - `k`: Henry-like partition coefficient between the food and the material.
+    - `contacttime`: Time duration of the packaging-food interaction.
+    - `contacttemperature`: Temperature at the packaging interface (°C).
+    - `surfacearea`: Contact surface area between packaging and food (m²).
+    - `volume`: Volume of the food medium (m³).
+    - `density`: Density of the food medium (kg/m³).
+    - `substance`: The migrating substance (e.g., a chemical compound).
+    - `medium`: The food medium in contact with packaging.
+    - `kmodel`: Custom partitioning model (can be overridden by the user).
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__rshift__(self, other)`: Propagates food properties to a layer (`food &gt;&gt; layer`).
+    - `__matmul__(self, other)`: Equivalent to `&gt;&gt;`, enables `food @ layer`.
+    - `migration(self, material, **kwargs)`: Simulates migration into a packaging layer.
+    - `contact(self, material, **kwargs)`: Alias for `migration()`.
+    - `update(self, **kwargs)`: Dynamically updates food properties.
+    - `get_param(self, key, default=None, acceptNone=True)`: Retrieves a parameter safely.
+    - `refresh(self)`: Ensures all properties are validated before simulation.
+    - `acknowledge(self, what, category)`: Tracks inherited properties.
+    - `copy(self, **kwargs)`: Creates a deep copy of the food object.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Works with `migration.py` to define the **left-side boundary condition**.
+    - Interfaces with `layer.py` to apply contact temperature propagation.
+    - Connects with `geometry.py` for food-contacting packaging surfaces.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.food import foodphysics
+    from patankar.layer import layer
+
+    medium = foodphysics(contacttemperature=(40, &#34;degC&#34;), h=(1e-6, &#34;m/s&#34;))
+    packaging_layer = layer(D=1e-14, l=50e-6)
+
+    # Propagate food properties to the layer
+    medium &gt;&gt; packaging_layer
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    solution = senspatankar(packaging_layer, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - The `foodphysics` class is the parent of `foodlayer`, `nofood`, `setoff`,
+      `realcontact`, and `testcontact`.
+    - The `PBC` property identifies periodic boundary conditions (used in `setoff`).
+    - This class provides **dynamic inheritance** for mass transfer properties.
+
     &#34;&#34;&#34;
 
     # General descriptors
@@ -741,7 +810,11 @@ class foodphysics:
         &#34;&#34;&#34;interface to simulation engine: senspantankar&#34;&#34;&#34;
         from patankar.migration import senspatankar
         self._to(material) # propagate contact conditions first
-        return senspatankar(material,self,**kwargs)
+        sim = senspatankar(material,self,**kwargs)
+        self.lastsimulation = sim # store the last simulation result in medium
+        self.lastinput = material # store the last input (material)
+        sim.savestate(material,self) # store store the inputs in sim for chaining
+        return sim
 
     def contact(self,material,**kwargs):
         &#34;&#34;&#34;alias to migration method&#34;&#34;&#34;
@@ -771,16 +844,88 @@ class foodphysics:
 
 class foodlayer(foodphysics):
     &#34;&#34;&#34;
-    Foodlayer class is a generic class to define food as a 1D layer in a symmetric manner with layer class
-    applicable to materials in contact.
-    Since mass transfer are much faster in the food than in the materials in contact, food is represented
-    as an almost 0D layer. Only a mass transfer resistance is applied at the food-material interface
-    controlled by the mass transfer coefficient h. A Henry-like coefficient k controls the eventual
-    partitioning of the substance between the food and the layer of the materials.
+    ===============================================================================
+    SFPPy Module: Food Layer
+    ===============================================================================
+    `foodlayer` models food as a **0D layer** in mass transfer simulations, serving
+    as the primary class for defining the medium in contact with a packaging material.
 
-    Food are geometrically defined by their volume and surface area in contact with the material.
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    - Models food as a **zero-dimensional (0D) medium** with:
+      - A **mass transfer resistance (`h`)** at the interface.
+      - A **partitioning behavior (`k`)** between food and packaging.
+      - **Contact time (`contacttime`) and temperature (`contacttemperature`)**.
+    - Defines **food geometry**:
+      - `surfacearea`: Contact area with the material (m²).
+      - `volume`: Total volume of the food medium (m³).
+    - Supports **impervious (`nofood`) and periodic (`setoff`) conditions**.
 
-    Contact time (contacttime) and contact temperature (contacttemperature) are defined via foodlayer.
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `h`: Mass transfer coefficient (m/s) defining resistance at the interface.
+    - `k`: Partition coefficient describing substance solubility in food.
+    - `contacttime`: Time duration of the packaging-food interaction.
+    - `contacttemperature`: Temperature at the packaging interface (°C).
+    - `surfacearea`: Contact surface area between packaging and food (m²).
+    - `volume`: Volume of the food medium (m³).
+    - `density`: Density of the food medium (kg/m³).
+    - `substance`: Migrant (chemical) diffusing into food.
+    - `medium`: Food medium in contact with packaging.
+    - `impervious`: `True` if no mass transfer occurs (`nofood` class).
+    - `PBC`: `True` if periodic boundary conditions apply (`setoff` class).
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__rshift__(self, other)`: Propagates food properties to a packaging layer (`food &gt;&gt; layer`).
+    - `__matmul__(self, other)`: Equivalent to `&gt;&gt;`, enables `food @ layer`.
+    - `migration(self, material, **kwargs)`: Simulates migration into a packaging layer.
+    - `contact(self, material, **kwargs)`: Alias for `migration()`.
+    - `update(self, **kwargs)`: Dynamically updates food properties.
+    - `get_param(self, key, default=None, acceptNone=True)`: Retrieves a parameter safely.
+    - `refresh(self)`: Ensures all properties are validated before simulation.
+    - `acknowledge(self, what, category)`: Tracks inherited properties.
+    - `copy(self, **kwargs)`: Creates a deep copy of the food object.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Used as the **left-side boundary** in `migration.py` simulations.
+    - Interacts with `layer.py` to propagate temperature and partitioning effects.
+    - Interfaces with `geometry.py` for food-contacting packaging simulations.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.food import foodlayer
+    medium = foodlayer(name=&#34;ethanol&#34;, contacttemperature=(40, &#34;degC&#34;))
+
+    from patankar.layer import LDPE
+    packaging = LDPE(l=50e-6, D=1e-14)
+
+    # Propagate food properties to the packaging
+    medium &gt;&gt; packaging
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    solution = senspatankar(packaging, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - The `foodlayer` class extends `foodphysics` and provides a physical
+      representation of food in contact with packaging.
+    - Subclasses include:
+      - `setoff`: Periodic boundary conditions (stacked packaging).
+      - `nofood`: Impervious boundary (no mass transfer).
+      - `realcontact`, `testcontact`: Standardized food contact conditions.
+    - The `h` parameter determines if the medium is **well-mixed** or **diffusion-limited**.
 
     &#34;&#34;&#34;
     level = &#34;root&#34;
@@ -1193,14 +1338,14 @@ class isooctane(simulant, perfectlymixed, fat):
     description = &#34;isooctane food simulant&#34;
     level = &#34;user&#34;
 
-class oiliveoil(simulant, perfectlymixed, fat):
+class oliveoil(simulant, perfectlymixed, fat):
     &#34;&#34;&#34;Isoactane food simulant&#34;&#34;&#34;
     _chemicalsubstance = &#34;methyl stearate&#34;
     _polarityindex = 1.0 # Primarily triacylglycerides; still quite non-polar, though it contains some polar headgroups (the glycerol backbone).
     name = &#34;olive oil&#34;
     description = &#34;olive oil food simulant&#34;
     level = &#34;user&#34;
-class oil(oiliveoil): pass # synonym of oliveoil
+class oil(oliveoil): pass # synonym of oliveoil
 
 class ethanol(simulant, perfectlymixed, fat):
     &#34;&#34;&#34;Ethanol food simulant&#34;&#34;&#34;
@@ -2145,7 +2290,7 @@ if __name__ == &#39;__main__&#39;:
 <ul class="hlist">
 <li><a title="food.ethanol" href="#food.ethanol">ethanol</a></li>
 <li><a title="food.isooctane" href="#food.isooctane">isooctane</a></li>
-<li><a title="food.oiliveoil" href="#food.oiliveoil">oiliveoil</a></li>
+<li><a title="food.oliveoil" href="#food.oliveoil">oliveoil</a></li>
 <li><a title="food.tenax" href="#food.tenax">tenax</a></li>
 </ul>
 <h3>Class variables</h3>
@@ -2193,14 +2338,85 @@ if __name__ == &#39;__main__&#39;:
 <span>(</span><span>**kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Foodlayer class is a generic class to define food as a 1D layer in a symmetric manner with layer class
-applicable to materials in contact.
-Since mass transfer are much faster in the food than in the materials in contact, food is represented
-as an almost 0D layer. Only a mass transfer resistance is applied at the food-material interface
-controlled by the mass transfer coefficient h. A Henry-like coefficient k controls the eventual
-partitioning of the substance between the food and the layer of the materials.</p>
-<p>Food are geometrically defined by their volume and surface area in contact with the material.</p>
-<p>Contact time (contacttime) and contact temperature (contacttemperature) are defined via foodlayer.</p>
+<div class="desc"><p>===============================================================================
+SFPPy Module: Food Layer
+===============================================================================
+<code><a title="food.foodlayer" href="#food.foodlayer">foodlayer</a></code> models food as a <strong>0D layer</strong> in mass transfer simulations, serving
+as the primary class for defining the medium in contact with a packaging material.</p>
+<hr>
+<h2 id="core-functionality"><strong>Core Functionality</strong></h2>
+<ul>
+<li>Models food as a <strong>zero-dimensional (0D) medium</strong> with:</li>
+<li>A <strong>mass transfer resistance (<code>h</code>)</strong> at the interface.</li>
+<li>A <strong>partitioning behavior (<code>k</code>)</strong> between food and packaging.</li>
+<li><strong>Contact time (<code>contacttime</code>) and temperature (<code>contacttemperature</code>)</strong>.</li>
+<li>Defines <strong>food geometry</strong>:</li>
+<li><code>surfacearea</code>: Contact area with the material (m²).</li>
+<li><code>volume</code>: Total volume of the food medium (m³).</li>
+<li>Supports <strong>impervious (<code><a title="food.nofood" href="#food.nofood">nofood</a></code>) and periodic (<code><a title="food.setoff" href="#food.setoff">setoff</a></code>) conditions</strong>.</li>
+</ul>
+<hr>
+<h2 id="key-properties"><strong>Key Properties</strong></h2>
+<ul>
+<li><code>h</code>: Mass transfer coefficient (m/s) defining resistance at the interface.</li>
+<li><code>k</code>: Partition coefficient describing substance solubility in food.</li>
+<li><code>contacttime</code>: Time duration of the packaging-food interaction.</li>
+<li><code>contacttemperature</code>: Temperature at the packaging interface (°C).</li>
+<li><code>surfacearea</code>: Contact surface area between packaging and food (m²).</li>
+<li><code>volume</code>: Volume of the food medium (m³).</li>
+<li><code>density</code>: Density of the food medium (kg/m³).</li>
+<li><code>substance</code>: Migrant (chemical) diffusing into food.</li>
+<li><code>medium</code>: Food medium in contact with packaging.</li>
+<li><code>impervious</code>: <code>True</code> if no mass transfer occurs (<code><a title="food.nofood" href="#food.nofood">nofood</a></code> class).</li>
+<li><code>PBC</code>: <code>True</code> if periodic boundary conditions apply (<code><a title="food.setoff" href="#food.setoff">setoff</a></code> class).</li>
+</ul>
+<hr>
+<h2 id="methods"><strong>Methods</strong></h2>
+<ul>
+<li><code>__rshift__(self, other)</code>: Propagates food properties to a packaging layer (<code>food &gt;&gt; layer</code>).</li>
+<li><code>__matmul__(self, other)</code>: Equivalent to <code>&gt;&gt;</code>, enables <code>food @ layer</code>.</li>
+<li><code>migration(self, material, **kwargs)</code>: Simulates migration into a packaging layer.</li>
+<li><code>contact(self, material, **kwargs)</code>: Alias for <code>migration()</code>.</li>
+<li><code>update(self, **kwargs)</code>: Dynamically updates food properties.</li>
+<li><code>get_param(self, key, default=None, acceptNone=True)</code>: Retrieves a parameter safely.</li>
+<li><code>refresh(self)</code>: Ensures all properties are validated before simulation.</li>
+<li><code>acknowledge(self, what, category)</code>: Tracks inherited properties.</li>
+<li><code>copy(self, **kwargs)</code>: Creates a deep copy of the food object.</li>
+</ul>
+<hr>
+<h2 id="integration-with-sfppy-modules"><strong>Integration with SFPPy Modules</strong></h2>
+<ul>
+<li>Used as the <strong>left-side boundary</strong> in <code>migration.py</code> simulations.</li>
+<li>Interacts with <code>layer.py</code> to propagate temperature and partitioning effects.</li>
+<li>Interfaces with <code>geometry.py</code> for food-contacting packaging simulations.</li>
+</ul>
+<hr>
+<h2 id="usage-example"><strong>Usage Example</strong></h2>
+<pre><code class="language-python">from patankar.food import foodlayer
+medium = foodlayer(name=&quot;ethanol&quot;, contacttemperature=(40, &quot;degC&quot;))
+
+from patankar.layer import LDPE
+packaging = LDPE(l=50e-6, D=1e-14)
+
+# Propagate food properties to the packaging
+medium &gt;&gt; packaging
+
+# Simulate migration
+from patankar.migration import senspatankar
+solution = senspatankar(packaging, medium)
+solution.plotCF()
+</code></pre>
+<hr>
+<h2 id="notes"><strong>Notes</strong></h2>
+<ul>
+<li>The <code><a title="food.foodlayer" href="#food.foodlayer">foodlayer</a></code> class extends <code><a title="food.foodphysics" href="#food.foodphysics">foodphysics</a></code> and provides a physical
+representation of food in contact with packaging.</li>
+<li>Subclasses include:</li>
+<li><code><a title="food.setoff" href="#food.setoff">setoff</a></code>: Periodic boundary conditions (stacked packaging).</li>
+<li><code><a title="food.nofood" href="#food.nofood">nofood</a></code>: Impervious boundary (no mass transfer).</li>
+<li><code><a title="food.realcontact" href="#food.realcontact">realcontact</a></code>, <code><a title="food.testcontact" href="#food.testcontact">testcontact</a></code>: Standardized food contact conditions.</li>
+<li>The <code>h</code> parameter determines if the medium is <strong>well-mixed</strong> or <strong>diffusion-limited</strong>.</li>
+</ul>
 <p>general constructor</p></div>
 <details class="source">
 <summary>
@@ -2208,16 +2424,88 @@ partitioning of the substance between the food and the layer of the materials.</
 </summary>
 <pre><code class="python">class foodlayer(foodphysics):
     &#34;&#34;&#34;
-    Foodlayer class is a generic class to define food as a 1D layer in a symmetric manner with layer class
-    applicable to materials in contact.
-    Since mass transfer are much faster in the food than in the materials in contact, food is represented
-    as an almost 0D layer. Only a mass transfer resistance is applied at the food-material interface
-    controlled by the mass transfer coefficient h. A Henry-like coefficient k controls the eventual
-    partitioning of the substance between the food and the layer of the materials.
+    ===============================================================================
+    SFPPy Module: Food Layer
+    ===============================================================================
+    `foodlayer` models food as a **0D layer** in mass transfer simulations, serving
+    as the primary class for defining the medium in contact with a packaging material.
 
-    Food are geometrically defined by their volume and surface area in contact with the material.
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    - Models food as a **zero-dimensional (0D) medium** with:
+      - A **mass transfer resistance (`h`)** at the interface.
+      - A **partitioning behavior (`k`)** between food and packaging.
+      - **Contact time (`contacttime`) and temperature (`contacttemperature`)**.
+    - Defines **food geometry**:
+      - `surfacearea`: Contact area with the material (m²).
+      - `volume`: Total volume of the food medium (m³).
+    - Supports **impervious (`nofood`) and periodic (`setoff`) conditions**.
 
-    Contact time (contacttime) and contact temperature (contacttemperature) are defined via foodlayer.
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `h`: Mass transfer coefficient (m/s) defining resistance at the interface.
+    - `k`: Partition coefficient describing substance solubility in food.
+    - `contacttime`: Time duration of the packaging-food interaction.
+    - `contacttemperature`: Temperature at the packaging interface (°C).
+    - `surfacearea`: Contact surface area between packaging and food (m²).
+    - `volume`: Volume of the food medium (m³).
+    - `density`: Density of the food medium (kg/m³).
+    - `substance`: Migrant (chemical) diffusing into food.
+    - `medium`: Food medium in contact with packaging.
+    - `impervious`: `True` if no mass transfer occurs (`nofood` class).
+    - `PBC`: `True` if periodic boundary conditions apply (`setoff` class).
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__rshift__(self, other)`: Propagates food properties to a packaging layer (`food &gt;&gt; layer`).
+    - `__matmul__(self, other)`: Equivalent to `&gt;&gt;`, enables `food @ layer`.
+    - `migration(self, material, **kwargs)`: Simulates migration into a packaging layer.
+    - `contact(self, material, **kwargs)`: Alias for `migration()`.
+    - `update(self, **kwargs)`: Dynamically updates food properties.
+    - `get_param(self, key, default=None, acceptNone=True)`: Retrieves a parameter safely.
+    - `refresh(self)`: Ensures all properties are validated before simulation.
+    - `acknowledge(self, what, category)`: Tracks inherited properties.
+    - `copy(self, **kwargs)`: Creates a deep copy of the food object.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Used as the **left-side boundary** in `migration.py` simulations.
+    - Interacts with `layer.py` to propagate temperature and partitioning effects.
+    - Interfaces with `geometry.py` for food-contacting packaging simulations.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.food import foodlayer
+    medium = foodlayer(name=&#34;ethanol&#34;, contacttemperature=(40, &#34;degC&#34;))
+
+    from patankar.layer import LDPE
+    packaging = LDPE(l=50e-6, D=1e-14)
+
+    # Propagate food properties to the packaging
+    medium &gt;&gt; packaging
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    solution = senspatankar(packaging, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - The `foodlayer` class extends `foodphysics` and provides a physical
+      representation of food in contact with packaging.
+    - Subclasses include:
+      - `setoff`: Periodic boundary conditions (stacked packaging).
+      - `nofood`: Impervious boundary (no mass transfer).
+      - `realcontact`, `testcontact`: Standardized food contact conditions.
+    - The `h` parameter determines if the medium is **well-mixed** or **diffusion-limited**.
 
     &#34;&#34;&#34;
     level = &#34;root&#34;
@@ -2621,17 +2909,83 @@ def substance(self): return self._substance # substance can be ambiguous</code><
 <span>(</span><span>**kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class that automatically assigns instance attributes from class defaults,
-except for the 'description' attribute.
-Check the physical meaning of quantities with units.</p>
-<p>Implemented methods include:
-- refresh() validates all quantities before a simulation
-- update(name="new name", description="new description",parameter1=value)
-assigns new values to physical parameters and attributes
-- getparam() returns physical parameters even if they undefined
-Available properties:
-PBC returns True in periodic boundary conditions are enforced (setoff)
-impervious returns True if impervious boundary condition is appled (no food)</p>
+<div class="desc"><p>===============================================================================
+SFPPy Module: Food Physics (Base Class)
+===============================================================================
+<code><a title="food.foodphysics" href="#food.foodphysics">foodphysics</a></code> serves as the <strong>base class</strong> for all food-related objects in mass
+transfer simulations. It defines key parameters for food interaction with packaging
+materials and implements dynamic property propagation for simulation models.</p>
+<hr>
+<h2 id="core-functionality"><strong>Core Functionality</strong></h2>
+<ul>
+<li>Defines <strong>mass transfer properties</strong>:</li>
+<li><code>h</code>: Mass transfer coefficient (m/s)</li>
+<li><code>k</code>: Partition coefficient (dimensionless)</li>
+<li>Implements <strong>contact conditions</strong>:</li>
+<li><code>contacttime</code>: Duration of food-packaging contact</li>
+<li><code>contacttemperature</code>: Temperature of the contact interface</li>
+<li>Supports <strong>inheritance and property propagation</strong> to layers.</li>
+<li>Provides <strong>physical state representation</strong> (<code><a title="food.solid" href="#food.solid">solid</a></code>, <code><a title="food.liquid" href="#food.liquid">liquid</a></code>, <code>gas</code>).</li>
+<li>Allows <strong>customization of mass transfer coefficients</strong> via <code>kmodel</code>.</li>
+</ul>
+<hr>
+<h2 id="key-properties"><strong>Key Properties</strong></h2>
+<ul>
+<li><code>h</code>: Mass transfer coefficient (m/s) defining resistance at the interface.</li>
+<li><code>k</code>: Henry-like partition coefficient between the food and the material.</li>
+<li><code>contacttime</code>: Time duration of the packaging-food interaction.</li>
+<li><code>contacttemperature</code>: Temperature at the packaging interface (°C).</li>
+<li><code>surfacearea</code>: Contact surface area between packaging and food (m²).</li>
+<li><code>volume</code>: Volume of the food medium (m³).</li>
+<li><code>density</code>: Density of the food medium (kg/m³).</li>
+<li><code>substance</code>: The migrating substance (e.g., a chemical compound).</li>
+<li><code>medium</code>: The food medium in contact with packaging.</li>
+<li><code>kmodel</code>: Custom partitioning model (can be overridden by the user).</li>
+</ul>
+<hr>
+<h2 id="methods"><strong>Methods</strong></h2>
+<ul>
+<li><code>__rshift__(self, other)</code>: Propagates food properties to a layer (<code>food &gt;&gt; layer</code>).</li>
+<li><code>__matmul__(self, other)</code>: Equivalent to <code>&gt;&gt;</code>, enables <code>food @ layer</code>.</li>
+<li><code>migration(self, material, **kwargs)</code>: Simulates migration into a packaging layer.</li>
+<li><code>contact(self, material, **kwargs)</code>: Alias for <code>migration()</code>.</li>
+<li><code>update(self, **kwargs)</code>: Dynamically updates food properties.</li>
+<li><code>get_param(self, key, default=None, acceptNone=True)</code>: Retrieves a parameter safely.</li>
+<li><code>refresh(self)</code>: Ensures all properties are validated before simulation.</li>
+<li><code>acknowledge(self, what, category)</code>: Tracks inherited properties.</li>
+<li><code>copy(self, **kwargs)</code>: Creates a deep copy of the food object.</li>
+</ul>
+<hr>
+<h2 id="integration-with-sfppy-modules"><strong>Integration with SFPPy Modules</strong></h2>
+<ul>
+<li>Works with <code>migration.py</code> to define the <strong>left-side boundary condition</strong>.</li>
+<li>Interfaces with <code>layer.py</code> to apply contact temperature propagation.</li>
+<li>Connects with <code>geometry.py</code> for food-contacting packaging surfaces.</li>
+</ul>
+<hr>
+<h2 id="usage-example"><strong>Usage Example</strong></h2>
+<pre><code class="language-python">from patankar.food import foodphysics
+from patankar.layer import layer
+
+medium = foodphysics(contacttemperature=(40, &quot;degC&quot;), h=(1e-6, &quot;m/s&quot;))
+packaging_layer = layer(D=1e-14, l=50e-6)
+
+# Propagate food properties to the layer
+medium &gt;&gt; packaging_layer
+
+# Simulate migration
+from patankar.migration import senspatankar
+solution = senspatankar(packaging_layer, medium)
+solution.plotCF()
+</code></pre>
+<hr>
+<h2 id="notes"><strong>Notes</strong></h2>
+<ul>
+<li>The <code><a title="food.foodphysics" href="#food.foodphysics">foodphysics</a></code> class is the parent of <code><a title="food.foodlayer" href="#food.foodlayer">foodlayer</a></code>, <code><a title="food.nofood" href="#food.nofood">nofood</a></code>, <code><a title="food.setoff" href="#food.setoff">setoff</a></code>,
+<code><a title="food.realcontact" href="#food.realcontact">realcontact</a></code>, and <code><a title="food.testcontact" href="#food.testcontact">testcontact</a></code>.</li>
+<li>The <code>PBC</code> property identifies periodic boundary conditions (used in <code><a title="food.setoff" href="#food.setoff">setoff</a></code>).</li>
+<li>This class provides <strong>dynamic inheritance</strong> for mass transfer properties.</li>
+</ul>
 <p>general constructor</p></div>
 <details class="source">
 <summary>
@@ -2639,18 +2993,87 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
 </summary>
 <pre><code class="python">class foodphysics:
     &#34;&#34;&#34;
-    Base class that automatically assigns instance attributes from class defaults,
-    except for the &#39;description&#39; attribute.
-    Check the physical meaning of quantities with units.
+    ===============================================================================
+    SFPPy Module: Food Physics (Base Class)
+    ===============================================================================
+    `foodphysics` serves as the **base class** for all food-related objects in mass
+    transfer simulations. It defines key parameters for food interaction with packaging
+    materials and implements dynamic property propagation for simulation models.
 
-    Implemented methods include:
-        - refresh() validates all quantities before a simulation
-        - update(name=&#34;new name&#34;, description=&#34;new description&#34;,parameter1=value)
-          assigns new values to physical parameters and attributes
-        - getparam() returns physical parameters even if they undefined
-    Available properties:
-        PBC returns True in periodic boundary conditions are enforced (setoff)
-        impervious returns True if impervious boundary condition is appled (no food)
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    - Defines **mass transfer properties**:
+      - `h`: Mass transfer coefficient (m/s)
+      - `k`: Partition coefficient (dimensionless)
+    - Implements **contact conditions**:
+      - `contacttime`: Duration of food-packaging contact
+      - `contacttemperature`: Temperature of the contact interface
+    - Supports **inheritance and property propagation** to layers.
+    - Provides **physical state representation** (`solid`, `liquid`, `gas`).
+    - Allows **customization of mass transfer coefficients** via `kmodel`.
+
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `h`: Mass transfer coefficient (m/s) defining resistance at the interface.
+    - `k`: Henry-like partition coefficient between the food and the material.
+    - `contacttime`: Time duration of the packaging-food interaction.
+    - `contacttemperature`: Temperature at the packaging interface (°C).
+    - `surfacearea`: Contact surface area between packaging and food (m²).
+    - `volume`: Volume of the food medium (m³).
+    - `density`: Density of the food medium (kg/m³).
+    - `substance`: The migrating substance (e.g., a chemical compound).
+    - `medium`: The food medium in contact with packaging.
+    - `kmodel`: Custom partitioning model (can be overridden by the user).
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__rshift__(self, other)`: Propagates food properties to a layer (`food &gt;&gt; layer`).
+    - `__matmul__(self, other)`: Equivalent to `&gt;&gt;`, enables `food @ layer`.
+    - `migration(self, material, **kwargs)`: Simulates migration into a packaging layer.
+    - `contact(self, material, **kwargs)`: Alias for `migration()`.
+    - `update(self, **kwargs)`: Dynamically updates food properties.
+    - `get_param(self, key, default=None, acceptNone=True)`: Retrieves a parameter safely.
+    - `refresh(self)`: Ensures all properties are validated before simulation.
+    - `acknowledge(self, what, category)`: Tracks inherited properties.
+    - `copy(self, **kwargs)`: Creates a deep copy of the food object.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Works with `migration.py` to define the **left-side boundary condition**.
+    - Interfaces with `layer.py` to apply contact temperature propagation.
+    - Connects with `geometry.py` for food-contacting packaging surfaces.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.food import foodphysics
+    from patankar.layer import layer
+
+    medium = foodphysics(contacttemperature=(40, &#34;degC&#34;), h=(1e-6, &#34;m/s&#34;))
+    packaging_layer = layer(D=1e-14, l=50e-6)
+
+    # Propagate food properties to the layer
+    medium &gt;&gt; packaging_layer
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    solution = senspatankar(packaging_layer, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - The `foodphysics` class is the parent of `foodlayer`, `nofood`, `setoff`,
+      `realcontact`, and `testcontact`.
+    - The `PBC` property identifies periodic boundary conditions (used in `setoff`).
+    - This class provides **dynamic inheritance** for mass transfer properties.
+
     &#34;&#34;&#34;
 
     # General descriptors
@@ -3133,7 +3556,11 @@ impervious returns True if impervious boundary condition is appled (no food)</p>
         &#34;&#34;&#34;interface to simulation engine: senspantankar&#34;&#34;&#34;
         from patankar.migration import senspatankar
         self._to(material) # propagate contact conditions first
-        return senspatankar(material,self,**kwargs)
+        sim = senspatankar(material,self,**kwargs)
+        self.lastsimulation = sim # store the last simulation result in medium
+        self.lastinput = material # store the last input (material)
+        sim.savestate(material,self) # store store the inputs in sim for chaining
+        return sim
 
     def contact(self,material,**kwargs):
         &#34;&#34;&#34;alias to migration method&#34;&#34;&#34;
@@ -3406,7 +3833,11 @@ The category under which the properties are grouped.</p>
     &#34;&#34;&#34;interface to simulation engine: senspantankar&#34;&#34;&#34;
     from patankar.migration import senspatankar
     self._to(material) # propagate contact conditions first
-    return senspatankar(material,self,**kwargs)</code></pre>
+    sim = senspatankar(material,self,**kwargs)
+    self.lastsimulation = sim # store the last simulation result in medium
+    self.lastinput = material # store the last input (material)
+    sim.savestate(material,self) # store store the inputs in sim for chaining
+    return sim</code></pre>
 </details>
 </dd>
 <dt id="food.foodphysics.refresh"><code class="name flex">
@@ -4084,16 +4515,78 @@ The category under which the properties are grouped.</p>
 </dd>
 <dt id="food.layer"><code class="flex name class">
 <span>class <span class="ident">layer</span></span>
-<span>(</span><span>l=None, D=None, k=None, C0=None, rho=None, T=None, lunit=None, Dunit=None, kunit=None, Cunit=None, rhounit=None, Tunit=None, layername=None, layertype=None, layermaterial=None, layercode=None, substance=None, medium=None, nmesh=None, nmeshmin=None, verbose=None, verbosity=2, **unresolved)</span>
+<span>(</span><span>l=None, D=None, k=None, C0=None, rho=None, T=None, lunit=None, Dunit=None, kunit=None, Cunit=None, rhounit=None, Tunit=None, layername=None, layertype=None, layermaterial=None, layercode=None, substance=None, medium=None, nmesh=None, nmeshmin=None, Dlink=None, klink=None, C0link=None, Tlink=None, llink=None, verbose=None, verbosity=2, **unresolved)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>layer class from patankar package
-&hellip;
-strings properties: layername, layertype, layermaterial
-scalar properties: D,k,l,C0
-&hellip;</p>
-<h2 id="example">Example</h2>
-<p>A = layer(D=1e-14,l=50e-6,layername="layer A",layertype="polymer",layermaterial="PP")</p>
+<div class="desc"><hr>
+<h2 id="core-functionality"><strong>Core Functionality</strong></h2>
+<p>This class models layers in food packaging, handling mass transfer, partitioning,
+and meshing for finite-volume simulations using a modified Patankar method.
+Layers can be assembled into multilayers via the <code>+</code> operator and support
+dynamic property linkage using <code>layerLink</code>.</p>
+<hr>
+<h2 id="key-properties"><strong>Key Properties</strong></h2>
+<ul>
+<li><code>l</code>: Thickness of the layer (m)</li>
+<li><code>D</code>: Diffusion coefficient (m²/s)</li>
+<li><code>k</code>: Partition coefficient (dimensionless)</li>
+<li><code>C0</code>: Initial concentration (arbitrary units)</li>
+<li><code>rho</code>: Density (kg/m³)</li>
+<li><code>T</code>: Contact temperature (°C)</li>
+<li><code>substance</code>: Migrant/substance modeled for diffusion</li>
+<li><code>medium</code>: The food medium in contact with the layer</li>
+<li><code>Dmodel</code>, <code>kmodel</code>: Callable models for diffusion and partitioning</li>
+</ul>
+<hr>
+<h2 id="methods"><strong>Methods</strong></h2>
+<ul>
+<li><code>__add__(self, other)</code>: Combines two layers into a multilayer structure.</li>
+<li><code>__mul__(self, n)</code>: Duplicates a layer <code>n</code> times to create a multilayer.</li>
+<li><code>__getitem__(self, i)</code>: Retrieves a sublayer from a multilayer.</li>
+<li><code>__setitem__(self, i, other)</code>: Replaces sublayers in a multilayer structure.</li>
+<li><code>mesh(self)</code>: Generates a numerical mesh for finite-volume simulations.</li>
+<li><code>struct(self)</code>: Returns a dictionary representation of the layer properties.</li>
+<li><code>resolvename(param_value, param_key, **unresolved)</code>: Resolves synonyms for parameter names.</li>
+<li><code>help(cls)</code>: Displays a dynamically formatted summary of input parameters.</li>
+</ul>
+<hr>
+<h2 id="integration-with-sfppy-modules"><strong>Integration with SFPPy Modules</strong></h2>
+<ul>
+<li>Works with <code>migration.py</code> for mass transfer simulations.</li>
+<li>Interfaces with <code>food.py</code> to define food-contact conditions.</li>
+<li>Uses <code>property.py</code> for predicting diffusion (<code>D</code>) and partitioning (<code>k</code>).</li>
+<li>Connects with <code>geometry.py</code> for 3D packaging simulations.</li>
+</ul>
+<hr>
+<h2 id="usage-example"><strong>Usage Example</strong></h2>
+<pre><code class="language-python">from patankar.layer import LDPE, PP, layerLink
+
+# Define a polymer layer with default properties
+A = LDPE(l=50e-6, D=1e-14)
+
+# Create a multilayer structure
+B = PP(l=200e-6, D=1e-15)
+multilayer = A + B
+
+# Assign dynamic property linkage
+k_link = layerLink(&quot;k&quot;, indices=[1], values=[10])  # Assign partition coefficient to the second layer
+multilayer.klink = k_link
+
+# Simulate migration
+from patankar.migration import senspatankar
+from patankar.food import ethanol
+medium = ethanol()
+solution = senspatankar(multilayer, medium)
+solution.plotCF()
+</code></pre>
+<hr>
+<h2 id="notes"><strong>Notes</strong></h2>
+<ul>
+<li>This class supports dynamic property inheritance, meaning <code>D</code> and <code>k</code> can be computed
+based on the substance defined in <code>substance</code> and <code>medium</code>.</li>
+<li>The <code>layerLink</code> mechanism allows parameter adjustments without modifying the core object.</li>
+<li>The modified finite-volume meshing ensures <strong>accurate steady-state and transient</strong> behavior.</li>
+</ul>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>layername</code></strong> :&ensp;<code>TYPE</code>, optional<code>, string</code></dt>
@@ -4132,13 +4625,80 @@ scalar properties: D,k,l,C0
 </summary>
 <pre><code class="python">class layer:
     &#34;&#34;&#34;
-        layer class from patankar package
-        ...
-        strings properties: layername, layertype, layermaterial
-        scalar properties: D,k,l,C0
-        ...
-        Example:
-            A = layer(D=1e-14,l=50e-6,layername=&#34;layer A&#34;,layertype=&#34;polymer&#34;,layermaterial=&#34;PP&#34;)
+    ------------------------------------------------------------------------------
+    **Core Functionality**
+    ------------------------------------------------------------------------------
+    This class models layers in food packaging, handling mass transfer, partitioning,
+    and meshing for finite-volume simulations using a modified Patankar method.
+    Layers can be assembled into multilayers via the `+` operator and support
+    dynamic property linkage using `layerLink`.
+
+    ------------------------------------------------------------------------------
+    **Key Properties**
+    ------------------------------------------------------------------------------
+    - `l`: Thickness of the layer (m)
+    - `D`: Diffusion coefficient (m²/s)
+    - `k`: Partition coefficient (dimensionless)
+    - `C0`: Initial concentration (arbitrary units)
+    - `rho`: Density (kg/m³)
+    - `T`: Contact temperature (°C)
+    - `substance`: Migrant/substance modeled for diffusion
+    - `medium`: The food medium in contact with the layer
+    - `Dmodel`, `kmodel`: Callable models for diffusion and partitioning
+
+    ------------------------------------------------------------------------------
+    **Methods**
+    ------------------------------------------------------------------------------
+    - `__add__(self, other)`: Combines two layers into a multilayer structure.
+    - `__mul__(self, n)`: Duplicates a layer `n` times to create a multilayer.
+    - `__getitem__(self, i)`: Retrieves a sublayer from a multilayer.
+    - `__setitem__(self, i, other)`: Replaces sublayers in a multilayer structure.
+    - `mesh(self)`: Generates a numerical mesh for finite-volume simulations.
+    - `struct(self)`: Returns a dictionary representation of the layer properties.
+    - `resolvename(param_value, param_key, **unresolved)`: Resolves synonyms for parameter names.
+    - `help(cls)`: Displays a dynamically formatted summary of input parameters.
+
+    ------------------------------------------------------------------------------
+    **Integration with SFPPy Modules**
+    ------------------------------------------------------------------------------
+    - Works with `migration.py` for mass transfer simulations.
+    - Interfaces with `food.py` to define food-contact conditions.
+    - Uses `property.py` for predicting diffusion (`D`) and partitioning (`k`).
+    - Connects with `geometry.py` for 3D packaging simulations.
+
+    ------------------------------------------------------------------------------
+    **Usage Example**
+    ------------------------------------------------------------------------------
+    ```python
+    from patankar.layer import LDPE, PP, layerLink
+
+    # Define a polymer layer with default properties
+    A = LDPE(l=50e-6, D=1e-14)
+
+    # Create a multilayer structure
+    B = PP(l=200e-6, D=1e-15)
+    multilayer = A + B
+
+    # Assign dynamic property linkage
+    k_link = layerLink(&#34;k&#34;, indices=[1], values=[10])  # Assign partition coefficient to the second layer
+    multilayer.klink = k_link
+
+    # Simulate migration
+    from patankar.migration import senspatankar
+    from patankar.food import ethanol
+    medium = ethanol()
+    solution = senspatankar(multilayer, medium)
+    solution.plotCF()
+    ```
+
+    ------------------------------------------------------------------------------
+    **Notes**
+    ------------------------------------------------------------------------------
+    - This class supports dynamic property inheritance, meaning `D` and `k` can be computed
+      based on the substance defined in `substance` and `medium`.
+    - The `layerLink` mechanism allows parameter adjustments without modifying the core object.
+    - The modified finite-volume meshing ensures **accurate steady-state and transient** behavior.
+
     &#34;&#34;&#34;
 
     # -----------------------------------------------------------------------------
@@ -4258,7 +4818,9 @@ scalar properties: D,k,l,C0
                  layername=None,layertype=None,layermaterial=None,layercode=None,
                  substance = None, medium = None,
                  # Dmodel = None, kmodel = None, they are defined via migrant (future overrides)
-                 nmesh=None, nmeshmin=None,
+                 nmesh=None, nmeshmin=None, # simulation parametes
+                 # link properties (for fitting and linking properties across simulations)
+                 Dlink=None, klink=None, C0link=None, Tlink=None, llink=None,
                  verbose=None, verbosity=2,**unresolved):
         &#34;&#34;&#34;
 
@@ -4356,6 +4918,14 @@ scalar properties: D,k,l,C0
         self._nmesh = nmesh
         self._nmeshmin = nmeshmin
 
+        # intialize links for X = D,k,C0,T,l (see documentation of layerLink)
+        # A link enables the values of X to be defined and controlled outside the instance
+        self._Dlink  = self._initialize_link(Dlink, &#34;D&#34;)
+        self._klink  = self._initialize_link(klink, &#34;k&#34;)
+        self._C0link = self._initialize_link(C0link, &#34;C0&#34;)
+        self._Tlink  = self._initialize_link(Tlink, &#34;T&#34;)
+        self._llink  = self._initialize_link(llink, &#34;l&#34;)
+
         # set substance, medium and related D and k models
         if isinstance(substance,str):
             substance = migrant(substance)
@@ -4381,6 +4951,43 @@ scalar properties: D,k,l,C0
 
         # we initialize the acknowlegment process for future property propagation
         self._hasbeeninherited = {}
+
+
+    # --------------------------------------------------------------------
+    # Helper method: initializes and validates layerLink attributes
+    # (Dlink, klink, C0link, Tlink, llink)
+    # --------------------------------------------------------------------
+    def _initialize_link(self, link, expected_property):
+        &#34;&#34;&#34;
+        Initializes and validates a layerLink attribute.
+
+        Parameters:
+        ----------
+        link : layerLink or None
+            The `layerLink` instance to be assigned.
+        expected_property : str
+            The expected property name (e.g., &#34;D&#34;, &#34;k&#34;, &#34;C0&#34;, &#34;T&#34;).
+
+        Returns:
+        -------
+        layerLink or None
+            The validated `layerLink` instance or None.
+
+        Raises:
+        -------
+        TypeError:
+            If `link` is not a `layerLink` or `None`.
+        ValueError:
+            If `link.property` does not match `expected_property`.
+        &#34;&#34;&#34;
+        if link is None:
+            return None
+        if isinstance(link, layerLink):
+            if link.property == expected_property:
+                return link
+            raise ValueError(f&#39;{expected_property}link.property should be &#34;{expected_property}&#34; not &#34;{link.property}&#34;&#39;)
+        raise TypeError(f&#34;{expected_property}link must be a layerLink not a {type(link).__name__}&#34;)
+
 
     # --------------------------------------------------------------------
     # Class method returning help() for the end user
@@ -4445,7 +5052,7 @@ scalar properties: D,k,l,C0
 
 
     # --------------------------------------------------------------------
-    # Class method to handle ambiguous definition from end-user
+    # Class method to handle ambiguous definitions from end-user
     # --------------------------------------------------------------------
     @classmethod
     def resolvename(cls, param_value, param_key, **unresolved):
@@ -4492,31 +5099,57 @@ scalar properties: D,k,l,C0
     # --------------------------------------------------------------------
     # overloading binary addition (note that the output is of type layer)
     # --------------------------------------------------------------------
-    def __add__(self,other):
-        &#34;&#34;&#34; C=A+B | overload + operator &#34;&#34;&#34;
+    def __add__(self, other):
+        &#34;&#34;&#34; C = A + B | overload + operator &#34;&#34;&#34;
         if isinstance(other, layer):
             res = duplicate(self)
-            res._nmeshmin = min(self._nmeshmin,other._nmeshmin)
-            # propage substance
+            res._nmeshmin = min(self._nmeshmin, other._nmeshmin)
+            # Propagate substance
             if self._substance is None:
                 res._substance = other._substance
             else:
-                if isinstance(self._substance,migrant) and isinstance(other._substance,migrant):
+                if isinstance(self._substance, migrant) and isinstance(other._substance, migrant):
                     if self._substance.M != other._substance.M:
-                        print(&#34;Warning: the smallest subtance is propagated everywhere&#34;)
-                    res._substance = self._substance if self._substance.M&lt;=other._substance.M else other._substance
+                        print(&#34;Warning: the smallest substance is propagated everywhere&#34;)
+                    res._substance = self._substance if self._substance.M &lt;= other._substance.M else other._substance
                 else:
                     res._substance = None
-            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_code&#34;,&#34;_nlayer&#34;]:
-                setattr(res,p,getattr(self,p)+getattr(other,p))
-            for p in [&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;,&#34;_rho&#34;,&#34;_T&#34;]:
-                setattr(res,p,np.concatenate((getattr(self,p),getattr(other,p))))
-            # we add the history of all layers
+            # Concatenate general attributes
+            for p in [&#34;_name&#34;, &#34;_type&#34;, &#34;_material&#34;, &#34;_code&#34;, &#34;_nlayer&#34;]:
+                setattr(res, p, getattr(self, p) + getattr(other, p))
+            # Concatenate numeric arrays
+            for p in [&#34;_l&#34;, &#34;_D&#34;, &#34;_k&#34;, &#34;_C0&#34;, &#34;_rho&#34;, &#34;_T&#34;]:
+                setattr(res, p, np.concatenate((getattr(self, p), getattr(other, p))))
+            # Handle history tracking
             res._layerclass_history = self.layerclass_history + other.layerclass_history
             res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
             res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
+            # Manage layerLink attributes (Dlink, klink, C0link, Tlink, llink)
+            property_map = {
+                &#34;Dlink&#34;: (&#34;D&#34;, self.Dlink, other.Dlink),
+                &#34;klink&#34;: (&#34;k&#34;, self.klink, other.klink),
+                &#34;C0link&#34;: (&#34;C0&#34;, self.C0link, other.C0link),
+                &#34;Tlink&#34;: (&#34;T&#34;, self.Tlink, other.Tlink),
+                &#34;llink&#34;: (&#34;l&#34;, self.llink, other.llink),
+            }
+            for attr, (prop, self_link, other_link) in property_map.items():
+                if (self_link is not None) and (other_link is not None):
+                    # Case 1: Both have a link → Apply `+`
+                    setattr(res, &#39;_&#39;+attr, self_link + other_link)
+                elif self_link is not None:
+                    # Case 2: Only self has a link → Use as-is
+                    setattr(res, &#39;_&#39;+attr, self_link)
+                elif other_link is not None:
+                    # Case 3: Only other has a link → Shift indices and use
+                    shifted_link = duplicate(other_link)
+                    shifted_link.indices += len(getattr(self, prop))
+                    setattr(res, &#39;_&#39;+attr, shifted_link)
+                else:
+                    # Case 4: Neither has a link → Result is None
+                    setattr(res, &#39;_&#39;+attr, None)
             return res
-        else: raise ValueError(&#34;invalid layer object&#34;)
+        else:
+            raise ValueError(&#34;Invalid layer object&#34;)
 
 
     # --------------------------------------------------------------------
@@ -4642,7 +5275,7 @@ scalar properties: D,k,l,C0
     @property
     def code(self): return self._code
     @property
-    def l(self): return self._l
+    def l(self): return self._l if not self.hasllink else self.llink.getfull(self._l)
     @property
     def D(self):
         Dtmp = None
@@ -4651,8 +5284,12 @@ scalar properties: D,k,l,C0
         elif callable(self.Dmodel): # user override
             Dtmp = self.Dmodel()
         if Dtmp is not None:
-            return np.full_like(self._D, Dtmp,dtype=np.float64)
-        return self._D
+            Dtmp = np.full_like(self._D, Dtmp,dtype=np.float64)
+            if self.hasDlink:
+                return self.Dlink.getfull(Dtmp) # substitution rules are applied as defined in Dlink
+            else:
+                return Dtmp
+        return self._D if not self.hasDlink else self.Dlink.getfull(self._D)
     @property
     def k(self):
         ktmp = None
@@ -4661,14 +5298,18 @@ scalar properties: D,k,l,C0
         elif callable(self.kmodel): # user override
             ktmp = self.kmodel()
         if ktmp is not None:
-            return np.full_like(self._k, ktmp,dtype=np.float64)
-        return self._k
+            ktmp = np.full_like(self._k, ktmp,dtype=np.float64)
+            if self.hasklink:
+                return self.klink.getfull(ktmp) # substitution rules are applied as defined in klink
+            else:
+                return ktmp
+        return self._k if not self.hasklink else self.klink.getfull(self._k)
     @property
-    def C0(self): return self._C0
+    def C0(self): return self._C0 if not self.hasC0link else self.COlink.getfull(self._C0)
     @property
     def rho(self): return self._rho
     @property
-    def T(self): return self._T
+    def T(self): return self._T if not self.hasTlink else self.Tlink.getfull(self._T)
     @property
     def TK(self): return self._T+T0K
     @property
@@ -4965,7 +5606,7 @@ scalar properties: D,k,l,C0
     def substance(self,value):
         if isinstance(value,str):
             value = migrant(value)
-        if not isinstance(value,migrant):
+        if not isinstance(value,migrant) and value is not None:
             raise TypeError(f&#34;value must be a migrant not a {type(value).__name__}&#34;)
         self._substance = value
     @migrant.setter
@@ -4984,6 +5625,93 @@ scalar properties: D,k,l,C0
             raise TypeError(f&#34;value must be a foodlayer not a {type(value).__name__}&#34;)
         self._medium = value
 
+    # --------------------------------------------------------------------
+    #  getter and setter for links: Dlink, klink, C0link, Tlink, llink
+    # --------------------------------------------------------------------
+    @property
+    def Dlink(self):
+        &#34;&#34;&#34;Getter for Dlink&#34;&#34;&#34;
+        return self._Dlink
+    @Dlink.setter
+    def Dlink(self, value):
+        &#34;&#34;&#34;Setter for Dlink&#34;&#34;&#34;
+        self._Dlink = self._initialize_link(value, &#34;D&#34;)
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def klink(self):
+        &#34;&#34;&#34;Getter for klink&#34;&#34;&#34;
+        return self._klink
+    @klink.setter
+    def klink(self, value):
+        &#34;&#34;&#34;Setter for klink&#34;&#34;&#34;
+        self._klink = self._initialize_link(value, &#34;k&#34;)
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def C0link(self):
+        &#34;&#34;&#34;Getter for C0link&#34;&#34;&#34;
+        return self._C0link
+    @C0link.setter
+    def C0link(self, value):
+        &#34;&#34;&#34;Setter for C0link&#34;&#34;&#34;
+        self._C0link = self._initialize_link(value, &#34;C0&#34;)
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def Tlink(self):
+        &#34;&#34;&#34;Getter for Tlink&#34;&#34;&#34;
+        return self._Tlink
+    @Tlink.setter
+    def Tlink(self, value):
+        &#34;&#34;&#34;Setter for Tlink&#34;&#34;&#34;
+        self._Tlink = self._initialize_link(value, &#34;T&#34;)
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def llink(self):
+        &#34;&#34;&#34;Getter for llink&#34;&#34;&#34;
+        return self._llink
+    @llink.setter
+    def llink(self, value):
+        &#34;&#34;&#34;Setter for llink&#34;&#34;&#34;
+        self._llink = self._initialize_link(value, &#34;l&#34;)
+        if isinstance(value,layerLink): value._maxlength = self.n
+    @property
+    def hasDlink(self):
+        &#34;&#34;&#34;Returns True if Dlink is defined&#34;&#34;&#34;
+        return self.Dlink is not None
+    @property
+    def hasklink(self):
+        &#34;&#34;&#34;Returns True if klink is defined&#34;&#34;&#34;
+        return self.klink is not None
+    @property
+    def hasC0link(self):
+        &#34;&#34;&#34;Returns True if C0link is defined&#34;&#34;&#34;
+        return self.C0link is not None
+    @property
+    def hasTlink(self):
+        &#34;&#34;&#34;Returns True if Tlink is defined&#34;&#34;&#34;
+        return self.Tlink is not None
+    @property
+    def hasllink(self):
+        &#34;&#34;&#34;Returns True if llink is defined&#34;&#34;&#34;
+        return self.llink is not None
+
+    # --------------------------------------------------------------------
+    # returned LaTeX-formated properties
+    # --------------------------------------------------------------------
+    def Dlatex(self, numdigits=4, units=r&#34;\mathrm{m^2 \cdot s^{-1}}&#34;,prefix=&#34;D=&#34;,mathmode=&#34;$&#34;):
+        &#34;&#34;&#34;Returns diffusivity values (D) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+        return [format_scientific_latex(D, numdigits, units, prefix,mathmode) for D in self.D]
+
+    def klatex(self, numdigits=4, units=&#34;a.u.&#34;,prefix=&#34;k=&#34;,mathmode=&#34;$&#34;):
+        &#34;&#34;&#34;Returns Henry-like values (k) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+        return [format_scientific_latex(k, numdigits, units, prefix,mathmode) for k in self.k]
+
+    def llatex(self, numdigits=4, units=&#34;m&#34;,prefix=&#34;l=&#34;,mathmode=&#34;$&#34;):
+        &#34;&#34;&#34;Returns thickness values (k) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+        return [format_scientific_latex(l, numdigits, units, prefix,mathmode) for l in self.l]
+
+    def C0latex(self, numdigits=4, units=&#34;a.u.&#34;,prefix=&#34;C0=&#34;,mathmode=&#34;$&#34;):
+        &#34;&#34;&#34;Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+        return [format_scientific_latex(c, numdigits, units, prefix,mathmode) for c in self.C0]
 
     # --------------------------------------------------------------------
     # hash methods (assembly and layer-by-layer)
@@ -5028,11 +5756,12 @@ scalar properties: D,k,l,C0
         if self._nlayer==0:
             print(&#34;empty %s&#34; % (self.__description))
         else:
-            hasDmodel = self._compute_Dmodel() is not None or self.Dmodel() is not None
-            haskmodel = self._compute_kmodel() is not None or self.kmodel() is not None
-            properties_ = {&#34;l&#34;:False,&#34;D&#34;:hasDmodel,&#34;k&#34;:haskmodel,&#34;C0&#34;:False}
+            hasDmodel, haskmodel = self.hasDmodel, self.haskmodel
+            hasDlink, hasklink, hasC0link, hasTlink, hasllink = self.hasDlink, self.hasklink, self.hasC0link, self.hasTlink, self.hasllink
+            properties_hasmodel = {&#34;l&#34;:False,&#34;D&#34;:hasDmodel,&#34;k&#34;:haskmodel,&#34;C0&#34;:False}
+            properties_haslink = {&#34;l&#34;:hasllink,&#34;D&#34;:hasDlink,&#34;k&#34;:hasklink,&#34;C0&#34;:hasC0link,&#34;T&#34;:hasTlink}
             if hasDmodel or haskmodel:
-                properties_[&#34;T&#34;] = False
+                properties_hasmodel[&#34;T&#34;] = False
             fmtval = &#39;%10s: &#39;+self._printformat+&#34; [%s]&#34;
             fmtstr = &#39;%10s= %s&#39;
             if self._nlayer==1:
@@ -5049,11 +5778,16 @@ scalar properties: D,k,l,C0
                 for p in [&#34;name&#34;,&#34;type&#34;,&#34;material&#34;,&#34;code&#34;]:
                     v = getattr(self,p)
                     print(&#39;%10s: &#34;%s&#34;&#39; % (p,v[n-1]),flush=True)
-                for p in properties_.keys():
+                for p in properties_hasmodel.keys():
                     v = getattr(self,p)                 # value
                     vunit = getattr(self,p[0]+&#34;unit&#34;)   # value unit
                     print(fmtval % (p,v[n-1],vunit),flush=True)
-                    if properties_[p]:
+                    isoverridenbylink = False
+                    if properties_haslink[p]:
+                        isoverridenbylink = not np.isnan(getattr(self,p+&#34;link&#34;).get(n-1))
+                    if isoverridenbylink:
+                        print(fmtstr % (&#34;&#34;,f&#34;value controlled by {p}link[{n-1}] (external)&#34;),flush=True)
+                    elif properties_hasmodel[p]:
                         print(fmtstr % (&#34;&#34;,modelinfo[p]),flush=True)
         return str(self)
 
@@ -5312,7 +6046,15 @@ scalar properties: D,k,l,C0
             raise ValueError(f&#34;Duplicate assignment detected for parameters: {duplicate_keys}. &#34;
                              &#34;Use only one synonym per parameter.&#34;)
 
-        return self # to enable chaining</code></pre>
+        return self # to enable chaining
+
+    # Basic tool for debugging
+    # --------------------------------------------------------------------
+    # STRUCT method - returns the equivalent dictionary from an object
+    # --------------------------------------------------------------------
+    def struct(self):
+        &#34;&#34;&#34; returns the equivalent dictionary from an object &#34;&#34;&#34;
+        return dict((key, getattr(self, key)) for key in dir(self) if key not in dir(self.__class__))</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -5489,7 +6231,20 @@ def resolvename(cls, param_value, param_key, **unresolved):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def C0(self): return self._C0</code></pre>
+def C0(self): return self._C0 if not self.hasC0link else self.COlink.getfull(self._C0)</code></pre>
+</details>
+</dd>
+<dt id="food.layer.C0link"><code class="name">var <span class="ident">C0link</span></code></dt>
+<dd>
+<div class="desc"><p>Getter for C0link</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def C0link(self):
+    &#34;&#34;&#34;Getter for C0link&#34;&#34;&#34;
+    return self._C0link</code></pre>
 </details>
 </dd>
 <dt id="food.layer.Cunit"><code class="name">var <span class="ident">Cunit</span></code></dt>
@@ -5518,8 +6273,25 @@ def D(self):
     elif callable(self.Dmodel): # user override
         Dtmp = self.Dmodel()
     if Dtmp is not None:
-        return np.full_like(self._D, Dtmp,dtype=np.float64)
-    return self._D</code></pre>
+        Dtmp = np.full_like(self._D, Dtmp,dtype=np.float64)
+        if self.hasDlink:
+            return self.Dlink.getfull(Dtmp) # substitution rules are applied as defined in Dlink
+        else:
+            return Dtmp
+    return self._D if not self.hasDlink else self.Dlink.getfull(self._D)</code></pre>
+</details>
+</dd>
+<dt id="food.layer.Dlink"><code class="name">var <span class="ident">Dlink</span></code></dt>
+<dd>
+<div class="desc"><p>Getter for Dlink</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Dlink(self):
+    &#34;&#34;&#34;Getter for Dlink&#34;&#34;&#34;
+    return self._Dlink</code></pre>
 </details>
 </dd>
 <dt id="food.layer.Dmodel"><code class="name">var <span class="ident">Dmodel</span></code></dt>
@@ -5564,7 +6336,7 @@ def Foscale(self): return self.D[self.referencelayer]/self.lreferencelayer**2</c
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def T(self): return self._T</code></pre>
+def T(self): return self._T if not self.hasTlink else self.Tlink.getfull(self._T)</code></pre>
 </details>
 </dd>
 <dt id="food.layer.TK"><code class="name">var <span class="ident">TK</span></code></dt>
@@ -5587,6 +6359,19 @@ def TK(self): return self._T+T0K</code></pre>
 </summary>
 <pre><code class="python">@property
 def TKunit(self): return &#34;K&#34;</code></pre>
+</details>
+</dd>
+<dt id="food.layer.Tlink"><code class="name">var <span class="ident">Tlink</span></code></dt>
+<dd>
+<div class="desc"><p>Getter for Tlink</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Tlink(self):
+    &#34;&#34;&#34;Getter for Tlink&#34;&#34;&#34;
+    return self._Tlink</code></pre>
 </details>
 </dd>
 <dt id="food.layer.Tunit"><code class="name">var <span class="ident">Tunit</span></code></dt>
@@ -5667,6 +6452,32 @@ def code(self): return self._code</code></pre>
 def concentration(self): return sum(self.l*self.C0)/self.thickness</code></pre>
 </details>
 </dd>
+<dt id="food.layer.hasC0link"><code class="name">var <span class="ident">hasC0link</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if C0link is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasC0link(self):
+    &#34;&#34;&#34;Returns True if C0link is defined&#34;&#34;&#34;
+    return self.C0link is not None</code></pre>
+</details>
+</dd>
+<dt id="food.layer.hasDlink"><code class="name">var <span class="ident">hasDlink</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if Dlink is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasDlink(self):
+    &#34;&#34;&#34;Returns True if Dlink is defined&#34;&#34;&#34;
+    return self.Dlink is not None</code></pre>
+</details>
+</dd>
 <dt id="food.layer.hasDmodel"><code class="name">var <span class="ident">hasDmodel</span></code></dt>
 <dd>
 <div class="desc"><p>Returns True if a Dmodel has been defined</p></div>
@@ -5683,6 +6494,19 @@ def hasDmodel(self):
         elif callable(self.Dmodel):
             return self.Dmodel() is not None
     return False</code></pre>
+</details>
+</dd>
+<dt id="food.layer.hasTlink"><code class="name">var <span class="ident">hasTlink</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if Tlink is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasTlink(self):
+    &#34;&#34;&#34;Returns True if Tlink is defined&#34;&#34;&#34;
+    return self.Tlink is not None</code></pre>
 </details>
 </dd>
 <dt id="food.layer.hashlayer"><code class="name">var <span class="ident">hashlayer</span></code></dt>
@@ -5707,6 +6531,19 @@ def hashlayer(self):
             ]</code></pre>
 </details>
 </dd>
+<dt id="food.layer.hasklink"><code class="name">var <span class="ident">hasklink</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if klink is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasklink(self):
+    &#34;&#34;&#34;Returns True if klink is defined&#34;&#34;&#34;
+    return self.klink is not None</code></pre>
+</details>
+</dd>
 <dt id="food.layer.haskmodel"><code class="name">var <span class="ident">haskmodel</span></code></dt>
 <dd>
 <div class="desc"><p>Returns True if a kmodel has been defined</p></div>
@@ -5723,6 +6560,19 @@ def haskmodel(self):
         elif callable(self.kmodel):
             return self.kmodel() is not None
     return False</code></pre>
+</details>
+</dd>
+<dt id="food.layer.hasllink"><code class="name">var <span class="ident">hasllink</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if llink is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasllink(self):
+    &#34;&#34;&#34;Returns True if llink is defined&#34;&#34;&#34;
+    return self.llink is not None</code></pre>
 </details>
 </dd>
 <dt id="food.layer.ispolymer"><code class="name">var <span class="ident">ispolymer</span></code></dt>
@@ -5774,8 +6624,25 @@ def k(self):
     elif callable(self.kmodel): # user override
         ktmp = self.kmodel()
     if ktmp is not None:
-        return np.full_like(self._k, ktmp,dtype=np.float64)
-    return self._k</code></pre>
+        ktmp = np.full_like(self._k, ktmp,dtype=np.float64)
+        if self.hasklink:
+            return self.klink.getfull(ktmp) # substitution rules are applied as defined in klink
+        else:
+            return ktmp
+    return self._k if not self.hasklink else self.klink.getfull(self._k)</code></pre>
+</details>
+</dd>
+<dt id="food.layer.klink"><code class="name">var <span class="ident">klink</span></code></dt>
+<dd>
+<div class="desc"><p>Getter for klink</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def klink(self):
+    &#34;&#34;&#34;Getter for klink&#34;&#34;&#34;
+    return self._klink</code></pre>
 </details>
 </dd>
 <dt id="food.layer.kmodel"><code class="name">var <span class="ident">kmodel</span></code></dt>
@@ -5809,7 +6676,7 @@ def kunit(self): return self._kunit</code></pre>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def l(self): return self._l</code></pre>
+def l(self): return self._l if not self.hasllink else self.llink.getfull(self._l)</code></pre>
 </details>
 </dd>
 <dt id="food.layer.lag"><code class="name">var <span class="ident">lag</span></code></dt>
@@ -5844,6 +6711,19 @@ def layerclass(self): return type(self).__name__</code></pre>
 <pre><code class="python">@property
 def layerclass_history(self):
     return self._layerclass_history if self._layerclass_history != [] else [self.layerclass]</code></pre>
+</details>
+</dd>
+<dt id="food.layer.llink"><code class="name">var <span class="ident">llink</span></code></dt>
+<dd>
+<div class="desc"><p>Getter for llink</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def llink(self):
+    &#34;&#34;&#34;Getter for llink&#34;&#34;&#34;
+    return self._llink</code></pre>
 </details>
 </dd>
 <dt id="food.layer.lreferencelayer"><code class="name">var <span class="ident">lreferencelayer</span></code></dt>
@@ -6115,6 +6995,34 @@ def type(self): return self._type</code></pre>
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="food.layer.C0latex"><code class="name flex">
+<span>def <span class="ident">C0latex</span></span>(<span>self, numdigits=4, units='a.u.', prefix='C0=', mathmode='$')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def C0latex(self, numdigits=4, units=&#34;a.u.&#34;,prefix=&#34;C0=&#34;,mathmode=&#34;$&#34;):
+    &#34;&#34;&#34;Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+    return [format_scientific_latex(c, numdigits, units, prefix,mathmode) for c in self.C0]</code></pre>
+</details>
+</dd>
+<dt id="food.layer.Dlatex"><code class="name flex">
+<span>def <span class="ident">Dlatex</span></span>(<span>self, numdigits=4, units='\\mathrm{m^2 \\cdot s^{-1}}', prefix='D=', mathmode='$')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns diffusivity values (D) formatted in LaTeX scientific notation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Dlatex(self, numdigits=4, units=r&#34;\mathrm{m^2 \cdot s^{-1}}&#34;,prefix=&#34;D=&#34;,mathmode=&#34;$&#34;):
+    &#34;&#34;&#34;Returns diffusivity values (D) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+    return [format_scientific_latex(D, numdigits, units, prefix,mathmode) for D in self.D]</code></pre>
+</details>
+</dd>
 <dt id="food.layer.acknowledge"><code class="name flex">
 <span>def <span class="ident">acknowledge</span></span>(<span>self, what=None, category=None)</span>
 </code></dt>
@@ -6238,6 +7146,34 @@ The category under which the properties are grouped.</p></div>
     return duplicate(self).update(**kwargs)</code></pre>
 </details>
 </dd>
+<dt id="food.layer.klatex"><code class="name flex">
+<span>def <span class="ident">klatex</span></span>(<span>self, numdigits=4, units='a.u.', prefix='k=', mathmode='$')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns Henry-like values (k) formatted in LaTeX scientific notation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def klatex(self, numdigits=4, units=&#34;a.u.&#34;,prefix=&#34;k=&#34;,mathmode=&#34;$&#34;):
+    &#34;&#34;&#34;Returns Henry-like values (k) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+    return [format_scientific_latex(k, numdigits, units, prefix,mathmode) for k in self.k]</code></pre>
+</details>
+</dd>
+<dt id="food.layer.llatex"><code class="name flex">
+<span>def <span class="ident">llatex</span></span>(<span>self, numdigits=4, units='m', prefix='l=', mathmode='$')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns thickness values (k) formatted in LaTeX scientific notation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def llatex(self, numdigits=4, units=&#34;m&#34;,prefix=&#34;l=&#34;,mathmode=&#34;$&#34;):
+    &#34;&#34;&#34;Returns thickness values (k) formatted in LaTeX scientific notation.&#34;&#34;&#34;
+    return [format_scientific_latex(l, numdigits, units, prefix,mathmode) for l in self.l]</code></pre>
+</details>
+</dd>
 <dt id="food.layer.mesh"><code class="name flex">
 <span>def <span class="ident">mesh</span></span>(<span>self, nmesh=None, nmeshmin=None)</span>
 </code></dt>
@@ -6335,6 +7271,20 @@ The category under which the properties are grouped.</p></div>
         for i in range(self._nlayer):
             out = out + (self[i],) # (,) special syntax for tuple singleton
     return out</code></pre>
+</details>
+</dd>
+<dt id="food.layer.struct"><code class="name flex">
+<span>def <span class="ident">struct</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns the equivalent dictionary from an object</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def struct(self):
+    &#34;&#34;&#34; returns the equivalent dictionary from an object &#34;&#34;&#34;
+    return dict((key, getattr(self, key)) for key in dir(self) if key not in dir(self.__class__))</code></pre>
 </details>
 </dd>
 <dt id="food.layer.update"><code class="name flex">
@@ -6963,8 +7913,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
         self.compound = None   # str
         self.name = None       # str or list
+        self.cid = None        # int or list
         self.CAS = None        # list or None
         self.M = None          # float
+        self.formula = None
+        self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
 
@@ -7004,22 +7957,26 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 # No record found
                 self.compound = name
                 self.name = [name]
+                self.cid = []
                 self.CAS = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
+                self.smiles = None
                 self.logP = None
             else:
                 # Possibly multiple matching rows
                 self.compound = name
-
                 all_names = []
+                all_cid = []
                 all_cas = []
                 all_m = []
                 all_formulas = []
+                all_smiles = []
                 all_logP = []
 
                 for _, row in df.iterrows():
+
                     # Gather a list/set of names
                     row_names = row.get(&#34;name&#34;, [])
                     if isinstance(row_names, str):
@@ -7027,6 +7984,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                     row_syns = row.get(&#34;synonyms&#34;, [])
                     combined_names = set(row_names) | set(row_syns)
                     all_names.extend(list(combined_names))
+
+                    # CID
+                    row_cid = row.get(&#34;CID&#34;, [])
+                    if row_cid:
+                        all_cid.append(row_cid)
 
                     # CAS
                     row_cas = row.get(&#34;CAS&#34;, [])
@@ -7058,26 +8020,35 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                     # Even if None, we append so the index lines up with M
                     all_formulas.append(row_formula)
 
+                    # SMILES (as a string)
+                    row_smiles = row.get(&#34;SMILES&#34;, None)
+                    # Even if None, we append so the index lines up with M
+                    all_smiles.append(row_smiles)
+
                 # Convert to arrays
                 arr_m = np.array(all_m, dtype=float)
                 arr_logp = np.array(all_logP, dtype=float)
 
                 # Some dedup / cleaning
                 unique_names = list(set(all_names))
+                unique_cid = list(set(all_cid))
                 unique_cas = list(set(all_cas))
 
                 # Store results in the migrant object
                 self.name = unique_names
+                self.cid = unique_cid[0] if len(unique_cid)==1 else unique_cid
                 self.CAS = unique_cas if unique_cas else None
                 self.M_array = arr_m
                 # Minimum M
                 if np.isnan(arr_m).all():
                     self.M = None
                     self.formula = None
+                    self.smiles = None
                 else:
-                    idx_min = np.nanargmin(arr_m)    # index of min M
-                    self.M = arr_m[idx_min]         # pick that M
+                    idx_min = np.nanargmin(arr_m)         # index of min M
+                    self.M = arr_m[idx_min]               # pick that M
                     self.formula = all_formulas[idx_min]  # pick formula from same record
+                    self.smiles = all_smiles[idx_min]     # pick smilesfrom same record
 
                 # Valid logP
                 valid_logp = arr_logp[~np.isnan(arr_logp)]
@@ -7098,10 +8069,12 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
             # name =&gt; &#34;generic&#34; or if user explicitly set name=..., handle it here
             self.name = &#34;generic&#34;  # from instructions
+            self.cid = None
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array  # user-supplied or None
 
         # Case (c): name is not None and M is provided =&gt; surrogate
@@ -7115,10 +8088,12 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                                  f&#34;{float(np.min(M_array))} to {float(np.max(M_array))}&#34;)
 
             self.name = name
+            self.cid
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array
 
         else:
@@ -7202,13 +8177,31 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         attributes = {
             &#34;Compound&#34;: self.compound,
             &#34;Name&#34;: self.name,
+            &#34;cid&#34;: self.cid,
             &#34;CAS&#34;: self.CAS,
             &#34;M (min)&#34;: self.M,
             &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
             &#34;formula&#34;: self.formula,
+            &#34;smiles&#34;: self.smiles if hasattr(self,&#34;smiles&#34;) else &#34;N/A&#34;,
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
+        if isinstance(self,migrantToxtree):
+            attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
+            attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
+            attributes[&#34;Toxicology&#34;] = self.CramerClass
+            attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
+            attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
+            alerts = self.alerts
+            # Process alerts
+            alert_index = 0
+            for key, value in alerts.items():
+                if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
+                    alert_index += 1
+                    # Convert key name to readable format (split at capital letters)
+                    alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
+                    attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
         # Format attributes with indentation
@@ -7338,6 +8331,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &#34;&#34;&#34;
         return 0.935 * self.M + 14.2</code></pre>
 </details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>patankar.loadpubchem.migrantToxtree</li>
+</ul>
 <h3>Instance variables</h3>
 <dl>
 <dt id="food.migrant.Deval"><code class="name">var <span class="ident">Deval</span></code></dt>
@@ -7665,11 +8662,11 @@ def polarityindex(self,logP=None,V=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class oil(oiliveoil): pass # synonym of oliveoil</code></pre>
+<pre><code class="python">class oil(oliveoil): pass # synonym of oliveoil</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="food.oiliveoil" href="#food.oiliveoil">oiliveoil</a></li>
+<li><a title="food.oliveoil" href="#food.oliveoil">oliveoil</a></li>
 <li><a title="food.simulant" href="#food.simulant">simulant</a></li>
 <li><a title="food.foodproperty" href="#food.foodproperty">foodproperty</a></li>
 <li><a title="food.foodlayer" href="#food.foodlayer">foodlayer</a></li>
@@ -7681,27 +8678,27 @@ def polarityindex(self,logP=None,V=None):
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="food.oiliveoil" href="#food.oiliveoil">oiliveoil</a></b></code>:
+<li><code><b><a title="food.oliveoil" href="#food.oliveoil">oliveoil</a></b></code>:
 <ul class="hlist">
-<li><code><a title="food.oiliveoil.PBC" href="#food.foodphysics.PBC">PBC</a></code></li>
-<li><code><a title="food.oiliveoil.acknowledge" href="#food.foodphysics.acknowledge">acknowledge</a></code></li>
-<li><code><a title="food.oiliveoil.contact" href="#food.foodphysics.contact">contact</a></code></li>
-<li><code><a title="food.oiliveoil.copy" href="#food.foodphysics.copy">copy</a></code></li>
-<li><code><a title="food.oiliveoil.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
-<li><code><a title="food.oiliveoil.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
-<li><code><a title="food.oiliveoil.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
-<li><code><a title="food.oiliveoil.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
-<li><code><a title="food.oiliveoil.lastinput" href="#food.foodphysics.lastinput">lastinput</a></code></li>
-<li><code><a title="food.oiliveoil.lastsimulation" href="#food.foodphysics.lastsimulation">lastsimulation</a></code></li>
-<li><code><a title="food.oiliveoil.migration" href="#food.foodphysics.migration">migration</a></code></li>
-<li><code><a title="food.oiliveoil.refresh" href="#food.foodphysics.refresh">refresh</a></code></li>
-<li><code><a title="food.oiliveoil.update" href="#food.foodphysics.update">update</a></code></li>
+<li><code><a title="food.oliveoil.PBC" href="#food.foodphysics.PBC">PBC</a></code></li>
+<li><code><a title="food.oliveoil.acknowledge" href="#food.foodphysics.acknowledge">acknowledge</a></code></li>
+<li><code><a title="food.oliveoil.contact" href="#food.foodphysics.contact">contact</a></code></li>
+<li><code><a title="food.oliveoil.copy" href="#food.foodphysics.copy">copy</a></code></li>
+<li><code><a title="food.oliveoil.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.oliveoil.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
+<li><code><a title="food.oliveoil.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
+<li><code><a title="food.oliveoil.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
+<li><code><a title="food.oliveoil.lastinput" href="#food.foodphysics.lastinput">lastinput</a></code></li>
+<li><code><a title="food.oliveoil.lastsimulation" href="#food.foodphysics.lastsimulation">lastsimulation</a></code></li>
+<li><code><a title="food.oliveoil.migration" href="#food.foodphysics.migration">migration</a></code></li>
+<li><code><a title="food.oliveoil.refresh" href="#food.foodphysics.refresh">refresh</a></code></li>
+<li><code><a title="food.oliveoil.update" href="#food.foodphysics.update">update</a></code></li>
 </ul>
 </li>
 </ul>
 </dd>
-<dt id="food.oiliveoil"><code class="flex name class">
-<span>class <span class="ident">oiliveoil</span></span>
+<dt id="food.oliveoil"><code class="flex name class">
+<span>class <span class="ident">oliveoil</span></span>
 <span>(</span><span>**kwargs)</span>
 </code></dt>
 <dd>
@@ -7711,7 +8708,7 @@ def polarityindex(self,logP=None,V=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class oiliveoil(simulant, perfectlymixed, fat):
+<pre><code class="python">class oliveoil(simulant, perfectlymixed, fat):
     &#34;&#34;&#34;Isoactane food simulant&#34;&#34;&#34;
     _chemicalsubstance = &#34;methyl stearate&#34;
     _polarityindex = 1.0 # Primarily triacylglycerides; still quite non-polar, though it contains some polar headgroups (the glycerol backbone).
@@ -7736,15 +8733,15 @@ def polarityindex(self,logP=None,V=None):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="food.oiliveoil.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dt id="food.oliveoil.description"><code class="name">var <span class="ident">description</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="food.oiliveoil.level"><code class="name">var <span class="ident">level</span></code></dt>
+<dt id="food.oliveoil.level"><code class="name">var <span class="ident">level</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="food.oiliveoil.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dt id="food.oliveoil.name"><code class="name">var <span class="ident">name</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -8027,7 +9024,7 @@ def polarityindex(self,logP=None,V=None):
 <li><a title="food.ethanol50" href="#food.ethanol50">ethanol50</a></li>
 <li><a title="food.isooctane" href="#food.isooctane">isooctane</a></li>
 <li><a title="food.methanol" href="#food.methanol">methanol</a></li>
-<li><a title="food.oiliveoil" href="#food.oiliveoil">oiliveoil</a></li>
+<li><a title="food.oliveoil" href="#food.oliveoil">oliveoil</a></li>
 <li><a title="food.water" href="#food.water">water</a></li>
 <li><a title="food.water3aceticacid" href="#food.water3aceticacid">water3aceticacid</a></li>
 </ul>
@@ -8436,7 +9433,7 @@ def polarityindex(self,logP=None,V=None):
 <li><a title="food.ethanol50" href="#food.ethanol50">ethanol50</a></li>
 <li><a title="food.isooctane" href="#food.isooctane">isooctane</a></li>
 <li><a title="food.methanol" href="#food.methanol">methanol</a></li>
-<li><a title="food.oiliveoil" href="#food.oiliveoil">oiliveoil</a></li>
+<li><a title="food.oliveoil" href="#food.oliveoil">oliveoil</a></li>
 <li><a title="food.tenax" href="#food.tenax">tenax</a></li>
 <li><a title="food.water" href="#food.water">water</a></li>
 <li><a title="food.water3aceticacid" href="#food.water3aceticacid">water3aceticacid</a></li>
@@ -9431,14 +10428,19 @@ def polarityindex(self,logP=None,V=None):
 <h4><code><a title="food.layer" href="#food.layer">layer</a></code></h4>
 <ul class="">
 <li><code><a title="food.layer.C0" href="#food.layer.C0">C0</a></code></li>
+<li><code><a title="food.layer.C0latex" href="#food.layer.C0latex">C0latex</a></code></li>
+<li><code><a title="food.layer.C0link" href="#food.layer.C0link">C0link</a></code></li>
 <li><code><a title="food.layer.Cunit" href="#food.layer.Cunit">Cunit</a></code></li>
 <li><code><a title="food.layer.D" href="#food.layer.D">D</a></code></li>
+<li><code><a title="food.layer.Dlatex" href="#food.layer.Dlatex">Dlatex</a></code></li>
+<li><code><a title="food.layer.Dlink" href="#food.layer.Dlink">Dlink</a></code></li>
 <li><code><a title="food.layer.Dmodel" href="#food.layer.Dmodel">Dmodel</a></code></li>
 <li><code><a title="food.layer.Dunit" href="#food.layer.Dunit">Dunit</a></code></li>
 <li><code><a title="food.layer.Foscale" href="#food.layer.Foscale">Foscale</a></code></li>
 <li><code><a title="food.layer.T" href="#food.layer.T">T</a></code></li>
 <li><code><a title="food.layer.TK" href="#food.layer.TK">TK</a></code></li>
 <li><code><a title="food.layer.TKunit" href="#food.layer.TKunit">TKunit</a></code></li>
+<li><code><a title="food.layer.Tlink" href="#food.layer.Tlink">Tlink</a></code></li>
 <li><code><a title="food.layer.Tunit" href="#food.layer.Tunit">Tunit</a></code></li>
 <li><code><a title="food.layer.acknowledge" href="#food.layer.acknowledge">acknowledge</a></code></li>
 <li><code><a title="food.layer.checknumvalue" href="#food.layer.checknumvalue">checknumvalue</a></code></li>
@@ -9451,20 +10453,29 @@ def polarityindex(self,logP=None,V=None):
 <li><code><a title="food.layer.concentration" href="#food.layer.concentration">concentration</a></code></li>
 <li><code><a title="food.layer.contact" href="#food.layer.contact">contact</a></code></li>
 <li><code><a title="food.layer.copy" href="#food.layer.copy">copy</a></code></li>
+<li><code><a title="food.layer.hasC0link" href="#food.layer.hasC0link">hasC0link</a></code></li>
+<li><code><a title="food.layer.hasDlink" href="#food.layer.hasDlink">hasDlink</a></code></li>
 <li><code><a title="food.layer.hasDmodel" href="#food.layer.hasDmodel">hasDmodel</a></code></li>
+<li><code><a title="food.layer.hasTlink" href="#food.layer.hasTlink">hasTlink</a></code></li>
 <li><code><a title="food.layer.hashlayer" href="#food.layer.hashlayer">hashlayer</a></code></li>
+<li><code><a title="food.layer.hasklink" href="#food.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="food.layer.haskmodel" href="#food.layer.haskmodel">haskmodel</a></code></li>
+<li><code><a title="food.layer.hasllink" href="#food.layer.hasllink">hasllink</a></code></li>
 <li><code><a title="food.layer.help" href="#food.layer.help">help</a></code></li>
 <li><code><a title="food.layer.ispolymer" href="#food.layer.ispolymer">ispolymer</a></code></li>
 <li><code><a title="food.layer.ispolymer_history" href="#food.layer.ispolymer_history">ispolymer_history</a></code></li>
 <li><code><a title="food.layer.issolid" href="#food.layer.issolid">issolid</a></code></li>
 <li><code><a title="food.layer.k" href="#food.layer.k">k</a></code></li>
+<li><code><a title="food.layer.klatex" href="#food.layer.klatex">klatex</a></code></li>
+<li><code><a title="food.layer.klink" href="#food.layer.klink">klink</a></code></li>
 <li><code><a title="food.layer.kmodel" href="#food.layer.kmodel">kmodel</a></code></li>
 <li><code><a title="food.layer.kunit" href="#food.layer.kunit">kunit</a></code></li>
 <li><code><a title="food.layer.l" href="#food.layer.l">l</a></code></li>
 <li><code><a title="food.layer.lag" href="#food.layer.lag">lag</a></code></li>
 <li><code><a title="food.layer.layerclass" href="#food.layer.layerclass">layerclass</a></code></li>
 <li><code><a title="food.layer.layerclass_history" href="#food.layer.layerclass_history">layerclass_history</a></code></li>
+<li><code><a title="food.layer.llatex" href="#food.layer.llatex">llatex</a></code></li>
+<li><code><a title="food.layer.llink" href="#food.layer.llink">llink</a></code></li>
 <li><code><a title="food.layer.lreferencelayer" href="#food.layer.lreferencelayer">lreferencelayer</a></code></li>
 <li><code><a title="food.layer.lunit" href="#food.layer.lunit">lunit</a></code></li>
 <li><code><a title="food.layer.material" href="#food.layer.material">material</a></code></li>
@@ -9491,6 +10502,7 @@ def polarityindex(self,logP=None,V=None):
 <li><code><a title="food.layer.simplify" href="#food.layer.simplify">simplify</a></code></li>
 <li><code><a title="food.layer.solute" href="#food.layer.solute">solute</a></code></li>
 <li><code><a title="food.layer.split" href="#food.layer.split">split</a></code></li>
+<li><code><a title="food.layer.struct" href="#food.layer.struct">struct</a></code></li>
 <li><code><a title="food.layer.substance" href="#food.layer.substance">substance</a></code></li>
 <li><code><a title="food.layer.thickness" href="#food.layer.thickness">thickness</a></code></li>
 <li><code><a title="food.layer.type" href="#food.layer.type">type</a></code></li>
@@ -9550,11 +10562,11 @@ def polarityindex(self,logP=None,V=None):
 <h4><code><a title="food.oil" href="#food.oil">oil</a></code></h4>
 </li>
 <li>
-<h4><code><a title="food.oiliveoil" href="#food.oiliveoil">oiliveoil</a></code></h4>
+<h4><code><a title="food.oliveoil" href="#food.oliveoil">oliveoil</a></code></h4>
 <ul class="">
-<li><code><a title="food.oiliveoil.description" href="#food.oiliveoil.description">description</a></code></li>
-<li><code><a title="food.oiliveoil.level" href="#food.oiliveoil.level">level</a></code></li>
-<li><code><a title="food.oiliveoil.name" href="#food.oiliveoil.name">name</a></code></li>
+<li><code><a title="food.oliveoil.description" href="#food.oliveoil.description">description</a></code></li>
+<li><code><a title="food.oliveoil.level" href="#food.oliveoil.level">level</a></code></li>
+<li><code><a title="food.oliveoil.name" href="#food.oliveoil.name">name</a></code></li>
 </ul>
 </li>
 <li>

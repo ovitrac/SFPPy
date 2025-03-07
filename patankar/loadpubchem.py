@@ -154,7 +154,7 @@ except ImportError:
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
 
-__all__ = ['CompoundIndex', 'dbdefault', 'get_compounds', 'migrant', 'polarity_index']
+__all__ = ['CompoundIndex', 'dbdefault', 'get_compounds', 'migrant', 'migrantToxtree', 'polarity_index']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -166,6 +166,9 @@ __email__ = "olivier.vitrac@agroparistech.fr"
 __version__ = "1.29"
 
 # %% Private functions and constants (used by estimators)
+
+# full path of patankar/ used cache.PubChem, cache.Toxtree, private/toxtree/
+_PATANKAR_FOLDER = os.path.dirname(__file__)
 
 # Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
 PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
@@ -292,7 +295,7 @@ class CompoundIndex:
         :param cache_dir: path to local cache of *.json files
         :param index_file: local JSON file holding synonyms → [cids] index
         """
-        self.cache_dir = cache_dir
+        self.cache_dir = os.path.join(_PATANKAR_FOLDER,cache_dir)
         os.makedirs(self.cache_dir, exist_ok=True)
 
         self.index_file = os.path.join(cache_dir, index_file)
@@ -1285,7 +1288,7 @@ class migrantToxtree(migrant):
                 raise ValueError(f"Multiple SMILES found for {compound_name}. Provide a unique SMILES.")
             self.smiles = self.smiles[0]
 
-        self.toxtree_root = os.path.join(os.path.dirname(__file__), 'private', 'toxtree')
+        self.toxtree_root = os.path.join(_PATANKAR_FOLDER, 'private', 'toxtree')
         self.jar_path = os.path.join(self.toxtree_root, 'Toxtree-3.1.0.1851.jar')
 
         if not os.path.isfile(self.jar_path):
@@ -1294,7 +1297,7 @@ class migrantToxtree(migrant):
                 f"Please follow the instructions in the README.md file located at '{self.toxtree_root}'."
             )
 
-        self.cache_folder = os.path.join(os.path.dirname(os.getcwd()), cache_folder)
+        self.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
         self.structure_folder = os.path.join(self.cache_folder, structure_folder)
         os.makedirs(self.cache_folder, exist_ok=True)
         os.makedirs(self.structure_folder, exist_ok=True)
@@ -1390,9 +1393,9 @@ class migrantToxtree(migrant):
                 cmd.extend(['-m', engine_class])
             try:
                 current_dir = os.getcwd()
-                os.chdir(self.toxtree_root)
+                os.chdir(self.toxtree_root) # toxtree needs to run from its installation folder
                 result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-                os.chdir(current_dir)
+                os.chdir(current_dir) # restore path
                 if not os.path.isfile(csv_file):
                     raise RuntimeError(
                         f"Error: Toxtree failed to generate the output file for {engine}.\n"
@@ -1401,7 +1404,7 @@ class migrantToxtree(migrant):
                         f"Error: {result.stderr}"
                     )
             except subprocess.CalledProcessError as e:
-                os.chdir(current_dir)
+                os.chdir(current_dir) # restore path
                 raise RuntimeError(
                     f"Error executing Toxtree for {engine}.\n"
                     f"Command: {' '.join(cmd)}\n"
@@ -1501,7 +1504,7 @@ if __name__ == "__main__":
     print(Dval)
 
     # MigranToxtree tests
-    substance = migrantToxtree("limonene")
+    substance = migrantToxtree("irganox 1010")
     c = substance.cramer
     c2 = substance.cramer2
     c3 = substance.cramer3

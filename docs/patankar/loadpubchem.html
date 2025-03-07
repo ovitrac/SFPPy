@@ -139,7 +139,7 @@ Main user-facing method. Returns a pandas DataFrame of matching records (possibl
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-02-17
-@rev: 2025-03-01</p>
+@rev: 2025-03-06</p>
 <h2 id="version-history">Version History</h2>
 <ul>
 <li>1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.</li>
@@ -275,7 +275,7 @@ Note
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-02-17
-@rev: 2025-03-01
+@rev: 2025-03-06
 
 Version History
 ---------------
@@ -287,6 +287,8 @@ Version History
 
 
 import os
+import subprocess
+import requests
 import json
 import re
 import glob
@@ -295,10 +297,16 @@ import numpy as np
 from datetime import datetime
 import time
 
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
 
-__all__ = [&#39;CompoundIndex&#39;, &#39;dbdefault&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;, &#39;polarity_index&#39;]
+__all__ = [&#39;CompoundIndex&#39;, &#39;dbdefault&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;, &#39;migrantToxtree&#39;, &#39;polarity_index&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -307,9 +315,12 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.21&#34;
+__version__ = &#34;1.29&#34;
 
 # %% Private functions and constants (used by estimators)
+
+# full path of patankar/ used cache.PubChem, cache.Toxtree, private/toxtree/
+_PATANKAR_FOLDER = os.path.dirname(__file__)
 
 # Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
 PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
@@ -436,7 +447,7 @@ class CompoundIndex:
         :param cache_dir: path to local cache of *.json files
         :param index_file: local JSON file holding synonyms → [cids] index
         &#34;&#34;&#34;
-        self.cache_dir = cache_dir
+        self.cache_dir = os.path.join(_PATANKAR_FOLDER,cache_dir)
         os.makedirs(self.cache_dir, exist_ok=True)
 
         self.index_file = os.path.join(cache_dir, index_file)
@@ -903,8 +914,11 @@ class migrant:
 
         self.compound = None   # str
         self.name = None       # str or list
+        self.cid = None        # int or list
         self.CAS = None        # list or None
         self.M = None          # float
+        self.formula = None
+        self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
 
@@ -944,22 +958,26 @@ class migrant:
                 # No record found
                 self.compound = name
                 self.name = [name]
+                self.cid = []
                 self.CAS = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
+                self.smiles = None
                 self.logP = None
             else:
                 # Possibly multiple matching rows
                 self.compound = name
-
                 all_names = []
+                all_cid = []
                 all_cas = []
                 all_m = []
                 all_formulas = []
+                all_smiles = []
                 all_logP = []
 
                 for _, row in df.iterrows():
+
                     # Gather a list/set of names
                     row_names = row.get(&#34;name&#34;, [])
                     if isinstance(row_names, str):
@@ -967,6 +985,11 @@ class migrant:
                     row_syns = row.get(&#34;synonyms&#34;, [])
                     combined_names = set(row_names) | set(row_syns)
                     all_names.extend(list(combined_names))
+
+                    # CID
+                    row_cid = row.get(&#34;CID&#34;, [])
+                    if row_cid:
+                        all_cid.append(row_cid)
 
                     # CAS
                     row_cas = row.get(&#34;CAS&#34;, [])
@@ -998,26 +1021,35 @@ class migrant:
                     # Even if None, we append so the index lines up with M
                     all_formulas.append(row_formula)
 
+                    # SMILES (as a string)
+                    row_smiles = row.get(&#34;SMILES&#34;, None)
+                    # Even if None, we append so the index lines up with M
+                    all_smiles.append(row_smiles)
+
                 # Convert to arrays
                 arr_m = np.array(all_m, dtype=float)
                 arr_logp = np.array(all_logP, dtype=float)
 
                 # Some dedup / cleaning
                 unique_names = list(set(all_names))
+                unique_cid = list(set(all_cid))
                 unique_cas = list(set(all_cas))
 
                 # Store results in the migrant object
                 self.name = unique_names
+                self.cid = unique_cid[0] if len(unique_cid)==1 else unique_cid
                 self.CAS = unique_cas if unique_cas else None
                 self.M_array = arr_m
                 # Minimum M
                 if np.isnan(arr_m).all():
                     self.M = None
                     self.formula = None
+                    self.smiles = None
                 else:
-                    idx_min = np.nanargmin(arr_m)    # index of min M
-                    self.M = arr_m[idx_min]         # pick that M
+                    idx_min = np.nanargmin(arr_m)         # index of min M
+                    self.M = arr_m[idx_min]               # pick that M
                     self.formula = all_formulas[idx_min]  # pick formula from same record
+                    self.smiles = all_smiles[idx_min]     # pick smilesfrom same record
 
                 # Valid logP
                 valid_logp = arr_logp[~np.isnan(arr_logp)]
@@ -1038,10 +1070,12 @@ class migrant:
 
             # name =&gt; &#34;generic&#34; or if user explicitly set name=..., handle it here
             self.name = &#34;generic&#34;  # from instructions
+            self.cid = None
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array  # user-supplied or None
 
         # Case (c): name is not None and M is provided =&gt; surrogate
@@ -1055,10 +1089,12 @@ class migrant:
                                  f&#34;{float(np.min(M_array))} to {float(np.max(M_array))}&#34;)
 
             self.name = name
+            self.cid
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array
 
         else:
@@ -1142,13 +1178,31 @@ class migrant:
         attributes = {
             &#34;Compound&#34;: self.compound,
             &#34;Name&#34;: self.name,
+            &#34;cid&#34;: self.cid,
             &#34;CAS&#34;: self.CAS,
             &#34;M (min)&#34;: self.M,
             &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
             &#34;formula&#34;: self.formula,
+            &#34;smiles&#34;: self.smiles if hasattr(self,&#34;smiles&#34;) else &#34;N/A&#34;,
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
+        if isinstance(self,migrantToxtree):
+            attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
+            attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
+            attributes[&#34;Toxicology&#34;] = self.CramerClass
+            attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
+            attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
+            alerts = self.alerts
+            # Process alerts
+            alert_index = 0
+            for key, value in alerts.items():
+                if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
+                    alert_index += 1
+                    # Convert key name to readable format (split at capital letters)
+                    alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
+                    attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
         # Format attributes with indentation
@@ -1278,6 +1332,293 @@ class migrant:
         &#34;&#34;&#34;
         return 0.935 * self.M + 14.2
 
+# %% Class migrantToxtree extending migrant class with Toxtree data
+&#34;&#34;&#34;
+===============================================================================
+SFPPy loadpubchem extension: Interface to Toxtree
+===============================================================================
+This module extends SFPPy migrants with the capability to interface with Toxtree for toxicological assessments:
+- Cramer classification
+- Detection of structural alerts from SMILES
+
+The module leverages existing PubChem data managed by SFPPy.
+
+===============================================================================
+&#34;&#34;&#34;
+class migrantToxtree(migrant):
+    &#34;&#34;&#34;
+    Extends the `migrant` class to integrate Toxtree for toxicological assessments.
+    This class retrieves chemical data from PubChem, caches results, and runs Toxtree
+    for toxicological classification.
+
+    Features:
+    - Downloads and caches molecular structure files (SDF) from PubChem.
+    - Interfaces with Toxtree to perform Cramer classification and detect toxicological alerts.
+    - Implements a multi-level cache system for efficiency.
+    - Cleans and standardizes field names for output consistency.
+    - Provides control flags for cache refresh and regeneration.
+
+    Attributes:
+        PUBCHEM_ROOT_URL (str): Base URL for PubChem compound data.
+        IMAGE_SIZE (tuple): Default image size for structure images.
+        TOXTREE_ENGINES (dict): Mapping of Toxtree engines to class names.
+        TOX_CLASSIFICATION (dict): Mapping of classification engines.
+        cache_folder (str): Directory to store cached Toxtree results.
+        structure_folder (str): Directory to store cached structure files.
+        structure_file (str): Path to the SDF file for the compound.
+        image_file (str): Path to the PNG image of the compound.
+        refresh (bool): If True, forces Toxtree reprocessing from CSV.
+        no_cache (bool): If True, forces full cache regeneration.
+
+    Methods:
+        __init__(compound_name, cache_folder=&#39;cache.ToxTree&#39;, structure_folder=&#39;structure&#39;, refresh=False, no_cache=False)
+            Initializes the class, retrieves chemical data, and runs Toxtree default classification.
+
+        _download_pubchem_data()
+            Downloads and caches the SDF structure file from PubChem.
+
+        _clean_field_names(data)
+            Cleans field names by removing &#39;PUBCHEM_&#39; prefix and applying CamelCase.
+
+        _run_toxtree(engine)
+            Runs Toxtree for the specified engine, handling caching and errors.
+
+    Properties:
+        cramer: Runs Toxtree with the Cramer classification engine.
+        cramer2: Runs Toxtree with the Cramer2 classification engine.
+        cramer3: Runs Toxtree with the Cramer3 classification engine.
+        alerts: Runs Toxtree to detect toxicological alerts.
+        has_alerts: Checks if any toxicological alerts were detected.
+
+    Example:
+        &gt;&gt;&gt; substance = migrantToxtree(&#34;limonene&#34;)
+        &gt;&gt;&gt; c = substance.cramer
+        &gt;&gt;&gt; c2 = substance.cramer2
+        &gt;&gt;&gt; c3 = substance.cramer3
+        &gt;&gt;&gt; print(&#34;Cramer Class:&#34;, c)
+        &gt;&gt;&gt; print(&#34;Cramer2 Class:&#34;, c2)
+        &gt;&gt;&gt; print(&#34;Cramer3 Class:&#34;, c3)
+    &#34;&#34;&#34;
+
+    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
+    IMAGE_SIZE = (640, 480)
+
+    TOXTREE_ENGINES = {
+        &#34;default&#34;: &#34;&#34;,
+        &#34;cramer&#34;: &#34;toxTree.tree.cramer.CramerRules&#34;,
+        &#34;cramer2&#34;: &#34;cramer2.CramerRulesWithExtensions&#34;,
+        &#34;cramer3&#34;: &#34;toxtree.tree.cramer3.RevisedCramerDecisionTree&#34;,
+        &#34;kroes&#34;: &#34;toxtree.plugins.kroes.Kroes1Tree&#34;,
+        &#34;dnabinding&#34;: &#34;toxtree.plugins.dnabinding.DNABindingPlugin&#34;,
+        &#34;skin&#34;: &#34;toxtree.plugins.skinsensitisation.SkinSensitisationPlugin&#34;,
+        &#34;eye&#34;: &#34;eye.EyeIrritationRules&#34;,
+        &#34;Ames&#34;: &#34;toxtree.plugins.ames.AmesMutagenicityRules&#34;
+    }
+
+    TOX_CLASSIFICATION = {
+        &#34;default&#34;: &#34;CramerRules&#34;,
+        &#34;cramer&#34;: &#34;CramerRules&#34;,
+        &#34;cramer2&#34;: &#34;CramerRules_WithExtensions&#34;,
+        &#34;cramer3&#34;: &#34;RevisedCDT&#34;,
+        &#34;kroes&#34;: &#34;KroesTTCDecisionTree&#34;
+    }
+
+    TTC = [0.0025, 1.5, 9.0 , 30] # µg/kg bw/day
+    TTCunits = &#34;[µg/kg bw/day]&#34;
+    CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
+    CFTTCunits = &#34;[mg/kg food intake]&#34;
+
+    def __init__(self, compound_name, cache_folder=&#39;cache.ToxTree&#39;, structure_folder=&#39;structure&#39;, refresh=False, no_cache=False):
+        super().__init__(compound_name)
+
+        if isinstance(self.cid, list):
+            if len(self.cid) != 1:
+                raise ValueError(f&#34;Multiple CIDs found for {compound_name}. Provide a unique compound.&#34;)
+            self.cid = self.cid[0]
+        if isinstance(self.smiles, list):
+            if len(self.smiles) != 1:
+                raise ValueError(f&#34;Multiple SMILES found for {compound_name}. Provide a unique SMILES.&#34;)
+            self.smiles = self.smiles[0]
+
+        self.toxtree_root = os.path.join(_PATANKAR_FOLDER, &#39;private&#39;, &#39;toxtree&#39;)
+        self.jar_path = os.path.join(self.toxtree_root, &#39;Toxtree-3.1.0.1851.jar&#39;)
+
+        if not os.path.isfile(self.jar_path):
+            raise FileNotFoundError(
+                f&#34;The Toxtree executable &#39;{self.jar_path}&#39; cannot be found.\n&#34;
+                f&#34;Please follow the instructions in the README.md file located at &#39;{self.toxtree_root}&#39;.&#34;
+            )
+
+        self.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
+        self.structure_folder = os.path.join(self.cache_folder, structure_folder)
+        os.makedirs(self.cache_folder, exist_ok=True)
+        os.makedirs(self.structure_folder, exist_ok=True)
+
+        self.structure_file = os.path.join(self.structure_folder, f&#39;{self.cid}.sdf&#39;)
+        self.image_file = os.path.join(self.structure_folder, f&#39;{self.cid}.png&#39;)
+        self.refresh = refresh
+        self.no_cache = no_cache
+
+        self._download_pubchem_data()
+        tmp = self._run_toxtree(&#34;default&#34;)
+        tmp[&#34;CramerValue&#34;]=self.class_roman_to_int(tmp[&#34;CramerRules&#34;])
+        self.ToxTree = tmp
+        self.CramerValue = tmp[&#34;CramerValue&#34;]
+        self.CramerClass = tmp[&#34;CramerRules&#34;]
+        self.TTC = self.TTC[self.CramerValue]
+        self.CFTTC = self.CFTTC[self.CramerValue]
+
+    def _download_pubchem_data(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
+        if not os.path.isfile(self.structure_file) or self.no_cache:
+            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
+            response = requests.get(sdf_url, timeout=60)
+            if response.status_code == 200:
+                with open(self.structure_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+            else:
+                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
+        if not os.path.isfile(self.image_file) or self.no_cache:
+            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
+            response = requests.get(png_url, timeout=60)
+            if response.status_code == 200:
+                with open(self.image_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+                self._crop_image(self.image_file)
+
+    def _crop_image(self, image_path):
+        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
+        if not PIL_AVAILABLE:
+            return
+        img = Image.open(image_path)
+        img = img.convert(&#34;RGBA&#34;)
+        bbox = img.getbbox()
+        if bbox:
+            img = img.crop(bbox)
+            img.save(image_path)
+
+
+    def _clean_field_names(self, data):
+        &#34;&#34;&#34;Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word.&#34;&#34;&#34;
+        cleaned_data = {}
+        substitutions = {
+            &#34;iupac&#34;: &#34;IUPAC&#34;,
+            &#34;logp&#34;: &#34;logP&#34;,
+            &#34;cramer&#34;: &#34;Cramer&#34;,
+            &#34;cid&#34;: &#34;CID&#34;,
+            &#34;inchi&#34;: &#34;InChi&#34;,
+            }
+        # Create a case-insensitive regex pattern
+        pattern = re.compile(&#34;|&#34;.join(re.escape(k) for k in substitutions.keys()), re.IGNORECASE)
+        # Function for case-insensitive substitution
+        def replace_case_insensitive(match):
+            return substitutions[match.group(0).lower()]  # Lookup in lowercase, replace as defined
+        for key, value in data.items():
+            # Remove PUBCHEM_ prefix
+            if key.startswith(&#34;PUBCHEM_&#34;):
+                key = key.replace(&#34;PUBCHEM_&#34;, &#34;&#34;)
+            # Split using multiple delimiters (space, underscore, comma)
+            words = re.split(r&#39;[ ,_:\.]+&#39;, key)
+            # Capitalize each word
+            cleaned_key = &#39;&#39;.join(word.capitalize() for word in words)
+            # Apply case-sensitive substitutions
+            cleaned_key = pattern.sub(replace_case_insensitive, cleaned_key)
+            # Store in the cleaned dictionary
+            cleaned_data[cleaned_key] = value
+        return cleaned_data
+
+    def _run_toxtree(self, engine):
+        if engine not in self.TOXTREE_ENGINES:
+            raise ValueError(f&#34;Unknown Toxtree engine: {engine}&#34;)
+
+        engine_class = self.TOXTREE_ENGINES[engine]
+        csv_file = os.path.join(self.cache_folder, f&#39;{self.cid}.{engine}.csv&#39;)
+        json_file = os.path.join(self.cache_folder, f&#39;{self.cid}.{engine}.json&#39;)
+
+        if os.path.isfile(json_file) and not self.refresh:
+            with open(json_file, &#39;r&#39;) as f:
+                return json.load(f)
+
+        if not os.path.isfile(csv_file) or self.no_cache:
+            cmd = [&#39;java&#39;, &#39;-jar&#39;, self.jar_path, &#39;-n&#39;, &#39;-i&#39;, self.structure_file, &#39;-o&#39;, csv_file]
+            if engine_class:
+                cmd.extend([&#39;-m&#39;, engine_class])
+            try:
+                current_dir = os.getcwd()
+                os.chdir(self.toxtree_root) # toxtree needs to run from its installation folder
+                result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+                os.chdir(current_dir) # restore path
+                if not os.path.isfile(csv_file):
+                    raise RuntimeError(
+                        f&#34;Error: Toxtree failed to generate the output file for {engine}.\n&#34;
+                        f&#34;Command: {&#39; &#39;.join(cmd)}\n&#34;
+                        f&#34;Output: {result.stdout}\n&#34;
+                        f&#34;Error: {result.stderr}&#34;
+                    )
+            except subprocess.CalledProcessError as e:
+                os.chdir(current_dir) # restore path
+                raise RuntimeError(
+                    f&#34;Error executing Toxtree for {engine}.\n&#34;
+                    f&#34;Command: {&#39; &#39;.join(cmd)}\n&#34;
+                    f&#34;Output: {e.stdout}\n&#34;
+                    f&#34;Error: {e.stderr}&#34;
+                )
+
+        df = pd.read_csv(csv_file)
+        cleaned_data = self._clean_field_names(df.to_dict(orient=&#39;records&#39;)[0]) if not df.empty else {}
+        with open(json_file, &#39;w&#39;) as f:
+            json.dump(cleaned_data, f, indent=4)
+        return cleaned_data
+
+
+    def class_roman_to_int(self,text):
+        &#34;&#34;&#34;Converts &#39;Class X&#39; (where X is I, II, III, IV, V) into an integer (1-5), case insensitive.&#34;&#34;&#34;
+        # Define mapping of Roman numerals to integers
+        roman_to_int = {
+            &#34;I&#34;: 1, &#34;II&#34;: 2, &#34;III&#34;: 3, &#34;IV&#34;: 4, &#34;V&#34;: 5
+        }
+        # Regex pattern to detect &#39;Class X&#39; with valid Roman numerals
+        pattern = re.compile(r&#39;\bClass\s+(I{1,3}|IV|V)\b&#39;, re.IGNORECASE)
+        # Search for pattern in text
+        match = pattern.search(text)
+        if match:
+            roman_numeral = match.group(1).upper()  # Extract and normalize the numeral
+            return roman_to_int.get(roman_numeral, None)  # Convert to int
+        return None  # Return None if no valid match
+
+
+    @property
+    def cramer(self):
+        tmp = self._run_toxtree(&#39;cramer&#39;)
+        tmp[&#34;CramerValue&#34;]=self.class_roman_to_int(tmp[&#34;CramerRules&#34;])
+        tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+        return tmp
+
+    @property
+    def cramer2(self):
+        tmp = self._run_toxtree(&#39;cramer2&#39;)
+        tmp[&#34;CramerValue&#34;] = self.class_roman_to_int(tmp[&#34;CramerRulesWithExtensions&#34;]) \
+            if &#34;CramerRulesWithExtensions&#34; in tmp else None
+        tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+        return tmp
+
+    @property
+    def cramer3(self):
+        tmp = self._run_toxtree(&#39;cramer3&#39;)
+        tmp[&#34;CramerValue&#34;] = self.class_roman_to_int(tmp[&#34;CramerRulesWithExtensions&#34;]) \
+            if &#34;CramerRulesWithExtensions&#34; in tmp else None
+        tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+        return tmp
+
+    @property
+    def alerts(self):
+        return self._run_toxtree(&#39;skin&#39;)
+
+    @property
+    def has_alerts(self):
+        return len(self.alerts) &gt; 0
+
+
 
 # %% debug
 # ==========================
@@ -1285,6 +1626,7 @@ class migrant:
 # ==========================
 if __name__ == &#34;__main__&#34;:
     # debug
+    m=migrant(&#34;bisphenol A&#34;)
     m=migrant(&#34;water&#34;)
     m.polarityindex
     # examples
@@ -1311,7 +1653,16 @@ if __name__ == &#34;__main__&#34;:
     print(m)
     # Piringer D value (several models can be implemented in module property.py)
     Dval = m.Deval(polymer=&#34;PET&#34;,T=20)
-    print(Dval)</code></pre>
+    print(Dval)
+
+    # MigranToxtree tests
+    substance = migrantToxtree(&#34;irganox 1010&#34;)
+    c = substance.cramer
+    c2 = substance.cramer2
+    c3 = substance.cramer3
+    print(&#34;Cramer Class:&#34;, c)
+    print(&#34;Cramer2 Class:&#34;, c2)
+    print(&#34;Cramer3 Class:&#34;, c3)</code></pre>
 </details>
 </section>
 <section>
@@ -1545,7 +1896,7 @@ from actual PubChem queries if needed.</p>
         :param cache_dir: path to local cache of *.json files
         :param index_file: local JSON file holding synonyms → [cids] index
         &#34;&#34;&#34;
-        self.cache_dir = cache_dir
+        self.cache_dir = os.path.join(_PATANKAR_FOLDER,cache_dir)
         os.makedirs(self.cache_dir, exist_ok=True)
 
         self.index_file = os.path.join(cache_dir, index_file)
@@ -2308,8 +2659,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
         self.compound = None   # str
         self.name = None       # str or list
+        self.cid = None        # int or list
         self.CAS = None        # list or None
         self.M = None          # float
+        self.formula = None
+        self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
 
@@ -2349,22 +2703,26 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 # No record found
                 self.compound = name
                 self.name = [name]
+                self.cid = []
                 self.CAS = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
+                self.smiles = None
                 self.logP = None
             else:
                 # Possibly multiple matching rows
                 self.compound = name
-
                 all_names = []
+                all_cid = []
                 all_cas = []
                 all_m = []
                 all_formulas = []
+                all_smiles = []
                 all_logP = []
 
                 for _, row in df.iterrows():
+
                     # Gather a list/set of names
                     row_names = row.get(&#34;name&#34;, [])
                     if isinstance(row_names, str):
@@ -2372,6 +2730,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                     row_syns = row.get(&#34;synonyms&#34;, [])
                     combined_names = set(row_names) | set(row_syns)
                     all_names.extend(list(combined_names))
+
+                    # CID
+                    row_cid = row.get(&#34;CID&#34;, [])
+                    if row_cid:
+                        all_cid.append(row_cid)
 
                     # CAS
                     row_cas = row.get(&#34;CAS&#34;, [])
@@ -2403,26 +2766,35 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                     # Even if None, we append so the index lines up with M
                     all_formulas.append(row_formula)
 
+                    # SMILES (as a string)
+                    row_smiles = row.get(&#34;SMILES&#34;, None)
+                    # Even if None, we append so the index lines up with M
+                    all_smiles.append(row_smiles)
+
                 # Convert to arrays
                 arr_m = np.array(all_m, dtype=float)
                 arr_logp = np.array(all_logP, dtype=float)
 
                 # Some dedup / cleaning
                 unique_names = list(set(all_names))
+                unique_cid = list(set(all_cid))
                 unique_cas = list(set(all_cas))
 
                 # Store results in the migrant object
                 self.name = unique_names
+                self.cid = unique_cid[0] if len(unique_cid)==1 else unique_cid
                 self.CAS = unique_cas if unique_cas else None
                 self.M_array = arr_m
                 # Minimum M
                 if np.isnan(arr_m).all():
                     self.M = None
                     self.formula = None
+                    self.smiles = None
                 else:
-                    idx_min = np.nanargmin(arr_m)    # index of min M
-                    self.M = arr_m[idx_min]         # pick that M
+                    idx_min = np.nanargmin(arr_m)         # index of min M
+                    self.M = arr_m[idx_min]               # pick that M
                     self.formula = all_formulas[idx_min]  # pick formula from same record
+                    self.smiles = all_smiles[idx_min]     # pick smilesfrom same record
 
                 # Valid logP
                 valid_logp = arr_logp[~np.isnan(arr_logp)]
@@ -2443,10 +2815,12 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
             # name =&gt; &#34;generic&#34; or if user explicitly set name=..., handle it here
             self.name = &#34;generic&#34;  # from instructions
+            self.cid = None
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array  # user-supplied or None
 
         # Case (c): name is not None and M is provided =&gt; surrogate
@@ -2460,10 +2834,12 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                                  f&#34;{float(np.min(M_array))} to {float(np.max(M_array))}&#34;)
 
             self.name = name
+            self.cid
             self.CAS = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
+            self.smiles = None
             self.logP = logP_array
 
         else:
@@ -2547,13 +2923,31 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         attributes = {
             &#34;Compound&#34;: self.compound,
             &#34;Name&#34;: self.name,
+            &#34;cid&#34;: self.cid,
             &#34;CAS&#34;: self.CAS,
             &#34;M (min)&#34;: self.M,
             &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
             &#34;formula&#34;: self.formula,
+            &#34;smiles&#34;: self.smiles if hasattr(self,&#34;smiles&#34;) else &#34;N/A&#34;,
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
+        if isinstance(self,migrantToxtree):
+            attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
+            attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
+            attributes[&#34;Toxicology&#34;] = self.CramerClass
+            attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
+            attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
+            alerts = self.alerts
+            # Process alerts
+            alert_index = 0
+            for key, value in alerts.items():
+                if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
+                    alert_index += 1
+                    # Convert key name to readable format (split at capital letters)
+                    alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
+                    attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
         # Format attributes with indentation
@@ -2683,6 +3077,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &#34;&#34;&#34;
         return 0.935 * self.M + 14.2</code></pre>
 </details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="loadpubchem.migrantToxtree" href="#loadpubchem.migrantToxtree">migrantToxtree</a></li>
+</ul>
 <h3>Instance variables</h3>
 <dl>
 <dt id="loadpubchem.migrant.Deval"><code class="name">var <span class="ident">Deval</span></code></dt>
@@ -2937,6 +3335,560 @@ def polarityindex(self,logP=None,V=None):
 </dd>
 </dl>
 </dd>
+<dt id="loadpubchem.migrantToxtree"><code class="flex name class">
+<span>class <span class="ident">migrantToxtree</span></span>
+<span>(</span><span>compound_name, cache_folder='cache.ToxTree', structure_folder='structure', refresh=False, no_cache=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extends the <code><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></code> class to integrate Toxtree for toxicological assessments.
+This class retrieves chemical data from PubChem, caches results, and runs Toxtree
+for toxicological classification.</p>
+<p>Features:
+- Downloads and caches molecular structure files (SDF) from PubChem.
+- Interfaces with Toxtree to perform Cramer classification and detect toxicological alerts.
+- Implements a multi-level cache system for efficiency.
+- Cleans and standardizes field names for output consistency.
+- Provides control flags for cache refresh and regeneration.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>PUBCHEM_ROOT_URL</code></strong> :&ensp;<code>str</code></dt>
+<dd>Base URL for PubChem compound data.</dd>
+<dt><strong><code>IMAGE_SIZE</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>Default image size for structure images.</dd>
+<dt><strong><code>TOXTREE_ENGINES</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Mapping of Toxtree engines to class names.</dd>
+<dt><strong><code>TOX_CLASSIFICATION</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Mapping of classification engines.</dd>
+<dt><strong><code>cache_folder</code></strong> :&ensp;<code>str</code></dt>
+<dd>Directory to store cached Toxtree results.</dd>
+<dt><strong><code>structure_folder</code></strong> :&ensp;<code>str</code></dt>
+<dd>Directory to store cached structure files.</dd>
+<dt><strong><code>structure_file</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to the SDF file for the compound.</dd>
+<dt><strong><code>image_file</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to the PNG image of the compound.</dd>
+<dt><strong><code>refresh</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, forces Toxtree reprocessing from CSV.</dd>
+<dt><strong><code>no_cache</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, forces full cache regeneration.</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong>(compound_name, cache_folder='cache.ToxTree', structure_folder='structure', refresh=False, no_cache=False)
+Initializes the class, retrieves chemical data, and runs Toxtree default classification.</p>
+<p>_download_pubchem_data()
+Downloads and caches the SDF structure file from PubChem.</p>
+<p><em>clean_field_names(data)
+Cleans field names by removing 'PUBCHEM</em>' prefix and applying CamelCase.</p>
+<p>_run_toxtree(engine)
+Runs Toxtree for the specified engine, handling caching and errors.</p>
+<h2 id="properties">Properties</h2>
+<p>cramer: Runs Toxtree with the Cramer classification engine.
+cramer2: Runs Toxtree with the Cramer2 classification engine.
+cramer3: Runs Toxtree with the Cramer3 classification engine.
+alerts: Runs Toxtree to detect toxicological alerts.
+has_alerts: Checks if any toxicological alerts were detected.</p>
+<h2 id="example">Example</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; substance = migrantToxtree(&quot;limonene&quot;)
+&gt;&gt;&gt; c = substance.cramer
+&gt;&gt;&gt; c2 = substance.cramer2
+&gt;&gt;&gt; c3 = substance.cramer3
+&gt;&gt;&gt; print(&quot;Cramer Class:&quot;, c)
+&gt;&gt;&gt; print(&quot;Cramer2 Class:&quot;, c2)
+&gt;&gt;&gt; print(&quot;Cramer3 Class:&quot;, c3)
+</code></pre>
+<p>Create a new migrant instance.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code> or <code>None</code></dt>
+<dd>
+<ul>
+<li>A textual name for the substance to be looked up in PubChem (case a),
+or a custom name for a surrogate (case c).</li>
+<li>If None, and M is given, we treat it as a numeric-only initialization (case b).</li>
+</ul>
+</dd>
+<dt><strong><code>M</code></strong> :&ensp;<code>float</code> or <code>list/ndarray</code> of <code>float</code> or <code>None</code></dt>
+<dd>
+<ul>
+<li>For case (a): If provided as None, we do a PubChem search by name.</li>
+<li>For case (b): The numeric molecular weight(s). No search is performed if name is None.</li>
+<li>For case (c): Combined name and numeric M =&gt; a surrogate with no search.</li>
+</ul>
+</dd>
+<dt><strong><code>logP</code></strong> :&ensp;<code>float</code> or <code>list/ndarray</code> of <code>float</code> or <code>None</code></dt>
+<dd>
+<ul>
+<li>For case (a): Typically None. If the PubChem search returns logP, it’s stored automatically.</li>
+<li>For case (b,c): user can supply. If given, stored in self.logP as a numpy array.</li>
+</ul>
+</dd>
+<dt><strong><code>db</code></strong> :&ensp;<code>instance</code> of <code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code> or <code>similar</code>, optional</dt>
+<dd>
+<ul>
+<li>If you want to perform a PubChem search (case a) automatically, pass an instance.</li>
+<li>If omitted or None, no search is attempted, even if name is given.</li>
+</ul>
+</dd>
+<dt><strong><code>raiseerror</code></strong> :&ensp;<code>bool (default=True)</code>, optional</dt>
+<dd>Raise an error if name is not found</dd>
+</dl>
+<h2 id="advanced-parameters">Advanced Parameters</h2>
+<p>Property models from MigrationPropertyModels can be directly attached to the substance.
+Based on the current version of migration.py two models are proposed:
+- Set a diffusivity model using
+- Dmodel="model name"
+default ="Piringer"
+- Dtemplate=template dict coding for the key:value parameters
+(e.g, to bed used Diringer(key1=value1&hellip;))
+note: the template needs to be valid (do not use None)
+default = {"polymer":None, "M":None, "T":None}
+- Set a Henry-like model using
+- kmodel="model name"
+default =None
+- ktemplate=template dict coding for the key:value parameters
+default =
+{"Pi":1.41, "Pk":3.97, "Vi":124.1, "Vk":30.9, "ispolymer":True, "alpha":0.14, "lngmin":0.0,"Psat":1.0}
+other models could be implemented in the future, read the module property.py for details.</p>
+<p>Example of usage of Dpiringer
+m = migrant(name='limonene')
+# without the helper function
+Dvalue = m.D.evaluate(**dict(m.Dtemplate,polymer="LDPE",T=60))
+# with the helper function
+Dvalue = m.Deval(polymer="LDPE",T=60)</p>
+<h2 id="raises">Raises</h2>
+<p>ValueError if insufficient arguments are provided for any scenario.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class migrantToxtree(migrant):
+    &#34;&#34;&#34;
+    Extends the `migrant` class to integrate Toxtree for toxicological assessments.
+    This class retrieves chemical data from PubChem, caches results, and runs Toxtree
+    for toxicological classification.
+
+    Features:
+    - Downloads and caches molecular structure files (SDF) from PubChem.
+    - Interfaces with Toxtree to perform Cramer classification and detect toxicological alerts.
+    - Implements a multi-level cache system for efficiency.
+    - Cleans and standardizes field names for output consistency.
+    - Provides control flags for cache refresh and regeneration.
+
+    Attributes:
+        PUBCHEM_ROOT_URL (str): Base URL for PubChem compound data.
+        IMAGE_SIZE (tuple): Default image size for structure images.
+        TOXTREE_ENGINES (dict): Mapping of Toxtree engines to class names.
+        TOX_CLASSIFICATION (dict): Mapping of classification engines.
+        cache_folder (str): Directory to store cached Toxtree results.
+        structure_folder (str): Directory to store cached structure files.
+        structure_file (str): Path to the SDF file for the compound.
+        image_file (str): Path to the PNG image of the compound.
+        refresh (bool): If True, forces Toxtree reprocessing from CSV.
+        no_cache (bool): If True, forces full cache regeneration.
+
+    Methods:
+        __init__(compound_name, cache_folder=&#39;cache.ToxTree&#39;, structure_folder=&#39;structure&#39;, refresh=False, no_cache=False)
+            Initializes the class, retrieves chemical data, and runs Toxtree default classification.
+
+        _download_pubchem_data()
+            Downloads and caches the SDF structure file from PubChem.
+
+        _clean_field_names(data)
+            Cleans field names by removing &#39;PUBCHEM_&#39; prefix and applying CamelCase.
+
+        _run_toxtree(engine)
+            Runs Toxtree for the specified engine, handling caching and errors.
+
+    Properties:
+        cramer: Runs Toxtree with the Cramer classification engine.
+        cramer2: Runs Toxtree with the Cramer2 classification engine.
+        cramer3: Runs Toxtree with the Cramer3 classification engine.
+        alerts: Runs Toxtree to detect toxicological alerts.
+        has_alerts: Checks if any toxicological alerts were detected.
+
+    Example:
+        &gt;&gt;&gt; substance = migrantToxtree(&#34;limonene&#34;)
+        &gt;&gt;&gt; c = substance.cramer
+        &gt;&gt;&gt; c2 = substance.cramer2
+        &gt;&gt;&gt; c3 = substance.cramer3
+        &gt;&gt;&gt; print(&#34;Cramer Class:&#34;, c)
+        &gt;&gt;&gt; print(&#34;Cramer2 Class:&#34;, c2)
+        &gt;&gt;&gt; print(&#34;Cramer3 Class:&#34;, c3)
+    &#34;&#34;&#34;
+
+    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
+    IMAGE_SIZE = (640, 480)
+
+    TOXTREE_ENGINES = {
+        &#34;default&#34;: &#34;&#34;,
+        &#34;cramer&#34;: &#34;toxTree.tree.cramer.CramerRules&#34;,
+        &#34;cramer2&#34;: &#34;cramer2.CramerRulesWithExtensions&#34;,
+        &#34;cramer3&#34;: &#34;toxtree.tree.cramer3.RevisedCramerDecisionTree&#34;,
+        &#34;kroes&#34;: &#34;toxtree.plugins.kroes.Kroes1Tree&#34;,
+        &#34;dnabinding&#34;: &#34;toxtree.plugins.dnabinding.DNABindingPlugin&#34;,
+        &#34;skin&#34;: &#34;toxtree.plugins.skinsensitisation.SkinSensitisationPlugin&#34;,
+        &#34;eye&#34;: &#34;eye.EyeIrritationRules&#34;,
+        &#34;Ames&#34;: &#34;toxtree.plugins.ames.AmesMutagenicityRules&#34;
+    }
+
+    TOX_CLASSIFICATION = {
+        &#34;default&#34;: &#34;CramerRules&#34;,
+        &#34;cramer&#34;: &#34;CramerRules&#34;,
+        &#34;cramer2&#34;: &#34;CramerRules_WithExtensions&#34;,
+        &#34;cramer3&#34;: &#34;RevisedCDT&#34;,
+        &#34;kroes&#34;: &#34;KroesTTCDecisionTree&#34;
+    }
+
+    TTC = [0.0025, 1.5, 9.0 , 30] # µg/kg bw/day
+    TTCunits = &#34;[µg/kg bw/day]&#34;
+    CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
+    CFTTCunits = &#34;[mg/kg food intake]&#34;
+
+    def __init__(self, compound_name, cache_folder=&#39;cache.ToxTree&#39;, structure_folder=&#39;structure&#39;, refresh=False, no_cache=False):
+        super().__init__(compound_name)
+
+        if isinstance(self.cid, list):
+            if len(self.cid) != 1:
+                raise ValueError(f&#34;Multiple CIDs found for {compound_name}. Provide a unique compound.&#34;)
+            self.cid = self.cid[0]
+        if isinstance(self.smiles, list):
+            if len(self.smiles) != 1:
+                raise ValueError(f&#34;Multiple SMILES found for {compound_name}. Provide a unique SMILES.&#34;)
+            self.smiles = self.smiles[0]
+
+        self.toxtree_root = os.path.join(_PATANKAR_FOLDER, &#39;private&#39;, &#39;toxtree&#39;)
+        self.jar_path = os.path.join(self.toxtree_root, &#39;Toxtree-3.1.0.1851.jar&#39;)
+
+        if not os.path.isfile(self.jar_path):
+            raise FileNotFoundError(
+                f&#34;The Toxtree executable &#39;{self.jar_path}&#39; cannot be found.\n&#34;
+                f&#34;Please follow the instructions in the README.md file located at &#39;{self.toxtree_root}&#39;.&#34;
+            )
+
+        self.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
+        self.structure_folder = os.path.join(self.cache_folder, structure_folder)
+        os.makedirs(self.cache_folder, exist_ok=True)
+        os.makedirs(self.structure_folder, exist_ok=True)
+
+        self.structure_file = os.path.join(self.structure_folder, f&#39;{self.cid}.sdf&#39;)
+        self.image_file = os.path.join(self.structure_folder, f&#39;{self.cid}.png&#39;)
+        self.refresh = refresh
+        self.no_cache = no_cache
+
+        self._download_pubchem_data()
+        tmp = self._run_toxtree(&#34;default&#34;)
+        tmp[&#34;CramerValue&#34;]=self.class_roman_to_int(tmp[&#34;CramerRules&#34;])
+        self.ToxTree = tmp
+        self.CramerValue = tmp[&#34;CramerValue&#34;]
+        self.CramerClass = tmp[&#34;CramerRules&#34;]
+        self.TTC = self.TTC[self.CramerValue]
+        self.CFTTC = self.CFTTC[self.CramerValue]
+
+    def _download_pubchem_data(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
+        if not os.path.isfile(self.structure_file) or self.no_cache:
+            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
+            response = requests.get(sdf_url, timeout=60)
+            if response.status_code == 200:
+                with open(self.structure_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+            else:
+                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
+        if not os.path.isfile(self.image_file) or self.no_cache:
+            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
+            response = requests.get(png_url, timeout=60)
+            if response.status_code == 200:
+                with open(self.image_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+                self._crop_image(self.image_file)
+
+    def _crop_image(self, image_path):
+        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
+        if not PIL_AVAILABLE:
+            return
+        img = Image.open(image_path)
+        img = img.convert(&#34;RGBA&#34;)
+        bbox = img.getbbox()
+        if bbox:
+            img = img.crop(bbox)
+            img.save(image_path)
+
+
+    def _clean_field_names(self, data):
+        &#34;&#34;&#34;Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word.&#34;&#34;&#34;
+        cleaned_data = {}
+        substitutions = {
+            &#34;iupac&#34;: &#34;IUPAC&#34;,
+            &#34;logp&#34;: &#34;logP&#34;,
+            &#34;cramer&#34;: &#34;Cramer&#34;,
+            &#34;cid&#34;: &#34;CID&#34;,
+            &#34;inchi&#34;: &#34;InChi&#34;,
+            }
+        # Create a case-insensitive regex pattern
+        pattern = re.compile(&#34;|&#34;.join(re.escape(k) for k in substitutions.keys()), re.IGNORECASE)
+        # Function for case-insensitive substitution
+        def replace_case_insensitive(match):
+            return substitutions[match.group(0).lower()]  # Lookup in lowercase, replace as defined
+        for key, value in data.items():
+            # Remove PUBCHEM_ prefix
+            if key.startswith(&#34;PUBCHEM_&#34;):
+                key = key.replace(&#34;PUBCHEM_&#34;, &#34;&#34;)
+            # Split using multiple delimiters (space, underscore, comma)
+            words = re.split(r&#39;[ ,_:\.]+&#39;, key)
+            # Capitalize each word
+            cleaned_key = &#39;&#39;.join(word.capitalize() for word in words)
+            # Apply case-sensitive substitutions
+            cleaned_key = pattern.sub(replace_case_insensitive, cleaned_key)
+            # Store in the cleaned dictionary
+            cleaned_data[cleaned_key] = value
+        return cleaned_data
+
+    def _run_toxtree(self, engine):
+        if engine not in self.TOXTREE_ENGINES:
+            raise ValueError(f&#34;Unknown Toxtree engine: {engine}&#34;)
+
+        engine_class = self.TOXTREE_ENGINES[engine]
+        csv_file = os.path.join(self.cache_folder, f&#39;{self.cid}.{engine}.csv&#39;)
+        json_file = os.path.join(self.cache_folder, f&#39;{self.cid}.{engine}.json&#39;)
+
+        if os.path.isfile(json_file) and not self.refresh:
+            with open(json_file, &#39;r&#39;) as f:
+                return json.load(f)
+
+        if not os.path.isfile(csv_file) or self.no_cache:
+            cmd = [&#39;java&#39;, &#39;-jar&#39;, self.jar_path, &#39;-n&#39;, &#39;-i&#39;, self.structure_file, &#39;-o&#39;, csv_file]
+            if engine_class:
+                cmd.extend([&#39;-m&#39;, engine_class])
+            try:
+                current_dir = os.getcwd()
+                os.chdir(self.toxtree_root) # toxtree needs to run from its installation folder
+                result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+                os.chdir(current_dir) # restore path
+                if not os.path.isfile(csv_file):
+                    raise RuntimeError(
+                        f&#34;Error: Toxtree failed to generate the output file for {engine}.\n&#34;
+                        f&#34;Command: {&#39; &#39;.join(cmd)}\n&#34;
+                        f&#34;Output: {result.stdout}\n&#34;
+                        f&#34;Error: {result.stderr}&#34;
+                    )
+            except subprocess.CalledProcessError as e:
+                os.chdir(current_dir) # restore path
+                raise RuntimeError(
+                    f&#34;Error executing Toxtree for {engine}.\n&#34;
+                    f&#34;Command: {&#39; &#39;.join(cmd)}\n&#34;
+                    f&#34;Output: {e.stdout}\n&#34;
+                    f&#34;Error: {e.stderr}&#34;
+                )
+
+        df = pd.read_csv(csv_file)
+        cleaned_data = self._clean_field_names(df.to_dict(orient=&#39;records&#39;)[0]) if not df.empty else {}
+        with open(json_file, &#39;w&#39;) as f:
+            json.dump(cleaned_data, f, indent=4)
+        return cleaned_data
+
+
+    def class_roman_to_int(self,text):
+        &#34;&#34;&#34;Converts &#39;Class X&#39; (where X is I, II, III, IV, V) into an integer (1-5), case insensitive.&#34;&#34;&#34;
+        # Define mapping of Roman numerals to integers
+        roman_to_int = {
+            &#34;I&#34;: 1, &#34;II&#34;: 2, &#34;III&#34;: 3, &#34;IV&#34;: 4, &#34;V&#34;: 5
+        }
+        # Regex pattern to detect &#39;Class X&#39; with valid Roman numerals
+        pattern = re.compile(r&#39;\bClass\s+(I{1,3}|IV|V)\b&#39;, re.IGNORECASE)
+        # Search for pattern in text
+        match = pattern.search(text)
+        if match:
+            roman_numeral = match.group(1).upper()  # Extract and normalize the numeral
+            return roman_to_int.get(roman_numeral, None)  # Convert to int
+        return None  # Return None if no valid match
+
+
+    @property
+    def cramer(self):
+        tmp = self._run_toxtree(&#39;cramer&#39;)
+        tmp[&#34;CramerValue&#34;]=self.class_roman_to_int(tmp[&#34;CramerRules&#34;])
+        tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+        return tmp
+
+    @property
+    def cramer2(self):
+        tmp = self._run_toxtree(&#39;cramer2&#39;)
+        tmp[&#34;CramerValue&#34;] = self.class_roman_to_int(tmp[&#34;CramerRulesWithExtensions&#34;]) \
+            if &#34;CramerRulesWithExtensions&#34; in tmp else None
+        tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+        return tmp
+
+    @property
+    def cramer3(self):
+        tmp = self._run_toxtree(&#39;cramer3&#39;)
+        tmp[&#34;CramerValue&#34;] = self.class_roman_to_int(tmp[&#34;CramerRulesWithExtensions&#34;]) \
+            if &#34;CramerRulesWithExtensions&#34; in tmp else None
+        tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+        return tmp
+
+    @property
+    def alerts(self):
+        return self._run_toxtree(&#39;skin&#39;)
+
+    @property
+    def has_alerts(self):
+        return len(self.alerts) &gt; 0</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="loadpubchem.migrantToxtree.CFTTC"><code class="name">var <span class="ident">CFTTC</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrantToxtree.CFTTCunits"><code class="name">var <span class="ident">CFTTCunits</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrantToxtree.IMAGE_SIZE"><code class="name">var <span class="ident">IMAGE_SIZE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrantToxtree.PUBCHEM_ROOT_URL"><code class="name">var <span class="ident">PUBCHEM_ROOT_URL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrantToxtree.TOXTREE_ENGINES"><code class="name">var <span class="ident">TOXTREE_ENGINES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrantToxtree.TOX_CLASSIFICATION"><code class="name">var <span class="ident">TOX_CLASSIFICATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrantToxtree.TTC"><code class="name">var <span class="ident">TTC</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrantToxtree.TTCunits"><code class="name">var <span class="ident">TTCunits</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="loadpubchem.migrantToxtree.alerts"><code class="name">var <span class="ident">alerts</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def alerts(self):
+    return self._run_toxtree(&#39;skin&#39;)</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrantToxtree.cramer"><code class="name">var <span class="ident">cramer</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def cramer(self):
+    tmp = self._run_toxtree(&#39;cramer&#39;)
+    tmp[&#34;CramerValue&#34;]=self.class_roman_to_int(tmp[&#34;CramerRules&#34;])
+    tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+    return tmp</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrantToxtree.cramer2"><code class="name">var <span class="ident">cramer2</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def cramer2(self):
+    tmp = self._run_toxtree(&#39;cramer2&#39;)
+    tmp[&#34;CramerValue&#34;] = self.class_roman_to_int(tmp[&#34;CramerRulesWithExtensions&#34;]) \
+        if &#34;CramerRulesWithExtensions&#34; in tmp else None
+    tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+    return tmp</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrantToxtree.cramer3"><code class="name">var <span class="ident">cramer3</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def cramer3(self):
+    tmp = self._run_toxtree(&#39;cramer3&#39;)
+    tmp[&#34;CramerValue&#34;] = self.class_roman_to_int(tmp[&#34;CramerRulesWithExtensions&#34;]) \
+        if &#34;CramerRulesWithExtensions&#34; in tmp else None
+    tmp[&#34;IsCramerFlag&#34;] = not pd.isna(tmp[&#34;Cramerflags&#34;]) if &#34;Cramerflags&#34; in tmp else None
+    return tmp</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrantToxtree.has_alerts"><code class="name">var <span class="ident">has_alerts</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def has_alerts(self):
+    return len(self.alerts) &gt; 0</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="loadpubchem.migrantToxtree.class_roman_to_int"><code class="name flex">
+<span>def <span class="ident">class_roman_to_int</span></span>(<span>self, text)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def class_roman_to_int(self,text):
+    &#34;&#34;&#34;Converts &#39;Class X&#39; (where X is I, II, III, IV, V) into an integer (1-5), case insensitive.&#34;&#34;&#34;
+    # Define mapping of Roman numerals to integers
+    roman_to_int = {
+        &#34;I&#34;: 1, &#34;II&#34;: 2, &#34;III&#34;: 3, &#34;IV&#34;: 4, &#34;V&#34;: 5
+    }
+    # Regex pattern to detect &#39;Class X&#39; with valid Roman numerals
+    pattern = re.compile(r&#39;\bClass\s+(I{1,3}|IV|V)\b&#39;, re.IGNORECASE)
+    # Search for pattern in text
+    match = pattern.search(text)
+    if match:
+        roman_numeral = match.group(1).upper()  # Extract and normalize the numeral
+        return roman_to_int.get(roman_numeral, None)  # Convert to int
+    return None  # Return None if no valid match</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></b></code>:
+<ul class="hlist">
+<li><code><a title="loadpubchem.migrant.Deval" href="#loadpubchem.migrant.Deval">Deval</a></code></li>
+<li><code><a title="loadpubchem.migrant.dispmax" href="#loadpubchem.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="loadpubchem.migrant.keval" href="#loadpubchem.migrant.keval">keval</a></code></li>
+<li><code><a title="loadpubchem.migrant.molarvolumeLinear" href="#loadpubchem.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
+<li><code><a title="loadpubchem.migrant.molarvolumeMiller" href="#loadpubchem.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
+<li><code><a title="loadpubchem.migrant.polarityindex" href="#loadpubchem.migrant.polarityindex">polarityindex</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
 </dl>
 </section>
 </article>
@@ -2978,6 +3930,25 @@ def polarityindex(self,logP=None,V=None):
 <li><code><a title="loadpubchem.migrant.molarvolumeLinear" href="#loadpubchem.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
 <li><code><a title="loadpubchem.migrant.molarvolumeMiller" href="#loadpubchem.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
 <li><code><a title="loadpubchem.migrant.polarityindex" href="#loadpubchem.migrant.polarityindex">polarityindex</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="loadpubchem.migrantToxtree" href="#loadpubchem.migrantToxtree">migrantToxtree</a></code></h4>
+<ul class="two-column">
+<li><code><a title="loadpubchem.migrantToxtree.CFTTC" href="#loadpubchem.migrantToxtree.CFTTC">CFTTC</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.CFTTCunits" href="#loadpubchem.migrantToxtree.CFTTCunits">CFTTCunits</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.IMAGE_SIZE" href="#loadpubchem.migrantToxtree.IMAGE_SIZE">IMAGE_SIZE</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.PUBCHEM_ROOT_URL" href="#loadpubchem.migrantToxtree.PUBCHEM_ROOT_URL">PUBCHEM_ROOT_URL</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.TOXTREE_ENGINES" href="#loadpubchem.migrantToxtree.TOXTREE_ENGINES">TOXTREE_ENGINES</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.TOX_CLASSIFICATION" href="#loadpubchem.migrantToxtree.TOX_CLASSIFICATION">TOX_CLASSIFICATION</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.TTC" href="#loadpubchem.migrantToxtree.TTC">TTC</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.TTCunits" href="#loadpubchem.migrantToxtree.TTCunits">TTCunits</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.alerts" href="#loadpubchem.migrantToxtree.alerts">alerts</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.class_roman_to_int" href="#loadpubchem.migrantToxtree.class_roman_to_int">class_roman_to_int</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.cramer" href="#loadpubchem.migrantToxtree.cramer">cramer</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.cramer2" href="#loadpubchem.migrantToxtree.cramer2">cramer2</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.cramer3" href="#loadpubchem.migrantToxtree.cramer3">cramer3</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.has_alerts" href="#loadpubchem.migrantToxtree.has_alerts">has_alerts</a></code></li>
 </ul>
 </li>
 </ul>

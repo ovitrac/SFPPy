@@ -174,7 +174,7 @@ generate_release_type() {
 generate_release_type "$generate_simple_manifest" "$generate_release" "Full"
 
 # Generate Minimalist Release (not needed yet)
-#generate_release_type "$generate_mini_manifest" "$generate_mini_release" "Minimalist"
+generate_release_type "$generate_mini_manifest" "$generate_mini_release" "Minimalist"
 
 echo ""
 

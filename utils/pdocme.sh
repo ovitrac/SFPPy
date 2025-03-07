@@ -756,7 +756,23 @@ cat >> "$index_file" <<'EOF'
         </div>
         <div id='main'>
             <h2>Welcome to SFPPy Documentation</h2>
-            <p>Select a Python module from the left panel to view its documentation. Click on a folder to expand/collapse its contents. <br/><i>Jump to the list of classes with this <a href="#table_of_contents" title="list of classes" style="text-decoration: none;">link</a></i></p>
+                <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-family: sans-serif;">
+                <h1 style="font-size: 1.8em; margin-bottom: 12px;">
+                    🍏⏩🍎<br><strong>SFPPy for Food Contact Compliance 𓌉◯𓇋 <br> and Risk Assessment 🎢</strong>
+                </h1>
+                <hr style="border: none; border-top: 1px solid #fff; width: 80%; margin: 15px auto;">
+                <p style="font-size: 1.1em; margin: 12px 0;">
+                👈 Choose a <b>Python module</b> 🐍 from the left panel ☰ to view its documentation 📚
+                </p>
+                <p style="font-size: 1.1em; margin: 12px 0; margin-bottom: 16px;">
+                    👇<i>Jump to the list of <b>classes</b> 📑 with this 
+                    <a href="#table_of_contents" title="list of classes" style="color: #fff; text-decoration: underline; font-weight: bold;">link</a>
+                    </i>
+                </p>
+                <p style="font-size: 1.2em; margin: 12px 0;margin-bottom: 16px;">🧭
+                    <a href="wikipages/" title="SFPPy Wiki Pages" style="color: #fff; text-decoration: underline; font-weight: bold;">LEARNING CENTER</a> for specific guidance ℹ️ on <b>migration modeling</b> 📐, substances and their properties ⌬, <b>recycled materials</b> ♻️, <b>curve fitting</b> 📈.
+                </p>
+                </div>
             <hr>
             <!-- Embed the raw Markdown in a script block -->
             <div id="markdown-content"></div>

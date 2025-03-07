@@ -1,37 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-generate_html_docs_iframe.py
+generate_wiki.py
 
 Generates an index HTML page for the SFPPy project that uses an iframe
 to display original Typora-generated HTML files located in the wiki folder.
 
 This script scans the SFPPy project's HTML files (converted from Markdown) in the wiki folder,
-builds a hierarchical, collapsible left menu that preserves the subfolder structure, 
-and loads the selected file in an iframe. Initially, the iframe loads wiki/wiki.html.
+copies them to a destination folder (html/wikipages) while preserving the subfolder structure,
+renaming files if duplicates occur (appending a "~" to the filename), and builds a hierarchical,
+collapsible left menu. The index file is written in the destination folder and refers to the
+HTML files from this folder. Initially, the iframe loads wiki.html.
 
 Usage:
     Ensure that this script is run from the `SFPPy/utils/` directory.
-    
+
     ```bash
-    python generate_html_docs_iframe.py
+    python generate_wiki.py
     ```
 
 Output:
-    - The `wiki` directory will contain the generated `index.html` file.
-    
+    - The `html/wikipages` directory will contain the copied HTML files and the generated `index.html` file.
+
 Author:
     - **INRAE\Olivier Vitrac**
     - **Email:** olivier.vitrac@agroparistech.fr
-    - **Last Revised:** 2025-01-17
+    - **Last Revised:** 2025-02-12
 
 Version:
-    SFPPy v.1.00
+    SFPPy v.1.30
 """
+
 
 import os
 import re
 import sys
+import shutil
 from datetime import datetime
 import html
 
@@ -58,10 +62,17 @@ def get_version():
     sys.exit(1)
 
 # Configuration
-output_dir = os.path.join(mainfolder, "wiki")
+# Source folder: mainfolder/wiki
+source_dir = os.path.join(mainfolder, "wiki")
+# Destination folder: mainfolder/html/wikipages
+dest_dir = os.path.join(mainfolder, "html", "wikipages")
 output_file = "index.html"
 SFPPy_VERSION = f"SFPPy v.{get_version()}"
 CONTACT = "INRAE\\olivier.vitrac@agroparistech.fr"
+
+# Create destination folder if it doesn't exist
+if not os.path.exists(dest_dir):
+    os.makedirs(dest_dir)
 
 # CSS Style for layout, iframe responsiveness, and collapsible menu styling
 CSS_STYLE = """
@@ -203,7 +214,7 @@ window.addEventListener('load', function() {
 });
 """
 
-# Build a list of HTML files, excluding certain directories or files
+# Exclusion lists for copying files
 excluded_dirs = [
     "__pycache__",
     ".ipynb_checkpoints",
@@ -218,8 +229,9 @@ excluded_dirs = [
 
 excluded_files = [
     "index.html",
-    "wiki.html"
-    # Other exclusions can be added as needed
+    "README.html"
+    # Other exclusions can be added as needed.
+    # Note: We are now copying wiki.html.
 ]
 
 def is_excluded(path):
@@ -230,28 +242,44 @@ def is_excluded(path):
         return True
     return False
 
-html_files = []
-wiki_folder = os.path.join(mainfolder, "wiki")
-for root, dirs, files in os.walk(wiki_folder):
+# Copy files from source_dir to dest_dir while preserving subfolder structure.
+# Rename files if duplicates occur.
+for root, dirs, files in os.walk(source_dir):
+    # Remove directories in the exclusion list
     dirs[:] = [d for d in dirs if d not in excluded_dirs]
     for f in files:
         if f.endswith(".html"):
-            full_path = os.path.join(root, f)
-            if not is_excluded(full_path):
-                html_files.append(full_path)
-html_files.sort()
+            source_file = os.path.join(root, f)
+            if is_excluded(source_file):
+                continue
+            rel_path = os.path.relpath(source_file, source_dir)
+            dest_file = os.path.join(dest_dir, rel_path)
+            dest_folder = os.path.dirname(dest_file)
+            if not os.path.exists(dest_folder):
+                os.makedirs(dest_folder)
+            # If destination file already exists, rename the new file by appending "~" to its name
+            if os.path.exists(dest_file):
+                dest_file = dest_file + "~"
+            shutil.copy2(source_file, dest_file)
 
-# Build a nested tree representing the folder structure.
-# The tree is a nested dict where each key is a folder name. Files in a folder are stored under the key "_files".
+# Now, build a nested tree representing the folder structure in dest_dir.
 tree = {}
-for fpath in html_files:
-    rel = os.path.relpath(fpath, wiki_folder)
-    parts = rel.split(os.path.sep)
-    current = tree
-    for part in parts[:-1]:
-        current = current.setdefault(part, {})
-    current.setdefault("_files", []).append((os.path.splitext(parts[-1])[0], rel))
-    
+for root, dirs, files in os.walk(dest_dir):
+    # Ensure we ignore the generated index file in the destination (if present)
+    dirs[:] = [d for d in dirs]
+    for f in files:
+        if f.endswith(".html"):
+            # Skip the generated index file if encountered
+            if f == output_file:
+                continue
+            full_path = os.path.join(root, f)
+            rel = os.path.relpath(full_path, dest_dir)
+            parts = rel.split(os.path.sep)
+            current = tree
+            for part in parts[:-1]:
+                current = current.setdefault(part, {})
+            current.setdefault("_files", []).append((os.path.splitext(parts[-1])[0], rel))
+
 def generate_nav_html(tree):
     """Recursively generate HTML for the navigation tree."""
     html_nav = "<ul>\n"
@@ -271,11 +299,11 @@ def generate_nav_html(tree):
     return html_nav
 
 nav_html = generate_nav_html(tree)
-# Prepend a "root" header for files in the wiki folder's root.
+# Prepend a "root" header for files in the destination folder's root.
 nav_html = "<div class='folder-title' onclick='toggleFolder(this)'>root</div>\n" + generate_nav_html(tree)
 
-# Generate index.html with an iframe in the main panel
-index_file = os.path.join(output_dir, output_file)
+# Generate index.html with an iframe in the main panel in the destination folder.
+index_file = os.path.join(dest_dir, output_file)
 with open(index_file, "w", encoding="utf-8") as fout:
     fout.write("<!DOCTYPE html>\n<html lang='en'>\n<head>\n")
     fout.write("<meta charset='UTF-8'>\n")
@@ -297,12 +325,12 @@ with open(index_file, "w", encoding="utf-8") as fout:
     fout.write(nav_html)
     fout.write("  </div>\n")
     fout.write("  <div id='main'>\n")
-    # Initially load wiki.html in the iframe
+    # Initially load wiki.html in the iframe (which has been copied to dest_dir)
     fout.write("    <iframe id='contentFrame' src='wiki.html' title='Content'></iframe>\n")
     fout.write("  </div>\n")
     fout.write("</div>\n")
     fout.write(f"<script>{JS_SCRIPT}</script>\n")
     fout.write("</body>\n</html>")
 
-print(f"Documentation generation completed. Output in {output_dir}")
+print(f"Wiki pages generation completed. Output in {dest_dir}")
 print(f"Index created at {index_file}")

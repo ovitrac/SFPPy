@@ -46,6 +46,8 @@ cd SFPPy
 pip install -r requirements.txt
 ```
 
+> **🧭 Learn how to use `SFPPy` from [Wiki Pages](https://ovitrac.github.io/SFPPy/wikipages/).**
+
 
 
 ---
@@ -296,21 +298,21 @@ medium1.lastsimulation.rerun()
 
 The project includes four detailed examples (`example1.py`, `example2.py`, `example3.py`, and `**example4.py**`), showcasing real-world scenarios with various materials, substances, food types, geometries, and usage conditions.
 
-### Example <kbd>1</kbd>: | **Mass Transfer from** ♶ **Monolayer Materials**
+### [Example <kbd>1</kbd>](https://ovitrac.github.io/SFPPy/wikipages/#examples/example1.html): | **Mass Transfer from** ♶ **Monolayer Materials**
 
 - 🥪 Simulates the migration of <kbd>**Irganox 1076**</kbd> and <kbd>**Irgafos 168**</kbd> from a **100 µm <kbd>LDPE</kbd>film** into a **fatty <kbd>sandwich</kbd>** 🥖over **10 days at 7°C**.
 - 📈 Evaluates **migration kinetics** and their implications for food safety.
 
 ***
 
-### Example <kbd>2</kbd> |  **Mass Transfer in ♻️ Recycled <kbd>PP</kbd> Bottles**
+### [Example <kbd>2</kbd>](https://ovitrac.github.io/SFPPy/wikipages/#examples/example2.html)|  **Mass Transfer in ♻️ Recycled <kbd>PP</kbd> Bottles**
 
 - 🍼 Investigates **<kbd>toluene</kbd>kbd< migration** from a **300 µm thick recycled <kbd>PP</kbd> bottle** into a **<kbd>fatty liquid</kbd> food**.
 - 🛡️ Assesses the **effect of a <kbd>PET</kbd> functional barrier** (<kbd>FB</kbd>) of varying thickness on reducing migration.
 
 ***
 
-### Example <kbd>3</kbd> |  **Advanced Migration Simulation ⛓️ with Variants**
+### [Example <kbd>3</kbd>](https://ovitrac.github.io/SFPPy/wikipages/#examples/example3.html) |  **Advanced Migration Simulation ⛓️ with Variants**
 
 - 📦 Simulates migration in a **trilayer (<kbd>ABA</kbd>) multilayer system**, with **<kbd>PET</kbd> (<kbd>A</kbd>) and recycled <kbd>PP</kbd> (<kbd>B</kbd>)**.
 - 🔥 Evaluates migration behavior across **<kbd>storage with set-off</kbd>, <kbd>hot-filling</kbd>, and <kbd>long-term storage</kbd> conditions**.
@@ -319,7 +321,7 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 
 ***
 
-### Example <kbd>4</kbd> | Parameter Fitting and Optimization ⚙️
+### [Example <kbd>4</kbd>](https://ovitrac.github.io/SFPPy/wikipages/#examples/example4.html) | **Parameter Fitting and Optimization** ⚙️
 
 - ✅ **Fit diffusivities ($D$) and partitioning coefficients ($\frac{k}{k_0}$)** from migration kinetic data 📈.
 - ✅ Utilize **dynamic parameter linking** 🔗🧲 with `layerLink`.
@@ -341,14 +343,14 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 
 ## **🌟 Why SFPPy?**
 
-✔ **SFPPy:** is **free** and **opensource**. 
-✔ **SFPPy:** accepts any unit as `(value,"unit")` or `([value1,value2...],"unit")`. 
+✔ **`SFPPy`:** is **free** and **opensource**. 
+✔ **`SFPPy`:** accepts any unit as `(value,"unit")` or `([value1,value2...],"unit")`. 
 ✔ **Operator-based chaining:** `>>` handles **automatic mass transfer and property propagation**
 ✔ **Minimal code for complex simulations:** `+` joins layers and merges results across storage conditions
-✔ **Pythonic abstraction:** Works with **PubChem**, predefined **polymer materials**, and **3D packaging geometries**
+✔ **Pythonic abstraction:** Works with **PubChem**, **ToxTree**, predefined **polymer materials**, and **3D packaging geometries**
 ✔ **Built-in visualization & export:** Supports **Excel (`.xlsx`), CSV, PDF, PNG** and **Matlab** (if its really needed)
 
-🔬 **SFPPy powers scalable, real-world safe food packaging simulations.**
+🔬 **`SFPPy` powers scalable, real-world safe food packaging simulations.**
 
 
 
@@ -380,12 +382,12 @@ $2025-02-12$
 
 
 
-🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
-🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
-🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍽️🍎🍽️🍽️🍽️🍎🍽️🍽️🐍🍽️🍽️🍽️🐍🍽️
-🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️
-🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
-🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
-🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.24$
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br/>
+🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br/>
+🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍽️🍎🍽️🍽️🍽️🍎🍽️🍽️🐍🍽️🍽️🍽️🐍🍽️<br/>
+🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️<br/>
+🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️<br/>
+🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️<br/>
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.30$<br/>
 
 *<small>Enlarge your window if you cannot read the logo. The snake is the totem for Python</small>*

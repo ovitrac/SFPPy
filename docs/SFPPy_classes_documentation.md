@@ -1,6 +1,6 @@
 # SFPPy Modules Documentation
 
-Generated on: **2025-03-03 21:46:17**
+Generated on: **2025-03-07 17:31:54**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -178,7 +178,7 @@ microwave
 migrant
 nofood
 oil
-oiliveoil
+oliveoil
 oven
 panfrying
 pasteurization
@@ -210,7 +210,7 @@ ethanol --> ethanol95
 ethanol50 --> yogurt
 fat --> ethanol
 fat --> isooctane
-fat --> oiliveoil
+fat --> oliveoil
 fat --> tenax
 foodlayer --> foodproperty
 foodphysics --> chemicalaffinity
@@ -227,13 +227,13 @@ intermediate --> ethanol50
 object --> foodphysics
 object --> layer
 object --> migrant
-oiliveoil --> oil
+oliveoil --> oil
 perfectlymixed --> acetonitrile
 perfectlymixed --> ethanol
 perfectlymixed --> ethanol50
 perfectlymixed --> isooctane
 perfectlymixed --> methanol
-perfectlymixed --> oiliveoil
+perfectlymixed --> oliveoil
 perfectlymixed --> water
 perfectlymixed --> water3aceticacid
 realcontact --> ambient
@@ -259,7 +259,7 @@ simulant --> ethanol
 simulant --> ethanol50
 simulant --> isooctane
 simulant --> methanol
-simulant --> oiliveoil
+simulant --> oliveoil
 simulant --> tenax
 simulant --> water
 simulant --> water3aceticacid
@@ -275,609 +275,609 @@ texture --> semisolid
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `get_defined_init_params` | Returns which parameters from parametersWithUnits are defined in the instance. | 3 | 1.21 |
-| (module-level) | `help_food` | Prints all food-related classes with relevant attributes in a **formatted Markdown table**. | 38 | 1.21 |
-| (module-level) | `is_valid_classname` | Returns True if class name is valid (not private/internal). | 3 | 1.21 |
-| (module-level) | `list_food_classes` | Lists all classes in the 'food' module with: - name and description - level (class attribute) - Inheritance details - Parameters from parametersWithUnits that are set in the instance | 44 | 1.21 |
-| (module-level) | `wrap_text` | Wraps text within a specified width and returns a list of wrapped lines. | 5 | 1.21 |
-| `acetonitrile` | `__init__` | general constructor | 52 | 1.21 |
-| `acetonitrile` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `acetonitrile` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `acetonitrile` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `acetonitrile` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `acetonitrile` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `acetonitrile` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `acetonitrile` | `contact` | alias to migration method | 3 | 1.21 |
-| `acetonitrile` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `acetonitrile` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `acetonitrile` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `acetonitrile` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `acetonitrile` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `ambient` | `__init__` | general constructor | 52 | 1.21 |
-| `ambient` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `ambient` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `ambient` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `ambient` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `ambient` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `ambient` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `ambient` | `contact` | alias to migration method | 3 | 1.21 |
-| `ambient` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `ambient` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `ambient` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `ambient` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `ambient` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `aqueous` | `__init__` | general constructor | 52 | 1.21 |
-| `aqueous` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `aqueous` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `aqueous` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `aqueous` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `aqueous` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `aqueous` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `aqueous` | `contact` | alias to migration method | 3 | 1.21 |
-| `aqueous` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `aqueous` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `aqueous` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `aqueous` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `aqueous` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `boiling` | `__init__` | general constructor | 52 | 1.21 |
-| `boiling` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `boiling` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `boiling` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `boiling` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `boiling` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `boiling` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `boiling` | `contact` | alias to migration method | 3 | 1.21 |
-| `boiling` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `boiling` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `boiling` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `boiling` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `boiling` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `chemicalaffinity` | `__init__` | general constructor | 52 | 1.21 |
-| `chemicalaffinity` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `chemicalaffinity` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `chemicalaffinity` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `chemicalaffinity` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `chemicalaffinity` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `chemicalaffinity` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `chemicalaffinity` | `contact` | alias to migration method | 3 | 1.21 |
-| `chemicalaffinity` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `chemicalaffinity` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `chemicalaffinity` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `chemicalaffinity` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `chemicalaffinity` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `chilled` | `__init__` | general constructor | 52 | 1.21 |
-| `chilled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `chilled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `chilled` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `chilled` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `chilled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `chilled` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `chilled` | `contact` | alias to migration method | 3 | 1.21 |
-| `chilled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `chilled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `chilled` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `chilled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `chilled` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `ethanol` | `__init__` | general constructor | 52 | 1.21 |
-| `ethanol` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `ethanol` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `ethanol` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `ethanol` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `ethanol` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `ethanol` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `ethanol` | `contact` | alias to migration method | 3 | 1.21 |
-| `ethanol` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `ethanol` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `ethanol` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `ethanol` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `ethanol` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `ethanol50` | `__init__` | general constructor | 52 | 1.21 |
-| `ethanol50` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `ethanol50` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `ethanol50` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `ethanol50` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `ethanol50` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `ethanol50` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `ethanol50` | `contact` | alias to migration method | 3 | 1.21 |
-| `ethanol50` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `ethanol50` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `ethanol50` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `ethanol50` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `ethanol50` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `ethanol95` | `__init__` | general constructor | 52 | 1.21 |
-| `ethanol95` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `ethanol95` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `ethanol95` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `ethanol95` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `ethanol95` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `ethanol95` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `ethanol95` | `contact` | alias to migration method | 3 | 1.21 |
-| `ethanol95` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `ethanol95` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `ethanol95` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `ethanol95` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `ethanol95` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `fat` | `__init__` | general constructor | 52 | 1.21 |
-| `fat` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `fat` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `fat` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `fat` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `fat` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `fat` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `fat` | `contact` | alias to migration method | 3 | 1.21 |
-| `fat` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `fat` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `fat` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `fat` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `fat` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `foodlayer` | `__init__` | general constructor | 52 | 1.21 |
-| `foodlayer` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `foodlayer` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `foodlayer` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `foodlayer` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `foodlayer` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `foodlayer` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `foodlayer` | `contact` | alias to migration method | 3 | 1.21 |
-| `foodlayer` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `foodlayer` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `foodlayer` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `foodlayer` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `foodlayer` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `foodphysics` | `__init__` | general constructor | 52 | 1.21 |
-| `foodphysics` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `foodphysics` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `foodphysics` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `foodphysics` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `foodphysics` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `foodphysics` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `foodphysics` | `contact` | alias to migration method | 3 | 1.21 |
-| `foodphysics` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `foodphysics` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `foodphysics` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `foodphysics` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `foodphysics` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `foodproperty` | `__init__` | general constructor | 52 | 1.21 |
-| `foodproperty` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `foodproperty` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `foodproperty` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `foodproperty` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `foodproperty` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `foodproperty` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `foodproperty` | `contact` | alias to migration method | 3 | 1.21 |
-| `foodproperty` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `foodproperty` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `foodproperty` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `foodproperty` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `foodproperty` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `frozen` | `__init__` | general constructor | 52 | 1.21 |
-| `frozen` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `frozen` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `frozen` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `frozen` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `frozen` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `frozen` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `frozen` | `contact` | alias to migration method | 3 | 1.21 |
-| `frozen` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `frozen` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `frozen` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `frozen` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `frozen` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `frying` | `__init__` | general constructor | 52 | 1.21 |
-| `frying` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `frying` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `frying` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `frying` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `frying` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `frying` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `frying` | `contact` | alias to migration method | 3 | 1.21 |
-| `frying` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `frying` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `frying` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `frying` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `frying` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `hotambient` | `__init__` | general constructor | 52 | 1.21 |
-| `hotambient` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `hotambient` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `hotambient` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `hotambient` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `hotambient` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `hotambient` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `hotambient` | `contact` | alias to migration method | 3 | 1.21 |
-| `hotambient` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `hotambient` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `hotambient` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `hotambient` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `hotambient` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `hotfilled` | `__init__` | general constructor | 52 | 1.21 |
-| `hotfilled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `hotfilled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `hotfilled` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `hotfilled` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `hotfilled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `hotfilled` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `hotfilled` | `contact` | alias to migration method | 3 | 1.21 |
-| `hotfilled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `hotfilled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `hotfilled` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `hotfilled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `hotfilled` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `hotoven` | `__init__` | general constructor | 52 | 1.21 |
-| `hotoven` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `hotoven` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `hotoven` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `hotoven` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `hotoven` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `hotoven` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `hotoven` | `contact` | alias to migration method | 3 | 1.21 |
-| `hotoven` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `hotoven` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `hotoven` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `hotoven` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `hotoven` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `intermediate` | `__init__` | general constructor | 52 | 1.21 |
-| `intermediate` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `intermediate` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `intermediate` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `intermediate` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `intermediate` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `intermediate` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `intermediate` | `contact` | alias to migration method | 3 | 1.21 |
-| `intermediate` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `intermediate` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `intermediate` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `intermediate` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `intermediate` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `isooctane` | `__init__` | general constructor | 52 | 1.21 |
-| `isooctane` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `isooctane` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `isooctane` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `isooctane` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `isooctane` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `isooctane` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `isooctane` | `contact` | alias to migration method | 3 | 1.21 |
-| `isooctane` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `isooctane` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `isooctane` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `isooctane` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `isooctane` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `liquid` | `__init__` | general constructor | 52 | 1.21 |
-| `liquid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `liquid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `liquid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `liquid` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `liquid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `liquid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `liquid` | `contact` | alias to migration method | 3 | 1.21 |
-| `liquid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `liquid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `liquid` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `liquid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `liquid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `methanol` | `__init__` | general constructor | 52 | 1.21 |
-| `methanol` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `methanol` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `methanol` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `methanol` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `methanol` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `methanol` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `methanol` | `contact` | alias to migration method | 3 | 1.21 |
-| `methanol` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `methanol` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `methanol` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `methanol` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `methanol` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `microwave` | `__init__` | general constructor | 52 | 1.21 |
-| `microwave` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `microwave` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `microwave` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `microwave` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `microwave` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `microwave` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `microwave` | `contact` | alias to migration method | 3 | 1.21 |
-| `microwave` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `microwave` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `microwave` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `microwave` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `microwave` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `nofood` | `__init__` | general constructor | 52 | 1.21 |
-| `nofood` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `nofood` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `nofood` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `nofood` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `nofood` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `nofood` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `nofood` | `contact` | alias to migration method | 3 | 1.21 |
-| `nofood` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `nofood` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `nofood` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `nofood` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `nofood` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `oil` | `__init__` | general constructor | 52 | 1.21 |
-| `oil` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `oil` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `oil` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `oil` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `oil` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `oil` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `oil` | `contact` | alias to migration method | 3 | 1.21 |
-| `oil` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `oil` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `oil` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `oil` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `oil` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `oiliveoil` | `__init__` | general constructor | 52 | 1.21 |
-| `oiliveoil` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `oiliveoil` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `oiliveoil` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `oiliveoil` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `oiliveoil` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `oiliveoil` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `oiliveoil` | `contact` | alias to migration method | 3 | 1.21 |
-| `oiliveoil` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `oiliveoil` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `oiliveoil` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `oiliveoil` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `oiliveoil` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `oven` | `__init__` | general constructor | 52 | 1.21 |
-| `oven` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `oven` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `oven` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `oven` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `oven` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `oven` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `oven` | `contact` | alias to migration method | 3 | 1.21 |
-| `oven` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `oven` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `oven` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `oven` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `oven` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `panfrying` | `__init__` | general constructor | 52 | 1.21 |
-| `panfrying` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `panfrying` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `panfrying` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `panfrying` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `panfrying` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `panfrying` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `panfrying` | `contact` | alias to migration method | 3 | 1.21 |
-| `panfrying` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `panfrying` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `panfrying` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `panfrying` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `panfrying` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `pasteurization` | `__init__` | general constructor | 52 | 1.21 |
-| `pasteurization` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `pasteurization` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `pasteurization` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `pasteurization` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `pasteurization` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `pasteurization` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `pasteurization` | `contact` | alias to migration method | 3 | 1.21 |
-| `pasteurization` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `pasteurization` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `pasteurization` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `pasteurization` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `pasteurization` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `perfectlymixed` | `__init__` | general constructor | 52 | 1.21 |
-| `perfectlymixed` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `perfectlymixed` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `perfectlymixed` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `perfectlymixed` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `perfectlymixed` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `perfectlymixed` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `perfectlymixed` | `contact` | alias to migration method | 3 | 1.21 |
-| `perfectlymixed` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `perfectlymixed` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `perfectlymixed` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `perfectlymixed` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `perfectlymixed` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `realcontact` | `__init__` | general constructor | 52 | 1.21 |
-| `realcontact` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `realcontact` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `realcontact` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `realcontact` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `realcontact` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `realcontact` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `realcontact` | `contact` | alias to migration method | 3 | 1.21 |
-| `realcontact` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `realcontact` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `realcontact` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `realcontact` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `realcontact` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `realfood` | `__init__` | general constructor | 52 | 1.21 |
-| `realfood` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `realfood` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `realfood` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `realfood` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `realfood` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `realfood` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `realfood` | `contact` | alias to migration method | 3 | 1.21 |
-| `realfood` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `realfood` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `realfood` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `realfood` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `realfood` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `rolled` | `__init__` | general constructor | 52 | 1.21 |
-| `rolled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `rolled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `rolled` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `rolled` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `rolled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `rolled` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `rolled` | `contact` | alias to migration method | 3 | 1.21 |
-| `rolled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `rolled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `rolled` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `rolled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `rolled` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `semisolid` | `__init__` | general constructor | 52 | 1.21 |
-| `semisolid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `semisolid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `semisolid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `semisolid` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `semisolid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `semisolid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `semisolid` | `contact` | alias to migration method | 3 | 1.21 |
-| `semisolid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `semisolid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `semisolid` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `semisolid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `semisolid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `setoff` | `__init__` | general constructor | 52 | 1.21 |
-| `setoff` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `setoff` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `setoff` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `setoff` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `setoff` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `setoff` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `setoff` | `contact` | alias to migration method | 3 | 1.21 |
-| `setoff` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `setoff` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `setoff` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `setoff` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `setoff` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `simulant` | `__init__` | general constructor | 52 | 1.21 |
-| `simulant` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `simulant` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `simulant` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `simulant` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `simulant` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `simulant` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `simulant` | `contact` | alias to migration method | 3 | 1.21 |
-| `simulant` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `simulant` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `simulant` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `simulant` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `simulant` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `solid` | `__init__` | general constructor | 52 | 1.21 |
-| `solid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `solid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `solid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `solid` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `solid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `solid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `solid` | `contact` | alias to migration method | 3 | 1.21 |
-| `solid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `solid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `solid` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `solid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `solid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `stacked` | `__init__` | general constructor | 52 | 1.21 |
-| `stacked` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `stacked` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `stacked` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `stacked` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `stacked` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `stacked` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `stacked` | `contact` | alias to migration method | 3 | 1.21 |
-| `stacked` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `stacked` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `stacked` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `stacked` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `stacked` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `sterilization` | `__init__` | general constructor | 52 | 1.21 |
-| `sterilization` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `sterilization` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `sterilization` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `sterilization` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `sterilization` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `sterilization` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `sterilization` | `contact` | alias to migration method | 3 | 1.21 |
-| `sterilization` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `sterilization` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `sterilization` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `sterilization` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `sterilization` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `tenax` | `__init__` | general constructor | 52 | 1.21 |
-| `tenax` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `tenax` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `tenax` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `tenax` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `tenax` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `tenax` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `tenax` | `contact` | alias to migration method | 3 | 1.21 |
-| `tenax` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `tenax` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `tenax` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `tenax` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `tenax` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `testcontact` | `__init__` | general constructor | 52 | 1.21 |
-| `testcontact` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `testcontact` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `testcontact` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `testcontact` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `testcontact` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `testcontact` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `testcontact` | `contact` | alias to migration method | 3 | 1.21 |
-| `testcontact` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `testcontact` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `testcontact` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `testcontact` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `testcontact` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `texture` | `__init__` | general constructor | 52 | 1.21 |
-| `texture` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `texture` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `texture` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `texture` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `texture` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `texture` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `texture` | `contact` | alias to migration method | 3 | 1.21 |
-| `texture` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `texture` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `texture` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `texture` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `texture` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `transportation` | `__init__` | general constructor | 52 | 1.21 |
-| `transportation` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `transportation` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `transportation` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `transportation` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `transportation` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `transportation` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `transportation` | `contact` | alias to migration method | 3 | 1.21 |
-| `transportation` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `transportation` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `transportation` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `transportation` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `transportation` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `water` | `__init__` | general constructor | 52 | 1.21 |
-| `water` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `water` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `water` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `water` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `water` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `water` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `water` | `contact` | alias to migration method | 3 | 1.21 |
-| `water` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `water` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `water` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `water` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `water` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `water3aceticacid` | `__init__` | general constructor | 52 | 1.21 |
-| `water3aceticacid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `water3aceticacid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `water3aceticacid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `water3aceticacid` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `water3aceticacid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `water3aceticacid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `water3aceticacid` | `contact` | alias to migration method | 3 | 1.21 |
-| `water3aceticacid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `water3aceticacid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `water3aceticacid` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `water3aceticacid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `water3aceticacid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
-| `yogurt` | `__init__` | general constructor | 52 | 1.21 |
-| `yogurt` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.21 |
-| `yogurt` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.21 |
-| `yogurt` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.21 |
-| `yogurt` | `__str__` | Formatted string representation of the property | 4 | 1.21 |
-| `yogurt` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.21 |
-| `yogurt` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.21 |
-| `yogurt` | `contact` | alias to migration method | 3 | 1.21 |
-| `yogurt` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.21 |
-| `yogurt` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.21 |
-| `yogurt` | `migration` | interface to simulation engine: senspantankar | 5 | 1.21 |
-| `yogurt` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.21 |
-| `yogurt` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.21 |
+| (module-level) | `get_defined_init_params` | Returns which parameters from parametersWithUnits are defined in the instance. | 3 | 1.22 |
+| (module-level) | `help_food` | Prints all food-related classes with relevant attributes in a **formatted Markdown table**. | 38 | 1.22 |
+| (module-level) | `is_valid_classname` | Returns True if class name is valid (not private/internal). | 3 | 1.22 |
+| (module-level) | `list_food_classes` | Lists all classes in the 'food' module with: - name and description - level (class attribute) - Inheritance details - Parameters from parametersWithUnits that are set in the instance | 44 | 1.22 |
+| (module-level) | `wrap_text` | Wraps text within a specified width and returns a list of wrapped lines. | 5 | 1.22 |
+| `acetonitrile` | `__init__` | general constructor | 52 | 1.22 |
+| `acetonitrile` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `acetonitrile` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `acetonitrile` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `acetonitrile` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `acetonitrile` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `acetonitrile` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `acetonitrile` | `contact` | alias to migration method | 3 | 1.22 |
+| `acetonitrile` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `acetonitrile` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `acetonitrile` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `acetonitrile` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `acetonitrile` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `ambient` | `__init__` | general constructor | 52 | 1.22 |
+| `ambient` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `ambient` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `ambient` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `ambient` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `ambient` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `ambient` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `ambient` | `contact` | alias to migration method | 3 | 1.22 |
+| `ambient` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `ambient` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `ambient` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `ambient` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `ambient` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `aqueous` | `__init__` | general constructor | 52 | 1.22 |
+| `aqueous` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `aqueous` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `aqueous` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `aqueous` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `aqueous` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `aqueous` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `aqueous` | `contact` | alias to migration method | 3 | 1.22 |
+| `aqueous` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `aqueous` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `aqueous` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `aqueous` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `aqueous` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `boiling` | `__init__` | general constructor | 52 | 1.22 |
+| `boiling` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `boiling` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `boiling` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `boiling` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `boiling` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `boiling` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `boiling` | `contact` | alias to migration method | 3 | 1.22 |
+| `boiling` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `boiling` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `boiling` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `boiling` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `boiling` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `chemicalaffinity` | `__init__` | general constructor | 52 | 1.22 |
+| `chemicalaffinity` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `chemicalaffinity` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `chemicalaffinity` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `chemicalaffinity` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `chemicalaffinity` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `chemicalaffinity` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `chemicalaffinity` | `contact` | alias to migration method | 3 | 1.22 |
+| `chemicalaffinity` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `chemicalaffinity` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `chemicalaffinity` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `chemicalaffinity` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `chemicalaffinity` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `chilled` | `__init__` | general constructor | 52 | 1.22 |
+| `chilled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `chilled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `chilled` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `chilled` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `chilled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `chilled` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `chilled` | `contact` | alias to migration method | 3 | 1.22 |
+| `chilled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `chilled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `chilled` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `chilled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `chilled` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `ethanol` | `__init__` | general constructor | 52 | 1.22 |
+| `ethanol` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `ethanol` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `ethanol` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `ethanol` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `ethanol` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `ethanol` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `ethanol` | `contact` | alias to migration method | 3 | 1.22 |
+| `ethanol` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `ethanol` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `ethanol` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `ethanol` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `ethanol` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `ethanol50` | `__init__` | general constructor | 52 | 1.22 |
+| `ethanol50` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `ethanol50` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `ethanol50` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `ethanol50` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `ethanol50` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `ethanol50` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `ethanol50` | `contact` | alias to migration method | 3 | 1.22 |
+| `ethanol50` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `ethanol50` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `ethanol50` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `ethanol50` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `ethanol50` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `ethanol95` | `__init__` | general constructor | 52 | 1.22 |
+| `ethanol95` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `ethanol95` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `ethanol95` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `ethanol95` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `ethanol95` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `ethanol95` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `ethanol95` | `contact` | alias to migration method | 3 | 1.22 |
+| `ethanol95` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `ethanol95` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `ethanol95` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `ethanol95` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `ethanol95` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `fat` | `__init__` | general constructor | 52 | 1.22 |
+| `fat` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `fat` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `fat` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `fat` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `fat` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `fat` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `fat` | `contact` | alias to migration method | 3 | 1.22 |
+| `fat` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `fat` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `fat` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `fat` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `fat` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `foodlayer` | `__init__` | general constructor | 52 | 1.22 |
+| `foodlayer` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `foodlayer` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `foodlayer` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `foodlayer` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `foodlayer` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `foodlayer` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `foodlayer` | `contact` | alias to migration method | 3 | 1.22 |
+| `foodlayer` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `foodlayer` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `foodlayer` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `foodlayer` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `foodlayer` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `foodphysics` | `__init__` | general constructor | 52 | 1.22 |
+| `foodphysics` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `foodphysics` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `foodphysics` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `foodphysics` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `foodphysics` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `foodphysics` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `foodphysics` | `contact` | alias to migration method | 3 | 1.22 |
+| `foodphysics` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `foodphysics` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `foodphysics` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `foodphysics` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `foodphysics` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `foodproperty` | `__init__` | general constructor | 52 | 1.22 |
+| `foodproperty` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `foodproperty` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `foodproperty` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `foodproperty` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `foodproperty` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `foodproperty` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `foodproperty` | `contact` | alias to migration method | 3 | 1.22 |
+| `foodproperty` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `foodproperty` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `foodproperty` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `foodproperty` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `foodproperty` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `frozen` | `__init__` | general constructor | 52 | 1.22 |
+| `frozen` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `frozen` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `frozen` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `frozen` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `frozen` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `frozen` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `frozen` | `contact` | alias to migration method | 3 | 1.22 |
+| `frozen` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `frozen` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `frozen` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `frozen` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `frozen` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `frying` | `__init__` | general constructor | 52 | 1.22 |
+| `frying` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `frying` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `frying` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `frying` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `frying` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `frying` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `frying` | `contact` | alias to migration method | 3 | 1.22 |
+| `frying` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `frying` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `frying` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `frying` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `frying` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `hotambient` | `__init__` | general constructor | 52 | 1.22 |
+| `hotambient` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `hotambient` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `hotambient` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `hotambient` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `hotambient` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `hotambient` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `hotambient` | `contact` | alias to migration method | 3 | 1.22 |
+| `hotambient` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `hotambient` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `hotambient` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `hotambient` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `hotambient` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `hotfilled` | `__init__` | general constructor | 52 | 1.22 |
+| `hotfilled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `hotfilled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `hotfilled` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `hotfilled` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `hotfilled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `hotfilled` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `hotfilled` | `contact` | alias to migration method | 3 | 1.22 |
+| `hotfilled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `hotfilled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `hotfilled` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `hotfilled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `hotfilled` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `hotoven` | `__init__` | general constructor | 52 | 1.22 |
+| `hotoven` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `hotoven` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `hotoven` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `hotoven` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `hotoven` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `hotoven` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `hotoven` | `contact` | alias to migration method | 3 | 1.22 |
+| `hotoven` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `hotoven` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `hotoven` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `hotoven` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `hotoven` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `intermediate` | `__init__` | general constructor | 52 | 1.22 |
+| `intermediate` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `intermediate` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `intermediate` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `intermediate` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `intermediate` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `intermediate` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `intermediate` | `contact` | alias to migration method | 3 | 1.22 |
+| `intermediate` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `intermediate` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `intermediate` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `intermediate` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `intermediate` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `isooctane` | `__init__` | general constructor | 52 | 1.22 |
+| `isooctane` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `isooctane` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `isooctane` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `isooctane` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `isooctane` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `isooctane` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `isooctane` | `contact` | alias to migration method | 3 | 1.22 |
+| `isooctane` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `isooctane` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `isooctane` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `isooctane` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `isooctane` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `liquid` | `__init__` | general constructor | 52 | 1.22 |
+| `liquid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `liquid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `liquid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `liquid` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `liquid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `liquid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `liquid` | `contact` | alias to migration method | 3 | 1.22 |
+| `liquid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `liquid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `liquid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `liquid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `liquid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `methanol` | `__init__` | general constructor | 52 | 1.22 |
+| `methanol` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `methanol` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `methanol` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `methanol` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `methanol` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `methanol` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `methanol` | `contact` | alias to migration method | 3 | 1.22 |
+| `methanol` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `methanol` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `methanol` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `methanol` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `methanol` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `microwave` | `__init__` | general constructor | 52 | 1.22 |
+| `microwave` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `microwave` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `microwave` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `microwave` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `microwave` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `microwave` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `microwave` | `contact` | alias to migration method | 3 | 1.22 |
+| `microwave` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `microwave` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `microwave` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `microwave` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `microwave` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `nofood` | `__init__` | general constructor | 52 | 1.22 |
+| `nofood` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `nofood` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `nofood` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `nofood` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `nofood` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `nofood` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `nofood` | `contact` | alias to migration method | 3 | 1.22 |
+| `nofood` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `nofood` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `nofood` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `nofood` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `nofood` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `oil` | `__init__` | general constructor | 52 | 1.22 |
+| `oil` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `oil` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `oil` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `oil` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `oil` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `oil` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `oil` | `contact` | alias to migration method | 3 | 1.22 |
+| `oil` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `oil` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `oil` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `oil` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `oil` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `oliveoil` | `__init__` | general constructor | 52 | 1.22 |
+| `oliveoil` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `oliveoil` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `oliveoil` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `oliveoil` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `oliveoil` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `oliveoil` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `oliveoil` | `contact` | alias to migration method | 3 | 1.22 |
+| `oliveoil` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `oliveoil` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `oliveoil` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `oliveoil` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `oliveoil` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `oven` | `__init__` | general constructor | 52 | 1.22 |
+| `oven` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `oven` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `oven` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `oven` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `oven` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `oven` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `oven` | `contact` | alias to migration method | 3 | 1.22 |
+| `oven` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `oven` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `oven` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `oven` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `oven` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `panfrying` | `__init__` | general constructor | 52 | 1.22 |
+| `panfrying` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `panfrying` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `panfrying` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `panfrying` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `panfrying` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `panfrying` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `panfrying` | `contact` | alias to migration method | 3 | 1.22 |
+| `panfrying` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `panfrying` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `panfrying` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `panfrying` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `panfrying` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `pasteurization` | `__init__` | general constructor | 52 | 1.22 |
+| `pasteurization` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `pasteurization` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `pasteurization` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `pasteurization` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `pasteurization` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `pasteurization` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `pasteurization` | `contact` | alias to migration method | 3 | 1.22 |
+| `pasteurization` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `pasteurization` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `pasteurization` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `pasteurization` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `pasteurization` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `perfectlymixed` | `__init__` | general constructor | 52 | 1.22 |
+| `perfectlymixed` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `perfectlymixed` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `perfectlymixed` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `perfectlymixed` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `perfectlymixed` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `perfectlymixed` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `perfectlymixed` | `contact` | alias to migration method | 3 | 1.22 |
+| `perfectlymixed` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `perfectlymixed` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `perfectlymixed` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `perfectlymixed` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `perfectlymixed` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `realcontact` | `__init__` | general constructor | 52 | 1.22 |
+| `realcontact` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `realcontact` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `realcontact` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `realcontact` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `realcontact` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `realcontact` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `realcontact` | `contact` | alias to migration method | 3 | 1.22 |
+| `realcontact` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `realcontact` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `realcontact` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `realcontact` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `realcontact` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `realfood` | `__init__` | general constructor | 52 | 1.22 |
+| `realfood` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `realfood` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `realfood` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `realfood` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `realfood` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `realfood` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `realfood` | `contact` | alias to migration method | 3 | 1.22 |
+| `realfood` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `realfood` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `realfood` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `realfood` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `realfood` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `rolled` | `__init__` | general constructor | 52 | 1.22 |
+| `rolled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `rolled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `rolled` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `rolled` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `rolled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `rolled` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `rolled` | `contact` | alias to migration method | 3 | 1.22 |
+| `rolled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `rolled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `rolled` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `rolled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `rolled` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `semisolid` | `__init__` | general constructor | 52 | 1.22 |
+| `semisolid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `semisolid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `semisolid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `semisolid` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `semisolid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `semisolid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `semisolid` | `contact` | alias to migration method | 3 | 1.22 |
+| `semisolid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `semisolid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `semisolid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `semisolid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `semisolid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `setoff` | `__init__` | general constructor | 52 | 1.22 |
+| `setoff` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `setoff` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `setoff` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `setoff` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `setoff` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `setoff` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `setoff` | `contact` | alias to migration method | 3 | 1.22 |
+| `setoff` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `setoff` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `setoff` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `setoff` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `setoff` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `simulant` | `__init__` | general constructor | 52 | 1.22 |
+| `simulant` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `simulant` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `simulant` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `simulant` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `simulant` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `simulant` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `simulant` | `contact` | alias to migration method | 3 | 1.22 |
+| `simulant` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `simulant` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `simulant` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `simulant` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `simulant` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `solid` | `__init__` | general constructor | 52 | 1.22 |
+| `solid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `solid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `solid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `solid` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `solid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `solid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `solid` | `contact` | alias to migration method | 3 | 1.22 |
+| `solid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `solid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `solid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `solid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `solid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `stacked` | `__init__` | general constructor | 52 | 1.22 |
+| `stacked` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `stacked` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `stacked` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `stacked` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `stacked` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `stacked` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `stacked` | `contact` | alias to migration method | 3 | 1.22 |
+| `stacked` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `stacked` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `stacked` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `stacked` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `stacked` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `sterilization` | `__init__` | general constructor | 52 | 1.22 |
+| `sterilization` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `sterilization` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `sterilization` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `sterilization` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `sterilization` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `sterilization` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `sterilization` | `contact` | alias to migration method | 3 | 1.22 |
+| `sterilization` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `sterilization` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `sterilization` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `sterilization` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `sterilization` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `tenax` | `__init__` | general constructor | 52 | 1.22 |
+| `tenax` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `tenax` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `tenax` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `tenax` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `tenax` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `tenax` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `tenax` | `contact` | alias to migration method | 3 | 1.22 |
+| `tenax` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `tenax` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `tenax` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `tenax` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `tenax` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `testcontact` | `__init__` | general constructor | 52 | 1.22 |
+| `testcontact` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `testcontact` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `testcontact` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `testcontact` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `testcontact` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `testcontact` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `testcontact` | `contact` | alias to migration method | 3 | 1.22 |
+| `testcontact` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `testcontact` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `testcontact` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `testcontact` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `testcontact` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `texture` | `__init__` | general constructor | 52 | 1.22 |
+| `texture` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `texture` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `texture` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `texture` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `texture` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `texture` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `texture` | `contact` | alias to migration method | 3 | 1.22 |
+| `texture` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `texture` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `texture` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `texture` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `texture` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `transportation` | `__init__` | general constructor | 52 | 1.22 |
+| `transportation` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `transportation` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `transportation` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `transportation` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `transportation` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `transportation` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `transportation` | `contact` | alias to migration method | 3 | 1.22 |
+| `transportation` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `transportation` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `transportation` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `transportation` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `transportation` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `water` | `__init__` | general constructor | 52 | 1.22 |
+| `water` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `water` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `water` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `water` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `water` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `water` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `water` | `contact` | alias to migration method | 3 | 1.22 |
+| `water` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `water` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `water` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `water` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `water` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `water3aceticacid` | `__init__` | general constructor | 52 | 1.22 |
+| `water3aceticacid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `water3aceticacid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `water3aceticacid` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `water3aceticacid` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `water3aceticacid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `water3aceticacid` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `water3aceticacid` | `contact` | alias to migration method | 3 | 1.22 |
+| `water3aceticacid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `water3aceticacid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `water3aceticacid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `water3aceticacid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `water3aceticacid` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
+| `yogurt` | `__init__` | general constructor | 52 | 1.22 |
+| `yogurt` | `__matmul__` | Overload @: equivalent to >> if other is a layer. | 5 | 1.22 |
+| `yogurt` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.22 |
+| `yogurt` | `__rshift__` | Overloads >> to propagate to other. | 8 | 1.22 |
+| `yogurt` | `__str__` | Formatted string representation of the property | 4 | 1.22 |
+| `yogurt` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.22 |
+| `yogurt` | `acknowledge` | Register inherited properties under a given category. | 30 | 1.22 |
+| `yogurt` | `contact` | alias to migration method | 3 | 1.22 |
+| `yogurt` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.22 |
+| `yogurt` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.22 |
+| `yogurt` | `migration` | interface to simulation engine: senspantankar | 9 | 1.22 |
+| `yogurt` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.22 |
+| `yogurt` | `update` | Update modifiable parameters of the foodphysics object. | 62 | 1.22 |
 
 <a id="patankar_geometry" name="patankar_geometry"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_food" title="Go to Previous Module: patankar.food" style="text-decoration: none;">⬅️ Previous</a>
@@ -1126,6 +1126,7 @@ UnitRegistry
 air
 gPET
 layer
+layerLink
 mesh
 migrant
 oPP
@@ -1168,6 +1169,7 @@ layer --> rPET
 layer --> rigidPVC
 object --> BaseRegistry
 object --> layer
+object --> layerLink
 object --> mesh
 object --> migrant
 ```
@@ -1178,880 +1180,1068 @@ object --> migrant
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `_toSI` | return an SI value from (value,"unit") | 7 | 1.2 |
-| (module-level) | `check_units` | check numeric inputs and convert them to SI units | 28 | 1.2 |
-| (module-level) | `help_layer` | Print all subclasses with their type/material info in a Markdown table with dynamic column widths. | 19 | 1.2 |
-| (module-level) | `list_layer_subclasses` | Lists all classes in this module that derive from 'layer', along with their layertype and layermaterial properties. | 28 | 1.2 |
-| (module-level) | `toSI` |  | 1 | 1.2 |
-| `AdhesiveAcrylate` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `AdhesiveAcrylate` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `AdhesiveAcrylate` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `AdhesiveAcrylate` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `AdhesiveAcrylate` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `AdhesiveAcrylate` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `AdhesiveAcrylate` | `__init__` | Parameters ---------- | 12 | 1.2 |
-| `AdhesiveAcrylate` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `AdhesiveAcrylate` | `__len__` | length method | 3 | 1.2 |
-| `AdhesiveAcrylate` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveAcrylate` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `AdhesiveAcrylate` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveAcrylate` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `AdhesiveAcrylate` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `AdhesiveAcrylate` | `__repr__` | disp method | 34 | 1.2 |
-| `AdhesiveAcrylate` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `AdhesiveAcrylate` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `AdhesiveAcrylate` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `AdhesiveAcrylate` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `AdhesiveAcrylate` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `AdhesiveAcrylate` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `AdhesiveAcrylate` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `AdhesiveAcrylate` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `AdhesiveAcrylate` | `contact` | alias to migration method | 3 | 1.2 |
-| `AdhesiveAcrylate` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `AdhesiveAcrylate` | `density` | typical density ~1000 kg/m^3 | 4 | 1.2 |
-| `AdhesiveAcrylate` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `AdhesiveAcrylate` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `AdhesiveAcrylate` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `AdhesiveAcrylate` | `split` | split layers | 7 | 1.2 |
-| `AdhesiveAcrylate` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `AdhesiveEVA` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `AdhesiveEVA` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `AdhesiveEVA` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `AdhesiveEVA` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `AdhesiveEVA` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `AdhesiveEVA` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `AdhesiveEVA` | `__init__` | Parameters ---------- | 12 | 1.2 |
-| `AdhesiveEVA` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `AdhesiveEVA` | `__len__` | length method | 3 | 1.2 |
-| `AdhesiveEVA` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveEVA` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `AdhesiveEVA` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveEVA` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `AdhesiveEVA` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `AdhesiveEVA` | `__repr__` | disp method | 34 | 1.2 |
-| `AdhesiveEVA` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `AdhesiveEVA` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `AdhesiveEVA` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `AdhesiveEVA` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `AdhesiveEVA` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `AdhesiveEVA` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `AdhesiveEVA` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `AdhesiveEVA` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `AdhesiveEVA` | `contact` | alias to migration method | 3 | 1.2 |
-| `AdhesiveEVA` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `AdhesiveEVA` | `density` | typical density ~930 kg/m^3 | 4 | 1.2 |
-| `AdhesiveEVA` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `AdhesiveEVA` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `AdhesiveEVA` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `AdhesiveEVA` | `split` | split layers | 7 | 1.2 |
-| `AdhesiveEVA` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `AdhesiveNaturalRubber` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `AdhesiveNaturalRubber` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `AdhesiveNaturalRubber` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `AdhesiveNaturalRubber` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `AdhesiveNaturalRubber` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `AdhesiveNaturalRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `AdhesiveNaturalRubber` | `__init__` | constructor for a natural rubber-based adhesive layer | 13 | 1.2 |
-| `AdhesiveNaturalRubber` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `AdhesiveNaturalRubber` | `__len__` | length method | 3 | 1.2 |
-| `AdhesiveNaturalRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveNaturalRubber` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `AdhesiveNaturalRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveNaturalRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `AdhesiveNaturalRubber` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `AdhesiveNaturalRubber` | `__repr__` | disp method | 34 | 1.2 |
-| `AdhesiveNaturalRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `AdhesiveNaturalRubber` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `AdhesiveNaturalRubber` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `AdhesiveNaturalRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `AdhesiveNaturalRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `AdhesiveNaturalRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `AdhesiveNaturalRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `AdhesiveNaturalRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `AdhesiveNaturalRubber` | `contact` | alias to migration method | 3 | 1.2 |
-| `AdhesiveNaturalRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `AdhesiveNaturalRubber` | `density` | typical density ~910 kg/m^3, adjust as needed | 4 | 1.2 |
-| `AdhesiveNaturalRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `AdhesiveNaturalRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `AdhesiveNaturalRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `AdhesiveNaturalRubber` | `split` | split layers | 7 | 1.2 |
-| `AdhesiveNaturalRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `AdhesivePU` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `AdhesivePU` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `AdhesivePU` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `AdhesivePU` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `AdhesivePU` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `AdhesivePU` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `AdhesivePU` | `__init__` | Parameters ---------- | 12 | 1.2 |
-| `AdhesivePU` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `AdhesivePU` | `__len__` | length method | 3 | 1.2 |
-| `AdhesivePU` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesivePU` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `AdhesivePU` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesivePU` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `AdhesivePU` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `AdhesivePU` | `__repr__` | disp method | 34 | 1.2 |
-| `AdhesivePU` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `AdhesivePU` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `AdhesivePU` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `AdhesivePU` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `AdhesivePU` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `AdhesivePU` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `AdhesivePU` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `AdhesivePU` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `AdhesivePU` | `contact` | alias to migration method | 3 | 1.2 |
-| `AdhesivePU` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `AdhesivePU` | `density` | typical density ~1100 kg/m^3 | 4 | 1.2 |
-| `AdhesivePU` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `AdhesivePU` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `AdhesivePU` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `AdhesivePU` | `split` | split layers | 7 | 1.2 |
-| `AdhesivePU` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `AdhesivePVAC` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `AdhesivePVAC` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `AdhesivePVAC` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `AdhesivePVAC` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `AdhesivePVAC` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `AdhesivePVAC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `AdhesivePVAC` | `__init__` | Parameters ---------- | 12 | 1.2 |
-| `AdhesivePVAC` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `AdhesivePVAC` | `__len__` | length method | 3 | 1.2 |
-| `AdhesivePVAC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesivePVAC` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `AdhesivePVAC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesivePVAC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `AdhesivePVAC` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `AdhesivePVAC` | `__repr__` | disp method | 34 | 1.2 |
-| `AdhesivePVAC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `AdhesivePVAC` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `AdhesivePVAC` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `AdhesivePVAC` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `AdhesivePVAC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `AdhesivePVAC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `AdhesivePVAC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `AdhesivePVAC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `AdhesivePVAC` | `contact` | alias to migration method | 3 | 1.2 |
-| `AdhesivePVAC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `AdhesivePVAC` | `density` | typical density ~1100 kg/m^3 | 4 | 1.2 |
-| `AdhesivePVAC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `AdhesivePVAC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `AdhesivePVAC` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `AdhesivePVAC` | `split` | split layers | 7 | 1.2 |
-| `AdhesivePVAC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__init__` | constructor for a synthetic rubber-based adhesive layer | 13 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__len__` | length method | 3 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__repr__` | disp method | 34 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `AdhesiveSyntheticRubber` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `AdhesiveSyntheticRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `AdhesiveSyntheticRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `AdhesiveSyntheticRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `AdhesiveSyntheticRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `AdhesiveSyntheticRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `AdhesiveSyntheticRubber` | `contact` | alias to migration method | 3 | 1.2 |
-| `AdhesiveSyntheticRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `AdhesiveSyntheticRubber` | `density` | typical density ~920 kg/m^3, adjust as needed | 4 | 1.2 |
-| `AdhesiveSyntheticRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `AdhesiveSyntheticRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `AdhesiveSyntheticRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `AdhesiveSyntheticRubber` | `split` | split layers | 7 | 1.2 |
-| `AdhesiveSyntheticRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `AdhesiveVAE` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `AdhesiveVAE` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `AdhesiveVAE` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `AdhesiveVAE` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `AdhesiveVAE` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `AdhesiveVAE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `AdhesiveVAE` | `__init__` | Parameters ---------- | 12 | 1.2 |
-| `AdhesiveVAE` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `AdhesiveVAE` | `__len__` | length method | 3 | 1.2 |
-| `AdhesiveVAE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveVAE` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `AdhesiveVAE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `AdhesiveVAE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `AdhesiveVAE` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `AdhesiveVAE` | `__repr__` | disp method | 34 | 1.2 |
-| `AdhesiveVAE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `AdhesiveVAE` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `AdhesiveVAE` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `AdhesiveVAE` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `AdhesiveVAE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `AdhesiveVAE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `AdhesiveVAE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `AdhesiveVAE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `AdhesiveVAE` | `contact` | alias to migration method | 3 | 1.2 |
-| `AdhesiveVAE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `AdhesiveVAE` | `density` | typical density ~950 kg/m^3 | 4 | 1.2 |
-| `AdhesiveVAE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `AdhesiveVAE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `AdhesiveVAE` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `AdhesiveVAE` | `split` | split layers | 7 | 1.2 |
-| `AdhesiveVAE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `Cardboard` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `Cardboard` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `Cardboard` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `Cardboard` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `Cardboard` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `Cardboard` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `Cardboard` | `__init__` | Cardboard layer constructor | 13 | 1.2 |
-| `Cardboard` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `Cardboard` | `__len__` | length method | 3 | 1.2 |
-| `Cardboard` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `Cardboard` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `Cardboard` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `Cardboard` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `Cardboard` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `Cardboard` | `__repr__` | disp method | 34 | 1.2 |
-| `Cardboard` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `Cardboard` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `Cardboard` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `Cardboard` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `Cardboard` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `Cardboard` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `Cardboard` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `Cardboard` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `Cardboard` | `contact` | alias to migration method | 3 | 1.2 |
-| `Cardboard` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `Cardboard` | `density` | approximate density for typical cardboard ~700 kg/m^3 | 6 | 1.2 |
-| `Cardboard` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `Cardboard` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `Cardboard` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `Cardboard` | `split` | split layers | 7 | 1.2 |
-| `Cardboard` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `HDPE` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `HDPE` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `HDPE` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `HDPE` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `HDPE` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `HDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `HDPE` | `__init__` | HDPE layer constructor | 13 | 1.2 |
-| `HDPE` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `HDPE` | `__len__` | length method | 3 | 1.2 |
-| `HDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `HDPE` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `HDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `HDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `HDPE` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `HDPE` | `__repr__` | disp method | 34 | 1.2 |
-| `HDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `HDPE` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `HDPE` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `HDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `HDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `HDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `HDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `HDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `HDPE` | `contact` | alias to migration method | 3 | 1.2 |
-| `HDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `HDPE` | `density` | density of HDPE: density(T in K) | 4 | 1.2 |
-| `HDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `HDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `HDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `HDPE` | `split` | split layers | 7 | 1.2 |
-| `HDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `HIPS` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `HIPS` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `HIPS` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `HIPS` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `HIPS` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `HIPS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `HIPS` | `__init__` | HIPS layer constructor | 13 | 1.2 |
-| `HIPS` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `HIPS` | `__len__` | length method | 3 | 1.2 |
-| `HIPS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `HIPS` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `HIPS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `HIPS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `HIPS` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `HIPS` | `__repr__` | disp method | 34 | 1.2 |
-| `HIPS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `HIPS` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `HIPS` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `HIPS` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `HIPS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `HIPS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `HIPS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `HIPS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `HIPS` | `contact` | alias to migration method | 3 | 1.2 |
-| `HIPS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `HIPS` | `density` | density of HIPS: ~1040 kg/m^3 | 6 | 1.2 |
-| `HIPS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `HIPS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `HIPS` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `HIPS` | `split` | split layers | 7 | 1.2 |
-| `HIPS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `LDPE` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `LDPE` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `LDPE` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `LDPE` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `LDPE` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `LDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `LDPE` | `__init__` | LDPE layer constructor | 13 | 1.2 |
-| `LDPE` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `LDPE` | `__len__` | length method | 3 | 1.2 |
-| `LDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `LDPE` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `LDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `LDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `LDPE` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `LDPE` | `__repr__` | disp method | 34 | 1.2 |
-| `LDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `LDPE` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `LDPE` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `LDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `LDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `LDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `LDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `LDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `LDPE` | `contact` | alias to migration method | 3 | 1.2 |
-| `LDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `LDPE` | `density` | density of LDPE: density(T in K) | 4 | 1.2 |
-| `LDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `LDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `LDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `LDPE` | `split` | split layers | 7 | 1.2 |
-| `LDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `LLDPE` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `LLDPE` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `LLDPE` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `LLDPE` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `LLDPE` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `LLDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `LLDPE` | `__init__` | LLDPE layer constructor Defaults are set to typical values found in the literature or between LDPE/HDPE ones. Adjust them as necessary for your models. | 17 | 1.2 |
-| `LLDPE` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `LLDPE` | `__len__` | length method | 3 | 1.2 |
-| `LLDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `LLDPE` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `LLDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `LLDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `LLDPE` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `LLDPE` | `__repr__` | disp method | 34 | 1.2 |
-| `LLDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `LLDPE` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `LLDPE` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `LLDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `LLDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `LLDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `LLDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `LLDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `LLDPE` | `contact` | alias to migration method | 3 | 1.2 |
-| `LLDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `LLDPE` | `density` | density of LLDPE: density(T in K) By default, uses an approximate value between LDPE and HDPE. | 8 | 1.2 |
-| `LLDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `LLDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `LLDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `LLDPE` | `split` | split layers | 7 | 1.2 |
-| `LLDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `PA6` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `PA6` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `PA6` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `PA6` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `PA6` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `PA6` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `PA6` | `__init__` | PA6 layer constructor | 13 | 1.2 |
-| `PA6` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `PA6` | `__len__` | length method | 3 | 1.2 |
-| `PA6` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `PA6` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `PA6` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `PA6` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `PA6` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `PA6` | `__repr__` | disp method | 34 | 1.2 |
-| `PA6` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `PA6` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `PA6` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `PA6` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `PA6` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `PA6` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `PA6` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `PA6` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `PA6` | `contact` | alias to migration method | 3 | 1.2 |
-| `PA6` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `PA6` | `density` | density of PA6: ~1140 kg/m^3 | 6 | 1.2 |
-| `PA6` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `PA6` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `PA6` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `PA6` | `split` | split layers | 7 | 1.2 |
-| `PA6` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `PA66` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `PA66` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `PA66` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `PA66` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `PA66` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `PA66` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `PA66` | `__init__` | PA66 layer constructor | 13 | 1.2 |
-| `PA66` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `PA66` | `__len__` | length method | 3 | 1.2 |
-| `PA66` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `PA66` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `PA66` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `PA66` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `PA66` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `PA66` | `__repr__` | disp method | 34 | 1.2 |
-| `PA66` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `PA66` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `PA66` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `PA66` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `PA66` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `PA66` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `PA66` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `PA66` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `PA66` | `contact` | alias to migration method | 3 | 1.2 |
-| `PA66` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `PA66` | `density` | density of PA66: ~1150 kg/m^3 | 6 | 1.2 |
-| `PA66` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `PA66` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `PA66` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `PA66` | `split` | split layers | 7 | 1.2 |
-| `PA66` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `PBT` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `PBT` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `PBT` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `PBT` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `PBT` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `PBT` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `PBT` | `__init__` | PBT layer constructor | 13 | 1.2 |
-| `PBT` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `PBT` | `__len__` | length method | 3 | 1.2 |
-| `PBT` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `PBT` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `PBT` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `PBT` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `PBT` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `PBT` | `__repr__` | disp method | 34 | 1.2 |
-| `PBT` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `PBT` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `PBT` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `PBT` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `PBT` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `PBT` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `PBT` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `PBT` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `PBT` | `contact` | alias to migration method | 3 | 1.2 |
-| `PBT` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `PBT` | `density` | density of PBT: ~1310 kg/m^3 | 6 | 1.2 |
-| `PBT` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `PBT` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `PBT` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `PBT` | `split` | split layers | 7 | 1.2 |
-| `PBT` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `PEN` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `PEN` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `PEN` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `PEN` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `PEN` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `PEN` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `PEN` | `__init__` | PEN layer constructor | 13 | 1.2 |
-| `PEN` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `PEN` | `__len__` | length method | 3 | 1.2 |
-| `PEN` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `PEN` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `PEN` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `PEN` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `PEN` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `PEN` | `__repr__` | disp method | 34 | 1.2 |
-| `PEN` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `PEN` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `PEN` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `PEN` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `PEN` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `PEN` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `PEN` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `PEN` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `PEN` | `contact` | alias to migration method | 3 | 1.2 |
-| `PEN` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `PEN` | `density` | density of PEN: ~1330 kg/m^3 | 6 | 1.2 |
-| `PEN` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `PEN` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `PEN` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `PEN` | `split` | split layers | 7 | 1.2 |
-| `PEN` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `PP` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `PP` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `PP` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `PP` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `PP` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `PP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `PP` | `__init__` | PP layer constructor | 13 | 1.2 |
-| `PP` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `PP` | `__len__` | length method | 3 | 1.2 |
-| `PP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `PP` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `PP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `PP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `PP` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `PP` | `__repr__` | disp method | 34 | 1.2 |
-| `PP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `PP` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `PP` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `PP` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `PP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `PP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `PP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `PP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `PP` | `contact` | alias to migration method | 3 | 1.2 |
-| `PP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `PP` | `density` | density of PP: density(T in K) | 4 | 1.2 |
-| `PP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `PP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `PP` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `PP` | `split` | split layers | 7 | 1.2 |
-| `PP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `PPrubber` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `PPrubber` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `PPrubber` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `PPrubber` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `PPrubber` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `PPrubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `PPrubber` | `__init__` | PPrubber layer constructor | 13 | 1.2 |
-| `PPrubber` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `PPrubber` | `__len__` | length method | 3 | 1.2 |
-| `PPrubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `PPrubber` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `PPrubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `PPrubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `PPrubber` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `PPrubber` | `__repr__` | disp method | 34 | 1.2 |
-| `PPrubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `PPrubber` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `PPrubber` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `PPrubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `PPrubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `PPrubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `PPrubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `PPrubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `PPrubber` | `contact` | alias to migration method | 3 | 1.2 |
-| `PPrubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `PPrubber` | `density` | density of atactic (rubbery) PP: density(T in K) Approximate initial density ~900 kg/m^3, linear thermal expansion factor can be adjusted. | 8 | 1.2 |
-| `PPrubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `PPrubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `PPrubber` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `PPrubber` | `split` | split layers | 7 | 1.2 |
-| `PPrubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `PS` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `PS` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `PS` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `PS` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `PS` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `PS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `PS` | `__init__` | PS layer constructor | 13 | 1.2 |
-| `PS` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `PS` | `__len__` | length method | 3 | 1.2 |
-| `PS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `PS` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `PS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `PS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `PS` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `PS` | `__repr__` | disp method | 34 | 1.2 |
-| `PS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `PS` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `PS` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `PS` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `PS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `PS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `PS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `PS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `PS` | `contact` | alias to migration method | 3 | 1.2 |
-| `PS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `PS` | `density` | density of PS: ~1050 kg/m^3 | 6 | 1.2 |
-| `PS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `PS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `PS` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `PS` | `split` | split layers | 7 | 1.2 |
-| `PS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `Paper` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `Paper` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `Paper` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `Paper` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `Paper` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `Paper` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `Paper` | `__init__` | Paper layer constructor | 13 | 1.2 |
-| `Paper` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `Paper` | `__len__` | length method | 3 | 1.2 |
-| `Paper` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `Paper` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `Paper` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `Paper` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `Paper` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `Paper` | `__repr__` | disp method | 34 | 1.2 |
-| `Paper` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `Paper` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `Paper` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `Paper` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `Paper` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `Paper` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `Paper` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `Paper` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `Paper` | `contact` | alias to migration method | 3 | 1.2 |
-| `Paper` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `Paper` | `density` | approximate density for typical paper ~800 kg/m^3 | 6 | 1.2 |
-| `Paper` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `Paper` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `Paper` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `Paper` | `split` | split layers | 7 | 1.2 |
-| `Paper` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `SBS` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `SBS` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `SBS` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `SBS` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `SBS` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `SBS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `SBS` | `__init__` | DBS layer constructor | 13 | 1.2 |
-| `SBS` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `SBS` | `__len__` | length method | 3 | 1.2 |
-| `SBS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `SBS` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `SBS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `SBS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `SBS` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `SBS` | `__repr__` | disp method | 34 | 1.2 |
-| `SBS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `SBS` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `SBS` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `SBS` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `SBS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `SBS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `SBS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `SBS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `SBS` | `contact` | alias to migration method | 3 | 1.2 |
-| `SBS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `SBS` | `density` | density of 'DBS': approximate, around ~1030 kg/m^3 | 6 | 1.2 |
-| `SBS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `SBS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `SBS` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `SBS` | `split` | split layers | 7 | 1.2 |
-| `SBS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `air` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `air` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `air` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `air` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `air` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `air` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `air` | `__init__` | air layer constructor | 17 | 1.2 |
-| `air` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `air` | `__len__` | length method | 3 | 1.2 |
-| `air` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `air` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `air` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `air` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `air` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `air` | `__repr__` | disp method | 34 | 1.2 |
-| `air` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `air` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `air` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `air` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `air` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `air` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `air` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `air` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `air` | `contact` | alias to migration method | 3 | 1.2 |
-| `air` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `air` | `density` | Density of air at atmospheric pressure: density(T in K) | 6 | 1.2 |
-| `air` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `air` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `air` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `air` | `split` | split layers | 7 | 1.2 |
-| `air` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `gPET` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `gPET` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `gPET` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `gPET` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `gPET` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `gPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `gPET` | `__init__` | glassy PET layer constructor | 13 | 1.2 |
-| `gPET` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `gPET` | `__len__` | length method | 3 | 1.2 |
-| `gPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `gPET` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `gPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `gPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `gPET` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `gPET` | `__repr__` | disp method | 34 | 1.2 |
-| `gPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `gPET` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `gPET` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `gPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `gPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `gPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `gPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `gPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `gPET` | `contact` | alias to migration method | 3 | 1.2 |
-| `gPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `gPET` | `density` | density of glassy PET: ~1350 kg/m^3 | 6 | 1.2 |
-| `gPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `gPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `gPET` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `gPET` | `split` | split layers | 7 | 1.2 |
-| `gPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `layer` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `layer` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `layer` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `layer` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `layer` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `layer` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `layer` | `__init__` | Parameters ---------- | 129 | 1.2 |
-| `layer` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `layer` | `__len__` | length method | 3 | 1.2 |
-| `layer` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `layer` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `layer` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `layer` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `layer` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `layer` | `__repr__` | disp method | 34 | 1.2 |
-| `layer` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `layer` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `layer` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `layer` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `layer` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `layer` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `layer` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `layer` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `layer` | `contact` | alias to migration method | 3 | 1.2 |
-| `layer` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `layer` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `layer` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `layer` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `layer` | `split` | split layers | 7 | 1.2 |
-| `layer` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `mesh` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 11 | 1.2 |
-| `mesh` | `__repr__` | Return repr(self). | 9 | 1.2 |
-| `oPP` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `oPP` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `oPP` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `oPP` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `oPP` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `oPP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `oPP` | `__init__` | oPP layer constructor | 13 | 1.2 |
-| `oPP` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `oPP` | `__len__` | length method | 3 | 1.2 |
-| `oPP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `oPP` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `oPP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `oPP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `oPP` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `oPP` | `__repr__` | disp method | 34 | 1.2 |
-| `oPP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `oPP` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `oPP` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `oPP` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `oPP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `oPP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `oPP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `oPP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `oPP` | `contact` | alias to migration method | 3 | 1.2 |
-| `oPP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `oPP` | `density` | density of bioriented PP: density(T in K) Typically close to isotactic PP around ~910 kg/m^3. | 7 | 1.2 |
-| `oPP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `oPP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `oPP` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `oPP` | `split` | split layers | 7 | 1.2 |
-| `oPP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `plasticizedPVC` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `plasticizedPVC` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `plasticizedPVC` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `plasticizedPVC` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `plasticizedPVC` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `plasticizedPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `plasticizedPVC` | `__init__` | plasticized PVC layer constructor | 13 | 1.2 |
-| `plasticizedPVC` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `plasticizedPVC` | `__len__` | length method | 3 | 1.2 |
-| `plasticizedPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `plasticizedPVC` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `plasticizedPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `plasticizedPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `plasticizedPVC` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `plasticizedPVC` | `__repr__` | disp method | 34 | 1.2 |
-| `plasticizedPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `plasticizedPVC` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `plasticizedPVC` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `plasticizedPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `plasticizedPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `plasticizedPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `plasticizedPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `plasticizedPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `plasticizedPVC` | `contact` | alias to migration method | 3 | 1.2 |
-| `plasticizedPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `plasticizedPVC` | `density` | density of plasticized PVC: ~1300 kg/m^3 | 6 | 1.2 |
-| `plasticizedPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `plasticizedPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `plasticizedPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `plasticizedPVC` | `split` | split layers | 7 | 1.2 |
-| `plasticizedPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `rPET` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `rPET` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `rPET` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `rPET` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `rPET` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `rPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `rPET` | `__init__` | rubbery PET layer constructor | 13 | 1.2 |
-| `rPET` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `rPET` | `__len__` | length method | 3 | 1.2 |
-| `rPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `rPET` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `rPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `rPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `rPET` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `rPET` | `__repr__` | disp method | 34 | 1.2 |
-| `rPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `rPET` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `rPET` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `rPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `rPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `rPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `rPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `rPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `rPET` | `contact` | alias to migration method | 3 | 1.2 |
-| `rPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `rPET` | `density` | density of rubbery PET: ~1350 kg/m^3 but with a different expansion slope possible, if needed | 7 | 1.2 |
-| `rPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `rPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `rPET` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `rPET` | `split` | split layers | 7 | 1.2 |
-| `rPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
-| `rigidPVC` | `__add__` | C=A+B | overload + operator | 25 | 1.2 |
-| `rigidPVC` | `__eq__` | Return self==value. | 7 | 1.2 |
-| `rigidPVC` | `__ge__` | Return self>=value. | 7 | 1.2 |
-| `rigidPVC` | `__getitem__` | get indexing method | 20 | 1.2 |
-| `rigidPVC` | `__gt__` | Return self>value. | 7 | 1.2 |
-| `rigidPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.2 |
-| `rigidPVC` | `__init__` | rigid PVC layer constructor | 13 | 1.2 |
-| `rigidPVC` | `__le__` | Return self<=value. | 7 | 1.2 |
-| `rigidPVC` | `__len__` | length method | 3 | 1.2 |
-| `rigidPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.2 |
-| `rigidPVC` | `__lt__` | Return self<value. | 7 | 1.2 |
-| `rigidPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.2 |
-| `rigidPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.2 |
-| `rigidPVC` | `__ne__` | Return self!=value. | 7 | 1.2 |
-| `rigidPVC` | `__repr__` | disp method | 34 | 1.2 |
-| `rigidPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.2 |
-| `rigidPVC` | `__setitem__` | set indexing method | 39 | 1.2 |
-| `rigidPVC` | `__str__` | Formatted string representation of layer | 5 | 1.2 |
-| `rigidPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.2 |
-| `rigidPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.2 |
-| `rigidPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.2 |
-| `rigidPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.2 |
-| `rigidPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.2 |
-| `rigidPVC` | `contact` | alias to migration method | 3 | 1.2 |
-| `rigidPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.2 |
-| `rigidPVC` | `density` | density of rigid PVC: ~1400 kg/m^3 | 6 | 1.2 |
-| `rigidPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.2 |
-| `rigidPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.2 |
-| `rigidPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.2 |
-| `rigidPVC` | `split` | split layers | 7 | 1.2 |
-| `rigidPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.2 |
+| (module-level) | `_toSI` | return an SI value from (value,"unit") | 7 | 1.24 |
+| (module-level) | `check_units` | check numeric inputs and convert them to SI units | 28 | 1.24 |
+| (module-level) | `format_scientific_latex` | Formats a number in scientific notation only when necessary, using LaTeX. | 53 | 1.24 |
+| (module-level) | `help_layer` | Print all subclasses with their type/material info in a Markdown table with dynamic column widths. | 19 | 1.24 |
+| (module-level) | `list_layer_subclasses` | Lists all classes in this module that derive from 'layer', along with their layertype and layermaterial properties. | 28 | 1.24 |
+| (module-level) | `toSI` |  | 1 | 1.24 |
+| `AdhesiveAcrylate` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveAcrylate` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveAcrylate` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `AdhesiveAcrylate` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `AdhesiveAcrylate` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `AdhesiveAcrylate` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `AdhesiveAcrylate` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `AdhesiveAcrylate` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `AdhesiveAcrylate` | `__init__` | Parameters ---------- | 12 | 1.24 |
+| `AdhesiveAcrylate` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `AdhesiveAcrylate` | `__len__` | length method | 3 | 1.24 |
+| `AdhesiveAcrylate` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveAcrylate` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `AdhesiveAcrylate` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveAcrylate` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `AdhesiveAcrylate` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `AdhesiveAcrylate` | `__repr__` | disp method | 40 | 1.24 |
+| `AdhesiveAcrylate` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `AdhesiveAcrylate` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `AdhesiveAcrylate` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `AdhesiveAcrylate` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `AdhesiveAcrylate` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `AdhesiveAcrylate` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveAcrylate` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `AdhesiveAcrylate` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `AdhesiveAcrylate` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `AdhesiveAcrylate` | `contact` | alias to migration method | 3 | 1.24 |
+| `AdhesiveAcrylate` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `AdhesiveAcrylate` | `density` | typical density ~1000 kg/m^3 | 4 | 1.24 |
+| `AdhesiveAcrylate` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveAcrylate` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveAcrylate` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `AdhesiveAcrylate` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `AdhesiveAcrylate` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `AdhesiveAcrylate` | `split` | split layers | 7 | 1.24 |
+| `AdhesiveAcrylate` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveAcrylate` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `AdhesiveEVA` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveEVA` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveEVA` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `AdhesiveEVA` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `AdhesiveEVA` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `AdhesiveEVA` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `AdhesiveEVA` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `AdhesiveEVA` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `AdhesiveEVA` | `__init__` | Parameters ---------- | 12 | 1.24 |
+| `AdhesiveEVA` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `AdhesiveEVA` | `__len__` | length method | 3 | 1.24 |
+| `AdhesiveEVA` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveEVA` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `AdhesiveEVA` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveEVA` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `AdhesiveEVA` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `AdhesiveEVA` | `__repr__` | disp method | 40 | 1.24 |
+| `AdhesiveEVA` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `AdhesiveEVA` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `AdhesiveEVA` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `AdhesiveEVA` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `AdhesiveEVA` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `AdhesiveEVA` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveEVA` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `AdhesiveEVA` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `AdhesiveEVA` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `AdhesiveEVA` | `contact` | alias to migration method | 3 | 1.24 |
+| `AdhesiveEVA` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `AdhesiveEVA` | `density` | typical density ~930 kg/m^3 | 4 | 1.24 |
+| `AdhesiveEVA` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveEVA` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveEVA` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `AdhesiveEVA` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `AdhesiveEVA` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `AdhesiveEVA` | `split` | split layers | 7 | 1.24 |
+| `AdhesiveEVA` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveEVA` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `AdhesiveNaturalRubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `AdhesiveNaturalRubber` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `AdhesiveNaturalRubber` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `AdhesiveNaturalRubber` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `AdhesiveNaturalRubber` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `AdhesiveNaturalRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `AdhesiveNaturalRubber` | `__init__` | constructor for a natural rubber-based adhesive layer | 13 | 1.24 |
+| `AdhesiveNaturalRubber` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `AdhesiveNaturalRubber` | `__len__` | length method | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `AdhesiveNaturalRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `AdhesiveNaturalRubber` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `AdhesiveNaturalRubber` | `__repr__` | disp method | 40 | 1.24 |
+| `AdhesiveNaturalRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `AdhesiveNaturalRubber` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `AdhesiveNaturalRubber` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `AdhesiveNaturalRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `AdhesiveNaturalRubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `AdhesiveNaturalRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `AdhesiveNaturalRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `AdhesiveNaturalRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `AdhesiveNaturalRubber` | `contact` | alias to migration method | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `AdhesiveNaturalRubber` | `density` | typical density ~910 kg/m^3, adjust as needed | 4 | 1.24 |
+| `AdhesiveNaturalRubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `AdhesiveNaturalRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `AdhesiveNaturalRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `AdhesiveNaturalRubber` | `split` | split layers | 7 | 1.24 |
+| `AdhesiveNaturalRubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveNaturalRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `AdhesivePU` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePU` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePU` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `AdhesivePU` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `AdhesivePU` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `AdhesivePU` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `AdhesivePU` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `AdhesivePU` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `AdhesivePU` | `__init__` | Parameters ---------- | 12 | 1.24 |
+| `AdhesivePU` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `AdhesivePU` | `__len__` | length method | 3 | 1.24 |
+| `AdhesivePU` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesivePU` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `AdhesivePU` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesivePU` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `AdhesivePU` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `AdhesivePU` | `__repr__` | disp method | 40 | 1.24 |
+| `AdhesivePU` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `AdhesivePU` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `AdhesivePU` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `AdhesivePU` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `AdhesivePU` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `AdhesivePU` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesivePU` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `AdhesivePU` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `AdhesivePU` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `AdhesivePU` | `contact` | alias to migration method | 3 | 1.24 |
+| `AdhesivePU` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `AdhesivePU` | `density` | typical density ~1100 kg/m^3 | 4 | 1.24 |
+| `AdhesivePU` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePU` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePU` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `AdhesivePU` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `AdhesivePU` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `AdhesivePU` | `split` | split layers | 7 | 1.24 |
+| `AdhesivePU` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesivePU` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `AdhesivePVAC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePVAC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePVAC` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `AdhesivePVAC` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `AdhesivePVAC` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `AdhesivePVAC` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `AdhesivePVAC` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `AdhesivePVAC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `AdhesivePVAC` | `__init__` | Parameters ---------- | 12 | 1.24 |
+| `AdhesivePVAC` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `AdhesivePVAC` | `__len__` | length method | 3 | 1.24 |
+| `AdhesivePVAC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesivePVAC` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `AdhesivePVAC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesivePVAC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `AdhesivePVAC` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `AdhesivePVAC` | `__repr__` | disp method | 40 | 1.24 |
+| `AdhesivePVAC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `AdhesivePVAC` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `AdhesivePVAC` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `AdhesivePVAC` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `AdhesivePVAC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `AdhesivePVAC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesivePVAC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `AdhesivePVAC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `AdhesivePVAC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `AdhesivePVAC` | `contact` | alias to migration method | 3 | 1.24 |
+| `AdhesivePVAC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `AdhesivePVAC` | `density` | typical density ~1100 kg/m^3 | 4 | 1.24 |
+| `AdhesivePVAC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePVAC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesivePVAC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `AdhesivePVAC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `AdhesivePVAC` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `AdhesivePVAC` | `split` | split layers | 7 | 1.24 |
+| `AdhesivePVAC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesivePVAC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `AdhesiveSyntheticRubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__init__` | constructor for a synthetic rubber-based adhesive layer | 13 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__len__` | length method | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__repr__` | disp method | 40 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `AdhesiveSyntheticRubber` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `AdhesiveSyntheticRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `AdhesiveSyntheticRubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `AdhesiveSyntheticRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `AdhesiveSyntheticRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `AdhesiveSyntheticRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `AdhesiveSyntheticRubber` | `contact` | alias to migration method | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `AdhesiveSyntheticRubber` | `density` | typical density ~920 kg/m^3, adjust as needed | 4 | 1.24 |
+| `AdhesiveSyntheticRubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `AdhesiveSyntheticRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `AdhesiveSyntheticRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `AdhesiveSyntheticRubber` | `split` | split layers | 7 | 1.24 |
+| `AdhesiveSyntheticRubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveSyntheticRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `AdhesiveVAE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveVAE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveVAE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `AdhesiveVAE` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `AdhesiveVAE` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `AdhesiveVAE` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `AdhesiveVAE` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `AdhesiveVAE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `AdhesiveVAE` | `__init__` | Parameters ---------- | 12 | 1.24 |
+| `AdhesiveVAE` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `AdhesiveVAE` | `__len__` | length method | 3 | 1.24 |
+| `AdhesiveVAE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveVAE` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `AdhesiveVAE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `AdhesiveVAE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `AdhesiveVAE` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `AdhesiveVAE` | `__repr__` | disp method | 40 | 1.24 |
+| `AdhesiveVAE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `AdhesiveVAE` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `AdhesiveVAE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `AdhesiveVAE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `AdhesiveVAE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `AdhesiveVAE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveVAE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `AdhesiveVAE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `AdhesiveVAE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `AdhesiveVAE` | `contact` | alias to migration method | 3 | 1.24 |
+| `AdhesiveVAE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `AdhesiveVAE` | `density` | typical density ~950 kg/m^3 | 4 | 1.24 |
+| `AdhesiveVAE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveVAE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `AdhesiveVAE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `AdhesiveVAE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `AdhesiveVAE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `AdhesiveVAE` | `split` | split layers | 7 | 1.24 |
+| `AdhesiveVAE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `AdhesiveVAE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `Cardboard` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Cardboard` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Cardboard` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `Cardboard` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `Cardboard` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `Cardboard` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `Cardboard` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `Cardboard` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `Cardboard` | `__init__` | Cardboard layer constructor | 13 | 1.24 |
+| `Cardboard` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `Cardboard` | `__len__` | length method | 3 | 1.24 |
+| `Cardboard` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `Cardboard` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `Cardboard` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `Cardboard` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `Cardboard` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `Cardboard` | `__repr__` | disp method | 40 | 1.24 |
+| `Cardboard` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `Cardboard` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `Cardboard` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `Cardboard` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `Cardboard` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `Cardboard` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `Cardboard` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `Cardboard` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `Cardboard` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `Cardboard` | `contact` | alias to migration method | 3 | 1.24 |
+| `Cardboard` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `Cardboard` | `density` | approximate density for typical cardboard ~700 kg/m^3 | 6 | 1.24 |
+| `Cardboard` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Cardboard` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Cardboard` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `Cardboard` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `Cardboard` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `Cardboard` | `split` | split layers | 7 | 1.24 |
+| `Cardboard` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `Cardboard` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `HDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HDPE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `HDPE` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `HDPE` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `HDPE` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `HDPE` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `HDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `HDPE` | `__init__` | HDPE layer constructor | 13 | 1.24 |
+| `HDPE` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `HDPE` | `__len__` | length method | 3 | 1.24 |
+| `HDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `HDPE` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `HDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `HDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `HDPE` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `HDPE` | `__repr__` | disp method | 40 | 1.24 |
+| `HDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `HDPE` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `HDPE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `HDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `HDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `HDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `HDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `HDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `HDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `HDPE` | `contact` | alias to migration method | 3 | 1.24 |
+| `HDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `HDPE` | `density` | density of HDPE: density(T in K) | 4 | 1.24 |
+| `HDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `HDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `HDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `HDPE` | `split` | split layers | 7 | 1.24 |
+| `HDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `HDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `HIPS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HIPS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HIPS` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `HIPS` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `HIPS` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `HIPS` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `HIPS` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `HIPS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `HIPS` | `__init__` | HIPS layer constructor | 13 | 1.24 |
+| `HIPS` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `HIPS` | `__len__` | length method | 3 | 1.24 |
+| `HIPS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `HIPS` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `HIPS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `HIPS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `HIPS` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `HIPS` | `__repr__` | disp method | 40 | 1.24 |
+| `HIPS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `HIPS` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `HIPS` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `HIPS` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `HIPS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `HIPS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `HIPS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `HIPS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `HIPS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `HIPS` | `contact` | alias to migration method | 3 | 1.24 |
+| `HIPS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `HIPS` | `density` | density of HIPS: ~1040 kg/m^3 | 6 | 1.24 |
+| `HIPS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HIPS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `HIPS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `HIPS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `HIPS` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `HIPS` | `split` | split layers | 7 | 1.24 |
+| `HIPS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `HIPS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `LDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LDPE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `LDPE` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `LDPE` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `LDPE` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `LDPE` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `LDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `LDPE` | `__init__` | LDPE layer constructor | 13 | 1.24 |
+| `LDPE` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `LDPE` | `__len__` | length method | 3 | 1.24 |
+| `LDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `LDPE` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `LDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `LDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `LDPE` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `LDPE` | `__repr__` | disp method | 40 | 1.24 |
+| `LDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `LDPE` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `LDPE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `LDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `LDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `LDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `LDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `LDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `LDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `LDPE` | `contact` | alias to migration method | 3 | 1.24 |
+| `LDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `LDPE` | `density` | density of LDPE: density(T in K) | 4 | 1.24 |
+| `LDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `LDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `LDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `LDPE` | `split` | split layers | 7 | 1.24 |
+| `LDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `LDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `LLDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LLDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LLDPE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `LLDPE` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `LLDPE` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `LLDPE` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `LLDPE` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `LLDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `LLDPE` | `__init__` | LLDPE layer constructor Defaults are set to typical values found in the literature or between LDPE/HDPE ones. Adjust them as necessary for your models. | 17 | 1.24 |
+| `LLDPE` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `LLDPE` | `__len__` | length method | 3 | 1.24 |
+| `LLDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `LLDPE` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `LLDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `LLDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `LLDPE` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `LLDPE` | `__repr__` | disp method | 40 | 1.24 |
+| `LLDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `LLDPE` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `LLDPE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `LLDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `LLDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `LLDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `LLDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `LLDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `LLDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `LLDPE` | `contact` | alias to migration method | 3 | 1.24 |
+| `LLDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `LLDPE` | `density` | density of LLDPE: density(T in K) By default, uses an approximate value between LDPE and HDPE. | 8 | 1.24 |
+| `LLDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LLDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `LLDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `LLDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `LLDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `LLDPE` | `split` | split layers | 7 | 1.24 |
+| `LLDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `LLDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `PA6` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA6` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA6` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `PA6` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `PA6` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `PA6` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `PA6` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `PA6` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `PA6` | `__init__` | PA6 layer constructor | 13 | 1.24 |
+| `PA6` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `PA6` | `__len__` | length method | 3 | 1.24 |
+| `PA6` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `PA6` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `PA6` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `PA6` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `PA6` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `PA6` | `__repr__` | disp method | 40 | 1.24 |
+| `PA6` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `PA6` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `PA6` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `PA6` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `PA6` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `PA6` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PA6` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `PA6` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `PA6` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `PA6` | `contact` | alias to migration method | 3 | 1.24 |
+| `PA6` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `PA6` | `density` | density of PA6: ~1140 kg/m^3 | 6 | 1.24 |
+| `PA6` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA6` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA6` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `PA6` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `PA6` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `PA6` | `split` | split layers | 7 | 1.24 |
+| `PA6` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PA6` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `PA66` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA66` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA66` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `PA66` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `PA66` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `PA66` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `PA66` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `PA66` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `PA66` | `__init__` | PA66 layer constructor | 13 | 1.24 |
+| `PA66` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `PA66` | `__len__` | length method | 3 | 1.24 |
+| `PA66` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `PA66` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `PA66` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `PA66` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `PA66` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `PA66` | `__repr__` | disp method | 40 | 1.24 |
+| `PA66` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `PA66` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `PA66` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `PA66` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `PA66` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `PA66` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PA66` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `PA66` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `PA66` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `PA66` | `contact` | alias to migration method | 3 | 1.24 |
+| `PA66` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `PA66` | `density` | density of PA66: ~1150 kg/m^3 | 6 | 1.24 |
+| `PA66` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA66` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PA66` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `PA66` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `PA66` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `PA66` | `split` | split layers | 7 | 1.24 |
+| `PA66` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PA66` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `PBT` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PBT` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PBT` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `PBT` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `PBT` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `PBT` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `PBT` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `PBT` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `PBT` | `__init__` | PBT layer constructor | 13 | 1.24 |
+| `PBT` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `PBT` | `__len__` | length method | 3 | 1.24 |
+| `PBT` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `PBT` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `PBT` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `PBT` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `PBT` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `PBT` | `__repr__` | disp method | 40 | 1.24 |
+| `PBT` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `PBT` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `PBT` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `PBT` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `PBT` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `PBT` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PBT` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `PBT` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `PBT` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `PBT` | `contact` | alias to migration method | 3 | 1.24 |
+| `PBT` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `PBT` | `density` | density of PBT: ~1310 kg/m^3 | 6 | 1.24 |
+| `PBT` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PBT` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PBT` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `PBT` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `PBT` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `PBT` | `split` | split layers | 7 | 1.24 |
+| `PBT` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PBT` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `PEN` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PEN` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PEN` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `PEN` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `PEN` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `PEN` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `PEN` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `PEN` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `PEN` | `__init__` | PEN layer constructor | 13 | 1.24 |
+| `PEN` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `PEN` | `__len__` | length method | 3 | 1.24 |
+| `PEN` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `PEN` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `PEN` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `PEN` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `PEN` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `PEN` | `__repr__` | disp method | 40 | 1.24 |
+| `PEN` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `PEN` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `PEN` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `PEN` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `PEN` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `PEN` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PEN` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `PEN` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `PEN` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `PEN` | `contact` | alias to migration method | 3 | 1.24 |
+| `PEN` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `PEN` | `density` | density of PEN: ~1330 kg/m^3 | 6 | 1.24 |
+| `PEN` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PEN` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PEN` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `PEN` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `PEN` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `PEN` | `split` | split layers | 7 | 1.24 |
+| `PEN` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PEN` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `PP` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PP` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PP` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `PP` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `PP` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `PP` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `PP` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `PP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `PP` | `__init__` | PP layer constructor | 13 | 1.24 |
+| `PP` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `PP` | `__len__` | length method | 3 | 1.24 |
+| `PP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `PP` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `PP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `PP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `PP` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `PP` | `__repr__` | disp method | 40 | 1.24 |
+| `PP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `PP` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `PP` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `PP` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `PP` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `PP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `PP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `PP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `PP` | `contact` | alias to migration method | 3 | 1.24 |
+| `PP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `PP` | `density` | density of PP: density(T in K) | 4 | 1.24 |
+| `PP` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PP` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `PP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `PP` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `PP` | `split` | split layers | 7 | 1.24 |
+| `PP` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `PPrubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PPrubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PPrubber` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `PPrubber` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `PPrubber` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `PPrubber` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `PPrubber` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `PPrubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `PPrubber` | `__init__` | PPrubber layer constructor | 13 | 1.24 |
+| `PPrubber` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `PPrubber` | `__len__` | length method | 3 | 1.24 |
+| `PPrubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `PPrubber` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `PPrubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `PPrubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `PPrubber` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `PPrubber` | `__repr__` | disp method | 40 | 1.24 |
+| `PPrubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `PPrubber` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `PPrubber` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `PPrubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `PPrubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `PPrubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PPrubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `PPrubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `PPrubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `PPrubber` | `contact` | alias to migration method | 3 | 1.24 |
+| `PPrubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `PPrubber` | `density` | density of atactic (rubbery) PP: density(T in K) Approximate initial density ~900 kg/m^3, linear thermal expansion factor can be adjusted. | 8 | 1.24 |
+| `PPrubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PPrubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PPrubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `PPrubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `PPrubber` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `PPrubber` | `split` | split layers | 7 | 1.24 |
+| `PPrubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PPrubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `PS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PS` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `PS` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `PS` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `PS` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `PS` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `PS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `PS` | `__init__` | PS layer constructor | 13 | 1.24 |
+| `PS` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `PS` | `__len__` | length method | 3 | 1.24 |
+| `PS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `PS` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `PS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `PS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `PS` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `PS` | `__repr__` | disp method | 40 | 1.24 |
+| `PS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `PS` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `PS` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `PS` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `PS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `PS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `PS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `PS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `PS` | `contact` | alias to migration method | 3 | 1.24 |
+| `PS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `PS` | `density` | density of PS: ~1050 kg/m^3 | 6 | 1.24 |
+| `PS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `PS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `PS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `PS` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `PS` | `split` | split layers | 7 | 1.24 |
+| `PS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `PS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `Paper` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Paper` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Paper` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `Paper` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `Paper` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `Paper` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `Paper` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `Paper` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `Paper` | `__init__` | Paper layer constructor | 13 | 1.24 |
+| `Paper` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `Paper` | `__len__` | length method | 3 | 1.24 |
+| `Paper` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `Paper` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `Paper` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `Paper` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `Paper` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `Paper` | `__repr__` | disp method | 40 | 1.24 |
+| `Paper` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `Paper` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `Paper` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `Paper` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `Paper` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `Paper` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `Paper` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `Paper` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `Paper` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `Paper` | `contact` | alias to migration method | 3 | 1.24 |
+| `Paper` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `Paper` | `density` | approximate density for typical paper ~800 kg/m^3 | 6 | 1.24 |
+| `Paper` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Paper` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `Paper` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `Paper` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `Paper` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `Paper` | `split` | split layers | 7 | 1.24 |
+| `Paper` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `Paper` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `SBS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `SBS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `SBS` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `SBS` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `SBS` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `SBS` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `SBS` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `SBS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `SBS` | `__init__` | DBS layer constructor | 13 | 1.24 |
+| `SBS` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `SBS` | `__len__` | length method | 3 | 1.24 |
+| `SBS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `SBS` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `SBS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `SBS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `SBS` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `SBS` | `__repr__` | disp method | 40 | 1.24 |
+| `SBS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `SBS` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `SBS` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `SBS` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `SBS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `SBS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `SBS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `SBS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `SBS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `SBS` | `contact` | alias to migration method | 3 | 1.24 |
+| `SBS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `SBS` | `density` | density of 'DBS': approximate, around ~1030 kg/m^3 | 6 | 1.24 |
+| `SBS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `SBS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `SBS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `SBS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `SBS` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `SBS` | `split` | split layers | 7 | 1.24 |
+| `SBS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `SBS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `air` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `air` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `air` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `air` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `air` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `air` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `air` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `air` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `air` | `__init__` | air layer constructor | 17 | 1.24 |
+| `air` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `air` | `__len__` | length method | 3 | 1.24 |
+| `air` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `air` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `air` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `air` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `air` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `air` | `__repr__` | disp method | 40 | 1.24 |
+| `air` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `air` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `air` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `air` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `air` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `air` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `air` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `air` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `air` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `air` | `contact` | alias to migration method | 3 | 1.24 |
+| `air` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `air` | `density` | Density of air at atmospheric pressure: density(T in K) | 6 | 1.24 |
+| `air` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `air` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `air` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `air` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `air` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `air` | `split` | split layers | 7 | 1.24 |
+| `air` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `air` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `gPET` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `gPET` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `gPET` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `gPET` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `gPET` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `gPET` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `gPET` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `gPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `gPET` | `__init__` | glassy PET layer constructor | 13 | 1.24 |
+| `gPET` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `gPET` | `__len__` | length method | 3 | 1.24 |
+| `gPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `gPET` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `gPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `gPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `gPET` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `gPET` | `__repr__` | disp method | 40 | 1.24 |
+| `gPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `gPET` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `gPET` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `gPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `gPET` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `gPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `gPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `gPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `gPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `gPET` | `contact` | alias to migration method | 3 | 1.24 |
+| `gPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `gPET` | `density` | density of glassy PET: ~1350 kg/m^3 | 6 | 1.24 |
+| `gPET` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `gPET` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `gPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `gPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `gPET` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `gPET` | `split` | split layers | 7 | 1.24 |
+| `gPET` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `gPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `layer` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `layer` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `layer` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `layer` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `layer` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `layer` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `layer` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `layer` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `layer` | `__init__` | Parameters ---------- | 139 | 1.24 |
+| `layer` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `layer` | `__len__` | length method | 3 | 1.24 |
+| `layer` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `layer` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `layer` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `layer` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `layer` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `layer` | `__repr__` | disp method | 40 | 1.24 |
+| `layer` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `layer` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `layer` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `layer` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `layer` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `layer` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `layer` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `layer` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `layer` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `layer` | `contact` | alias to migration method | 3 | 1.24 |
+| `layer` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `layer` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `layer` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `layer` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `layer` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `layer` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `layer` | `split` | split layers | 7 | 1.24 |
+| `layer` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `layer` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `layerLink` | `__add__` | Concatenates two layerLink instances. | 40 | 1.24 |
+| `layerLink` | `__getitem__` | Allows `D_link[index]` or `D_link[slice]` to retrieve values. | 10 | 1.24 |
+| `layerLink` | `__init__` | constructs a link | 19 | 1.24 |
+| `layerLink` | `__len__` | Returns the length of the vector managed by the link object. | 3 | 1.24 |
+| `layerLink` | `__mul__` | Repeats the layerLink instance `n` times. | 24 | 1.24 |
+| `layerLink` | `__repr__` | Returns a detailed string representation. | 6 | 1.24 |
+| `layerLink` | `__setitem__` | Allows `D_link[index] = value` or `D_link[slice] = list/scalar`. | 27 | 1.24 |
+| `layerLink` | `__str__` | Returns a compact summary string. | 3 | 1.24 |
+| `layerLink` | `_get_single` | Retrieves the value for a single index, applying rules if necessary. | 12 | 1.24 |
+| `layerLink` | `_remove_indices` | Removes indices from `self.indices` and `self.values` and updates length. | 13 | 1.24 |
+| `layerLink` | `_validate` | Ensures consistency between indices and values. | 6 | 1.24 |
+| `layerLink` | `get` | Retrieves values based on index or returns the full vector. | 24 | 1.24 |
+| `layerLink` | `getandreplace` | Retrieves values for the given indices, replacing NaN values with corresponding values from altvalues. | 38 | 1.24 |
+| `layerLink` | `getfull` | Retrieves the full vector using `getandreplace(None, altvalues)`. | 30 | 1.24 |
+| `layerLink` | `lengthextension` | Ensures that the length of the layerLink instance is at least `max(indices) + 1`. | 10 | 1.24 |
+| `layerLink` | `rename` | Renames the property associated with this link. | 17 | 1.24 |
+| `layerLink` | `reset` | Resets the link instance based on the prototype values. | 10 | 1.24 |
+| `layerLink` | `reshape` | Reshapes the link instance to a new length. | 23 | 1.24 |
+| `layerLink` | `set` | Sets values at specific indices. | 47 | 1.24 |
+| `mesh` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 11 | 1.24 |
+| `mesh` | `__repr__` | Return repr(self). | 9 | 1.24 |
+| `oPP` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `oPP` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `oPP` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `oPP` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `oPP` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `oPP` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `oPP` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `oPP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `oPP` | `__init__` | oPP layer constructor | 13 | 1.24 |
+| `oPP` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `oPP` | `__len__` | length method | 3 | 1.24 |
+| `oPP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `oPP` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `oPP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `oPP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `oPP` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `oPP` | `__repr__` | disp method | 40 | 1.24 |
+| `oPP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `oPP` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `oPP` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `oPP` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `oPP` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `oPP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `oPP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `oPP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `oPP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `oPP` | `contact` | alias to migration method | 3 | 1.24 |
+| `oPP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `oPP` | `density` | density of bioriented PP: density(T in K) Typically close to isotactic PP around ~910 kg/m^3. | 7 | 1.24 |
+| `oPP` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `oPP` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `oPP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `oPP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `oPP` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `oPP` | `split` | split layers | 7 | 1.24 |
+| `oPP` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `oPP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `plasticizedPVC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `plasticizedPVC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `plasticizedPVC` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `plasticizedPVC` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `plasticizedPVC` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `plasticizedPVC` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `plasticizedPVC` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `plasticizedPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `plasticizedPVC` | `__init__` | plasticized PVC layer constructor | 13 | 1.24 |
+| `plasticizedPVC` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `plasticizedPVC` | `__len__` | length method | 3 | 1.24 |
+| `plasticizedPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `plasticizedPVC` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `plasticizedPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `plasticizedPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `plasticizedPVC` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `plasticizedPVC` | `__repr__` | disp method | 40 | 1.24 |
+| `plasticizedPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `plasticizedPVC` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `plasticizedPVC` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `plasticizedPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `plasticizedPVC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `plasticizedPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `plasticizedPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `plasticizedPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `plasticizedPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `plasticizedPVC` | `contact` | alias to migration method | 3 | 1.24 |
+| `plasticizedPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `plasticizedPVC` | `density` | density of plasticized PVC: ~1300 kg/m^3 | 6 | 1.24 |
+| `plasticizedPVC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `plasticizedPVC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `plasticizedPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `plasticizedPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `plasticizedPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `plasticizedPVC` | `split` | split layers | 7 | 1.24 |
+| `plasticizedPVC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `plasticizedPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `rPET` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rPET` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rPET` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `rPET` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `rPET` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `rPET` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `rPET` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `rPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `rPET` | `__init__` | rubbery PET layer constructor | 13 | 1.24 |
+| `rPET` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `rPET` | `__len__` | length method | 3 | 1.24 |
+| `rPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `rPET` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `rPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `rPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `rPET` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `rPET` | `__repr__` | disp method | 40 | 1.24 |
+| `rPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `rPET` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `rPET` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `rPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `rPET` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `rPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `rPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `rPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `rPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `rPET` | `contact` | alias to migration method | 3 | 1.24 |
+| `rPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `rPET` | `density` | density of rubbery PET: ~1350 kg/m^3 but with a different expansion slope possible, if needed | 7 | 1.24 |
+| `rPET` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rPET` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `rPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `rPET` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `rPET` | `split` | split layers | 7 | 1.24 |
+| `rPET` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `rPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| `rigidPVC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rigidPVC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rigidPVC` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
+| `rigidPVC` | `__eq__` | Return self==value. | 7 | 1.24 |
+| `rigidPVC` | `__ge__` | Return self>=value. | 7 | 1.24 |
+| `rigidPVC` | `__getitem__` | get indexing method | 20 | 1.24 |
+| `rigidPVC` | `__gt__` | Return self>value. | 7 | 1.24 |
+| `rigidPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
+| `rigidPVC` | `__init__` | rigid PVC layer constructor | 13 | 1.24 |
+| `rigidPVC` | `__le__` | Return self<=value. | 7 | 1.24 |
+| `rigidPVC` | `__len__` | length method | 3 | 1.24 |
+| `rigidPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
+| `rigidPVC` | `__lt__` | Return self<value. | 7 | 1.24 |
+| `rigidPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
+| `rigidPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
+| `rigidPVC` | `__ne__` | Return self!=value. | 7 | 1.24 |
+| `rigidPVC` | `__repr__` | disp method | 40 | 1.24 |
+| `rigidPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
+| `rigidPVC` | `__setitem__` | set indexing method | 39 | 1.24 |
+| `rigidPVC` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
+| `rigidPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
+| `rigidPVC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
+| `rigidPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `rigidPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
+| `rigidPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
+| `rigidPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
+| `rigidPVC` | `contact` | alias to migration method | 3 | 1.24 |
+| `rigidPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
+| `rigidPVC` | `density` | density of rigid PVC: ~1400 kg/m^3 | 6 | 1.24 |
+| `rigidPVC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rigidPVC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
+| `rigidPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
+| `rigidPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
+| `rigidPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
+| `rigidPVC` | `split` | split layers | 7 | 1.24 |
+| `rigidPVC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
+| `rigidPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
 
 <a id="patankar_loadpubchem" name="patankar_loadpubchem"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_layer" title="Go to Previous Module: patankar.layer" style="text-decoration: none;">⬅️ Previous</a>
@@ -2066,30 +2256,41 @@ object --> migrant
 graph TD;
 CompoundIndex
 migrant
+migrantToxtree
+migrant --> migrantToxtree
 object --> CompoundIndex
 object --> migrant
 ```
 
-**[Class Examples for `patankar/loadpubchem.py` (4)](class_examples.html#patankar_loadpubchem)**
+**[Class Examples for `patankar/loadpubchem.py` (5)](class_examples.html#patankar_loadpubchem)**
 
 ### Methods Table
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 102 | 1.21 |
-| `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.21 |
-| `CompoundIndex` | `_add_synonym_to_index` | Helper to map a single synonym→cid in self.index. | 9 | 1.21 |
-| `CompoundIndex` | `_atom_to_dict` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.21 |
-| `CompoundIndex` | `_bond_to_dict` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.21 |
-| `CompoundIndex` | `_extract_all_pubchem_properties` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.21 |
-| `CompoundIndex` | `_gather_synonyms` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.21 |
-| `CompoundIndex` | `_generate_simple_dict` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.21 |
-| `CompoundIndex` | `find` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 86 | 1.21 |
-| `CompoundIndex` | `refresh_index` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.21 |
-| `migrant` | `__init__` | Create a new migrant instance. | 273 | 1.21 |
-| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 27 | 1.21 |
-| `migrant` | `__str__` | Formatted string representing the migrant | 4 | 1.21 |
-| `migrant` | `dispmax` | optimize display | 9 | 1.21 |
+| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 102 | 1.29 |
+| `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.29 |
+| `CompoundIndex` | `_add_synonym_to_index` | Helper to map a single synonym→cid in self.index. | 9 | 1.29 |
+| `CompoundIndex` | `_atom_to_dict` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.29 |
+| `CompoundIndex` | `_bond_to_dict` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.29 |
+| `CompoundIndex` | `_extract_all_pubchem_properties` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.29 |
+| `CompoundIndex` | `_gather_synonyms` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.29 |
+| `CompoundIndex` | `_generate_simple_dict` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.29 |
+| `CompoundIndex` | `find` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 86 | 1.29 |
+| `CompoundIndex` | `refresh_index` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.29 |
+| `migrant` | `__init__` | Create a new migrant instance. | 298 | 1.29 |
+| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 45 | 1.29 |
+| `migrant` | `__str__` | Formatted string representing the migrant | 4 | 1.29 |
+| `migrant` | `dispmax` | optimize display | 9 | 1.29 |
+| `migrantToxtree` | `__init__` | Create a new migrant instance. | 39 | 1.29 |
+| `migrantToxtree` | `__repr__` | Formatted string representation summarizing key attributes. | 45 | 1.29 |
+| `migrantToxtree` | `__str__` | Formatted string representing the migrant | 4 | 1.29 |
+| `migrantToxtree` | `_clean_field_names` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.29 |
+| `migrantToxtree` | `_crop_image` | Crops white background from the PNG image. | 10 | 1.29 |
+| `migrantToxtree` | `_download_pubchem_data` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 17 | 1.29 |
+| `migrantToxtree` | `_run_toxtree` |  | 42 | 1.29 |
+| `migrantToxtree` | `class_roman_to_int` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.29 |
+| `migrantToxtree` | `dispmax` | optimize display | 9 | 1.29 |
 
 <a id="patankar_migration" name="patankar_migration"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_loadpubchem" title="Go to Previous Module: patankar.loadpubchem" style="text-decoration: none;">⬅️ Previous</a>
@@ -2109,6 +2310,7 @@ SensPatankarResult
 foodlayer
 foodphysics
 layer
+layerLink
 restartfile
 restartfile_senspantakar
 Figure --> PrintableFigure
@@ -2118,6 +2320,7 @@ object --> Cprofile
 object --> SensPatankarResult
 object --> foodphysics
 object --> layer
+object --> layerLink
 object --> restartfile
 restartfile --> restartfile_senspantakar
 ```
@@ -2128,57 +2331,78 @@ restartfile --> restartfile_senspantakar
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `_generate_figname` | Generate a clean filename based on metadata or current date/time. | 23 | 1.2 |
-| (module-level) | `autoname` | Generates a random simulation name. | 25 | 1.2 |
-| (module-level) | `compute_fc_profile_PBC` | Calculate interface concentrations with periodic boundary conditions | 41 | 1.2 |
-| (module-level) | `compute_fv_profile` | Compute the full finite-volume concentration profile, including node values and interface values. (this function is not nested inside senspantar for better readability) | 71 | 1.2 |
-| (module-level) | `custom_plt_figure` | Ensure all figures are PrintableFigure. | 4 | 1.2 |
-| (module-level) | `custom_plt_subplots` | Ensure plt.subplots() returns a PrintableFigure. | 5 | 1.2 |
-| (module-level) | `is_valid_figure` | Checks if `fig` is a valid and open Matplotlib figure. | 11 | 1.2 |
-| (module-level) | `print_figure` | Save the figure in both PDF and PNG formats. | 16 | 1.2 |
-| (module-level) | `print_pdf` | Save a given figure as a PDF. | 26 | 1.2 |
-| (module-level) | `print_png` | Save a given figure as a PNG. | 26 | 1.2 |
-| (module-level) | `rgb` | Displays a categorized color chart with properly aligned headers. | 33 | 1.2 |
-| (module-level) | `senspatankar` | Simulates in 1D the mass transfer of a substance initially distributed in a multilayer packaging structure into a food medium (or liquid medium). This solver uses a finite-volume method adapted from Patankar to handle partition coefficients between all layers, and between the food and the contact layer. | 354 | 1.2 |
-| (module-level) | `tooclear` | Darkens a too-bright RGB(A) color tuple. | 31 | 1.2 |
-| `CFSimulationContainer` | `__init__` | Initialize an empty container for CF results. | 6 | 1.2 |
-| `CFSimulationContainer` | `__repr__` | Return a summary of stored CF curves. | 16 | 1.2 |
-| `CFSimulationContainer` | `add` | Add a new CF result to the container. | 50 | 1.2 |
-| `CFSimulationContainer` | `delete` | Remove a stored curve by its label. | 15 | 1.2 |
-| `CFSimulationContainer` | `plotCF` | Plot all stored CF curves in a single figure. | 58 | 1.2 |
-| `CFSimulationContainer` | `rgb` | Displays a categorized color chart with properly aligned headers. | 3 | 1.2 |
-| `CFSimulationContainer` | `save_as_csv` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 25 | 1.2 |
-| `CFSimulationContainer` | `save_as_excel` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 26 | 1.2 |
-| `CFSimulationContainer` | `to_dataframe` | Export interpolated CF data as a pandas DataFrame. Parameters: - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). Returns: - pd.DataFrame A DataFrame with time as index and CF values as columns (one per simulation). | 35 | 1.2 |
-| `Cprofile` | `__init__` | Initialize the concentration profile Cx(x). | 13 | 1.2 |
-| `Cprofile` | `__repr__` | Representation of the profile. | 25 | 1.2 |
-| `Cprofile` | `__str__` | Returns a formatted string representation of the profile. | 3 | 1.2 |
-| `Cprofile` | `assign_values` | Assign new values to Cx at specified indices. | 19 | 1.2 |
-| `Cprofile` | `find_indices_Cxrange` | Find indices where Cx is within a specified range. | 12 | 1.2 |
-| `Cprofile` | `find_indices_xrange` | Find indices where x is within a specified range. | 12 | 1.2 |
-| `Cprofile` | `integrate` | Compute the integral of Cx over x using Simpson's rule. | 8 | 1.2 |
-| `Cprofile` | `interp` | Interpolate concentration values at new x positions. | 12 | 1.2 |
-| `Cprofile` | `mean_concentration` | Compute the mean concentration using the integral. | 8 | 1.2 |
-| `PrintableFigure` | `print` |  | 2 | 1.2 |
-| `PrintableFigure` | `print_pdf` |  | 2 | 1.2 |
-| `PrintableFigure` | `print_png` |  | 2 | 1.2 |
-| `SensPatankarResult` | `__add__` | Concatenate two solutions | 63 | 1.2 |
-| `SensPatankarResult` | `__init__` | constructor using positional arguments | 38 | 1.2 |
-| `SensPatankarResult` | `__repr__` | Return repr(self). | 14 | 1.2 |
-| `SensPatankarResult` | `__rshift__` | Overloads >> to propagate migration to food. | 8 | 1.2 |
-| `SensPatankarResult` | `__str__` | Return str(self). | 4 | 1.2 |
-| `SensPatankarResult` | `chaining` |  | 6 | 1.2 |
-| `SensPatankarResult` | `interpolate_CF` | Interpolates the concentration in the food (CF) at given time(s). | 39 | 1.2 |
-| `SensPatankarResult` | `plotCF` | Plot the concentration in the food (CF) as a function of time and highlight the target time(s). | 100 | 1.2 |
-| `SensPatankarResult` | `plotCx` | Plot the concentration profiles (Cx) in the packaging vs. position (x) for different times, using a color gradient similar to Parula, based on time values (not index order). Additionally, highlight the concentration profile at `ttarget` with a thick black line. | 82 | 1.2 |
-| `SensPatankarResult` | `resume` | Resume simulation for a new duration (with all parameters are unchanged) | 46 | 1.2 |
-| `SensPatankarResult` | `savestate` | Saves senspantankar inputs for simulation chaining | 5 | 1.2 |
-| `SensPatankarResult` | `update` | Update modifiable parameters of the SensPatankarResult object. Parameters: - name (str): New name for the object. - description (str): New description. - tscale (float or tuple): Time scale (can be tuple like (1, "day")). - tunit (str): Time unit. - lscale (float or tuple): Length scale (can be tuple like (1e-6, "µm")). - lunit (str): Length unit. - Cscale (float or tuple): Concentration scale (can be tuple like (1, "a.u.")). - Cunit (str): Concentration unit. | 43 | 1.2 |
-| `restartfile_senspantakar` | `__init__` | constructor to be called at the intialization | 23 | 1.2 |
-| `restartfile_senspantakar` | `__repr__` | representation of the restart object | 9 | 1.2 |
-| `restartfile_senspantakar` | `__str__` | Formatted representation of the restart object | 4 | 1.2 |
-| `restartfile_senspantakar` | `freezeCF` | Freeze the CF solution CF(t) | 4 | 1.2 |
-| `restartfile_senspantakar` | `freezeCx` | Freeze the Cx solution Cx(x) | 3 | 1.2 |
+| (module-level) | `_generate_figname` | Generate a clean filename based on metadata or current date/time. | 23 | 1.24 |
+| (module-level) | `autoname` | Generates a random simulation name. | 25 | 1.24 |
+| (module-level) | `colormap` | Generates a list of `ncolors` colors from the specified colormap. | 51 | 1.24 |
+| (module-level) | `compute_fc_profile_PBC` | Computes the full concentration profile, including interface concentrations, for a system with periodic boundary conditions (PBC). | 89 | 1.24 |
+| (module-level) | `compute_fv_profile` | Compute the full finite-volume concentration profile, including node values and interface values. (this function is not nested inside senspantar for better readability) | 71 | 1.24 |
+| (module-level) | `custom_plt_figure` | Ensure all figures are PrintableFigure. | 4 | 1.24 |
+| (module-level) | `custom_plt_subplots` | Ensure plt.subplots() returns a PrintableFigure. | 5 | 1.24 |
+| (module-level) | `is_valid_figure` | Checks if `fig` is a valid and open Matplotlib figure. | 11 | 1.24 |
+| (module-level) | `print_figure` | Save the figure in both PDF and PNG formats. | 16 | 1.24 |
+| (module-level) | `print_pdf` | Save a given figure as a PDF. | 26 | 1.24 |
+| (module-level) | `print_png` | Save a given figure as a PNG. | 26 | 1.24 |
+| (module-level) | `rgb` | Displays a categorized color chart with properly aligned headers. | 33 | 1.24 |
+| (module-level) | `senspatankar` | Simulates in 1D the mass transfer of a substance initially distributed in a multilayer packaging structure into a food medium (or liquid medium). This solver uses a finite-volume method adapted from Patankar to handle partition coefficients between all layers, and between the food and the contact layer. | 361 | 1.24 |
+| (module-level) | `tooclear` | Darkens a too-bright RGB(A) color tuple. | 31 | 1.24 |
+| `CFSimulationContainer` | `__init__` | Initialize an empty container for CF results. | 6 | 1.24 |
+| `CFSimulationContainer` | `__repr__` | Return a summary of stored CF curves including index numbers. | 13 | 1.24 |
+| `CFSimulationContainer` | `_get_keys_by_indices` | Helper function to retrieve keys based on indices. | 20 | 1.24 |
+| `CFSimulationContainer` | `_validate_indices` | Helper function to check if indices are valid. | 7 | 1.24 |
+| `CFSimulationContainer` | `add` | Add a CF result to the container. | 43 | 1.24 |
+| `CFSimulationContainer` | `color` | Change the color of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `colormap` | Generates a list of `ncolors` colors from the specified colormap. | 26 | 1.24 |
+| `CFSimulationContainer` | `delete` | Remove a stored curve by its index (int) or label (str). | 19 | 1.24 |
+| `CFSimulationContainer` | `jet` | Generates colors from the Jet colormap. | 3 | 1.24 |
+| `CFSimulationContainer` | `label` | Change the label of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `linestyle` | Change the linestyle of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `linewidth` | Change the linewidth of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `marker` | Change the marker style of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `markeredgecolor` | Change the marker edge color of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `markerfacecolor` | Change the marker face color of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `markersize` | Change the marker size of one or multiple curves. | 3 | 1.24 |
+| `CFSimulationContainer` | `plotCF` | Plot all stored CF curves in a single figure. | 57 | 1.24 |
+| `CFSimulationContainer` | `rgb` | Displays a categorized color chart with properly aligned headers. | 4 | 1.24 |
+| `CFSimulationContainer` | `save_as_csv` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 25 | 1.24 |
+| `CFSimulationContainer` | `save_as_excel` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 26 | 1.24 |
+| `CFSimulationContainer` | `to_dataframe` | Export interpolated CF data as a pandas DataFrame. Parameters: - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). Returns: - pd.DataFrame A DataFrame with time as index and CF values as columns (one per simulation). | 35 | 1.24 |
+| `CFSimulationContainer` | `update` | Update properties of one or multiple curves. | 45 | 1.24 |
+| `CFSimulationContainer` | `viridis` | Generates colors from the Viridis colormap. | 3 | 1.24 |
+| `Cprofile` | `__init__` | Initialize the concentration profile Cx(x). | 13 | 1.24 |
+| `Cprofile` | `__repr__` | Representation of the profile. | 25 | 1.24 |
+| `Cprofile` | `__str__` | Returns a formatted string representation of the profile. | 3 | 1.24 |
+| `Cprofile` | `assign_values` | Assign new values to Cx at specified indices. | 19 | 1.24 |
+| `Cprofile` | `find_indices_Cxrange` | Find indices where Cx is within a specified range. | 12 | 1.24 |
+| `Cprofile` | `find_indices_xrange` | Find indices where x is within a specified range. | 12 | 1.24 |
+| `Cprofile` | `integrate` | Compute the integral of Cx over x using Simpson's rule. | 8 | 1.24 |
+| `Cprofile` | `interp` | Interpolate concentration values at new x positions. | 12 | 1.24 |
+| `Cprofile` | `mean_concentration` | Compute the mean concentration using the integral. | 8 | 1.24 |
+| `PrintableFigure` | `print` |  | 2 | 1.24 |
+| `PrintableFigure` | `print_pdf` |  | 2 | 1.24 |
+| `PrintableFigure` | `print_png` |  | 2 | 1.24 |
+| `SensPatankarResult` | `__add__` | Concatenate two solutions | 64 | 1.24 |
+| `SensPatankarResult` | `__init__` | Constructor for simulation results. | 54 | 1.24 |
+| `SensPatankarResult` | `__repr__` | Return repr(self). | 14 | 1.24 |
+| `SensPatankarResult` | `__rshift__` | Overloads >> to propagate migration to food. | 8 | 1.24 |
+| `SensPatankarResult` | `__str__` | Return str(self). | 4 | 1.24 |
+| `SensPatankarResult` | `__sub__` | Overloads the operator - for returning a square distance function | 3 | 1.24 |
+| `SensPatankarResult` | `chaining` |  | 6 | 1.24 |
+| `SensPatankarResult` | `copy` | Creates a deep copy of the current SensPatankarResult instance. | 30 | 1.24 |
+| `SensPatankarResult` | `distanceSq` | Compute the squared distance between two SensPatankarResult instances. | 63 | 1.24 |
+| `SensPatankarResult` | `fit` | Fits simulation parameters D and k to fit a discrete CF data | 46 | 1.24 |
+| `SensPatankarResult` | `interpolate_CF` | Interpolates the concentration in the food (CF) at given time(s). | 39 | 1.24 |
+| `SensPatankarResult` | `plotCF` | Plot the concentration in the food (CF) as a function of time. | 97 | 1.24 |
+| `SensPatankarResult` | `plotCx` | Plot the concentration profiles (Cx) in the packaging vs. position (x) for different times, using a color gradient similar to Parula, based on time values (not index order). Additionally, highlight the concentration profile at `ttarget` with a thick black line. | 79 | 1.24 |
+| `SensPatankarResult` | `pseudoexperiment` | Generates discrete pseudo-experimental data from high-resolution simulated results. | 82 | 1.24 |
+| `SensPatankarResult` | `rerun` | Rerun the simulation (while keeping everything unchanged) This function is intended to be used with layerLinks for updating internally the parameters. R.rerun() stores the updated simulation results in R Rupdate = R.rerun() returns a copy of R while updating R | 52 | 1.24 |
+| `SensPatankarResult` | `resume` | Resume simulation for a new duration (with all parameters are unchanged) | 46 | 1.24 |
+| `SensPatankarResult` | `savestate` | Saves senspantankar inputs for simulation chaining | 5 | 1.24 |
+| `SensPatankarResult` | `update` | Update modifiable parameters of the SensPatankarResult object. Parameters: - name (str): New name for the object. - description (str): New description. - tscale (float or tuple): Time scale (can be tuple like (1, "day")). - tunit (str): Time unit. - lscale (float or tuple): Length scale (can be tuple like (1e-6, "µm")). - lunit (str): Length unit. - Cscale (float or tuple): Concentration scale (can be tuple like (1, "a.u.")). - Cunit (str): Concentration unit. | 43 | 1.24 |
+| `restartfile_senspantakar` | `__init__` | constructor to be called at the intialization | 38 | 1.24 |
+| `restartfile_senspantakar` | `__repr__` | representation of the restart object | 9 | 1.24 |
+| `restartfile_senspantakar` | `__str__` | Formatted representation of the restart object | 4 | 1.24 |
+| `restartfile_senspantakar` | `freezeCF` | Freeze the CF solution CF(t) | 4 | 1.24 |
+| `restartfile_senspantakar` | `freezeCx` | Freeze the Cx solution Cx(x) | 3 | 1.24 |
 
 <a id="patankar_private_mstruct" name="patankar_private_mstruct"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_migration" title="Go to Previous Module: patankar.migration" style="text-decoration: none;">⬅️ Previous</a>
