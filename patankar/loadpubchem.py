@@ -616,7 +616,119 @@ class CompoundIndex:
 # Main compound database
 dbdefault = CompoundIndex(cache_dir="cache.PubChem", index_file="pubchem_index.json")
 
-# Migrant class
+# Model extensions to be tested with PropertyModelSelector()
+"""
+# ==============================================================================================
+#  Use this emplate to validate the validation of alternative models by PropertyModelSelector()
+#    The syntax is sophisticated and accept multiple paradims and criteria.
+#
+#    see patankar.property.PropertyModelSelector documentation for more details
+# ==============================================================================================
+
+# Evaluate first Dmodel_extensions
+
+# Dependencies
+from pprint import pp as disp
+from patankar.loadpubchem import migrant
+from patankar.layer import gPET, PS, PP, LDPE, rigidPVC
+from patankar.property import PropertyModelSelector
+
+# Case study
+m1 = migrant("toluene")
+m2 = migrant("BHT")
+material = gPET()+PS()+PP()+LDPE()+rigidPVC()
+disp(Dmodel_extensions,depth=7,width=60) # show Dmodel_extensinos
+
+# we build objects on which rules will be tested
+# use material first since all Dmodels check against material, but not all against migrant
+# index refers the the layer index (it should be last)
+objects = {"material":material,"migrant":m1,"index":2}
+
+# check Dmodels with objects
+availableExtensions = list(Dmodel_extensions.keys())
+applicableExtensions = [False]*len(availableExtensions)
+for imodel,modelCode in enumerate(availableExtensions):
+    modelObjects = [objects[o] for o in Dmodel_extensions[modelCode]["objects"]]
+    modelRules = Dmodel_extensions[modelCode]["rules"].copy()
+    modelRules_layer = modelRules[0]["list"][1] # 0=polymer rules, 1=polymer type
+    modelRules_layer["index"] = objects["index"] # layer index
+    applicableExtensions[imodel] = PropertyModelSelector(modelRules,modelObjects)
+    # nice display
+    print(f'{modelCode}('
+          f'{objects["material"][objects["index"]].layerclass_history[0]},'
+          f'{objects["migrant"].compound}) = ',
+          applicableExtensions[imodel]
+          )
+first_true_index = next((i for i, val in enumerate(applicableExtensions) if val), None)
+if first_true_index is not None:
+    firstApplicableExtension = availableExtensions[first_true_index]
+    print(f"first applicable model: {firstApplicableExtension}")
+else:
+    print("no alternative model, use the default one")
+"""
+
+
+# Alternative Dmodels
+Dmodel_extensions = {
+    "DFV": {
+      "description": "hole Free-Volume theory model for toluene in many polymers",
+          "objects": ["material","migrant"], # it requires material and migrant (material always first)
+            "rules": [ # we assume AND between all conditions
+                        # Condition on the material (always first)
+                        {"list": [
+                            # medium must be a polymer (ispolymer == True)
+                            {"attribute": "ispolymer",
+                             "op": "istrue",
+                            },
+                            # the polymer with index must be of these types
+                            {"attribute": "layerclass_history",
+                             "index":0,
+                             "op": "in",
+                             "value": ("gPET","LDPE","PP","PS")
+                            }, # next condition
+                                ] # close list of rules for rules[0]
+                        }, # close rules[0]
+                        # Condition on migrant
+                        {"list": [
+                            # migrant must be Toluene (based on its InChiKey)
+                            {"attribute": "InChiKey",
+                                   "op": "==",
+                                   "value": "YXFVVABEGXRONW-UHFFFAOYSA-N"
+                            }
+                                ], # next condition
+                        }, # next rule
+                    ] # close rules
+            }, # next model
+
+    "Dwelle": {
+    "description": "hole Free-Volume theory model for toluene in many polymers",
+        "objects": ["material"],
+          "rules": [ # we assume AND between all conditions
+                    # Condition on the material (always first)
+                    {"list": [
+                        # medium must be a polymer (ispolymer == True)
+                        {"attribute": "ispolymer",
+                         "op": "istrue",
+                        },
+                        # the polymer with index must be of these types
+                        {"attribute": "layerclass_history",
+                         "index":0,
+                         "op": "in",
+                         "value": ("gPET","LDPE","PP","PS")
+                        }, # next condition
+                            ] # close list of rules for rules[0]
+                    }, # close rules[0]
+                    ] # close rules
+            }
+    }
+
+# Alternative kmodel
+kmodel_extensions = {} # they are not implemented yet
+
+# =========================================
+#               Migrant class
+# =========================================
+
 class migrant:
     """
     A class representing a migrating chemical substance.
@@ -694,16 +806,36 @@ class migrant:
     # class attribute, maximum width
     _maxdisplay = 40
 
-    # migrant constructor
-    def __init__(self, name=None,
-                 M=None, logP=None,
-                 Dmodel = "Piringer",
-                 Dtemplate = {"polymer":"LLDPE", "M":50, "T":40}, # do not use None
-                 kmodel = "kFHP",
-                 ktemplate = {"Pi":1.41, "Pk":3.97, "Vi":124.1, "Vk":30.9, "ispolymer":True,
-                              "alpha":0.14, "lngmin":0.0,"Psat":1.0}, # do not use None
-                 db=dbdefault,
-                 raiseerror=True):
+    # migrant constructor with its predictor templates
+    def __init__(self, name=None,   # substance identified by name
+                 M=None, logP=None, # substance identified by M, logP(less reliable)
+
+                 Dmodel = "Piringer", # <--- default D model
+
+                 Dtemplate = {"polymer":"LLDPE",
+                              "M":50,
+                              "T":40
+                              }, # do not use None
+
+                 kmodel = "kFHP",    # <--- default k model
+
+                 ktemplate = {"Pi":1.41,  # P'i (polarity index)
+                              "Pk":3.97,  # P'k (polarity index)
+                              "Vi":124.1, # molar volume of i
+                              "Vk":30.9,  # molar volume of k
+                              "ispolymer":True, # True if FH theory is applicable
+                              "alpha":0.14, # \alpha \times (P'_i-P'k)^2
+                              "lngmin":0.0, # min of log(\gamma_i) -- see theory at inifinite dilution
+                              "Psat":1.0,   # partial saturation pressure for i (usually not defined)
+                              "crystallinity":0, # k are calculated respectively to the volume fraction
+                              "porosity":0       # of amorphous phase (1-crystallinity)(1-porosity)
+                              }, # do not use None
+
+                 db=dbdefault, # cache.PubChem database
+
+                 raiseerror=True # raise an error if the susbtance is not found
+
+                 ):
         """
         Create a new migrant instance.
 
@@ -803,7 +935,6 @@ class migrant:
                 if raiseerror:
                     raise ValueError(f"<{name}> not found")
                 print(f"LOADPUBCHEM ERRROR: <{name}> not found - empty object returned")
-                # No record found
                 self.compound = name
                 self.name = [name]
                 self.cid = []
@@ -814,97 +945,102 @@ class migrant:
                 self.smiles = None
                 self.logP = None
             else:
-                # Possibly multiple matching rows
                 self.compound = name
-                all_names = []
-                all_cid = []
-                all_cas = []
-                all_m = []
-                all_formulas = []
-                all_smiles = []
-                all_logP = []
+                # Initialize dictionary to accumulate properties from each row
+                all_data = {
+                    "names": [],
+                    "cid": [],
+                    "cas": [],
+                    "inchi": [],
+                    "inchikey": [],
+                    "m": [],
+                    "logp": [],
+                    "formula": [],
+                    "smiles": [],
+                }
+
+                # Helper functions
+                def ensure_list(val):
+                    if val is None:
+                        return []
+                    return val if isinstance(val, list) else [val]
+
+                def to_float(val):
+                    try:
+                        return float(val)
+                    except Exception:
+                        return np.nan
 
                 for _, row in df.iterrows():
+                    # Combine name and synonyms into one set
+                    names = ensure_list(row.get("name", []))
+                    syns = ensure_list(row.get("synonyms", []))
+                    all_data["names"].extend(set(names) | set(syns))
 
-                    # Gather a list/set of names
-                    row_names = row.get("name", [])
-                    if isinstance(row_names, str):
-                        row_names = [row_names]
-                    row_syns = row.get("synonyms", [])
-                    combined_names = set(row_names) | set(row_syns)
-                    all_names.extend(list(combined_names))
+                    # Process CID (append if exists)
+                    cid = row.get("CID", None)
+                    if cid:
+                        all_data["cid"].append(cid)
 
-                    # CID
-                    row_cid = row.get("CID", [])
-                    if row_cid:
-                        all_cid.append(row_cid)
+                    # Process CAS (extend list if exists)
+                    cas = ensure_list(row.get("CAS", []))
+                    all_data["cas"].extend(cas)
 
-                    # CAS
-                    row_cas = row.get("CAS", [])
-                    if row_cas:
-                        all_cas.extend(row_cas)
+                    # Process InChi and InChiKey (ensure list conversion and extend)
+                    inchi = ensure_list(row.get("InChi", []))
+                    inchikey = ensure_list(row.get("InChiKey", []))
+                    all_data["inchi"].extend(inchi)
+                    all_data["inchikey"].extend(inchikey)
 
-                    # M
-                    row_m = row.get("M", None)
-                    if row_m is not None:
-                        try:
-                            all_m.append(float(row_m))
-                        except:
-                            all_m.append(np.nan)
+                    # Process M: convert to float or use np.nan
+                    m_val = row.get("M", None)
+                    all_data["m"].append(to_float(m_val) if m_val is not None else np.nan)
+
+                    # Process logP similarly (if not None or empty)
+                    logp_val = row.get("logP", None)
+                    if logp_val not in (None, ""):
+                        all_data["logp"].append(to_float(logp_val))
                     else:
-                        all_m.append(np.nan)
+                        all_data["logp"].append(np.nan)
 
-                    # logP
-                    row_logp = row.get("logP", None)
-                    if row_logp not in (None, ""):
-                        try:
-                            all_logP.append(float(row_logp))
-                        except:
-                            all_logP.append(np.nan)
-                    else:
-                        all_logP.append(np.nan)
+                    # Process formula and SMILES (append even if None to preserve index)
+                    all_data["formula"].append(row.get("formula", None))
+                    all_data["smiles"].append(row.get("SMILES", None))
 
-                    # formula (as a string)
-                    row_formula = row.get("formula", None)
-                    # Even if None, we append so the index lines up with M
-                    all_formulas.append(row_formula)
+                # Convert lists to arrays for numerical properties
+                arr_m = np.array(all_data["m"], dtype=float)
+                arr_logp = np.array(all_data["logp"], dtype=float)
 
-                    # SMILES (as a string)
-                    row_smiles = row.get("SMILES", None)
-                    # Even if None, we append so the index lines up with M
-                    all_smiles.append(row_smiles)
+                # Deduplicate fields where necessary
+                unique_names = list(set(all_data["names"]))
+                unique_cid = list(set(all_data["cid"]))
+                unique_cas = list(set(all_data["cas"]))
+                unique_inchi = list(set(all_data["inchi"]))
+                unique_inchikey = list(set(all_data["inchikey"]))
 
-                # Convert to arrays
-                arr_m = np.array(all_m, dtype=float)
-                arr_logp = np.array(all_logP, dtype=float)
-
-                # Some dedup / cleaning
-                unique_names = list(set(all_names))
-                unique_cid = list(set(all_cid))
-                unique_cas = list(set(all_cas))
-
-                # Store results in the migrant object
+                # Store deduplicated and processed values in the object
                 self.name = unique_names
-                self.cid = unique_cid[0] if len(unique_cid)==1 else unique_cid
+                self.cid = unique_cid[0] if len(unique_cid) == 1 else unique_cid
                 self.CAS = unique_cas if unique_cas else None
+                self.InChi = unique_inchi[0] if unique_inchi else None
+                self.InChiKey = unique_inchikey[0] if unique_inchikey else None
                 self.M_array = arr_m
-                # Minimum M
+
+                # Select the record with the minimum M (if available)
                 if np.isnan(arr_m).all():
                     self.M = None
                     self.formula = None
                     self.smiles = None
                 else:
-                    idx_min = np.nanargmin(arr_m)         # index of min M
-                    self.M = arr_m[idx_min]               # pick that M
-                    self.formula = all_formulas[idx_min]  # pick formula from same record
-                    self.smiles = all_smiles[idx_min]     # pick smilesfrom same record
+                    idx_min = np.nanargmin(arr_m)
+                    self.M = arr_m[idx_min]
+                    self.formula = all_data["formula"][idx_min]
+                    self.smiles = all_data["smiles"][idx_min]
 
-                # Valid logP
+                # Process logP: store only valid (non-NaN) values if available
                 valid_logp = arr_logp[~np.isnan(arr_logp)]
-                if valid_logp.size > 0:
-                    self.logP = valid_logp  # or store as a list/mean/etc.
-                else:
-                    self.logP = None
+                self.logP = valid_logp if valid_logp.size > 0 else None
+
 
         # Case (b): name is None, M is provided => generic substance
         # ----------------------------------------------------------------
@@ -920,6 +1056,8 @@ class migrant:
             self.name = "generic"  # from instructions
             self.cid = None
             self.CAS = None
+            self.InChi = None
+            self.InChiKey = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
@@ -939,6 +1077,8 @@ class migrant:
             self.name = name
             self.cid
             self.CAS = None
+            self.InChi = None
+            self.InChiKey = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
@@ -956,43 +1096,54 @@ class migrant:
 
         # Diffusivity model
         if Dmodel is not None:
-            if not isinstance(Dmodel,str):
-                raise TypeError(f"Dmodel should be str not a {type(Dmodel).__name__}")
-            if Dmodel not in MigrationPropertyModels["D"]:
-                raise ValueError(f'The diffusivity model "{Dmodel}" does not exist')
-            Dmodelclass = MigrationPropertyModels["D"][Dmodel]
-            if not MigrationPropertyModel_validator(Dmodelclass,Dmodel,"D"):
-                raise TypeError(f'The diffusivity model "{Dmodel}" is corrupted')
-            if Dtemplate is None:
-                Dtemplate = {}
-            if not isinstance(Dtemplate,dict):
-                raise TypeError(f"Dtemplate should be a dict not a {type(Dtemplate).__name__}")
-            self.D  = Dmodelclass
-            self.Dtemplate = Dtemplate.copy()
-            self.Dtemplate.update(M=self.M,logP=self.logP)
+            self._validate_and_set_model("D",Dmodel,Dtemplate,
+                                         {"M": self.M, "logP": self.logP},
+                                         MigrationPropertyModels,MigrationPropertyModel_validator)
         else:
             self.D = None
             self.Dtemplate = None
 
         # Henry-like model
         if kmodel is not None:
-            if not isinstance(kmodel,str):
-                raise TypeError(f"kmodel should be str not a {type(kmodel).__name__}")
-            if kmodel not in MigrationPropertyModels["k"]:
-                raise ValueError(f'The Henry-like model "{kmodel}" does not exist')
-            kmodelclass = MigrationPropertyModels["k"][kmodel]
-            if not MigrationPropertyModel_validator(kmodelclass,kmodel,"k"):
-                raise TypeError(f'The Henry-like model "{kmodel}" is corrupted')
-            if ktemplate is None:
-                ktemplate = {}
-            if not isinstance(ktemplate,dict):
-                raise TypeError(f"ktemplate should be a dict not a {type(ktemplate).__name__}")
-            self.k  = kmodelclass
-            self.ktemplate = ktemplate.copy()
-            self.ktemplate.update(Pi=self.polarityindex,Vi=self.molarvolumeMiller)
+            self._validate_and_set_model("k",kmodel,ktemplate,
+                                         {"Pi": self.polarityindex, "Vi": self.molarvolumeMiller},
+                                         MigrationPropertyModels,MigrationPropertyModel_validator)
         else:
             self.k = None
             self.ktemplate = None
+
+
+    def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):
+        """
+        Generic method for validating and setting a migration property model.
+
+        Parameters:
+            prop (str): The property identifier (e.g. "D" or "k").
+            model (str or None): The model name.
+            template (dict or None): A dictionary template to be updated.
+            update_params (dict): Extra parameters to update the template.
+            PropertyModel: MigrationPropertyModels from patankar.property
+            PropertyModelValidator: MigrationPropertyModel_validator from patankar.property
+        """
+        if model is not None:
+            if not isinstance(model, str):
+                raise TypeError(f"{prop}model should be str not a {type(model).__name__}")
+            if model not in PropertyModel[prop]:
+                raise ValueError(f'The {prop} model "{model}" does not exist')
+            model_class = PropertyModel[prop][model]
+            if not PropertyModelValidator(model_class, model, prop):
+                raise TypeError(f'The {prop} model "{model}" is corrupted')
+            if template is None:
+                template = {}
+            if not isinstance(template, dict):
+                raise TypeError(f"{prop}template should be a dict not a {type(template).__name__}")
+            setattr(self, prop, model_class)
+            temp_copy = template.copy()
+            temp_copy.update(update_params)
+            setattr(self, f"{prop}template", temp_copy)
+        else:
+            setattr(self, prop, None)
+            setattr(self, f"{prop}template", None)
 
     # helper property to combine D and Dtemplate
     @property
@@ -1032,6 +1183,7 @@ class migrant:
             "M_array": self.M_array if self.M_array is not None else "N/A",
             "formula": self.formula,
             "smiles": self.smiles if hasattr(self,"smiles") else "N/A",
+            "InChiKey": self.InChiKey if hasattr(self,"InChiKey") else "N/A",
             "logP": self.logP,
             "P' (calc)": self.polarityindex
         }
@@ -1179,6 +1331,34 @@ class migrant:
         120.7  # Example output
         """
         return 0.935 * self.M + 14.2
+
+    # suggest an alternative D model
+    def suggest_alt_Dmodel(self,material=None,index=None):
+        """suggest an alternative Dmodel based on Dmodel_extensions"""
+        # local dependencies
+        from patankar.layer import layer
+        from patankar.property import PropertyModelSelector
+        # check all args (all mandatory)
+        if material is None or substance is None or index is None:
+            raise ValueError("material, subsdtance and index must be provided")
+        if not isinstance(material, layer):
+            raise TypeError(f"material must be a layer not a {type(material).__name__}")
+        if not(isinstance(index,int)):
+            raise TypeError(f"index must be int not a {type(index).__name__}")
+        # we build objects on which rules will be tested
+        objects = {"material":material,"migrant":self,"index":index}
+        # check Dmodels with objects
+        availableExtensions = list(Dmodel_extensions.keys())
+        applicableExtensions = [False]*len(availableExtensions)
+        for imodel,modelCode in enumerate(availableExtensions):
+            modelObjects = [objects[o] for o in Dmodel_extensions[modelCode]["objects"]]
+            modelRules = Dmodel_extensions[modelCode]["rules"].copy()
+            modelRules_layer = modelRules[0]["list"][1] # 0=polymer rules, 1=polymer type
+            modelRules_layer["index"] = objects["index"] # layer index
+            applicableExtensions[imodel] = PropertyModelSelector(modelRules,modelObjects)
+        first_true_index = next((i for i, val in enumerate(applicableExtensions) if val), None)
+        # returns the name of the first applicable model, if not None
+        return availableExtensions[first_true_index] if first_true_index is not None else None
 
 # %% Class migrantToxtree extending migrant class with Toxtree data
 """
@@ -1511,3 +1691,9 @@ if __name__ == "__main__":
     print("Cramer Class:", c)
     print("Cramer2 Class:", c2)
     print("Cramer3 Class:", c3)
+
+    # suggest an alternative D model
+    from patankar.layer import gPET, LDPE, PP, rigidPVC
+    material = gPET()+LDPE()+PP()+rigidPVC()
+    m.suggest_alt_Dmodel(material,3)
+    m.suggest_alt_Dmodel(material,1)

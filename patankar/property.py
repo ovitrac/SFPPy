@@ -149,7 +149,7 @@ class PartitionCoeffcicients(migrationProperty):
 class kFHP(HenryLikeCoefficients):
     """
         Simplified model to estimate Henry-like coefficients based on gFHP class
-            ki,k = Vi * Pi gik(P'i,P'k,Vi,Vk)
+            ki,k = Vi * Pi gik(P'i,P'k,Vi,Vk,crystallinity,porosity)
 
             i: solute
             k: P or F
@@ -158,8 +158,9 @@ class kFHP(HenryLikeCoefficients):
             ispolymer: True for polymers
             alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
             lngmin: minimum value (default=0)
-            gscale: activity coefficient (default=Vi*Psat)
             Psat: vapor saturation pressure
+            cristallinity: crystallinity of the solid phase
+            porosity: porosity of the effective solid.medium
 
         Only a static evaluate is proposed.
 
@@ -170,26 +171,30 @@ class kFHP(HenryLikeCoefficients):
     description = "Flory-Huggins model of Henry-likecoefficients from P' and V at infinite dilution in k"
     model = "semi-empirical"
     theory = "Flory-Huggins"
-    parameters = {"Pi": {"description": "polarity index of solute i","units": "-"},
-                  "Pk": {"description": "polarity index of continuous phase k","units": "-"},
-                  "Vi": {"description": "molar volume","units": "g/cm**3"},
-                  "Vk": {"description": "molar volume of k","units": "g/cm**3"},
-                  "Psat": {"description": "vapor saturation pressure of i","units": "Pa"}
+    parameters = {  "Pi": {"description": "polarity index of solute i","units": "-"},
+                    "Pk": {"description": "polarity index of continuous phase k","units": "-"},
+                    "Vi": {"description": "molar volume","units": "g/cm**3"},
+                    "Vk": {"description": "molar volume of k","units": "g/cm**3"},
+                  "Psat": {"description": "vapor saturation pressure of i","units": "Pa"},
+         "crystallinity": {"description": "crystallinity of the solid phase",'units':"-"},
+              "porosity": {"description": "porosity of the effective solid/medium",'units':"-"},
                 }
     _available_to_import = True # this model can be imported
 
     @classmethod
-    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True,porosity=0,crystallinity=0):
         """evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)"""
+        scalesolidamorphous = (1-porosity)*(1-crystallinity)
+        scalesolidamorphous = 1 if scalesolidamorphous==0 else scalesolidamorphous # pure air
         if scaling: # (default behavior)
             return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                         alpha=alpha,lngmin=lngmin,
-                        gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --> [m**3/kg]
+                        gscale=Vi*1e-3*Psat/scalesolidamorphous # Vi is converted [cm**3/g] --> [m**3/kg]
                         )
         else:
             return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                         alpha=alpha,lngmin=lngmin,
-                        gscale=1
+                        gscale=1/scalesolidamorphous
                         )
 
 # %% Simplified Flory-Huggins model of activity coefficients
@@ -800,6 +805,341 @@ def MigrationPropertyModel_validator(model=None,name=None,notation=None):
     return True # if all tests passed
 
 
+
+# Function helper to select a model based in rules
+def PropertyModelSelector(rules, obj, model1=None, params1=None, model2=None, params2=None, flags=None):
+    """
+    Selects between two models (and their associated parameter dictionaries) based on a set of rules
+    evaluated on a provided object (or objects). New features include optional models/params and
+    additional operators.
+
+    ---------------------------------------------------------------------------------------------------
+    ===== **Important Notice** =====
+    ---------------------------------------------------------------------------------------------------
+    Several paradigms are available, it is implemented for patankar.loadpubchem.migrant instances as
+            migrant.suggest_alt_Dmodel(material,layerindex) by using global rules: Dmodel_extensions
+
+    This low-level function enforces rigourously complex rules to pick the best model based on objexct
+    attributes. Objects can be included in a list to test conditions on material (specific layer),
+    substance, etc, all together.
+
+    Please refer to examples and current implementations for details.
+    ---------------------------------------------------------------------------------------------------
+
+    Parameters:
+        rules (dict or list of dict): A rule or a list of rules. A single rule should have the format:
+            {
+              "operation": "and" or "or" (default "and"),
+              "list": [
+                  {"attribute": <str>, "op": <str>, "value": <any>, "index": <int> (optional)},
+                  ...
+              ]
+            }
+        obj (dict, object, or list/tuple): An object (or sequence of objects) on which the rules are checked.
+            For each condition, the attribute is retrieved either from a dict (via key) or from an object
+            (via getattr).
+        model1 (function or None): The default model function.
+        params1 (dict or None): The parameters for model1.
+        model2 (function or None): The alternate model function.
+        params2 (dict or None): The parameters for model2.
+        flags (dict, optional): A dictionary with flags for string comparisons. Defaults to:
+            {
+              "remove_blanks": True,      # Remove spaces from the string.
+              "trim": True,               # Remove leading/trailing whitespace.
+              "case_insensitive": True    # Compare in lowercase.
+            }
+            These flags are applied to both the attribute value (from obj) and the condition value when
+            they are strings.
+
+    Returns:
+        - If all of model1, params1, model2, and params2 are None: returns a single boolean value
+          (the test result).
+        - Otherwise: returns a tuple (testresult, selected_model, selected_params) where:
+            * testresult (bool): Outcome of evaluating the rules on obj.
+            * If testresult is True, selected_model and selected_params are model2 and params2.
+            * Otherwise, they are model1 and params1.
+
+    Note: Calling with a tuple of two objects (migrant, medium):
+        result, selected_model, selected_params = PropertyModelSelector(
+            Dmodel_extensions["DFV"]["rules"],
+            (migrant, medium),
+            model1, params1,
+            model2, params2
+        )
+
+    Advanced features:
+    1. Pseudo Recursion for List Inputs:
+       If both rules and obj are lists (or tuples), then for each rule in rules, the function applies
+       the rule to the corresponding object from obj (if there are more rules than objects, the last
+       object is reused). The overall test result is True only if all evaluations are True.
+    2. Optional Index Field:
+       Each condition may include an optional `index` field. If present and if the attribute value
+       is a list or tuple, the condition is evaluated on the element at that index.
+    3. Optional Models/Parameters:
+       If all of model1, params1, model2, and params2 are None, the function returns a single boolean
+       result (the outcome of evaluating the rules on obj). Otherwise, if at least one is provided, the
+       function returns a tuple: (testresult, selected_model, selected_params). In that case, model1 and
+       params1 must be provided.
+    2. Additional Operators:
+
+
+    List of implemented operators
+      - **"=" or "=="**
+        Tests for equality between the processed attribute value and the condition value.
+      - **"in"**
+        Checks whether the processed attribute value is a member of the condition value
+        (which can be a string, list, or tuple).
+      - **"startswith"**
+        For string values, verifies if the processed attribute value starts with the processed
+        condition value.
+      - **"endwith"**
+        For string values, verifies if the processed attribute value ends with the processed
+        condition value.
+      - **">"**
+        Performs a numeric greater-than comparison.
+      - **"<"**
+        Performs a numeric less-than comparison.
+      - **"istrue"**
+        Tests whether the attribute value is `True` (the condition's value is optional and
+        defaults to `True`).
+      - **"isfalse"**
+        Tests whether the attribute value is `False`.
+      - **"all"**
+        Applies Python’s built-in `all()` to the attribute value (expects an iterable).
+      - **"any"**
+        Applies Python’s built-in `any()` to the attribute value (expects an iterable).
+      - **"hasattr"**
+        Uses Python’s `hasattr()` to check if the attribute value (which may itself be an object)
+        has a specified attribute.
+        *(Here, the condition value must be provided as the attribute name.)*
+      - **"isinstance"**
+        Uses `isinstance(attribute_value, condition_value)` to check if the attribute value is an
+        instance of the given type (or tuple of types).
+      - **"issubclass"**
+        Uses `issubclass(attribute_value, condition_value)` to determine if the attribute value
+        (expected to be a class) is a subclass of the specified type, with error handling for
+        non-class values.
+      - **"callable"**
+        Checks if the attribute value is callable (i.e. it is a function, method, or any object
+        implementing `__call__`).
+
+    Raises:
+        ValueError: If not all models/params are None and model1 or params1 is missing, or if an unsupported
+                    operator or invalid operation is encountered.
+
+    Example (for the current implementation, refer to Dmodel_extensions in read patankar.Dmodel_extensions)
+        Dmodel_extensions = { # toy example, not applicable for production
+            "DFV": {
+              "description": "hole Free-Volume theory model for toluene in many polymers",
+                  "objects": ["migrant","material"],
+                    "rules": [
+                                {"list": [{"attribute": "InChiKey",
+                                           "op": "==",
+                                           "value": "YXFVVABEGXRONW-UHFFFAOYSA-N"}] # <--- migrant must be Toluene
+                                },
+                                {"list": [
+                                    {"attribute": "ispolymer",
+                                     "op": "==",
+                                     "value": True
+                                    }, # <--- medium must be a polymer (ispolymer == True)
+                                    {"attribute": "layerclass_history",
+                                     "index":0,
+                                     "op": "in",
+                                     "value": ("gPET","LDPE","PP","PS")
+                                    } # <---- medium must be one of these polymers
+                                        ]
+                                }
+                            ]
+                    }
+            }
+        from pprint import pp as disp
+        from patankar.loadpubchem import migrant
+        from patankar.layer import gPET, PS, PP, LDPE, rigidPVC
+        from patankar.property import PropertyModelSelector
+        m1 = migrant("toluene")
+        m2 = migrant("BHT")
+        material = gPET()+PS()+PP()+LDPE()+rigidPVC()
+        disp(Dmodel_extensions,depth=7,width=60) # show Dmodel_extensinos
+
+        # check FVT
+        # Note that the index Dmodel_extensions["DFV"]["rules"][1]["list"][1]["index"] must be assigned
+        mig = m1     # migrant
+        index = 2    # layer index
+        FVTrules = Dmodel_extensions["DFV"]["rules"].copy()
+        FVTrules_layer = FVTrules[1]["list"][1]
+        FVTrules_layer["index"] = index # layer index
+        print(f"FVT({mig.compound},{FVTrules_layer['value'][index]})=",
+              PropertyModelSelector(FVTrules,(mig,material))
+              )
+
+    """
+
+    # Check if all model/params are None; if so, we will return a single boolean.
+    all_models_none = (model1 is None and params1 is None and model2 is None and params2 is None)
+
+    # Pseudo Recursion: if rules and obj are lists/tuples.
+    if isinstance(rules, (list, tuple)) and isinstance(obj, (list, tuple)):
+        resbyrules = []
+        N = len(obj)
+        for i, rule_item in enumerate(rules):
+            current_obj = obj[i] if i < N else obj[-1]
+            result = PropertyModelSelector(rule_item, current_obj, model1, params1, model2, params2, flags=flags)
+            # If returning a tuple, extract the boolean result (first element)
+            if isinstance(result, tuple):
+                result = result[0]
+            resbyrules.append(result)
+        final_result = all(resbyrules)
+        if all_models_none:
+            return final_result
+        else:
+            return (True, model2, params2) if final_result else (False, model1, params1)
+
+    # If not all models are None, ensure model1 and params1 are provided.
+    if not all_models_none:
+        if model1 is None or params1 is None:
+            raise ValueError("model1 and params1 are required if not all models/params are None")
+        if model2 is None and params2 is None:
+            return (False, model1, params1)
+        if model2 is None or params2 is None:
+            raise ValueError("model2 and params2 are required if not all models/params are None")
+        if  rules is None: # Only return test result: default is False.
+            return (False, model1, params1)
+    elif rules is None: # Only return test result: default is False.
+            return False
+
+    # Set default flags if not provided.
+    if flags is None:
+        flags = {"remove_blanks": True, "trim": True, "case_insensitive": True}
+
+    # Helper: Process a string with the provided flags.
+    def process_str(s, flags):
+        if not isinstance(s, str):
+            return s
+        if flags.get("trim", True):
+            s = s.strip()
+        if flags.get("remove_blanks", True):
+            s = s.replace(" ", "")
+        if flags.get("case_insensitive", True):
+            s = s.lower()
+        return s
+
+    # Evaluate a single condition.
+    def evaluate_condition(condition):
+        attr = condition.get("attribute")
+        operator = condition.get("op")
+        cond_value = condition.get("value", None)  # value is optional for istrue/isfalse
+        index = condition.get("index", None)  # Optional index for list/tuple attributes
+
+        # Retrieve the attribute value from obj (dict or object).
+        if isinstance(obj, dict):
+            if attr not in obj:
+                return False
+            param_value = obj[attr]
+        else:
+            if not hasattr(obj, attr):
+                return False
+            param_value = getattr(obj, attr)
+
+        # If an index is specified and param_value is a list/tuple, select that element.
+        if index is not None and isinstance(param_value, (list, tuple)):
+            try:
+                param_value = param_value[index]
+            except IndexError:
+                return False
+
+        # For string comparisons, process the values if both are strings.
+        if isinstance(param_value, str) and isinstance(cond_value, str):
+            proc_param = process_str(param_value, flags)
+            proc_cond = process_str(cond_value, flags)
+        else:
+            proc_param = param_value
+            proc_cond = cond_value
+
+        # Standard operators.
+        if operator in ("=", "=="):
+            return proc_param == proc_cond
+        elif operator == "in":
+            if isinstance(param_value, str):
+                proc_param = process_str(param_value, flags)
+                if isinstance(cond_value, str):
+                    proc_cond = process_str(cond_value, flags)
+                    return proc_param in proc_cond
+                elif isinstance(cond_value, (list, tuple)):
+                    proc_list = [process_str(item, flags) if isinstance(item, str) else item
+                                 for item in cond_value]
+                    return proc_param in proc_list
+                else:
+                    return proc_param in cond_value
+            else:
+                return proc_param in cond_value
+        elif operator == "startswith":
+            if not isinstance(param_value, str):
+                return False
+            return process_str(param_value, flags).startswith(process_str(cond_value, flags))
+        elif operator == "endwith":
+            if not isinstance(param_value, str):
+                return False
+            return process_str(param_value, flags).endswith(process_str(cond_value, flags))
+        # New operators:
+        elif operator == "istrue":
+            # value field is optional; equivalent to checking equality with True.
+            return proc_param == True
+        elif operator == "isfalse":
+            return proc_param == False
+        elif operator == "all":
+            try:
+                return all(param_value)
+            except Exception:
+                return False
+        elif operator == "any":
+            try:
+                return any(param_value)
+            except Exception:
+                return False
+        elif operator == "hasattr":
+            # cond_value must be provided as the attribute name to check.
+            return hasattr(param_value, cond_value)
+        elif operator == "isinstance":
+            return isinstance(param_value, cond_value)
+        elif operator == "issubclass":
+            try:
+                return issubclass(param_value, cond_value)
+            except Exception:
+                return False
+        elif operator == "callable":
+            return callable(param_value)
+        elif operator == ">":
+            try:
+                return param_value > cond_value
+            except Exception:
+                return False
+        elif operator == "<":
+            try:
+                return param_value < cond_value
+            except Exception:
+                return False
+        else:
+            raise ValueError(f"Unsupported operator: {operator}")
+
+    # Evaluate all conditions from the rule.
+    conditions = rules.get("list", [])
+    results = [evaluate_condition(cond) for cond in conditions]
+    op_str = rules.get("operation", "and").lower()
+    if op_str == "and":
+        final_result = all(results)
+    elif op_str == "or":
+        final_result = any(results)
+    else:
+        raise ValueError("Invalid rules operation. Must be 'and' or 'or'")
+
+    if all_models_none:
+        return final_result
+    else:
+        return (True, model2, params2) if final_result else (False, model1, params1)
+
+
+
+
 # %% debug and standalone
 # -------------------------------------------------------------------
 # Example usage (for debugging / standalone tests)
@@ -814,3 +1154,44 @@ if __name__ == "__main__":
     Dmodel = Dpiringer("PET",M=100,T=40)
     Dvalue= Dmodel.eval()
     print(f"D2 = {Dvalue} [m**2/s]")
+
+    # Define dummy functions for testing.
+    def dummy1():
+        return "dummy1"
+
+    def dummy2():
+        return "dummy2"
+
+    # Test with obj as a dictionary.
+    test_obj_dict = {"a": " test ", "num": 15}
+    rules = {"operation": "and", "list": [
+        {"attribute": "a", "op": "==", "value": "Test"},
+        {"attribute": "num", "op": ">", "value": 10}
+    ]}
+    res, m, p = PropertyModelSelector(rules, test_obj_dict, dummy1, {"a": 1}, dummy2, {"a": "alternate"})
+    assert res is True and m == dummy2 and p == {"a": "alternate"}, "Expected dummy2 with dict-based obj"
+
+    # Test with obj as a generic object.
+    class TestObj:
+        def __init__(self, a, num):
+            self.a = a
+            self.num = num
+
+    test_obj_obj = TestObj(" test ", 15)
+    res, m, p = PropertyModelSelector(rules, test_obj_obj, dummy1, {"a": 1}, dummy2, {"a": "alternate"})
+    assert res is True and m == dummy2 and p == {"a": "alternate"}, "Expected dummy2 with object-based obj"
+
+    # Test: Attribute missing in object.
+    test_obj_obj2 = TestObj(" test ", 5)
+    rules_missing = {"operation": "and", "list": [{"attribute": "b", "op": "==", "value": "something"}]}
+    res, m, p = PropertyModelSelector(rules_missing, test_obj_obj2, dummy1, {"a": 1}, dummy2, {"a": "alternate"})
+    assert res is False and m == dummy1, "Expected default when attribute missing in object"
+
+    print("All tests passed.")
+
+
+    # other test
+    from patankar.loadpubchem import migrant
+    m = migrant("toluene")
+    istoluene = {"list": [{"attribute": "InChiKey", "op": "==", "value": "YXFVVABEGXRONW-UHFFFAOYSA-N"}]}
+    res = PropertyModelSelector(istoluene,m)

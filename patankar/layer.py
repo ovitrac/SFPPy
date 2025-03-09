@@ -1283,6 +1283,9 @@ class layer:
         self._layerclass_history = []
         self._ispolymer_history = []
         self._chemicalsubstance_history = []
+        self._Tg_history = []
+        self._porosity_history = []
+        self._crystallinity_history = []
 
         # set verbosity attributes
         self.verbosity = 0 if verbosity is None else verbosity
@@ -1463,6 +1466,9 @@ class layer:
             res._layerclass_history = self.layerclass_history + other.layerclass_history
             res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
             res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
+            res._Tg_history = self.Tg_history + other.Tg_history
+            res._porosity_history = self.porosity_history + other.porosity_history
+            res._crystallinity_history = self.crystallinity_history + other.crystallinity_history
             # Manage layerLink attributes (Dlink, klink, C0link, Tlink, llink)
             property_map = {
                 "Dlink": ("D", self.Dlink, other.Dlink),
@@ -1525,7 +1531,10 @@ class layer:
             res._nlayer = len(j)
         if isinstance(i,int): res._nlayer = 1
         # pick indices for each property
-        for p in ["_name","_type","_material","_l","_D","_k","_C0"]:
+        for p in ["_name","_type","_material","_l","_D","_k","_C0",
+                  # Handle history tracking
+                  "_layerclass_history","_ispolymer_history","_chemicalsubstance_history",
+                  "_Tg_history","_porosity_history","_crystallinity_history"]:
             content = getattr(self,p)
             try:
                 if isscalar: setattr(res,p,content[i:i+1])
@@ -1546,7 +1555,10 @@ class layer:
         islayer = isinstance(other,layer)
         isempty = not islayer and isinstance(other,list) and len(other)<1
         if isempty:         # empty right hand side
-            for p in ["_name","_type","_material","_l","_D","_k","_C0"]:
+            for p in ["_name","_type","_material","_l","_D","_k","_C0",
+                      # Handle history tracking
+                      "_layerclass_history","_ispolymer_history","_chemicalsubstance_history",
+                      "_Tg_history","_porosity_history","_crystallinity_history"]:
                 content = getattr(self,p)
                 try:
                     newcontent = [content[k] for k in range(self._nlayer) if k not in j]
@@ -1562,7 +1574,10 @@ class layer:
             nk2 = other._nlayer
             if nk1 != nk2:
                 raise IndexError("the number of elements does not match the number of indices")
-            for p in ["_name","_type","_material","_l","_D","_k","_C0"]:
+            for p in ["_name","_type","_material","_l","_D","_k","_C0"
+                      # Handle history tracking
+                      "_layerclass_history","_ispolymer_history","_chemicalsubstance_history",
+                      "_Tg_history","_porosity_history","_crystallinity_history"]:
                 content1 = getattr(self,p)
                 content2 = getattr(other,p)
                 for k in range(nk1):
@@ -1603,6 +1618,27 @@ class layer:
     @property
     def chemicalsubstance_history(self):
         return self._chemicalsubstance_history if self._chemicalsubstance_history != [] else [self.chemicalsubstance]
+    @property
+    def _currentTg(self):
+        """returns the current Tg if its defined, if not None"""
+        return getattr(self, "Tg", None)
+    @property
+    def _currentporosity(self):
+        """returns the current porosity if its defined, if not 0"""
+        return getattr(self, "porosity", 0)
+    @property
+    def _currentcrystallinity(self):
+        """returns the crystallinity at the current temperature (if defined)"""
+        return getattr(self, "crystallinity", lambda T=None: 0)(T=None)
+    @property
+    def Tg_history(self):
+        return self._Tg_history if self._Tg_history != [] else [self._currentTg]
+    @property
+    def porosity_history(self):
+        return self._porosity_history if self._porosity_history != [] else [self._currentporosity]
+    @property
+    def crystallinity_history(self):
+        return self._crystallinity_history if self._crystallinity_history != [] else [self._currentcrystallinity]
     @property
     def layerclass(self): return type(self).__name__
     @property
@@ -1733,7 +1769,11 @@ class layer:
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
                 template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
                 # inherit eventual user parameters
-                D[i] = self._substance.D.evaluate(**dict(template, **kwargs))
+                result = self._substance.D.evaluate(**dict(template, **kwargs))
+                if isinstance(result, np.ndarray) and result.size == 1:
+                    D[i] = result.item()  # Extract scalar safely
+                else:
+                    D[i] = result  # Assume it's already a scalar
             return D
         return func # we return a callable function not a value
 
@@ -1760,12 +1800,18 @@ class layer:
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
                 if not self.ispolymer_history[i]: # k can be evaluated only in polymes via FH theory
                     continue # we keep the existing k value
-                # add/update monomer properties
+                # add/update monomer properties + porosity and crystallinity of the polymer
                 monomer = migrant(self.chemicalsubstance_history[i])
                 template.update(Pk = monomer.polarityindex,
-                                Vk = monomer.molarvolumeMiller)
+                                Vk = monomer.molarvolumeMiller,
+                                crystallinity = self.crystallinity_history[i],
+                                porosity = self.porosity_history[i])
                 # inherit eventual user parameters
-                k[i] = self._substance.k.evaluate(**dict(template, **kwargs))
+                result = self._substance.k.evaluate(**dict(template, **kwargs))
+                if isinstance(result, np.ndarray) and result.size == 1:
+                    k[i] = result.item()  # Extract scalar safely
+                else:
+                    k[i] = result  # Assume it's already a scalar
             return k
         return func # we return a callable function not a value
 
@@ -2114,9 +2160,18 @@ class layer:
                     }
                 print('-- [ layer %d of %d ] ---------- barrier rank=%d --------------'
                       % (n,self._nlayer,self.rank[n-1]))
+                # generic properties
                 for p in ["name","type","material","code"]:
                     v = getattr(self,p)
                     print('%10s: "%s"' % (p,v[n-1]),flush=True)
+                # polymer properties if relevant
+                if haskmodel:
+                    print('%10s: %s' % ("crystal",self.crystallinity_history[n-1]),flush=True)
+                if hasDmodel and self.Tg_history[n-1] is not None:
+                    Tg,Tgu = check_units(self.Tg_history[n-1])
+                    Tg = Tg.item() if isinstance(Tg, np.ndarray) else Tg
+                    print('%10s: %s' % ("Tg",f"{Tg} [{Tgu}]"),flush=True)
+                # numeric properties
                 for p in properties_hasmodel.keys():
                     v = getattr(self,p)                 # value
                     vunit = getattr(self,p[0]+"unit")   # value unit
@@ -2476,13 +2531,28 @@ class LDPE(layer):
                        )
     def density(self,T=None):
         """ density of LDPE: density(T in K) """
-        T = self.T if T is None else check_units(T,None,"degC")[0]
+        T = self.T[0] if T is None else check_units(T,None,"degC")[0]
         return 920 *(1-3*(T-layer._defaults["Td"])*20e-5),"kg/m**3" # lowest temperature
     @property
     def Tg(self):
         """ glass transition temperature of LDPE """
         return -130,"degC" # lowest temperature
+    @property
+    def Tm(self):
+        """ typical melting temperature of LDPE """
+        return 110, "degC"
 
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.4
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # <-- HDPE polymer ---------------------------------->
 class HDPE(layer):
@@ -2504,12 +2574,29 @@ class HDPE(layer):
                        )
     def density(self,T=None):
         """ density of HDPE: density(T in K) """
-        T = self.T if T is None else check_units(T,None,"degC")[0]
+        T = self.T[0] if T is None else check_units(T,None,"degC")[0]
         return 940 *(1-3*(T-layer._defaults["Td"])*11e-5),"kg/m**3" # lowest temperature
+
     @property
     def Tg(self):
         """ glass transition temperature of HDPE """
         return -100,"degC" # highest temperature
+
+    @property
+    def Tm(self):
+        """ typical melting temperature of HDPE """
+        return 133.5, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.8
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # <-- LLDPE polymer ---------------------------------->
 class LLDPE(layer):
@@ -2538,8 +2625,7 @@ class LLDPE(layer):
         density of LLDPE: density(T in K)
         By default, uses an approximate value between LDPE and HDPE.
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
-        # Similar formula to LDPE and HDPE, with a coefficient suitable for LLDPE.
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 915 * (1 - 3 * (T - layer._defaults["Td"]) * 15e-5), "kg/m**3"
     @property
     def Tg(self):
@@ -2548,6 +2634,21 @@ class LLDPE(layer):
         Typically close to LDPE, though slightly higher or lower can be found in the literature.
         """
         return -120, "degC"
+    @property
+    def Tm(self):
+        """ typical melting temperature of LLDPE """
+        return 110, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.45
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # <-- PP polymer ---------------------------------->
 class PP(layer):
@@ -2569,12 +2670,27 @@ class PP(layer):
                        )
     def density(self,T=None):
         """ density of PP: density(T in K) """
-        T = self.T if T is None else check_units(T,None,"degC")[0]
+        T = self.T[0] if T is None else check_units(T,None,"degC")[0]
         return 910 *(1-3*(T-layer._defaults["Td"])*7e-5),"kg/m**3" # lowest temperature
     @property
     def Tg(self):
         """ glass transition temperature of PP """
         return 0,"degC" # highest temperature
+    @property
+    def Tm(self):
+        """ typical melting temperature of PP """
+        return 165, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.5
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- PPrubber (atactic polypropylene) ---------------------------------
 class PPrubber(layer):
@@ -2600,14 +2716,24 @@ class PPrubber(layer):
         Approximate initial density ~900 kg/m^3, linear thermal expansion factor
         can be adjusted.
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 900 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of atactic/rubbery PP """
         return -20, "degC"
-
+    @property
+    def Tm(self):
+        """ atactic PP has no well-defined melting temperature """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- oPP (bioriented polypropylene) ------------------------------------
 class oPP(layer):
@@ -2632,14 +2758,27 @@ class oPP(layer):
         density of bioriented PP: density(T in K)
         Typically close to isotactic PP around ~910 kg/m^3.
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 910 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of bioriented PP """
         return 0, "degC"
-
+    @property
+    def Tm(self):
+        """ typical melting temperature of bioriented PP """
+        return 165, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.5
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # <<<<<<<<<<<<<<<<<<<<<<< P O L Y V I N Y L S >>>>>>>>>>>>>>>>>>>>>>
 
@@ -2665,13 +2804,23 @@ class PS(layer):
         """
         density of PS: ~1050 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1050 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of PS """
         return 100, "degC"
+    @property
+    def Tm(self):
+        """ polystyrene is largely amorphous """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        return
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- HIPS (high-impact polystyrene) -----------------------------------
@@ -2696,14 +2845,23 @@ class HIPS(layer):
         """
         density of HIPS: ~1040 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1040 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of HIPS """
         return 95, "degC"
-
+    @property
+    def Tm(self):
+        """ HIPS is also considered amorphous """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- PBS (assuming a styrene-based polymer) ---------------------------
 class SBS(layer):
@@ -2730,14 +2888,23 @@ class SBS(layer):
         """
         density of 'DBS': approximate, around ~1030 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1030 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of 'DBS' """
         return 90, "degC"
-
+    @property
+    def Tm(self):
+        """ SBS typically no well-defined melt """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- rigidPVC ---------------------------------------------------------
 class rigidPVC(layer):
@@ -2761,14 +2928,24 @@ class rigidPVC(layer):
         """
         density of rigid PVC: ~1400 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1400 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
 
     @property
     def Tg(self):
         """ glass transition temperature of rigid PVC """
         return 80, "degC"
-
+    @property
+    def Tm(self):
+        """ rigid PVC is mostly amorphous """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- plasticizedPVC ---------------------------------------------------
 class plasticizedPVC(layer):
@@ -2792,13 +2969,23 @@ class plasticizedPVC(layer):
         """
         density of plasticized PVC: ~1300 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1300 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of plasticized PVC """
         return -40, "degC"
+    @property
+    def Tm(self):
+        """ plasticized PVC also amorphous """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # <<<<<<<<<<<<<<<<<<<<<<< P O L Y E S T E R S >>>>>>>>>>>>>>>>>>>>>>
@@ -2825,14 +3012,27 @@ class gPET(layer):
         """
         density of glassy PET: ~1350 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1350 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ approximate glass transition temperature of PET """
         return 76, "degC"
-
+    @property
+    def Tm(self):
+        """ approximate melting temperature of PET """
+        return 250, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.35
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- rPET (rubbery PET, T > 76°C) --------------------------------------
 class rPET(layer):
@@ -2857,14 +3057,27 @@ class rPET(layer):
         density of rubbery PET: ~1350 kg/m^3
         but with a different expansion slope possible, if needed
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1350 * (1 - 3*(T - layer._defaults["Td"]) * 1e-4), "kg/m**3"
-
     @property
     def Tg(self):
         """ approximate glass transition temperature of PET """
         return 76, "degC"
-
+    @property
+    def Tm(self):
+        """ approximate melting temperature of PET """
+        return 250, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.35
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- PBT --------------------------------------------------------------
 class PBT(layer):
@@ -2888,14 +3101,27 @@ class PBT(layer):
         """
         density of PBT: ~1310 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1310 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of PBT """
         return 40, "degC"
-
+    @property
+    def Tm(self):
+        """ approximate melting temperature of PBT """
+        return 225, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.35
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 # -- PEN --------------------------------------------------------------
 class PEN(layer):
@@ -2919,13 +3145,27 @@ class PEN(layer):
         """
         density of PEN: ~1330 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1330 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of PEN """
         return 120, "degC"
+    @property
+    def Tm(self):
+        """ approximate melting temperature of PEN """
+        return 270, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.4
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # <<<<<<<<<<<<<<<<<<<<<<< P O L Y A M I D E S >>>>>>>>>>>>>>>>>>>>>>
@@ -2952,13 +3192,27 @@ class PA6(layer):
         """
         density of PA6: ~1140 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1140 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of PA6 """
         return 50, "degC"
+    @property
+    def Tm(self):
+        """ approximate melting temperature of PA6 """
+        return 220, "degC"
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.3
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- PA66 -------------------------------------------------------------
@@ -2983,13 +3237,28 @@ class PA66(layer):
         """
         density of PA66: ~1150 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1150 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ glass transition temperature of PA66 """
         return 70, "degC"
+    @property
+    def Tm(self):
+        """ approximate melting temperature of PA66 """
+        return 255, "degC"
+
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        T = self.T[0] if T is None else T
+        if self.Tm is None or T > self.Tm[0]:
+            return 0
+        else:
+            return 0.35
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # <<<<<<<<<<<<<<<<<<<<<<< A D H E S I V E S >>>>>>>>>>>>>>>>>>>>>>
@@ -3014,13 +3283,23 @@ class AdhesiveNaturalRubber(layer):
         )
     def density(self, T=None):
         """ typical density ~910 kg/m^3, adjust as needed """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 910 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ approximate Tg of natural rubber adhesives """
         return -70, "degC"
+    @property
+    def Tm(self):
+        """ adhesives often degrade, no well-defined melt """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- AdhesiveSyntheticRubber ------------------------------------------
@@ -3043,13 +3322,23 @@ class AdhesiveSyntheticRubber(layer):
         )
     def density(self, T=None):
         """ typical density ~920 kg/m^3, adjust as needed """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 920 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """ approximate Tg of synthetic rubber adhesives """
         return -50, "degC"
+    @property
+    def Tm(self):
+        """ adhesives often degrade, no well-defined melt """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- AdhesiveEVA (ethylene-vinyl acetate) ------------------------------
@@ -3071,12 +3360,24 @@ class AdhesiveEVA(layer):
         )
     def density(self, T=None):
         """ typical density ~930 kg/m^3 """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 930 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
     @property
     def Tg(self):
         """ approximate Tg of EVA adhesives """
         return -30, "degC"
+    @property
+    def Tm(self):
+        """ adhesives often degrade, no well-defined melt """
+        return None
+
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- AdhesiveVAE (vinyl acetate-ethylene) -----------------------------
@@ -3098,12 +3399,23 @@ class AdhesiveVAE(layer):
         )
     def density(self, T=None):
         """ typical density ~950 kg/m^3 """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 950 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
     @property
     def Tg(self):
         """ approximate Tg of VAE adhesives """
         return 10, "degC"
+    @property
+    def Tm(self):
+        """ adhesives often degrade, no well-defined melt """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- AdhesivePVAC (polyvinyl acetate) ---------------------------------
@@ -3126,12 +3438,23 @@ class AdhesivePVAC(layer):
         )
     def density(self, T=None):
         """ typical density ~1100 kg/m^3 """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1100 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
     @property
     def Tg(self):
         """ approximate Tg of PVAc adhesives """
         return 35, "degC"
+    @property
+    def Tm(self):
+        """ adhesives often degrade, no well-defined melt """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- AdhesiveAcrylate -------------------------------------------------
@@ -3153,12 +3476,23 @@ class AdhesiveAcrylate(layer):
         )
     def density(self, T=None):
         """ typical density ~1000 kg/m^3 """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1000 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
     @property
     def Tg(self):
         """ approximate Tg of acrylate adhesives """
         return -20, "degC"
+    @property
+    def Tm(self):
+        """ adhesives often degrade, no well-defined melt """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # -- AdhesivePU (polyurethane) ----------------------------------------
@@ -3180,12 +3514,23 @@ class AdhesivePU(layer):
         )
     def density(self, T=None):
         """ typical density ~1100 kg/m^3 """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 1100 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
     @property
     def Tg(self):
         """ approximate Tg of polyurethane adhesives """
         return -50, "degC"
+    @property
+    def Tm(self):
+        """ adhesives often degrade, no well-defined melt """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
 
 
 # <<<<<<<<<<<<<<<<<<<<<<< P A P E R   &   C A R D B O A R D >>>>>>>>>>>>>>>>>>>>>>
@@ -3214,9 +3559,8 @@ class Paper(layer):
         """
         approximate density for typical paper ~800 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 800 * (1 - 3*(T - layer._defaults["Td"]) * 1e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """
@@ -3224,7 +3568,17 @@ class Paper(layer):
         but we provide a placeholder.
         """
         return 200, "degC"  # purely illustrative placeholder
-
+    @property
+    def Tm(self):
+        """ paper is not a pure polymer melt -> no Tm """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 1
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0.9
 
 # -- Cardboard --------------------------------------------------------
 class Cardboard(layer):
@@ -3250,19 +3604,25 @@ class Cardboard(layer):
         """
         approximate density for typical cardboard ~700 kg/m^3
         """
-        T = self.T if T is None else check_units(T, None, "degC")[0]
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
         return 700 * (1 - 3*(T - layer._defaults["Td"]) * 1e-5), "kg/m**3"
-
     @property
     def Tg(self):
         """
         same placeholder concept for paper-based material
         """
         return 200, "degC"
-
-
-
-
+    @property
+    def Tm(self):
+        """ cardboard also no real melt """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 1
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0.8
 
 # <<<<<<<<<<<<<<<<<<<<<<< G A S E S  >>>>>>>>>>>>>>>>>>>>>>
 
@@ -3288,13 +3648,24 @@ class air(layer):
                        layercode="gas",
                        **extra
                        )
-
     def density(self, T=None):
         """Density of air at atmospheric pressure: density(T in K)"""
         TK = self.TK if T is None else check_units(T,None,"K")[0]
         P_atm = 101325  # Pa (1 atm)
         M_air = 28.9647 # g/mol = 0.0289647 kg/mol (Molar mass of dry air).
         return P_atm / ((constants["R"]/M_air) * TK), "kg/m**3"
+    @property
+    def Tm(self):
+        """ air does not have a melting point in this context """
+        return None
+    def crystallinity(self, T=None):
+        """Crystallinity of the solid phase"""
+        return 1
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 1
+
 
 # %% For testing and debugging
 # ===================================================
