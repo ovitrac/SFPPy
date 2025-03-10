@@ -3335,7 +3335,7 @@ Cfull_dimless (np.ndarray): Full concentration profile.</p></div>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:ihUvcJ', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:MdEIB8', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -9987,10 +9987,12 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     def checknumvalue(self,value,ExpectedUnits=None):
         &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
         if isinstance(value,tuple):
-            value = check_units(value,ExpectedUnits=ExpectedUnits)
+            value = check_units(value,ExpectedUnits=ExpectedUnits)[0]
         if isinstance(value,int): value = float(value)
         if isinstance(value,float): value = np.array([value])
         if isinstance(value,list): value = np.array(value)
+        if isinstance(value,np.ndarray) and np.ndim(value)==0:
+            value = np.atleast_1d(value)
         if len(value)&gt;self._nlayer:
             value = value[:self._nlayer]
             if self.verbosity&gt;1 and self.verbose:
@@ -11554,10 +11556,12 @@ The category under which the properties are grouped.</p></div>
 <pre><code class="python">def checknumvalue(self,value,ExpectedUnits=None):
     &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
     if isinstance(value,tuple):
-        value = check_units(value,ExpectedUnits=ExpectedUnits)
+        value = check_units(value,ExpectedUnits=ExpectedUnits)[0]
     if isinstance(value,int): value = float(value)
     if isinstance(value,float): value = np.array([value])
     if isinstance(value,list): value = np.array(value)
+    if isinstance(value,np.ndarray) and np.ndim(value)==0:
+        value = np.atleast_1d(value)
     if len(value)&gt;self._nlayer:
         value = value[:self._nlayer]
         if self.verbosity&gt;1 and self.verbose:

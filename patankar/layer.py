@@ -132,7 +132,7 @@ if 'migrant' not in dir():
     from patankar.loadpubchem import migrant
 
 
-__all__ = ['AdhesiveAcrylate', 'AdhesiveEVA', 'AdhesiveNaturalRubber', 'AdhesivePU', 'AdhesivePVAC', 'AdhesiveSyntheticRubber', 'AdhesiveVAE', 'Cardboard', 'HDPE', 'HIPS', 'LDPE', 'LLDPE', 'PA6', 'PA66', 'PBT', 'PEN', 'PP', 'PPrubber', 'PS', 'Paper', 'R', 'RT0K', 'SBS', 'SI', 'SIbase', 'T0K', 'air', 'check_units', 'fixSIbase', 'format_scientific_latex', 'gPET', 'help_layer', 'iRT0K', 'layer', 'layerLink', 'list_layer_subclasses', 'mesh', 'migrant', 'oPP', 'plasticizedPVC', 'qSI', 'rPET', 'rigidPVC', 'toSI']
+__all__ = ['AdhesiveAcrylate', 'AdhesiveEVA', 'AdhesiveNaturalRubber', 'AdhesivePU', 'AdhesivePVAC', 'AdhesiveSyntheticRubber', 'AdhesiveVAE', 'Cardboard', 'HDPE', 'HIPS', 'LDPE', 'LLDPE', 'PA6', 'PA66', 'PBT', 'PEN', 'PMMA', 'PP', 'PPrubber', 'PS', 'PVAc', 'Paper', 'R', 'RT0K', 'SBS', 'SI', 'SIbase', 'T0K', 'air', 'check_units', 'fixSIbase', 'format_scientific_latex', 'gPET', 'help_layer', 'iRT0K', 'layer', 'layerLink', 'list_layer_subclasses', 'mesh', 'migrant', 'oPP', 'plasticizedPVC', 'qSI', 'rHIPS', 'rPET', 'rPS', 'rigidPVC', 'toSI', 'wPET']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -1956,10 +1956,12 @@ class layer:
     def checknumvalue(self,value,ExpectedUnits=None):
         """ returns a validate value to set properties """
         if isinstance(value,tuple):
-            value = check_units(value,ExpectedUnits=ExpectedUnits)
+            value = check_units(value,ExpectedUnits=ExpectedUnits)[0]
         if isinstance(value,int): value = float(value)
         if isinstance(value,float): value = np.array([value])
         if isinstance(value,list): value = np.array(value)
+        if isinstance(value,np.ndarray) and np.ndim(value)==0:
+            value = np.atleast_1d(value)
         if len(value)>self._nlayer:
             value = value[:self._nlayer]
             if self.verbosity>1 and self.verbose:
@@ -3830,6 +3832,20 @@ class air(layer):
 # the code is called from here
 # ===================================================
 if __name__ == '__main__':
+    from patankar.loadpubchem import migrant
+    list_of_migrants = ["toluene","limonene","BHT","Irganox 1076"]
+    m = [migrant(s) for s in list_of_migrants]
+    P = PS();
+    P.update(migrant=m[1]).D
+    P.update(migrant=m[2]).D
+
+
+    materials = gPET()+wPET()+PS()+PP()
+    m = [migrant(s) for s in list_of_migrants]
+    materials.update(migrant=m[0],T=50)
+    print(materials.D)
+    materials.update(migrant=m[1])
+
 
     P=PS(migrant="toluene",T=20)
     P.D

@@ -5617,10 +5617,12 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     def checknumvalue(self,value,ExpectedUnits=None):
         &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
         if isinstance(value,tuple):
-            value = check_units(value,ExpectedUnits=ExpectedUnits)
+            value = check_units(value,ExpectedUnits=ExpectedUnits)[0]
         if isinstance(value,int): value = float(value)
         if isinstance(value,float): value = np.array([value])
         if isinstance(value,list): value = np.array(value)
+        if isinstance(value,np.ndarray) and np.ndim(value)==0:
+            value = np.atleast_1d(value)
         if len(value)&gt;self._nlayer:
             value = value[:self._nlayer]
             if self.verbosity&gt;1 and self.verbose:
@@ -7184,10 +7186,12 @@ The category under which the properties are grouped.</p></div>
 <pre><code class="python">def checknumvalue(self,value,ExpectedUnits=None):
     &#34;&#34;&#34; returns a validate value to set properties &#34;&#34;&#34;
     if isinstance(value,tuple):
-        value = check_units(value,ExpectedUnits=ExpectedUnits)
+        value = check_units(value,ExpectedUnits=ExpectedUnits)[0]
     if isinstance(value,int): value = float(value)
     if isinstance(value,float): value = np.array([value])
     if isinstance(value,list): value = np.array(value)
+    if isinstance(value,np.ndarray) and np.ndim(value)==0:
+        value = np.atleast_1d(value)
     if len(value)&gt;self._nlayer:
         value = value[:self._nlayer]
         if self.verbosity&gt;1 and self.verbose:

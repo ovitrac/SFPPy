@@ -153,7 +153,7 @@ class migrationProperty:
     _source = &#34;&#34;
     _author = &#34;olivier.vitrac@agroparistech.fr&#34;
     _license = &#34;MIT&#34;
-    _version = 1.21
+    _version = 1.30
     _available_to_import = False
 
 
@@ -605,7 +605,12 @@ class Dpiringer(Diffusivities):
             &#34;tau&#34;: None
         }
     }
+    # duplicate an entry for wPET from rPET
+    piringer_data[&#34;wPET&#34;] = piringer_data[&#34;rPET&#34;]
+    piringer_data[&#34;wPET&#34;][&#34;className&#34;] = &#34;wPET&#34;
 
+
+    # Dpiringer constructor
     def __init__(self, polymer=&#34;LDPE&#34;, M=100, T=40):
         &#34;&#34;&#34;
         Instantiate a Dpiringer object for a specific polymer key
@@ -998,7 +1003,7 @@ class Dwelle(Diffusivities):
     theory = &#34;scaling&#34;
     parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
-                  &#34;VvdW&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
+                  &#34;Vvdw&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
                 }
     _available_to_import = True # this model can be directly imported
 
@@ -1038,13 +1043,13 @@ class Dwelle(Diffusivities):
             raise ValueError(f&#34;The property {prop} does not exist for {self.polymer}&#34;)
         return self.welle_data[self.polymer][prop]
 
-    def eval(self,VvdW,T,**extra):
+    def eval(self,Vvdw,T,**extra):
         &#34;&#34;&#34;Compute D acoording to the Welle model&#34;&#34;&#34;
         TK = self.T0K+T
-        return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
+        return  1.0e-4 * self.b * (Vvdw/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
 
     @classmethod
-    def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
+    def evaluate(cls,polymer=&#34;gPET&#34;, Vvdw=100, T=40.0, **extra):
         &#34;&#34;&#34;
         Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
 
@@ -1052,7 +1057,7 @@ class Dwelle(Diffusivities):
         ----------
         polymer : str
             Polymer name (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#39;HIPS&#39;, &#39;rPS&#39;, &#39;rHIPS&#39; etc.) as listed in the original data structure.
-        VvdW : float
+        Vvdw : float
             3D molecular volume, default = 100 (units in A**3).
         T : float
             Temperature in °C, default = 40.
@@ -1063,7 +1068,7 @@ class Dwelle(Diffusivities):
             The estimated diffusion coefficient in m^2/s
         &#34;&#34;&#34;
         FW = Dwelle(polymer=polymer)
-        return FW.eval(VvdW,T,**extra)
+        return FW.eval(Vvdw,T,**extra)
 
 # %% Available models to expose to layer.py and food.py
 # List below the importable models (currently only D, k, K models are possible)
@@ -2858,7 +2863,12 @@ are looked up and stored as instance attributes.</p></div>
             &#34;tau&#34;: None
         }
     }
+    # duplicate an entry for wPET from rPET
+    piringer_data[&#34;wPET&#34;] = piringer_data[&#34;rPET&#34;]
+    piringer_data[&#34;wPET&#34;][&#34;className&#34;] = &#34;wPET&#34;
 
+
+    # Dpiringer constructor
     def __init__(self, polymer=&#34;LDPE&#34;, M=100, T=40):
         &#34;&#34;&#34;
         Instantiate a Dpiringer object for a specific polymer key
@@ -3174,7 +3184,7 @@ def evaluate(cls, polymer=&#34;LLDPE&#34;, M=100.0, T=40.0, **extra):
 </details>
 </dd>
 <dt id="property.Dpiringer.get_piringer_params"><code class="name flex">
-<span>def <span class="ident">get_piringer_params</span></span>(<span>polymer: str, data: dict = {'HDPE': {'className': 'HDPE', 'type': 'polymer', 'material': 'high-density polyethylene', 'code': 'HDPE', 'description': 'Piringer parameters for HDPE.', 'App': 14.5, 'tau': 1577}, 'LDPE': {'className': 'LDPE', 'type': 'polymer', 'material': 'low-density polyethylene', 'code': 'LDPE', 'description': 'Piringer parameters for LDPE.', 'App': 11.5, 'tau': 0}, 'LLDPE': {'className': 'LLDPE', 'type': 'polymer', 'material': 'linear low-density polyethylene', 'code': 'LLDPE', 'description': 'Piringer parameters for LLDPE.', 'App': 11.5, 'tau': 0}, 'PP': {'className': 'PP', 'type': 'polymer', 'material': 'isotactic polypropylene', 'code': 'PP', 'description': 'Piringer parameters for isotactic PP.', 'App': 13.1, 'tau': 1577}, 'aPP': {'className': 'PPrubber', 'type': 'polymer', 'material': 'atactic polypropylene', 'code': 'aPP', 'description': 'Piringer parameters for atactic PP.', 'App': 11.5, 'tau': 0}, 'oPP': {'className': 'oPP', 'type': 'polymer', 'material': 'bioriented polypropylene', 'code': 'oPP', 'description': 'Piringer parameters for bioriented PP.', 'App': 13.1, 'tau': 1577}, 'pPVC': {'className': 'plasticizedPVC', 'type': 'polymer', 'material': 'plasticized PVC', 'code': 'pPVC', 'description': 'Piringer parameters for plasticized PVC.', 'App': 14.6, 'tau': 0}, 'PVC': {'className': 'rigidPVC', 'type': 'polymer', 'material': 'rigid PVC', 'code': 'PVC', 'description': 'Piringer parameters for rigid PVC.', 'App': -1.0, 'tau': 0}, 'HIPS': {'className': 'HIPS', 'type': 'polymer', 'material': 'high-impact polystyrene', 'code': 'HIPS', 'description': 'Piringer parameters for HIPS.', 'App': 1.0, 'tau': 0}, 'PBS': {'className': 'PBS', 'type': 'polymer', 'material': 'styrene-based polymer PBS', 'code': 'PBS', 'description': 'No original Piringer data; set to None.', 'App': 10.5, 'tau': 0}, 'PS': {'className': 'PS', 'type': 'polymer', 'material': 'polystyrene', 'code': 'PS', 'description': 'Piringer parameters for PS.', 'App': -1.0, 'tau': 0}, 'PBT': {'className': 'PBT', 'type': 'polymer', 'material': 'polybutylene terephthalate', 'code': 'PBT', 'description': 'Piringer parameters for PBT.', 'App': 6.5, 'tau': 1577}, 'PEN': {'className': 'PEN', 'type': 'polymer', 'material': 'polyethylene naphthalate', 'code': 'PEN', 'description': 'Piringer parameters for PEN.', 'App': 5.0, 'tau': 1577}, 'PET': {'className': 'gPET', 'type': 'polymer', 'material': 'glassy PET', 'code': 'PET', 'description': 'Piringer parameters for glassy PET (inf Tg).', 'App': 3.1, 'tau': 1577}, 'rPET': {'className': 'rPET', 'type': 'polymer', 'material': 'rubbery PET', 'code': 'rPET', 'description': 'Piringer parameters for rubbery PET (sup Tg).', 'App': 6.4, 'tau': 1577}, 'PA6': {'className': 'PA6', 'type': 'polymer', 'material': 'polyamide 6', 'code': 'PA6', 'description': 'Piringer parameters for polyamide 6.', 'App': 0.0, 'tau': 0}, 'PA6,6': {'className': 'PA66', 'type': 'polymer', 'material': 'polyamide 6,6', 'code': 'PA6,6', 'description': 'Piringer parameters for polyamide 6,6.', 'App': 2.0, 'tau': 0}, 'Acryl': {'className': 'AdhesiveAcrylate', 'type': 'adhesive', 'material': 'acrylate adhesive', 'code': 'Acryl', 'description': 'Piringer parameters for acrylate adhesive.', 'App': 4.5, 'tau': 83}, 'EVA': {'className': 'AdhesiveEVA', 'type': 'adhesive', 'material': 'EVA adhesive', 'code': 'EVA', 'description': 'Piringer parameters for EVA adhesive.', 'App': 6.6, 'tau': -1270}, 'rubber': {'className': 'AdhesiveNaturalRubber', 'type': 'adhesive', 'material': 'natural rubber adhesive', 'code': 'rubber', 'description': 'Piringer parameters for natural rubber adhesive.', 'App': 11.3, 'tau': -421}, 'PU': {'className': 'AdhesivePU', 'type': 'adhesive', 'material': 'polyurethane adhesive', 'code': 'PU', 'description': 'Piringer parameters for polyurethane adhesive.', 'App': 4.0, 'tau': 250}, 'PVAc': {'className': 'AdhesivePVAC', 'type': 'adhesive', 'material': 'PVAc adhesive', 'code': 'PVAc', 'description': 'Piringer parameters for PVAc adhesive.', 'App': 6.6, 'tau': -1270}, 'sRubber': {'className': 'AdhesiveSyntheticRubber', 'type': 'adhesive', 'material': 'synthetic rubber adhesive', 'code': 'sRubber', 'description': 'Piringer parameters for synthetic rubber adhesive.', 'App': 11.3, 'tau': -421}, 'VAE': {'className': 'AdhesiveVAE', 'type': 'adhesive', 'material': 'VAE adhesive', 'code': 'VAE', 'description': 'Piringer parameters for VAE adhesive.', 'App': 6.6, 'tau': -1270}, 'board_polar': {'className': 'Cardboard', 'type': 'paper', 'material': 'cardboard', 'code': 'board', 'description': 'Piringer parameters for cardboard (polar migrants).', 'App': 4, 'tau': -1511}, 'board_apol': {'className': 'Cardboard', 'type': 'paper', 'material': 'cardboard', 'code': 'board', 'description': 'Piringer parameters for cardboard (variant for apolar).', 'App': 7.4, 'tau': -1511}, 'paper': {'className': 'Paper', 'type': 'paper', 'material': 'paper', 'code': 'paper', 'description': 'Piringer parameters for paper.', 'App': 6.6, 'tau': -1900}, 'gas': {'className': 'air', 'type': 'air', 'material': 'ideal gas', 'code': 'gas', 'description': 'No Piringer data for air; set to None.', 'App': None, 'tau': None}})</span>
+<span>def <span class="ident">get_piringer_params</span></span>(<span>polymer: str, data: dict = {'HDPE': {'className': 'HDPE', 'type': 'polymer', 'material': 'high-density polyethylene', 'code': 'HDPE', 'description': 'Piringer parameters for HDPE.', 'App': 14.5, 'tau': 1577}, 'LDPE': {'className': 'LDPE', 'type': 'polymer', 'material': 'low-density polyethylene', 'code': 'LDPE', 'description': 'Piringer parameters for LDPE.', 'App': 11.5, 'tau': 0}, 'LLDPE': {'className': 'LLDPE', 'type': 'polymer', 'material': 'linear low-density polyethylene', 'code': 'LLDPE', 'description': 'Piringer parameters for LLDPE.', 'App': 11.5, 'tau': 0}, 'PP': {'className': 'PP', 'type': 'polymer', 'material': 'isotactic polypropylene', 'code': 'PP', 'description': 'Piringer parameters for isotactic PP.', 'App': 13.1, 'tau': 1577}, 'aPP': {'className': 'PPrubber', 'type': 'polymer', 'material': 'atactic polypropylene', 'code': 'aPP', 'description': 'Piringer parameters for atactic PP.', 'App': 11.5, 'tau': 0}, 'oPP': {'className': 'oPP', 'type': 'polymer', 'material': 'bioriented polypropylene', 'code': 'oPP', 'description': 'Piringer parameters for bioriented PP.', 'App': 13.1, 'tau': 1577}, 'pPVC': {'className': 'plasticizedPVC', 'type': 'polymer', 'material': 'plasticized PVC', 'code': 'pPVC', 'description': 'Piringer parameters for plasticized PVC.', 'App': 14.6, 'tau': 0}, 'PVC': {'className': 'rigidPVC', 'type': 'polymer', 'material': 'rigid PVC', 'code': 'PVC', 'description': 'Piringer parameters for rigid PVC.', 'App': -1.0, 'tau': 0}, 'HIPS': {'className': 'HIPS', 'type': 'polymer', 'material': 'high-impact polystyrene', 'code': 'HIPS', 'description': 'Piringer parameters for HIPS.', 'App': 1.0, 'tau': 0}, 'PBS': {'className': 'PBS', 'type': 'polymer', 'material': 'styrene-based polymer PBS', 'code': 'PBS', 'description': 'No original Piringer data; set to None.', 'App': 10.5, 'tau': 0}, 'PS': {'className': 'PS', 'type': 'polymer', 'material': 'polystyrene', 'code': 'PS', 'description': 'Piringer parameters for PS.', 'App': -1.0, 'tau': 0}, 'PBT': {'className': 'PBT', 'type': 'polymer', 'material': 'polybutylene terephthalate', 'code': 'PBT', 'description': 'Piringer parameters for PBT.', 'App': 6.5, 'tau': 1577}, 'PEN': {'className': 'PEN', 'type': 'polymer', 'material': 'polyethylene naphthalate', 'code': 'PEN', 'description': 'Piringer parameters for PEN.', 'App': 5.0, 'tau': 1577}, 'PET': {'className': 'gPET', 'type': 'polymer', 'material': 'glassy PET', 'code': 'PET', 'description': 'Piringer parameters for glassy PET (inf Tg).', 'App': 3.1, 'tau': 1577}, 'rPET': {'className': 'wPET', 'type': 'polymer', 'material': 'rubbery PET', 'code': 'rPET', 'description': 'Piringer parameters for rubbery PET (sup Tg).', 'App': 6.4, 'tau': 1577}, 'PA6': {'className': 'PA6', 'type': 'polymer', 'material': 'polyamide 6', 'code': 'PA6', 'description': 'Piringer parameters for polyamide 6.', 'App': 0.0, 'tau': 0}, 'PA6,6': {'className': 'PA66', 'type': 'polymer', 'material': 'polyamide 6,6', 'code': 'PA6,6', 'description': 'Piringer parameters for polyamide 6,6.', 'App': 2.0, 'tau': 0}, 'Acryl': {'className': 'AdhesiveAcrylate', 'type': 'adhesive', 'material': 'acrylate adhesive', 'code': 'Acryl', 'description': 'Piringer parameters for acrylate adhesive.', 'App': 4.5, 'tau': 83}, 'EVA': {'className': 'AdhesiveEVA', 'type': 'adhesive', 'material': 'EVA adhesive', 'code': 'EVA', 'description': 'Piringer parameters for EVA adhesive.', 'App': 6.6, 'tau': -1270}, 'rubber': {'className': 'AdhesiveNaturalRubber', 'type': 'adhesive', 'material': 'natural rubber adhesive', 'code': 'rubber', 'description': 'Piringer parameters for natural rubber adhesive.', 'App': 11.3, 'tau': -421}, 'PU': {'className': 'AdhesivePU', 'type': 'adhesive', 'material': 'polyurethane adhesive', 'code': 'PU', 'description': 'Piringer parameters for polyurethane adhesive.', 'App': 4.0, 'tau': 250}, 'PVAc': {'className': 'AdhesivePVAC', 'type': 'adhesive', 'material': 'PVAc adhesive', 'code': 'PVAc', 'description': 'Piringer parameters for PVAc adhesive.', 'App': 6.6, 'tau': -1270}, 'sRubber': {'className': 'AdhesiveSyntheticRubber', 'type': 'adhesive', 'material': 'synthetic rubber adhesive', 'code': 'sRubber', 'description': 'Piringer parameters for synthetic rubber adhesive.', 'App': 11.3, 'tau': -421}, 'VAE': {'className': 'AdhesiveVAE', 'type': 'adhesive', 'material': 'VAE adhesive', 'code': 'VAE', 'description': 'Piringer parameters for VAE adhesive.', 'App': 6.6, 'tau': -1270}, 'board_polar': {'className': 'Cardboard', 'type': 'paper', 'material': 'cardboard', 'code': 'board', 'description': 'Piringer parameters for cardboard (polar migrants).', 'App': 4, 'tau': -1511}, 'board_apol': {'className': 'Cardboard', 'type': 'paper', 'material': 'cardboard', 'code': 'board', 'description': 'Piringer parameters for cardboard (variant for apolar).', 'App': 7.4, 'tau': -1511}, 'paper': {'className': 'Paper', 'type': 'paper', 'material': 'paper', 'code': 'paper', 'description': 'Piringer parameters for paper.', 'App': 6.6, 'tau': -1900}, 'gas': {'className': 'air', 'type': 'air', 'material': 'ideal gas', 'code': 'gas', 'description': 'No Piringer data for air; set to None.', 'App': None, 'tau': None}, 'wPET': {'className': 'wPET', 'type': 'polymer', 'material': 'rubbery PET', 'code': 'rPET', 'description': 'Piringer parameters for rubbery PET (sup Tg).', 'App': 6.4, 'tau': 1577}})</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Look up an entry in piringer_data by:
@@ -3435,7 +3445,7 @@ are looked up and stored as instance attributes.</p></div>
     theory = &#34;scaling&#34;
     parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
-                  &#34;VvdW&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
+                  &#34;Vvdw&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
                 }
     _available_to_import = True # this model can be directly imported
 
@@ -3475,13 +3485,13 @@ are looked up and stored as instance attributes.</p></div>
             raise ValueError(f&#34;The property {prop} does not exist for {self.polymer}&#34;)
         return self.welle_data[self.polymer][prop]
 
-    def eval(self,VvdW,T,**extra):
+    def eval(self,Vvdw,T,**extra):
         &#34;&#34;&#34;Compute D acoording to the Welle model&#34;&#34;&#34;
         TK = self.T0K+T
-        return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
+        return  1.0e-4 * self.b * (Vvdw/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
 
     @classmethod
-    def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
+    def evaluate(cls,polymer=&#34;gPET&#34;, Vvdw=100, T=40.0, **extra):
         &#34;&#34;&#34;
         Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
 
@@ -3489,7 +3499,7 @@ are looked up and stored as instance attributes.</p></div>
         ----------
         polymer : str
             Polymer name (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#39;HIPS&#39;, &#39;rPS&#39;, &#39;rHIPS&#39; etc.) as listed in the original data structure.
-        VvdW : float
+        Vvdw : float
             3D molecular volume, default = 100 (units in A**3).
         T : float
             Temperature in °C, default = 40.
@@ -3500,7 +3510,7 @@ are looked up and stored as instance attributes.</p></div>
             The estimated diffusion coefficient in m^2/s
         &#34;&#34;&#34;
         FW = Dwelle(polymer=polymer)
-        return FW.eval(VvdW,T,**extra)</code></pre>
+        return FW.eval(Vvdw,T,**extra)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -3541,7 +3551,7 @@ are looked up and stored as instance attributes.</p></div>
 <h3>Static methods</h3>
 <dl>
 <dt id="property.Dwelle.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>polymer='gPET', VvdW=100, T=40.0, **extra)</span>
+<span>def <span class="ident">evaluate</span></span>(<span>polymer='gPET', Vvdw=100, T=40.0, **extra)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T</p>
@@ -3549,7 +3559,7 @@ are looked up and stored as instance attributes.</p></div>
 <dl>
 <dt><strong><code>polymer</code></strong> :&ensp;<code>str</code></dt>
 <dd>Polymer name (e.g. 'gPET', 'PS', 'HIPS', 'rPS', 'rHIPS' etc.) as listed in the original data structure.</dd>
-<dt><strong><code>VvdW</code></strong> :&ensp;<code>float</code></dt>
+<dt><strong><code>Vvdw</code></strong> :&ensp;<code>float</code></dt>
 <dd>3D molecular volume, default = 100 (units in A**3).</dd>
 <dt><strong><code>T</code></strong> :&ensp;<code>float</code></dt>
 <dd>Temperature in °C, default = 40.</dd>
@@ -3564,7 +3574,7 @@ are looked up and stored as instance attributes.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
-def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
+def evaluate(cls,polymer=&#34;gPET&#34;, Vvdw=100, T=40.0, **extra):
     &#34;&#34;&#34;
     Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
 
@@ -3572,7 +3582,7 @@ def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
     ----------
     polymer : str
         Polymer name (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#39;HIPS&#39;, &#39;rPS&#39;, &#39;rHIPS&#39; etc.) as listed in the original data structure.
-    VvdW : float
+    Vvdw : float
         3D molecular volume, default = 100 (units in A**3).
     T : float
         Temperature in °C, default = 40.
@@ -3583,14 +3593,14 @@ def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
         The estimated diffusion coefficient in m^2/s
     &#34;&#34;&#34;
     FW = Dwelle(polymer=polymer)
-    return FW.eval(VvdW,T,**extra)</code></pre>
+    return FW.eval(Vvdw,T,**extra)</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
 <dt id="property.Dwelle.eval"><code class="name flex">
-<span>def <span class="ident">eval</span></span>(<span>self, VvdW, T, **extra)</span>
+<span>def <span class="ident">eval</span></span>(<span>self, Vvdw, T, **extra)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Compute D acoording to the Welle model</p></div>
@@ -3598,10 +3608,10 @@ def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def eval(self,VvdW,T,**extra):
+<pre><code class="python">def eval(self,Vvdw,T,**extra):
     &#34;&#34;&#34;Compute D acoording to the Welle model&#34;&#34;&#34;
     TK = self.T0K+T
-    return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s</code></pre>
+    return  1.0e-4 * self.b * (Vvdw/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s</code></pre>
 </details>
 </dd>
 </dl>
@@ -3966,7 +3976,7 @@ def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=
     _source = &#34;&#34;
     _author = &#34;olivier.vitrac@agroparistech.fr&#34;
     _license = &#34;MIT&#34;
-    _version = 1.21
+    _version = 1.30
     _available_to_import = False
 
 

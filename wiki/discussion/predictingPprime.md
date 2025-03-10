@@ -147,11 +147,11 @@ n(r) = \frac{r-5}{r}
 $$
 
 >> References
->> 
->>	Guillaume Gillet, Olivier Vitrac, and Stéphane Desobry
->> Prediction of Partition Coefficients of Plastic Additives between Packaging Materials and Food Simulants
->> *Industrial & Engineering Chemistry Research* **2010** 49 (16), 7263-7280
->> https://doi.org/10.1021/ie9010595
+>
+>>		Guillaume Gillet, Olivier Vitrac, and Stéphane Desobry
+>>	Prediction of Partition Coefficients of Plastic Additives between Packaging Materials and Food Simulants
+>>	*Industrial & Engineering Chemistry Research* **2010** 49 (16), 7263-7280
+>>	https://doi.org/10.1021/ie9010595
 
 ***
 
@@ -168,6 +168,25 @@ $$
 - It is directly linked to $logP$ and fitted using second-degree polynomial regression.
 	•	The method provides a universal approach to predicting activity coefficients in various media, including polymers and food simulants.
 	•	A correction term $n(r)$ accounts for molecular interactions in complex environments.
+
+***
+### Extensions to $k_{i,k}^H$ (Henry-like coefficients)
+
+Calculated activity coefficients, $\gamma_{i,k}$ are associated with volume fractions $\phi_{i,k}$ in the amorphous phase. As a result they are not practical to expression mass fluxes within an effective medium. In volume-averaged transport equations, Henry-like partition coefficients, $k_{i,k}^H$ are preferred. They express the linear relationship at infinite dilution between the partial pressure $p_{i}$ (or fugacity) in phase/component $k$ (pressure of a theoretical gas phase in equilibrium with the local volume) and the volume-averaged concentration of the species $i$ in $k$:
+$$
+p_i = k_{i,k}^HC_{i,k}\cdot\left(1-c_k\right)\cdot\left(1-\epsilon_k\right)=\gamma_{i,k}\phi_{i,k}P_{i,sat}^{(T)}
+$$
+where $c_k$ and $\epsilon_k$ are the crystallinity and porosity of the effective medium $k$, and $P_{i,sat}^{(T)}$ the vapor saturation pressure of $i$.
+
+Finally by noticing that $C_{i,k}\cdot\left(1-c\right)\cdot\left(1-\epsilon\right)\times V_i^m=\phi_{i,k}$ with $V_i^m$ the molar volume of $i$, one gets: 
+$$
+k_{i,k} =\frac{P_{i,sat}^{(T)}V_i^m}{\left(1-c_k\right)\cdot\left(1-\epsilon_k\right)}\times\gamma_{i,k}
+$$
+The only assumption made here is that the sorption isotherm is linear and that the volatility of the substances is low to neglect the amount of substances in the gas phase.
+
+> This model is fully implemented in `SFPPy` within the `kFH` model. For non-volatile substances and mass transfer through dense phases, it is convenient to scale all $k_{i,k}^H$ and consequently all fugacities with $P_{i,sat}^{(T)}=1$.
+> The correct $P_{i,sat}^{(T)}$ value needs to be assigned in the presence of an air layer or of a porous medium since $k_{i,air}$ is by definition $\frac{1}{RT}$.
+
 
 ***
 

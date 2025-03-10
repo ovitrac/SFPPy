@@ -56,7 +56,7 @@ The name or CAS of the substance will trigger the predictions for the considered
 
 import numpy as np
 
-__all__ = ['ActivityCoefficients', 'Diffusivities', 'Dpiringer', 'HenryLikeCoefficients', 'MigrationPropertyModel_validator', 'PartitionCoeffcicients', 'gFHP', 'kFHP', 'migrationProperty']
+__all__ = ['ActivityCoefficients', 'DFV', 'Diffusivities', 'Dpiringer', 'Dwelle', 'HenryLikeCoefficients', 'MigrationPropertyModel_validator', 'PartitionCoeffcicients', 'PropertyModelSelector', 'gFHP', 'kFHP', 'migrationProperty']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -84,7 +84,7 @@ class migrationProperty:
     _source = ""
     _author = "olivier.vitrac@agroparistech.fr"
     _license = "MIT"
-    _version = 1.21
+    _version = 1.30
     _available_to_import = False
 
 
@@ -536,7 +536,12 @@ class Dpiringer(Diffusivities):
             "tau": None
         }
     }
+    # duplicate an entry for wPET from rPET
+    piringer_data["wPET"] = piringer_data["rPET"]
+    piringer_data["wPET"]["className"] = "wPET"
 
+
+    # Dpiringer constructor
     def __init__(self, polymer="LDPE", M=100, T=40):
         """
         Instantiate a Dpiringer object for a specific polymer key
@@ -929,7 +934,7 @@ class Dwelle(Diffusivities):
     theory = "scaling"
     parameters = {"T": {"description": "temperature","units": "degC"},
                   "Tg": {"description": "glass transition temperature","units": "degC"},
-                  "VvdW": {"description": "molecular volume 3D","units": "Å³"}
+                  "Vvdw": {"description": "molecular volume 3D","units": "Å³"}
                 }
     _available_to_import = True # this model can be directly imported
 
@@ -969,13 +974,13 @@ class Dwelle(Diffusivities):
             raise ValueError(f"The property {prop} does not exist for {self.polymer}")
         return self.welle_data[self.polymer][prop]
 
-    def eval(self,VvdW,T,**extra):
+    def eval(self,Vvdw,T,**extra):
         """Compute D acoording to the Welle model"""
         TK = self.T0K+T
-        return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
+        return  1.0e-4 * self.b * (Vvdw/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
 
     @classmethod
-    def evaluate(cls,polymer="gPET", VvdW=100, T=40.0, **extra):
+    def evaluate(cls,polymer="gPET", Vvdw=100, T=40.0, **extra):
         """
         Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
 
@@ -983,7 +988,7 @@ class Dwelle(Diffusivities):
         ----------
         polymer : str
             Polymer name (e.g. 'gPET', 'PS', 'HIPS', 'rPS', 'rHIPS' etc.) as listed in the original data structure.
-        VvdW : float
+        Vvdw : float
             3D molecular volume, default = 100 (units in A**3).
         T : float
             Temperature in °C, default = 40.
@@ -994,7 +999,7 @@ class Dwelle(Diffusivities):
             The estimated diffusion coefficient in m^2/s
         """
         FW = Dwelle(polymer=polymer)
-        return FW.eval(VvdW,T,**extra)
+        return FW.eval(Vvdw,T,**extra)
 
 # %% Available models to expose to layer.py and food.py
 # List below the importable models (currently only D, k, K models are possible)
