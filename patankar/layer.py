@@ -42,7 +42,7 @@ operations such as +. The general object general object is of class layer.
 
 Specific materials with known properties have been derived: LDPE(),HDPE(),PP()...air()
 
-List of implemnted materials:
+List of implemented materials:
 
     | Class Name              | Type     | Material                        | Code    |
     |-------------------------|----------|---------------------------------|---------|
@@ -83,12 +83,12 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.24
+@version: 1.30
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-04
+@rev. 2025-03-10
 
 """
 
@@ -141,7 +141,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.24"
+__version__ = "1.30"
 
 # %% Private functions and classes
 
@@ -1621,7 +1621,7 @@ class layer:
     @property
     def _currentTg(self):
         """returns the current Tg if its defined, if not None"""
-        return getattr(self, "Tg", None)
+        return check_units(getattr(self, "Tg", None))[0]
     @property
     def _currentporosity(self):
         """returns the current porosity if its defined, if not 0"""
@@ -1767,9 +1767,17 @@ class layer:
         def func(**kwargs):
             D = np.empty_like(self._D)
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
-                template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
-                # inherit eventual user parameters
-                result = self._substance.D.evaluate(**dict(template, **kwargs))
+                template.update(polymer=self.layerclass_history[i],
+                                Tg=self.Tg_history[i],
+                                T=T) # updated layer properties
+                # test if an alternative mode is applicable
+                alt_Dclass = self._substance.suggest_alt_Dclass(self,index=i,RaiseError=False,RaiseWarning=False,**template)
+                if alt_Dclass is None:
+                    # run the default model with inherited eventual user parameters
+                    result = self._substance.D.evaluate(**dict(template, **kwargs))
+                else:
+                    # run the alternative model with inherited eventual user parameters
+                    result = alt_Dclass.evaluate(**dict(template, **kwargs))
                 if isinstance(result, np.ndarray) and result.size == 1:
                     D[i] = result.item()  # Extract scalar safely
                 else:
@@ -1825,6 +1833,16 @@ class layer:
             elif callable(self.Dmodel):
                 return self.Dmodel() is not None
         return False
+
+    def _currentDmodel(self,index=0):
+        """Returns the name of Dmodel used in the ith layer"""
+        if self.hasDmodel:
+            default = self._substance.D.__name__
+            altDmodel = self._substance.suggest_alt_Dmodel(self,index,RaiseError=False)
+            if altDmodel is None:
+                return default
+            return altDmodel if self._substance.check_alt_propclass(altDmodel) else altDmodel+"-->"+default
+        return ""
 
     @property
     def haskmodel(self):
@@ -2155,7 +2173,7 @@ class layer:
                 print(f'{self._nlayer}-multilayer of {self.__description}:')
             for n in range(1,self._nlayer+1):
                 modelinfo = {
-                    "D": f"{self._substance.D.__name__}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})" if hasDmodel else "",
+                    "D": f"{self._currentDmodel(n-1)}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})" if hasDmodel else "",
                     "k": f"{self._substance.k.__name__}(<{self.chemicalsubstance_history[n-1]}>,{self._substance})" if haskmodel else "",
                     }
                 print('-- [ layer %d of %d ] ---------- barrier rank=%d --------------'
@@ -2168,9 +2186,9 @@ class layer:
                 if haskmodel:
                     print('%10s: %s' % ("crystal",self.crystallinity_history[n-1]),flush=True)
                 if hasDmodel and self.Tg_history[n-1] is not None:
-                    Tg,Tgu = check_units(self.Tg_history[n-1])
+                    Tg = self.Tg_history[n-1] # Tg,Tgu = check_units(self.Tg_history[n-1])
                     Tg = Tg.item() if isinstance(Tg, np.ndarray) else Tg
-                    print('%10s: %s' % ("Tg",f"{Tg} [{Tgu}]"),flush=True)
+                    print('%10s: %s' % ("Tg",f"{Tg} [{self.Tunit}]"),flush=True)
                 # numeric properties
                 for p in properties_hasmodel.keys():
                     v = getattr(self,p)                 # value
@@ -2717,7 +2735,7 @@ class PPrubber(layer):
         can be adjusted.
         """
         T = self.T[0] if T is None else check_units(T, None, "degC")[0]
-        return 900 * (1 - 3*(T - layer._defaults["Td"]) * 7e-5), "kg/m**3"
+        return 900 * (1 - 3*(T - layer._defaults["Td"]) * 17e-5), "kg/m**3"
     @property
     def Tg(self):
         """ glass transition temperature of atactic/rubbery PP """
@@ -2780,24 +2798,67 @@ class oPP(layer):
         """Porosity: volume fraction of voids"""
         return 0
 
-# <<<<<<<<<<<<<<<<<<<<<<< P O L Y V I N Y L S >>>>>>>>>>>>>>>>>>>>>>
 
-# -- PS (polystyrene) -----------------------------------------------
-class PS(layer):
+# <<<<<<<<<<<<<<<<<<<<<<< P O L Y A C R Y L A T E S >>>>>>>>>>>>>>>>>>>>>>
+# -- PMMA (polymethyl acrylate) -----------------------------------------------
+class PMMA(layer):
     """ extended pantankar.layer for polystyrene (PS) """
-    _chemicalsubstance = "styrene" # monomer for polymers
-    _polarityindex = 3.0  # Slightly more polar than polyolefins, but still considered relatively non-polar
+    _chemicalsubstance = "methyl methacrylate" # monomer for polymers
+    _polarityindex = 5.5  #  more polar than polyolefins
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
-                 layername="layer in PS",**extra):
-        """ PS layer constructor """
+                 layername="layer in PMMA",**extra):
+        """ PMMA layer constructor """
         super().__init__(
             l=l, D=D, k=k, C0=C0, T=T,
             lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
             layername=layername,
             layertype="polymer",
-            layermaterial="polystyrene",
-            layercode="PS",
+            layermaterial="PMMA",
+            layercode="PMMA",
+            **extra
+        )
+    def density(self, T=None):
+        """
+        density of PMMA: ~1180 kg/m^3
+        """
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
+        return 1180 * (1 - 3*(T - layer._defaults["Td"]) * 7.5e-5), "kg/m**3"
+    @property
+    def Tg(self):
+        """ glass transition temperature of PMMA """
+        return 105, "degC"
+    @property
+    def Tm(self):
+        """ polystyrene is largely amorphous """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
+
+# <<<<<<<<<<<<<<<<<<<<<<< P O L Y V I N Y L S >>>>>>>>>>>>>>>>>>>>>>
+
+# -- PS (polystyrene) -----------------------------------------------
+class PS(layer):
+    """ extended pantankar.layer for polystyrene (general purpose PS) """
+    _chemicalsubstance = "styrene" # monomer for polymers
+    _polarityindex = 3.0  # Slightly more polar than polyolefins, but still considered relatively non-polar
+    def __init__(self, l=100e-6, D=1e-14, T=None,
+                 k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
+                 layername="layer in PS",layertype="polymer",layermaterial="polystyrene",layercode="PS",
+                 **extra):
+        """ PS layer constructor """
+        super().__init__(
+            l=l, D=D, k=k, C0=C0, T=T,
+            lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
+            layername=layername,
+            layertype=layertype,
+            layermaterial=layermaterial,
+            layercode=layercode,
             **extra
         )
     def density(self, T=None):
@@ -2816,12 +2877,27 @@ class PS(layer):
         return None
     def crystallinity(self, T=None):
         """polymer crystallinity"""
-        return
+        return 0
     @property
     def porosity(self):
         """Porosity: volume fraction of voids"""
         return 0
 
+# -- rPS (polystyrene above Tg) --------------------------------------
+class rPS(PS):
+    """extended pantankar layer for rubber polystyrene (general purpose PS)"""
+    def __init__(self, l=100e-6, D=1e-14, T=None,
+                 k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
+                 layername="layer in rPS",layermaterial="polystyrene above Tg",
+                 **extra):
+        """ PS layer constructor """
+        super().__init__(
+            l=l, D=D, k=k, C0=C0, T=T,
+            lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
+            layername=layername,
+            layermaterial=layermaterial,
+            **extra
+        )
 
 # -- HIPS (high-impact polystyrene) -----------------------------------
 class HIPS(layer):
@@ -2830,15 +2906,16 @@ class HIPS(layer):
     _polarityindex = 3.0  # Similar or very close to PS in polarity
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
-                 layername="layer in HIPS",**extra):
+                 layername="layer in HIPS", layertype="polymer",
+                 layermaterial="high-impact polystyrene", layercode="HIPS", **extra):
         """ HIPS layer constructor """
         super().__init__(
             l=l, D=D, k=k, C0=C0, T=T,
             lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
             layername=layername,
-            layertype="polymer",
-            layermaterial="high-impact polystyrene",
-            layercode="HIPS",
+            layertype=layertype,
+            layermaterial=layermaterial,
+            layercode=layercode,
             **extra
         )
     def density(self, T=None):
@@ -2862,6 +2939,23 @@ class HIPS(layer):
     def porosity(self):
         """Porosity: volume fraction of voids"""
         return 0
+
+# -- rHIPS (high-impact polystyrene above Tg) --------------------------
+class rHIPS(HIPS):
+    """extended pantankar layer for rubber high-impact polystyrene"""
+    def __init__(self, l=100e-6, D=1e-14, T=None,
+                 k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
+                 layername="layer in rHIPS",layermaterial="high-impact polystyrene above Tg",
+                 **extra):
+        """ PS layer constructor """
+        super().__init__(
+            l=l, D=D, k=k, C0=C0, T=T,
+            lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
+            layername=layername,
+            layermaterial=layermaterial,
+            **extra
+        )
+
 
 # -- PBS (assuming a styrene-based polymer) ---------------------------
 class SBS(layer):
@@ -2929,7 +3023,7 @@ class rigidPVC(layer):
         density of rigid PVC: ~1400 kg/m^3
         """
         T = self.T[0] if T is None else check_units(T, None, "degC")[0]
-        return 1400 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
+        return 1400 * (1 - 3*(T - layer._defaults["Td"]) * 15e-5), "kg/m**3"
 
     @property
     def Tg(self):
@@ -2970,7 +3064,47 @@ class plasticizedPVC(layer):
         density of plasticized PVC: ~1300 kg/m^3
         """
         T = self.T[0] if T is None else check_units(T, None, "degC")[0]
-        return 1300 * (1 - 3*(T - layer._defaults["Td"]) * 5e-5), "kg/m**3"
+        return 1300 * (1 - 3*(T - layer._defaults["Td"]) * 15e-5), "kg/m**3"
+    @property
+    def Tg(self):
+        """ glass transition temperature of plasticized PVC """
+        return -40, "degC"
+    @property
+    def Tm(self):
+        """ plasticized PVC also amorphous """
+        return None
+    def crystallinity(self, T=None):
+        """polymer crystallinity"""
+        return 0
+    @property
+    def porosity(self):
+        """Porosity: volume fraction of voids"""
+        return 0
+
+# -- plasticizedPVC ---------------------------------------------------
+class PVAc(layer):
+    """ extended pantankar.layer for PVAc """
+    _chemicalsubstance = "vinyl acetate" # monomer for polymers
+    _polarityindex = 7  # polar but it depends on the acetylation rate.
+    def __init__(self, l=200e-6, D=1e-14, T=None,
+                 k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
+                 layername="layer in PVAc",**extra):
+        """ PVAc layer constructor """
+        super().__init__(
+            l=l, D=D, k=k, C0=C0, T=T,
+            lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
+            layername=layername,
+            layertype="polymer",
+            layermaterial="PVAc",
+            layercode="PVAc",
+            **extra
+        )
+    def density(self, T=None):
+        """
+        density of plasticized PVC: ~1300 kg/m^3
+        """
+        T = self.T[0] if T is None else check_units(T, None, "degC")[0]
+        return 1190 * (1 - 3*(T - layer._defaults["Td"]) * 15e-5), "kg/m**3"
     @property
     def Tg(self):
         """ glass transition temperature of plasticized PVC """
@@ -2997,15 +3131,15 @@ class gPET(layer):
     _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
-                 layername="layer in gPET",**extra):
+                 layername="layer in gPET",layertype="polymer",layermaterial="glassy PET", layercode="PET",**extra):
         """ glassy PET layer constructor """
         super().__init__(
             l=l, D=D, k=k, C0=C0, T=T,
             lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
             layername=layername,
-            layertype="polymer",
-            layermaterial="glassy PET",
-            layercode="PET",
+            layertype=layertype,
+            layermaterial=layermaterial,
+            layercode=layercode,
             **extra
         )
     def density(self, T=None):
@@ -3033,6 +3167,27 @@ class gPET(layer):
     def porosity(self):
         """Porosity: volume fraction of voids"""
         return 0
+
+## wPET(plasticized/wet PET) -------------------------------------------
+class wPET(gPET):
+    """ extended pantankar.layer for severaly plasticized PET (Tg ~46°C) """
+    def __init__(self, l=200e-6, D=1e-14, T=None,
+                 k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
+                 layername="layer in wPET",layermaterial="plasticized PET",**extra):
+        """ plasticized PET layer constructor """
+        super().__init__(
+            l=l, D=D, k=k, C0=C0, T=T,
+            lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
+            layername=layername,
+            layermaterial=layermaterial,
+            **extra
+        )
+
+    @property
+    def Tg(self):
+        """ approximate glass transition temperature of PET """
+        return 46, "degC"
+
 
 # -- rPET (rubbery PET, T > 76°C) --------------------------------------
 class rPET(layer):
@@ -3675,6 +3830,20 @@ class air(layer):
 # the code is called from here
 # ===================================================
 if __name__ == '__main__':
+
+    P=PS(migrant="toluene",T=20)
+    P.D
+    repr(P)
+
+
+    P = rPS(migrant="bisphenol A",T=40)
+    P.D
+    repr(P)
+
+    P=wPET(migrant="toluene",T=40)
+    P.D
+    repr(P)
+
     G = air(T=60)
     P = LDPE(D=1e-8,Dunit='cm**2/s')
     P = LDPE(D=(1e-8,"cm**2/s"))

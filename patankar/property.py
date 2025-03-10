@@ -50,7 +50,7 @@ The name or CAS of the substance will trigger the predictions for the considered
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-07-21
-@rev: 2025-03-03
+@rev: 2025-03-09
 
 """
 
@@ -65,7 +65,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.21"
+__version__ = "1.30"
 
 # %% Top classes for any property
 # level 0
@@ -167,7 +167,7 @@ class kFHP(HenryLikeCoefficients):
         Note use: scaling = False to get activity coefficients instead of Henry-like ones
 
     """
-    name = "kFHP"
+    name = "FHP"
     description = "Flory-Huggins model of Henry-likecoefficients from P' and V at infinite dilution in k"
     model = "semi-empirical"
     theory = "Flory-Huggins"
@@ -215,7 +215,7 @@ class gFHP(ActivityCoefficients):
         Only a static evaluate is proposed.
 
     """
-    name = "gFHP"
+    name = "FHP"
     description = "Flory-Huggins model of activity coefficients from P' and V at infinite dilution in k"
     model = "semi-empirical"
     theory = "Flory-Huggins"
@@ -540,7 +540,7 @@ class Dpiringer(Diffusivities):
     def __init__(self, polymer="LDPE", M=100, T=40):
         """
         Instantiate a Dpiringer object for a specific polymer key
-        (e.g. 'LDPE', 'PET', or 'air'). The corresponding App and tau
+        (e.g. 'LDPE', 'PET',...). The corresponding App and tau
         are looked up and stored as instance attributes.
         """
         polymer_str = polymer.strip()
@@ -748,26 +748,281 @@ class Dpiringer(Diffusivities):
         D = np.exp(exponent)
         return D
 
+# %% DFV model
+class DFV(Diffusivities):
+    """
+        Diffusivity predicted Hole free-volume model from this reference.
+        This model covers well plasticizing effects and is applicable for substances built
+        on a repeated pattern connecting linearly. Anchor effects are also included.
+
+        Current implementation covers only toluene as surrogate for recycled materials.
+
+
+        REFERENCE
+        Zhu Y., Welle, F. and Vitrac O. A blob model to parameterize polymer hole free volumes and solute diffusion",
+        *Soft Matter* **2019**, 15(42), 8912-8932. DOI: https://doi.org/10.1039/C9SM01556F
+
+        ABSTRACT
+        Solute diffusion in solid polymers has tremendous applications in packaging,
+        reservoir, and biomedical technologies but remains poorly understood. Diffusion
+        of non-entangled linear solutes with chemically identical patterns (blobs) deviates
+        dramatically in polymers in the solid-state (αlin > 1, Macromolecules 2013, 46, 874)
+        from their behaviors in the molten state (αlin = 1, Macromolecules, 2007, 40, 3970).
+        This work uses the scale invariance of the diffusivities, D, of linear probes
+        D(N·M_blob + M_anchor,T,Tg) = N^(-αlin(T,Tg)) * D(M_blob + M_anchor,T,Tg) comprising
+        N identical blobs of mass M_blob and possibly one different terminal pattern (anchor of
+        mass M_anchor) to evaluate the amounts of hole-free volume in seven polymers (aliphatic,
+        semi-aromatic and aromatic) over a broad range of temperatures (−70 K ≤ T − Tg ≤ 160 K).
+        The new parameterization of the concept of hole-free volumes opens the application of
+        the free-volume theory (FVT) developed by Vrentas and Duda to practically any polymer,
+        regardless of the availability of free-volume parameters. The quality of the estimations
+        was tested with various probes including n-alkanes, 1-alcohols, n-alkyl acetates, and
+        n-alkylbenzene. The effects of enthalpic and entropic effects of the blobs and the anchor
+        were analyzed and quantified. Blind validation of the reformulated FVT was tested
+        successfully by predicting from first principles the diffusivities of water and toluene
+        in amorphous polyethylene terephthalate from 4 °C to 180 °C and in various other polymers.
+        The new blob model would open the rational design of additives with controlled diffusivities
+        in thermoplastics.
+    """
+
+    name = "FV"
+    description = "Hole Free Volume model - current implementation is limited to toluene"
+    model = "theory"
+    theory = ["free-volume","scaling"]
+    parameters = {"T": {"description": "temperature","units": "degC"},
+                  "Tg": {"description": "glass transition temperature","units": "degC"}
+                }
+    _available_to_import = True # this model can be directly imported
+
+    # Constants
+    R = 8.31
+    T0K = 273.15 # K
+    deltaT = 2   # (K) sharpness of the transition at Tg
+    betalin = 1  # Rouse scaling
+
+    # Polymer data (Tg in K) stored in a dictionary.
+    _data = {
+        'LDPE': {'Tg': 148.15, 'D0': 1.87e-08, 'xi': 0.615,  'ref': 3, 'Ka': 144, 'Kb': 40, 'E': 0, 'r': 0.5},
+        'PMMA': {'Tg': 381.15, 'D0': 1.87e-08, 'xi': 0.56,   'ref': 2, 'Ka': 252, 'Kb': 65, 'E': 0, 'r': 0.5},
+        'PS':   {'Tg': 373.15, 'D0': 4.8e-08,  'xi': 0.584,  'ref': 2, 'Ka': 144, 'Kb': 40, 'E': 0, 'r': 0.5},
+        'PVAc': {'Tg': 305.15, 'D0': 1.87e-08, 'xi': 0.86,   'ref': 4, 'Ka': 142, 'Kb': 40, 'E': 0, 'r': 0.5},
+        'gPET': {'Tg': 349.15, 'D0': 1.0205e-08, 'xi': 0.6761, 'ref': 5, 'Ka': 252, 'Kb': 65, 'E': 0, 'r': 0.6153},
+        'wPET': {'Tg': 316.15, 'D0': 1.02046e-08, 'xi': 0.6761, 'ref': 5, 'Ka': 252, 'Kb': 65, 'E': 0, 'r': 0.277734},
+    }
+
+    # Reference data used to parameterize the polymer (matching ref)
+    _references = [
+        'Vrentas and Vrentas, 1994',
+        'Zielinski and Duda, 1992',
+        'Lutzow et al., 1999',
+        'Hong, 1995',
+        # toluene in PET
+        'Welle,2008',
+        'Pennarun et al., 2004',
+        'Welle,2013',
+        'our work (permeation)',
+        'our work (sorption)',
+    ]
+
+
+    def __init__(self, polymer="gPET", Tg=76.0, T=40.0):
+        """
+        Instantiate a DFV object for a specific polymer key
+        (e.g. 'LDPE', 'PMMA', or 'PET'). The corresponding D0, xi, Ka, Kb
+        are looked up and stored as instance attributes.
+        """
+        polymer_str = polymer.strip()
+        if polymer_str not in self._data:
+            raise ValueError(f"No exact match for polymer key: {polymer_str!r}")
+        self.polymer = polymer_str
+        self.solute = "toluene"
+        self.Tg = Tg + self.T0K
+        self.Ka = self._lookup("Ka")
+        self.Kb = self._lookup("Kb")
+        self.D0 = self._lookup("D0")
+        self.r = self._lookup("r")
+        self.E = self._lookup("E")
+        self.xi = self._lookup("xi")
+
+    def _lookup(self,prop):
+        """Helper function to lookup a property value from the data dictionary"""
+        if prop not in self._data[self.polymer]:
+            raise ValueError(f"The property {prop} does not exist for {self.polymer}")
+        return self._data[self.polymer][prop]
+
+    def alpha(self,T):
+        """alpha for T >= Tg"""
+        TK = self.T0K+T
+        return 1 + self.Ka / (TK - self.Tg + self.Kb)
+
+    def alphag(self,T):
+        """alpha for T < Tg"""
+        TK = self.T0K+T
+        return 1 + self.Ka / (self.r * (TK - self.Tg) + self.Kb)
+
+    def H(self,T):
+        """Heaviside-like function using tanh"""
+        TK = self.T0K+T
+        return 0.5 * (1 + np.tanh(4 / self.deltaT * (TK - self.Tg)))
+
+    def alphaT(self,T):
+        """Composite alpha function that smoothly transitions between alpha and alphag"""
+        H = self.H(T)
+        return (1-H) * self.alphag(T) + H * self.alpha(T)
+
+    def Plike(self,T):
+        """Plike function see publication"""
+        return (self.alphaT(T) + self.betalin) / 0.24
+
+    def eval(self,T,**extra):
+        """Compute FV D for this polymer"""
+        TK = self.T0K+T
+        if TK-self.Tg < -self.Kb/self.r + self.deltaT:
+            return None # temperature too low for theory at glassy state
+        else:
+            return self.D0 * np.exp(-self.E / (self.R * TK)) * np.exp(-self.xi * self.Plike(T))
+
+    @classmethod
+    def evaluate(cls,polymer="gPET", Tg=76.0, T=40.0, **extra):
+        """
+        Evaluate D (DFV) for toluene in polymer at T in function of its Tg
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer name (e.g. 'LLDPE', 'LDPE', 'rPET', etc.) as listed in the original data structure.
+        T : float
+            Temperature in °C, default = 40.
+        Tg : float
+            Glass Transiton Temperature in °C, default = Tg (PET value).
+
+
+        Returns
+        -------
+        float
+            The estimated diffusion coefficient in m^2/s of toluene.
+        """
+        FV = DFV(polymer=polymer,Tg=Tg,T=T)
+        return FV.eval(T,**extra)
+
+
+# %% Welle model
+class Dwelle(Diffusivities):
+    """
+        Diffusivities predicted with the Welle model
+
+        References:
+
+            Ewender J, Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
+            terephthalate)—Validation data. Packag Technol Sci. 2022; 35(5): 405-413.
+            https://doi.org:10.1002/pts.2638
+
+            Welle, F. (2021). Diffusion Coefficients and Activation Energies of Diffusion of Organic Molecules
+            in Polystyrene below and above Glass Transition Temperature. Polymers, 13(8), 1317.
+            https://doi.org/10.3390/polym13081317
+
+    """
+
+    name = "Welle"
+    description = "Welle diffusivity model"
+    model = "empirical"
+    theory = "scaling"
+    parameters = {"T": {"description": "temperature","units": "degC"},
+                  "Tg": {"description": "glass transition temperature","units": "degC"},
+                  "VvdW": {"description": "molecular volume 3D","units": "Å³"}
+                }
+    _available_to_import = True # this model can be directly imported
+
+
+    # Welle values (the primary key matches the one used in layer)
+    welle_data = {
+        # a in 1/K, b in cm2/s, c in A3, d in 1/K
+        "gPET": {"a": 1.93e-3, "b": 2.27e-6, "c": 11.1, "d":1.50e-4},
+        "PS": {"a": 2.59e-3, "b": 7.38e-9, "c": 55.71, "d":2.73e-5},
+        "rPS": {"a": 2.44e-3, "b": 6.46e-8, "c": 25.51, "d":7.55e-5}, # rubber PS
+        "HIPS": {"a": 2.55e-3, "b": 9.21e-9, "c": 73.28, "d": 2.04e-5},
+        "rHIPS": {"a": 2.46e-3, "b": 2.07e-7, "c": 45.00, "d": 2.07e-7}, # rubber HIPS
+  # add polymers here
+        }
+
+    # Constants
+    T0K = 273.15 # K
+
+    def __init__(self, polymer="gPET"):
+        """
+        Instantiate a Dwelle object for a specific polymer key
+        (e.g. 'gPET', 'PS', "rPS", "HIPS", or 'rHIPS'). The corresponding a,b,c,d values
+        are looked up and stored as instance attributes.
+        """
+        polymer_str = polymer.strip()
+        if polymer_str not in self.welle_data:
+            raise ValueError(f"No exact match for polymer key: {polymer_str!r}")
+        self.polymer = polymer_str
+        self.a = self._lookup("a")
+        self.b = self._lookup("b")
+        self.c = self._lookup("c")
+        self.d = self._lookup("d")
+
+    def _lookup(self,prop):
+        """Helper function to lookup a property value from the welle_data dictionary"""
+        if prop not in self.welle_data[self.polymer]:
+            raise ValueError(f"The property {prop} does not exist for {self.polymer}")
+        return self.welle_data[self.polymer][prop]
+
+    def eval(self,VvdW,T,**extra):
+        """Compute D acoording to the Welle model"""
+        TK = self.T0K+T
+        return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
+
+    @classmethod
+    def evaluate(cls,polymer="gPET", VvdW=100, T=40.0, **extra):
+        """
+        Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer name (e.g. 'gPET', 'PS', 'HIPS', 'rPS', 'rHIPS' etc.) as listed in the original data structure.
+        VvdW : float
+            3D molecular volume, default = 100 (units in A**3).
+        T : float
+            Temperature in °C, default = 40.
+
+        Returns
+        -------
+        float
+            The estimated diffusion coefficient in m^2/s
+        """
+        FW = Dwelle(polymer=polymer)
+        return FW.eval(VvdW,T,**extra)
+
 # %% Available models to expose to layer.py and food.py
 # List below the importable models (currently only D, k, K models are possible)
 # They are imported via:
 #    from property import MigrationPropertyModels, MigrationPropertyModel_validator
-# Note that the name of the attribute (eg, "Piringer") must match class.name (eg, Dpiringer.name)
+# Note that the name of the attribute (eg, "Piringer" or "FV") must match class.name (eg, Dpiringer.name, DFV.name)
 # A strict validator is proposed as MigrationPropertyModel_validator()
 
 MigrationPropertyModels = {
     "D":{
-        "Piringer": Dpiringer
+        "Piringer": Dpiringer,
+        "FV": DFV,
+        "Welle": Dwelle,
+        # add other diffusivity models here
         },
     "k":{
-        "kFHP": kFHP
+        "FHP": kFHP
+        # add other Henry-like models here
         },
     "g":{
-        "gFHP": gFHP
+        "FHP": gFHP
+        # add other activity coefficients models here
         },
     "K":{
         },
     }
+
+# %% Helper functions
 
 # Function helper to get a strict control on property models used by layer.py and food.py
 def MigrationPropertyModel_validator(model=None,name=None,notation=None):

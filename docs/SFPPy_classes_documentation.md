@@ -1,6 +1,6 @@
 # SFPPy Modules Documentation
 
-Generated on: **2025-03-07 18:21:54**
+Generated on: **2025-03-10 16:22:24**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -1115,9 +1115,11 @@ PA6
 PA66
 PBT
 PEN
+PMMA
 PP
 PPrubber
 PS
+PVAc
 Paper
 Quantity
 SBS
@@ -1131,15 +1133,21 @@ mesh
 migrant
 oPP
 plasticizedPVC
+rHIPS
 rPET
+rPS
 rigidPVC
+wPET
 BaseRegistry --> ContextRegistry
 BaseRegistry --> NonMultiplicativeRegistry
 BaseRegistry --> SystemRegistry
 ContextRegistry --> UnitRegistry
+HIPS --> rHIPS
 NonMultiplicativeRegistry --> UnitRegistry
+PS --> rPS
 Quantity --> Quantity
 SystemRegistry --> UnitRegistry
+gPET --> wPET
 layer --> AdhesiveAcrylate
 layer --> AdhesiveEVA
 layer --> AdhesiveNaturalRubber
@@ -1156,9 +1164,11 @@ layer --> PA6
 layer --> PA66
 layer --> PBT
 layer --> PEN
+layer --> PMMA
 layer --> PP
 layer --> PPrubber
 layer --> PS
+layer --> PVAc
 layer --> Paper
 layer --> SBS
 layer --> air
@@ -1180,1068 +1190,1318 @@ object --> migrant
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `_toSI` | return an SI value from (value,"unit") | 7 | 1.24 |
-| (module-level) | `check_units` | check numeric inputs and convert them to SI units | 28 | 1.24 |
-| (module-level) | `format_scientific_latex` | Formats a number in scientific notation only when necessary, using LaTeX. | 53 | 1.24 |
-| (module-level) | `help_layer` | Print all subclasses with their type/material info in a Markdown table with dynamic column widths. | 19 | 1.24 |
-| (module-level) | `list_layer_subclasses` | Lists all classes in this module that derive from 'layer', along with their layertype and layermaterial properties. | 28 | 1.24 |
-| (module-level) | `toSI` |  | 1 | 1.24 |
-| `AdhesiveAcrylate` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveAcrylate` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveAcrylate` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `AdhesiveAcrylate` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `AdhesiveAcrylate` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `AdhesiveAcrylate` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `AdhesiveAcrylate` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `AdhesiveAcrylate` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `AdhesiveAcrylate` | `__init__` | Parameters ---------- | 12 | 1.24 |
-| `AdhesiveAcrylate` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `AdhesiveAcrylate` | `__len__` | length method | 3 | 1.24 |
-| `AdhesiveAcrylate` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveAcrylate` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `AdhesiveAcrylate` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveAcrylate` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `AdhesiveAcrylate` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `AdhesiveAcrylate` | `__repr__` | disp method | 40 | 1.24 |
-| `AdhesiveAcrylate` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `AdhesiveAcrylate` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `AdhesiveAcrylate` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `AdhesiveAcrylate` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `AdhesiveAcrylate` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `AdhesiveAcrylate` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveAcrylate` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `AdhesiveAcrylate` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `AdhesiveAcrylate` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `AdhesiveAcrylate` | `contact` | alias to migration method | 3 | 1.24 |
-| `AdhesiveAcrylate` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `AdhesiveAcrylate` | `density` | typical density ~1000 kg/m^3 | 4 | 1.24 |
-| `AdhesiveAcrylate` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveAcrylate` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveAcrylate` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `AdhesiveAcrylate` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `AdhesiveAcrylate` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `AdhesiveAcrylate` | `split` | split layers | 7 | 1.24 |
-| `AdhesiveAcrylate` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveAcrylate` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `AdhesiveEVA` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveEVA` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveEVA` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `AdhesiveEVA` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `AdhesiveEVA` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `AdhesiveEVA` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `AdhesiveEVA` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `AdhesiveEVA` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `AdhesiveEVA` | `__init__` | Parameters ---------- | 12 | 1.24 |
-| `AdhesiveEVA` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `AdhesiveEVA` | `__len__` | length method | 3 | 1.24 |
-| `AdhesiveEVA` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveEVA` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `AdhesiveEVA` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveEVA` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `AdhesiveEVA` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `AdhesiveEVA` | `__repr__` | disp method | 40 | 1.24 |
-| `AdhesiveEVA` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `AdhesiveEVA` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `AdhesiveEVA` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `AdhesiveEVA` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `AdhesiveEVA` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `AdhesiveEVA` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveEVA` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `AdhesiveEVA` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `AdhesiveEVA` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `AdhesiveEVA` | `contact` | alias to migration method | 3 | 1.24 |
-| `AdhesiveEVA` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `AdhesiveEVA` | `density` | typical density ~930 kg/m^3 | 4 | 1.24 |
-| `AdhesiveEVA` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveEVA` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveEVA` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `AdhesiveEVA` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `AdhesiveEVA` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `AdhesiveEVA` | `split` | split layers | 7 | 1.24 |
-| `AdhesiveEVA` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveEVA` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `AdhesiveNaturalRubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `AdhesiveNaturalRubber` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `AdhesiveNaturalRubber` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `AdhesiveNaturalRubber` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `AdhesiveNaturalRubber` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `AdhesiveNaturalRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `AdhesiveNaturalRubber` | `__init__` | constructor for a natural rubber-based adhesive layer | 13 | 1.24 |
-| `AdhesiveNaturalRubber` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `AdhesiveNaturalRubber` | `__len__` | length method | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `AdhesiveNaturalRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `AdhesiveNaturalRubber` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `AdhesiveNaturalRubber` | `__repr__` | disp method | 40 | 1.24 |
-| `AdhesiveNaturalRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `AdhesiveNaturalRubber` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `AdhesiveNaturalRubber` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `AdhesiveNaturalRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `AdhesiveNaturalRubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `AdhesiveNaturalRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `AdhesiveNaturalRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `AdhesiveNaturalRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `AdhesiveNaturalRubber` | `contact` | alias to migration method | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `AdhesiveNaturalRubber` | `density` | typical density ~910 kg/m^3, adjust as needed | 4 | 1.24 |
-| `AdhesiveNaturalRubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `AdhesiveNaturalRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `AdhesiveNaturalRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `AdhesiveNaturalRubber` | `split` | split layers | 7 | 1.24 |
-| `AdhesiveNaturalRubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveNaturalRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `AdhesivePU` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePU` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePU` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `AdhesivePU` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `AdhesivePU` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `AdhesivePU` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `AdhesivePU` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `AdhesivePU` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `AdhesivePU` | `__init__` | Parameters ---------- | 12 | 1.24 |
-| `AdhesivePU` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `AdhesivePU` | `__len__` | length method | 3 | 1.24 |
-| `AdhesivePU` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesivePU` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `AdhesivePU` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesivePU` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `AdhesivePU` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `AdhesivePU` | `__repr__` | disp method | 40 | 1.24 |
-| `AdhesivePU` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `AdhesivePU` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `AdhesivePU` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `AdhesivePU` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `AdhesivePU` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `AdhesivePU` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesivePU` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `AdhesivePU` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `AdhesivePU` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `AdhesivePU` | `contact` | alias to migration method | 3 | 1.24 |
-| `AdhesivePU` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `AdhesivePU` | `density` | typical density ~1100 kg/m^3 | 4 | 1.24 |
-| `AdhesivePU` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePU` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePU` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `AdhesivePU` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `AdhesivePU` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `AdhesivePU` | `split` | split layers | 7 | 1.24 |
-| `AdhesivePU` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesivePU` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `AdhesivePVAC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePVAC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePVAC` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `AdhesivePVAC` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `AdhesivePVAC` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `AdhesivePVAC` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `AdhesivePVAC` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `AdhesivePVAC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `AdhesivePVAC` | `__init__` | Parameters ---------- | 12 | 1.24 |
-| `AdhesivePVAC` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `AdhesivePVAC` | `__len__` | length method | 3 | 1.24 |
-| `AdhesivePVAC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesivePVAC` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `AdhesivePVAC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesivePVAC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `AdhesivePVAC` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `AdhesivePVAC` | `__repr__` | disp method | 40 | 1.24 |
-| `AdhesivePVAC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `AdhesivePVAC` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `AdhesivePVAC` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `AdhesivePVAC` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `AdhesivePVAC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `AdhesivePVAC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesivePVAC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `AdhesivePVAC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `AdhesivePVAC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `AdhesivePVAC` | `contact` | alias to migration method | 3 | 1.24 |
-| `AdhesivePVAC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `AdhesivePVAC` | `density` | typical density ~1100 kg/m^3 | 4 | 1.24 |
-| `AdhesivePVAC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePVAC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesivePVAC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `AdhesivePVAC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `AdhesivePVAC` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `AdhesivePVAC` | `split` | split layers | 7 | 1.24 |
-| `AdhesivePVAC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesivePVAC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `AdhesiveSyntheticRubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__init__` | constructor for a synthetic rubber-based adhesive layer | 13 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__len__` | length method | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__repr__` | disp method | 40 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `AdhesiveSyntheticRubber` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `AdhesiveSyntheticRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `AdhesiveSyntheticRubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `AdhesiveSyntheticRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `AdhesiveSyntheticRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `AdhesiveSyntheticRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `AdhesiveSyntheticRubber` | `contact` | alias to migration method | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `AdhesiveSyntheticRubber` | `density` | typical density ~920 kg/m^3, adjust as needed | 4 | 1.24 |
-| `AdhesiveSyntheticRubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `AdhesiveSyntheticRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `AdhesiveSyntheticRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `AdhesiveSyntheticRubber` | `split` | split layers | 7 | 1.24 |
-| `AdhesiveSyntheticRubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveSyntheticRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `AdhesiveVAE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveVAE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveVAE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `AdhesiveVAE` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `AdhesiveVAE` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `AdhesiveVAE` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `AdhesiveVAE` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `AdhesiveVAE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `AdhesiveVAE` | `__init__` | Parameters ---------- | 12 | 1.24 |
-| `AdhesiveVAE` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `AdhesiveVAE` | `__len__` | length method | 3 | 1.24 |
-| `AdhesiveVAE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveVAE` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `AdhesiveVAE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `AdhesiveVAE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `AdhesiveVAE` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `AdhesiveVAE` | `__repr__` | disp method | 40 | 1.24 |
-| `AdhesiveVAE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `AdhesiveVAE` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `AdhesiveVAE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `AdhesiveVAE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `AdhesiveVAE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `AdhesiveVAE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveVAE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `AdhesiveVAE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `AdhesiveVAE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `AdhesiveVAE` | `contact` | alias to migration method | 3 | 1.24 |
-| `AdhesiveVAE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `AdhesiveVAE` | `density` | typical density ~950 kg/m^3 | 4 | 1.24 |
-| `AdhesiveVAE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveVAE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `AdhesiveVAE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `AdhesiveVAE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `AdhesiveVAE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `AdhesiveVAE` | `split` | split layers | 7 | 1.24 |
-| `AdhesiveVAE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `AdhesiveVAE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `Cardboard` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Cardboard` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Cardboard` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `Cardboard` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `Cardboard` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `Cardboard` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `Cardboard` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `Cardboard` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `Cardboard` | `__init__` | Cardboard layer constructor | 13 | 1.24 |
-| `Cardboard` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `Cardboard` | `__len__` | length method | 3 | 1.24 |
-| `Cardboard` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `Cardboard` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `Cardboard` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `Cardboard` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `Cardboard` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `Cardboard` | `__repr__` | disp method | 40 | 1.24 |
-| `Cardboard` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `Cardboard` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `Cardboard` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `Cardboard` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `Cardboard` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `Cardboard` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `Cardboard` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `Cardboard` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `Cardboard` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `Cardboard` | `contact` | alias to migration method | 3 | 1.24 |
-| `Cardboard` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `Cardboard` | `density` | approximate density for typical cardboard ~700 kg/m^3 | 6 | 1.24 |
-| `Cardboard` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Cardboard` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Cardboard` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `Cardboard` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `Cardboard` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `Cardboard` | `split` | split layers | 7 | 1.24 |
-| `Cardboard` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `Cardboard` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `HDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HDPE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `HDPE` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `HDPE` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `HDPE` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `HDPE` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `HDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `HDPE` | `__init__` | HDPE layer constructor | 13 | 1.24 |
-| `HDPE` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `HDPE` | `__len__` | length method | 3 | 1.24 |
-| `HDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `HDPE` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `HDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `HDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `HDPE` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `HDPE` | `__repr__` | disp method | 40 | 1.24 |
-| `HDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `HDPE` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `HDPE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `HDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `HDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `HDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `HDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `HDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `HDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `HDPE` | `contact` | alias to migration method | 3 | 1.24 |
-| `HDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `HDPE` | `density` | density of HDPE: density(T in K) | 4 | 1.24 |
-| `HDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `HDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `HDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `HDPE` | `split` | split layers | 7 | 1.24 |
-| `HDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `HDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `HIPS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HIPS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HIPS` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `HIPS` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `HIPS` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `HIPS` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `HIPS` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `HIPS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `HIPS` | `__init__` | HIPS layer constructor | 13 | 1.24 |
-| `HIPS` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `HIPS` | `__len__` | length method | 3 | 1.24 |
-| `HIPS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `HIPS` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `HIPS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `HIPS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `HIPS` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `HIPS` | `__repr__` | disp method | 40 | 1.24 |
-| `HIPS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `HIPS` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `HIPS` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `HIPS` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `HIPS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `HIPS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `HIPS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `HIPS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `HIPS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `HIPS` | `contact` | alias to migration method | 3 | 1.24 |
-| `HIPS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `HIPS` | `density` | density of HIPS: ~1040 kg/m^3 | 6 | 1.24 |
-| `HIPS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HIPS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `HIPS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `HIPS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `HIPS` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `HIPS` | `split` | split layers | 7 | 1.24 |
-| `HIPS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `HIPS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `LDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LDPE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `LDPE` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `LDPE` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `LDPE` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `LDPE` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `LDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `LDPE` | `__init__` | LDPE layer constructor | 13 | 1.24 |
-| `LDPE` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `LDPE` | `__len__` | length method | 3 | 1.24 |
-| `LDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `LDPE` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `LDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `LDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `LDPE` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `LDPE` | `__repr__` | disp method | 40 | 1.24 |
-| `LDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `LDPE` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `LDPE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `LDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `LDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `LDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `LDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `LDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `LDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `LDPE` | `contact` | alias to migration method | 3 | 1.24 |
-| `LDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `LDPE` | `density` | density of LDPE: density(T in K) | 4 | 1.24 |
-| `LDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `LDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `LDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `LDPE` | `split` | split layers | 7 | 1.24 |
-| `LDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `LDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `LLDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LLDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LLDPE` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `LLDPE` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `LLDPE` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `LLDPE` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `LLDPE` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `LLDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `LLDPE` | `__init__` | LLDPE layer constructor Defaults are set to typical values found in the literature or between LDPE/HDPE ones. Adjust them as necessary for your models. | 17 | 1.24 |
-| `LLDPE` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `LLDPE` | `__len__` | length method | 3 | 1.24 |
-| `LLDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `LLDPE` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `LLDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `LLDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `LLDPE` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `LLDPE` | `__repr__` | disp method | 40 | 1.24 |
-| `LLDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `LLDPE` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `LLDPE` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `LLDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `LLDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `LLDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `LLDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `LLDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `LLDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `LLDPE` | `contact` | alias to migration method | 3 | 1.24 |
-| `LLDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `LLDPE` | `density` | density of LLDPE: density(T in K) By default, uses an approximate value between LDPE and HDPE. | 8 | 1.24 |
-| `LLDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LLDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `LLDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `LLDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `LLDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `LLDPE` | `split` | split layers | 7 | 1.24 |
-| `LLDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `LLDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `PA6` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA6` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA6` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `PA6` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `PA6` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `PA6` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `PA6` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `PA6` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `PA6` | `__init__` | PA6 layer constructor | 13 | 1.24 |
-| `PA6` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `PA6` | `__len__` | length method | 3 | 1.24 |
-| `PA6` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `PA6` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `PA6` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `PA6` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `PA6` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `PA6` | `__repr__` | disp method | 40 | 1.24 |
-| `PA6` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `PA6` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `PA6` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `PA6` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `PA6` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `PA6` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PA6` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `PA6` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `PA6` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `PA6` | `contact` | alias to migration method | 3 | 1.24 |
-| `PA6` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `PA6` | `density` | density of PA6: ~1140 kg/m^3 | 6 | 1.24 |
-| `PA6` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA6` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA6` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `PA6` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `PA6` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `PA6` | `split` | split layers | 7 | 1.24 |
-| `PA6` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PA6` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `PA66` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA66` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA66` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `PA66` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `PA66` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `PA66` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `PA66` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `PA66` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `PA66` | `__init__` | PA66 layer constructor | 13 | 1.24 |
-| `PA66` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `PA66` | `__len__` | length method | 3 | 1.24 |
-| `PA66` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `PA66` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `PA66` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `PA66` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `PA66` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `PA66` | `__repr__` | disp method | 40 | 1.24 |
-| `PA66` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `PA66` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `PA66` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `PA66` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `PA66` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `PA66` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PA66` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `PA66` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `PA66` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `PA66` | `contact` | alias to migration method | 3 | 1.24 |
-| `PA66` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `PA66` | `density` | density of PA66: ~1150 kg/m^3 | 6 | 1.24 |
-| `PA66` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA66` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PA66` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `PA66` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `PA66` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `PA66` | `split` | split layers | 7 | 1.24 |
-| `PA66` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PA66` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `PBT` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PBT` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PBT` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `PBT` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `PBT` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `PBT` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `PBT` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `PBT` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `PBT` | `__init__` | PBT layer constructor | 13 | 1.24 |
-| `PBT` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `PBT` | `__len__` | length method | 3 | 1.24 |
-| `PBT` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `PBT` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `PBT` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `PBT` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `PBT` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `PBT` | `__repr__` | disp method | 40 | 1.24 |
-| `PBT` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `PBT` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `PBT` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `PBT` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `PBT` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `PBT` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PBT` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `PBT` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `PBT` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `PBT` | `contact` | alias to migration method | 3 | 1.24 |
-| `PBT` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `PBT` | `density` | density of PBT: ~1310 kg/m^3 | 6 | 1.24 |
-| `PBT` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PBT` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PBT` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `PBT` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `PBT` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `PBT` | `split` | split layers | 7 | 1.24 |
-| `PBT` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PBT` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `PEN` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PEN` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PEN` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `PEN` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `PEN` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `PEN` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `PEN` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `PEN` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `PEN` | `__init__` | PEN layer constructor | 13 | 1.24 |
-| `PEN` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `PEN` | `__len__` | length method | 3 | 1.24 |
-| `PEN` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `PEN` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `PEN` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `PEN` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `PEN` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `PEN` | `__repr__` | disp method | 40 | 1.24 |
-| `PEN` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `PEN` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `PEN` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `PEN` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `PEN` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `PEN` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PEN` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `PEN` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `PEN` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `PEN` | `contact` | alias to migration method | 3 | 1.24 |
-| `PEN` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `PEN` | `density` | density of PEN: ~1330 kg/m^3 | 6 | 1.24 |
-| `PEN` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PEN` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PEN` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `PEN` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `PEN` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `PEN` | `split` | split layers | 7 | 1.24 |
-| `PEN` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PEN` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `PP` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PP` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PP` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `PP` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `PP` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `PP` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `PP` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `PP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `PP` | `__init__` | PP layer constructor | 13 | 1.24 |
-| `PP` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `PP` | `__len__` | length method | 3 | 1.24 |
-| `PP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `PP` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `PP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `PP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `PP` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `PP` | `__repr__` | disp method | 40 | 1.24 |
-| `PP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `PP` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `PP` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `PP` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `PP` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `PP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `PP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `PP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `PP` | `contact` | alias to migration method | 3 | 1.24 |
-| `PP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `PP` | `density` | density of PP: density(T in K) | 4 | 1.24 |
-| `PP` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PP` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `PP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `PP` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `PP` | `split` | split layers | 7 | 1.24 |
-| `PP` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `PPrubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PPrubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PPrubber` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `PPrubber` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `PPrubber` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `PPrubber` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `PPrubber` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `PPrubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `PPrubber` | `__init__` | PPrubber layer constructor | 13 | 1.24 |
-| `PPrubber` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `PPrubber` | `__len__` | length method | 3 | 1.24 |
-| `PPrubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `PPrubber` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `PPrubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `PPrubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `PPrubber` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `PPrubber` | `__repr__` | disp method | 40 | 1.24 |
-| `PPrubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `PPrubber` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `PPrubber` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `PPrubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `PPrubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `PPrubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PPrubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `PPrubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `PPrubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `PPrubber` | `contact` | alias to migration method | 3 | 1.24 |
-| `PPrubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `PPrubber` | `density` | density of atactic (rubbery) PP: density(T in K) Approximate initial density ~900 kg/m^3, linear thermal expansion factor can be adjusted. | 8 | 1.24 |
-| `PPrubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PPrubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PPrubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `PPrubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `PPrubber` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `PPrubber` | `split` | split layers | 7 | 1.24 |
-| `PPrubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PPrubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `PS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PS` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `PS` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `PS` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `PS` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `PS` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `PS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `PS` | `__init__` | PS layer constructor | 13 | 1.24 |
-| `PS` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `PS` | `__len__` | length method | 3 | 1.24 |
-| `PS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `PS` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `PS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `PS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `PS` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `PS` | `__repr__` | disp method | 40 | 1.24 |
-| `PS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `PS` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `PS` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `PS` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `PS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `PS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `PS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `PS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `PS` | `contact` | alias to migration method | 3 | 1.24 |
-| `PS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `PS` | `density` | density of PS: ~1050 kg/m^3 | 6 | 1.24 |
-| `PS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `PS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `PS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `PS` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `PS` | `split` | split layers | 7 | 1.24 |
-| `PS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `PS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `Paper` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Paper` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Paper` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `Paper` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `Paper` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `Paper` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `Paper` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `Paper` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `Paper` | `__init__` | Paper layer constructor | 13 | 1.24 |
-| `Paper` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `Paper` | `__len__` | length method | 3 | 1.24 |
-| `Paper` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `Paper` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `Paper` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `Paper` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `Paper` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `Paper` | `__repr__` | disp method | 40 | 1.24 |
-| `Paper` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `Paper` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `Paper` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `Paper` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `Paper` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `Paper` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `Paper` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `Paper` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `Paper` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `Paper` | `contact` | alias to migration method | 3 | 1.24 |
-| `Paper` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `Paper` | `density` | approximate density for typical paper ~800 kg/m^3 | 6 | 1.24 |
-| `Paper` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Paper` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `Paper` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `Paper` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `Paper` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `Paper` | `split` | split layers | 7 | 1.24 |
-| `Paper` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `Paper` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `SBS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `SBS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `SBS` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `SBS` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `SBS` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `SBS` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `SBS` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `SBS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `SBS` | `__init__` | DBS layer constructor | 13 | 1.24 |
-| `SBS` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `SBS` | `__len__` | length method | 3 | 1.24 |
-| `SBS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `SBS` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `SBS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `SBS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `SBS` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `SBS` | `__repr__` | disp method | 40 | 1.24 |
-| `SBS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `SBS` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `SBS` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `SBS` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `SBS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `SBS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `SBS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `SBS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `SBS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `SBS` | `contact` | alias to migration method | 3 | 1.24 |
-| `SBS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `SBS` | `density` | density of 'DBS': approximate, around ~1030 kg/m^3 | 6 | 1.24 |
-| `SBS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `SBS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `SBS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `SBS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `SBS` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `SBS` | `split` | split layers | 7 | 1.24 |
-| `SBS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `SBS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `air` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `air` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `air` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `air` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `air` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `air` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `air` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `air` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `air` | `__init__` | air layer constructor | 17 | 1.24 |
-| `air` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `air` | `__len__` | length method | 3 | 1.24 |
-| `air` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `air` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `air` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `air` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `air` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `air` | `__repr__` | disp method | 40 | 1.24 |
-| `air` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `air` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `air` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `air` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `air` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `air` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `air` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `air` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `air` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `air` | `contact` | alias to migration method | 3 | 1.24 |
-| `air` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `air` | `density` | Density of air at atmospheric pressure: density(T in K) | 6 | 1.24 |
-| `air` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `air` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `air` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `air` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `air` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `air` | `split` | split layers | 7 | 1.24 |
-| `air` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `air` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `gPET` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `gPET` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `gPET` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `gPET` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `gPET` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `gPET` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `gPET` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `gPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `gPET` | `__init__` | glassy PET layer constructor | 13 | 1.24 |
-| `gPET` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `gPET` | `__len__` | length method | 3 | 1.24 |
-| `gPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `gPET` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `gPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `gPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `gPET` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `gPET` | `__repr__` | disp method | 40 | 1.24 |
-| `gPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `gPET` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `gPET` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `gPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `gPET` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `gPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `gPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `gPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `gPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `gPET` | `contact` | alias to migration method | 3 | 1.24 |
-| `gPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `gPET` | `density` | density of glassy PET: ~1350 kg/m^3 | 6 | 1.24 |
-| `gPET` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `gPET` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `gPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `gPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `gPET` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `gPET` | `split` | split layers | 7 | 1.24 |
-| `gPET` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `gPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `layer` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `layer` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `layer` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `layer` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `layer` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `layer` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `layer` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `layer` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `layer` | `__init__` | Parameters ---------- | 139 | 1.24 |
-| `layer` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `layer` | `__len__` | length method | 3 | 1.24 |
-| `layer` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `layer` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `layer` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `layer` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `layer` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `layer` | `__repr__` | disp method | 40 | 1.24 |
-| `layer` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `layer` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `layer` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `layer` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `layer` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `layer` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `layer` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `layer` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `layer` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `layer` | `contact` | alias to migration method | 3 | 1.24 |
-| `layer` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `layer` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `layer` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `layer` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `layer` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `layer` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `layer` | `split` | split layers | 7 | 1.24 |
-| `layer` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `layer` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `layerLink` | `__add__` | Concatenates two layerLink instances. | 40 | 1.24 |
-| `layerLink` | `__getitem__` | Allows `D_link[index]` or `D_link[slice]` to retrieve values. | 10 | 1.24 |
-| `layerLink` | `__init__` | constructs a link | 19 | 1.24 |
-| `layerLink` | `__len__` | Returns the length of the vector managed by the link object. | 3 | 1.24 |
-| `layerLink` | `__mul__` | Repeats the layerLink instance `n` times. | 24 | 1.24 |
-| `layerLink` | `__repr__` | Returns a detailed string representation. | 6 | 1.24 |
-| `layerLink` | `__setitem__` | Allows `D_link[index] = value` or `D_link[slice] = list/scalar`. | 27 | 1.24 |
-| `layerLink` | `__str__` | Returns a compact summary string. | 3 | 1.24 |
-| `layerLink` | `_get_single` | Retrieves the value for a single index, applying rules if necessary. | 12 | 1.24 |
-| `layerLink` | `_remove_indices` | Removes indices from `self.indices` and `self.values` and updates length. | 13 | 1.24 |
-| `layerLink` | `_validate` | Ensures consistency between indices and values. | 6 | 1.24 |
-| `layerLink` | `get` | Retrieves values based on index or returns the full vector. | 24 | 1.24 |
-| `layerLink` | `getandreplace` | Retrieves values for the given indices, replacing NaN values with corresponding values from altvalues. | 38 | 1.24 |
-| `layerLink` | `getfull` | Retrieves the full vector using `getandreplace(None, altvalues)`. | 30 | 1.24 |
-| `layerLink` | `lengthextension` | Ensures that the length of the layerLink instance is at least `max(indices) + 1`. | 10 | 1.24 |
-| `layerLink` | `rename` | Renames the property associated with this link. | 17 | 1.24 |
-| `layerLink` | `reset` | Resets the link instance based on the prototype values. | 10 | 1.24 |
-| `layerLink` | `reshape` | Reshapes the link instance to a new length. | 23 | 1.24 |
-| `layerLink` | `set` | Sets values at specific indices. | 47 | 1.24 |
-| `mesh` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 11 | 1.24 |
-| `mesh` | `__repr__` | Return repr(self). | 9 | 1.24 |
-| `oPP` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `oPP` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `oPP` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `oPP` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `oPP` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `oPP` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `oPP` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `oPP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `oPP` | `__init__` | oPP layer constructor | 13 | 1.24 |
-| `oPP` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `oPP` | `__len__` | length method | 3 | 1.24 |
-| `oPP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `oPP` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `oPP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `oPP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `oPP` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `oPP` | `__repr__` | disp method | 40 | 1.24 |
-| `oPP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `oPP` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `oPP` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `oPP` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `oPP` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `oPP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `oPP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `oPP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `oPP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `oPP` | `contact` | alias to migration method | 3 | 1.24 |
-| `oPP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `oPP` | `density` | density of bioriented PP: density(T in K) Typically close to isotactic PP around ~910 kg/m^3. | 7 | 1.24 |
-| `oPP` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `oPP` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `oPP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `oPP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `oPP` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `oPP` | `split` | split layers | 7 | 1.24 |
-| `oPP` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `oPP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `plasticizedPVC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `plasticizedPVC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `plasticizedPVC` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `plasticizedPVC` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `plasticizedPVC` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `plasticizedPVC` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `plasticizedPVC` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `plasticizedPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `plasticizedPVC` | `__init__` | plasticized PVC layer constructor | 13 | 1.24 |
-| `plasticizedPVC` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `plasticizedPVC` | `__len__` | length method | 3 | 1.24 |
-| `plasticizedPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `plasticizedPVC` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `plasticizedPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `plasticizedPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `plasticizedPVC` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `plasticizedPVC` | `__repr__` | disp method | 40 | 1.24 |
-| `plasticizedPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `plasticizedPVC` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `plasticizedPVC` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `plasticizedPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `plasticizedPVC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `plasticizedPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `plasticizedPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `plasticizedPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `plasticizedPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `plasticizedPVC` | `contact` | alias to migration method | 3 | 1.24 |
-| `plasticizedPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `plasticizedPVC` | `density` | density of plasticized PVC: ~1300 kg/m^3 | 6 | 1.24 |
-| `plasticizedPVC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `plasticizedPVC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `plasticizedPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `plasticizedPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `plasticizedPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `plasticizedPVC` | `split` | split layers | 7 | 1.24 |
-| `plasticizedPVC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `plasticizedPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `rPET` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rPET` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rPET` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `rPET` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `rPET` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `rPET` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `rPET` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `rPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `rPET` | `__init__` | rubbery PET layer constructor | 13 | 1.24 |
-| `rPET` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `rPET` | `__len__` | length method | 3 | 1.24 |
-| `rPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `rPET` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `rPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `rPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `rPET` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `rPET` | `__repr__` | disp method | 40 | 1.24 |
-| `rPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `rPET` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `rPET` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `rPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `rPET` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `rPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `rPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `rPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `rPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `rPET` | `contact` | alias to migration method | 3 | 1.24 |
-| `rPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `rPET` | `density` | density of rubbery PET: ~1350 kg/m^3 but with a different expansion slope possible, if needed | 7 | 1.24 |
-| `rPET` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rPET` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `rPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `rPET` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `rPET` | `split` | split layers | 7 | 1.24 |
-| `rPET` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `rPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
-| `rigidPVC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rigidPVC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rigidPVC` | `__add__` | C = A + B | overload + operator | 51 | 1.24 |
-| `rigidPVC` | `__eq__` | Return self==value. | 7 | 1.24 |
-| `rigidPVC` | `__ge__` | Return self>=value. | 7 | 1.24 |
-| `rigidPVC` | `__getitem__` | get indexing method | 20 | 1.24 |
-| `rigidPVC` | `__gt__` | Return self>value. | 7 | 1.24 |
-| `rigidPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.24 |
-| `rigidPVC` | `__init__` | rigid PVC layer constructor | 13 | 1.24 |
-| `rigidPVC` | `__le__` | Return self<=value. | 7 | 1.24 |
-| `rigidPVC` | `__len__` | length method | 3 | 1.24 |
-| `rigidPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.24 |
-| `rigidPVC` | `__lt__` | Return self<value. | 7 | 1.24 |
-| `rigidPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.24 |
-| `rigidPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.24 |
-| `rigidPVC` | `__ne__` | Return self!=value. | 7 | 1.24 |
-| `rigidPVC` | `__repr__` | disp method | 40 | 1.24 |
-| `rigidPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.24 |
-| `rigidPVC` | `__setitem__` | set indexing method | 39 | 1.24 |
-| `rigidPVC` | `__str__` | Formatted string representation of layer | 5 | 1.24 |
-| `rigidPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.24 |
-| `rigidPVC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.24 |
-| `rigidPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `rigidPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.24 |
-| `rigidPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.24 |
-| `rigidPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.24 |
-| `rigidPVC` | `contact` | alias to migration method | 3 | 1.24 |
-| `rigidPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.24 |
-| `rigidPVC` | `density` | density of rigid PVC: ~1400 kg/m^3 | 6 | 1.24 |
-| `rigidPVC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rigidPVC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.24 |
-| `rigidPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.24 |
-| `rigidPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.24 |
-| `rigidPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.24 |
-| `rigidPVC` | `split` | split layers | 7 | 1.24 |
-| `rigidPVC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.24 |
-| `rigidPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.24 |
+| (module-level) | `_toSI` | return an SI value from (value,"unit") | 7 | 1.30 |
+| (module-level) | `check_units` | check numeric inputs and convert them to SI units | 28 | 1.30 |
+| (module-level) | `format_scientific_latex` | Formats a number in scientific notation only when necessary, using LaTeX. | 53 | 1.30 |
+| (module-level) | `help_layer` | Print all subclasses with their type/material info in a Markdown table with dynamic column widths. | 19 | 1.30 |
+| (module-level) | `list_layer_subclasses` | Lists all classes in this module that derive from 'layer', along with their layertype and layermaterial properties. | 28 | 1.30 |
+| (module-level) | `toSI` |  | 1 | 1.30 |
+| `AdhesiveAcrylate` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveAcrylate` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveAcrylate` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `AdhesiveAcrylate` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `AdhesiveAcrylate` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `AdhesiveAcrylate` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `AdhesiveAcrylate` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `AdhesiveAcrylate` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `AdhesiveAcrylate` | `__init__` | Parameters ---------- | 12 | 1.30 |
+| `AdhesiveAcrylate` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `AdhesiveAcrylate` | `__len__` | length method | 3 | 1.30 |
+| `AdhesiveAcrylate` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveAcrylate` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `AdhesiveAcrylate` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveAcrylate` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `AdhesiveAcrylate` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `AdhesiveAcrylate` | `__repr__` | disp method | 49 | 1.30 |
+| `AdhesiveAcrylate` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `AdhesiveAcrylate` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `AdhesiveAcrylate` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `AdhesiveAcrylate` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `AdhesiveAcrylate` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `AdhesiveAcrylate` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `AdhesiveAcrylate` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveAcrylate` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `AdhesiveAcrylate` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `AdhesiveAcrylate` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `AdhesiveAcrylate` | `contact` | alias to migration method | 3 | 1.30 |
+| `AdhesiveAcrylate` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `AdhesiveAcrylate` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `AdhesiveAcrylate` | `density` | typical density ~1000 kg/m^3 | 4 | 1.30 |
+| `AdhesiveAcrylate` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveAcrylate` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveAcrylate` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `AdhesiveAcrylate` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `AdhesiveAcrylate` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `AdhesiveAcrylate` | `split` | split layers | 7 | 1.30 |
+| `AdhesiveAcrylate` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveAcrylate` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `AdhesiveEVA` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveEVA` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveEVA` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `AdhesiveEVA` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `AdhesiveEVA` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `AdhesiveEVA` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `AdhesiveEVA` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `AdhesiveEVA` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `AdhesiveEVA` | `__init__` | Parameters ---------- | 12 | 1.30 |
+| `AdhesiveEVA` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `AdhesiveEVA` | `__len__` | length method | 3 | 1.30 |
+| `AdhesiveEVA` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveEVA` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `AdhesiveEVA` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveEVA` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `AdhesiveEVA` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `AdhesiveEVA` | `__repr__` | disp method | 49 | 1.30 |
+| `AdhesiveEVA` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `AdhesiveEVA` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `AdhesiveEVA` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `AdhesiveEVA` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `AdhesiveEVA` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `AdhesiveEVA` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `AdhesiveEVA` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveEVA` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `AdhesiveEVA` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `AdhesiveEVA` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `AdhesiveEVA` | `contact` | alias to migration method | 3 | 1.30 |
+| `AdhesiveEVA` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `AdhesiveEVA` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `AdhesiveEVA` | `density` | typical density ~930 kg/m^3 | 4 | 1.30 |
+| `AdhesiveEVA` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveEVA` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveEVA` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `AdhesiveEVA` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `AdhesiveEVA` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `AdhesiveEVA` | `split` | split layers | 7 | 1.30 |
+| `AdhesiveEVA` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveEVA` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `AdhesiveNaturalRubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `AdhesiveNaturalRubber` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `AdhesiveNaturalRubber` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `AdhesiveNaturalRubber` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `AdhesiveNaturalRubber` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `AdhesiveNaturalRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `AdhesiveNaturalRubber` | `__init__` | constructor for a natural rubber-based adhesive layer | 13 | 1.30 |
+| `AdhesiveNaturalRubber` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `AdhesiveNaturalRubber` | `__len__` | length method | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `AdhesiveNaturalRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `AdhesiveNaturalRubber` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `AdhesiveNaturalRubber` | `__repr__` | disp method | 49 | 1.30 |
+| `AdhesiveNaturalRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `AdhesiveNaturalRubber` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `AdhesiveNaturalRubber` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `AdhesiveNaturalRubber` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `AdhesiveNaturalRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `AdhesiveNaturalRubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `AdhesiveNaturalRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `AdhesiveNaturalRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `AdhesiveNaturalRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `AdhesiveNaturalRubber` | `contact` | alias to migration method | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `AdhesiveNaturalRubber` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `density` | typical density ~910 kg/m^3, adjust as needed | 4 | 1.30 |
+| `AdhesiveNaturalRubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `AdhesiveNaturalRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `AdhesiveNaturalRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `AdhesiveNaturalRubber` | `split` | split layers | 7 | 1.30 |
+| `AdhesiveNaturalRubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveNaturalRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `AdhesivePU` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePU` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePU` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `AdhesivePU` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `AdhesivePU` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `AdhesivePU` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `AdhesivePU` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `AdhesivePU` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `AdhesivePU` | `__init__` | Parameters ---------- | 12 | 1.30 |
+| `AdhesivePU` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `AdhesivePU` | `__len__` | length method | 3 | 1.30 |
+| `AdhesivePU` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesivePU` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `AdhesivePU` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesivePU` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `AdhesivePU` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `AdhesivePU` | `__repr__` | disp method | 49 | 1.30 |
+| `AdhesivePU` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `AdhesivePU` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `AdhesivePU` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `AdhesivePU` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `AdhesivePU` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `AdhesivePU` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `AdhesivePU` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesivePU` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `AdhesivePU` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `AdhesivePU` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `AdhesivePU` | `contact` | alias to migration method | 3 | 1.30 |
+| `AdhesivePU` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `AdhesivePU` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `AdhesivePU` | `density` | typical density ~1100 kg/m^3 | 4 | 1.30 |
+| `AdhesivePU` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePU` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePU` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `AdhesivePU` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `AdhesivePU` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `AdhesivePU` | `split` | split layers | 7 | 1.30 |
+| `AdhesivePU` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesivePU` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `AdhesivePVAC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePVAC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePVAC` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `AdhesivePVAC` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `AdhesivePVAC` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `AdhesivePVAC` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `AdhesivePVAC` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `AdhesivePVAC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `AdhesivePVAC` | `__init__` | Parameters ---------- | 12 | 1.30 |
+| `AdhesivePVAC` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `AdhesivePVAC` | `__len__` | length method | 3 | 1.30 |
+| `AdhesivePVAC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesivePVAC` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `AdhesivePVAC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesivePVAC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `AdhesivePVAC` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `AdhesivePVAC` | `__repr__` | disp method | 49 | 1.30 |
+| `AdhesivePVAC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `AdhesivePVAC` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `AdhesivePVAC` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `AdhesivePVAC` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `AdhesivePVAC` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `AdhesivePVAC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `AdhesivePVAC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesivePVAC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `AdhesivePVAC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `AdhesivePVAC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `AdhesivePVAC` | `contact` | alias to migration method | 3 | 1.30 |
+| `AdhesivePVAC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `AdhesivePVAC` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `AdhesivePVAC` | `density` | typical density ~1100 kg/m^3 | 4 | 1.30 |
+| `AdhesivePVAC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePVAC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesivePVAC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `AdhesivePVAC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `AdhesivePVAC` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `AdhesivePVAC` | `split` | split layers | 7 | 1.30 |
+| `AdhesivePVAC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesivePVAC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `AdhesiveSyntheticRubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__init__` | constructor for a synthetic rubber-based adhesive layer | 13 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__len__` | length method | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__repr__` | disp method | 49 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `AdhesiveSyntheticRubber` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `AdhesiveSyntheticRubber` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `AdhesiveSyntheticRubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `AdhesiveSyntheticRubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `AdhesiveSyntheticRubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `AdhesiveSyntheticRubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `AdhesiveSyntheticRubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `AdhesiveSyntheticRubber` | `contact` | alias to migration method | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `AdhesiveSyntheticRubber` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `density` | typical density ~920 kg/m^3, adjust as needed | 4 | 1.30 |
+| `AdhesiveSyntheticRubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `AdhesiveSyntheticRubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `AdhesiveSyntheticRubber` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `AdhesiveSyntheticRubber` | `split` | split layers | 7 | 1.30 |
+| `AdhesiveSyntheticRubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveSyntheticRubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `AdhesiveVAE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveVAE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveVAE` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `AdhesiveVAE` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `AdhesiveVAE` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `AdhesiveVAE` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `AdhesiveVAE` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `AdhesiveVAE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `AdhesiveVAE` | `__init__` | Parameters ---------- | 12 | 1.30 |
+| `AdhesiveVAE` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `AdhesiveVAE` | `__len__` | length method | 3 | 1.30 |
+| `AdhesiveVAE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveVAE` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `AdhesiveVAE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `AdhesiveVAE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `AdhesiveVAE` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `AdhesiveVAE` | `__repr__` | disp method | 49 | 1.30 |
+| `AdhesiveVAE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `AdhesiveVAE` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `AdhesiveVAE` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `AdhesiveVAE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `AdhesiveVAE` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `AdhesiveVAE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `AdhesiveVAE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveVAE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `AdhesiveVAE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `AdhesiveVAE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `AdhesiveVAE` | `contact` | alias to migration method | 3 | 1.30 |
+| `AdhesiveVAE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `AdhesiveVAE` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `AdhesiveVAE` | `density` | typical density ~950 kg/m^3 | 4 | 1.30 |
+| `AdhesiveVAE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveVAE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `AdhesiveVAE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `AdhesiveVAE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `AdhesiveVAE` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `AdhesiveVAE` | `split` | split layers | 7 | 1.30 |
+| `AdhesiveVAE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `AdhesiveVAE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `Cardboard` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Cardboard` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Cardboard` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `Cardboard` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `Cardboard` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `Cardboard` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `Cardboard` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `Cardboard` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `Cardboard` | `__init__` | Cardboard layer constructor | 13 | 1.30 |
+| `Cardboard` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `Cardboard` | `__len__` | length method | 3 | 1.30 |
+| `Cardboard` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `Cardboard` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `Cardboard` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `Cardboard` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `Cardboard` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `Cardboard` | `__repr__` | disp method | 49 | 1.30 |
+| `Cardboard` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `Cardboard` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `Cardboard` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `Cardboard` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `Cardboard` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `Cardboard` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `Cardboard` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `Cardboard` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `Cardboard` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `Cardboard` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `Cardboard` | `contact` | alias to migration method | 3 | 1.30 |
+| `Cardboard` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `Cardboard` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `Cardboard` | `density` | approximate density for typical cardboard ~700 kg/m^3 | 6 | 1.30 |
+| `Cardboard` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Cardboard` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Cardboard` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `Cardboard` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `Cardboard` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `Cardboard` | `split` | split layers | 7 | 1.30 |
+| `Cardboard` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `Cardboard` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `HDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HDPE` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `HDPE` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `HDPE` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `HDPE` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `HDPE` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `HDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `HDPE` | `__init__` | HDPE layer constructor | 13 | 1.30 |
+| `HDPE` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `HDPE` | `__len__` | length method | 3 | 1.30 |
+| `HDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `HDPE` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `HDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `HDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `HDPE` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `HDPE` | `__repr__` | disp method | 49 | 1.30 |
+| `HDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `HDPE` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `HDPE` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `HDPE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `HDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `HDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `HDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `HDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `HDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `HDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `HDPE` | `contact` | alias to migration method | 3 | 1.30 |
+| `HDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `HDPE` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `HDPE` | `density` | density of HDPE: density(T in K) | 4 | 1.30 |
+| `HDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `HDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `HDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `HDPE` | `split` | split layers | 7 | 1.30 |
+| `HDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `HDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `HIPS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HIPS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HIPS` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `HIPS` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `HIPS` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `HIPS` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `HIPS` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `HIPS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `HIPS` | `__init__` | HIPS layer constructor | 14 | 1.30 |
+| `HIPS` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `HIPS` | `__len__` | length method | 3 | 1.30 |
+| `HIPS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `HIPS` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `HIPS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `HIPS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `HIPS` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `HIPS` | `__repr__` | disp method | 49 | 1.30 |
+| `HIPS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `HIPS` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `HIPS` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `HIPS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `HIPS` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `HIPS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `HIPS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `HIPS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `HIPS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `HIPS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `HIPS` | `contact` | alias to migration method | 3 | 1.30 |
+| `HIPS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `HIPS` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `HIPS` | `density` | density of HIPS: ~1040 kg/m^3 | 6 | 1.30 |
+| `HIPS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HIPS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `HIPS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `HIPS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `HIPS` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `HIPS` | `split` | split layers | 7 | 1.30 |
+| `HIPS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `HIPS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `LDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LDPE` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `LDPE` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `LDPE` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `LDPE` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `LDPE` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `LDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `LDPE` | `__init__` | LDPE layer constructor | 13 | 1.30 |
+| `LDPE` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `LDPE` | `__len__` | length method | 3 | 1.30 |
+| `LDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `LDPE` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `LDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `LDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `LDPE` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `LDPE` | `__repr__` | disp method | 49 | 1.30 |
+| `LDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `LDPE` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `LDPE` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `LDPE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `LDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `LDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `LDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `LDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `LDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `LDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `LDPE` | `contact` | alias to migration method | 3 | 1.30 |
+| `LDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `LDPE` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `LDPE` | `density` | density of LDPE: density(T in K) | 4 | 1.30 |
+| `LDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `LDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `LDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `LDPE` | `split` | split layers | 7 | 1.30 |
+| `LDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `LDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `LLDPE` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LLDPE` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LLDPE` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `LLDPE` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `LLDPE` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `LLDPE` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `LLDPE` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `LLDPE` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `LLDPE` | `__init__` | LLDPE layer constructor Defaults are set to typical values found in the literature or between LDPE/HDPE ones. Adjust them as necessary for your models. | 17 | 1.30 |
+| `LLDPE` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `LLDPE` | `__len__` | length method | 3 | 1.30 |
+| `LLDPE` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `LLDPE` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `LLDPE` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `LLDPE` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `LLDPE` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `LLDPE` | `__repr__` | disp method | 49 | 1.30 |
+| `LLDPE` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `LLDPE` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `LLDPE` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `LLDPE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `LLDPE` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `LLDPE` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `LLDPE` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `LLDPE` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `LLDPE` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `LLDPE` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `LLDPE` | `contact` | alias to migration method | 3 | 1.30 |
+| `LLDPE` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `LLDPE` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `LLDPE` | `density` | density of LLDPE: density(T in K) By default, uses an approximate value between LDPE and HDPE. | 7 | 1.30 |
+| `LLDPE` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LLDPE` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `LLDPE` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `LLDPE` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `LLDPE` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `LLDPE` | `split` | split layers | 7 | 1.30 |
+| `LLDPE` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `LLDPE` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PA6` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA6` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA6` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PA6` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PA6` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PA6` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PA6` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PA6` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PA6` | `__init__` | PA6 layer constructor | 13 | 1.30 |
+| `PA6` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PA6` | `__len__` | length method | 3 | 1.30 |
+| `PA6` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PA6` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PA6` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PA6` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PA6` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PA6` | `__repr__` | disp method | 49 | 1.30 |
+| `PA6` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PA6` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PA6` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PA6` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PA6` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PA6` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PA6` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PA6` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PA6` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PA6` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PA6` | `contact` | alias to migration method | 3 | 1.30 |
+| `PA6` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PA6` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `PA6` | `density` | density of PA6: ~1140 kg/m^3 | 6 | 1.30 |
+| `PA6` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA6` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA6` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PA6` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PA6` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PA6` | `split` | split layers | 7 | 1.30 |
+| `PA6` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PA6` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PA66` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA66` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA66` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PA66` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PA66` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PA66` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PA66` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PA66` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PA66` | `__init__` | PA66 layer constructor | 13 | 1.30 |
+| `PA66` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PA66` | `__len__` | length method | 3 | 1.30 |
+| `PA66` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PA66` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PA66` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PA66` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PA66` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PA66` | `__repr__` | disp method | 49 | 1.30 |
+| `PA66` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PA66` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PA66` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PA66` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PA66` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PA66` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PA66` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PA66` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PA66` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PA66` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PA66` | `contact` | alias to migration method | 3 | 1.30 |
+| `PA66` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PA66` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `PA66` | `density` | density of PA66: ~1150 kg/m^3 | 6 | 1.30 |
+| `PA66` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA66` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PA66` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PA66` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PA66` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PA66` | `split` | split layers | 7 | 1.30 |
+| `PA66` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PA66` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PBT` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PBT` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PBT` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PBT` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PBT` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PBT` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PBT` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PBT` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PBT` | `__init__` | PBT layer constructor | 13 | 1.30 |
+| `PBT` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PBT` | `__len__` | length method | 3 | 1.30 |
+| `PBT` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PBT` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PBT` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PBT` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PBT` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PBT` | `__repr__` | disp method | 49 | 1.30 |
+| `PBT` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PBT` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PBT` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PBT` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PBT` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PBT` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PBT` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PBT` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PBT` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PBT` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PBT` | `contact` | alias to migration method | 3 | 1.30 |
+| `PBT` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PBT` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `PBT` | `density` | density of PBT: ~1310 kg/m^3 | 6 | 1.30 |
+| `PBT` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PBT` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PBT` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PBT` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PBT` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PBT` | `split` | split layers | 7 | 1.30 |
+| `PBT` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PBT` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PEN` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PEN` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PEN` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PEN` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PEN` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PEN` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PEN` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PEN` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PEN` | `__init__` | PEN layer constructor | 13 | 1.30 |
+| `PEN` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PEN` | `__len__` | length method | 3 | 1.30 |
+| `PEN` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PEN` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PEN` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PEN` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PEN` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PEN` | `__repr__` | disp method | 49 | 1.30 |
+| `PEN` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PEN` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PEN` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PEN` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PEN` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PEN` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PEN` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PEN` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PEN` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PEN` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PEN` | `contact` | alias to migration method | 3 | 1.30 |
+| `PEN` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PEN` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `PEN` | `density` | density of PEN: ~1330 kg/m^3 | 6 | 1.30 |
+| `PEN` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PEN` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PEN` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PEN` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PEN` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PEN` | `split` | split layers | 7 | 1.30 |
+| `PEN` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PEN` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PMMA` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PMMA` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PMMA` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PMMA` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PMMA` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PMMA` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PMMA` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PMMA` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PMMA` | `__init__` | PMMA layer constructor | 13 | 1.30 |
+| `PMMA` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PMMA` | `__len__` | length method | 3 | 1.30 |
+| `PMMA` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PMMA` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PMMA` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PMMA` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PMMA` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PMMA` | `__repr__` | disp method | 49 | 1.30 |
+| `PMMA` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PMMA` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PMMA` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PMMA` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PMMA` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PMMA` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PMMA` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PMMA` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PMMA` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PMMA` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PMMA` | `contact` | alias to migration method | 3 | 1.30 |
+| `PMMA` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PMMA` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `PMMA` | `density` | density of PMMA: ~1180 kg/m^3 | 6 | 1.30 |
+| `PMMA` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PMMA` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PMMA` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PMMA` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PMMA` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PMMA` | `split` | split layers | 7 | 1.30 |
+| `PMMA` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PMMA` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PP` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PP` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PP` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PP` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PP` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PP` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PP` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PP` | `__init__` | PP layer constructor | 13 | 1.30 |
+| `PP` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PP` | `__len__` | length method | 3 | 1.30 |
+| `PP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PP` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PP` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PP` | `__repr__` | disp method | 49 | 1.30 |
+| `PP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PP` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PP` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PP` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PP` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PP` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PP` | `contact` | alias to migration method | 3 | 1.30 |
+| `PP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PP` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `PP` | `density` | density of PP: density(T in K) | 4 | 1.30 |
+| `PP` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PP` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PP` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PP` | `split` | split layers | 7 | 1.30 |
+| `PP` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PPrubber` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PPrubber` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PPrubber` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PPrubber` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PPrubber` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PPrubber` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PPrubber` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PPrubber` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PPrubber` | `__init__` | PPrubber layer constructor | 13 | 1.30 |
+| `PPrubber` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PPrubber` | `__len__` | length method | 3 | 1.30 |
+| `PPrubber` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PPrubber` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PPrubber` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PPrubber` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PPrubber` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PPrubber` | `__repr__` | disp method | 49 | 1.30 |
+| `PPrubber` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PPrubber` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PPrubber` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PPrubber` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PPrubber` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PPrubber` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PPrubber` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PPrubber` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PPrubber` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PPrubber` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PPrubber` | `contact` | alias to migration method | 3 | 1.30 |
+| `PPrubber` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PPrubber` | `crystallinity` | polymer crystallinity | 4 | 1.30 |
+| `PPrubber` | `density` | density of atactic (rubbery) PP: density(T in K) Approximate initial density ~900 kg/m^3, linear thermal expansion factor can be adjusted. | 8 | 1.30 |
+| `PPrubber` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PPrubber` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PPrubber` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PPrubber` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PPrubber` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PPrubber` | `split` | split layers | 7 | 1.30 |
+| `PPrubber` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PPrubber` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PS` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PS` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PS` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PS` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PS` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PS` | `__init__` | PS layer constructor | 14 | 1.30 |
+| `PS` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PS` | `__len__` | length method | 3 | 1.30 |
+| `PS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PS` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PS` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PS` | `__repr__` | disp method | 49 | 1.30 |
+| `PS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PS` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PS` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PS` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PS` | `contact` | alias to migration method | 3 | 1.30 |
+| `PS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PS` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `PS` | `density` | density of PS: ~1050 kg/m^3 | 6 | 1.30 |
+| `PS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PS` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PS` | `split` | split layers | 7 | 1.30 |
+| `PS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `PVAc` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PVAc` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PVAc` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `PVAc` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `PVAc` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `PVAc` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `PVAc` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `PVAc` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `PVAc` | `__init__` | PVAc layer constructor | 13 | 1.30 |
+| `PVAc` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `PVAc` | `__len__` | length method | 3 | 1.30 |
+| `PVAc` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `PVAc` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `PVAc` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `PVAc` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `PVAc` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `PVAc` | `__repr__` | disp method | 49 | 1.30 |
+| `PVAc` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `PVAc` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `PVAc` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `PVAc` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `PVAc` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `PVAc` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `PVAc` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PVAc` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `PVAc` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `PVAc` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `PVAc` | `contact` | alias to migration method | 3 | 1.30 |
+| `PVAc` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `PVAc` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `PVAc` | `density` | density of plasticized PVC: ~1300 kg/m^3 | 6 | 1.30 |
+| `PVAc` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PVAc` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `PVAc` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `PVAc` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `PVAc` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `PVAc` | `split` | split layers | 7 | 1.30 |
+| `PVAc` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `PVAc` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `Paper` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Paper` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Paper` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `Paper` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `Paper` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `Paper` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `Paper` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `Paper` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `Paper` | `__init__` | Paper layer constructor | 13 | 1.30 |
+| `Paper` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `Paper` | `__len__` | length method | 3 | 1.30 |
+| `Paper` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `Paper` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `Paper` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `Paper` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `Paper` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `Paper` | `__repr__` | disp method | 49 | 1.30 |
+| `Paper` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `Paper` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `Paper` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `Paper` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `Paper` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `Paper` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `Paper` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `Paper` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `Paper` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `Paper` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `Paper` | `contact` | alias to migration method | 3 | 1.30 |
+| `Paper` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `Paper` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `Paper` | `density` | approximate density for typical paper ~800 kg/m^3 | 6 | 1.30 |
+| `Paper` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Paper` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `Paper` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `Paper` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `Paper` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `Paper` | `split` | split layers | 7 | 1.30 |
+| `Paper` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `Paper` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `SBS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `SBS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `SBS` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `SBS` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `SBS` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `SBS` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `SBS` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `SBS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `SBS` | `__init__` | DBS layer constructor | 13 | 1.30 |
+| `SBS` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `SBS` | `__len__` | length method | 3 | 1.30 |
+| `SBS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `SBS` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `SBS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `SBS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `SBS` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `SBS` | `__repr__` | disp method | 49 | 1.30 |
+| `SBS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `SBS` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `SBS` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `SBS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `SBS` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `SBS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `SBS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `SBS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `SBS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `SBS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `SBS` | `contact` | alias to migration method | 3 | 1.30 |
+| `SBS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `SBS` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `SBS` | `density` | density of 'DBS': approximate, around ~1030 kg/m^3 | 6 | 1.30 |
+| `SBS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `SBS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `SBS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `SBS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `SBS` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `SBS` | `split` | split layers | 7 | 1.30 |
+| `SBS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `SBS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `air` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `air` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `air` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `air` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `air` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `air` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `air` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `air` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `air` | `__init__` | air layer constructor | 17 | 1.30 |
+| `air` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `air` | `__len__` | length method | 3 | 1.30 |
+| `air` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `air` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `air` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `air` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `air` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `air` | `__repr__` | disp method | 49 | 1.30 |
+| `air` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `air` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `air` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `air` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `air` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `air` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `air` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `air` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `air` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `air` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `air` | `contact` | alias to migration method | 3 | 1.30 |
+| `air` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `air` | `crystallinity` | Crystallinity of the solid phase | 3 | 1.30 |
+| `air` | `density` | Density of air at atmospheric pressure: density(T in K) | 6 | 1.30 |
+| `air` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `air` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `air` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `air` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `air` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `air` | `split` | split layers | 7 | 1.30 |
+| `air` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `air` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `gPET` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `gPET` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `gPET` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `gPET` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `gPET` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `gPET` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `gPET` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `gPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `gPET` | `__init__` | glassy PET layer constructor | 13 | 1.30 |
+| `gPET` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `gPET` | `__len__` | length method | 3 | 1.30 |
+| `gPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `gPET` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `gPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `gPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `gPET` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `gPET` | `__repr__` | disp method | 49 | 1.30 |
+| `gPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `gPET` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `gPET` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `gPET` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `gPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `gPET` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `gPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `gPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `gPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `gPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `gPET` | `contact` | alias to migration method | 3 | 1.30 |
+| `gPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `gPET` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `gPET` | `density` | density of glassy PET: ~1350 kg/m^3 | 6 | 1.30 |
+| `gPET` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `gPET` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `gPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `gPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `gPET` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `gPET` | `split` | split layers | 7 | 1.30 |
+| `gPET` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `gPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `layer` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `layer` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `layer` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `layer` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `layer` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `layer` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `layer` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `layer` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `layer` | `__init__` | Parameters ---------- | 142 | 1.30 |
+| `layer` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `layer` | `__len__` | length method | 3 | 1.30 |
+| `layer` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `layer` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `layer` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `layer` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `layer` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `layer` | `__repr__` | disp method | 49 | 1.30 |
+| `layer` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `layer` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `layer` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `layer` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `layer` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `layer` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `layer` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `layer` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `layer` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `layer` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `layer` | `contact` | alias to migration method | 3 | 1.30 |
+| `layer` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `layer` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `layer` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `layer` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `layer` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `layer` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `layer` | `split` | split layers | 7 | 1.30 |
+| `layer` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `layer` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `layerLink` | `__add__` | Concatenates two layerLink instances. | 40 | 1.30 |
+| `layerLink` | `__getitem__` | Allows `D_link[index]` or `D_link[slice]` to retrieve values. | 10 | 1.30 |
+| `layerLink` | `__init__` | constructs a link | 19 | 1.30 |
+| `layerLink` | `__len__` | Returns the length of the vector managed by the link object. | 3 | 1.30 |
+| `layerLink` | `__mul__` | Repeats the layerLink instance `n` times. | 24 | 1.30 |
+| `layerLink` | `__repr__` | Returns a detailed string representation. | 6 | 1.30 |
+| `layerLink` | `__setitem__` | Allows `D_link[index] = value` or `D_link[slice] = list/scalar`. | 27 | 1.30 |
+| `layerLink` | `__str__` | Returns a compact summary string. | 3 | 1.30 |
+| `layerLink` | `_get_single` | Retrieves the value for a single index, applying rules if necessary. | 12 | 1.30 |
+| `layerLink` | `_remove_indices` | Removes indices from `self.indices` and `self.values` and updates length. | 13 | 1.30 |
+| `layerLink` | `_validate` | Ensures consistency between indices and values. | 6 | 1.30 |
+| `layerLink` | `get` | Retrieves values based on index or returns the full vector. | 24 | 1.30 |
+| `layerLink` | `getandreplace` | Retrieves values for the given indices, replacing NaN values with corresponding values from altvalues. | 38 | 1.30 |
+| `layerLink` | `getfull` | Retrieves the full vector using `getandreplace(None, altvalues)`. | 30 | 1.30 |
+| `layerLink` | `lengthextension` | Ensures that the length of the layerLink instance is at least `max(indices) + 1`. | 10 | 1.30 |
+| `layerLink` | `rename` | Renames the property associated with this link. | 17 | 1.30 |
+| `layerLink` | `reset` | Resets the link instance based on the prototype values. | 10 | 1.30 |
+| `layerLink` | `reshape` | Reshapes the link instance to a new length. | 23 | 1.30 |
+| `layerLink` | `set` | Sets values at specific indices. | 47 | 1.30 |
+| `mesh` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 11 | 1.30 |
+| `mesh` | `__repr__` | Return repr(self). | 9 | 1.30 |
+| `oPP` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `oPP` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `oPP` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `oPP` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `oPP` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `oPP` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `oPP` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `oPP` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `oPP` | `__init__` | oPP layer constructor | 13 | 1.30 |
+| `oPP` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `oPP` | `__len__` | length method | 3 | 1.30 |
+| `oPP` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `oPP` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `oPP` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `oPP` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `oPP` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `oPP` | `__repr__` | disp method | 49 | 1.30 |
+| `oPP` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `oPP` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `oPP` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `oPP` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `oPP` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `oPP` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `oPP` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `oPP` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `oPP` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `oPP` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `oPP` | `contact` | alias to migration method | 3 | 1.30 |
+| `oPP` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `oPP` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `oPP` | `density` | density of bioriented PP: density(T in K) Typically close to isotactic PP around ~910 kg/m^3. | 7 | 1.30 |
+| `oPP` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `oPP` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `oPP` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `oPP` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `oPP` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `oPP` | `split` | split layers | 7 | 1.30 |
+| `oPP` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `oPP` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `plasticizedPVC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `plasticizedPVC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `plasticizedPVC` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `plasticizedPVC` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `plasticizedPVC` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `plasticizedPVC` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `plasticizedPVC` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `plasticizedPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `plasticizedPVC` | `__init__` | plasticized PVC layer constructor | 13 | 1.30 |
+| `plasticizedPVC` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `plasticizedPVC` | `__len__` | length method | 3 | 1.30 |
+| `plasticizedPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `plasticizedPVC` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `plasticizedPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `plasticizedPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `plasticizedPVC` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `plasticizedPVC` | `__repr__` | disp method | 49 | 1.30 |
+| `plasticizedPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `plasticizedPVC` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `plasticizedPVC` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `plasticizedPVC` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `plasticizedPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `plasticizedPVC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `plasticizedPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `plasticizedPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `plasticizedPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `plasticizedPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `plasticizedPVC` | `contact` | alias to migration method | 3 | 1.30 |
+| `plasticizedPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `plasticizedPVC` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `plasticizedPVC` | `density` | density of plasticized PVC: ~1300 kg/m^3 | 6 | 1.30 |
+| `plasticizedPVC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `plasticizedPVC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `plasticizedPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `plasticizedPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `plasticizedPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `plasticizedPVC` | `split` | split layers | 7 | 1.30 |
+| `plasticizedPVC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `plasticizedPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `rHIPS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rHIPS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rHIPS` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `rHIPS` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `rHIPS` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `rHIPS` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `rHIPS` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `rHIPS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `rHIPS` | `__init__` | PS layer constructor | 12 | 1.30 |
+| `rHIPS` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `rHIPS` | `__len__` | length method | 3 | 1.30 |
+| `rHIPS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `rHIPS` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `rHIPS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `rHIPS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `rHIPS` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `rHIPS` | `__repr__` | disp method | 49 | 1.30 |
+| `rHIPS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `rHIPS` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `rHIPS` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `rHIPS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `rHIPS` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `rHIPS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `rHIPS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rHIPS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `rHIPS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `rHIPS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `rHIPS` | `contact` | alias to migration method | 3 | 1.30 |
+| `rHIPS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `rHIPS` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `rHIPS` | `density` | density of HIPS: ~1040 kg/m^3 | 6 | 1.30 |
+| `rHIPS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rHIPS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rHIPS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `rHIPS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `rHIPS` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `rHIPS` | `split` | split layers | 7 | 1.30 |
+| `rHIPS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rHIPS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `rPET` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPET` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPET` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `rPET` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `rPET` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `rPET` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `rPET` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `rPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `rPET` | `__init__` | rubbery PET layer constructor | 13 | 1.30 |
+| `rPET` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `rPET` | `__len__` | length method | 3 | 1.30 |
+| `rPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `rPET` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `rPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `rPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `rPET` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `rPET` | `__repr__` | disp method | 49 | 1.30 |
+| `rPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `rPET` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `rPET` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `rPET` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `rPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `rPET` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `rPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `rPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `rPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `rPET` | `contact` | alias to migration method | 3 | 1.30 |
+| `rPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `rPET` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `rPET` | `density` | density of rubbery PET: ~1350 kg/m^3 but with a different expansion slope possible, if needed | 7 | 1.30 |
+| `rPET` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPET` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `rPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `rPET` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `rPET` | `split` | split layers | 7 | 1.30 |
+| `rPET` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `rPS` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPS` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPS` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `rPS` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `rPS` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `rPS` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `rPS` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `rPS` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `rPS` | `__init__` | PS layer constructor | 12 | 1.30 |
+| `rPS` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `rPS` | `__len__` | length method | 3 | 1.30 |
+| `rPS` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `rPS` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `rPS` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `rPS` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `rPS` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `rPS` | `__repr__` | disp method | 49 | 1.30 |
+| `rPS` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `rPS` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `rPS` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `rPS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `rPS` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `rPS` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `rPS` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rPS` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `rPS` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `rPS` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `rPS` | `contact` | alias to migration method | 3 | 1.30 |
+| `rPS` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `rPS` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `rPS` | `density` | density of PS: ~1050 kg/m^3 | 6 | 1.30 |
+| `rPS` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPS` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rPS` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `rPS` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `rPS` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `rPS` | `split` | split layers | 7 | 1.30 |
+| `rPS` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rPS` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `rigidPVC` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rigidPVC` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rigidPVC` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `rigidPVC` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `rigidPVC` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `rigidPVC` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `rigidPVC` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `rigidPVC` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `rigidPVC` | `__init__` | rigid PVC layer constructor | 13 | 1.30 |
+| `rigidPVC` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `rigidPVC` | `__len__` | length method | 3 | 1.30 |
+| `rigidPVC` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `rigidPVC` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `rigidPVC` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `rigidPVC` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `rigidPVC` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `rigidPVC` | `__repr__` | disp method | 49 | 1.30 |
+| `rigidPVC` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `rigidPVC` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `rigidPVC` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `rigidPVC` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `rigidPVC` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `rigidPVC` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `rigidPVC` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rigidPVC` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `rigidPVC` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `rigidPVC` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `rigidPVC` | `contact` | alias to migration method | 3 | 1.30 |
+| `rigidPVC` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `rigidPVC` | `crystallinity` | polymer crystallinity | 3 | 1.30 |
+| `rigidPVC` | `density` | density of rigid PVC: ~1400 kg/m^3 | 6 | 1.30 |
+| `rigidPVC` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rigidPVC` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `rigidPVC` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `rigidPVC` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `rigidPVC` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `rigidPVC` | `split` | split layers | 7 | 1.30 |
+| `rigidPVC` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `rigidPVC` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
+| `wPET` | `C0latex` | Returns Initial Concentratoin values (C0) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `wPET` | `Dlatex` | Returns diffusivity values (D) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `wPET` | `__add__` | C = A + B | overload + operator | 54 | 1.30 |
+| `wPET` | `__eq__` | Return self==value. | 7 | 1.30 |
+| `wPET` | `__ge__` | Return self>=value. | 7 | 1.30 |
+| `wPET` | `__getitem__` | get indexing method | 23 | 1.30 |
+| `wPET` | `__gt__` | Return self>value. | 7 | 1.30 |
+| `wPET` | `__hash__` | hash layer-object (assembly) method | 10 | 1.30 |
+| `wPET` | `__init__` | plasticized PET layer constructor | 11 | 1.30 |
+| `wPET` | `__le__` | Return self<=value. | 7 | 1.30 |
+| `wPET` | `__len__` | length method | 3 | 1.30 |
+| `wPET` | `__lshift__` | Overloads << to propagate contact conditions from food. | 3 | 1.30 |
+| `wPET` | `__lt__` | Return self<value. | 7 | 1.30 |
+| `wPET` | `__matmul__` | Overloads @ to propagate contact conditions from food. | 3 | 1.30 |
+| `wPET` | `__mul__` | nA = A*n | overload * operator | 8 | 1.30 |
+| `wPET` | `__ne__` | Return self!=value. | 7 | 1.30 |
+| `wPET` | `__repr__` | disp method | 49 | 1.30 |
+| `wPET` | `__rshift__` | Overloads >> to propagate migration to food. | 6 | 1.30 |
+| `wPET` | `__setitem__` | set indexing method | 45 | 1.30 |
+| `wPET` | `__str__` | Formatted string representation of layer | 5 | 1.30 |
+| `wPET` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.30 |
+| `wPET` | `_from` | Propagates contact conditions from food instance | 16 | 1.30 |
+| `wPET` | `_initialize_link` | Initializes and validates a layerLink attribute. | 30 | 1.30 |
+| `wPET` | `_todict` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `wPET` | `acknowledge` | Register inherited properties under a given category. | 22 | 1.30 |
+| `wPET` | `checknumvalue` | returns a validate value to set properties | 16 | 1.30 |
+| `wPET` | `checktextvalue` | returns a validate value to set properties | 12 | 1.30 |
+| `wPET` | `contact` | alias to migration method | 3 | 1.30 |
+| `wPET` | `copy` | Creates a deep copy of the current layer instance. | 8 | 1.30 |
+| `wPET` | `crystallinity` | polymer crystallinity | 7 | 1.30 |
+| `wPET` | `density` | density of glassy PET: ~1350 kg/m^3 | 6 | 1.30 |
+| `wPET` | `klatex` | Returns Henry-like values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `wPET` | `llatex` | Returns thickness values (k) formatted in LaTeX scientific notation. | 3 | 1.30 |
+| `wPET` | `mesh` | nmesh() generates mesh based on nmesh and nmeshmin, nmesh(nmesh=value,nmeshmin=value) | 18 | 1.30 |
+| `wPET` | `migration` | interface to simulation engine: senspantankar | 13 | 1.30 |
+| `wPET` | `simplify` | merge continuous layers of the same type | 17 | 1.30 |
+| `wPET` | `split` | split layers | 7 | 1.30 |
+| `wPET` | `struct` | returns the equivalent dictionary from an object | 3 | 1.30 |
+| `wPET` | `update` | Update layer parameters following strict validation rules. | 104 | 1.30 |
 
 <a id="patankar_loadpubchem" name="patankar_loadpubchem"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_layer" title="Go to Previous Module: patankar.layer" style="text-decoration: none;">⬅️ Previous</a>
@@ -2262,35 +2522,43 @@ object --> CompoundIndex
 object --> migrant
 ```
 
-**[Class Examples for `patankar/loadpubchem.py` (5)](class_examples.html#patankar_loadpubchem)**
+**[Class Examples for `patankar/loadpubchem.py` (6)](class_examples.html#patankar_loadpubchem)**
 
 ### Methods Table
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 102 | 1.29 |
-| `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.29 |
-| `CompoundIndex` | `_add_synonym_to_index` | Helper to map a single synonym→cid in self.index. | 9 | 1.29 |
-| `CompoundIndex` | `_atom_to_dict` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.29 |
-| `CompoundIndex` | `_bond_to_dict` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.29 |
-| `CompoundIndex` | `_extract_all_pubchem_properties` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.29 |
-| `CompoundIndex` | `_gather_synonyms` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.29 |
-| `CompoundIndex` | `_generate_simple_dict` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.29 |
-| `CompoundIndex` | `find` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 86 | 1.29 |
-| `CompoundIndex` | `refresh_index` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.29 |
-| `migrant` | `__init__` | Create a new migrant instance. | 298 | 1.29 |
-| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 45 | 1.29 |
-| `migrant` | `__str__` | Formatted string representing the migrant | 4 | 1.29 |
-| `migrant` | `dispmax` | optimize display | 9 | 1.29 |
-| `migrantToxtree` | `__init__` | Create a new migrant instance. | 39 | 1.29 |
-| `migrantToxtree` | `__repr__` | Formatted string representation summarizing key attributes. | 45 | 1.29 |
-| `migrantToxtree` | `__str__` | Formatted string representing the migrant | 4 | 1.29 |
-| `migrantToxtree` | `_clean_field_names` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.29 |
-| `migrantToxtree` | `_crop_image` | Crops white background from the PNG image. | 10 | 1.29 |
-| `migrantToxtree` | `_download_pubchem_data` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 17 | 1.29 |
-| `migrantToxtree` | `_run_toxtree` |  | 42 | 1.29 |
-| `migrantToxtree` | `class_roman_to_int` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.29 |
-| `migrantToxtree` | `dispmax` | optimize display | 9 | 1.29 |
+| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 102 | 1.30 |
+| `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.30 |
+| `CompoundIndex` | `_add_synonym_to_index` | Helper to map a single synonym→cid in self.index. | 9 | 1.30 |
+| `CompoundIndex` | `_atom_to_dict` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.30 |
+| `CompoundIndex` | `_bond_to_dict` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.30 |
+| `CompoundIndex` | `_extract_all_pubchem_properties` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.30 |
+| `CompoundIndex` | `_gather_synonyms` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.30 |
+| `CompoundIndex` | `_generate_simple_dict` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.30 |
+| `CompoundIndex` | `find` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 86 | 1.30 |
+| `CompoundIndex` | `refresh_index` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.30 |
+| `migrant` | `__init__` | Create a new migrant instance. | 316 | 1.30 |
+| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 46 | 1.30 |
+| `migrant` | `__str__` | Formatted string representing the migrant | 4 | 1.30 |
+| `migrant` | `_validate_and_set_model` | Generic method for validating and setting a migration property model. | 31 | 1.30 |
+| `migrant` | `check_alt_propclass` | returns True if a class property exists in patankar.property | 12 | 1.30 |
+| `migrant` | `dispmax` | optimize display | 9 | 1.30 |
+| `migrant` | `suggest_alt_Dclass` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.30 |
+| `migrant` | `suggest_alt_Dmodel` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.30 |
+| `migrantToxtree` | `__init__` | Create a new migrant instance. | 39 | 1.30 |
+| `migrantToxtree` | `__repr__` | Formatted string representation summarizing key attributes. | 46 | 1.30 |
+| `migrantToxtree` | `__str__` | Formatted string representing the migrant | 4 | 1.30 |
+| `migrantToxtree` | `_clean_field_names` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.30 |
+| `migrantToxtree` | `_crop_image` | Crops white background from the PNG image. | 10 | 1.30 |
+| `migrantToxtree` | `_download_pubchem_data` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 17 | 1.30 |
+| `migrantToxtree` | `_run_toxtree` |  | 42 | 1.30 |
+| `migrantToxtree` | `_validate_and_set_model` | Generic method for validating and setting a migration property model. | 31 | 1.30 |
+| `migrantToxtree` | `check_alt_propclass` | returns True if a class property exists in patankar.property | 12 | 1.30 |
+| `migrantToxtree` | `class_roman_to_int` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.30 |
+| `migrantToxtree` | `dispmax` | optimize display | 9 | 1.30 |
+| `migrantToxtree` | `suggest_alt_Dclass` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.30 |
+| `migrantToxtree` | `suggest_alt_Dmodel` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.30 |
 
 <a id="patankar_migration" name="patankar_migration"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_loadpubchem" title="Go to Previous Module: patankar.loadpubchem" style="text-decoration: none;">⬅️ Previous</a>
@@ -2787,15 +3055,19 @@ object --> Substance
 ```mermaid
 graph TD;
 ActivityCoefficients
+DFV
 Diffusivities
 Dpiringer
+Dwelle
 HenryLikeCoefficients
 PartitionCoeffcicients
 gFHP
 kFHP
 migrationProperty
 ActivityCoefficients --> gFHP
+Diffusivities --> DFV
 Diffusivities --> Dpiringer
+Diffusivities --> Dwelle
 HenryLikeCoefficients --> kFHP
 migrationProperty --> ActivityCoefficients
 migrationProperty --> Diffusivities
@@ -2804,29 +3076,45 @@ migrationProperty --> PartitionCoeffcicients
 object --> migrationProperty
 ```
 
-**[Class Examples for `patankar/property.py` (3)](class_examples.html#patankar_property)**
+**[Class Examples for `patankar/property.py` (8)](class_examples.html#patankar_property)**
 
 ### Methods Table
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `MigrationPropertyModel_validator` | Returns True if the proposed model is valid for the requested migraton property | 33 | 1.21 |
-| `ActivityCoefficients` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `ActivityCoefficients` | `__str__` | Formatted string representation of property | 3 | 1.21 |
-| `Diffusivities` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `Diffusivities` | `__str__` | Formatted string representation of property | 3 | 1.21 |
-| `Dpiringer` | `__init__` | Instantiate a Dpiringer object for a specific polymer key (e.g. 'LDPE', 'PET', or 'air'). The corresponding App and tau are looked up and stored as instance attributes. | 18 | 1.21 |
-| `Dpiringer` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `Dpiringer` | `__str__` | Formatted string representation of property | 3 | 1.21 |
-| `Dpiringer` | `eval` | Compute Piringer D for this polymer (already stored in the instance) at molecular mass M (g/mol) and temperature T (°C). | 16 | 1.21 |
-| `HenryLikeCoefficients` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `HenryLikeCoefficients` | `__str__` | Formatted string representation of property | 3 | 1.21 |
-| `PartitionCoeffcicients` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `PartitionCoeffcicients` | `__str__` | Formatted string representation of property | 3 | 1.21 |
-| `gFHP` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `gFHP` | `__str__` | Formatted string representation of property | 3 | 1.21 |
-| `kFHP` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `kFHP` | `__str__` | Formatted string representation of property | 3 | 1.21 |
-| `migrationProperty` | `__repr__` | Formatted string representation for nice display. | 25 | 1.21 |
-| `migrationProperty` | `__str__` | Formatted string representation of property | 3 | 1.21 |
+| (module-level) | `MigrationPropertyModel_validator` | Returns True if the proposed model is valid for the requested migraton property | 33 | 1.30 |
+| (module-level) | `PropertyModelSelector` | Selects between two models (and their associated parameter dictionaries) based on a set of rules evaluated on a provided object (or objects). New features include optional models/params and additional operators. | 329 | 1.30 |
+| `ActivityCoefficients` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `ActivityCoefficients` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `DFV` | `H` | Heaviside-like function using tanh | 4 | 1.30 |
+| `DFV` | `Plike` | Plike function see publication | 3 | 1.30 |
+| `DFV` | `__init__` | Instantiate a DFV object for a specific polymer key (e.g. 'LDPE', 'PMMA', or 'PET'). The corresponding D0, xi, Ka, Kb are looked up and stored as instance attributes. | 18 | 1.30 |
+| `DFV` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `DFV` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `DFV` | `_lookup` | Helper function to lookup a property value from the data dictionary | 5 | 1.30 |
+| `DFV` | `alpha` | alpha for T >= Tg | 4 | 1.30 |
+| `DFV` | `alphaT` | Composite alpha function that smoothly transitions between alpha and alphag | 4 | 1.30 |
+| `DFV` | `alphag` | alpha for T < Tg | 4 | 1.30 |
+| `DFV` | `eval` | Compute FV D for this polymer | 7 | 1.30 |
+| `Diffusivities` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `Diffusivities` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `Dpiringer` | `__init__` | Instantiate a Dpiringer object for a specific polymer key (e.g. 'LDPE', 'PET',...). The corresponding App and tau are looked up and stored as instance attributes. | 18 | 1.30 |
+| `Dpiringer` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `Dpiringer` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `Dpiringer` | `eval` | Compute Piringer D for this polymer (already stored in the instance) at molecular mass M (g/mol) and temperature T (°C). | 16 | 1.30 |
+| `Dwelle` | `__init__` | Instantiate a Dwelle object for a specific polymer key (e.g. 'gPET', 'PS', "rPS", "HIPS", or 'rHIPS'). The corresponding a,b,c,d values are looked up and stored as instance attributes. | 14 | 1.30 |
+| `Dwelle` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `Dwelle` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `Dwelle` | `_lookup` | Helper function to lookup a property value from the welle_data dictionary | 5 | 1.30 |
+| `Dwelle` | `eval` | Compute D acoording to the Welle model | 4 | 1.30 |
+| `HenryLikeCoefficients` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `HenryLikeCoefficients` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `PartitionCoeffcicients` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `PartitionCoeffcicients` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `gFHP` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `gFHP` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `kFHP` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `kFHP` | `__str__` | Formatted string representation of property | 3 | 1.30 |
+| `migrationProperty` | `__repr__` | Formatted string representation for nice display. | 25 | 1.30 |
+| `migrationProperty` | `__str__` | Formatted string representation of property | 3 | 1.30 |
 

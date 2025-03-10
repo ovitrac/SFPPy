@@ -62,7 +62,7 @@ The name or CAS of the substance will trigger the predictions for the considered
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-07-21
-@rev: 2025-03-03</p>
+@rev: 2025-03-09</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -119,13 +119,13 @@ The name or CAS of the substance will trigger the predictions for the considered
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-07-21
-@rev: 2025-03-03
+@rev: 2025-03-09
 
 &#34;&#34;&#34;
 
 import numpy as np
 
-__all__ = [&#39;ActivityCoefficients&#39;, &#39;Diffusivities&#39;, &#39;Dpiringer&#39;, &#39;HenryLikeCoefficients&#39;, &#39;MigrationPropertyModel_validator&#39;, &#39;PartitionCoeffcicients&#39;, &#39;gFHP&#39;, &#39;kFHP&#39;, &#39;migrationProperty&#39;]
+__all__ = [&#39;ActivityCoefficients&#39;, &#39;DFV&#39;, &#39;Diffusivities&#39;, &#39;Dpiringer&#39;, &#39;Dwelle&#39;, &#39;HenryLikeCoefficients&#39;, &#39;MigrationPropertyModel_validator&#39;, &#39;PartitionCoeffcicients&#39;, &#39;PropertyModelSelector&#39;, &#39;gFHP&#39;, &#39;kFHP&#39;, &#39;migrationProperty&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -134,7 +134,7 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.21&#34;
+__version__ = &#34;1.30&#34;
 
 # %% Top classes for any property
 # level 0
@@ -218,7 +218,7 @@ class PartitionCoeffcicients(migrationProperty):
 class kFHP(HenryLikeCoefficients):
     &#34;&#34;&#34;
         Simplified model to estimate Henry-like coefficients based on gFHP class
-            ki,k = Vi * Pi gik(P&#39;i,P&#39;k,Vi,Vk)
+            ki,k = Vi * Pi gik(P&#39;i,P&#39;k,Vi,Vk,crystallinity,porosity)
 
             i: solute
             k: P or F
@@ -227,38 +227,43 @@ class kFHP(HenryLikeCoefficients):
             ispolymer: True for polymers
             alpha: scaling constant for chiik (default=0.14=1/migrant(&#34;water&#34;).polarityindex)
             lngmin: minimum value (default=0)
-            gscale: activity coefficient (default=Vi*Psat)
             Psat: vapor saturation pressure
+            cristallinity: crystallinity of the solid phase
+            porosity: porosity of the effective solid.medium
 
         Only a static evaluate is proposed.
 
         Note use: scaling = False to get activity coefficients instead of Henry-like ones
 
     &#34;&#34;&#34;
-    name = &#34;kFHP&#34;
+    name = &#34;FHP&#34;
     description = &#34;Flory-Huggins model of Henry-likecoefficients from P&#39; and V at infinite dilution in k&#34;
     model = &#34;semi-empirical&#34;
     theory = &#34;Flory-Huggins&#34;
-    parameters = {&#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
-                  &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
-                  &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
-                  &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
-                  &#34;Psat&#34;: {&#34;description&#34;: &#34;vapor saturation pressure of i&#34;,&#34;units&#34;: &#34;Pa&#34;}
+    parameters = {  &#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
+                    &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
+                    &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                    &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                  &#34;Psat&#34;: {&#34;description&#34;: &#34;vapor saturation pressure of i&#34;,&#34;units&#34;: &#34;Pa&#34;},
+         &#34;crystallinity&#34;: {&#34;description&#34;: &#34;crystallinity of the solid phase&#34;,&#39;units&#39;:&#34;-&#34;},
+              &#34;porosity&#34;: {&#34;description&#34;: &#34;porosity of the effective solid/medium&#34;,&#39;units&#39;:&#34;-&#34;},
                 }
     _available_to_import = True # this model can be imported
 
     @classmethod
-    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True,porosity=0,crystallinity=0):
         &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+        scalesolidamorphous = (1-porosity)*(1-crystallinity)
+        scalesolidamorphous = 1 if scalesolidamorphous==0 else scalesolidamorphous # pure air
         if scaling: # (default behavior)
             return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                         alpha=alpha,lngmin=lngmin,
-                        gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --&gt; [m**3/kg]
+                        gscale=Vi*1e-3*Psat/scalesolidamorphous # Vi is converted [cm**3/g] --&gt; [m**3/kg]
                         )
         else:
             return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                         alpha=alpha,lngmin=lngmin,
-                        gscale=1
+                        gscale=1/scalesolidamorphous
                         )
 
 # %% Simplified Flory-Huggins model of activity coefficients
@@ -279,7 +284,7 @@ class gFHP(ActivityCoefficients):
         Only a static evaluate is proposed.
 
     &#34;&#34;&#34;
-    name = &#34;gFHP&#34;
+    name = &#34;FHP&#34;
     description = &#34;Flory-Huggins model of activity coefficients from P&#39; and V at infinite dilution in k&#34;
     model = &#34;semi-empirical&#34;
     theory = &#34;Flory-Huggins&#34;
@@ -604,7 +609,7 @@ class Dpiringer(Diffusivities):
     def __init__(self, polymer=&#34;LDPE&#34;, M=100, T=40):
         &#34;&#34;&#34;
         Instantiate a Dpiringer object for a specific polymer key
-        (e.g. &#39;LDPE&#39;, &#39;PET&#39;, or &#39;air&#39;). The corresponding App and tau
+        (e.g. &#39;LDPE&#39;, &#39;PET&#39;,...). The corresponding App and tau
         are looked up and stored as instance attributes.
         &#34;&#34;&#34;
         polymer_str = polymer.strip()
@@ -812,26 +817,281 @@ class Dpiringer(Diffusivities):
         D = np.exp(exponent)
         return D
 
+# %% DFV model
+class DFV(Diffusivities):
+    &#34;&#34;&#34;
+        Diffusivity predicted Hole free-volume model from this reference.
+        This model covers well plasticizing effects and is applicable for substances built
+        on a repeated pattern connecting linearly. Anchor effects are also included.
+
+        Current implementation covers only toluene as surrogate for recycled materials.
+
+
+        REFERENCE
+        Zhu Y., Welle, F. and Vitrac O. A blob model to parameterize polymer hole free volumes and solute diffusion&#34;,
+        *Soft Matter* **2019**, 15(42), 8912-8932. DOI: https://doi.org/10.1039/C9SM01556F
+
+        ABSTRACT
+        Solute diffusion in solid polymers has tremendous applications in packaging,
+        reservoir, and biomedical technologies but remains poorly understood. Diffusion
+        of non-entangled linear solutes with chemically identical patterns (blobs) deviates
+        dramatically in polymers in the solid-state (αlin &gt; 1, Macromolecules 2013, 46, 874)
+        from their behaviors in the molten state (αlin = 1, Macromolecules, 2007, 40, 3970).
+        This work uses the scale invariance of the diffusivities, D, of linear probes
+        D(N·M_blob + M_anchor,T,Tg) = N^(-αlin(T,Tg)) * D(M_blob + M_anchor,T,Tg) comprising
+        N identical blobs of mass M_blob and possibly one different terminal pattern (anchor of
+        mass M_anchor) to evaluate the amounts of hole-free volume in seven polymers (aliphatic,
+        semi-aromatic and aromatic) over a broad range of temperatures (−70 K ≤ T − Tg ≤ 160 K).
+        The new parameterization of the concept of hole-free volumes opens the application of
+        the free-volume theory (FVT) developed by Vrentas and Duda to practically any polymer,
+        regardless of the availability of free-volume parameters. The quality of the estimations
+        was tested with various probes including n-alkanes, 1-alcohols, n-alkyl acetates, and
+        n-alkylbenzene. The effects of enthalpic and entropic effects of the blobs and the anchor
+        were analyzed and quantified. Blind validation of the reformulated FVT was tested
+        successfully by predicting from first principles the diffusivities of water and toluene
+        in amorphous polyethylene terephthalate from 4 °C to 180 °C and in various other polymers.
+        The new blob model would open the rational design of additives with controlled diffusivities
+        in thermoplastics.
+    &#34;&#34;&#34;
+
+    name = &#34;FV&#34;
+    description = &#34;Hole Free Volume model - current implementation is limited to toluene&#34;
+    model = &#34;theory&#34;
+    theory = [&#34;free-volume&#34;,&#34;scaling&#34;]
+    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+                  &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;}
+                }
+    _available_to_import = True # this model can be directly imported
+
+    # Constants
+    R = 8.31
+    T0K = 273.15 # K
+    deltaT = 2   # (K) sharpness of the transition at Tg
+    betalin = 1  # Rouse scaling
+
+    # Polymer data (Tg in K) stored in a dictionary.
+    _data = {
+        &#39;LDPE&#39;: {&#39;Tg&#39;: 148.15, &#39;D0&#39;: 1.87e-08, &#39;xi&#39;: 0.615,  &#39;ref&#39;: 3, &#39;Ka&#39;: 144, &#39;Kb&#39;: 40, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;PMMA&#39;: {&#39;Tg&#39;: 381.15, &#39;D0&#39;: 1.87e-08, &#39;xi&#39;: 0.56,   &#39;ref&#39;: 2, &#39;Ka&#39;: 252, &#39;Kb&#39;: 65, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;PS&#39;:   {&#39;Tg&#39;: 373.15, &#39;D0&#39;: 4.8e-08,  &#39;xi&#39;: 0.584,  &#39;ref&#39;: 2, &#39;Ka&#39;: 144, &#39;Kb&#39;: 40, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;PVAc&#39;: {&#39;Tg&#39;: 305.15, &#39;D0&#39;: 1.87e-08, &#39;xi&#39;: 0.86,   &#39;ref&#39;: 4, &#39;Ka&#39;: 142, &#39;Kb&#39;: 40, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;gPET&#39;: {&#39;Tg&#39;: 349.15, &#39;D0&#39;: 1.0205e-08, &#39;xi&#39;: 0.6761, &#39;ref&#39;: 5, &#39;Ka&#39;: 252, &#39;Kb&#39;: 65, &#39;E&#39;: 0, &#39;r&#39;: 0.6153},
+        &#39;wPET&#39;: {&#39;Tg&#39;: 316.15, &#39;D0&#39;: 1.02046e-08, &#39;xi&#39;: 0.6761, &#39;ref&#39;: 5, &#39;Ka&#39;: 252, &#39;Kb&#39;: 65, &#39;E&#39;: 0, &#39;r&#39;: 0.277734},
+    }
+
+    # Reference data used to parameterize the polymer (matching ref)
+    _references = [
+        &#39;Vrentas and Vrentas, 1994&#39;,
+        &#39;Zielinski and Duda, 1992&#39;,
+        &#39;Lutzow et al., 1999&#39;,
+        &#39;Hong, 1995&#39;,
+        # toluene in PET
+        &#39;Welle,2008&#39;,
+        &#39;Pennarun et al., 2004&#39;,
+        &#39;Welle,2013&#39;,
+        &#39;our work (permeation)&#39;,
+        &#39;our work (sorption)&#39;,
+    ]
+
+
+    def __init__(self, polymer=&#34;gPET&#34;, Tg=76.0, T=40.0):
+        &#34;&#34;&#34;
+        Instantiate a DFV object for a specific polymer key
+        (e.g. &#39;LDPE&#39;, &#39;PMMA&#39;, or &#39;PET&#39;). The corresponding D0, xi, Ka, Kb
+        are looked up and stored as instance attributes.
+        &#34;&#34;&#34;
+        polymer_str = polymer.strip()
+        if polymer_str not in self._data:
+            raise ValueError(f&#34;No exact match for polymer key: {polymer_str!r}&#34;)
+        self.polymer = polymer_str
+        self.solute = &#34;toluene&#34;
+        self.Tg = Tg + self.T0K
+        self.Ka = self._lookup(&#34;Ka&#34;)
+        self.Kb = self._lookup(&#34;Kb&#34;)
+        self.D0 = self._lookup(&#34;D0&#34;)
+        self.r = self._lookup(&#34;r&#34;)
+        self.E = self._lookup(&#34;E&#34;)
+        self.xi = self._lookup(&#34;xi&#34;)
+
+    def _lookup(self,prop):
+        &#34;&#34;&#34;Helper function to lookup a property value from the data dictionary&#34;&#34;&#34;
+        if prop not in self._data[self.polymer]:
+            raise ValueError(f&#34;The property {prop} does not exist for {self.polymer}&#34;)
+        return self._data[self.polymer][prop]
+
+    def alpha(self,T):
+        &#34;&#34;&#34;alpha for T &gt;= Tg&#34;&#34;&#34;
+        TK = self.T0K+T
+        return 1 + self.Ka / (TK - self.Tg + self.Kb)
+
+    def alphag(self,T):
+        &#34;&#34;&#34;alpha for T &lt; Tg&#34;&#34;&#34;
+        TK = self.T0K+T
+        return 1 + self.Ka / (self.r * (TK - self.Tg) + self.Kb)
+
+    def H(self,T):
+        &#34;&#34;&#34;Heaviside-like function using tanh&#34;&#34;&#34;
+        TK = self.T0K+T
+        return 0.5 * (1 + np.tanh(4 / self.deltaT * (TK - self.Tg)))
+
+    def alphaT(self,T):
+        &#34;&#34;&#34;Composite alpha function that smoothly transitions between alpha and alphag&#34;&#34;&#34;
+        H = self.H(T)
+        return (1-H) * self.alphag(T) + H * self.alpha(T)
+
+    def Plike(self,T):
+        &#34;&#34;&#34;Plike function see publication&#34;&#34;&#34;
+        return (self.alphaT(T) + self.betalin) / 0.24
+
+    def eval(self,T,**extra):
+        &#34;&#34;&#34;Compute FV D for this polymer&#34;&#34;&#34;
+        TK = self.T0K+T
+        if TK-self.Tg &lt; -self.Kb/self.r + self.deltaT:
+            return None # temperature too low for theory at glassy state
+        else:
+            return self.D0 * np.exp(-self.E / (self.R * TK)) * np.exp(-self.xi * self.Plike(T))
+
+    @classmethod
+    def evaluate(cls,polymer=&#34;gPET&#34;, Tg=76.0, T=40.0, **extra):
+        &#34;&#34;&#34;
+        Evaluate D (DFV) for toluene in polymer at T in function of its Tg
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer name (e.g. &#39;LLDPE&#39;, &#39;LDPE&#39;, &#39;rPET&#39;, etc.) as listed in the original data structure.
+        T : float
+            Temperature in °C, default = 40.
+        Tg : float
+            Glass Transiton Temperature in °C, default = Tg (PET value).
+
+
+        Returns
+        -------
+        float
+            The estimated diffusion coefficient in m^2/s of toluene.
+        &#34;&#34;&#34;
+        FV = DFV(polymer=polymer,Tg=Tg,T=T)
+        return FV.eval(T,**extra)
+
+
+# %% Welle model
+class Dwelle(Diffusivities):
+    &#34;&#34;&#34;
+        Diffusivities predicted with the Welle model
+
+        References:
+
+            Ewender J, Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
+            terephthalate)—Validation data. Packag Technol Sci. 2022; 35(5): 405-413.
+            https://doi.org:10.1002/pts.2638
+
+            Welle, F. (2021). Diffusion Coefficients and Activation Energies of Diffusion of Organic Molecules
+            in Polystyrene below and above Glass Transition Temperature. Polymers, 13(8), 1317.
+            https://doi.org/10.3390/polym13081317
+
+    &#34;&#34;&#34;
+
+    name = &#34;Welle&#34;
+    description = &#34;Welle diffusivity model&#34;
+    model = &#34;empirical&#34;
+    theory = &#34;scaling&#34;
+    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+                  &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+                  &#34;VvdW&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
+                }
+    _available_to_import = True # this model can be directly imported
+
+
+    # Welle values (the primary key matches the one used in layer)
+    welle_data = {
+        # a in 1/K, b in cm2/s, c in A3, d in 1/K
+        &#34;gPET&#34;: {&#34;a&#34;: 1.93e-3, &#34;b&#34;: 2.27e-6, &#34;c&#34;: 11.1, &#34;d&#34;:1.50e-4},
+        &#34;PS&#34;: {&#34;a&#34;: 2.59e-3, &#34;b&#34;: 7.38e-9, &#34;c&#34;: 55.71, &#34;d&#34;:2.73e-5},
+        &#34;rPS&#34;: {&#34;a&#34;: 2.44e-3, &#34;b&#34;: 6.46e-8, &#34;c&#34;: 25.51, &#34;d&#34;:7.55e-5}, # rubber PS
+        &#34;HIPS&#34;: {&#34;a&#34;: 2.55e-3, &#34;b&#34;: 9.21e-9, &#34;c&#34;: 73.28, &#34;d&#34;: 2.04e-5},
+        &#34;rHIPS&#34;: {&#34;a&#34;: 2.46e-3, &#34;b&#34;: 2.07e-7, &#34;c&#34;: 45.00, &#34;d&#34;: 2.07e-7}, # rubber HIPS
+  # add polymers here
+        }
+
+    # Constants
+    T0K = 273.15 # K
+
+    def __init__(self, polymer=&#34;gPET&#34;):
+        &#34;&#34;&#34;
+        Instantiate a Dwelle object for a specific polymer key
+        (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#34;rPS&#34;, &#34;HIPS&#34;, or &#39;rHIPS&#39;). The corresponding a,b,c,d values
+        are looked up and stored as instance attributes.
+        &#34;&#34;&#34;
+        polymer_str = polymer.strip()
+        if polymer_str not in self.welle_data:
+            raise ValueError(f&#34;No exact match for polymer key: {polymer_str!r}&#34;)
+        self.polymer = polymer_str
+        self.a = self._lookup(&#34;a&#34;)
+        self.b = self._lookup(&#34;b&#34;)
+        self.c = self._lookup(&#34;c&#34;)
+        self.d = self._lookup(&#34;d&#34;)
+
+    def _lookup(self,prop):
+        &#34;&#34;&#34;Helper function to lookup a property value from the welle_data dictionary&#34;&#34;&#34;
+        if prop not in self.welle_data[self.polymer]:
+            raise ValueError(f&#34;The property {prop} does not exist for {self.polymer}&#34;)
+        return self.welle_data[self.polymer][prop]
+
+    def eval(self,VvdW,T,**extra):
+        &#34;&#34;&#34;Compute D acoording to the Welle model&#34;&#34;&#34;
+        TK = self.T0K+T
+        return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
+
+    @classmethod
+    def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
+        &#34;&#34;&#34;
+        Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer name (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#39;HIPS&#39;, &#39;rPS&#39;, &#39;rHIPS&#39; etc.) as listed in the original data structure.
+        VvdW : float
+            3D molecular volume, default = 100 (units in A**3).
+        T : float
+            Temperature in °C, default = 40.
+
+        Returns
+        -------
+        float
+            The estimated diffusion coefficient in m^2/s
+        &#34;&#34;&#34;
+        FW = Dwelle(polymer=polymer)
+        return FW.eval(VvdW,T,**extra)
+
 # %% Available models to expose to layer.py and food.py
 # List below the importable models (currently only D, k, K models are possible)
 # They are imported via:
 #    from property import MigrationPropertyModels, MigrationPropertyModel_validator
-# Note that the name of the attribute (eg, &#34;Piringer&#34;) must match class.name (eg, Dpiringer.name)
+# Note that the name of the attribute (eg, &#34;Piringer&#34; or &#34;FV&#34;) must match class.name (eg, Dpiringer.name, DFV.name)
 # A strict validator is proposed as MigrationPropertyModel_validator()
 
 MigrationPropertyModels = {
     &#34;D&#34;:{
-        &#34;Piringer&#34;: Dpiringer
+        &#34;Piringer&#34;: Dpiringer,
+        &#34;FV&#34;: DFV,
+        &#34;Welle&#34;: Dwelle,
+        # add other diffusivity models here
         },
     &#34;k&#34;:{
-        &#34;kFHP&#34;: kFHP
+        &#34;FHP&#34;: kFHP
+        # add other Henry-like models here
         },
     &#34;g&#34;:{
-        &#34;gFHP&#34;: gFHP
+        &#34;FHP&#34;: gFHP
+        # add other activity coefficients models here
         },
     &#34;K&#34;:{
         },
     }
+
+# %% Helper functions
 
 # Function helper to get a strict control on property models used by layer.py and food.py
 def MigrationPropertyModel_validator(model=None,name=None,notation=None):
@@ -869,6 +1129,341 @@ def MigrationPropertyModel_validator(model=None,name=None,notation=None):
     return True # if all tests passed
 
 
+
+# Function helper to select a model based in rules
+def PropertyModelSelector(rules, obj, model1=None, params1=None, model2=None, params2=None, flags=None):
+    &#34;&#34;&#34;
+    Selects between two models (and their associated parameter dictionaries) based on a set of rules
+    evaluated on a provided object (or objects). New features include optional models/params and
+    additional operators.
+
+    ---------------------------------------------------------------------------------------------------
+    ===== **Important Notice** =====
+    ---------------------------------------------------------------------------------------------------
+    Several paradigms are available, it is implemented for patankar.loadpubchem.migrant instances as
+            migrant.suggest_alt_Dmodel(material,layerindex) by using global rules: Dmodel_extensions
+
+    This low-level function enforces rigourously complex rules to pick the best model based on objexct
+    attributes. Objects can be included in a list to test conditions on material (specific layer),
+    substance, etc, all together.
+
+    Please refer to examples and current implementations for details.
+    ---------------------------------------------------------------------------------------------------
+
+    Parameters:
+        rules (dict or list of dict): A rule or a list of rules. A single rule should have the format:
+            {
+              &#34;operation&#34;: &#34;and&#34; or &#34;or&#34; (default &#34;and&#34;),
+              &#34;list&#34;: [
+                  {&#34;attribute&#34;: &lt;str&gt;, &#34;op&#34;: &lt;str&gt;, &#34;value&#34;: &lt;any&gt;, &#34;index&#34;: &lt;int&gt; (optional)},
+                  ...
+              ]
+            }
+        obj (dict, object, or list/tuple): An object (or sequence of objects) on which the rules are checked.
+            For each condition, the attribute is retrieved either from a dict (via key) or from an object
+            (via getattr).
+        model1 (function or None): The default model function.
+        params1 (dict or None): The parameters for model1.
+        model2 (function or None): The alternate model function.
+        params2 (dict or None): The parameters for model2.
+        flags (dict, optional): A dictionary with flags for string comparisons. Defaults to:
+            {
+              &#34;remove_blanks&#34;: True,      # Remove spaces from the string.
+              &#34;trim&#34;: True,               # Remove leading/trailing whitespace.
+              &#34;case_insensitive&#34;: True    # Compare in lowercase.
+            }
+            These flags are applied to both the attribute value (from obj) and the condition value when
+            they are strings.
+
+    Returns:
+        - If all of model1, params1, model2, and params2 are None: returns a single boolean value
+          (the test result).
+        - Otherwise: returns a tuple (testresult, selected_model, selected_params) where:
+            * testresult (bool): Outcome of evaluating the rules on obj.
+            * If testresult is True, selected_model and selected_params are model2 and params2.
+            * Otherwise, they are model1 and params1.
+
+    Note: Calling with a tuple of two objects (migrant, medium):
+        result, selected_model, selected_params = PropertyModelSelector(
+            Dmodel_extensions[&#34;DFV&#34;][&#34;rules&#34;],
+            (migrant, medium),
+            model1, params1,
+            model2, params2
+        )
+
+    Advanced features:
+    1. Pseudo Recursion for List Inputs:
+       If both rules and obj are lists (or tuples), then for each rule in rules, the function applies
+       the rule to the corresponding object from obj (if there are more rules than objects, the last
+       object is reused). The overall test result is True only if all evaluations are True.
+    2. Optional Index Field:
+       Each condition may include an optional `index` field. If present and if the attribute value
+       is a list or tuple, the condition is evaluated on the element at that index.
+    3. Optional Models/Parameters:
+       If all of model1, params1, model2, and params2 are None, the function returns a single boolean
+       result (the outcome of evaluating the rules on obj). Otherwise, if at least one is provided, the
+       function returns a tuple: (testresult, selected_model, selected_params). In that case, model1 and
+       params1 must be provided.
+    2. Additional Operators:
+
+
+    List of implemented operators
+      - **&#34;=&#34; or &#34;==&#34;**
+        Tests for equality between the processed attribute value and the condition value.
+      - **&#34;in&#34;**
+        Checks whether the processed attribute value is a member of the condition value
+        (which can be a string, list, or tuple).
+      - **&#34;startswith&#34;**
+        For string values, verifies if the processed attribute value starts with the processed
+        condition value.
+      - **&#34;endwith&#34;**
+        For string values, verifies if the processed attribute value ends with the processed
+        condition value.
+      - **&#34;&gt;&#34;**
+        Performs a numeric greater-than comparison.
+      - **&#34;&lt;&#34;**
+        Performs a numeric less-than comparison.
+      - **&#34;istrue&#34;**
+        Tests whether the attribute value is `True` (the condition&#39;s value is optional and
+        defaults to `True`).
+      - **&#34;isfalse&#34;**
+        Tests whether the attribute value is `False`.
+      - **&#34;all&#34;**
+        Applies Python’s built-in `all()` to the attribute value (expects an iterable).
+      - **&#34;any&#34;**
+        Applies Python’s built-in `any()` to the attribute value (expects an iterable).
+      - **&#34;hasattr&#34;**
+        Uses Python’s `hasattr()` to check if the attribute value (which may itself be an object)
+        has a specified attribute.
+        *(Here, the condition value must be provided as the attribute name.)*
+      - **&#34;isinstance&#34;**
+        Uses `isinstance(attribute_value, condition_value)` to check if the attribute value is an
+        instance of the given type (or tuple of types).
+      - **&#34;issubclass&#34;**
+        Uses `issubclass(attribute_value, condition_value)` to determine if the attribute value
+        (expected to be a class) is a subclass of the specified type, with error handling for
+        non-class values.
+      - **&#34;callable&#34;**
+        Checks if the attribute value is callable (i.e. it is a function, method, or any object
+        implementing `__call__`).
+
+    Raises:
+        ValueError: If not all models/params are None and model1 or params1 is missing, or if an unsupported
+                    operator or invalid operation is encountered.
+
+    Example (for the current implementation, refer to Dmodel_extensions in read patankar.Dmodel_extensions)
+        Dmodel_extensions = { # toy example, not applicable for production
+            &#34;DFV&#34;: {
+              &#34;description&#34;: &#34;hole Free-Volume theory model for toluene in many polymers&#34;,
+                  &#34;objects&#34;: [&#34;migrant&#34;,&#34;material&#34;],
+                    &#34;rules&#34;: [
+                                {&#34;list&#34;: [{&#34;attribute&#34;: &#34;InChiKey&#34;,
+                                           &#34;op&#34;: &#34;==&#34;,
+                                           &#34;value&#34;: &#34;YXFVVABEGXRONW-UHFFFAOYSA-N&#34;}] # &lt;--- migrant must be Toluene
+                                },
+                                {&#34;list&#34;: [
+                                    {&#34;attribute&#34;: &#34;ispolymer&#34;,
+                                     &#34;op&#34;: &#34;==&#34;,
+                                     &#34;value&#34;: True
+                                    }, # &lt;--- medium must be a polymer (ispolymer == True)
+                                    {&#34;attribute&#34;: &#34;layerclass_history&#34;,
+                                     &#34;index&#34;:0,
+                                     &#34;op&#34;: &#34;in&#34;,
+                                     &#34;value&#34;: (&#34;gPET&#34;,&#34;LDPE&#34;,&#34;PP&#34;,&#34;PS&#34;)
+                                    } # &lt;---- medium must be one of these polymers
+                                        ]
+                                }
+                            ]
+                    }
+            }
+        from pprint import pp as disp
+        from patankar.loadpubchem import migrant
+        from patankar.layer import gPET, PS, PP, LDPE, rigidPVC
+        from patankar.property import PropertyModelSelector
+        m1 = migrant(&#34;toluene&#34;)
+        m2 = migrant(&#34;BHT&#34;)
+        material = gPET()+PS()+PP()+LDPE()+rigidPVC()
+        disp(Dmodel_extensions,depth=7,width=60) # show Dmodel_extensinos
+
+        # check FVT
+        # Note that the index Dmodel_extensions[&#34;DFV&#34;][&#34;rules&#34;][1][&#34;list&#34;][1][&#34;index&#34;] must be assigned
+        mig = m1     # migrant
+        index = 2    # layer index
+        FVTrules = Dmodel_extensions[&#34;DFV&#34;][&#34;rules&#34;].copy()
+        FVTrules_layer = FVTrules[1][&#34;list&#34;][1]
+        FVTrules_layer[&#34;index&#34;] = index # layer index
+        print(f&#34;FVT({mig.compound},{FVTrules_layer[&#39;value&#39;][index]})=&#34;,
+              PropertyModelSelector(FVTrules,(mig,material))
+              )
+
+    &#34;&#34;&#34;
+
+    # Check if all model/params are None; if so, we will return a single boolean.
+    all_models_none = (model1 is None and params1 is None and model2 is None and params2 is None)
+
+    # Pseudo Recursion: if rules and obj are lists/tuples.
+    if isinstance(rules, (list, tuple)) and isinstance(obj, (list, tuple)):
+        resbyrules = []
+        N = len(obj)
+        for i, rule_item in enumerate(rules):
+            current_obj = obj[i] if i &lt; N else obj[-1]
+            result = PropertyModelSelector(rule_item, current_obj, model1, params1, model2, params2, flags=flags)
+            # If returning a tuple, extract the boolean result (first element)
+            if isinstance(result, tuple):
+                result = result[0]
+            resbyrules.append(result)
+        final_result = all(resbyrules)
+        if all_models_none:
+            return final_result
+        else:
+            return (True, model2, params2) if final_result else (False, model1, params1)
+
+    # If not all models are None, ensure model1 and params1 are provided.
+    if not all_models_none:
+        if model1 is None or params1 is None:
+            raise ValueError(&#34;model1 and params1 are required if not all models/params are None&#34;)
+        if model2 is None and params2 is None:
+            return (False, model1, params1)
+        if model2 is None or params2 is None:
+            raise ValueError(&#34;model2 and params2 are required if not all models/params are None&#34;)
+        if  rules is None: # Only return test result: default is False.
+            return (False, model1, params1)
+    elif rules is None: # Only return test result: default is False.
+            return False
+
+    # Set default flags if not provided.
+    if flags is None:
+        flags = {&#34;remove_blanks&#34;: True, &#34;trim&#34;: True, &#34;case_insensitive&#34;: True}
+
+    # Helper: Process a string with the provided flags.
+    def process_str(s, flags):
+        if not isinstance(s, str):
+            return s
+        if flags.get(&#34;trim&#34;, True):
+            s = s.strip()
+        if flags.get(&#34;remove_blanks&#34;, True):
+            s = s.replace(&#34; &#34;, &#34;&#34;)
+        if flags.get(&#34;case_insensitive&#34;, True):
+            s = s.lower()
+        return s
+
+    # Evaluate a single condition.
+    def evaluate_condition(condition):
+        attr = condition.get(&#34;attribute&#34;)
+        operator = condition.get(&#34;op&#34;)
+        cond_value = condition.get(&#34;value&#34;, None)  # value is optional for istrue/isfalse
+        index = condition.get(&#34;index&#34;, None)  # Optional index for list/tuple attributes
+
+        # Retrieve the attribute value from obj (dict or object).
+        if isinstance(obj, dict):
+            if attr not in obj:
+                return False
+            param_value = obj[attr]
+        else:
+            if not hasattr(obj, attr):
+                return False
+            param_value = getattr(obj, attr)
+
+        # If an index is specified and param_value is a list/tuple, select that element.
+        if index is not None and isinstance(param_value, (list, tuple)):
+            try:
+                param_value = param_value[index]
+            except IndexError:
+                return False
+
+        # For string comparisons, process the values if both are strings.
+        if isinstance(param_value, str) and isinstance(cond_value, str):
+            proc_param = process_str(param_value, flags)
+            proc_cond = process_str(cond_value, flags)
+        else:
+            proc_param = param_value
+            proc_cond = cond_value
+
+        # Standard operators.
+        if operator in (&#34;=&#34;, &#34;==&#34;):
+            return proc_param == proc_cond
+        elif operator == &#34;in&#34;:
+            if isinstance(param_value, str):
+                proc_param = process_str(param_value, flags)
+                if isinstance(cond_value, str):
+                    proc_cond = process_str(cond_value, flags)
+                    return proc_param in proc_cond
+                elif isinstance(cond_value, (list, tuple)):
+                    proc_list = [process_str(item, flags) if isinstance(item, str) else item
+                                 for item in cond_value]
+                    return proc_param in proc_list
+                else:
+                    return proc_param in cond_value
+            else:
+                return proc_param in cond_value
+        elif operator == &#34;startswith&#34;:
+            if not isinstance(param_value, str):
+                return False
+            return process_str(param_value, flags).startswith(process_str(cond_value, flags))
+        elif operator == &#34;endwith&#34;:
+            if not isinstance(param_value, str):
+                return False
+            return process_str(param_value, flags).endswith(process_str(cond_value, flags))
+        # New operators:
+        elif operator == &#34;istrue&#34;:
+            # value field is optional; equivalent to checking equality with True.
+            return proc_param == True
+        elif operator == &#34;isfalse&#34;:
+            return proc_param == False
+        elif operator == &#34;all&#34;:
+            try:
+                return all(param_value)
+            except Exception:
+                return False
+        elif operator == &#34;any&#34;:
+            try:
+                return any(param_value)
+            except Exception:
+                return False
+        elif operator == &#34;hasattr&#34;:
+            # cond_value must be provided as the attribute name to check.
+            return hasattr(param_value, cond_value)
+        elif operator == &#34;isinstance&#34;:
+            return isinstance(param_value, cond_value)
+        elif operator == &#34;issubclass&#34;:
+            try:
+                return issubclass(param_value, cond_value)
+            except Exception:
+                return False
+        elif operator == &#34;callable&#34;:
+            return callable(param_value)
+        elif operator == &#34;&gt;&#34;:
+            try:
+                return param_value &gt; cond_value
+            except Exception:
+                return False
+        elif operator == &#34;&lt;&#34;:
+            try:
+                return param_value &lt; cond_value
+            except Exception:
+                return False
+        else:
+            raise ValueError(f&#34;Unsupported operator: {operator}&#34;)
+
+    # Evaluate all conditions from the rule.
+    conditions = rules.get(&#34;list&#34;, [])
+    results = [evaluate_condition(cond) for cond in conditions]
+    op_str = rules.get(&#34;operation&#34;, &#34;and&#34;).lower()
+    if op_str == &#34;and&#34;:
+        final_result = all(results)
+    elif op_str == &#34;or&#34;:
+        final_result = any(results)
+    else:
+        raise ValueError(&#34;Invalid rules operation. Must be &#39;and&#39; or &#39;or&#39;&#34;)
+
+    if all_models_none:
+        return final_result
+    else:
+        return (True, model2, params2) if final_result else (False, model1, params1)
+
+
+
+
 # %% debug and standalone
 # -------------------------------------------------------------------
 # Example usage (for debugging / standalone tests)
@@ -882,7 +1477,48 @@ if __name__ == &#34;__main__&#34;:
     # dynamic use (with instantiation)
     Dmodel = Dpiringer(&#34;PET&#34;,M=100,T=40)
     Dvalue= Dmodel.eval()
-    print(f&#34;D2 = {Dvalue} [m**2/s]&#34;)</code></pre>
+    print(f&#34;D2 = {Dvalue} [m**2/s]&#34;)
+
+    # Define dummy functions for testing.
+    def dummy1():
+        return &#34;dummy1&#34;
+
+    def dummy2():
+        return &#34;dummy2&#34;
+
+    # Test with obj as a dictionary.
+    test_obj_dict = {&#34;a&#34;: &#34; test &#34;, &#34;num&#34;: 15}
+    rules = {&#34;operation&#34;: &#34;and&#34;, &#34;list&#34;: [
+        {&#34;attribute&#34;: &#34;a&#34;, &#34;op&#34;: &#34;==&#34;, &#34;value&#34;: &#34;Test&#34;},
+        {&#34;attribute&#34;: &#34;num&#34;, &#34;op&#34;: &#34;&gt;&#34;, &#34;value&#34;: 10}
+    ]}
+    res, m, p = PropertyModelSelector(rules, test_obj_dict, dummy1, {&#34;a&#34;: 1}, dummy2, {&#34;a&#34;: &#34;alternate&#34;})
+    assert res is True and m == dummy2 and p == {&#34;a&#34;: &#34;alternate&#34;}, &#34;Expected dummy2 with dict-based obj&#34;
+
+    # Test with obj as a generic object.
+    class TestObj:
+        def __init__(self, a, num):
+            self.a = a
+            self.num = num
+
+    test_obj_obj = TestObj(&#34; test &#34;, 15)
+    res, m, p = PropertyModelSelector(rules, test_obj_obj, dummy1, {&#34;a&#34;: 1}, dummy2, {&#34;a&#34;: &#34;alternate&#34;})
+    assert res is True and m == dummy2 and p == {&#34;a&#34;: &#34;alternate&#34;}, &#34;Expected dummy2 with object-based obj&#34;
+
+    # Test: Attribute missing in object.
+    test_obj_obj2 = TestObj(&#34; test &#34;, 5)
+    rules_missing = {&#34;operation&#34;: &#34;and&#34;, &#34;list&#34;: [{&#34;attribute&#34;: &#34;b&#34;, &#34;op&#34;: &#34;==&#34;, &#34;value&#34;: &#34;something&#34;}]}
+    res, m, p = PropertyModelSelector(rules_missing, test_obj_obj2, dummy1, {&#34;a&#34;: 1}, dummy2, {&#34;a&#34;: &#34;alternate&#34;})
+    assert res is False and m == dummy1, &#34;Expected default when attribute missing in object&#34;
+
+    print(&#34;All tests passed.&#34;)
+
+
+    # other test
+    from patankar.loadpubchem import migrant
+    m = migrant(&#34;toluene&#34;)
+    istoluene = {&#34;list&#34;: [{&#34;attribute&#34;: &#34;InChiKey&#34;, &#34;op&#34;: &#34;==&#34;, &#34;value&#34;: &#34;YXFVVABEGXRONW-UHFFFAOYSA-N&#34;}]}
+    res = PropertyModelSelector(istoluene,m)</code></pre>
 </details>
 </section>
 <section>
@@ -936,6 +1572,504 @@ if __name__ == &#34;__main__&#34;:
     return True # if all tests passed</code></pre>
 </details>
 </dd>
+<dt id="property.PropertyModelSelector"><code class="name flex">
+<span>def <span class="ident">PropertyModelSelector</span></span>(<span>rules, obj, model1=None, params1=None, model2=None, params2=None, flags=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Selects between two models (and their associated parameter dictionaries) based on a set of rules
+evaluated on a provided object (or objects). New features include optional models/params and
+additional operators.</p>
+<hr>
+<h2 id="important-notice">===== <strong>Important Notice</strong> =====</h2>
+<p>Several paradigms are available, it is implemented for patankar.loadpubchem.migrant instances as
+migrant.suggest_alt_Dmodel(material,layerindex) by using global rules: Dmodel_extensions</p>
+<p>This low-level function enforces rigourously complex rules to pick the best model based on objexct
+attributes. Objects can be included in a list to test conditions on material (specific layer),
+substance, etc, all together.</p>
+<h2 id="please-refer-to-examples-and-current-implementations-for-details">Please refer to examples and current implementations for details.</h2>
+<h2 id="parameters">Parameters</h2>
+<p>rules (dict or list of dict): A rule or a list of rules. A single rule should have the format:
+{
+"operation": "and" or "or" (default "and"),
+"list": [
+{"attribute": <str>, "op": <str>, "value": <any>, "index": <int> (optional)},
+&hellip;
+]
+}
+obj (dict, object, or list/tuple): An object (or sequence of objects) on which the rules are checked.
+For each condition, the attribute is retrieved either from a dict (via key) or from an object
+(via getattr).
+model1 (function or None): The default model function.
+params1 (dict or None): The parameters for model1.
+model2 (function or None): The alternate model function.
+params2 (dict or None): The parameters for model2.
+flags (dict, optional): A dictionary with flags for string comparisons. Defaults to:
+{
+"remove_blanks": True,
+# Remove spaces from the string.
+"trim": True,
+# Remove leading/trailing whitespace.
+"case_insensitive": True
+# Compare in lowercase.
+}
+These flags are applied to both the attribute value (from obj) and the condition value when
+they are strings.</p>
+<h2 id="returns">Returns</h2>
+<ul>
+<li>If all of model1, params1, model2, and params2 are None: returns a single boolean value
+(the test result).</li>
+<li>Otherwise: returns a tuple (testresult, selected_model, selected_params) where:<ul>
+<li>testresult (bool): Outcome of evaluating the rules on obj.</li>
+<li>If testresult is True, selected_model and selected_params are model2 and params2.</li>
+<li>Otherwise, they are model1 and params1.
+Note: Calling with a tuple of two objects (migrant, medium):
+result, selected_model, selected_params = PropertyModelSelector(
+Dmodel_extensions["DFV"]["rules"],
+(migrant, medium),
+model1, params1,
+model2, params2
+)</li>
+</ul>
+</li>
+</ul>
+<p>Advanced features:
+1. Pseudo Recursion for List Inputs:
+If both rules and obj are lists (or tuples), then for each rule in rules, the function applies
+the rule to the corresponding object from obj (if there are more rules than objects, the last
+object is reused). The overall test result is True only if all evaluations are True.
+2. Optional Index Field:
+Each condition may include an optional <code>index</code> field. If present and if the attribute value
+is a list or tuple, the condition is evaluated on the element at that index.
+3. Optional Models/Parameters:
+If all of model1, params1, model2, and params2 are None, the function returns a single boolean
+result (the outcome of evaluating the rules on obj). Otherwise, if at least one is provided, the
+function returns a tuple: (testresult, selected_model, selected_params). In that case, model1 and
+params1 must be provided.
+2. Additional Operators:</p>
+<p>List of implemented operators
+- <strong>"=" or "=="</strong>
+Tests for equality between the processed attribute value and the condition value.
+- <strong>"in"</strong>
+Checks whether the processed attribute value is a member of the condition value
+(which can be a string, list, or tuple).
+- <strong>"startswith"</strong>
+For string values, verifies if the processed attribute value starts with the processed
+condition value.
+- <strong>"endwith"</strong>
+For string values, verifies if the processed attribute value ends with the processed
+condition value.
+- <strong>"&gt;"</strong>
+Performs a numeric greater-than comparison.
+- <strong>"&lt;"</strong>
+Performs a numeric less-than comparison.
+- <strong>"istrue"</strong>
+Tests whether the attribute value is <code>True</code> (the condition's value is optional and
+defaults to <code>True</code>).
+- <strong>"isfalse"</strong>
+Tests whether the attribute value is <code>False</code>.
+- <strong>"all"</strong>
+Applies Python’s built-in <code>all()</code> to the attribute value (expects an iterable).
+- <strong>"any"</strong>
+Applies Python’s built-in <code>any()</code> to the attribute value (expects an iterable).
+- <strong>"hasattr"</strong>
+Uses Python’s <code>hasattr()</code> to check if the attribute value (which may itself be an object)
+has a specified attribute.
+<em>(Here, the condition value must be provided as the attribute name.)</em>
+- <strong>"isinstance"</strong>
+Uses <code>isinstance(attribute_value, condition_value)</code> to check if the attribute value is an
+instance of the given type (or tuple of types).
+- <strong>"issubclass"</strong>
+Uses <code>issubclass(attribute_value, condition_value)</code> to determine if the attribute value
+(expected to be a class) is a subclass of the specified type, with error handling for
+non-class values.
+- <strong>"callable"</strong>
+Checks if the attribute value is callable (i.e. it is a function, method, or any object
+implementing <code>__call__</code>).</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If not all models/params are None and model1 or params1 is missing, or if an unsupported
+operator or invalid operation is encountered.</dd>
+</dl>
+<p>Example (for the current implementation, refer to Dmodel_extensions in read patankar.Dmodel_extensions)
+Dmodel_extensions = { # toy example, not applicable for production
+"DFV": {
+"description": "hole Free-Volume theory model for toluene in many polymers",
+"objects": ["migrant","material"],
+"rules": [
+{"list": [{"attribute": "InChiKey",
+"op": "==",
+"value": "YXFVVABEGXRONW-UHFFFAOYSA-N"}] # &lt;&mdash; migrant must be Toluene
+},
+{"list": [
+{"attribute": "ispolymer",
+"op": "==",
+"value": True
+}, # &lt;&mdash; medium must be a polymer (ispolymer == True)
+{"attribute": "layerclass_history",
+"index":0,
+"op": "in",
+"value": ("gPET","LDPE","PP","PS")
+} # &lt;---- medium must be one of these polymers
+]
+}
+]
+}
+}
+from pprint import pp as disp
+from patankar.loadpubchem import migrant
+from patankar.layer import gPET, PS, PP, LDPE, rigidPVC
+from patankar.property import PropertyModelSelector
+m1 = migrant("toluene")
+m2 = migrant("BHT")
+material = gPET()+PS()+PP()+LDPE()+rigidPVC()
+disp(Dmodel_extensions,depth=7,width=60) # show Dmodel_extensinos</p>
+<pre><code># check FVT
+# Note that the index Dmodel_extensions["DFV"]["rules"][1]["list"][1]["index"] must be assigned
+mig = m1     # migrant
+index = 2    # layer index
+FVTrules = Dmodel_extensions["DFV"]["rules"].copy()
+FVTrules_layer = FVTrules[1]["list"][1]
+FVTrules_layer["index"] = index # layer index
+print(f"FVT({mig.compound},{FVTrules_layer['value'][index]})=",
+      PropertyModelSelector(FVTrules,(mig,material))
+      )
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def PropertyModelSelector(rules, obj, model1=None, params1=None, model2=None, params2=None, flags=None):
+    &#34;&#34;&#34;
+    Selects between two models (and their associated parameter dictionaries) based on a set of rules
+    evaluated on a provided object (or objects). New features include optional models/params and
+    additional operators.
+
+    ---------------------------------------------------------------------------------------------------
+    ===== **Important Notice** =====
+    ---------------------------------------------------------------------------------------------------
+    Several paradigms are available, it is implemented for patankar.loadpubchem.migrant instances as
+            migrant.suggest_alt_Dmodel(material,layerindex) by using global rules: Dmodel_extensions
+
+    This low-level function enforces rigourously complex rules to pick the best model based on objexct
+    attributes. Objects can be included in a list to test conditions on material (specific layer),
+    substance, etc, all together.
+
+    Please refer to examples and current implementations for details.
+    ---------------------------------------------------------------------------------------------------
+
+    Parameters:
+        rules (dict or list of dict): A rule or a list of rules. A single rule should have the format:
+            {
+              &#34;operation&#34;: &#34;and&#34; or &#34;or&#34; (default &#34;and&#34;),
+              &#34;list&#34;: [
+                  {&#34;attribute&#34;: &lt;str&gt;, &#34;op&#34;: &lt;str&gt;, &#34;value&#34;: &lt;any&gt;, &#34;index&#34;: &lt;int&gt; (optional)},
+                  ...
+              ]
+            }
+        obj (dict, object, or list/tuple): An object (or sequence of objects) on which the rules are checked.
+            For each condition, the attribute is retrieved either from a dict (via key) or from an object
+            (via getattr).
+        model1 (function or None): The default model function.
+        params1 (dict or None): The parameters for model1.
+        model2 (function or None): The alternate model function.
+        params2 (dict or None): The parameters for model2.
+        flags (dict, optional): A dictionary with flags for string comparisons. Defaults to:
+            {
+              &#34;remove_blanks&#34;: True,      # Remove spaces from the string.
+              &#34;trim&#34;: True,               # Remove leading/trailing whitespace.
+              &#34;case_insensitive&#34;: True    # Compare in lowercase.
+            }
+            These flags are applied to both the attribute value (from obj) and the condition value when
+            they are strings.
+
+    Returns:
+        - If all of model1, params1, model2, and params2 are None: returns a single boolean value
+          (the test result).
+        - Otherwise: returns a tuple (testresult, selected_model, selected_params) where:
+            * testresult (bool): Outcome of evaluating the rules on obj.
+            * If testresult is True, selected_model and selected_params are model2 and params2.
+            * Otherwise, they are model1 and params1.
+
+    Note: Calling with a tuple of two objects (migrant, medium):
+        result, selected_model, selected_params = PropertyModelSelector(
+            Dmodel_extensions[&#34;DFV&#34;][&#34;rules&#34;],
+            (migrant, medium),
+            model1, params1,
+            model2, params2
+        )
+
+    Advanced features:
+    1. Pseudo Recursion for List Inputs:
+       If both rules and obj are lists (or tuples), then for each rule in rules, the function applies
+       the rule to the corresponding object from obj (if there are more rules than objects, the last
+       object is reused). The overall test result is True only if all evaluations are True.
+    2. Optional Index Field:
+       Each condition may include an optional `index` field. If present and if the attribute value
+       is a list or tuple, the condition is evaluated on the element at that index.
+    3. Optional Models/Parameters:
+       If all of model1, params1, model2, and params2 are None, the function returns a single boolean
+       result (the outcome of evaluating the rules on obj). Otherwise, if at least one is provided, the
+       function returns a tuple: (testresult, selected_model, selected_params). In that case, model1 and
+       params1 must be provided.
+    2. Additional Operators:
+
+
+    List of implemented operators
+      - **&#34;=&#34; or &#34;==&#34;**
+        Tests for equality between the processed attribute value and the condition value.
+      - **&#34;in&#34;**
+        Checks whether the processed attribute value is a member of the condition value
+        (which can be a string, list, or tuple).
+      - **&#34;startswith&#34;**
+        For string values, verifies if the processed attribute value starts with the processed
+        condition value.
+      - **&#34;endwith&#34;**
+        For string values, verifies if the processed attribute value ends with the processed
+        condition value.
+      - **&#34;&gt;&#34;**
+        Performs a numeric greater-than comparison.
+      - **&#34;&lt;&#34;**
+        Performs a numeric less-than comparison.
+      - **&#34;istrue&#34;**
+        Tests whether the attribute value is `True` (the condition&#39;s value is optional and
+        defaults to `True`).
+      - **&#34;isfalse&#34;**
+        Tests whether the attribute value is `False`.
+      - **&#34;all&#34;**
+        Applies Python’s built-in `all()` to the attribute value (expects an iterable).
+      - **&#34;any&#34;**
+        Applies Python’s built-in `any()` to the attribute value (expects an iterable).
+      - **&#34;hasattr&#34;**
+        Uses Python’s `hasattr()` to check if the attribute value (which may itself be an object)
+        has a specified attribute.
+        *(Here, the condition value must be provided as the attribute name.)*
+      - **&#34;isinstance&#34;**
+        Uses `isinstance(attribute_value, condition_value)` to check if the attribute value is an
+        instance of the given type (or tuple of types).
+      - **&#34;issubclass&#34;**
+        Uses `issubclass(attribute_value, condition_value)` to determine if the attribute value
+        (expected to be a class) is a subclass of the specified type, with error handling for
+        non-class values.
+      - **&#34;callable&#34;**
+        Checks if the attribute value is callable (i.e. it is a function, method, or any object
+        implementing `__call__`).
+
+    Raises:
+        ValueError: If not all models/params are None and model1 or params1 is missing, or if an unsupported
+                    operator or invalid operation is encountered.
+
+    Example (for the current implementation, refer to Dmodel_extensions in read patankar.Dmodel_extensions)
+        Dmodel_extensions = { # toy example, not applicable for production
+            &#34;DFV&#34;: {
+              &#34;description&#34;: &#34;hole Free-Volume theory model for toluene in many polymers&#34;,
+                  &#34;objects&#34;: [&#34;migrant&#34;,&#34;material&#34;],
+                    &#34;rules&#34;: [
+                                {&#34;list&#34;: [{&#34;attribute&#34;: &#34;InChiKey&#34;,
+                                           &#34;op&#34;: &#34;==&#34;,
+                                           &#34;value&#34;: &#34;YXFVVABEGXRONW-UHFFFAOYSA-N&#34;}] # &lt;--- migrant must be Toluene
+                                },
+                                {&#34;list&#34;: [
+                                    {&#34;attribute&#34;: &#34;ispolymer&#34;,
+                                     &#34;op&#34;: &#34;==&#34;,
+                                     &#34;value&#34;: True
+                                    }, # &lt;--- medium must be a polymer (ispolymer == True)
+                                    {&#34;attribute&#34;: &#34;layerclass_history&#34;,
+                                     &#34;index&#34;:0,
+                                     &#34;op&#34;: &#34;in&#34;,
+                                     &#34;value&#34;: (&#34;gPET&#34;,&#34;LDPE&#34;,&#34;PP&#34;,&#34;PS&#34;)
+                                    } # &lt;---- medium must be one of these polymers
+                                        ]
+                                }
+                            ]
+                    }
+            }
+        from pprint import pp as disp
+        from patankar.loadpubchem import migrant
+        from patankar.layer import gPET, PS, PP, LDPE, rigidPVC
+        from patankar.property import PropertyModelSelector
+        m1 = migrant(&#34;toluene&#34;)
+        m2 = migrant(&#34;BHT&#34;)
+        material = gPET()+PS()+PP()+LDPE()+rigidPVC()
+        disp(Dmodel_extensions,depth=7,width=60) # show Dmodel_extensinos
+
+        # check FVT
+        # Note that the index Dmodel_extensions[&#34;DFV&#34;][&#34;rules&#34;][1][&#34;list&#34;][1][&#34;index&#34;] must be assigned
+        mig = m1     # migrant
+        index = 2    # layer index
+        FVTrules = Dmodel_extensions[&#34;DFV&#34;][&#34;rules&#34;].copy()
+        FVTrules_layer = FVTrules[1][&#34;list&#34;][1]
+        FVTrules_layer[&#34;index&#34;] = index # layer index
+        print(f&#34;FVT({mig.compound},{FVTrules_layer[&#39;value&#39;][index]})=&#34;,
+              PropertyModelSelector(FVTrules,(mig,material))
+              )
+
+    &#34;&#34;&#34;
+
+    # Check if all model/params are None; if so, we will return a single boolean.
+    all_models_none = (model1 is None and params1 is None and model2 is None and params2 is None)
+
+    # Pseudo Recursion: if rules and obj are lists/tuples.
+    if isinstance(rules, (list, tuple)) and isinstance(obj, (list, tuple)):
+        resbyrules = []
+        N = len(obj)
+        for i, rule_item in enumerate(rules):
+            current_obj = obj[i] if i &lt; N else obj[-1]
+            result = PropertyModelSelector(rule_item, current_obj, model1, params1, model2, params2, flags=flags)
+            # If returning a tuple, extract the boolean result (first element)
+            if isinstance(result, tuple):
+                result = result[0]
+            resbyrules.append(result)
+        final_result = all(resbyrules)
+        if all_models_none:
+            return final_result
+        else:
+            return (True, model2, params2) if final_result else (False, model1, params1)
+
+    # If not all models are None, ensure model1 and params1 are provided.
+    if not all_models_none:
+        if model1 is None or params1 is None:
+            raise ValueError(&#34;model1 and params1 are required if not all models/params are None&#34;)
+        if model2 is None and params2 is None:
+            return (False, model1, params1)
+        if model2 is None or params2 is None:
+            raise ValueError(&#34;model2 and params2 are required if not all models/params are None&#34;)
+        if  rules is None: # Only return test result: default is False.
+            return (False, model1, params1)
+    elif rules is None: # Only return test result: default is False.
+            return False
+
+    # Set default flags if not provided.
+    if flags is None:
+        flags = {&#34;remove_blanks&#34;: True, &#34;trim&#34;: True, &#34;case_insensitive&#34;: True}
+
+    # Helper: Process a string with the provided flags.
+    def process_str(s, flags):
+        if not isinstance(s, str):
+            return s
+        if flags.get(&#34;trim&#34;, True):
+            s = s.strip()
+        if flags.get(&#34;remove_blanks&#34;, True):
+            s = s.replace(&#34; &#34;, &#34;&#34;)
+        if flags.get(&#34;case_insensitive&#34;, True):
+            s = s.lower()
+        return s
+
+    # Evaluate a single condition.
+    def evaluate_condition(condition):
+        attr = condition.get(&#34;attribute&#34;)
+        operator = condition.get(&#34;op&#34;)
+        cond_value = condition.get(&#34;value&#34;, None)  # value is optional for istrue/isfalse
+        index = condition.get(&#34;index&#34;, None)  # Optional index for list/tuple attributes
+
+        # Retrieve the attribute value from obj (dict or object).
+        if isinstance(obj, dict):
+            if attr not in obj:
+                return False
+            param_value = obj[attr]
+        else:
+            if not hasattr(obj, attr):
+                return False
+            param_value = getattr(obj, attr)
+
+        # If an index is specified and param_value is a list/tuple, select that element.
+        if index is not None and isinstance(param_value, (list, tuple)):
+            try:
+                param_value = param_value[index]
+            except IndexError:
+                return False
+
+        # For string comparisons, process the values if both are strings.
+        if isinstance(param_value, str) and isinstance(cond_value, str):
+            proc_param = process_str(param_value, flags)
+            proc_cond = process_str(cond_value, flags)
+        else:
+            proc_param = param_value
+            proc_cond = cond_value
+
+        # Standard operators.
+        if operator in (&#34;=&#34;, &#34;==&#34;):
+            return proc_param == proc_cond
+        elif operator == &#34;in&#34;:
+            if isinstance(param_value, str):
+                proc_param = process_str(param_value, flags)
+                if isinstance(cond_value, str):
+                    proc_cond = process_str(cond_value, flags)
+                    return proc_param in proc_cond
+                elif isinstance(cond_value, (list, tuple)):
+                    proc_list = [process_str(item, flags) if isinstance(item, str) else item
+                                 for item in cond_value]
+                    return proc_param in proc_list
+                else:
+                    return proc_param in cond_value
+            else:
+                return proc_param in cond_value
+        elif operator == &#34;startswith&#34;:
+            if not isinstance(param_value, str):
+                return False
+            return process_str(param_value, flags).startswith(process_str(cond_value, flags))
+        elif operator == &#34;endwith&#34;:
+            if not isinstance(param_value, str):
+                return False
+            return process_str(param_value, flags).endswith(process_str(cond_value, flags))
+        # New operators:
+        elif operator == &#34;istrue&#34;:
+            # value field is optional; equivalent to checking equality with True.
+            return proc_param == True
+        elif operator == &#34;isfalse&#34;:
+            return proc_param == False
+        elif operator == &#34;all&#34;:
+            try:
+                return all(param_value)
+            except Exception:
+                return False
+        elif operator == &#34;any&#34;:
+            try:
+                return any(param_value)
+            except Exception:
+                return False
+        elif operator == &#34;hasattr&#34;:
+            # cond_value must be provided as the attribute name to check.
+            return hasattr(param_value, cond_value)
+        elif operator == &#34;isinstance&#34;:
+            return isinstance(param_value, cond_value)
+        elif operator == &#34;issubclass&#34;:
+            try:
+                return issubclass(param_value, cond_value)
+            except Exception:
+                return False
+        elif operator == &#34;callable&#34;:
+            return callable(param_value)
+        elif operator == &#34;&gt;&#34;:
+            try:
+                return param_value &gt; cond_value
+            except Exception:
+                return False
+        elif operator == &#34;&lt;&#34;:
+            try:
+                return param_value &lt; cond_value
+            except Exception:
+                return False
+        else:
+            raise ValueError(f&#34;Unsupported operator: {operator}&#34;)
+
+    # Evaluate all conditions from the rule.
+    conditions = rules.get(&#34;list&#34;, [])
+    results = [evaluate_condition(cond) for cond in conditions]
+    op_str = rules.get(&#34;operation&#34;, &#34;and&#34;).lower()
+    if op_str == &#34;and&#34;:
+        final_result = all(results)
+    elif op_str == &#34;or&#34;:
+        final_result = any(results)
+    else:
+        raise ValueError(&#34;Invalid rules operation. Must be &#39;and&#39; or &#39;or&#39;&#34;)
+
+    if all_models_none:
+        return final_result
+    else:
+        return (True, model2, params2) if final_result else (False, model1, params1)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -984,6 +2118,392 @@ if __name__ == &#34;__main__&#34;:
 </dd>
 </dl>
 </dd>
+<dt id="property.DFV"><code class="flex name class">
+<span>class <span class="ident">DFV</span></span>
+<span>(</span><span>polymer='gPET', Tg=76.0, T=40.0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Diffusivity predicted Hole free-volume model from this reference.
+This model covers well plasticizing effects and is applicable for substances built
+on a repeated pattern connecting linearly. Anchor effects are also included.</p>
+<p>Current implementation covers only toluene as surrogate for recycled materials.</p>
+<p>REFERENCE
+Zhu Y., Welle, F. and Vitrac O. A blob model to parameterize polymer hole free volumes and solute diffusion",
+<em>Soft Matter</em> <strong>2019</strong>, 15(42), 8912-8932. DOI: <a href="https://doi.org/10.1039/C9SM01556F">https://doi.org/10.1039/C9SM01556F</a></p>
+<p>ABSTRACT
+Solute diffusion in solid polymers has tremendous applications in packaging,
+reservoir, and biomedical technologies but remains poorly understood. Diffusion
+of non-entangled linear solutes with chemically identical patterns (blobs) deviates
+dramatically in polymers in the solid-state (αlin &gt; 1, Macromolecules 2013, 46, 874)
+from their behaviors in the molten state (αlin = 1, Macromolecules, 2007, 40, 3970).
+This work uses the scale invariance of the diffusivities, D, of linear probes
+D(N·M_blob + M_anchor,T,Tg) = N^(-αlin(T,Tg)) * D(M_blob + M_anchor,T,Tg) comprising
+N identical blobs of mass M_blob and possibly one different terminal pattern (anchor of
+mass M_anchor) to evaluate the amounts of hole-free volume in seven polymers (aliphatic,
+semi-aromatic and aromatic) over a broad range of temperatures (−70 K ≤ T − Tg ≤ 160 K).
+The new parameterization of the concept of hole-free volumes opens the application of
+the free-volume theory (FVT) developed by Vrentas and Duda to practically any polymer,
+regardless of the availability of free-volume parameters. The quality of the estimations
+was tested with various probes including n-alkanes, 1-alcohols, n-alkyl acetates, and
+n-alkylbenzene. The effects of enthalpic and entropic effects of the blobs and the anchor
+were analyzed and quantified. Blind validation of the reformulated FVT was tested
+successfully by predicting from first principles the diffusivities of water and toluene
+in amorphous polyethylene terephthalate from 4 °C to 180 °C and in various other polymers.
+The new blob model would open the rational design of additives with controlled diffusivities
+in thermoplastics.</p>
+<p>Instantiate a DFV object for a specific polymer key
+(e.g. 'LDPE', 'PMMA', or 'PET'). The corresponding D0, xi, Ka, Kb
+are looked up and stored as instance attributes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DFV(Diffusivities):
+    &#34;&#34;&#34;
+        Diffusivity predicted Hole free-volume model from this reference.
+        This model covers well plasticizing effects and is applicable for substances built
+        on a repeated pattern connecting linearly. Anchor effects are also included.
+
+        Current implementation covers only toluene as surrogate for recycled materials.
+
+
+        REFERENCE
+        Zhu Y., Welle, F. and Vitrac O. A blob model to parameterize polymer hole free volumes and solute diffusion&#34;,
+        *Soft Matter* **2019**, 15(42), 8912-8932. DOI: https://doi.org/10.1039/C9SM01556F
+
+        ABSTRACT
+        Solute diffusion in solid polymers has tremendous applications in packaging,
+        reservoir, and biomedical technologies but remains poorly understood. Diffusion
+        of non-entangled linear solutes with chemically identical patterns (blobs) deviates
+        dramatically in polymers in the solid-state (αlin &gt; 1, Macromolecules 2013, 46, 874)
+        from their behaviors in the molten state (αlin = 1, Macromolecules, 2007, 40, 3970).
+        This work uses the scale invariance of the diffusivities, D, of linear probes
+        D(N·M_blob + M_anchor,T,Tg) = N^(-αlin(T,Tg)) * D(M_blob + M_anchor,T,Tg) comprising
+        N identical blobs of mass M_blob and possibly one different terminal pattern (anchor of
+        mass M_anchor) to evaluate the amounts of hole-free volume in seven polymers (aliphatic,
+        semi-aromatic and aromatic) over a broad range of temperatures (−70 K ≤ T − Tg ≤ 160 K).
+        The new parameterization of the concept of hole-free volumes opens the application of
+        the free-volume theory (FVT) developed by Vrentas and Duda to practically any polymer,
+        regardless of the availability of free-volume parameters. The quality of the estimations
+        was tested with various probes including n-alkanes, 1-alcohols, n-alkyl acetates, and
+        n-alkylbenzene. The effects of enthalpic and entropic effects of the blobs and the anchor
+        were analyzed and quantified. Blind validation of the reformulated FVT was tested
+        successfully by predicting from first principles the diffusivities of water and toluene
+        in amorphous polyethylene terephthalate from 4 °C to 180 °C and in various other polymers.
+        The new blob model would open the rational design of additives with controlled diffusivities
+        in thermoplastics.
+    &#34;&#34;&#34;
+
+    name = &#34;FV&#34;
+    description = &#34;Hole Free Volume model - current implementation is limited to toluene&#34;
+    model = &#34;theory&#34;
+    theory = [&#34;free-volume&#34;,&#34;scaling&#34;]
+    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+                  &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;}
+                }
+    _available_to_import = True # this model can be directly imported
+
+    # Constants
+    R = 8.31
+    T0K = 273.15 # K
+    deltaT = 2   # (K) sharpness of the transition at Tg
+    betalin = 1  # Rouse scaling
+
+    # Polymer data (Tg in K) stored in a dictionary.
+    _data = {
+        &#39;LDPE&#39;: {&#39;Tg&#39;: 148.15, &#39;D0&#39;: 1.87e-08, &#39;xi&#39;: 0.615,  &#39;ref&#39;: 3, &#39;Ka&#39;: 144, &#39;Kb&#39;: 40, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;PMMA&#39;: {&#39;Tg&#39;: 381.15, &#39;D0&#39;: 1.87e-08, &#39;xi&#39;: 0.56,   &#39;ref&#39;: 2, &#39;Ka&#39;: 252, &#39;Kb&#39;: 65, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;PS&#39;:   {&#39;Tg&#39;: 373.15, &#39;D0&#39;: 4.8e-08,  &#39;xi&#39;: 0.584,  &#39;ref&#39;: 2, &#39;Ka&#39;: 144, &#39;Kb&#39;: 40, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;PVAc&#39;: {&#39;Tg&#39;: 305.15, &#39;D0&#39;: 1.87e-08, &#39;xi&#39;: 0.86,   &#39;ref&#39;: 4, &#39;Ka&#39;: 142, &#39;Kb&#39;: 40, &#39;E&#39;: 0, &#39;r&#39;: 0.5},
+        &#39;gPET&#39;: {&#39;Tg&#39;: 349.15, &#39;D0&#39;: 1.0205e-08, &#39;xi&#39;: 0.6761, &#39;ref&#39;: 5, &#39;Ka&#39;: 252, &#39;Kb&#39;: 65, &#39;E&#39;: 0, &#39;r&#39;: 0.6153},
+        &#39;wPET&#39;: {&#39;Tg&#39;: 316.15, &#39;D0&#39;: 1.02046e-08, &#39;xi&#39;: 0.6761, &#39;ref&#39;: 5, &#39;Ka&#39;: 252, &#39;Kb&#39;: 65, &#39;E&#39;: 0, &#39;r&#39;: 0.277734},
+    }
+
+    # Reference data used to parameterize the polymer (matching ref)
+    _references = [
+        &#39;Vrentas and Vrentas, 1994&#39;,
+        &#39;Zielinski and Duda, 1992&#39;,
+        &#39;Lutzow et al., 1999&#39;,
+        &#39;Hong, 1995&#39;,
+        # toluene in PET
+        &#39;Welle,2008&#39;,
+        &#39;Pennarun et al., 2004&#39;,
+        &#39;Welle,2013&#39;,
+        &#39;our work (permeation)&#39;,
+        &#39;our work (sorption)&#39;,
+    ]
+
+
+    def __init__(self, polymer=&#34;gPET&#34;, Tg=76.0, T=40.0):
+        &#34;&#34;&#34;
+        Instantiate a DFV object for a specific polymer key
+        (e.g. &#39;LDPE&#39;, &#39;PMMA&#39;, or &#39;PET&#39;). The corresponding D0, xi, Ka, Kb
+        are looked up and stored as instance attributes.
+        &#34;&#34;&#34;
+        polymer_str = polymer.strip()
+        if polymer_str not in self._data:
+            raise ValueError(f&#34;No exact match for polymer key: {polymer_str!r}&#34;)
+        self.polymer = polymer_str
+        self.solute = &#34;toluene&#34;
+        self.Tg = Tg + self.T0K
+        self.Ka = self._lookup(&#34;Ka&#34;)
+        self.Kb = self._lookup(&#34;Kb&#34;)
+        self.D0 = self._lookup(&#34;D0&#34;)
+        self.r = self._lookup(&#34;r&#34;)
+        self.E = self._lookup(&#34;E&#34;)
+        self.xi = self._lookup(&#34;xi&#34;)
+
+    def _lookup(self,prop):
+        &#34;&#34;&#34;Helper function to lookup a property value from the data dictionary&#34;&#34;&#34;
+        if prop not in self._data[self.polymer]:
+            raise ValueError(f&#34;The property {prop} does not exist for {self.polymer}&#34;)
+        return self._data[self.polymer][prop]
+
+    def alpha(self,T):
+        &#34;&#34;&#34;alpha for T &gt;= Tg&#34;&#34;&#34;
+        TK = self.T0K+T
+        return 1 + self.Ka / (TK - self.Tg + self.Kb)
+
+    def alphag(self,T):
+        &#34;&#34;&#34;alpha for T &lt; Tg&#34;&#34;&#34;
+        TK = self.T0K+T
+        return 1 + self.Ka / (self.r * (TK - self.Tg) + self.Kb)
+
+    def H(self,T):
+        &#34;&#34;&#34;Heaviside-like function using tanh&#34;&#34;&#34;
+        TK = self.T0K+T
+        return 0.5 * (1 + np.tanh(4 / self.deltaT * (TK - self.Tg)))
+
+    def alphaT(self,T):
+        &#34;&#34;&#34;Composite alpha function that smoothly transitions between alpha and alphag&#34;&#34;&#34;
+        H = self.H(T)
+        return (1-H) * self.alphag(T) + H * self.alpha(T)
+
+    def Plike(self,T):
+        &#34;&#34;&#34;Plike function see publication&#34;&#34;&#34;
+        return (self.alphaT(T) + self.betalin) / 0.24
+
+    def eval(self,T,**extra):
+        &#34;&#34;&#34;Compute FV D for this polymer&#34;&#34;&#34;
+        TK = self.T0K+T
+        if TK-self.Tg &lt; -self.Kb/self.r + self.deltaT:
+            return None # temperature too low for theory at glassy state
+        else:
+            return self.D0 * np.exp(-self.E / (self.R * TK)) * np.exp(-self.xi * self.Plike(T))
+
+    @classmethod
+    def evaluate(cls,polymer=&#34;gPET&#34;, Tg=76.0, T=40.0, **extra):
+        &#34;&#34;&#34;
+        Evaluate D (DFV) for toluene in polymer at T in function of its Tg
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer name (e.g. &#39;LLDPE&#39;, &#39;LDPE&#39;, &#39;rPET&#39;, etc.) as listed in the original data structure.
+        T : float
+            Temperature in °C, default = 40.
+        Tg : float
+            Glass Transiton Temperature in °C, default = Tg (PET value).
+
+
+        Returns
+        -------
+        float
+            The estimated diffusion coefficient in m^2/s of toluene.
+        &#34;&#34;&#34;
+        FV = DFV(polymer=polymer,Tg=Tg,T=T)
+        return FV.eval(T,**extra)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="property.Diffusivities" href="#property.Diffusivities">Diffusivities</a></li>
+<li><a title="property.migrationProperty" href="#property.migrationProperty">migrationProperty</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="property.DFV.R"><code class="name">var <span class="ident">R</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.T0K"><code class="name">var <span class="ident">T0K</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.betalin"><code class="name">var <span class="ident">betalin</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.deltaT"><code class="name">var <span class="ident">deltaT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.model"><code class="name">var <span class="ident">model</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.parameters"><code class="name">var <span class="ident">parameters</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.DFV.theory"><code class="name">var <span class="ident">theory</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="property.DFV.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>polymer='gPET', Tg=76.0, T=40.0, **extra)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluate D (DFV) for toluene in polymer at T in function of its Tg</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>polymer</code></strong> :&ensp;<code>str</code></dt>
+<dd>Polymer name (e.g. 'LLDPE', 'LDPE', 'rPET', etc.) as listed in the original data structure.</dd>
+<dt><strong><code>T</code></strong> :&ensp;<code>float</code></dt>
+<dd>Temperature in °C, default = 40.</dd>
+<dt><strong><code>Tg</code></strong> :&ensp;<code>float</code></dt>
+<dd>Glass Transiton Temperature in °C, default = Tg (PET value).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>The estimated diffusion coefficient in m^2/s of toluene.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def evaluate(cls,polymer=&#34;gPET&#34;, Tg=76.0, T=40.0, **extra):
+    &#34;&#34;&#34;
+    Evaluate D (DFV) for toluene in polymer at T in function of its Tg
+
+    Parameters
+    ----------
+    polymer : str
+        Polymer name (e.g. &#39;LLDPE&#39;, &#39;LDPE&#39;, &#39;rPET&#39;, etc.) as listed in the original data structure.
+    T : float
+        Temperature in °C, default = 40.
+    Tg : float
+        Glass Transiton Temperature in °C, default = Tg (PET value).
+
+
+    Returns
+    -------
+    float
+        The estimated diffusion coefficient in m^2/s of toluene.
+    &#34;&#34;&#34;
+    FV = DFV(polymer=polymer,Tg=Tg,T=T)
+    return FV.eval(T,**extra)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="property.DFV.H"><code class="name flex">
+<span>def <span class="ident">H</span></span>(<span>self, T)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Heaviside-like function using tanh</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def H(self,T):
+    &#34;&#34;&#34;Heaviside-like function using tanh&#34;&#34;&#34;
+    TK = self.T0K+T
+    return 0.5 * (1 + np.tanh(4 / self.deltaT * (TK - self.Tg)))</code></pre>
+</details>
+</dd>
+<dt id="property.DFV.Plike"><code class="name flex">
+<span>def <span class="ident">Plike</span></span>(<span>self, T)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Plike function see publication</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Plike(self,T):
+    &#34;&#34;&#34;Plike function see publication&#34;&#34;&#34;
+    return (self.alphaT(T) + self.betalin) / 0.24</code></pre>
+</details>
+</dd>
+<dt id="property.DFV.alpha"><code class="name flex">
+<span>def <span class="ident">alpha</span></span>(<span>self, T)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>alpha for T &gt;= Tg</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def alpha(self,T):
+    &#34;&#34;&#34;alpha for T &gt;= Tg&#34;&#34;&#34;
+    TK = self.T0K+T
+    return 1 + self.Ka / (TK - self.Tg + self.Kb)</code></pre>
+</details>
+</dd>
+<dt id="property.DFV.alphaT"><code class="name flex">
+<span>def <span class="ident">alphaT</span></span>(<span>self, T)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Composite alpha function that smoothly transitions between alpha and alphag</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def alphaT(self,T):
+    &#34;&#34;&#34;Composite alpha function that smoothly transitions between alpha and alphag&#34;&#34;&#34;
+    H = self.H(T)
+    return (1-H) * self.alphag(T) + H * self.alpha(T)</code></pre>
+</details>
+</dd>
+<dt id="property.DFV.alphag"><code class="name flex">
+<span>def <span class="ident">alphag</span></span>(<span>self, T)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>alpha for T &lt; Tg</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def alphag(self,T):
+    &#34;&#34;&#34;alpha for T &lt; Tg&#34;&#34;&#34;
+    TK = self.T0K+T
+    return 1 + self.Ka / (self.r * (TK - self.Tg) + self.Kb)</code></pre>
+</details>
+</dd>
+<dt id="property.DFV.eval"><code class="name flex">
+<span>def <span class="ident">eval</span></span>(<span>self, T, **extra)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute FV D for this polymer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def eval(self,T,**extra):
+    &#34;&#34;&#34;Compute FV D for this polymer&#34;&#34;&#34;
+    TK = self.T0K+T
+    if TK-self.Tg &lt; -self.Kb/self.r + self.deltaT:
+        return None # temperature too low for theory at glassy state
+    else:
+        return self.D0 * np.exp(-self.E / (self.R * TK)) * np.exp(-self.xi * self.Plike(T))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="property.Diffusivities"><code class="flex name class">
 <span>class <span class="ident">Diffusivities</span></span>
 </code></dt>
@@ -1006,7 +2526,9 @@ if __name__ == &#34;__main__&#34;:
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
+<li><a title="property.DFV" href="#property.DFV">DFV</a></li>
 <li><a title="property.Dpiringer" href="#property.Dpiringer">Dpiringer</a></li>
+<li><a title="property.Dwelle" href="#property.Dwelle">Dwelle</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -1039,7 +2561,7 @@ if __name__ == &#34;__main__&#34;:
 - dynamic: Dmodel = Dpiringer(polymer="polymer"&hellip;)
 Dmodel.eval(M=Mvalue,T=Tvalue)</p>
 <p>Instantiate a Dpiringer object for a specific polymer key
-(e.g. 'LDPE', 'PET', or 'air'). The corresponding App and tau
+(e.g. 'LDPE', 'PET',&hellip;). The corresponding App and tau
 are looked up and stored as instance attributes.</p></div>
 <details class="source">
 <summary>
@@ -1340,7 +2862,7 @@ are looked up and stored as instance attributes.</p></div>
     def __init__(self, polymer=&#34;LDPE&#34;, M=100, T=40):
         &#34;&#34;&#34;
         Instantiate a Dpiringer object for a specific polymer key
-        (e.g. &#39;LDPE&#39;, &#39;PET&#39;, or &#39;air&#39;). The corresponding App and tau
+        (e.g. &#39;LDPE&#39;, &#39;PET&#39;,...). The corresponding App and tau
         are looked up and stored as instance attributes.
         &#34;&#34;&#34;
         polymer_str = polymer.strip()
@@ -1871,6 +3393,219 @@ at molecular mass M (g/mol) and temperature T (°C).</p></div>
 </dd>
 </dl>
 </dd>
+<dt id="property.Dwelle"><code class="flex name class">
+<span>class <span class="ident">Dwelle</span></span>
+<span>(</span><span>polymer='gPET')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Diffusivities predicted with the Welle model</p>
+<h2 id="references">References</h2>
+<p>Ewender J, Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
+terephthalate)—Validation data. Packag Technol Sci. 2022; 35(5): 405-413.
+<a href="https://doi.org:10.1002/pts.2638">https://doi.org:10.1002/pts.2638</a></p>
+<p>Welle, F. (2021). Diffusion Coefficients and Activation Energies of Diffusion of Organic Molecules
+in Polystyrene below and above Glass Transition Temperature. Polymers, 13(8), 1317.
+<a href="https://doi.org/10.3390/polym13081317">https://doi.org/10.3390/polym13081317</a></p>
+<p>Instantiate a Dwelle object for a specific polymer key
+(e.g. 'gPET', 'PS', "rPS", "HIPS", or 'rHIPS'). The corresponding a,b,c,d values
+are looked up and stored as instance attributes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Dwelle(Diffusivities):
+    &#34;&#34;&#34;
+        Diffusivities predicted with the Welle model
+
+        References:
+
+            Ewender J, Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
+            terephthalate)—Validation data. Packag Technol Sci. 2022; 35(5): 405-413.
+            https://doi.org:10.1002/pts.2638
+
+            Welle, F. (2021). Diffusion Coefficients and Activation Energies of Diffusion of Organic Molecules
+            in Polystyrene below and above Glass Transition Temperature. Polymers, 13(8), 1317.
+            https://doi.org/10.3390/polym13081317
+
+    &#34;&#34;&#34;
+
+    name = &#34;Welle&#34;
+    description = &#34;Welle diffusivity model&#34;
+    model = &#34;empirical&#34;
+    theory = &#34;scaling&#34;
+    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+                  &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+                  &#34;VvdW&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
+                }
+    _available_to_import = True # this model can be directly imported
+
+
+    # Welle values (the primary key matches the one used in layer)
+    welle_data = {
+        # a in 1/K, b in cm2/s, c in A3, d in 1/K
+        &#34;gPET&#34;: {&#34;a&#34;: 1.93e-3, &#34;b&#34;: 2.27e-6, &#34;c&#34;: 11.1, &#34;d&#34;:1.50e-4},
+        &#34;PS&#34;: {&#34;a&#34;: 2.59e-3, &#34;b&#34;: 7.38e-9, &#34;c&#34;: 55.71, &#34;d&#34;:2.73e-5},
+        &#34;rPS&#34;: {&#34;a&#34;: 2.44e-3, &#34;b&#34;: 6.46e-8, &#34;c&#34;: 25.51, &#34;d&#34;:7.55e-5}, # rubber PS
+        &#34;HIPS&#34;: {&#34;a&#34;: 2.55e-3, &#34;b&#34;: 9.21e-9, &#34;c&#34;: 73.28, &#34;d&#34;: 2.04e-5},
+        &#34;rHIPS&#34;: {&#34;a&#34;: 2.46e-3, &#34;b&#34;: 2.07e-7, &#34;c&#34;: 45.00, &#34;d&#34;: 2.07e-7}, # rubber HIPS
+  # add polymers here
+        }
+
+    # Constants
+    T0K = 273.15 # K
+
+    def __init__(self, polymer=&#34;gPET&#34;):
+        &#34;&#34;&#34;
+        Instantiate a Dwelle object for a specific polymer key
+        (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#34;rPS&#34;, &#34;HIPS&#34;, or &#39;rHIPS&#39;). The corresponding a,b,c,d values
+        are looked up and stored as instance attributes.
+        &#34;&#34;&#34;
+        polymer_str = polymer.strip()
+        if polymer_str not in self.welle_data:
+            raise ValueError(f&#34;No exact match for polymer key: {polymer_str!r}&#34;)
+        self.polymer = polymer_str
+        self.a = self._lookup(&#34;a&#34;)
+        self.b = self._lookup(&#34;b&#34;)
+        self.c = self._lookup(&#34;c&#34;)
+        self.d = self._lookup(&#34;d&#34;)
+
+    def _lookup(self,prop):
+        &#34;&#34;&#34;Helper function to lookup a property value from the welle_data dictionary&#34;&#34;&#34;
+        if prop not in self.welle_data[self.polymer]:
+            raise ValueError(f&#34;The property {prop} does not exist for {self.polymer}&#34;)
+        return self.welle_data[self.polymer][prop]
+
+    def eval(self,VvdW,T,**extra):
+        &#34;&#34;&#34;Compute D acoording to the Welle model&#34;&#34;&#34;
+        TK = self.T0K+T
+        return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s
+
+    @classmethod
+    def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
+        &#34;&#34;&#34;
+        Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer name (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#39;HIPS&#39;, &#39;rPS&#39;, &#39;rHIPS&#39; etc.) as listed in the original data structure.
+        VvdW : float
+            3D molecular volume, default = 100 (units in A**3).
+        T : float
+            Temperature in °C, default = 40.
+
+        Returns
+        -------
+        float
+            The estimated diffusion coefficient in m^2/s
+        &#34;&#34;&#34;
+        FW = Dwelle(polymer=polymer)
+        return FW.eval(VvdW,T,**extra)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="property.Diffusivities" href="#property.Diffusivities">Diffusivities</a></li>
+<li><a title="property.migrationProperty" href="#property.migrationProperty">migrationProperty</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="property.Dwelle.T0K"><code class="name">var <span class="ident">T0K</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.Dwelle.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.Dwelle.model"><code class="name">var <span class="ident">model</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.Dwelle.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.Dwelle.parameters"><code class="name">var <span class="ident">parameters</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.Dwelle.theory"><code class="name">var <span class="ident">theory</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="property.Dwelle.welle_data"><code class="name">var <span class="ident">welle_data</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="property.Dwelle.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>polymer='gPET', VvdW=100, T=40.0, **extra)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>polymer</code></strong> :&ensp;<code>str</code></dt>
+<dd>Polymer name (e.g. 'gPET', 'PS', 'HIPS', 'rPS', 'rHIPS' etc.) as listed in the original data structure.</dd>
+<dt><strong><code>VvdW</code></strong> :&ensp;<code>float</code></dt>
+<dd>3D molecular volume, default = 100 (units in A**3).</dd>
+<dt><strong><code>T</code></strong> :&ensp;<code>float</code></dt>
+<dd>Temperature in °C, default = 40.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>The estimated diffusion coefficient in m^2/s</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def evaluate(cls,polymer=&#34;gPET&#34;, VvdW=100, T=40.0, **extra):
+    &#34;&#34;&#34;
+    Evaluate D (Dwelle) for a substance with a molar volume V in polymer at T
+
+    Parameters
+    ----------
+    polymer : str
+        Polymer name (e.g. &#39;gPET&#39;, &#39;PS&#39;, &#39;HIPS&#39;, &#39;rPS&#39;, &#39;rHIPS&#39; etc.) as listed in the original data structure.
+    VvdW : float
+        3D molecular volume, default = 100 (units in A**3).
+    T : float
+        Temperature in °C, default = 40.
+
+    Returns
+    -------
+    float
+        The estimated diffusion coefficient in m^2/s
+    &#34;&#34;&#34;
+    FW = Dwelle(polymer=polymer)
+    return FW.eval(VvdW,T,**extra)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="property.Dwelle.eval"><code class="name flex">
+<span>def <span class="ident">eval</span></span>(<span>self, VvdW, T, **extra)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute D acoording to the Welle model</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def eval(self,VvdW,T,**extra):
+    &#34;&#34;&#34;Compute D acoording to the Welle model&#34;&#34;&#34;
+    TK = self.T0K+T
+    return  1.0e-4 * self.b * (VvdW/self.c) ** ((self.a-1/TK)/self.d) # result in m2/s</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="property.HenryLikeCoefficients"><code class="flex name class">
 <span>class <span class="ident">HenryLikeCoefficients</span></span>
 </code></dt>
@@ -1990,7 +3725,7 @@ gscale: activity coefficient (default=1.0)</p>
         Only a static evaluate is proposed.
 
     &#34;&#34;&#34;
-    name = &#34;gFHP&#34;
+    name = &#34;FHP&#34;
     description = &#34;Flory-Huggins model of activity coefficients from P&#39; and V at infinite dilution in k&#34;
     model = &#34;semi-empirical&#34;
     theory = &#34;Flory-Huggins&#34;
@@ -2080,7 +3815,7 @@ def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
 </code></dt>
 <dd>
 <div class="desc"><p>Simplified model to estimate Henry-like coefficients based on gFHP class
-ki,k = Vi * Pi gik(P'i,P'k,Vi,Vk)</p>
+ki,k = Vi * Pi gik(P'i,P'k,Vi,Vk,crystallinity,porosity)</p>
 <pre><code>i: solute
 k: P or F
 P'i and P'k: Polarity index (e.g.: migrant("solute").polarityindex)
@@ -2088,8 +3823,9 @@ Vi, Vk: molar volumes (e.g. migrant("solute").molarvolumeMiller)
 ispolymer: True for polymers
 alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
 lngmin: minimum value (default=0)
-gscale: activity coefficient (default=Vi*Psat)
 Psat: vapor saturation pressure
+cristallinity: crystallinity of the solid phase
+porosity: porosity of the effective solid.medium
 </code></pre>
 <p>Only a static evaluate is proposed.</p>
 <p>Note use: scaling = False to get activity coefficients instead of Henry-like ones</p></div>
@@ -2100,7 +3836,7 @@ Psat: vapor saturation pressure
 <pre><code class="python">class kFHP(HenryLikeCoefficients):
     &#34;&#34;&#34;
         Simplified model to estimate Henry-like coefficients based on gFHP class
-            ki,k = Vi * Pi gik(P&#39;i,P&#39;k,Vi,Vk)
+            ki,k = Vi * Pi gik(P&#39;i,P&#39;k,Vi,Vk,crystallinity,porosity)
 
             i: solute
             k: P or F
@@ -2109,38 +3845,43 @@ Psat: vapor saturation pressure
             ispolymer: True for polymers
             alpha: scaling constant for chiik (default=0.14=1/migrant(&#34;water&#34;).polarityindex)
             lngmin: minimum value (default=0)
-            gscale: activity coefficient (default=Vi*Psat)
             Psat: vapor saturation pressure
+            cristallinity: crystallinity of the solid phase
+            porosity: porosity of the effective solid.medium
 
         Only a static evaluate is proposed.
 
         Note use: scaling = False to get activity coefficients instead of Henry-like ones
 
     &#34;&#34;&#34;
-    name = &#34;kFHP&#34;
+    name = &#34;FHP&#34;
     description = &#34;Flory-Huggins model of Henry-likecoefficients from P&#39; and V at infinite dilution in k&#34;
     model = &#34;semi-empirical&#34;
     theory = &#34;Flory-Huggins&#34;
-    parameters = {&#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
-                  &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
-                  &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
-                  &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
-                  &#34;Psat&#34;: {&#34;description&#34;: &#34;vapor saturation pressure of i&#34;,&#34;units&#34;: &#34;Pa&#34;}
+    parameters = {  &#34;Pi&#34;: {&#34;description&#34;: &#34;polarity index of solute i&#34;,&#34;units&#34;: &#34;-&#34;},
+                    &#34;Pk&#34;: {&#34;description&#34;: &#34;polarity index of continuous phase k&#34;,&#34;units&#34;: &#34;-&#34;},
+                    &#34;Vi&#34;: {&#34;description&#34;: &#34;molar volume&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                    &#34;Vk&#34;: {&#34;description&#34;: &#34;molar volume of k&#34;,&#34;units&#34;: &#34;g/cm**3&#34;},
+                  &#34;Psat&#34;: {&#34;description&#34;: &#34;vapor saturation pressure of i&#34;,&#34;units&#34;: &#34;Pa&#34;},
+         &#34;crystallinity&#34;: {&#34;description&#34;: &#34;crystallinity of the solid phase&#34;,&#39;units&#39;:&#34;-&#34;},
+              &#34;porosity&#34;: {&#34;description&#34;: &#34;porosity of the effective solid/medium&#34;,&#39;units&#39;:&#34;-&#34;},
                 }
     _available_to_import = True # this model can be imported
 
     @classmethod
-    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True,porosity=0,crystallinity=0):
         &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+        scalesolidamorphous = (1-porosity)*(1-crystallinity)
+        scalesolidamorphous = 1 if scalesolidamorphous==0 else scalesolidamorphous # pure air
         if scaling: # (default behavior)
             return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                         alpha=alpha,lngmin=lngmin,
-                        gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --&gt; [m**3/kg]
+                        gscale=Vi*1e-3*Psat/scalesolidamorphous # Vi is converted [cm**3/g] --&gt; [m**3/kg]
                         )
         else:
             return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                         alpha=alpha,lngmin=lngmin,
-                        gscale=1
+                        gscale=1/scalesolidamorphous
                         )</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -2174,7 +3915,7 @@ Psat: vapor saturation pressure
 <h3>Static methods</h3>
 <dl>
 <dt id="property.kFHP.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer=False, alpha=0.14, lngmin=0.0, Psat=1.0, scaling=True)</span>
+<span>def <span class="ident">evaluate</span></span>(<span>Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer=False, alpha=0.14, lngmin=0.0, Psat=1.0, scaling=True, porosity=0, crystallinity=0)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)</p></div>
@@ -2183,17 +3924,19 @@ Psat: vapor saturation pressure
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
-def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True):
+def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True,porosity=0,crystallinity=0):
     &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
+    scalesolidamorphous = (1-porosity)*(1-crystallinity)
+    scalesolidamorphous = 1 if scalesolidamorphous==0 else scalesolidamorphous # pure air
     if scaling: # (default behavior)
         return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                     alpha=alpha,lngmin=lngmin,
-                    gscale=Vi*1e-3*Psat # Vi is converted [cm**3/g] --&gt; [m**3/kg]
+                    gscale=Vi*1e-3*Psat/scalesolidamorphous # Vi is converted [cm**3/g] --&gt; [m**3/kg]
                     )
     else:
         return gFHP.evaluate(Pi=Pi, Pk=Pk, Vi=Vi, Vk=Vk, ispolymer=ispolymer,
                     alpha=alpha,lngmin=lngmin,
-                    gscale=1
+                    gscale=1/scalesolidamorphous
                     )</code></pre>
 </details>
 </dd>
@@ -2304,6 +4047,7 @@ def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="property.MigrationPropertyModel_validator" href="#property.MigrationPropertyModel_validator">MigrationPropertyModel_validator</a></code></li>
+<li><code><a title="property.PropertyModelSelector" href="#property.PropertyModelSelector">PropertyModelSelector</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -2315,6 +4059,27 @@ def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=
 <li><code><a title="property.ActivityCoefficients.description" href="#property.ActivityCoefficients.description">description</a></code></li>
 <li><code><a title="property.ActivityCoefficients.notation" href="#property.ActivityCoefficients.notation">notation</a></code></li>
 <li><code><a title="property.ActivityCoefficients.property" href="#property.ActivityCoefficients.property">property</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="property.DFV" href="#property.DFV">DFV</a></code></h4>
+<ul class="two-column">
+<li><code><a title="property.DFV.H" href="#property.DFV.H">H</a></code></li>
+<li><code><a title="property.DFV.Plike" href="#property.DFV.Plike">Plike</a></code></li>
+<li><code><a title="property.DFV.R" href="#property.DFV.R">R</a></code></li>
+<li><code><a title="property.DFV.T0K" href="#property.DFV.T0K">T0K</a></code></li>
+<li><code><a title="property.DFV.alpha" href="#property.DFV.alpha">alpha</a></code></li>
+<li><code><a title="property.DFV.alphaT" href="#property.DFV.alphaT">alphaT</a></code></li>
+<li><code><a title="property.DFV.alphag" href="#property.DFV.alphag">alphag</a></code></li>
+<li><code><a title="property.DFV.betalin" href="#property.DFV.betalin">betalin</a></code></li>
+<li><code><a title="property.DFV.deltaT" href="#property.DFV.deltaT">deltaT</a></code></li>
+<li><code><a title="property.DFV.description" href="#property.DFV.description">description</a></code></li>
+<li><code><a title="property.DFV.eval" href="#property.DFV.eval">eval</a></code></li>
+<li><code><a title="property.DFV.evaluate" href="#property.DFV.evaluate">evaluate</a></code></li>
+<li><code><a title="property.DFV.model" href="#property.DFV.model">model</a></code></li>
+<li><code><a title="property.DFV.name" href="#property.DFV.name">name</a></code></li>
+<li><code><a title="property.DFV.parameters" href="#property.DFV.parameters">parameters</a></code></li>
+<li><code><a title="property.DFV.theory" href="#property.DFV.theory">theory</a></code></li>
 </ul>
 </li>
 <li>
@@ -2343,6 +4108,20 @@ def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=
 <li><code><a title="property.Dpiringer.polymer" href="#property.Dpiringer.polymer">polymer</a></code></li>
 <li><code><a title="property.Dpiringer.tau" href="#property.Dpiringer.tau">tau</a></code></li>
 <li><code><a title="property.Dpiringer.theory" href="#property.Dpiringer.theory">theory</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="property.Dwelle" href="#property.Dwelle">Dwelle</a></code></h4>
+<ul class="two-column">
+<li><code><a title="property.Dwelle.T0K" href="#property.Dwelle.T0K">T0K</a></code></li>
+<li><code><a title="property.Dwelle.description" href="#property.Dwelle.description">description</a></code></li>
+<li><code><a title="property.Dwelle.eval" href="#property.Dwelle.eval">eval</a></code></li>
+<li><code><a title="property.Dwelle.evaluate" href="#property.Dwelle.evaluate">evaluate</a></code></li>
+<li><code><a title="property.Dwelle.model" href="#property.Dwelle.model">model</a></code></li>
+<li><code><a title="property.Dwelle.name" href="#property.Dwelle.name">name</a></code></li>
+<li><code><a title="property.Dwelle.parameters" href="#property.Dwelle.parameters">parameters</a></code></li>
+<li><code><a title="property.Dwelle.theory" href="#property.Dwelle.theory">theory</a></code></li>
+<li><code><a title="property.Dwelle.welle_data" href="#property.Dwelle.welle_data">welle_data</a></code></li>
 </ul>
 </li>
 <li>

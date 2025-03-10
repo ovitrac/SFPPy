@@ -134,7 +134,9 @@ hfig1 = ref_simulation.plotCF(t=listoftimes)
 # %% Define PET Functional Barrier (FB)
 # -------------------------------------
 # Create a **30 µm thick PET layer** as a functional barrier
-PET_functionalBarrier = polymer.gPET(
+# we assume that the layer will be plasticized and apply a "wet" PET
+# for comparison, replace wPET by gPET to see the drastic difference
+PET_functionalBarrier = polymer.wPET(
     l=(30, "um"),  # Thickness: 30 µm
     substance=surrogate,
     C0=0,  # Virgin PET (no migrant initially)

@@ -3335,7 +3335,7 @@ Cfull_dimless (np.ndarray): Full concentration profile.</p></div>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:7ScZGK', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:ihUvcJ', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -9314,6 +9314,9 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         self._layerclass_history = []
         self._ispolymer_history = []
         self._chemicalsubstance_history = []
+        self._Tg_history = []
+        self._porosity_history = []
+        self._crystallinity_history = []
 
         # set verbosity attributes
         self.verbosity = 0 if verbosity is None else verbosity
@@ -9494,6 +9497,9 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             res._layerclass_history = self.layerclass_history + other.layerclass_history
             res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
             res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
+            res._Tg_history = self.Tg_history + other.Tg_history
+            res._porosity_history = self.porosity_history + other.porosity_history
+            res._crystallinity_history = self.crystallinity_history + other.crystallinity_history
             # Manage layerLink attributes (Dlink, klink, C0link, Tlink, llink)
             property_map = {
                 &#34;Dlink&#34;: (&#34;D&#34;, self.Dlink, other.Dlink),
@@ -9556,7 +9562,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             res._nlayer = len(j)
         if isinstance(i,int): res._nlayer = 1
         # pick indices for each property
-        for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+        for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;,
+                  # Handle history tracking
+                  &#34;_layerclass_history&#34;,&#34;_ispolymer_history&#34;,&#34;_chemicalsubstance_history&#34;,
+                  &#34;_Tg_history&#34;,&#34;_porosity_history&#34;,&#34;_crystallinity_history&#34;]:
             content = getattr(self,p)
             try:
                 if isscalar: setattr(res,p,content[i:i+1])
@@ -9577,7 +9586,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         islayer = isinstance(other,layer)
         isempty = not islayer and isinstance(other,list) and len(other)&lt;1
         if isempty:         # empty right hand side
-            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;,
+                      # Handle history tracking
+                      &#34;_layerclass_history&#34;,&#34;_ispolymer_history&#34;,&#34;_chemicalsubstance_history&#34;,
+                      &#34;_Tg_history&#34;,&#34;_porosity_history&#34;,&#34;_crystallinity_history&#34;]:
                 content = getattr(self,p)
                 try:
                     newcontent = [content[k] for k in range(self._nlayer) if k not in j]
@@ -9593,7 +9605,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             nk2 = other._nlayer
             if nk1 != nk2:
                 raise IndexError(&#34;the number of elements does not match the number of indices&#34;)
-            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;
+                      # Handle history tracking
+                      &#34;_layerclass_history&#34;,&#34;_ispolymer_history&#34;,&#34;_chemicalsubstance_history&#34;,
+                      &#34;_Tg_history&#34;,&#34;_porosity_history&#34;,&#34;_crystallinity_history&#34;]:
                 content1 = getattr(self,p)
                 content2 = getattr(other,p)
                 for k in range(nk1):
@@ -9634,6 +9649,27 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     @property
     def chemicalsubstance_history(self):
         return self._chemicalsubstance_history if self._chemicalsubstance_history != [] else [self.chemicalsubstance]
+    @property
+    def _currentTg(self):
+        &#34;&#34;&#34;returns the current Tg if its defined, if not None&#34;&#34;&#34;
+        return check_units(getattr(self, &#34;Tg&#34;, None))[0]
+    @property
+    def _currentporosity(self):
+        &#34;&#34;&#34;returns the current porosity if its defined, if not 0&#34;&#34;&#34;
+        return getattr(self, &#34;porosity&#34;, 0)
+    @property
+    def _currentcrystallinity(self):
+        &#34;&#34;&#34;returns the crystallinity at the current temperature (if defined)&#34;&#34;&#34;
+        return getattr(self, &#34;crystallinity&#34;, lambda T=None: 0)(T=None)
+    @property
+    def Tg_history(self):
+        return self._Tg_history if self._Tg_history != [] else [self._currentTg]
+    @property
+    def porosity_history(self):
+        return self._porosity_history if self._porosity_history != [] else [self._currentporosity]
+    @property
+    def crystallinity_history(self):
+        return self._crystallinity_history if self._crystallinity_history != [] else [self._currentcrystallinity]
     @property
     def layerclass(self): return type(self).__name__
     @property
@@ -9762,9 +9798,21 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         def func(**kwargs):
             D = np.empty_like(self._D)
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
-                template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
-                # inherit eventual user parameters
-                D[i] = self._substance.D.evaluate(**dict(template, **kwargs))
+                template.update(polymer=self.layerclass_history[i],
+                                Tg=self.Tg_history[i],
+                                T=T) # updated layer properties
+                # test if an alternative mode is applicable
+                alt_Dclass = self._substance.suggest_alt_Dclass(self,index=i,RaiseError=False,RaiseWarning=False,**template)
+                if alt_Dclass is None:
+                    # run the default model with inherited eventual user parameters
+                    result = self._substance.D.evaluate(**dict(template, **kwargs))
+                else:
+                    # run the alternative model with inherited eventual user parameters
+                    result = alt_Dclass.evaluate(**dict(template, **kwargs))
+                if isinstance(result, np.ndarray) and result.size == 1:
+                    D[i] = result.item()  # Extract scalar safely
+                else:
+                    D[i] = result  # Assume it&#39;s already a scalar
             return D
         return func # we return a callable function not a value
 
@@ -9791,12 +9839,18 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
                 if not self.ispolymer_history[i]: # k can be evaluated only in polymes via FH theory
                     continue # we keep the existing k value
-                # add/update monomer properties
+                # add/update monomer properties + porosity and crystallinity of the polymer
                 monomer = migrant(self.chemicalsubstance_history[i])
                 template.update(Pk = monomer.polarityindex,
-                                Vk = monomer.molarvolumeMiller)
+                                Vk = monomer.molarvolumeMiller,
+                                crystallinity = self.crystallinity_history[i],
+                                porosity = self.porosity_history[i])
                 # inherit eventual user parameters
-                k[i] = self._substance.k.evaluate(**dict(template, **kwargs))
+                result = self._substance.k.evaluate(**dict(template, **kwargs))
+                if isinstance(result, np.ndarray) and result.size == 1:
+                    k[i] = result.item()  # Extract scalar safely
+                else:
+                    k[i] = result  # Assume it&#39;s already a scalar
             return k
         return func # we return a callable function not a value
 
@@ -9810,6 +9864,16 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             elif callable(self.Dmodel):
                 return self.Dmodel() is not None
         return False
+
+    def _currentDmodel(self,index=0):
+        &#34;&#34;&#34;Returns the name of Dmodel used in the ith layer&#34;&#34;&#34;
+        if self.hasDmodel:
+            default = self._substance.D.__name__
+            altDmodel = self._substance.suggest_alt_Dmodel(self,index,RaiseError=False)
+            if altDmodel is None:
+                return default
+            return altDmodel if self._substance.check_alt_propclass(altDmodel) else altDmodel+&#34;--&gt;&#34;+default
+        return &#34;&#34;
 
     @property
     def haskmodel(self):
@@ -10140,14 +10204,23 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
                 print(f&#39;{self._nlayer}-multilayer of {self.__description}:&#39;)
             for n in range(1,self._nlayer+1):
                 modelinfo = {
-                    &#34;D&#34;: f&#34;{self._substance.D.__name__}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})&#34; if hasDmodel else &#34;&#34;,
+                    &#34;D&#34;: f&#34;{self._currentDmodel(n-1)}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})&#34; if hasDmodel else &#34;&#34;,
                     &#34;k&#34;: f&#34;{self._substance.k.__name__}(&lt;{self.chemicalsubstance_history[n-1]}&gt;,{self._substance})&#34; if haskmodel else &#34;&#34;,
                     }
                 print(&#39;-- [ layer %d of %d ] ---------- barrier rank=%d --------------&#39;
                       % (n,self._nlayer,self.rank[n-1]))
+                # generic properties
                 for p in [&#34;name&#34;,&#34;type&#34;,&#34;material&#34;,&#34;code&#34;]:
                     v = getattr(self,p)
                     print(&#39;%10s: &#34;%s&#34;&#39; % (p,v[n-1]),flush=True)
+                # polymer properties if relevant
+                if haskmodel:
+                    print(&#39;%10s: %s&#39; % (&#34;crystal&#34;,self.crystallinity_history[n-1]),flush=True)
+                if hasDmodel and self.Tg_history[n-1] is not None:
+                    Tg = self.Tg_history[n-1] # Tg,Tgu = check_units(self.Tg_history[n-1])
+                    Tg = Tg.item() if isinstance(Tg, np.ndarray) else Tg
+                    print(&#39;%10s: %s&#39; % (&#34;Tg&#34;,f&#34;{Tg} [{self.Tunit}]&#34;),flush=True)
+                # numeric properties
                 for p in properties_hasmodel.keys():
                     v = getattr(self,p)                 # value
                     vunit = getattr(self,p[0]+&#34;unit&#34;)   # value unit
@@ -10444,9 +10517,11 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <li>patankar.layer.PA66</li>
 <li>patankar.layer.PBT</li>
 <li>patankar.layer.PEN</li>
+<li>patankar.layer.PMMA</li>
 <li>patankar.layer.PP</li>
 <li>patankar.layer.PPrubber</li>
 <li>patankar.layer.PS</li>
+<li>patankar.layer.PVAc</li>
 <li>patankar.layer.Paper</li>
 <li>patankar.layer.SBS</li>
 <li>patankar.layer.air</li>
@@ -10731,6 +10806,18 @@ def TK(self): return self._T+T0K</code></pre>
 def TKunit(self): return &#34;K&#34;</code></pre>
 </details>
 </dd>
+<dt id="migration.layer.Tg_history"><code class="name">var <span class="ident">Tg_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Tg_history(self):
+    return self._Tg_history if self._Tg_history != [] else [self._currentTg]</code></pre>
+</details>
+</dd>
 <dt id="migration.layer.Tlink"><code class="name">var <span class="ident">Tlink</span></code></dt>
 <dd>
 <div class="desc"><p>Getter for Tlink</p></div>
@@ -10820,6 +10907,18 @@ def code(self): return self._code</code></pre>
 </summary>
 <pre><code class="python">@property
 def concentration(self): return sum(self.l*self.C0)/self.thickness</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.crystallinity_history"><code class="name">var <span class="ident">crystallinity_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def crystallinity_history(self):
+    return self._crystallinity_history if self._crystallinity_history != [] else [self._currentcrystallinity]</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.hasC0link"><code class="name">var <span class="ident">hasC0link</span></code></dt>
@@ -11228,6 +11327,18 @@ def physicalstate(self): return self._physicalstate</code></pre>
 def polarityindex(self):
     # rescaled to match predictions - standard scale [0,10.2] - predicted scale [0,7.12]
     return self._polarityindex * migrant(&#34;water&#34;).polarityindex/10.2</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.porosity_history"><code class="name">var <span class="ident">porosity_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def porosity_history(self):
+    return self._porosity_history if self._porosity_history != [] else [self._currentporosity]</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.pressure"><code class="name">var <span class="ident">pressure</span></code></dt>
@@ -13487,6 +13598,7 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.layer.T" href="#migration.layer.T">T</a></code></li>
 <li><code><a title="migration.layer.TK" href="#migration.layer.TK">TK</a></code></li>
 <li><code><a title="migration.layer.TKunit" href="#migration.layer.TKunit">TKunit</a></code></li>
+<li><code><a title="migration.layer.Tg_history" href="#migration.layer.Tg_history">Tg_history</a></code></li>
 <li><code><a title="migration.layer.Tlink" href="#migration.layer.Tlink">Tlink</a></code></li>
 <li><code><a title="migration.layer.Tunit" href="#migration.layer.Tunit">Tunit</a></code></li>
 <li><code><a title="migration.layer.acknowledge" href="#migration.layer.acknowledge">acknowledge</a></code></li>
@@ -13500,6 +13612,7 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.layer.concentration" href="#migration.layer.concentration">concentration</a></code></li>
 <li><code><a title="migration.layer.contact" href="#migration.layer.contact">contact</a></code></li>
 <li><code><a title="migration.layer.copy" href="#migration.layer.copy">copy</a></code></li>
+<li><code><a title="migration.layer.crystallinity_history" href="#migration.layer.crystallinity_history">crystallinity_history</a></code></li>
 <li><code><a title="migration.layer.hasC0link" href="#migration.layer.hasC0link">hasC0link</a></code></li>
 <li><code><a title="migration.layer.hasDlink" href="#migration.layer.hasDlink">hasDlink</a></code></li>
 <li><code><a title="migration.layer.hasDmodel" href="#migration.layer.hasDmodel">hasDmodel</a></code></li>
@@ -13537,6 +13650,7 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.layer.permeability" href="#migration.layer.permeability">permeability</a></code></li>
 <li><code><a title="migration.layer.physicalstate" href="#migration.layer.physicalstate">physicalstate</a></code></li>
 <li><code><a title="migration.layer.polarityindex" href="#migration.layer.polarityindex">polarityindex</a></code></li>
+<li><code><a title="migration.layer.porosity_history" href="#migration.layer.porosity_history">porosity_history</a></code></li>
 <li><code><a title="migration.layer.pressure" href="#migration.layer.pressure">pressure</a></code></li>
 <li><code><a title="migration.layer.rank" href="#migration.layer.rank">rank</a></code></li>
 <li><code><a title="migration.layer.referencelayer" href="#migration.layer.referencelayer">referencelayer</a></code></li>

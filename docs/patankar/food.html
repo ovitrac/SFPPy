@@ -4944,6 +4944,9 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         self._layerclass_history = []
         self._ispolymer_history = []
         self._chemicalsubstance_history = []
+        self._Tg_history = []
+        self._porosity_history = []
+        self._crystallinity_history = []
 
         # set verbosity attributes
         self.verbosity = 0 if verbosity is None else verbosity
@@ -5124,6 +5127,9 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             res._layerclass_history = self.layerclass_history + other.layerclass_history
             res._ispolymer_history = self.ispolymer_history + other.ispolymer_history
             res._chemicalsubstance_history = self.chemicalsubstance_history + other.chemicalsubstance_history
+            res._Tg_history = self.Tg_history + other.Tg_history
+            res._porosity_history = self.porosity_history + other.porosity_history
+            res._crystallinity_history = self.crystallinity_history + other.crystallinity_history
             # Manage layerLink attributes (Dlink, klink, C0link, Tlink, llink)
             property_map = {
                 &#34;Dlink&#34;: (&#34;D&#34;, self.Dlink, other.Dlink),
@@ -5186,7 +5192,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             res._nlayer = len(j)
         if isinstance(i,int): res._nlayer = 1
         # pick indices for each property
-        for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+        for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;,
+                  # Handle history tracking
+                  &#34;_layerclass_history&#34;,&#34;_ispolymer_history&#34;,&#34;_chemicalsubstance_history&#34;,
+                  &#34;_Tg_history&#34;,&#34;_porosity_history&#34;,&#34;_crystallinity_history&#34;]:
             content = getattr(self,p)
             try:
                 if isscalar: setattr(res,p,content[i:i+1])
@@ -5207,7 +5216,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         islayer = isinstance(other,layer)
         isempty = not islayer and isinstance(other,list) and len(other)&lt;1
         if isempty:         # empty right hand side
-            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;,
+                      # Handle history tracking
+                      &#34;_layerclass_history&#34;,&#34;_ispolymer_history&#34;,&#34;_chemicalsubstance_history&#34;,
+                      &#34;_Tg_history&#34;,&#34;_porosity_history&#34;,&#34;_crystallinity_history&#34;]:
                 content = getattr(self,p)
                 try:
                     newcontent = [content[k] for k in range(self._nlayer) if k not in j]
@@ -5223,7 +5235,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             nk2 = other._nlayer
             if nk1 != nk2:
                 raise IndexError(&#34;the number of elements does not match the number of indices&#34;)
-            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;]:
+            for p in [&#34;_name&#34;,&#34;_type&#34;,&#34;_material&#34;,&#34;_l&#34;,&#34;_D&#34;,&#34;_k&#34;,&#34;_C0&#34;
+                      # Handle history tracking
+                      &#34;_layerclass_history&#34;,&#34;_ispolymer_history&#34;,&#34;_chemicalsubstance_history&#34;,
+                      &#34;_Tg_history&#34;,&#34;_porosity_history&#34;,&#34;_crystallinity_history&#34;]:
                 content1 = getattr(self,p)
                 content2 = getattr(other,p)
                 for k in range(nk1):
@@ -5264,6 +5279,27 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     @property
     def chemicalsubstance_history(self):
         return self._chemicalsubstance_history if self._chemicalsubstance_history != [] else [self.chemicalsubstance]
+    @property
+    def _currentTg(self):
+        &#34;&#34;&#34;returns the current Tg if its defined, if not None&#34;&#34;&#34;
+        return check_units(getattr(self, &#34;Tg&#34;, None))[0]
+    @property
+    def _currentporosity(self):
+        &#34;&#34;&#34;returns the current porosity if its defined, if not 0&#34;&#34;&#34;
+        return getattr(self, &#34;porosity&#34;, 0)
+    @property
+    def _currentcrystallinity(self):
+        &#34;&#34;&#34;returns the crystallinity at the current temperature (if defined)&#34;&#34;&#34;
+        return getattr(self, &#34;crystallinity&#34;, lambda T=None: 0)(T=None)
+    @property
+    def Tg_history(self):
+        return self._Tg_history if self._Tg_history != [] else [self._currentTg]
+    @property
+    def porosity_history(self):
+        return self._porosity_history if self._porosity_history != [] else [self._currentporosity]
+    @property
+    def crystallinity_history(self):
+        return self._crystallinity_history if self._crystallinity_history != [] else [self._currentcrystallinity]
     @property
     def layerclass(self): return type(self).__name__
     @property
@@ -5392,9 +5428,21 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         def func(**kwargs):
             D = np.empty_like(self._D)
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
-                template.update(polymer=self.layerclass_history[i],T=T) # updated layer properties
-                # inherit eventual user parameters
-                D[i] = self._substance.D.evaluate(**dict(template, **kwargs))
+                template.update(polymer=self.layerclass_history[i],
+                                Tg=self.Tg_history[i],
+                                T=T) # updated layer properties
+                # test if an alternative mode is applicable
+                alt_Dclass = self._substance.suggest_alt_Dclass(self,index=i,RaiseError=False,RaiseWarning=False,**template)
+                if alt_Dclass is None:
+                    # run the default model with inherited eventual user parameters
+                    result = self._substance.D.evaluate(**dict(template, **kwargs))
+                else:
+                    # run the alternative model with inherited eventual user parameters
+                    result = alt_Dclass.evaluate(**dict(template, **kwargs))
+                if isinstance(result, np.ndarray) and result.size == 1:
+                    D[i] = result.item()  # Extract scalar safely
+                else:
+                    D[i] = result  # Assume it&#39;s already a scalar
             return D
         return func # we return a callable function not a value
 
@@ -5421,12 +5469,18 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             for (i,),T in np.ndenumerate(self.T.ravel()): # loop over all layers via T
                 if not self.ispolymer_history[i]: # k can be evaluated only in polymes via FH theory
                     continue # we keep the existing k value
-                # add/update monomer properties
+                # add/update monomer properties + porosity and crystallinity of the polymer
                 monomer = migrant(self.chemicalsubstance_history[i])
                 template.update(Pk = monomer.polarityindex,
-                                Vk = monomer.molarvolumeMiller)
+                                Vk = monomer.molarvolumeMiller,
+                                crystallinity = self.crystallinity_history[i],
+                                porosity = self.porosity_history[i])
                 # inherit eventual user parameters
-                k[i] = self._substance.k.evaluate(**dict(template, **kwargs))
+                result = self._substance.k.evaluate(**dict(template, **kwargs))
+                if isinstance(result, np.ndarray) and result.size == 1:
+                    k[i] = result.item()  # Extract scalar safely
+                else:
+                    k[i] = result  # Assume it&#39;s already a scalar
             return k
         return func # we return a callable function not a value
 
@@ -5440,6 +5494,16 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             elif callable(self.Dmodel):
                 return self.Dmodel() is not None
         return False
+
+    def _currentDmodel(self,index=0):
+        &#34;&#34;&#34;Returns the name of Dmodel used in the ith layer&#34;&#34;&#34;
+        if self.hasDmodel:
+            default = self._substance.D.__name__
+            altDmodel = self._substance.suggest_alt_Dmodel(self,index,RaiseError=False)
+            if altDmodel is None:
+                return default
+            return altDmodel if self._substance.check_alt_propclass(altDmodel) else altDmodel+&#34;--&gt;&#34;+default
+        return &#34;&#34;
 
     @property
     def haskmodel(self):
@@ -5770,14 +5834,23 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
                 print(f&#39;{self._nlayer}-multilayer of {self.__description}:&#39;)
             for n in range(1,self._nlayer+1):
                 modelinfo = {
-                    &#34;D&#34;: f&#34;{self._substance.D.__name__}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})&#34; if hasDmodel else &#34;&#34;,
+                    &#34;D&#34;: f&#34;{self._currentDmodel(n-1)}({self.layerclass_history[n-1]},{self._substance},T={float(self.T[0])} {self.Tunit})&#34; if hasDmodel else &#34;&#34;,
                     &#34;k&#34;: f&#34;{self._substance.k.__name__}(&lt;{self.chemicalsubstance_history[n-1]}&gt;,{self._substance})&#34; if haskmodel else &#34;&#34;,
                     }
                 print(&#39;-- [ layer %d of %d ] ---------- barrier rank=%d --------------&#39;
                       % (n,self._nlayer,self.rank[n-1]))
+                # generic properties
                 for p in [&#34;name&#34;,&#34;type&#34;,&#34;material&#34;,&#34;code&#34;]:
                     v = getattr(self,p)
                     print(&#39;%10s: &#34;%s&#34;&#39; % (p,v[n-1]),flush=True)
+                # polymer properties if relevant
+                if haskmodel:
+                    print(&#39;%10s: %s&#39; % (&#34;crystal&#34;,self.crystallinity_history[n-1]),flush=True)
+                if hasDmodel and self.Tg_history[n-1] is not None:
+                    Tg = self.Tg_history[n-1] # Tg,Tgu = check_units(self.Tg_history[n-1])
+                    Tg = Tg.item() if isinstance(Tg, np.ndarray) else Tg
+                    print(&#39;%10s: %s&#39; % (&#34;Tg&#34;,f&#34;{Tg} [{self.Tunit}]&#34;),flush=True)
+                # numeric properties
                 for p in properties_hasmodel.keys():
                     v = getattr(self,p)                 # value
                     vunit = getattr(self,p[0]+&#34;unit&#34;)   # value unit
@@ -6074,9 +6147,11 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <li>patankar.layer.PA66</li>
 <li>patankar.layer.PBT</li>
 <li>patankar.layer.PEN</li>
+<li>patankar.layer.PMMA</li>
 <li>patankar.layer.PP</li>
 <li>patankar.layer.PPrubber</li>
 <li>patankar.layer.PS</li>
+<li>patankar.layer.PVAc</li>
 <li>patankar.layer.Paper</li>
 <li>patankar.layer.SBS</li>
 <li>patankar.layer.air</li>
@@ -6361,6 +6436,18 @@ def TK(self): return self._T+T0K</code></pre>
 def TKunit(self): return &#34;K&#34;</code></pre>
 </details>
 </dd>
+<dt id="food.layer.Tg_history"><code class="name">var <span class="ident">Tg_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def Tg_history(self):
+    return self._Tg_history if self._Tg_history != [] else [self._currentTg]</code></pre>
+</details>
+</dd>
 <dt id="food.layer.Tlink"><code class="name">var <span class="ident">Tlink</span></code></dt>
 <dd>
 <div class="desc"><p>Getter for Tlink</p></div>
@@ -6450,6 +6537,18 @@ def code(self): return self._code</code></pre>
 </summary>
 <pre><code class="python">@property
 def concentration(self): return sum(self.l*self.C0)/self.thickness</code></pre>
+</details>
+</dd>
+<dt id="food.layer.crystallinity_history"><code class="name">var <span class="ident">crystallinity_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def crystallinity_history(self):
+    return self._crystallinity_history if self._crystallinity_history != [] else [self._currentcrystallinity]</code></pre>
 </details>
 </dd>
 <dt id="food.layer.hasC0link"><code class="name">var <span class="ident">hasC0link</span></code></dt>
@@ -6858,6 +6957,18 @@ def physicalstate(self): return self._physicalstate</code></pre>
 def polarityindex(self):
     # rescaled to match predictions - standard scale [0,10.2] - predicted scale [0,7.12]
     return self._polarityindex * migrant(&#34;water&#34;).polarityindex/10.2</code></pre>
+</details>
+</dd>
+<dt id="food.layer.porosity_history"><code class="name">var <span class="ident">porosity_history</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def porosity_history(self):
+    return self._porosity_history if self._porosity_history != [] else [self._currentporosity]</code></pre>
 </details>
 </dd>
 <dt id="food.layer.pressure"><code class="name">var <span class="ident">pressure</span></code></dt>
@@ -7625,7 +7736,7 @@ current value of the parameter and its default value.</p></div>
 </dd>
 <dt id="food.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50, 'T': 40}, kmodel='kFHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0}, db=&lt;patankar.loadpubchem.CompoundIndex object&gt;, raiseerror=True)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;patankar.loadpubchem.CompoundIndex object&gt;, raiseerror=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -7845,16 +7956,38 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     # class attribute, maximum width
     _maxdisplay = 40
 
-    # migrant constructor
-    def __init__(self, name=None,
-                 M=None, logP=None,
-                 Dmodel = &#34;Piringer&#34;,
-                 Dtemplate = {&#34;polymer&#34;:&#34;LLDPE&#34;, &#34;M&#34;:50, &#34;T&#34;:40}, # do not use None
-                 kmodel = &#34;kFHP&#34;,
-                 ktemplate = {&#34;Pi&#34;:1.41, &#34;Pk&#34;:3.97, &#34;Vi&#34;:124.1, &#34;Vk&#34;:30.9, &#34;ispolymer&#34;:True,
-                              &#34;alpha&#34;:0.14, &#34;lngmin&#34;:0.0,&#34;Psat&#34;:1.0}, # do not use None
-                 db=dbdefault,
-                 raiseerror=True):
+    # migrant constructor with its predictor templates
+    def __init__(self, name=None,   # substance identified by name
+                 M=None, logP=None, # substance identified by M, logP(less reliable)
+
+                 Dmodel = &#34;Piringer&#34;, # &lt;--- default D model
+
+                 Dtemplate = {&#34;polymer&#34;:&#34;LLDPE&#34;,
+                              &#34;M&#34;:50.0,  # used by Dpiringer (molecular mass in g/mol)
+                           &#34;Vvdw&#34;:100.0, # used by Dwelle (molecular volume)
+                              &#34;T&#34;:40.0,  # used by Dpringer, DFV
+                             &#34;Tg&#34;:76.0,  # used by DFV
+                              }, # do not use None
+
+                 kmodel = &#34;FHP&#34;,    # &lt;--- default k model
+
+                 ktemplate = {&#34;Pi&#34;:1.41,  # P&#39;i (polarity index)
+                              &#34;Pk&#34;:3.97,  # P&#39;k (polarity index)
+                              &#34;Vi&#34;:124.1, # molar volume of i
+                              &#34;Vk&#34;:30.9,  # molar volume of k
+                              &#34;ispolymer&#34;:True, # True if FH theory is applicable
+                              &#34;alpha&#34;:0.14, # \alpha \times (P&#39;_i-P&#39;k)^2
+                              &#34;lngmin&#34;:0.0, # min of log(\gamma_i) -- see theory at inifinite dilution
+                              &#34;Psat&#34;:1.0,   # partial saturation pressure for i (usually not defined)
+                              &#34;crystallinity&#34;:0, # k are calculated respectively to the volume fraction
+                              &#34;porosity&#34;:0       # of amorphous phase (1-crystallinity)(1-porosity)
+                              }, # do not use None
+
+                 db=dbdefault, # cache.PubChem database
+
+                 raiseerror=True # raise an error if the susbtance is not found
+
+                 ):
         &#34;&#34;&#34;
         Create a new migrant instance.
 
@@ -7954,7 +8087,6 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 if raiseerror:
                     raise ValueError(f&#34;&lt;{name}&gt; not found&#34;)
                 print(f&#34;LOADPUBCHEM ERRROR: &lt;{name}&gt; not found - empty object returned&#34;)
-                # No record found
                 self.compound = name
                 self.name = [name]
                 self.cid = []
@@ -7965,97 +8097,108 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 self.smiles = None
                 self.logP = None
             else:
-                # Possibly multiple matching rows
                 self.compound = name
-                all_names = []
-                all_cid = []
-                all_cas = []
-                all_m = []
-                all_formulas = []
-                all_smiles = []
-                all_logP = []
+                # Initialize dictionary to accumulate properties from each row
+                all_data = {
+                    &#34;names&#34;: [],
+                    &#34;cid&#34;: [],
+                    &#34;cas&#34;: [],
+                    &#34;inchi&#34;: [],
+                    &#34;inchikey&#34;: [],
+                    &#34;m&#34;: [],
+                    &#34;logp&#34;: [],
+                    &#34;formula&#34;: [],
+                    &#34;smiles&#34;: [],
+                }
+
+                # Helper functions
+                def ensure_list(val):
+                    if val is None:
+                        return []
+                    return val if isinstance(val, list) else [val]
+
+                def to_float(val):
+                    try:
+                        return float(val)
+                    except Exception:
+                        return np.nan
 
                 for _, row in df.iterrows():
+                    # Combine name and synonyms into one set
+                    names = ensure_list(row.get(&#34;name&#34;, []))
+                    syns = ensure_list(row.get(&#34;synonyms&#34;, []))
+                    all_data[&#34;names&#34;].extend(set(names) | set(syns))
 
-                    # Gather a list/set of names
-                    row_names = row.get(&#34;name&#34;, [])
-                    if isinstance(row_names, str):
-                        row_names = [row_names]
-                    row_syns = row.get(&#34;synonyms&#34;, [])
-                    combined_names = set(row_names) | set(row_syns)
-                    all_names.extend(list(combined_names))
+                    # Process CID (append if exists)
+                    cid = row.get(&#34;CID&#34;, None)
+                    if cid:
+                        all_data[&#34;cid&#34;].append(cid)
 
-                    # CID
-                    row_cid = row.get(&#34;CID&#34;, [])
-                    if row_cid:
-                        all_cid.append(row_cid)
+                    # Process CAS (extend list if exists)
+                    cas = ensure_list(row.get(&#34;CAS&#34;, []))
+                    all_data[&#34;cas&#34;].extend(cas)
 
-                    # CAS
-                    row_cas = row.get(&#34;CAS&#34;, [])
-                    if row_cas:
-                        all_cas.extend(row_cas)
+                    # Process InChi and InChiKey (ensure list conversion and extend)
+                    inchi = ensure_list(row.get(&#34;InChi&#34;, []))
+                    inchikey = ensure_list(row.get(&#34;InChiKey&#34;, []))
+                    all_data[&#34;inchi&#34;].extend(inchi)
+                    all_data[&#34;inchikey&#34;].extend(inchikey)
 
-                    # M
-                    row_m = row.get(&#34;M&#34;, None)
-                    if row_m is not None:
-                        try:
-                            all_m.append(float(row_m))
-                        except:
-                            all_m.append(np.nan)
+                    # Process M: convert to float or use np.nan
+                    m_val = row.get(&#34;M&#34;, None)
+                    all_data[&#34;m&#34;].append(to_float(m_val) if m_val is not None else np.nan)
+
+                    # Process logP similarly (if not None or empty)
+                    logp_val = row.get(&#34;logP&#34;, None)
+                    if logp_val not in (None, &#34;&#34;):
+                        all_data[&#34;logp&#34;].append(to_float(logp_val))
                     else:
-                        all_m.append(np.nan)
+                        all_data[&#34;logp&#34;].append(np.nan)
 
-                    # logP
-                    row_logp = row.get(&#34;logP&#34;, None)
-                    if row_logp not in (None, &#34;&#34;):
-                        try:
-                            all_logP.append(float(row_logp))
-                        except:
-                            all_logP.append(np.nan)
-                    else:
-                        all_logP.append(np.nan)
+                    # Process formula and SMILES (append even if None to preserve index)
+                    all_data[&#34;formula&#34;].append(row.get(&#34;formula&#34;, None))
+                    all_data[&#34;smiles&#34;].append(row.get(&#34;SMILES&#34;, None))
 
-                    # formula (as a string)
-                    row_formula = row.get(&#34;formula&#34;, None)
-                    # Even if None, we append so the index lines up with M
-                    all_formulas.append(row_formula)
+                # Convert lists to arrays for numerical properties
+                arr_m = np.array(all_data[&#34;m&#34;], dtype=float)
+                arr_logp = np.array(all_data[&#34;logp&#34;], dtype=float)
 
-                    # SMILES (as a string)
-                    row_smiles = row.get(&#34;SMILES&#34;, None)
-                    # Even if None, we append so the index lines up with M
-                    all_smiles.append(row_smiles)
+                # Deduplicate fields where necessary
+                unique_names = list(set(all_data[&#34;names&#34;]))
+                unique_cid = list(set(all_data[&#34;cid&#34;]))
+                unique_cas = list(set(all_data[&#34;cas&#34;]))
+                unique_inchi = list(set(all_data[&#34;inchi&#34;]))
+                unique_inchikey = list(set(all_data[&#34;inchikey&#34;]))
 
-                # Convert to arrays
-                arr_m = np.array(all_m, dtype=float)
-                arr_logp = np.array(all_logP, dtype=float)
-
-                # Some dedup / cleaning
-                unique_names = list(set(all_names))
-                unique_cid = list(set(all_cid))
-                unique_cas = list(set(all_cas))
-
-                # Store results in the migrant object
+                # Store deduplicated and processed values in the object
                 self.name = unique_names
-                self.cid = unique_cid[0] if len(unique_cid)==1 else unique_cid
+                self.cid = unique_cid[0] if len(unique_cid) == 1 else unique_cid
                 self.CAS = unique_cas if unique_cas else None
+                self.InChi = unique_inchi[0] if unique_inchi else None
+                self.InChiKey = unique_inchikey[0] if unique_inchikey else None
                 self.M_array = arr_m
-                # Minimum M
+
+                # Select the record with the minimum M (if available)
                 if np.isnan(arr_m).all():
                     self.M = None
                     self.formula = None
                     self.smiles = None
                 else:
-                    idx_min = np.nanargmin(arr_m)         # index of min M
-                    self.M = arr_m[idx_min]               # pick that M
-                    self.formula = all_formulas[idx_min]  # pick formula from same record
-                    self.smiles = all_smiles[idx_min]     # pick smilesfrom same record
+                    idx_min = np.nanargmin(arr_m)
+                    self.M = arr_m[idx_min]
+                    self.formula = all_data[&#34;formula&#34;][idx_min]
+                    self.smiles = all_data[&#34;smiles&#34;][idx_min]
 
-                # Valid logP
+                # Process logP: store only valid (non-NaN) values if available
                 valid_logp = arr_logp[~np.isnan(arr_logp)]
-                if valid_logp.size &gt; 0:
-                    self.logP = valid_logp  # or store as a list/mean/etc.
-                else:
-                    self.logP = None
+                self.logP = valid_logp if valid_logp.size &gt; 0 else None
+
+                # Store estimated on the van-der-Waals volume
+                # (they are all wrong, then two estimates)
+                self.vdWvolume = self.volume_3d # for future use (Dwelle use it)
+                alpha = 1/0.65 if self.count_rings[&#34;aromatic&#34;]&gt;0 else 1.3
+                self.vdWvolume2 = 1/alpha * self.molarvolumeMiller * 10.0/6.02214076 # in A3
+
 
         # Case (b): name is None, M is provided =&gt; generic substance
         # ----------------------------------------------------------------
@@ -8071,11 +8214,14 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             self.name = &#34;generic&#34;  # from instructions
             self.cid = None
             self.CAS = None
+            self.InChi = None
+            self.InChiKey = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
             self.smiles = None
             self.logP = logP_array  # user-supplied or None
+            self.vdWvolume, self.vdWvolume2 = None, None
 
         # Case (c): name is not None and M is provided =&gt; surrogate
         # ----------------------------------------------------------------
@@ -8090,11 +8236,14 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             self.name = name
             self.cid
             self.CAS = None
+            self.InChi = None
+            self.InChiKey = None
             self.M_array = M_array
             self.M = float(np.min(M_array))
             self.formula = None
             self.smiles = None
             self.logP = logP_array
+            self.vdWvolume, self.vdWvolume2 = None, None
 
         else:
             # If none of these scenarios apply, user gave incomplete or conflicting args
@@ -8103,47 +8252,60 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
 
         # Model validation and paramameterization
-        # ----------------------------------------
+        # ------------------------------------------------
+        # migrant parameters are populated to the template
+        # ------------------------------------------------
 
         # Diffusivity model
         if Dmodel is not None:
-            if not isinstance(Dmodel,str):
-                raise TypeError(f&#34;Dmodel should be str not a {type(Dmodel).__name__}&#34;)
-            if Dmodel not in MigrationPropertyModels[&#34;D&#34;]:
-                raise ValueError(f&#39;The diffusivity model &#34;{Dmodel}&#34; does not exist&#39;)
-            Dmodelclass = MigrationPropertyModels[&#34;D&#34;][Dmodel]
-            if not MigrationPropertyModel_validator(Dmodelclass,Dmodel,&#34;D&#34;):
-                raise TypeError(f&#39;The diffusivity model &#34;{Dmodel}&#34; is corrupted&#39;)
-            if Dtemplate is None:
-                Dtemplate = {}
-            if not isinstance(Dtemplate,dict):
-                raise TypeError(f&#34;Dtemplate should be a dict not a {type(Dtemplate).__name__}&#34;)
-            self.D  = Dmodelclass
-            self.Dtemplate = Dtemplate.copy()
-            self.Dtemplate.update(M=self.M,logP=self.logP)
+            self._validate_and_set_model(&#34;D&#34;,Dmodel,Dtemplate,
+                                         {&#34;M&#34;: self.M, &#34;logP&#34;: self.logP, &#34;Vvdw&#34;: self.volumeDwelle},
+                                         MigrationPropertyModels,MigrationPropertyModel_validator)
         else:
             self.D = None
             self.Dtemplate = None
 
         # Henry-like model
         if kmodel is not None:
-            if not isinstance(kmodel,str):
-                raise TypeError(f&#34;kmodel should be str not a {type(kmodel).__name__}&#34;)
-            if kmodel not in MigrationPropertyModels[&#34;k&#34;]:
-                raise ValueError(f&#39;The Henry-like model &#34;{kmodel}&#34; does not exist&#39;)
-            kmodelclass = MigrationPropertyModels[&#34;k&#34;][kmodel]
-            if not MigrationPropertyModel_validator(kmodelclass,kmodel,&#34;k&#34;):
-                raise TypeError(f&#39;The Henry-like model &#34;{kmodel}&#34; is corrupted&#39;)
-            if ktemplate is None:
-                ktemplate = {}
-            if not isinstance(ktemplate,dict):
-                raise TypeError(f&#34;ktemplate should be a dict not a {type(ktemplate).__name__}&#34;)
-            self.k  = kmodelclass
-            self.ktemplate = ktemplate.copy()
-            self.ktemplate.update(Pi=self.polarityindex,Vi=self.molarvolumeMiller)
+            self._validate_and_set_model(&#34;k&#34;,kmodel,ktemplate,
+                                         {&#34;Pi&#34;: self.polarityindex, &#34;Vi&#34;: self.molarvolumeMiller},
+                                         MigrationPropertyModels,MigrationPropertyModel_validator)
         else:
             self.k = None
             self.ktemplate = None
+
+
+    def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):
+        &#34;&#34;&#34;
+        Generic method for validating and setting a migration property model.
+
+        Parameters:
+            prop (str): The property identifier (e.g. &#34;D&#34; or &#34;k&#34;).
+            model (str or None): The model name.
+            template (dict or None): A dictionary template to be updated.
+            update_params (dict): Extra parameters to update the template.
+            PropertyModel: MigrationPropertyModels from patankar.property
+            PropertyModelValidator: MigrationPropertyModel_validator from patankar.property
+        &#34;&#34;&#34;
+        if model is not None:
+            if not isinstance(model, str):
+                raise TypeError(f&#34;{prop}model should be str not a {type(model).__name__}&#34;)
+            if model not in PropertyModel[prop]:
+                raise ValueError(f&#39;The {prop} model &#34;{model}&#34; does not exist&#39;)
+            model_class = PropertyModel[prop][model]
+            if not PropertyModelValidator(model_class, model, prop):
+                raise TypeError(f&#39;The {prop} model &#34;{model}&#34; is corrupted&#39;)
+            if template is None:
+                template = {}
+            if not isinstance(template, dict):
+                raise TypeError(f&#34;{prop}template should be a dict not a {type(template).__name__}&#34;)
+            setattr(self, prop, model_class)
+            temp_copy = template.copy()
+            temp_copy.update(update_params)
+            setattr(self, f&#34;{prop}template&#34;, temp_copy)
+        else:
+            setattr(self, prop, None)
+            setattr(self, f&#34;{prop}template&#34;, None)
 
     # helper property to combine D and Dtemplate
     @property
@@ -8183,6 +8345,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             &#34;M_array&#34;: self.M_array if self.M_array is not None else &#34;N/A&#34;,
             &#34;formula&#34;: self.formula,
             &#34;smiles&#34;: self.smiles if hasattr(self,&#34;smiles&#34;) else &#34;N/A&#34;,
+            &#34;InChiKey&#34;: self.InChiKey if hasattr(self,&#34;InChiKey&#34;) else &#34;N/A&#34;,
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
@@ -8329,7 +8492,300 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &gt;&gt;&gt; compound.molarvolumeLinear
         120.7  # Example output
         &#34;&#34;&#34;
-        return 0.935 * self.M + 14.2</code></pre>
+        return 0.935 * self.M + 14.2
+
+    # suggest an alternative D model
+    def suggest_alt_Dmodel(self,material=None,index=0,RaiseError=True,RaiseWarning=True,**template):
+        &#34;&#34;&#34;suggest an alternative Dmodel based on Dmodel_extensions&#34;&#34;&#34;
+        # local dependencies
+        from patankar.property import PropertyModelSelector
+        # special case when material is a str
+        if isinstance(material,str):
+            import patankar.layer as allmaterials
+            if not hasattr(allmaterials,material):
+                raise ValueError(f&#34;{material} is not a valid class of patankar.layer&#34;)
+            cls = getattr(allmaterials,material)
+            material = cls()
+        if RaiseError: # check all args
+            from patankar.layer import layer
+            if material is None:
+                raise ValueError(&#34;material must be provided&#34;)
+            if not isinstance(material, layer):
+                # note that forcing layer.__compute_Dmodel(...RaiseError=True) may raise errors
+                # since a different reference to layer might be in memory
+                raise TypeError(f&#34;material must be a layer not a {type(material).__name__}&#34;)
+            if not(isinstance(index,int)):
+                raise TypeError(f&#34;index must be int not a {type(index).__name__}&#34;)
+            if index&gt;len(material):
+                raise ValueError(f&#34;index value {index} exceeds the number of layers {len(material)}&#34;)
+        # build objects on which rules will be tested
+        objects = {&#34;material&#34;:material,&#34;migrant&#34;:self,&#34;index&#34;:index}
+        # check Dmodels with objects
+        availableExtensions = list(Dmodel_extensions.keys())
+        applicableExtensions = [False]*len(availableExtensions)
+        import patankar.property as allproperties
+        for imodel,modelCode in enumerate(availableExtensions):
+            modelObjects = [objects[o] for o in Dmodel_extensions[modelCode][&#34;objects&#34;]]
+            modelRules = Dmodel_extensions[modelCode][&#34;rules&#34;].copy()
+            modelRules_layer = modelRules[0][&#34;list&#34;][1] # 0=polymer rules, 1=polymer type
+            modelRules_layer[&#34;index&#34;] = objects[&#34;index&#34;] # layer index
+            applicableExtensions[imodel] = PropertyModelSelector(modelRules,modelObjects)
+
+            # if the model is OK we try to import it and check at temperature T
+            if applicableExtensions[imodel]:
+                try:
+                    modelclass = getattr(allproperties, availableExtensions[imodel])
+                except AttributeError:
+                    if RaiseWarning:
+                        print(f&#34;WARNING:: The D model {modelclass} is not defined in patankar.property.&#34;)
+                    applicableExtensions[imodel] = False # the model is not avaiable
+                    continue
+                modeltest = modelclass.evaluate(**template) # we call the static method without instantiation
+                if modeltest is None:
+                    applicableExtensions[imodel] = False # the model is not suitable (we will take the next)
+
+        first_true_index = next((i for i, val in enumerate(applicableExtensions) if val), None)
+        # returns the name of the first applicable model, if not None
+        return availableExtensions[first_true_index] if first_true_index is not None else None
+
+    # suggest an alternative D class
+    def suggest_alt_Dclass(self,material=None,index=0,RaiseError=True,RaiseWarning=True,**template):
+        &#34;&#34;&#34;returns an alternative Dclass based on Dmodel_extensions&#34;&#34;&#34;
+        alt_classname = self.suggest_alt_Dmodel(material=material,index=index,RaiseError=RaiseError,RaiseWarning=RaiseWarning,**template)
+        if alt_classname is None:
+            return None
+        import patankar.property as allproperties
+        try:
+            alt_class = getattr(allproperties, alt_classname)
+        except AttributeError:
+            if RaiseWarning: # it is a double check
+                print(f&#34;WARNING:: The D model {alt_classname} is not defined in patankar.property.&#34;)
+            return None
+        if not isinstance(alt_class, type):
+            raise TypeError(f&#34;Expected a class for {alt_classname}, but found {type(alt_class).__name__}.&#34;)
+        return alt_class
+
+    # suggest an alternative D class
+    def check_alt_propclass(self,alt_classname):
+        &#34;&#34;&#34;returns True if a class property exists in patankar.property&#34;&#34;&#34;
+        if alt_classname is None:
+            return False
+        import patankar.property as allproperties
+        try:
+            alt_class = getattr(allproperties, alt_classname)
+        except AttributeError:
+            return False
+        if not isinstance(alt_class, type):
+            return False
+        return True
+
+    # --------------------------------------------------------------------------
+    #            [   M O L E C U L A R   D E S C R I P T O R S   ]
+    #         experimental implementation to remove external dependencies
+    #                               results are AS IS
+    # --------------------------------------------------------------------------
+    @property
+    def count_rings(self):
+        &#34;&#34;&#34;
+        Count aromatic and non-aromatic rings separately from canonical SMILES.
+
+        The method removes bracketed expressions to avoid counting digits
+        that are part of atomic specifications, then finds ring closure digits.
+        It handles both single-digit ring closures and multi-digit closures (e.g., %12).
+
+        The method is very rough, do not expect the best results.
+
+        Returns:
+            dict: {
+                &#39;total&#39;: int,
+                &#39;aromatic&#39;: int,
+                &#39;non_aromatic&#39;: int,
+                &#39;fusions&#39;: {
+                    &#39;AlAr&#39;: int,
+                    &#39;AlAl&#39;: int,
+                    &#39;ArAr&#39;: int,
+                    &#39;S&#39;: int
+                }
+            }
+        &#34;&#34;&#34;
+        smiles = self.smiles
+        smiles_no_brackets = re.sub(r&#39;\[.*?\]&#39;, &#39;&#39;, smiles)
+
+        closures = {}
+        for match in re.finditer(r&#39;(\%\d{2}|\d)&#39;, smiles_no_brackets):
+            marker = match.group()
+            pos = match.start()
+            closures.setdefault(marker, []).append(pos)
+
+        aromatic_rings = set()
+        non_aromatic_rings = set()
+        ring_aromaticity = {}
+
+        for marker, positions in closures.items():
+            if len(positions) == 2:
+                start, end = sorted(positions)
+                ring_substring = smiles_no_brackets[start:end+len(marker)]
+
+                is_aromatic = (
+                    bool(re.search(r&#39;[a-z]&#39;, ring_substring)) or
+                    len(re.findall(&#39;=&#39;, ring_substring)) &gt;= 2
+                )
+
+                ring_aromaticity[marker] = &#39;Ar&#39; if is_aromatic else &#39;Al&#39;
+
+                if is_aromatic:
+                    aromatic_rings.add(marker)
+                else:
+                    non_aromatic_rings.add(marker)
+
+        fusion_counts = {&#39;AlAl&#39;: 0, &#39;AlAr&#39;: 0, &#39;ArAr&#39;: 0, &#39;S&#39;: 0}
+        markers = list(closures.keys())
+
+        for i in range(len(markers)):
+            for j in range(i + 1, len(markers)):
+                # Rings are fused if they share a closure digit (atom)
+                if len(set(closures[markers[i]]) &amp; set(closures[markers[j]])) &gt;= 1:
+                    types = sorted([ring_aromaticity[markers[i]], ring_aromaticity[markers[j]]])
+                    fusion_type = &#39;&#39;.join(types)
+                    if fusion_type in fusion_counts:
+                        fusion_counts[fusion_type] += 1
+
+        # Special pattern (S-type) detection simplified
+        fusion_counts[&#39;S&#39;] = len(re.findall(r&#39;s1.*?c.*?c.*?c.*?c.*?c.*?c1.*?c&#39;, smiles_no_brackets))
+
+        return {
+            &#39;total&#39;: len(aromatic_rings) + len(non_aromatic_rings),
+            &#39;aromatic&#39;: len(aromatic_rings),
+            &#39;non_aromatic&#39;: len(non_aromatic_rings),
+            &#39;fusions&#39;: fusion_counts
+        }
+
+
+
+    @property
+    def parse_formula(self):
+        &#34;&#34;&#34;
+        Parse the molecular formula into a dictionary of element counts.
+
+        For example, &#39;C15H16O2&#39; will be parsed as:
+          {&#39;C&#39;: 15, &#39;H&#39;: 16, &#39;O&#39;: 2}
+
+        Returns:
+          dict: Dictionary mapping element symbols to their counts.
+        &#34;&#34;&#34;
+        formula = self.formula
+        pattern = re.compile(r&#39;([A-Z][a-z]*)(\d*)&#39;)
+        counts = {}
+        for (element, count) in pattern.findall(formula):
+            count = int(count) if count else 1
+            counts[element] = counts.get(element, 0) + count
+        return counts
+
+    @property
+    def volume_3d(self):
+        &#34;&#34;&#34;
+        Compute the molecular 3D van-der-Waals volume using a linear additive model.
+
+        This function applies an empirical, linear-additive scheme:
+        Adapted code from: https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py. The intent is to remove the dependence to babel.
+
+        \[
+        \begin{aligned}
+        V_{vdw} =\,&amp; n_H \times 7.24 + n_C \times 20.58 + n_N \times 15.6 + n_O \times 14.71 + n_F \times 13.31 \\
+        &amp;+ n_{Cl} \times 22.45 + n_{Br} \times 26.52 + n_{I} \times 32.52 + n_P \times 24.43 \\
+        &amp;+ n_S \times 24.43 + n_{Si} \times 38.79 + n_{Se} \times 28.73 + n_{Te} \times 36.62 \\
+        &amp;- 5.92 \times (\text{bonds}) - 14.7 \times (\text{no\_ar}) - 3.8 \times (\text{no\_non\_ar}) \\
+        &amp;+ 5 \times (\text{no\_f\_ring\_ArAr}) + 3 \times (\text{no\_f\_ring\_AlAr}) + 1 \times (\text{no\_f\_ring\_AlAl}) \\
+        &amp;- 5 \times (\text{no\_f\_ring\_S})
+        \end{aligned}
+        \]
+
+        Here, the bond count is estimated using the heuristic:
+
+        \[
+        \text{bonds} \approx (\text{number of heavy atoms} - 1) + (\text{number of rings})
+        \]
+
+        and heavy atoms are all atoms except hydrogen.
+
+        For this implementation:
+          - All rings detected in the SMILES are assumed to be aromatic (valid for bisphenol A).
+          - Fused ring corrections (no_f_ring_*) are set to zero.
+
+        Parameters:
+          smiles (str): Canonical SMILES string of the molecule.
+          formula (str): Molecular formula (e.g., &#39;C15H16O2&#39;) to retrieve accurate hydrogen counts.
+
+        Returns:
+          float: Estimated 3D van-der-Waals volume in Å³.
+        &#34;&#34;&#34;
+        # Parse the molecular formula to obtain element counts.
+        counts = self.parse_formula
+        no_H = counts.get(&#39;H&#39;, 0)
+        no_C = counts.get(&#39;C&#39;, 0)
+        no_N = counts.get(&#39;N&#39;, 0)
+        no_O = counts.get(&#39;O&#39;, 0)
+        no_F = counts.get(&#39;F&#39;, 0)
+        no_Cl = counts.get(&#39;Cl&#39;, 0)
+        no_Br = counts.get(&#39;Br&#39;, 0)
+        no_I = counts.get(&#39;I&#39;, 0)
+        no_P = counts.get(&#39;P&#39;, 0)
+        no_S = counts.get(&#39;S&#39;, 0)
+        no_Si = counts.get(&#39;Si&#39;, 0)
+        no_Se = counts.get(&#39;Se&#39;, 0)
+        no_Te = counts.get(&#39;Te&#39;, 0)
+
+        # Count rings using the SMILES string.
+        num_rings = self.count_rings
+
+        # Assume all rings are aromatic (for bisphenol A, both rings are aromatic).
+        no_ar = num_rings[&#34;aromatic&#34;]
+        no_non_ar = num_rings[&#34;non_aromatic&#34;]
+        no_total = num_rings[&#34;total&#34;]
+
+        # Estimate the number of bonds.
+        # Heavy atoms are those except hydrogen.
+        heavy_atoms = no_C + no_N + no_O + no_F + no_Cl + no_Br + no_I + no_P + no_S + no_Si + no_Se + no_Te
+        # For a tree structure, bonds = (heavy_atoms - 1). Each ring adds one extra bond.
+        bonds = (heavy_atoms - 1) + no_total
+
+        # For fused ring corrections
+        no_f_ring_ArAr = num_rings[&#34;fusions&#34;][&#34;ArAr&#34;]
+        no_f_ring_AlAr = num_rings[&#34;fusions&#34;][&#34;AlAr&#34;]
+        no_f_ring_AlAl = num_rings[&#34;fusions&#34;][&#34;AlAl&#34;]
+        no_f_ring_S = num_rings[&#34;fusions&#34;][&#34;S&#34;]
+        # remove 1 for each fused ring
+        bonds = bonds - no_f_ring_ArAr - no_f_ring_AlAr - no_f_ring_AlAl - no_f_ring_S
+
+        # Compute the initial volume from atomic contributions.
+        V_vdw = (no_H)*7.24 + (no_C)*20.58 + (no_N)*15.6 + (no_O)*14.71 + (no_F)*13.31 + \
+                (no_Cl)*22.45 + (no_Br)*26.52 + (no_I)*32.52 + (no_P)*24.43 + (no_S)*24.43 + \
+                (no_Si)*38.79 + (no_Se)*28.73 + (no_Te)*36.62
+
+        # Apply corrections for bonds and rings.
+        V_vdw = V_vdw - 5.92*(bonds) - 14.7*(no_ar) - 3.8*(no_non_ar) + \
+                5*(no_f_ring_ArAr) + 3*(no_f_ring_AlAr) + 1*(no_f_ring_AlAl) - 5*(no_f_ring_S)
+
+        return V_vdw
+
+    @property
+    def volumeDwelle(self):
+        &#34;&#34;&#34;
+            Returns the approximate volume as estimated by Dwelle
+            In the original paper [1], molecular volumes are calculated with [2].
+            The values reported in [1] are particularly low such as the H contribution
+            was missing. As a result a linear correction is proposed based on phenanthrene.
+
+            [1] https://onlinelibrary.wiley.com/doi/full/10.1002/pts.2638
+            [2] https://www.molinspiration.com/services/volume.html
+
+            The minimum of vdWvolume (calculated with volume_3D) and vdWvolume2 (inferred
+            from molarvolumeMiller using a linear correlation for aromatic and non-aromatic
+            molecules) is taken. This procedure aims at preserving conservatism in Dwelle
+            estimates.
+
+        &#34;&#34;&#34;
+        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -8353,6 +8809,109 @@ def Deval(self):
         updated_template = dict(self.Dtemplate, **kwargs)
         return self.D.evaluate(**updated_template)
     return func</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.count_rings"><code class="name">var <span class="ident">count_rings</span></code></dt>
+<dd>
+<div class="desc"><p>Count aromatic and non-aromatic rings separately from canonical SMILES.</p>
+<p>The method removes bracketed expressions to avoid counting digits
+that are part of atomic specifications, then finds ring closure digits.
+It handles both single-digit ring closures and multi-digit closures (e.g., %12).</p>
+<p>The method is very rough, do not expect the best results.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>{
+'total': int,
+'aromatic': int,
+'non_aromatic': int,
+'fusions': {
+'AlAr': int,
+'AlAl': int,
+'ArAr': int,
+'S': int
+}</dd>
+</dl>
+<p>}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def count_rings(self):
+    &#34;&#34;&#34;
+    Count aromatic and non-aromatic rings separately from canonical SMILES.
+
+    The method removes bracketed expressions to avoid counting digits
+    that are part of atomic specifications, then finds ring closure digits.
+    It handles both single-digit ring closures and multi-digit closures (e.g., %12).
+
+    The method is very rough, do not expect the best results.
+
+    Returns:
+        dict: {
+            &#39;total&#39;: int,
+            &#39;aromatic&#39;: int,
+            &#39;non_aromatic&#39;: int,
+            &#39;fusions&#39;: {
+                &#39;AlAr&#39;: int,
+                &#39;AlAl&#39;: int,
+                &#39;ArAr&#39;: int,
+                &#39;S&#39;: int
+            }
+        }
+    &#34;&#34;&#34;
+    smiles = self.smiles
+    smiles_no_brackets = re.sub(r&#39;\[.*?\]&#39;, &#39;&#39;, smiles)
+
+    closures = {}
+    for match in re.finditer(r&#39;(\%\d{2}|\d)&#39;, smiles_no_brackets):
+        marker = match.group()
+        pos = match.start()
+        closures.setdefault(marker, []).append(pos)
+
+    aromatic_rings = set()
+    non_aromatic_rings = set()
+    ring_aromaticity = {}
+
+    for marker, positions in closures.items():
+        if len(positions) == 2:
+            start, end = sorted(positions)
+            ring_substring = smiles_no_brackets[start:end+len(marker)]
+
+            is_aromatic = (
+                bool(re.search(r&#39;[a-z]&#39;, ring_substring)) or
+                len(re.findall(&#39;=&#39;, ring_substring)) &gt;= 2
+            )
+
+            ring_aromaticity[marker] = &#39;Ar&#39; if is_aromatic else &#39;Al&#39;
+
+            if is_aromatic:
+                aromatic_rings.add(marker)
+            else:
+                non_aromatic_rings.add(marker)
+
+    fusion_counts = {&#39;AlAl&#39;: 0, &#39;AlAr&#39;: 0, &#39;ArAr&#39;: 0, &#39;S&#39;: 0}
+    markers = list(closures.keys())
+
+    for i in range(len(markers)):
+        for j in range(i + 1, len(markers)):
+            # Rings are fused if they share a closure digit (atom)
+            if len(set(closures[markers[i]]) &amp; set(closures[markers[j]])) &gt;= 1:
+                types = sorted([ring_aromaticity[markers[i]], ring_aromaticity[markers[j]]])
+                fusion_type = &#39;&#39;.join(types)
+                if fusion_type in fusion_counts:
+                    fusion_counts[fusion_type] += 1
+
+    # Special pattern (S-type) detection simplified
+    fusion_counts[&#39;S&#39;] = len(re.findall(r&#39;s1.*?c.*?c.*?c.*?c.*?c.*?c1.*?c&#39;, smiles_no_brackets))
+
+    return {
+        &#39;total&#39;: len(aromatic_rings) + len(non_aromatic_rings),
+        &#39;aromatic&#39;: len(aromatic_rings),
+        &#39;non_aromatic&#39;: len(non_aromatic_rings),
+        &#39;fusions&#39;: fusion_counts
+    }</code></pre>
 </details>
 </dd>
 <dt id="food.migrant.keval"><code class="name">var <span class="ident">keval</span></code></dt>
@@ -8499,6 +9058,39 @@ def molarvolumeMiller(self, a=0.997, b=1.03):
     return a * self.M**b</code></pre>
 </details>
 </dd>
+<dt id="food.migrant.parse_formula"><code class="name">var <span class="ident">parse_formula</span></code></dt>
+<dd>
+<div class="desc"><p>Parse the molecular formula into a dictionary of element counts.</p>
+<p 15_="15," 16_="16," 2 _C_:="'C':" _H_:="'H':" _O_:="'O':">For example, 'C15H16O2' will be parsed as:</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Dictionary mapping element symbols to their counts.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def parse_formula(self):
+    &#34;&#34;&#34;
+    Parse the molecular formula into a dictionary of element counts.
+
+    For example, &#39;C15H16O2&#39; will be parsed as:
+      {&#39;C&#39;: 15, &#39;H&#39;: 16, &#39;O&#39;: 2}
+
+    Returns:
+      dict: Dictionary mapping element symbols to their counts.
+    &#34;&#34;&#34;
+    formula = self.formula
+    pattern = re.compile(r&#39;([A-Z][a-z]*)(\d*)&#39;)
+    counts = {}
+    for (element, count) in pattern.findall(formula):
+        count = int(count) if count else 1
+        counts[element] = counts.get(element, 0) + count
+    return counts</code></pre>
+</details>
+</dd>
 <dt id="food.migrant.polarityindex"><code class="name">var <span class="ident">polarityindex</span></code></dt>
 <dd>
 <div class="desc"><p>Computes the polarity index (P') of the compound.</p>
@@ -8564,9 +9156,220 @@ def polarityindex(self,logP=None,V=None):
                           V=self.molarvolumeMiller if V is None else V)</code></pre>
 </details>
 </dd>
+<dt id="food.migrant.volumeDwelle"><code class="name">var <span class="ident">volumeDwelle</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the approximate volume as estimated by Dwelle
+In the original paper [1], molecular volumes are calculated with [2].
+The values reported in [1] are particularly low such as the H contribution
+was missing. As a result a linear correction is proposed based on phenanthrene.</p>
+<p>[1] <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/pts.2638">https://onlinelibrary.wiley.com/doi/full/10.1002/pts.2638</a>
+[2] <a href="https://www.molinspiration.com/services/volume.html">https://www.molinspiration.com/services/volume.html</a></p>
+<p>The minimum of vdWvolume (calculated with volume_3D) and vdWvolume2 (inferred
+from molarvolumeMiller using a linear correlation for aromatic and non-aromatic
+molecules) is taken. This procedure aims at preserving conservatism in Dwelle
+estimates.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def volumeDwelle(self):
+    &#34;&#34;&#34;
+        Returns the approximate volume as estimated by Dwelle
+        In the original paper [1], molecular volumes are calculated with [2].
+        The values reported in [1] are particularly low such as the H contribution
+        was missing. As a result a linear correction is proposed based on phenanthrene.
+
+        [1] https://onlinelibrary.wiley.com/doi/full/10.1002/pts.2638
+        [2] https://www.molinspiration.com/services/volume.html
+
+        The minimum of vdWvolume (calculated with volume_3D) and vdWvolume2 (inferred
+        from molarvolumeMiller using a linear correlation for aromatic and non-aromatic
+        molecules) is taken. This procedure aims at preserving conservatism in Dwelle
+        estimates.
+
+    &#34;&#34;&#34;
+    return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.volume_3d"><code class="name">var <span class="ident">volume_3d</span></code></dt>
+<dd>
+<div class="desc"><p>Compute the molecular 3D van-der-Waals volume using a linear additive model.</p>
+<p>This function applies an empirical, linear-additive scheme:
+Adapted code from: <a href="https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.">https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.</a> The intent is to remove the dependence to babel.</p>
+<p>[
+egin{aligned}
+V_{vdw} =\,&amp; n_H
+imes 7.24 + n_C
+imes 20.58 + n_N
+imes 15.6 + n_O
+imes 14.71 + n_F
+imes 13.31 \
+&amp;+ n_{Cl}
+imes 22.45 + n_{Br}
+imes 26.52 + n_{I}
+imes 32.52 + n_P
+imes 24.43 \
+&amp;+ n_S
+imes 24.43 + n_{Si}
+imes 38.79 + n_{Se}
+imes 28.73 + n_{Te}
+imes 36.62 \
+&amp;- 5.92
+imes (
+ext{bonds}) - 14.7
+imes (
+ext{no_ar}) - 3.8
+imes (
+ext{no_non_ar}) \
+&amp;+ 5
+imes (
+ext{no_f_ring_ArAr}) + 3
+imes (
+ext{no_f_ring_AlAr}) + 1
+imes (
+ext{no_f_ring_AlAl}) \
+&amp;- 5
+imes (
+ext{no_f_ring_S})
+\end{aligned}
+]</p>
+<p>Here, the bond count is estimated using the heuristic:</p>
+<p>[
+ext{bonds} pprox (
+ext{number of heavy atoms} - 1) + (
+ext{number of rings})
+]</p>
+<p>and heavy atoms are all atoms except hydrogen.</p>
+<p>For this implementation:
+- All rings detected in the SMILES are assumed to be aromatic (valid for bisphenol A).
+- Fused ring corrections (no_f_ring_*) are set to zero.</p>
+<h2 id="parameters">Parameters</h2>
+<p>smiles (str): Canonical SMILES string of the molecule.
+formula (str): Molecular formula (e.g., 'C15H16O2') to retrieve accurate hydrogen counts.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Estimated 3D van-der-Waals volume in Å³.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def volume_3d(self):
+    &#34;&#34;&#34;
+    Compute the molecular 3D van-der-Waals volume using a linear additive model.
+
+    This function applies an empirical, linear-additive scheme:
+    Adapted code from: https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py. The intent is to remove the dependence to babel.
+
+    \[
+    \begin{aligned}
+    V_{vdw} =\,&amp; n_H \times 7.24 + n_C \times 20.58 + n_N \times 15.6 + n_O \times 14.71 + n_F \times 13.31 \\
+    &amp;+ n_{Cl} \times 22.45 + n_{Br} \times 26.52 + n_{I} \times 32.52 + n_P \times 24.43 \\
+    &amp;+ n_S \times 24.43 + n_{Si} \times 38.79 + n_{Se} \times 28.73 + n_{Te} \times 36.62 \\
+    &amp;- 5.92 \times (\text{bonds}) - 14.7 \times (\text{no\_ar}) - 3.8 \times (\text{no\_non\_ar}) \\
+    &amp;+ 5 \times (\text{no\_f\_ring\_ArAr}) + 3 \times (\text{no\_f\_ring\_AlAr}) + 1 \times (\text{no\_f\_ring\_AlAl}) \\
+    &amp;- 5 \times (\text{no\_f\_ring\_S})
+    \end{aligned}
+    \]
+
+    Here, the bond count is estimated using the heuristic:
+
+    \[
+    \text{bonds} \approx (\text{number of heavy atoms} - 1) + (\text{number of rings})
+    \]
+
+    and heavy atoms are all atoms except hydrogen.
+
+    For this implementation:
+      - All rings detected in the SMILES are assumed to be aromatic (valid for bisphenol A).
+      - Fused ring corrections (no_f_ring_*) are set to zero.
+
+    Parameters:
+      smiles (str): Canonical SMILES string of the molecule.
+      formula (str): Molecular formula (e.g., &#39;C15H16O2&#39;) to retrieve accurate hydrogen counts.
+
+    Returns:
+      float: Estimated 3D van-der-Waals volume in Å³.
+    &#34;&#34;&#34;
+    # Parse the molecular formula to obtain element counts.
+    counts = self.parse_formula
+    no_H = counts.get(&#39;H&#39;, 0)
+    no_C = counts.get(&#39;C&#39;, 0)
+    no_N = counts.get(&#39;N&#39;, 0)
+    no_O = counts.get(&#39;O&#39;, 0)
+    no_F = counts.get(&#39;F&#39;, 0)
+    no_Cl = counts.get(&#39;Cl&#39;, 0)
+    no_Br = counts.get(&#39;Br&#39;, 0)
+    no_I = counts.get(&#39;I&#39;, 0)
+    no_P = counts.get(&#39;P&#39;, 0)
+    no_S = counts.get(&#39;S&#39;, 0)
+    no_Si = counts.get(&#39;Si&#39;, 0)
+    no_Se = counts.get(&#39;Se&#39;, 0)
+    no_Te = counts.get(&#39;Te&#39;, 0)
+
+    # Count rings using the SMILES string.
+    num_rings = self.count_rings
+
+    # Assume all rings are aromatic (for bisphenol A, both rings are aromatic).
+    no_ar = num_rings[&#34;aromatic&#34;]
+    no_non_ar = num_rings[&#34;non_aromatic&#34;]
+    no_total = num_rings[&#34;total&#34;]
+
+    # Estimate the number of bonds.
+    # Heavy atoms are those except hydrogen.
+    heavy_atoms = no_C + no_N + no_O + no_F + no_Cl + no_Br + no_I + no_P + no_S + no_Si + no_Se + no_Te
+    # For a tree structure, bonds = (heavy_atoms - 1). Each ring adds one extra bond.
+    bonds = (heavy_atoms - 1) + no_total
+
+    # For fused ring corrections
+    no_f_ring_ArAr = num_rings[&#34;fusions&#34;][&#34;ArAr&#34;]
+    no_f_ring_AlAr = num_rings[&#34;fusions&#34;][&#34;AlAr&#34;]
+    no_f_ring_AlAl = num_rings[&#34;fusions&#34;][&#34;AlAl&#34;]
+    no_f_ring_S = num_rings[&#34;fusions&#34;][&#34;S&#34;]
+    # remove 1 for each fused ring
+    bonds = bonds - no_f_ring_ArAr - no_f_ring_AlAr - no_f_ring_AlAl - no_f_ring_S
+
+    # Compute the initial volume from atomic contributions.
+    V_vdw = (no_H)*7.24 + (no_C)*20.58 + (no_N)*15.6 + (no_O)*14.71 + (no_F)*13.31 + \
+            (no_Cl)*22.45 + (no_Br)*26.52 + (no_I)*32.52 + (no_P)*24.43 + (no_S)*24.43 + \
+            (no_Si)*38.79 + (no_Se)*28.73 + (no_Te)*36.62
+
+    # Apply corrections for bonds and rings.
+    V_vdw = V_vdw - 5.92*(bonds) - 14.7*(no_ar) - 3.8*(no_non_ar) + \
+            5*(no_f_ring_ArAr) + 3*(no_f_ring_AlAr) + 1*(no_f_ring_AlAl) - 5*(no_f_ring_S)
+
+    return V_vdw</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="food.migrant.check_alt_propclass"><code class="name flex">
+<span>def <span class="ident">check_alt_propclass</span></span>(<span>self, alt_classname)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns True if a class property exists in patankar.property</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_alt_propclass(self,alt_classname):
+    &#34;&#34;&#34;returns True if a class property exists in patankar.property&#34;&#34;&#34;
+    if alt_classname is None:
+        return False
+    import patankar.property as allproperties
+    try:
+        alt_class = getattr(allproperties, alt_classname)
+    except AttributeError:
+        return False
+    if not isinstance(alt_class, type):
+        return False
+    return True</code></pre>
+</details>
+</dd>
 <dt id="food.migrant.dispmax"><code class="name flex">
 <span>def <span class="ident">dispmax</span></span>(<span>self, content, maxwidth=None)</span>
 </code></dt>
@@ -8585,6 +9388,95 @@ def polarityindex(self,logP=None,V=None):
         return strcontent[:nchar]+&#34; [...] &#34;+strcontent[-nchar:]
     else:
         return content</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.suggest_alt_Dclass"><code class="name flex">
+<span>def <span class="ident">suggest_alt_Dclass</span></span>(<span>self, material=None, index=0, RaiseError=True, RaiseWarning=True, **template)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns an alternative Dclass based on Dmodel_extensions</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def suggest_alt_Dclass(self,material=None,index=0,RaiseError=True,RaiseWarning=True,**template):
+    &#34;&#34;&#34;returns an alternative Dclass based on Dmodel_extensions&#34;&#34;&#34;
+    alt_classname = self.suggest_alt_Dmodel(material=material,index=index,RaiseError=RaiseError,RaiseWarning=RaiseWarning,**template)
+    if alt_classname is None:
+        return None
+    import patankar.property as allproperties
+    try:
+        alt_class = getattr(allproperties, alt_classname)
+    except AttributeError:
+        if RaiseWarning: # it is a double check
+            print(f&#34;WARNING:: The D model {alt_classname} is not defined in patankar.property.&#34;)
+        return None
+    if not isinstance(alt_class, type):
+        raise TypeError(f&#34;Expected a class for {alt_classname}, but found {type(alt_class).__name__}.&#34;)
+    return alt_class</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.suggest_alt_Dmodel"><code class="name flex">
+<span>def <span class="ident">suggest_alt_Dmodel</span></span>(<span>self, material=None, index=0, RaiseError=True, RaiseWarning=True, **template)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>suggest an alternative Dmodel based on Dmodel_extensions</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def suggest_alt_Dmodel(self,material=None,index=0,RaiseError=True,RaiseWarning=True,**template):
+    &#34;&#34;&#34;suggest an alternative Dmodel based on Dmodel_extensions&#34;&#34;&#34;
+    # local dependencies
+    from patankar.property import PropertyModelSelector
+    # special case when material is a str
+    if isinstance(material,str):
+        import patankar.layer as allmaterials
+        if not hasattr(allmaterials,material):
+            raise ValueError(f&#34;{material} is not a valid class of patankar.layer&#34;)
+        cls = getattr(allmaterials,material)
+        material = cls()
+    if RaiseError: # check all args
+        from patankar.layer import layer
+        if material is None:
+            raise ValueError(&#34;material must be provided&#34;)
+        if not isinstance(material, layer):
+            # note that forcing layer.__compute_Dmodel(...RaiseError=True) may raise errors
+            # since a different reference to layer might be in memory
+            raise TypeError(f&#34;material must be a layer not a {type(material).__name__}&#34;)
+        if not(isinstance(index,int)):
+            raise TypeError(f&#34;index must be int not a {type(index).__name__}&#34;)
+        if index&gt;len(material):
+            raise ValueError(f&#34;index value {index} exceeds the number of layers {len(material)}&#34;)
+    # build objects on which rules will be tested
+    objects = {&#34;material&#34;:material,&#34;migrant&#34;:self,&#34;index&#34;:index}
+    # check Dmodels with objects
+    availableExtensions = list(Dmodel_extensions.keys())
+    applicableExtensions = [False]*len(availableExtensions)
+    import patankar.property as allproperties
+    for imodel,modelCode in enumerate(availableExtensions):
+        modelObjects = [objects[o] for o in Dmodel_extensions[modelCode][&#34;objects&#34;]]
+        modelRules = Dmodel_extensions[modelCode][&#34;rules&#34;].copy()
+        modelRules_layer = modelRules[0][&#34;list&#34;][1] # 0=polymer rules, 1=polymer type
+        modelRules_layer[&#34;index&#34;] = objects[&#34;index&#34;] # layer index
+        applicableExtensions[imodel] = PropertyModelSelector(modelRules,modelObjects)
+
+        # if the model is OK we try to import it and check at temperature T
+        if applicableExtensions[imodel]:
+            try:
+                modelclass = getattr(allproperties, availableExtensions[imodel])
+            except AttributeError:
+                if RaiseWarning:
+                    print(f&#34;WARNING:: The D model {modelclass} is not defined in patankar.property.&#34;)
+                applicableExtensions[imodel] = False # the model is not avaiable
+                continue
+            modeltest = modelclass.evaluate(**template) # we call the static method without instantiation
+            if modeltest is None:
+                applicableExtensions[imodel] = False # the model is not suitable (we will take the next)
+
+    first_true_index = next((i for i, val in enumerate(applicableExtensions) if val), None)
+    # returns the name of the first applicable model, if not None
+    return availableExtensions[first_true_index] if first_true_index is not None else None</code></pre>
 </details>
 </dd>
 </dl>
@@ -10440,6 +11332,7 @@ def polarityindex(self,logP=None,V=None):
 <li><code><a title="food.layer.T" href="#food.layer.T">T</a></code></li>
 <li><code><a title="food.layer.TK" href="#food.layer.TK">TK</a></code></li>
 <li><code><a title="food.layer.TKunit" href="#food.layer.TKunit">TKunit</a></code></li>
+<li><code><a title="food.layer.Tg_history" href="#food.layer.Tg_history">Tg_history</a></code></li>
 <li><code><a title="food.layer.Tlink" href="#food.layer.Tlink">Tlink</a></code></li>
 <li><code><a title="food.layer.Tunit" href="#food.layer.Tunit">Tunit</a></code></li>
 <li><code><a title="food.layer.acknowledge" href="#food.layer.acknowledge">acknowledge</a></code></li>
@@ -10453,6 +11346,7 @@ def polarityindex(self,logP=None,V=None):
 <li><code><a title="food.layer.concentration" href="#food.layer.concentration">concentration</a></code></li>
 <li><code><a title="food.layer.contact" href="#food.layer.contact">contact</a></code></li>
 <li><code><a title="food.layer.copy" href="#food.layer.copy">copy</a></code></li>
+<li><code><a title="food.layer.crystallinity_history" href="#food.layer.crystallinity_history">crystallinity_history</a></code></li>
 <li><code><a title="food.layer.hasC0link" href="#food.layer.hasC0link">hasC0link</a></code></li>
 <li><code><a title="food.layer.hasDlink" href="#food.layer.hasDlink">hasDlink</a></code></li>
 <li><code><a title="food.layer.hasDmodel" href="#food.layer.hasDmodel">hasDmodel</a></code></li>
@@ -10490,6 +11384,7 @@ def polarityindex(self,logP=None,V=None):
 <li><code><a title="food.layer.permeability" href="#food.layer.permeability">permeability</a></code></li>
 <li><code><a title="food.layer.physicalstate" href="#food.layer.physicalstate">physicalstate</a></code></li>
 <li><code><a title="food.layer.polarityindex" href="#food.layer.polarityindex">polarityindex</a></code></li>
+<li><code><a title="food.layer.porosity_history" href="#food.layer.porosity_history">porosity_history</a></code></li>
 <li><code><a title="food.layer.pressure" href="#food.layer.pressure">pressure</a></code></li>
 <li><code><a title="food.layer.rank" href="#food.layer.rank">rank</a></code></li>
 <li><code><a title="food.layer.referencelayer" href="#food.layer.referencelayer">referencelayer</a></code></li>
@@ -10542,11 +11437,18 @@ def polarityindex(self,logP=None,V=None):
 <h4><code><a title="food.migrant" href="#food.migrant">migrant</a></code></h4>
 <ul class="two-column">
 <li><code><a title="food.migrant.Deval" href="#food.migrant.Deval">Deval</a></code></li>
+<li><code><a title="food.migrant.check_alt_propclass" href="#food.migrant.check_alt_propclass">check_alt_propclass</a></code></li>
+<li><code><a title="food.migrant.count_rings" href="#food.migrant.count_rings">count_rings</a></code></li>
 <li><code><a title="food.migrant.dispmax" href="#food.migrant.dispmax">dispmax</a></code></li>
 <li><code><a title="food.migrant.keval" href="#food.migrant.keval">keval</a></code></li>
 <li><code><a title="food.migrant.molarvolumeLinear" href="#food.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
 <li><code><a title="food.migrant.molarvolumeMiller" href="#food.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
+<li><code><a title="food.migrant.parse_formula" href="#food.migrant.parse_formula">parse_formula</a></code></li>
 <li><code><a title="food.migrant.polarityindex" href="#food.migrant.polarityindex">polarityindex</a></code></li>
+<li><code><a title="food.migrant.suggest_alt_Dclass" href="#food.migrant.suggest_alt_Dclass">suggest_alt_Dclass</a></code></li>
+<li><code><a title="food.migrant.suggest_alt_Dmodel" href="#food.migrant.suggest_alt_Dmodel">suggest_alt_Dmodel</a></code></li>
+<li><code><a title="food.migrant.volumeDwelle" href="#food.migrant.volumeDwelle">volumeDwelle</a></code></li>
+<li><code><a title="food.migrant.volume_3d" href="#food.migrant.volume_3d">volume_3d</a></code></li>
 </ul>
 </li>
 <li>
