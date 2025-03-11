@@ -93,6 +93,7 @@ Example
 """
 # Dependencies
 import os
+import shutil
 import random
 import re
 from datetime import datetime
@@ -138,7 +139,6 @@ plotconfig = {
     }
 _fig_metadata_atrr_ = "__filename__"
 # %% Private functions and classes
-
 def autoname(nchars=6, charset="a-zA-Z0-9"):
     """
     Generates a random simulation name.
@@ -428,6 +428,70 @@ def colormap(name="viridis", ncolors=16, tooclearflag=True, reverse=False):
     cmap = plt.colormaps.get_cmap(cmap_name)  # Fetch the colormap
     colors = [cmap(i / (ncolors - 1)) for i in range(ncolors)]  # Normalize colors
     return [tooclear(c) if tooclearflag else c[:3] for c in colors]  # Apply tooclear if enabled
+
+# Latex fixer on systems without LaTeX
+def is_latex_available():
+    """
+    Check whether LaTeX is available in the system PATH.
+
+    Returns:
+        bool: True if LaTeX is found, False otherwise.
+    """
+    # 'latex' should be available in the PATH if a LaTeX distribution is installed.
+    return shutil.which("latex") is not None
+
+_LaTeXavailable = is_latex_available()
+
+# Clean tex
+def cleantex(text,islatexavailable=_LaTeXavailable):
+    """
+    Process a LaTeX string to guess the plain text by performing substitutions
+    and removing formatting characters, while preserving inner content as much as possible.
+
+    Replacements performed:
+      - Replace '\,' with a space.
+      - Replace '\frac{num}{denom}' with 'num/denom'.
+      - Replace '\sum' with 'sum'.
+      - Replace '\int' with 'int'.
+
+    Afterwards, it removes:
+      - Dollar signs ($$ and $) used as math delimiters.
+      - Inline math delimiters: \( and \).
+      - Display math delimiters: \[ and \].
+      - Any remaining LaTeX commands (a backslash followed by letters).
+      - Underscores (_).
+      - Curly braces ({ and }).
+
+    Parameters:
+        text (str): The input text containing LaTeX code.
+
+    Returns:
+        str: The processed text with LaTeX formatting stripped out.
+    """
+    if islatexavailable:
+        return text  # LaTeX is available, return the original text
+    # Replace \, with space
+    text = text.replace(r'\,', ' ')
+    # Replace \frac{num}{denom} with num/denom
+    text = re.sub(r'\\frac\{([^{}]+)\}\{([^{}]+)\}', r'\1/\2', text)
+    # Replace \sum with "sum", \int with "int"
+    text = re.sub(r'\\sum', 'sum', text)
+    text = re.sub(r'\\int', 'int', text)
+    # Remove dollar delimiters
+    text = text.replace('$$', '')
+    text = text.replace('$', '')
+    # Remove inline math delimiters \( and \)
+    text = re.sub(r'\\\(|\\\)', '', text)
+    # Remove display math delimiters \[ and \]
+    text = re.sub(r'\\\[|\\\]', '', text)
+    # Remove any remaining LaTeX commands (backslash followed by letters)
+    text = re.sub(r'\\[A-Za-z]+', '', text)
+    # Remove underscores and curly braces
+    text = text.replace('_', '')
+    text = text.replace('{', '')
+    text = text.replace('}', '')
+    return text
+
 
 # Define PrintableFigure class
 class PrintableFigure(Figure):
@@ -1722,7 +1786,8 @@ class CFSimulationContainer:
             - "tscale": Time scaling factor.
             - "Cscale": Concentration scaling factor.
         """
-        plt.rc('text', usetex=True) # Enable LaTeX formatting for Matplotlib
+        plt.rc('text', usetex=_LaTeXavailable) # Enable LaTeX formatting for Matplotlib
+
         # extract plotconfig
         plotconfig = self._plotconfig
 
@@ -1747,14 +1812,14 @@ class CFSimulationContainer:
 
                 t_plot = np.linspace(t_min, t_max, 500)
                 CF_plot = data["interpolant"](t_plot)
-                ax.plot(t_plot, CF_plot, label=data["label"],
+                ax.plot(t_plot, CF_plot, label=cleantex(data["label"]),
                         color=data["color"], linestyle=data["linestyle"], linewidth=data["linewidth"])
 
         # Configure the plot
         ax.set_xlabel(f'Time [{plotconfig["tunit"]}]' if plotconfig else "Time")
         ax.set_ylabel(f'Concentration in Food [{plotconfig["Cunit"]}]' if plotconfig else "CF")
         title_main = "Concentration in Food vs. Time"
-        title_sub = rf"$\bf{{{self.name}}}$" + (f": {self.description}" if self.description else "")
+        title_sub = cleantex(rf"$\bf{{{self.name}}}$") + (f": {self.description}" if self.description else "")
         ax.set_title(f"{title_main}\n{title_sub}", fontsize=10)
         ax.text(0.5, 1.05, title_sub, fontsize=8, ha="center", va="bottom", transform=ax.transAxes)
         ax.set_title(title_main)
