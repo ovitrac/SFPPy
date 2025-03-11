@@ -47,6 +47,8 @@ pip install -r requirements.txt
 ```
 
 > **🧭 Learn how to use `SFPPy` from [Wiki Pages](https://ovitrac.github.io/SFPPy/wikipages/).**
+>
+> 🔥Run `SFPPy` remotely in a 🌐[Google Colab](https://colab.research.google.com/) Environment (see [instructions](https://ovitrac.github.io/SFPPy/wikipages/#installation/googlecolab.html))
 
 
 
@@ -56,7 +58,7 @@ pip install -r requirements.txt
 
 ## 💡 Usage Snippets
 
-SFPPy is fully object-oriented and supports multiple syntax styles, ranging from a functional approach to a more abstract, operator-driven paradigm—all in a **Pythonic** manner. The snippets below demonstrate both approaches.
+`SFPPy` is fully object-oriented and supports multiple syntax styles, ranging from a *functional approach* to a more abstract, *operator-driven paradigm*—all in a **Pythonic** manner. The snippets below demonstrate both approaches.
 
 
 
