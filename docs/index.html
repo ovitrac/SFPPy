@@ -408,7 +408,7 @@
                 const markdownContent = `
 # SFPPy Modules Documentation
 
-Generated on: **2025-03-11 11:20:37**
+Generated on: **2025-03-11 19:20:07**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -3009,11 +3009,13 @@ restartfile --> restartfile_senspantakar
 |-------|---------|---------------------------|---------|-------------|
 | (module-level) | \`_generate_figname\` | Generate a clean filename based on metadata or current date/time. | 23 | 1.24 |
 | (module-level) | \`autoname\` | Generates a random simulation name. | 25 | 1.24 |
+| (module-level) | \`cleantex\` | Process a LaTeX string to guess the plain text by performing substitutions and removing formatting characters, while preserving inner content as much as possible. | 48 | 1.24 |
 | (module-level) | \`colormap\` | Generates a list of \`ncolors\` colors from the specified colormap. | 51 | 1.24 |
 | (module-level) | \`compute_fc_profile_PBC\` | Computes the full concentration profile, including interface concentrations, for a system with periodic boundary conditions (PBC). | 89 | 1.24 |
 | (module-level) | \`compute_fv_profile\` | Compute the full finite-volume concentration profile, including node values and interface values. (this function is not nested inside senspantar for better readability) | 71 | 1.24 |
 | (module-level) | \`custom_plt_figure\` | Ensure all figures are PrintableFigure. | 4 | 1.24 |
 | (module-level) | \`custom_plt_subplots\` | Ensure plt.subplots() returns a PrintableFigure. | 5 | 1.24 |
+| (module-level) | \`is_latex_available\` | Check whether LaTeX is available in the system PATH. | 9 | 1.24 |
 | (module-level) | \`is_valid_figure\` | Checks if \`fig\` is a valid and open Matplotlib figure. | 11 | 1.24 |
 | (module-level) | \`print_figure\` | Save the figure in both PDF and PNG formats. | 16 | 1.24 |
 | (module-level) | \`print_pdf\` | Save a given figure as a PDF. | 26 | 1.24 |
@@ -3037,7 +3039,7 @@ restartfile --> restartfile_senspantakar
 | \`CFSimulationContainer\` | \`markeredgecolor\` | Change the marker edge color of one or multiple curves. | 3 | 1.24 |
 | \`CFSimulationContainer\` | \`markerfacecolor\` | Change the marker face color of one or multiple curves. | 3 | 1.24 |
 | \`CFSimulationContainer\` | \`markersize\` | Change the marker size of one or multiple curves. | 3 | 1.24 |
-| \`CFSimulationContainer\` | \`plotCF\` | Plot all stored CF curves in a single figure. | 57 | 1.24 |
+| \`CFSimulationContainer\` | \`plotCF\` | Plot all stored CF curves in a single figure. | 58 | 1.24 |
 | \`CFSimulationContainer\` | \`rgb\` | Displays a categorized color chart with properly aligned headers. | 4 | 1.24 |
 | \`CFSimulationContainer\` | \`save_as_csv\` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 25 | 1.24 |
 | \`CFSimulationContainer\` | \`save_as_excel\` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 26 | 1.24 |

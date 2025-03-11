@@ -8,6 +8,9 @@ This tutorial explains how to use `SFPPy` in a [Google Colab](https://colab.rese
 4. Adding the `SFPPy` folder to Python's `sys.path` to allow direct imports.
 5. Run you own code
 
+> Try it with this link:
+> https://colab.research.google.com/drive/1F4LajmigBAmcWlknWbKpBChdyL80ZglK?usp=sharing
+
 ---
 
 ## 1. Clone or Update the Repository
@@ -44,7 +47,7 @@ After cloning or updating, verify that the `SFPPy` folder is present by listing 
 Test the installation by running an example script provided by SFPPy. Assuming `example1.py` is in the current working directory (or adjust the path as needed):
 
 ```bash
-!python example1.py
+%run example1.py   # do not use !python example1.py, it will not show graphics
 ```
 
 ---
@@ -94,7 +97,7 @@ print(m)
 
 ## Conclusion
 
-By following these steps, you can work with SFPPy in Google Colab without performing a traditional installation. Clone the repository the first time, update it in subsequent sessions, list the contents to confirm its presence, run an example to verify functionality, and finally, ensure the folder is in your Python path for seamless imports
+By following these steps, you can work with `SFPPy` in Google Colab without performing a traditional installation. Clone the repository the first time, update it in subsequent sessions, list the contents to confirm its presence, run an example to verify functionality, and finally, ensure the folder is in your Python path for seamless imports
 
 
 

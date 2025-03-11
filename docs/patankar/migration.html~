@@ -196,6 +196,7 @@ Example
 &#34;&#34;&#34;
 # Dependencies
 import os
+import shutil
 import random
 import re
 from datetime import datetime
@@ -219,7 +220,7 @@ import pandas as pd
 from patankar.layer import layer, check_units, layerLink
 from patankar.food import foodphysics,foodlayer
 
-__all__ = [&#39;CFSimulationContainer&#39;, &#39;Cprofile&#39;, &#39;PrintableFigure&#39;, &#39;SensPatankarResult&#39;, &#39;autoname&#39;, &#39;check_units&#39;, &#39;colormap&#39;, &#39;compute_fc_profile_PBC&#39;, &#39;compute_fv_profile&#39;, &#39;custom_plt_figure&#39;, &#39;custom_plt_subplots&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;is_valid_figure&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;print_figure&#39;, &#39;print_pdf&#39;, &#39;print_png&#39;, &#39;restartfile&#39;, &#39;restartfile_senspantakar&#39;, &#39;rgb&#39;, &#39;senspatankar&#39;, &#39;tooclear&#39;]
+__all__ = [&#39;CFSimulationContainer&#39;, &#39;Cprofile&#39;, &#39;PrintableFigure&#39;, &#39;SensPatankarResult&#39;, &#39;autoname&#39;, &#39;check_units&#39;, &#39;cleantex&#39;, &#39;colormap&#39;, &#39;compute_fc_profile_PBC&#39;, &#39;compute_fv_profile&#39;, &#39;custom_plt_figure&#39;, &#39;custom_plt_subplots&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;is_latex_available&#39;, &#39;is_valid_figure&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;print_figure&#39;, &#39;print_pdf&#39;, &#39;print_png&#39;, &#39;restartfile&#39;, &#39;restartfile_senspantakar&#39;, &#39;rgb&#39;, &#39;senspatankar&#39;, &#39;tooclear&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -241,7 +242,6 @@ plotconfig = {
     }
 _fig_metadata_atrr_ = &#34;__filename__&#34;
 # %% Private functions and classes
-
 def autoname(nchars=6, charset=&#34;a-zA-Z0-9&#34;):
     &#34;&#34;&#34;
     Generates a random simulation name.
@@ -531,6 +531,70 @@ def colormap(name=&#34;viridis&#34;, ncolors=16, tooclearflag=True, reverse=Fals
     cmap = plt.colormaps.get_cmap(cmap_name)  # Fetch the colormap
     colors = [cmap(i / (ncolors - 1)) for i in range(ncolors)]  # Normalize colors
     return [tooclear(c) if tooclearflag else c[:3] for c in colors]  # Apply tooclear if enabled
+
+# Latex fixer on systems without LaTeX
+def is_latex_available():
+    &#34;&#34;&#34;
+    Check whether LaTeX is available in the system PATH.
+
+    Returns:
+        bool: True if LaTeX is found, False otherwise.
+    &#34;&#34;&#34;
+    # &#39;latex&#39; should be available in the PATH if a LaTeX distribution is installed.
+    return shutil.which(&#34;latex&#34;) is not None
+
+_LaTeXavailable = is_latex_available()
+
+# Clean tex
+def cleantex(text,islatexavailable=_LaTeXavailable):
+    &#34;&#34;&#34;
+    Process a LaTeX string to guess the plain text by performing substitutions
+    and removing formatting characters, while preserving inner content as much as possible.
+
+    Replacements performed:
+      - Replace &#39;\,&#39; with a space.
+      - Replace &#39;\frac{num}{denom}&#39; with &#39;num/denom&#39;.
+      - Replace &#39;\sum&#39; with &#39;sum&#39;.
+      - Replace &#39;\int&#39; with &#39;int&#39;.
+
+    Afterwards, it removes:
+      - Dollar signs ($$ and $) used as math delimiters.
+      - Inline math delimiters: \( and \).
+      - Display math delimiters: \[ and \].
+      - Any remaining LaTeX commands (a backslash followed by letters).
+      - Underscores (_).
+      - Curly braces ({ and }).
+
+    Parameters:
+        text (str): The input text containing LaTeX code.
+
+    Returns:
+        str: The processed text with LaTeX formatting stripped out.
+    &#34;&#34;&#34;
+    if islatexavailable:
+        return text  # LaTeX is available, return the original text
+    # Replace \, with space
+    text = text.replace(r&#39;\,&#39;, &#39; &#39;)
+    # Replace \frac{num}{denom} with num/denom
+    text = re.sub(r&#39;\\frac\{([^{}]+)\}\{([^{}]+)\}&#39;, r&#39;\1/\2&#39;, text)
+    # Replace \sum with &#34;sum&#34;, \int with &#34;int&#34;
+    text = re.sub(r&#39;\\sum&#39;, &#39;sum&#39;, text)
+    text = re.sub(r&#39;\\int&#39;, &#39;int&#39;, text)
+    # Remove dollar delimiters
+    text = text.replace(&#39;$$&#39;, &#39;&#39;)
+    text = text.replace(&#39;$&#39;, &#39;&#39;)
+    # Remove inline math delimiters \( and \)
+    text = re.sub(r&#39;\\\(|\\\)&#39;, &#39;&#39;, text)
+    # Remove display math delimiters \[ and \]
+    text = re.sub(r&#39;\\\[|\\\]&#39;, &#39;&#39;, text)
+    # Remove any remaining LaTeX commands (backslash followed by letters)
+    text = re.sub(r&#39;\\[A-Za-z]+&#39;, &#39;&#39;, text)
+    # Remove underscores and curly braces
+    text = text.replace(&#39;_&#39;, &#39;&#39;)
+    text = text.replace(&#39;{&#39;, &#39;&#39;)
+    text = text.replace(&#39;}&#39;, &#39;&#39;)
+    return text
+
 
 # Define PrintableFigure class
 class PrintableFigure(Figure):
@@ -1825,7 +1889,8 @@ class CFSimulationContainer:
             - &#34;tscale&#34;: Time scaling factor.
             - &#34;Cscale&#34;: Concentration scaling factor.
         &#34;&#34;&#34;
-        plt.rc(&#39;text&#39;, usetex=True) # Enable LaTeX formatting for Matplotlib
+        plt.rc(&#39;text&#39;, usetex=_LaTeXavailable) # Enable LaTeX formatting for Matplotlib
+
         # extract plotconfig
         plotconfig = self._plotconfig
 
@@ -1850,14 +1915,14 @@ class CFSimulationContainer:
 
                 t_plot = np.linspace(t_min, t_max, 500)
                 CF_plot = data[&#34;interpolant&#34;](t_plot)
-                ax.plot(t_plot, CF_plot, label=data[&#34;label&#34;],
+                ax.plot(t_plot, CF_plot, label=cleantex(data[&#34;label&#34;]),
                         color=data[&#34;color&#34;], linestyle=data[&#34;linestyle&#34;], linewidth=data[&#34;linewidth&#34;])
 
         # Configure the plot
         ax.set_xlabel(f&#39;Time [{plotconfig[&#34;tunit&#34;]}]&#39; if plotconfig else &#34;Time&#34;)
         ax.set_ylabel(f&#39;Concentration in Food [{plotconfig[&#34;Cunit&#34;]}]&#39; if plotconfig else &#34;CF&#34;)
         title_main = &#34;Concentration in Food vs. Time&#34;
-        title_sub = rf&#34;$\bf{{{self.name}}}$&#34; + (f&#34;: {self.description}&#34; if self.description else &#34;&#34;)
+        title_sub = cleantex(rf&#34;$\bf{{{self.name}}}$&#34;) + (f&#34;: {self.description}&#34; if self.description else &#34;&#34;)
         ax.set_title(f&#34;{title_main}\n{title_sub}&#34;, fontsize=10)
         ax.text(0.5, 1.05, title_sub, fontsize=8, ha=&#34;center&#34;, va=&#34;bottom&#34;, transform=ax.transAxes)
         ax.set_title(title_main)
@@ -2778,6 +2843,85 @@ if __name__ == &#39;__main__&#39;:
         return np.array([value*conversion]),units</code></pre>
 </details>
 </dd>
+<dt id="migration.cleantex"><code class="name flex">
+<span>def <span class="ident">cleantex</span></span>(<span>text, islatexavailable=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Process a LaTeX string to guess the plain text by performing substitutions
+and removing formatting characters, while preserving inner content as much as possible.</p>
+<p>Replacements performed:
+- Replace '\,' with a space.
+- Replace 'rac{num}{denom}' with 'num/denom'.
+- Replace '\sum' with 'sum'.
+- Replace '\int' with 'int'.</p>
+<p>Afterwards, it removes:
+- Dollar signs ($$ and $) used as math delimiters.
+- Inline math delimiters: ( and ).
+- Display math delimiters: [ and ].
+- Any remaining LaTeX commands (a backslash followed by letters).
+- Underscores (_).
+- Curly braces ({ and }).</p>
+<h2 id="parameters">Parameters</h2>
+<p>text (str): The input text containing LaTeX code.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The processed text with LaTeX formatting stripped out.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cleantex(text,islatexavailable=_LaTeXavailable):
+    &#34;&#34;&#34;
+    Process a LaTeX string to guess the plain text by performing substitutions
+    and removing formatting characters, while preserving inner content as much as possible.
+
+    Replacements performed:
+      - Replace &#39;\,&#39; with a space.
+      - Replace &#39;\frac{num}{denom}&#39; with &#39;num/denom&#39;.
+      - Replace &#39;\sum&#39; with &#39;sum&#39;.
+      - Replace &#39;\int&#39; with &#39;int&#39;.
+
+    Afterwards, it removes:
+      - Dollar signs ($$ and $) used as math delimiters.
+      - Inline math delimiters: \( and \).
+      - Display math delimiters: \[ and \].
+      - Any remaining LaTeX commands (a backslash followed by letters).
+      - Underscores (_).
+      - Curly braces ({ and }).
+
+    Parameters:
+        text (str): The input text containing LaTeX code.
+
+    Returns:
+        str: The processed text with LaTeX formatting stripped out.
+    &#34;&#34;&#34;
+    if islatexavailable:
+        return text  # LaTeX is available, return the original text
+    # Replace \, with space
+    text = text.replace(r&#39;\,&#39;, &#39; &#39;)
+    # Replace \frac{num}{denom} with num/denom
+    text = re.sub(r&#39;\\frac\{([^{}]+)\}\{([^{}]+)\}&#39;, r&#39;\1/\2&#39;, text)
+    # Replace \sum with &#34;sum&#34;, \int with &#34;int&#34;
+    text = re.sub(r&#39;\\sum&#39;, &#39;sum&#39;, text)
+    text = re.sub(r&#39;\\int&#39;, &#39;int&#39;, text)
+    # Remove dollar delimiters
+    text = text.replace(&#39;$$&#39;, &#39;&#39;)
+    text = text.replace(&#39;$&#39;, &#39;&#39;)
+    # Remove inline math delimiters \( and \)
+    text = re.sub(r&#39;\\\(|\\\)&#39;, &#39;&#39;, text)
+    # Remove display math delimiters \[ and \]
+    text = re.sub(r&#39;\\\[|\\\]&#39;, &#39;&#39;, text)
+    # Remove any remaining LaTeX commands (backslash followed by letters)
+    text = re.sub(r&#39;\\[A-Za-z]+&#39;, &#39;&#39;, text)
+    # Remove underscores and curly braces
+    text = text.replace(&#39;_&#39;, &#39;&#39;)
+    text = text.replace(&#39;{&#39;, &#39;&#39;)
+    text = text.replace(&#39;}&#39;, &#39;&#39;)
+    return text</code></pre>
+</details>
+</dd>
 <dt id="migration.colormap"><code class="name flex">
 <span>def <span class="ident">colormap</span></span>(<span>name='viridis', ncolors=16, tooclearflag=True, reverse=False)</span>
 </code></dt>
@@ -3145,6 +3289,31 @@ Cfull_dimless (np.ndarray): Full concentration profile.</p></div>
     return fig, ax</code></pre>
 </details>
 </dd>
+<dt id="migration.is_latex_available"><code class="name flex">
+<span>def <span class="ident">is_latex_available</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check whether LaTeX is available in the system PATH.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if LaTeX is found, False otherwise.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_latex_available():
+    &#34;&#34;&#34;
+    Check whether LaTeX is available in the system PATH.
+
+    Returns:
+        bool: True if LaTeX is found, False otherwise.
+    &#34;&#34;&#34;
+    # &#39;latex&#39; should be available in the PATH if a LaTeX distribution is installed.
+    return shutil.which(&#34;latex&#34;) is not None</code></pre>
+</details>
+</dd>
 <dt id="migration.is_valid_figure"><code class="name flex">
 <span>def <span class="ident">is_valid_figure</span></span>(<span>fig)</span>
 </code></dt>
@@ -3335,7 +3504,7 @@ Cfull_dimless (np.ndarray): Full concentration profile.</p></div>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:7pJXXB', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:iZwnZA', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -4149,7 +4318,8 @@ Adjusted RGB(A) color tuple with too bright colors darkened.</p>
             - &#34;tscale&#34;: Time scaling factor.
             - &#34;Cscale&#34;: Concentration scaling factor.
         &#34;&#34;&#34;
-        plt.rc(&#39;text&#39;, usetex=True) # Enable LaTeX formatting for Matplotlib
+        plt.rc(&#39;text&#39;, usetex=_LaTeXavailable) # Enable LaTeX formatting for Matplotlib
+
         # extract plotconfig
         plotconfig = self._plotconfig
 
@@ -4174,14 +4344,14 @@ Adjusted RGB(A) color tuple with too bright colors darkened.</p>
 
                 t_plot = np.linspace(t_min, t_max, 500)
                 CF_plot = data[&#34;interpolant&#34;](t_plot)
-                ax.plot(t_plot, CF_plot, label=data[&#34;label&#34;],
+                ax.plot(t_plot, CF_plot, label=cleantex(data[&#34;label&#34;]),
                         color=data[&#34;color&#34;], linestyle=data[&#34;linestyle&#34;], linewidth=data[&#34;linewidth&#34;])
 
         # Configure the plot
         ax.set_xlabel(f&#39;Time [{plotconfig[&#34;tunit&#34;]}]&#39; if plotconfig else &#34;Time&#34;)
         ax.set_ylabel(f&#39;Concentration in Food [{plotconfig[&#34;Cunit&#34;]}]&#39; if plotconfig else &#34;CF&#34;)
         title_main = &#34;Concentration in Food vs. Time&#34;
-        title_sub = rf&#34;$\bf{{{self.name}}}$&#34; + (f&#34;: {self.description}&#34; if self.description else &#34;&#34;)
+        title_sub = cleantex(rf&#34;$\bf{{{self.name}}}$&#34;) + (f&#34;: {self.description}&#34; if self.description else &#34;&#34;)
         ax.set_title(f&#34;{title_main}\n{title_sub}&#34;, fontsize=10)
         ax.text(0.5, 1.05, title_sub, fontsize=8, ha=&#34;center&#34;, va=&#34;bottom&#34;, transform=ax.transAxes)
         ax.set_title(title_main)
@@ -4633,7 +4803,8 @@ If the colormap name is not recognized.</p></div>
         - &#34;tscale&#34;: Time scaling factor.
         - &#34;Cscale&#34;: Concentration scaling factor.
     &#34;&#34;&#34;
-    plt.rc(&#39;text&#39;, usetex=True) # Enable LaTeX formatting for Matplotlib
+    plt.rc(&#39;text&#39;, usetex=_LaTeXavailable) # Enable LaTeX formatting for Matplotlib
+
     # extract plotconfig
     plotconfig = self._plotconfig
 
@@ -4658,14 +4829,14 @@ If the colormap name is not recognized.</p></div>
 
             t_plot = np.linspace(t_min, t_max, 500)
             CF_plot = data[&#34;interpolant&#34;](t_plot)
-            ax.plot(t_plot, CF_plot, label=data[&#34;label&#34;],
+            ax.plot(t_plot, CF_plot, label=cleantex(data[&#34;label&#34;]),
                     color=data[&#34;color&#34;], linestyle=data[&#34;linestyle&#34;], linewidth=data[&#34;linewidth&#34;])
 
     # Configure the plot
     ax.set_xlabel(f&#39;Time [{plotconfig[&#34;tunit&#34;]}]&#39; if plotconfig else &#34;Time&#34;)
     ax.set_ylabel(f&#39;Concentration in Food [{plotconfig[&#34;Cunit&#34;]}]&#39; if plotconfig else &#34;CF&#34;)
     title_main = &#34;Concentration in Food vs. Time&#34;
-    title_sub = rf&#34;$\bf{{{self.name}}}$&#34; + (f&#34;: {self.description}&#34; if self.description else &#34;&#34;)
+    title_sub = cleantex(rf&#34;$\bf{{{self.name}}}$&#34;) + (f&#34;: {self.description}&#34; if self.description else &#34;&#34;)
     ax.set_title(f&#34;{title_main}\n{title_sub}&#34;, fontsize=10)
     ax.text(0.5, 1.05, title_sub, fontsize=8, ha=&#34;center&#34;, va=&#34;bottom&#34;, transform=ax.transAxes)
     ax.set_title(title_main)
@@ -13453,11 +13624,13 @@ restart.freezeCF(t=1000, CF=0.05)
 <ul class="">
 <li><code><a title="migration.autoname" href="#migration.autoname">autoname</a></code></li>
 <li><code><a title="migration.check_units" href="#migration.check_units">check_units</a></code></li>
+<li><code><a title="migration.cleantex" href="#migration.cleantex">cleantex</a></code></li>
 <li><code><a title="migration.colormap" href="#migration.colormap">colormap</a></code></li>
 <li><code><a title="migration.compute_fc_profile_PBC" href="#migration.compute_fc_profile_PBC">compute_fc_profile_PBC</a></code></li>
 <li><code><a title="migration.compute_fv_profile" href="#migration.compute_fv_profile">compute_fv_profile</a></code></li>
 <li><code><a title="migration.custom_plt_figure" href="#migration.custom_plt_figure">custom_plt_figure</a></code></li>
 <li><code><a title="migration.custom_plt_subplots" href="#migration.custom_plt_subplots">custom_plt_subplots</a></code></li>
+<li><code><a title="migration.is_latex_available" href="#migration.is_latex_available">is_latex_available</a></code></li>
 <li><code><a title="migration.is_valid_figure" href="#migration.is_valid_figure">is_valid_figure</a></code></li>
 <li><code><a title="migration.print_figure" href="#migration.print_figure">print_figure</a></code></li>
 <li><code><a title="migration.print_pdf" href="#migration.print_pdf">print_pdf</a></code></li>
