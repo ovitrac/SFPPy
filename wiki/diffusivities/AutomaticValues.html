@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>DFVtol</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>AutomaticValues</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7511,44 +7511,28 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8f38878f">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=00d343b8-cfa5-40d5-a0a8-105234617744">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Parameterizing-hole-Free-Volume-theory-for-various-polymers">Parameterizing hole Free-Volume theory for various polymers<a class="anchor-link" href="#Parameterizing-hole-Free-Volume-theory-for-various-polymers">¶</a></h1><h1 id="Application-to-the-prediction-of-diffusivity-of-toluene">Application to the prediction of diffusivity of toluene<a class="anchor-link" href="#Application-to-the-prediction-of-diffusivity-of-toluene">¶</a></h1><blockquote>
-<p>Toluene is the most common surrogate for testing recyling plastics for food contact</p>
-</blockquote>
-<p>This script shows the prediction of diffusivities of toluene using hole Free-Volume theory
-at different temperatures in different polymers (LDPE, PMMA, PS, PVAc, PET).
-gPET corresponds to dry PET (unplasticized) and wPET corresponds to plasticized PET.</p>
-<p>Data have been extracted from the script figure8_revSep2019_2025.m used to generate
-Figure 9 for the reference mentioned below.</p>
-<p>REFERENCE
-Zhu Y., Welle, F. and Vitrac O. A blob model to parameterize polymer hole free volumes and solute diffusion",
-<em>Soft Matter</em> <strong>2019</strong>, 15(42), 8912-8932. DOI: <a href="https://doi.org/10.1039/C9SM01556F">https://doi.org/10.1039/C9SM01556F</a></p>
-<p>ABSTRACT
-<em>Solute diffusion in solid polymers has extensive applications in packaging, reservoir engineering, and biomedical technologies but remains poorly understood. The diffusion of non-entangled linear solutes with chemically identical patterns (blobs) deviates significantly in solid-state polymers, where the scaling exponent $\alpha_{\text{lin}} &gt; 1$ (</em>Macromolecules<em>, 2013, *46</em>, 874), compared to their behavior in the molten state, where $\alpha_{\text{lin}} = 1$ (<em>Macromolecules</em>, 2007, <em>40</em>, 3970). This study leverages the scale invariance of diffusivities, $D$, for linear probes of the form*</p>
-<p>$$
-D(N \cdot M_{\text{blob}} + M_{\text{anchor}},T,T_g) = N^{-\alpha_{\text{lin}}(T,T_g)} \cdot D(M_{\text{blob}} + M_{\text{anchor}},T,T_g)
-$$</p>
-<p><em>where $N$ represents the number of identical blobs, each with mass $M_{\text{blob}}$, and possibly a distinct terminal pattern (anchor) of mass $M_{\text{anchor}}$. This formulation is used to evaluate the hole-free volume in seven polymers (aliphatic, semi-aromatic, and aromatic) across a broad temperature range, $-70\,\text{K} \leq T - T_g \leq 160\,\text{K}$. The new parameterization of hole-free volumes extends the applicability of the free-volume theory (FVT) developed by Vrentas and Duda to virtually any polymer, independent of the availability of pre-determined free-volume parameters. The predictive accuracy of this approach was validated using various solutes, including *n</em>-alkanes, 1-alcohols, <em>n</em>-alkyl acetates, and <em>n</em>-alkylbenzenes. The enthalpic and entropic contributions of both the blobs and the anchor were analyzed and quantified. A blind validation of the reformulated FVT demonstrated successful first-principles predictions of water and toluene diffusivities in amorphous polyethylene terephthalate over the temperature range $4^\circ\text{C}$ to $180^\circ\text{C}$, as well as in various other polymers. This new blob-based model enables the rational design of additives with controlled diffusivities in thermoplastics.*</p>
+<h1 id="Discussion:-How-diffusivities-$D$-and-Henry-like-coefficients-$k$-are-automatically-set-in-SFPPy">Discussion: How diffusivities $D$ and Henry-like coefficients $k$ are automatically set in <code>SFPPy</code><a class="anchor-link" href="#Discussion:-How-diffusivities-$D$-and-Henry-like-coefficients-$k$-are-automatically-set-in-SFPPy">¶</a></h1><h2 id="Preamble">Preamble<a class="anchor-link" href="#Preamble">¶</a></h2><p>Diffusivities $D_{i,k}$ and $k_{i,k}$ are  properties that depend on the pair substance (indexed $i$) and on the medium where  sorption/diffusion/desorption occurs (indexed $k$). For diffusivities, the medium is limited to food layers indexed in our publications from $1$ to $n$ (in <code>SFFPy</code> for <code>layer</code>s indexed from <code>0</code> to <code>n-1</code>). For Henry-like coefficients, the index range of $k$ includes also the food/food simulant indexed $0$ (in <code>SFPPy</code> denoted <code>foodlayer</code>).</p>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6fa8966d-4356-4e3c-b318-16d70f1ea54c">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4cb36ff9-eb3a-442a-b41e-412e168f47fe">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Dependencies">Dependencies<a class="anchor-link" href="#Dependencies">¶</a></h2>
+<h2 id="Update-the-SFPPy-path">Update the SFPPy path<a class="anchor-link" href="#Update-the-SFPPy-path">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=63de43c0">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=26928764-7edb-4762-8ea1-68494035dc6e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7556,276 +7540,15 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d73d1742-7b20-401d-9fa7-3c8b57b3c7b5">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Constants">Constants<a class="anchor-link" href="#Constants">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=eabf05ad">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="mf">8.31</span>
-<span class="n">T0K</span> <span class="o">=</span> <span class="mf">273.15</span>  <span class="c1"># K</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=675392fe-1216-44ea-b06e-b0c9f19ca148">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Polymer-data-($T_g$-in-K)-stored-in-a-dictionary.">Polymer data ($T_g$ in K) stored in a dictionary.<a class="anchor-link" href="#Polymer-data-($T_g$-in-K)-stored-in-a-dictionary.">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=88a9a301-3c9b-4d2d-a25c-92365fd50fd3">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'LDPE'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Tg'</span><span class="p">:</span> <span class="mf">148.15</span><span class="p">,</span> <span class="s1">'D0'</span><span class="p">:</span> <span class="mf">1.87e-08</span><span class="p">,</span> <span class="s1">'xi'</span><span class="p">:</span> <span class="mf">0.615</span><span class="p">,</span>  <span class="s1">'ref'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">:</span> <span class="mi">144</span><span class="p">,</span> <span class="s1">'Kb'</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
-    <span class="s1">'PMMA'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Tg'</span><span class="p">:</span> <span class="mf">381.15</span><span class="p">,</span> <span class="s1">'D0'</span><span class="p">:</span> <span class="mf">1.87e-08</span><span class="p">,</span> <span class="s1">'xi'</span><span class="p">:</span> <span class="mf">0.56</span><span class="p">,</span>   <span class="s1">'ref'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">:</span> <span class="mi">252</span><span class="p">,</span> <span class="s1">'Kb'</span><span class="p">:</span> <span class="mi">65</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
-    <span class="s1">'PS'</span><span class="p">:</span>   <span class="p">{</span><span class="s1">'Tg'</span><span class="p">:</span> <span class="mf">373.15</span><span class="p">,</span> <span class="s1">'D0'</span><span class="p">:</span> <span class="mf">4.8e-08</span><span class="p">,</span>  <span class="s1">'xi'</span><span class="p">:</span> <span class="mf">0.584</span><span class="p">,</span>  <span class="s1">'ref'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">:</span> <span class="mi">144</span><span class="p">,</span> <span class="s1">'Kb'</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
-    <span class="s1">'PVAc'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Tg'</span><span class="p">:</span> <span class="mf">305.15</span><span class="p">,</span> <span class="s1">'D0'</span><span class="p">:</span> <span class="mf">1.87e-08</span><span class="p">,</span> <span class="s1">'xi'</span><span class="p">:</span> <span class="mf">0.86</span><span class="p">,</span>   <span class="s1">'ref'</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">:</span> <span class="mi">142</span><span class="p">,</span> <span class="s1">'Kb'</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
-    <span class="s1">'gPET'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Tg'</span><span class="p">:</span> <span class="mf">349.15</span><span class="p">,</span> <span class="s1">'D0'</span><span class="p">:</span> <span class="mf">1.0205e-08</span><span class="p">,</span> <span class="s1">'xi'</span><span class="p">:</span> <span class="mf">0.6761</span><span class="p">,</span> <span class="s1">'ref'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">:</span> <span class="mi">252</span><span class="p">,</span> <span class="s1">'Kb'</span><span class="p">:</span> <span class="mi">65</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="mf">0.6153</span><span class="p">},</span>
-    <span class="s1">'wPET'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Tg'</span><span class="p">:</span> <span class="mf">316.15</span><span class="p">,</span> <span class="s1">'D0'</span><span class="p">:</span> <span class="mf">1.02046e-08</span><span class="p">,</span> <span class="s1">'xi'</span><span class="p">:</span> <span class="mf">0.6761</span><span class="p">,</span> <span class="s1">'ref'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">:</span> <span class="mi">252</span><span class="p">,</span> <span class="s1">'Kb'</span><span class="p">:</span> <span class="mi">65</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="mf">0.277734</span><span class="p">},</span>
-<span class="p">}</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="c1"># References list (for documentation)</span>
-<span class="n">references</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">'Vrentas and Vrentas, 1994'</span><span class="p">,</span>
-    <span class="s1">'Zielinski and Duda, 1992'</span><span class="p">,</span>
-    <span class="s1">'Lutzow et al., 1999'</span><span class="p">,</span>
-    <span class="s1">'Hong, 1995'</span><span class="p">,</span>
-    <span class="c1"># toluene in PET</span>
-    <span class="s1">'Welle,2008'</span><span class="p">,</span>
-    <span class="s1">'Pennarun et al., 2004'</span><span class="p">,</span>
-    <span class="s1">'Welle,2013'</span><span class="p">,</span>
-    <span class="s1">'our work (permeation)'</span><span class="p">,</span>
-    <span class="s1">'our work (sorption)'</span><span class="p">,</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b172e817-ae6c-46d5-b8e8-d5eb5b91349b">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Main-function-that-computes-the-predicted-diffusivity-DscalingPlike">Main function that computes the predicted diffusivity <code>DscalingPlike</code><a class="anchor-link" href="#Main-function-that-computes-the-predicted-diffusivity-DscalingPlike">¶</a></h2><blockquote>
-<p><code>Plike</code> is a mathematical function representing polymer effects and strongly related to WLF model</p>
-</blockquote>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e7753643-ead7-4d0b-bdf2-a74efe844cf0">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">DscalingPlike</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">polymer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute the predicted diffusivity using the scaling law.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        T : float</span>
-<span class="sd">            Temperature in Kelvin.</span>
-<span class="sd">        polymer : str</span>
-<span class="sd">            Polymer name (must be one of the keys in the data dictionary).</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        float: Predicted diffusivity.</span>
-<span class="sd">    """</span>
-    <span class="c1"># Helper function to lookup a property value from the data dictionary.</span>
-    <span class="k">def</span> <span class="nf">lookup</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">P</span><span class="p">][</span><span class="n">prop</span><span class="p">]</span>
-
-    <span class="c1"># Define alpha for T &gt;= Tg.</span>
-    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tg</span><span class="p">,</span> <span class="n">Ka</span><span class="p">,</span> <span class="n">Kb</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">Ka</span> <span class="o">/</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">Tg</span> <span class="o">+</span> <span class="n">Kb</span><span class="p">)</span>
-
-    <span class="c1"># Define alphag for T &lt; Tg.</span>
-    <span class="k">def</span> <span class="nf">alphag</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tg</span><span class="p">,</span> <span class="n">Ka</span><span class="p">,</span> <span class="n">Kb</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">Ka</span> <span class="o">/</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">Tg</span><span class="p">)</span> <span class="o">+</span> <span class="n">Kb</span><span class="p">)</span>
-
-    <span class="n">deltaT</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># (K) sharpness of the transition at Tg</span>
-
-    <span class="c1"># Heaviside-like function using tanh.</span>
-    <span class="k">def</span> <span class="nf">H</span><span class="p">(</span><span class="n">T_val</span><span class="p">,</span> <span class="n">Tg_val</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="mi">4</span> <span class="o">/</span> <span class="n">deltaT</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_val</span> <span class="o">-</span> <span class="n">Tg_val</span><span class="p">)))</span>
-
-    <span class="c1"># Composite alpha function that smoothly transitions between alpha and alphag.</span>
-    <span class="k">def</span> <span class="nf">alphaT</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tg</span><span class="p">,</span> <span class="n">Ka</span><span class="p">,</span> <span class="n">Kb</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-        <span class="c1"># Note: H(lookup(polymer, 'Tg'), T) computes H(Tg,T) and H(T, lookup(polymer, 'Tg')) computes H(T,Tg)</span>
-        <span class="k">return</span> <span class="n">H</span><span class="p">(</span><span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'Tg'</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">alphag</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tg</span><span class="p">,</span> <span class="n">Ka</span><span class="p">,</span> <span class="n">Kb</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">H</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'Tg'</span><span class="p">))</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tg</span><span class="p">,</span> <span class="n">Ka</span><span class="p">,</span> <span class="n">Kb</span><span class="p">)</span>
-
-    <span class="n">betalin</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="c1"># Function to compute Plike (see publication, Plike holds polymer effects)</span>
-    <span class="k">def</span> <span class="nf">Plike</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">polymer</span><span class="p">):</span>
-        <span class="n">Tg</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'Tg'</span><span class="p">)</span>
-        <span class="n">Ka</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'Ka'</span><span class="p">)</span>
-        <span class="n">Kb</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'Kb'</span><span class="p">)</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">alphaT</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tg</span><span class="p">,</span> <span class="n">Ka</span><span class="p">,</span> <span class="n">Kb</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">betalin</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.24</span>
-
-    <span class="c1"># Compute the predicted diffusivity.</span>
-    <span class="n">D0</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'D0'</span><span class="p">)</span>
-    <span class="n">E</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">)</span>
-    <span class="n">xi</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="s1">'xi'</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">D0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">E</span> <span class="o">/</span> <span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">xi</span> <span class="o">*</span> <span class="n">Plike</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">polymer</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=54566686-e695-4f84-bf2f-bbe69105cb01">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Test-data-(similar-to-a-DataFrame)-stored-as-a-list-of-dictionaries.">Test data (similar to a DataFrame) stored as a list of dictionaries.<a class="anchor-link" href="#Test-data-(similar-to-a-DataFrame)-stored-as-a-list-of-dictionaries.">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=312a0423-70f5-4661-9d28-296a4756b289">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">451.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">4e-11</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">433.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">1.5e-11</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">413.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2e-12</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">383.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">1.5e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PMMA'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">433.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">9e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PMMA'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">413.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PMMA'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">403.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">8e-14</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'LDPE'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">343.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">7e-11</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PVAc'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">383.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2e-12</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PVAc'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">353.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">1e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PVAc'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">313.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">8e-16</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">388.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">7.2e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">451.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">4e-11</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">433.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">1.5e-11</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">413.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2e-12</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">383.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">1.5e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PS'</span><span class="p">,</span>    <span class="s1">'T'</span><span class="p">:</span> <span class="mf">388.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">7.2e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PMMA'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">433.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">9e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PMMA'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">413.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'PMMA'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">403.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">8e-14</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'wPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">313.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">4.1e-16</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">313.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2e-18</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">313.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">3.8e-18</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">333.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2.6e-17</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'wPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">313.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">6.3e-17</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'wPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">313.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2.1e-16</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'wPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">313.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">4.8e-16</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'wPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">323.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">4.1e-16</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'wPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">323.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">6.1e-16</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">373.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">3.26e-15</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">453.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2.78e-12</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">434.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">1.17e-12</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">414.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">1.9e-13</span><span class="p">},</span>
-    <span class="p">{</span><span class="s1">'polymer'</span><span class="p">:</span> <span class="s1">'gPET'</span><span class="p">,</span>  <span class="s1">'T'</span><span class="p">:</span> <span class="mf">394.15</span><span class="p">,</span> <span class="s1">'Dexp'</span><span class="p">:</span> <span class="mf">2.47e-14</span><span class="p">},</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3fc389ca-2394-43bd-ad3d-0947ec04c095">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Compute-predicted-diffusivity-for-each-test-data-point.">Compute predicted diffusivity for each test data point.<a class="anchor-link" href="#Compute-predicted-diffusivity-for-each-test-data-point.">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=22622fc8-5b46-4251-89d6-4daf812edafa">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
-    <span class="n">entry</span><span class="p">[</span><span class="s1">'Dpred'</span><span class="p">]</span> <span class="o">=</span> <span class="n">DscalingPlike</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">'T'</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'polymer'</span><span class="p">])</span>
-
-<span class="c1"># Plot experimental vs predicted D values.</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-<span class="c1"># Define a color map for polymers.</span>
-<span class="n">colors</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'LDPE'</span><span class="p">:</span> <span class="s1">'blue'</span><span class="p">,</span>
-    <span class="s1">'PMMA'</span><span class="p">:</span> <span class="s1">'green'</span><span class="p">,</span>
-    <span class="s1">'PS'</span><span class="p">:</span> <span class="s1">'red'</span><span class="p">,</span>
-    <span class="s1">'PVAc'</span><span class="p">:</span> <span class="s1">'orange'</span><span class="p">,</span>
-    <span class="s1">'gPET'</span><span class="p">:</span> <span class="s1">'purple'</span><span class="p">,</span>
-    <span class="s1">'wPET'</span><span class="p">:</span> <span class="s1">'brown'</span>
-<span class="p">}</span>
-
-<span class="c1"># Plot points for each polymer with its own color.</span>
-<span class="k">for</span> <span class="n">polymer</span> <span class="ow">in</span> <span class="n">colors</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="s1">'Dexp'</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">test_data</span> <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'polymer'</span><span class="p">]</span> <span class="o">==</span> <span class="n">polymer</span><span class="p">]</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="s1">'Dpred'</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">test_data</span> <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'polymer'</span><span class="p">]</span> <span class="o">==</span> <span class="n">polymer</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">x</span><span class="p">:</span>  <span class="c1"># Only plot if there are data points.</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">polymer</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">polymer</span><span class="p">],</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">'k'</span><span class="p">)</span>
-
-<span class="c1"># Plot the reference line y = x.</span>
-<span class="n">x_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">x_vals</span><span class="p">,</span> <span class="s1">'k-'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'y = x'</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'experimental D values (m$^2$/s)'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'predicted D values (m$^2$/s)'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'DFV vs. experimental D values'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># Check if SFPPy path is already in sys.path</span>
+<span class="n">SFPPy_path</span> <span class="o">=</span> <span class="s1">'/home/olivi/natacha/python'</span>
+<span class="k">if</span> <span class="n">SFPPy_path</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SFPPy installation '</span><span class="si">{</span><span class="n">SFPPy_path</span><span class="si">}</span><span class="s2">' is already in sys.path."</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Add SFPPy path '</span><span class="si">{</span><span class="n">SFPPy_path</span><span class="si">}</span><span class="s2">' to sys.path."</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SFPPy_path</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7837,8 +7560,901 @@ $$</p>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
-<img alt="No description has been provided for this image" class="" src="data:image/png;base64,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isDAQIKCgihduvQ9X8+teHh4cPnyZbuPm91zZ1ft2rWpWbMmCxcupHXr1vz+++988803t32NrSUZAD///DOQXmt3/vz5bM2Ii4hIZjExMXTv3p3jx4/j5ubGtGnTeOGFF7JVlqeb4SS/u6eEeerUqbz//vtUqFCBDh068Nprr1GuXDnc3d05f/48u3fvJiYmhqeffppGjRrx0Ucf8dBDD931edq2bUvbtm1veTwsLIzg4GAGDhwIQHh4OKtXr2bmzJlMnDgRgG3btt3LJWZSunRpatSowU8//WQtR7hRcnJypsQ8ISEh2+ObTKY8kwQOHDiQqVOncvz4cZ566il8fW++3FAGW0syDhw4QEhICLNnz2b58uX06dOHdevW4eSU7+9XFRHJlrS0NCZOnMi4ceNIS0ujWrVqLF++nBo1ajg6NJG8w7gHQUFBxm+//XbHfklJScbHH39szJ49+15OkwlgrFixwvo8OTnZMJvNRlRUVKZ+w4cPN5o1a3ZXY69fv9547rnnMrWdPHnSiI+PNwzDMOLj441HH33U2LVr1y3HeOuttwwgyyNjjAxXr1419uzZY1y9evWuYrxfxMfHGx4eHoaLi4vx+eef5+i5rl27ZjRu3NgIDAw0DMMw4uLijBIlShiTJk3K9hh5/f0WEbHFyZMnjaefftr6f1Lv3r2NS5cuOToskftGfHz8TfO1G93TDPMXX3yRrX6urq53tW/93Th79iwWiyVLiUTp0qU5efJktsdp3bo127dv58qVK/j4+LBixQrq169PbGwswcHBGIaBYRgMHTr0tr+Njx07ltDQUOvzhISEO86+5kWFCxfmueee4z//+U+WenJ7e//99zl8+LC17KNMmTJ89tlndOnShaeffppatWrl6PlFRPKy9evX06NHD06ePIm7uzsff/zxHe87EZGbs/mmv6tXr2IYhrUW9siRI6xYsYJHHnmE1q1b2xzgndz4D98wjLv6YbB69eqbttetW5edO3dmexxXV1dcXV2z3T8vi4uLo2fPnjl+vePGjWPcuHGZ2jp27HjTmnQREUlnsVh47733GD9+PGlpaTz66KMsX76cxx57zNGhieRZNheCduzYkYULFwLpq0o0bNiQKVOm0KlTJ2bOnGlzgLdSokQJzGZzltnk06dP58iNeZJ+093nn3/ODz/8wMsvv+zocERE5AZxcXG0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3z61bdtW0dHRcnJy0rx587Ru3TrCMgAAsCsEZpS47OxszZw5Uw8//LASEhJ07733at++fZo4cWKR/mw5AABAWcCSDJSo5ORkhYaGavPmzZKkIUOGKDIyklvrAQAAu0VgRon55ptvNHToUJ07d07Ozs6aO3eunnjiCWaVAQCAXWNJBu5Ydna23nnnHQUGBurcuXO67777dODAAY0bN46wDAAA7B4zzLgjSUlJCgkJ0fbt2yVJwcHBWrRokapWrWpyZQAAACWDwIxi27lzp4YPH67ExES5urpqwYIFGjVqFLPKAACgXGFJBoosKytLb775prp27arExES1atVKcXFxCgsLIywDAIByhxlmFMn58+c1YsQI7dixQ5IUFhamefPmyc3NzeTKAAAASgeBGTb76quvNGLECCUlJcnNzU2LFi1SSEiI2WUBAACUKpZkoFC3bt3SK6+8oqCgICUlJal169Y6ePAgYRkAAFQIzDDDqnPnzmn48OHavXu3JGn8+PGaNWuWXF1dTa4MAADg7iAwo0Bbt25VSEiIkpOTVa1aNUVGRmro0KFmlwUAAHBXsSQDedy8eVMvvviievbsqeTkZLVt21aHDh0iLAMAgAqJGWbkkpCQoGHDhmnv3r2SpIkTJ2rmzJlycXExuTIAAABzEJiR44svvtCoUaN06dIlubu7a/HixRo0aJDZZQEAAJiKJRlQZmamnnvuOfXt21eXLl2Sn5+fDh8+TFgGAAAQM8wV3unTpzV06FAdOHBAkjRlyhS9++67cnJyMrkyAACAsoHAXIGtX79eo0eP1pUrV1SjRg1FRUWpX79+ZpcFAABQprAkowK6ceOGJk2apEGDBunKlSvq2LGj4uPjCcsAAAD5IDBXMD/99JP8/f01f/58SdI///lP7d69W02bNjW5MgAAgLKJJRkVyNq1azV27FhdvXpVtWrV0rJly9SrVy+zywIAACjTmGGuADIyMjRhwgQNGTJEV69eVUBAgOLj4wnLAAAANiAwl3MnT55Ux44dFRERIYvFomnTpik2NlaNGjUyuzQAAAC7wJKMcmzVqlUaP3680tPTVbt2ba1cuVJBQUFmlwUAAGBXmGEuh65du6axY8cqODhY6enpCgwM1Pfff09YBgAAKAYCczlz/PhxPfjgg1q8eLEsFotee+01ffXVV6pfv77ZpQEAANgllmSUI1FR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Xfv37y/wWjw9PXX58uU8+4va68JER0ere/fuOSHYljpv35audu3aNp0DQPERmAGUSa1atZKzs7MSEhL0yCOP5PuYzMxMjRgxQkOGDNH999+vMWPG6OjRozmze5L03Xff5XrOd999p7/97W9ydHS06RylqaTO7+TkpKysrFz7Ll68qBMnTigiIkJ///vfJUnffPPNHdV7244dO3T06FE9++yzBT7G1dVVAwcO1KpVq3Tq1Cm1aNFCvr6+d1Rf7dq1lZiYmLOdmpqq06dP52zb8npaLBY99NBDeuihh/Tqq6+qadOm2rBhg8LDw/N9fNu2bbVy5UqrdZWEzz//PNedOGyp88cff1SjRo3k6elZ6vUBFR2BGUCZVK1aNT3//PN69tlnlZ2drYCAAKWmpmrv3r2qWrWqQkNDNX36dF25ckVz585V1apVtWXLFo0ZM0Zffvllzji//vqrwsPDNX78eB0+fFjz5s3TBx98YPM5zL5GWzRr1kz79+/XmTNnVLVqVXl4eKhmzZqqVauWIiMjVb9+fSUkJNh0f9+/unHjhs6fP6+srCxduHBBW7du1YwZM9S7d2+NHDnS6nNHjBihPn366NixYwoODs51rDj1denSRVFRUerTp49q1qypV155JdcSj8Jez/vvv19ff/21goKCVKdOHe3fv1+///67WrZsWeA5e/TooZdeekmXL1+2unTjTiQlJSkuLk4bN26U9MfdXmypc8+ePbk+4Aqg9BCYAZRZb731lurUqaMZM2bo559/Vo0aNXJubbZz507Nnj1bsbGxql69uiRpxYoVatOmjRYtWqQnn3xSkjRy5EhlZGTowQcflKOjoyZNmqRx48bZdA6zr9FWzz//vEJDQ9WqVStlZGTo9OnTatasmVavXq3JkyfLy8tL9913n+bOnavAwMAi1bd161bVr19flSpVUs2aNeXt7a25c+cqNDRUDg7Wb7TUpUsXeXh46OTJkxo+fHiuYw4ODkWu76WXXtLPP/+s3r17y93dXW+99VauGWbJ+utZvXp17d69W7Nnz1ZqaqqaNm2qDz74QD179izwnK1bt1b79u21du1ajR8/vvAXrBi++OILdejQQXXq1JEkm+q8fv26NmzYoG3btpVKTQBysxh/XRAGAOVEYGCgfHx88ty7FyiKzZs36/nnn9ePP/5Y6C8JxdG3b18FBARo6tSpNj9nwYIF+vzzz3PuOQ6gdDHDDACAFY899pj+97//6dy5c/n+Oes7FRAQoGHDhhXpOZUrV9a8efNKvBYA+WOGGUC5xQwzAKAkEJgBAAAAK/jT2AAAAIAVBGYAAADACgIzAAAAYAWBGQAAALCCwAwAAABYQWAGAAAArCAwAwAAAFYQmAEAAAArCMwAAACAFQRmAAAAwAoCMwAAAGAFgRkAAACw4v8BaTnvdREOc04AAAAASUVORK5CYII="/>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Add SFPPy path '/home/olivi/natacha/python' to sys.path.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=aa24fca5-b18a-46a3-8906-0b72c3b828d2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Let's-define-four-migrants:-$i=0..3$-(Python-indexing)">Let's define four migrants: $i=0..3$ <small>(Python indexing)</small><a class="anchor-link" href="#Let's-define-four-migrants:-$i=0..3$-(Python-indexing)">¶</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=11996021-a32e-48c8-8402-3173c329cd28">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">patankar.loadpubchem</span> <span class="kn">import</span> <span class="n">migrant</span>
+<span class="n">list_of_migrants</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"toluene"</span><span class="p">,</span><span class="s2">"limonene"</span><span class="p">,</span><span class="s2">"BHT"</span><span class="p">,</span><span class="s2">"Irganox 1076"</span><span class="p">]</span>
+<span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="n">migrant</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">list_of_migrants</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;migrant object&gt;
+    Compound: toluene
+        Name: ['phenyl-methane', ' [...]  for HPLC, &gt;=99.9%']
+         cid: 1140
+         CAS: ['25013-04-1', '108-88-3']
+     M (min): 92.14
+     M_array: [92.14]
+     formula: C7H8
+      smiles: CC1=CC=CC=C1
+    InChiKey: YXFVVABEGXRONW-UHFFFAOYSA-N
+        logP: [2.7]
+   P' (calc): [1.23097093]
+&lt;migrant object&gt;
+    Compound: limonene
+        Name: ['1-Methyl-4-isoprop [...] pentene, p.a., 95%']
+         cid: 22311
+         CAS: ['138-86-3', '7705-14-8']
+     M (min): 136.23
+     M_array: [136.23]
+     formula: C10H16
+      smiles: CC1=CCC(CC1)C(=C)C
+    InChiKey: XMGQYMWWDOXHJM-UHFFFAOYSA-N
+        logP: [3.4]
+   P' (calc): [0.]
+&lt;migrant object&gt;
+    Compound: BHT
+        Name: ['2,6-di-t butyl-4-m [...] ', 'Antioxidant 29']
+         cid: 31404
+         CAS: ['128-37-0']
+     M (min): 220.35
+     M_array: [220.35]
+     formula: C15H24O
+      smiles: CC1=CC(=C(C(=C1)C(C)(C)C)O)C(C)(C)C
+    InChiKey: NLZUEZXRPGMBCV-UHFFFAOYSA-N
+        logP: [5.3]
+   P' (calc): [0.]
+&lt;migrant object&gt;
+    Compound: Irganox 1076
+        Name: ['Octadecyl 3(3,5dit [...] e', 'Tominokusu SS']
+         cid: 16386
+         CAS: ['2082-79-3']
+     M (min): 530.9
+     M_array: [530.9]
+     formula: C35H62O3
+      smiles: CCCCCCCCCCCCCCCCCCOC [...] )C(C)(C)C)O)C(C)(C)C
+    InChiKey: SSDSCDGVMJFTEQ-UHFFFAOYSA-N
+        logP: [13.8]
+   P' (calc): [0.]
+[&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;, &lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;, &lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;, &lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d4579d09-5779-4644-b18e-0dfb4a4459e9">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Let's-define-four-polymers-and-a-temperature-$T=50%C2%B0C$">Let's define four polymers and a temperature $T=50°C$<a class="anchor-link" href="#Let's-define-four-polymers-and-a-temperature-$T=50%C2%B0C$">¶</a></h2><ul>
+<li>PET with two states: dry PET (<code>gPET</code> for glassy PET) and plasticized PET (<code>wPET</code> for <em>wet</em> PET)</li>
+<li>PS (general purpose PS, unplasticized)</li>
+<li>PP (atactic polypropylene)</li>
+</ul>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=63632444-78a6-4394-90fa-c797e94507e1">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">patankar.layer</span> <span class="kn">import</span> <span class="n">gPET</span><span class="p">,</span> <span class="n">wPET</span><span class="p">,</span> <span class="n">PS</span><span class="p">,</span> <span class="n">PP</span>
+<span class="n">materials</span> <span class="o">=</span> <span class="n">gPET</span><span class="p">()</span><span class="o">+</span><span class="n">wPET</span><span class="p">()</span><span class="o">+</span><span class="n">PS</span><span class="p">()</span><span class="o">+</span><span class="n">PP</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6bdeb131-f071-4618-b13e-9da7ace8a87f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Now-we-incorporate-$i=0$-in-all-layers-materials">Now we incorporate $i=0$ in all layers <code>materials</code><a class="anchor-link" href="#Now-we-incorporate-$i=0$-in-all-layers-materials">¶</a></h2>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c890357e-82ab-4dce-8cf3-fbb0a0ec0548">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<blockquote>
+<p>Without inserting a substance in <code>multilayer</code>, all layers have the same diffusivity:
+<code>D: 1e-14 [m**2/s]</code></p>
+<p>The default $k=1$ value is also assigned by default to all layers.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6a694290-616d-4470-b976-f61f1bec543a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"D="</span><span class="p">,</span><span class="n">materials</span><span class="o">.</span><span class="n">D</span><span class="p">)</span> <span class="c1"># we print the default values assigned</span>
+<span class="n">materials</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>D= [1.e-14 1.e-14 1.e-14 1.e-14]
+
+[LAYER object version=1, contact=olivier.vitrac@agroparistech.fr]
+4-multilayer of LAYER object:
+-- [ layer 1 of 4 ] ---------- barrier rank=2 --------------
+      name: "layer in gPET"
+      type: "polymer"
+  material: "glassy PET"
+      code: "PET"
+         l: 0.0002 [m]
+         D: 1e-14 [m**2/s]
+         k: 1 [a.u.]
+        C0: 1000 [a.u.]
+-- [ layer 2 of 4 ] ---------- barrier rank=4 --------------
+      name: "layer in wPET"
+      type: "polymer"
+  material: "plasticized PET"
+      code: "PET"
+         l: 0.0002 [m]
+         D: 1e-14 [m**2/s]
+         k: 1 [a.u.]
+        C0: 1000 [a.u.]
+-- [ layer 3 of 4 ] ---------- barrier rank=3 --------------
+      name: "layer in PS"
+      type: "polymer"
+  material: "polystyrene"
+      code: "PS"
+         l: 0.0001 [m]
+         D: 1e-14 [m**2/s]
+         k: 1 [a.u.]
+        C0: 1000 [a.u.]
+-- [ layer 4 of 4 ] ---------- barrier rank=1 --------------
+      name: "layer in PP"
+      type: "polymer"
+  material: "isotactic polypropylene"
+      code: "PP"
+         l: 0.0003 [m]
+         D: 1e-14 [m**2/s]
+         k: 1 [a.u.]
+        C0: 1000 [a.u.]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;multilayer with 4 layers: ['layer in gPET', 'layer in wPET', 'layer in PS', 'layer in PP']&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4d16b9e8-dc5e-4fc5-9b8b-dc147118d06f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="We-insert-m%5B0%5D-in-all-layers">We insert <code>m[0]</code> in all layers<a class="anchor-link" href="#We-insert-m%5B0%5D-in-all-layers">¶</a></h3><blockquote>
+<p>All values of $D$ and $k$ are updated automatically;</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f7e07184-74db-4a22-b399-8b8a119d3813">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">materials</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">T</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">materials</span><span class="o">.</span><span class="n">D</span><span class="p">)</span> <span class="c1"># we print the default values automatically calculated at temperature T</span>
+<span class="n">materials</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>dimension mismatch, the last value has been repeated
+[1.86299457e-17 1.24073529e-15 2.64579177e-20 2.78163880e-12]
+
+[LAYER object version=1, contact=olivier.vitrac@agroparistech.fr]
+4-multilayer of LAYER object:
+-- [ layer 1 of 4 ] ---------- barrier rank=1 --------------
+      name: "layer in gPET"
+      type: "polymer"
+  material: "glassy PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 76 [degC]
+         l: 0.0002 [m]
+         D: 1.863e-17 [m**2/s]
+          = DFV(gPET,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;,T=50.0 degC)
+         k: 0.565 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 2 of 4 ] ---------- barrier rank=3 --------------
+      name: "layer in wPET"
+      type: "polymer"
+  material: "plasticized PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 46 [degC]
+         l: 0.0002 [m]
+         D: 1.241e-15 [m**2/s]
+          = DFV(wPET,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;,T=50.0 degC)
+         k: 0.565 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 3 of 4 ] ---------- barrier rank=4 --------------
+      name: "layer in PS"
+      type: "polymer"
+  material: "polystyrene"
+      code: "PS"
+   crystal: 0
+        Tg: 100 [degC]
+         l: 0.0001 [m]
+         D: 2.646e-20 [m**2/s]
+          = DFV(PS,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;,T=50.0 degC)
+         k: 0.3672 [a.u.]
+          = kFHP(&lt;styrene&gt;,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 4 of 4 ] ---------- barrier rank=2 --------------
+      name: "layer in PP"
+      type: "polymer"
+  material: "isotactic polypropylene"
+      code: "PP"
+   crystal: 0.5
+        Tg: 0 [degC]
+         l: 0.0003 [m]
+         D: 2.782e-12 [m**2/s]
+          = Dpiringer(PP,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;,T=50.0 degC)
+         k: 1.106 [a.u.]
+          = kFHP(&lt;propylene&gt;,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;multilayer with 4 layers: ['layer in gPET', 'layer in wPET', 'layer in PS', 'layer in PP']&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f87ac976-e11a-4cb3-a304-4f9412fe5b4b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><blockquote>
+<p>We note that the diffusivities are different for all four layers:</p>
+<blockquote>
+<p><code>[1.86299457e-17 1.24073529e-15 2.64579177e-20 2.78163880e-12]</code></p>
+</blockquote>
+<p>The output is giving details on the models, which were used
+| Reported model                                               | Model       | Interpretation                                               |
+| ------------------------------------------------------------ | ----------- | ------------------------------------------------------------ |
+| <code>DFV(gPET,&lt;migrant: Toluene-13C - M=92.14 g/mol&gt;,T=50.0 degC)</code> | <code>DFV</code>       | best model for toluene when Free-volume parameters are available for this polymer |
+| <code>DFV(wPET,&lt;migrant: Toluene-13C - M=92.14 g/mol&gt;,T=50.0 degC)</code> | <code>DFV</code>       | best  model for toluene when Free-volume parameters are available for this polymer |
+| <code>DFV(gPS,&lt;migrant: Toluene-13C - M=92.14 g/mol&gt;,T=50.0 degC)</code> | <code>DFV</code>       | best  model for toluene when Free-volume parameters are available for this polymer |
+| <code>Dpiringer(PP,&lt;migrant: Toluene-13C - M=92.14 g/mol&gt;,T=50.0 degC)</code> | <code>Dpiringer</code> | fall-back mechanism                                          |</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=50203f8f-474a-44c3-a4c8-27ed07dfa258">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="We-insert-m%5B1%5D-in-all-layers">We insert <code>m[1]</code> in all layers<a class="anchor-link" href="#We-insert-m%5B1%5D-in-all-layers">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=9c76fa92-3a5b-4746-8da0-8f2d327b32f1">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">materials</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">T</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">materials</span><span class="o">.</span><span class="n">D</span><span class="p">)</span> <span class="c1"># we print the default values automatically calculated at temperature T</span>
+<span class="n">materials</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>dimension mismatch, the last value has been repeated
+[2.70631048e-19 1.72090422e-15 3.74480502e-21 1.39807262e-12]
+
+[LAYER object version=1, contact=olivier.vitrac@agroparistech.fr]
+4-multilayer of LAYER object:
+-- [ layer 1 of 4 ] ---------- barrier rank=1 --------------
+      name: "layer in gPET"
+      type: "polymer"
+  material: "glassy PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 76 [degC]
+         l: 0.0002 [m]
+         D: 2.706e-19 [m**2/s]
+          = Dwelle(gPET,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;,T=50.0 degC)
+         k: 0.8452 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 2 of 4 ] ---------- barrier rank=3 --------------
+      name: "layer in wPET"
+      type: "polymer"
+  material: "plasticized PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 46 [degC]
+         l: 0.0002 [m]
+         D: 1.721e-15 [m**2/s]
+          = Dpiringer(wPET,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;,T=50.0 degC)
+         k: 0.8452 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 3 of 4 ] ---------- barrier rank=4 --------------
+      name: "layer in PS"
+      type: "polymer"
+  material: "polystyrene"
+      code: "PS"
+   crystal: 0
+        Tg: 100 [degC]
+         l: 0.0001 [m]
+         D: 3.745e-21 [m**2/s]
+          = Dwelle(PS,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;,T=50.0 degC)
+         k: 0.5494 [a.u.]
+          = kFHP(&lt;styrene&gt;,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 4 of 4 ] ---------- barrier rank=2 --------------
+      name: "layer in PP"
+      type: "polymer"
+  material: "isotactic polypropylene"
+      code: "PP"
+   crystal: 0.5
+        Tg: 0 [degC]
+         l: 0.0003 [m]
+         D: 1.398e-12 [m**2/s]
+          = Dpiringer(PP,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;,T=50.0 degC)
+         k: 4.322 [a.u.]
+          = kFHP(&lt;propylene&gt;,&lt;migrant: 1-Methyl [...] lohexene - M=136.23 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[15]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;multilayer with 4 layers: ['layer in gPET', 'layer in wPET', 'layer in PS', 'layer in PP']&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a68e29bf-ac4a-4408-8770-6420d3b5873f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><blockquote>
+<p>We note that the diffusivities are different for all four layers:</p>
+<blockquote>
+<p><code>[2.70631048e-19 1.72090422e-15 3.74480502e-21 1.39807262e-12]</code></p>
+</blockquote>
+<p>The output is giving details on the models, which were used</p>
+<p>| Reported model                                               | Model       | Interpretation                                        |
+| ------------------------------------------------------------ | ----------- | ----------------------------------------------------- |
+| <code>Dwelle(gPET,&lt;migrant: Cyclohex [...] )-, (R)- - M=136.23 g/mol&gt;,T=50.0 degC)</code> | <code>Dwelle</code>    | best model for glassy PET when <code>DFV</code> is not available |
+| <code>Dpiringer(wPET,&lt;migrant: Cyclohex [...] )-, (R)- - M=136.23 g/mol&gt;,T=50.0 degC)</code> | <code>Dpiringer</code> | fall-back mechanism                                   |
+| <code>Dwelle(PS,&lt;migrant: Cyclohex [...] )-, (R)- - M=136.23 g/mol&gt;,T=50.0 degC)</code> | <code>Dwelle</code>    | best model for glassy PS when <code>DFV</code> is not available  |
+| <code>Dpiringer(PP,&lt;migrant: Cyclohex [...] )-, (R)- - M=136.23 g/mol&gt;,T=50.0 degC)</code> | <code>Dpiringer</code> | fall-back mechanism                                   |</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=dbc86107-f346-408b-b1be-6a4b729b1eff">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="We-can-repeat-the-mechanism-for-m%5B2%5D-and-m%5B3%5D">We can repeat the mechanism for <code>m[2]</code> and <code>m[3]</code><a class="anchor-link" href="#We-can-repeat-the-mechanism-for-m%5B2%5D-and-m%5B3%5D">¶</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=19160e6d-3174-4f8d-9b06-7042d2d73878">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"D for"</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">compound</span><span class="p">,</span><span class="s2">"="</span><span class="p">,</span><span class="n">materials</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">D</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"D for"</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">compound</span><span class="p">,</span><span class="s2">"="</span><span class="p">,</span><span class="n">materials</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">D</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>D for BHT = [2.13915138e-20 5.73730849e-16 8.90819931e-24 4.66102284e-13]
+D for Irganox 1076 = [1.88965546e-23 2.87174640e-17 4.78703852e-31 2.33302351e-14]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4fa095f6-9fa7-4410-ba35-5fe4bb9b3a99">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">materials</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+[LAYER object version=1, contact=olivier.vitrac@agroparistech.fr]
+4-multilayer of LAYER object:
+-- [ layer 1 of 4 ] ---------- barrier rank=1 --------------
+      name: "layer in gPET"
+      type: "polymer"
+  material: "glassy PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 76 [degC]
+         l: 0.0002 [m]
+         D: 2.139e-20 [m**2/s]
+          = Dwelle(gPET,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;,T=50.0 degC)
+         k: 1.387 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 2 of 4 ] ---------- barrier rank=3 --------------
+      name: "layer in wPET"
+      type: "polymer"
+  material: "plasticized PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 46 [degC]
+         l: 0.0002 [m]
+         D: 5.737e-16 [m**2/s]
+          = Dpiringer(wPET,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;,T=50.0 degC)
+         k: 1.387 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 3 of 4 ] ---------- barrier rank=4 --------------
+      name: "layer in PS"
+      type: "polymer"
+  material: "polystyrene"
+      code: "PS"
+   crystal: 0
+        Tg: 100 [degC]
+         l: 0.0001 [m]
+         D: 8.908e-24 [m**2/s]
+          = Dwelle(PS,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;,T=50.0 degC)
+         k: 0.9015 [a.u.]
+          = kFHP(&lt;styrene&gt;,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 4 of 4 ] ---------- barrier rank=2 --------------
+      name: "layer in PP"
+      type: "polymer"
+  material: "isotactic polypropylene"
+      code: "PP"
+   crystal: 0.5
+        Tg: 0 [degC]
+         l: 0.0003 [m]
+         D: 4.661e-13 [m**2/s]
+          = Dpiringer(PP,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;,T=50.0 degC)
+         k: 7.093 [a.u.]
+          = kFHP(&lt;propylene&gt;,&lt;migrant: 2,6-di-t [...] ylphenol - M=220.35 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[19]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;multilayer with 4 layers: ['layer in gPET', 'layer in wPET', 'layer in PS', 'layer in PP']&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=860eaa06-7111-4992-923d-512927cbcc2d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">materials</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+[LAYER object version=1, contact=olivier.vitrac@agroparistech.fr]
+4-multilayer of LAYER object:
+-- [ layer 1 of 4 ] ---------- barrier rank=1 --------------
+      name: "layer in gPET"
+      type: "polymer"
+  material: "glassy PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 76 [degC]
+         l: 0.0002 [m]
+         D: 1.89e-23 [m**2/s]
+          = Dwelle(gPET,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;,T=50.0 degC)
+         k: 3.431 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 2 of 4 ] ---------- barrier rank=3 --------------
+      name: "layer in wPET"
+      type: "polymer"
+  material: "plasticized PET"
+      code: "PET"
+   crystal: 0.35
+        Tg: 46 [degC]
+         l: 0.0002 [m]
+         D: 2.872e-17 [m**2/s]
+          = Dpiringer(wPET,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;,T=50.0 degC)
+         k: 3.431 [a.u.]
+          = kFHP(&lt;ethylene terephthalate&gt;,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 3 of 4 ] ---------- barrier rank=4 --------------
+      name: "layer in PS"
+      type: "polymer"
+  material: "polystyrene"
+      code: "PS"
+   crystal: 0
+        Tg: 100 [degC]
+         l: 0.0001 [m]
+         D: 4.787e-31 [m**2/s]
+          = Dwelle(PS,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;,T=50.0 degC)
+         k: 2.23 [a.u.]
+          = kFHP(&lt;styrene&gt;,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+-- [ layer 4 of 4 ] ---------- barrier rank=2 --------------
+      name: "layer in PP"
+      type: "polymer"
+  material: "isotactic polypropylene"
+      code: "PP"
+   crystal: 0.5
+        Tg: 0 [degC]
+         l: 0.0003 [m]
+         D: 2.333e-14 [m**2/s]
+          = Dpiringer(PP,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;,T=50.0 degC)
+         k: 17.55 [a.u.]
+          = kFHP(&lt;propylene&gt;,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;)
+        C0: 1000 [a.u.]
+         T: 50 [degC]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[20]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;multilayer with 4 layers: ['layer in gPET', 'layer in wPET', 'layer in PS', 'layer in PP']&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=df74b0f8-a463-4816-89b5-ac0ef8a73a8d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Adapt-automatically-$k$-value-for-food">Adapt automatically $k$ value for food<a class="anchor-link" href="#Adapt-automatically-$k$-value-for-food">¶</a></h2><blockquote>
+<p>We choose here ethanol as food simulant</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b62bc6f3-7318-462f-9c9a-d7876e698787">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [45]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">patankar.food</span> <span class="kn">import</span> <span class="n">ethanol</span>
+<span class="n">contactmedium</span> <span class="o">=</span> <span class="n">ethanol</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="nb">repr</span><span class="p">(</span><span class="n">contactmedium</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Food object "ethanol" (ethanol = from pure ethanol down to ethanol 95%) with properties:
+        CF0: 0 [a.u.]
+contacttime: 864000 [s]
+    density: 1000 [kilogram / meter ** 3]
+          h: 0.0001 [meter / second]
+surfacearea: 0.06 [meter ** 2]
+     volume: 0.001 [meter ** 3]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[45]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>'&lt;ethanol: ethanol&gt;'</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8ecfd766-7390-434c-b751-4e248465659c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Add-m%5B0%5D-to-contactmedium">Add <code>m[0]</code> to <code>contactmedium</code><a class="anchor-link" href="#Add-m%5B0%5D-to-contactmedium">¶</a></h3><blockquote>
+<p>This step makes appear the field <code>k0</code></p>
+<blockquote>
+<p><code>  k0: 0.17613565 [a.u.]</code></p>
+<p><code>     = kFHP(&lt;ethanol&gt;,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;)</code></p>
+</blockquote>
+</blockquote>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=9b10c3d0-84d8-49aa-aa89-e0cddb830c02">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [58]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">contactmedium</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Food object "ethanol" (ethanol = from pure ethanol down to ethanol 95%) with properties:
+        CF0: 0 [a.u.]
+contacttime: 864000 [s]
+    density: 1000 [kilogram / meter ** 3]
+          h: 0.0001 [meter / second]
+         k0: 0.17613565 [a.u.]
+           = kFHP(&lt;ethanol&gt;,&lt;migrant: phenyl-methane - M=92.14 g/mol&gt;)
+surfacearea: 0.06 [meter ** 2]
+     volume: 0.001 [meter ** 3]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[58]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;ethanol: ethanol&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=fa9d7f92-60af-476d-85a8-0d3081d8bc8a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>print('k0 for ',m[0].compound," = ",contactmedium.k0)</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8bd43c26-6e6b-4efe-ace2-832fa1ccc411">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [61]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'k0 for '</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">compound</span><span class="p">,</span><span class="s2">" = "</span><span class="p">,</span><span class="n">contactmedium</span><span class="o">.</span><span class="n">k0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>k0 for  toluene  =  [0.17613565]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1cb562fd-0fdf-4995-bab2-d2cba16bb74c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="We-repeat-the-process-for-m%5B1%5D,-m%5B2%5D-and-m%5B3%5D">We repeat the process for <code>m[1]</code>, <code>m[2]</code> and <code>m[3]</code><a class="anchor-link" href="#We-repeat-the-process-for-m%5B1%5D,-m%5B2%5D-and-m%5B3%5D">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=393e854e-de50-4d69-8e8d-a68dd0f6f235">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [66]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'k0 for '</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">compound</span><span class="p">,</span><span class="s2">" = "</span><span class="p">,</span><span class="n">contactmedium</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">k0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'k0 for '</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">compound</span><span class="p">,</span><span class="s2">" = "</span><span class="p">,</span><span class="n">contactmedium</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">k0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'k0 for '</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">compound</span><span class="p">,</span><span class="s2">" = "</span><span class="p">,</span><span class="n">contactmedium</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">migrant</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">k0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>k0 for  limonene  =  [0.55908817]
+k0 for  BHT  =  [0.25828644]
+k0 for  Irganox 1076  =  [0.63893733]
+</pre>
 </div>
 </div>
 </div>

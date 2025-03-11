@@ -182,7 +182,7 @@ Finally by noticing that $C_{i,k}\cdot\left(1-c\right)\cdot\left(1-\epsilon\righ
 $$
 k_{i,k} =\frac{P_{i,sat}^{(T)}V_i^m}{\left(1-c_k\right)\cdot\left(1-\epsilon_k\right)}\times\gamma_{i,k}
 $$
-The only assumption made here is that the sorption isotherm is linear and that the volatility of the substances is low to neglect the amount of substances in the gas phase.
+The only assumptions made here are that the sorption isotherm is linear and that the volatility of the substances is low enough to neglect the amount of substances in the gas phase.
 
 > This model is fully implemented in `SFPPy` within the `kFH` model. For non-volatile substances and mass transfer through dense phases, it is convenient to scale all $k_{i,k}^H$ and consequently all fugacities with $P_{i,sat}^{(T)}=1$.
 > The correct $P_{i,sat}^{(T)}$ value needs to be assigned in the presence of an air layer or of a porous medium since $k_{i,air}$ is by definition $\frac{1}{RT}$.

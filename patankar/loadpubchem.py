@@ -701,7 +701,7 @@ Dmodel_extensions = {
             }, # next model
 
     "Dwelle": {
-    "description": "hole Free-Volume theory model for toluene in many polymers",
+    "description": "Frank-Welle diffusivity model based on VdW volumes",
         "objects": ["material"],
           "rules": [ # we assume AND between all conditions
                     # Condition on the material (always first)

@@ -328,7 +328,8 @@ class Dpiringer(Diffusivities):
     description = &#34;Piringer&#39;s overestimate of diffusion coefficients&#34;
     model = &#34;empirical&#34;
     theory = &#34;scaling&#34;
-    parameters = {&#34;M&#34;: {&#34;description&#34;: &#34;molecular mass&#34;,&#34;units&#34;: &#34;g/mol&#34;},
+    parameters = {&#34;polymer&#34;:{&#34;polymer&#34;: &#34;polymer code/name&#34;, &#34;units&#34;:&#34;N/A&#34;},
+                  &#34;M&#34;: {&#34;description&#34;: &#34;molecular mass&#34;,&#34;units&#34;: &#34;g/mol&#34;},
                   &#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;}
                 }
     _available_to_import = True # this model can be directly imported
@@ -863,7 +864,8 @@ class DFV(Diffusivities):
     description = &#34;Hole Free Volume model - current implementation is limited to toluene&#34;
     model = &#34;theory&#34;
     theory = [&#34;free-volume&#34;,&#34;scaling&#34;]
-    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+    parameters = {&#34;polymer&#34;:{&#34;polymer&#34;: &#34;polymer code/name&#34;, &#34;units&#34;:&#34;N/A&#34;},
+                  &#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;}
                 }
     _available_to_import = True # this model can be directly imported
@@ -1001,7 +1003,8 @@ class Dwelle(Diffusivities):
     description = &#34;Welle diffusivity model&#34;
     model = &#34;empirical&#34;
     theory = &#34;scaling&#34;
-    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+    parameters = {&#34;polymer&#34;:{&#34;polymer&#34;: &#34;polymer code/name&#34;, &#34;units&#34;:&#34;N/A&#34;},
+                  &#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Vvdw&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
                 }
@@ -2203,7 +2206,8 @@ are looked up and stored as instance attributes.</p></div>
     description = &#34;Hole Free Volume model - current implementation is limited to toluene&#34;
     model = &#34;theory&#34;
     theory = [&#34;free-volume&#34;,&#34;scaling&#34;]
-    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+    parameters = {&#34;polymer&#34;:{&#34;polymer&#34;: &#34;polymer code/name&#34;, &#34;units&#34;:&#34;N/A&#34;},
+                  &#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;}
                 }
     _available_to_import = True # this model can be directly imported
@@ -2586,7 +2590,8 @@ are looked up and stored as instance attributes.</p></div>
     description = &#34;Piringer&#39;s overestimate of diffusion coefficients&#34;
     model = &#34;empirical&#34;
     theory = &#34;scaling&#34;
-    parameters = {&#34;M&#34;: {&#34;description&#34;: &#34;molecular mass&#34;,&#34;units&#34;: &#34;g/mol&#34;},
+    parameters = {&#34;polymer&#34;:{&#34;polymer&#34;: &#34;polymer code/name&#34;, &#34;units&#34;:&#34;N/A&#34;},
+                  &#34;M&#34;: {&#34;description&#34;: &#34;molecular mass&#34;,&#34;units&#34;: &#34;g/mol&#34;},
                   &#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;}
                 }
     _available_to_import = True # this model can be directly imported
@@ -3443,7 +3448,8 @@ are looked up and stored as instance attributes.</p></div>
     description = &#34;Welle diffusivity model&#34;
     model = &#34;empirical&#34;
     theory = &#34;scaling&#34;
-    parameters = {&#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
+    parameters = {&#34;polymer&#34;:{&#34;polymer&#34;: &#34;polymer code/name&#34;, &#34;units&#34;:&#34;N/A&#34;},
+                  &#34;T&#34;: {&#34;description&#34;: &#34;temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Tg&#34;: {&#34;description&#34;: &#34;glass transition temperature&#34;,&#34;units&#34;: &#34;degC&#34;},
                   &#34;Vvdw&#34;: {&#34;description&#34;: &#34;molecular volume 3D&#34;,&#34;units&#34;: &#34;Å³&#34;}
                 }

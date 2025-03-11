@@ -259,7 +259,8 @@ class Dpiringer(Diffusivities):
     description = "Piringer's overestimate of diffusion coefficients"
     model = "empirical"
     theory = "scaling"
-    parameters = {"M": {"description": "molecular mass","units": "g/mol"},
+    parameters = {"polymer":{"polymer": "polymer code/name", "units":"N/A"},
+                  "M": {"description": "molecular mass","units": "g/mol"},
                   "T": {"description": "temperature","units": "degC"}
                 }
     _available_to_import = True # this model can be directly imported
@@ -794,7 +795,8 @@ class DFV(Diffusivities):
     description = "Hole Free Volume model - current implementation is limited to toluene"
     model = "theory"
     theory = ["free-volume","scaling"]
-    parameters = {"T": {"description": "temperature","units": "degC"},
+    parameters = {"polymer":{"polymer": "polymer code/name", "units":"N/A"},
+                  "T": {"description": "temperature","units": "degC"},
                   "Tg": {"description": "glass transition temperature","units": "degC"}
                 }
     _available_to_import = True # this model can be directly imported
@@ -932,7 +934,8 @@ class Dwelle(Diffusivities):
     description = "Welle diffusivity model"
     model = "empirical"
     theory = "scaling"
-    parameters = {"T": {"description": "temperature","units": "degC"},
+    parameters = {"polymer":{"polymer": "polymer code/name", "units":"N/A"},
+                  "T": {"description": "temperature","units": "degC"},
                   "Tg": {"description": "glass transition temperature","units": "degC"},
                   "Vvdw": {"description": "molecular volume 3D","units": "Å³"}
                 }
