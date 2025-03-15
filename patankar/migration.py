@@ -117,7 +117,7 @@ import pandas as pd
 from patankar.layer import layer, check_units, layerLink
 from patankar.food import foodphysics,foodlayer
 
-__all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'colormap', 'compute_fc_profile_PBC', 'compute_fv_profile', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_valid_figure', 'layer', 'layerLink', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear']
+__all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'cleantex', 'colormap', 'compute_fc_profile_PBC', 'compute_fv_profile', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_latex_available', 'is_valid_figure', 'layer', 'layerLink', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -129,7 +129,7 @@ __email__ = "olivier.vitrac@agroparistech.fr"
 __version__ = "1.24"
 
 # Plot configuration (preferred units)
-plotconfig = {
+plotconfig_default = {
     "tscale": 24 * 3600, # days used as time scale
     "tunit": "days",
     "lscale": 1e-6, # µm
@@ -495,7 +495,22 @@ def cleantex(text,islatexavailable=_LaTeXavailable):
 
 # Define PrintableFigure class
 class PrintableFigure(Figure):
-    """Custom Figure class with print methods."""
+    """Custom Figure class with show and print methods."""
+
+    def show(self, display_mode=None):
+        """
+        Show figure based on the environment:
+        - In Jupyter: Uses display(fig)
+        - In scripts or GUI mode: Uses plt.show()
+        """
+        try:
+            get_ipython  # Check if running inside Jupyter
+            if display_mode is None or display_mode == "auto":
+                display(self)  # Preferred for Jupyter
+            else:
+                super().show()  # Use Matplotlib’s default show
+        except NameError:
+            super().show()  # Use Matplotlib’s default show in scripts
 
     def print(self, filename="", destinationfolder=os.getcwd(), overwrite=False, dpi=300):
         print_figure(self, filename, destinationfolder, overwrite, dpi)
@@ -506,25 +521,455 @@ class PrintableFigure(Figure):
     def print_pdf(self, filename="", destinationfolder=os.getcwd(), overwrite=False, dpi=300):
         print_pdf(self, filename, destinationfolder, overwrite, dpi)
 
-# ✅ Override `plt.figure()` and `plt.subplots()` to always use PrintableFigure
+# ✅ Store original references
 original_plt_figure = plt.figure
 original_plt_subplots = plt.subplots
 
+# ✅ Override `plt.figure()` to use PrintableFigure
 def custom_plt_figure(*args, **kwargs):
-    """Ensure all figures are PrintableFigure."""
+    """Ensure all figures use PrintableFigure."""
     kwargs.setdefault("FigureClass", PrintableFigure)
     return original_plt_figure(*args, **kwargs)
 
+# ✅ Override `plt.subplots()` to return PrintableFigure
 def custom_plt_subplots(*args, **kwargs):
     """Ensure plt.subplots() returns a PrintableFigure."""
-    kwargs.setdefault("FigureClass", PrintableFigure)
-    fig, ax = original_plt_subplots(*args, **kwargs)
+    fig, ax = original_plt_subplots(*args, **kwargs)  # Create normal figure
+    fig.__class__ = PrintableFigure  # Explicitly convert to PrintableFigure
     return fig, ax
 
-# Apply overrides
+# ✅ Apply overrides
 plt.figure = custom_plt_figure
 plt.subplots = custom_plt_subplots
-plt.rcParams['figure.figsize'] = (8, 6)  # Optional default size
+plt.FigureClass = PrintableFigure  # Ensure all figures default to PrintableFigure globally
+plt.rcParams['figure.figsize'] = (8, 6)  # Optional: Default size
+
+# %% Widget
+def create_simulation_widget():
+    """
+    Creates a widget interface for launching a migration simulation.
+
+    The UI consists of four horizontally arranged dropdowns representing:
+      - Substance: selected from mysubstances.keys()
+      - Contact (medium): selected from mycontacts.keys()
+      - Packaging geometry: selected from mypackaging.keys()
+      - Material (layer): selected from mymaterials.keys()
+
+    These dropdowns are displayed in a row with operator labels:
+        substance % medium << geom >> layers
+
+    Below, a text field allows the user to give a simulation name (default "mig1"),
+    and a "Launch Simulation" button triggers the simulation, which computes:
+
+        result = substance % medium << geom >> layers >> medium
+
+    The resulting simulation object is stored in the global dictionary mymigration.
+
+    Returns:
+      An ipywidgets.VBox instance containing the complete UI.
+    """
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError("ipywidgets and IPython are required for this widget interface.") from e
+
+    from patankar.loadpubchem import migrant
+    from patankar.geometry import Packaging3D
+    import builtins
+    # Ensure global dictionaries exist:
+    if not hasattr(builtins, "mysubstances"):
+        builtins.mysubstances = {}
+    if not hasattr(builtins, "mycontacts"):
+        builtins.mycontacts = {}
+    if not hasattr(builtins, "mypackaging"):
+        builtins.mypackaging = {}
+    if not hasattr(builtins, "mymaterials"):
+        builtins.mymaterials = {}
+    if not hasattr(builtins, "mymigration"):
+        builtins.mymigration = {}
+    global mysubstances, mycontacts, mypackaging, mymaterials, mymigration
+    mysubstances = builtins.mysubstances
+    mycontacts = builtins.mycontacts
+    mypackaging = builtins.mypackaging
+    mymaterials = builtins.mymaterials
+    mymigration = builtins.mymigration
+
+    # Create dropdowns for each parameter.
+    substance_dropdown = widgets.Dropdown(
+         options=list(mysubstances.keys()),
+         description="Substance:",
+         layout=widgets.Layout(width="200px")
+    )
+    medium_dropdown = widgets.Dropdown(
+         options=list(mycontacts.keys()),
+         description="Contact:",
+         layout=widgets.Layout(width="200px")
+    )
+    geom_dropdown = widgets.Dropdown(
+         options=list(mypackaging.keys()),
+         description="Packaging:",
+         layout=widgets.Layout(width="200px")
+    )
+    layers_dropdown = widgets.Dropdown(
+         options=list(mymaterials.keys()),
+         description="Material:",
+         layout=widgets.Layout(width="200px")
+    )
+
+    # Create labels for operator symbols.
+    op1 = widgets.Label(value=" % ")
+    op2 = widgets.Label(value=" << ")
+    op3 = widgets.Label(value=" >> ")
+
+    # Arrange the four panels and operators horizontally.
+    panels = widgets.HBox([substance_dropdown, op1, medium_dropdown, op2, geom_dropdown, op3, layers_dropdown])
+
+    # Simulation name input.
+    sim_name_text = widgets.Text(
+         value="mig1",
+         description="Sim Name:",
+         layout=widgets.Layout(width="300px")
+    )
+
+    # Launch button.
+    launch_button = widgets.Button(
+         description="Launch Simulation",
+         button_style="success",
+         tooltip="Click to launch the simulation"
+    )
+
+    # Output area.
+    sim_output = widgets.Output()
+
+    # Callback to launch simulation.
+    def launch_simulation(b):
+         with sim_output:
+             sim_output.clear_output()
+             try:
+                 substance = mysubstances[substance_dropdown.value]
+                 medium = mycontacts[medium_dropdown.value]
+                 geom = mypackaging[geom_dropdown.value]
+                 layers = mymaterials[layers_dropdown.value]
+             except KeyError as e:
+                 print("Error: one of the selections is missing:", e)
+                 return
+             if not isinstance(substance,migrant):
+                 raise TypeError(f"mysubstances['{substance_dropdown.value}'] must be a migrant not a {type(substance).__name__}")
+             if not isinstance(medium,foodphysics):
+                 raise TypeError(f"mycontacts['{medium_dropdown.value}'] must be a foodphysics not a {type(medium).__name__}")
+             if not isinstance(geom,Packaging3D):
+                 raise TypeError(f"mypackaging['{geom_dropdown.value}'] must be a Packaging3D not a {type(geom).__name__}")
+             if not isinstance(layers,layer):
+                 raise TypeError(f"mymaterials['{layers_dropdown.value}'] must be a layer not a {type(layers).__name__}")
+             try:
+                 # Compute the simulation result using overloaded operators.
+                 result = substance % medium << geom >> layers >> medium
+             except Exception as e:
+                 print("Error during simulation computation:", e)
+                 return
+             sim_name = sim_name_text.value.strip()
+             if not sim_name:
+                 print("Please provide a simulation name.")
+                 return
+             mymigration[sim_name] = result
+             print(f"Simulation '{sim_name}' launched successfully.")
+             print("Result:", result)
+             print("Current simulations:", list(mymigration.keys()))
+    launch_button.on_click(launch_simulation)
+
+    # Arrange the complete UI.
+    ui = widgets.VBox([panels, sim_name_text, launch_button, sim_output])
+    return ui
+
+
+def create_plotmigration_widget():
+    """
+    Creates a widget interface for managing simulation plots and point evaluations.
+    It uses the global dictionary mymigration (keys like "mig1", etc.) to let the user
+    select a simulation instance, then provides:
+
+      Panel 1 (Plot Panel):
+         - A dropdown for simulation key.
+         - A checkbox (plotSML, default True).
+         - A button "Plot CF" which calls: simulation.plotCF(plotSML=plotSML)
+         - A slider for nmax (5–30, default 15).
+         - A button "Plot Cx" which calls: simulation.plotCx(nmax=nmax)
+
+      Panel 2 (Point Evaluation):
+         - A FloatText for ttarget.
+         - A dropdown for tunit.
+         - A button "Evaluate Point" which computes:
+               CFtarget = simulation.interp_CF(ttarget * tscale)
+             and prints CF and CF/SML.
+
+      Panel 3 (Tabulated Values):
+         - Two FloatTexts for trange_min and trange_max.
+         - A slider for numberofvalues (3–500, default 5).
+         - A button "Generate Table" that builds a table of t and CF values.
+
+    The panels are arranged vertically. All outputs are shown in an output area.
+
+    The simulation instance is retrieved as:
+         simulation = mymigration[selected_key]
+
+    Note: The function uses check_units((1, tunit))[0].item() to compute tscale.
+    """
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display, clear_output
+        import numpy as np
+    except ImportError as e:
+        raise ImportError("ipywidgets, IPython and numpy are required for this widget.") from e
+
+    # Access the global dictionary mymigration
+    import builtins
+    if not hasattr(builtins, "mymigration"):
+        builtins.mymigration = {}
+    global mymigration
+    mymigration = builtins.mymigration
+
+    # --- Interactive Table ---
+    def interactive_table(df):
+        # Create a slider that allows selection of a row range.
+        range_slider = widgets.IntRangeSlider(
+             value=[0, len(df)],
+             min=0,
+             max=len(df),
+             step=1,
+             description='Rows:',
+             continuous_update=False,
+             layout=widgets.Layout(width='80%')
+        )
+        out = widgets.Output()
+        def update_table(change):
+             with out:
+                  clear_output()
+                  start, end = range_slider.value
+                  display(df.iloc[start:end])
+        range_slider.observe(update_table, names='value')
+        update_table(None)
+        return widgets.VBox([range_slider, out])
+
+
+    # --- Simulation selection ---
+    sim_keys = list(mymigration.keys())
+    if not sim_keys:
+        sim_keys = ["<none>"]
+    sim_dropdown = widgets.Dropdown(
+         options=sim_keys,
+         value=sim_keys[0],
+         description="Sim:",
+         layout=widgets.Layout(width="200px")
+    )
+
+    # --- Panel 1: Plotting ---
+    plotSML_checkbox = widgets.Checkbox(
+         value=True,
+         description="Plot SML"
+    )
+    plotCF_button = widgets.Button(
+         description="Plot CF",
+         button_style="info"
+    )
+    nmax_slider = widgets.IntSlider(
+         value=15,
+         min=5,
+         max=30,
+         step=1,
+         description="nmax:",
+         continuous_update=False,
+         layout=widgets.Layout(width="200px")
+    )
+    plotCx_button = widgets.Button(
+         description="Plot Cx",
+         button_style="info"
+    )
+    plot_out = widgets.Output()
+
+    plot_panel = widgets.VBox([
+         widgets.HBox([sim_dropdown, plotSML_checkbox]),
+         widgets.HBox([plotCF_button, nmax_slider, plotCx_button]),
+         plot_out
+    ])
+
+    # --- Panel 2: Point Evaluation ---
+    tunit_dropdown = widgets.Dropdown(
+         options=["s", "min", "h", "days", "weeks", "months", "years"],
+         value="days",
+         description="tunit:"
+    )
+    ttarget_text = widgets.FloatText(
+         value=1.0,
+         description="ttarget:"
+    )
+    point_button = widgets.Button(
+         description="Evaluate Point",
+         button_style="success"
+    )
+    point_out = widgets.Output()
+
+    point_panel = widgets.VBox([
+         widgets.HBox([ttarget_text, tunit_dropdown]),
+         point_button,
+         point_out
+    ])
+
+    # --- Panel 3: Tabulated Values ---
+    trange_min_text = widgets.FloatText(
+         value=0.0,
+         description="t_min:"
+    )
+    trange_max_text = widgets.FloatText(
+         value=10.0,
+         description="t_max:"
+    )
+    num_values_slider = widgets.IntSlider(
+         value=5,
+         min=3,
+         max=500,
+         step=1,
+         description="n_vals:",
+         continuous_update=False,
+         layout=widgets.Layout(width="250px")
+    )
+    table_button = widgets.Button(
+         description="Generate Table",
+         button_style="success"
+    )
+    table_out = widgets.Output()
+
+    table_panel = widgets.VBox([
+         widgets.HBox([trange_min_text, trange_max_text, num_values_slider]),
+         table_button,
+         table_out
+    ])
+
+    # --- Overall output area ---
+    main_out = widgets.Output()
+
+    # --- Callback for Plot CF button ---
+    def on_plotCF(b):
+        with plot_out:
+            plot_out.clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            try:
+                sim.plotCF(plotSML=plotSML_checkbox.value)
+            except Exception as e:
+                print("Error in plotCF:", e)
+    plotCF_button.on_click(on_plotCF)
+
+    # --- Callback for Plot Cx button ---
+    def on_plotCx(b):
+        with plot_out:
+            plot_out.clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            try:
+                sim.plotCx(nmax=nmax_slider.value)
+            except Exception as e:
+                print("Error in plotCx:", e)
+    plotCx_button.on_click(on_plotCx)
+
+    # --- Callback for Point Evaluation button ---
+    def on_eval_point(b):
+        with point_out:
+            point_out.clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            try:
+                # Compute tscale from tunit using check_units
+                from patankar.layer import check_units
+                tscale = check_units((1, tunit_dropdown.value))[0].item()
+            except Exception as e:
+                print("Error computing tscale:", e)
+                return
+            # Use the simulation's t array to determine defaults if needed
+            try:
+                tmin = sim.t[0] / tscale
+                tmax = sim.t[-1] / tscale
+            except Exception:
+                tmin, tmax = 0, 1
+            # Ensure ttarget is between tmin and tmax (or warn)
+            ttarget = ttarget_text.value
+            if ttarget < tmin or ttarget > tmax:
+                print(f"Warning: ttarget ({ttarget}) is outside simulation time range [{tmin}, {tmax}].")
+            try:
+                CFtarget = sim.interp_CF(ttarget * tscale)
+            except Exception as e:
+                print("Error interpolating CF:", e)
+                return
+            # Assume constant concentration unit "a.u." and retrieve SML from simulation
+            Cunit = "a.u."
+            try:
+                SML = sim._SML
+            except Exception:
+                SML = None
+            print(f"CF at t={ttarget} [{tunit_dropdown.value}]: {CFtarget:.6g} [{Cunit}]")
+            if SML is not None:
+                ratio = CFtarget / SML
+                warn = ""
+                if ratio > 10:
+                    warn = " !!!"
+                elif ratio > 1:
+                    warn = " !"
+                print(f"CF/SML at t={ttarget} [{tunit_dropdown.value}]: {ratio:.6g}{warn}")
+    point_button.on_click(on_eval_point)
+
+    # --- Callback for Generate Table button ---
+    def on_generate_table(b):
+        Cunit = plotconfig_default["Cunit"]
+        with table_out:
+            table_out.clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            tscale = check_units((1, tunit_dropdown.value))[0].item()
+            tmin = sim.t[0] / tscale
+            tmax = sim.t[-1] / tscale
+            # Use widget values if provided; otherwise default to simulation range.
+            trange_min = trange_min_text.value if trange_min_text.value is not None else tmin
+            trange_max = trange_max_text.value if trange_max_text.value is not None else tmax
+            n_vals = num_values_slider.value
+            trange = np.linspace(trange_min, trange_max, n_vals)
+            try:
+                CFrange = sim.interp_CF(trange * tscale)
+            except Exception as e:
+                print("Error interpolating CF for table:", e)
+                return
+            # Create a DataFrame with the computed values
+            df = pd.DataFrame({
+                f"Time ({tunit_dropdown.value})": trange,
+                f"CF ({Cunit})": CFrange
+            })
+            widgetdf = interactive_table(df)
+            display(widgetdf)
+    table_button.on_click(on_generate_table)
+
+    # --- Arrange overall UI ---
+    ui = widgets.VBox([
+         widgets.HTML("<h3>Migration Simulation Evaluation</h3>"),
+         plot_panel,
+         widgets.HTML("<hr>"),
+         point_panel,
+         widgets.HTML("<hr>"),
+         table_panel,
+         widgets.HTML("<hr>"),
+         main_out  # you can use this output for further messages if needed
+    ])
+    return ui
 
 
 # %% Generic Classes to manipulate results
@@ -737,11 +1182,24 @@ class SensPatankarResult:
     restart : restartfile_senspatankar object
         Restart object (see restartfile_senspatankar doc)
 
+    ----- plotting parameters ------
+    SML : None or float, optional
+        SML value in final units (usually mg/kg, adapt the value accordingly)
+    plotSML = True (default), bool, optional
+        if True and SML is not None, plot SML limit as an horizontal line
+    plotconfig : dict, optional
+        Dictionary with plotting configuration, containing:
+        - "tunit": Time unit label (e.g., 's').
+        - "Cunit": Concentration unit label (e.g., 'mg/L').
+        - "tscale": Time scaling factor.
+        - "Cscale": Concentration scaling factor.
+
     """
 
     def __init__(self, name, description, ttarget, t, C, CF, fc, f, x, Cx, tC, C0eq, timebase,
                  restart,restart_unsecure,xi,Cxi,
-                 _plotconfig=None, createcontainer=True, container=None, discrete=False):
+                 SML = None, SMLunit=None, plotSML=True,
+                 plotconfig=None, createcontainer=True, container=None, discrete=False):
         """Constructor for simulation results."""
         self.name = name
         self.description = description
@@ -773,23 +1231,39 @@ class SensPatankarResult:
         self.restart = restart # secure restart file (cannot be modified from outside)
         self.restart_unsecure = restart_unsecure # unsecure one (can be modified from outside)
 
-        # Plot configuration
-        self._plotconfig = _plotconfig if _plotconfig else plotconfig
-
         # Store state for simulation chaining
         self.savestate(self.restart.inputs["multilayer"], self.restart.inputs["medium"])
+
+        # Plot configuration
+        if plotconfig is not None:
+            if not isinstance(plotconfig, dict):
+                raise TypeError(f"plotconfig must be a dict not a {type(plotconfig).__name__}")
+            self._plotconfig = {**plotconfig_default, **plotconfig}  # Merge without modifying plotconfig_default
+        else:
+            self._plotconfig = plotconfig_default.copy()  # Work with a copy to prevent accidental changes
+
+        # SML_configuration
+        if SML is None:
+            if self.restart.inputs["medium"].hasSML:
+                SML = self.restart.inputs["medium"].SML
+                SMLunit = self.restart.inputs["medium"].SMLunit
+        self._SML = SML
+        self._SMLunit = self._plotconfig["Cunit"] if SMLunit is None else SMLunit
+        self._plotSML = plotSML
 
         # Default container for results comparison
         if createcontainer:
             if container is None:
-                self.comparison = CFSimulationContainer(name=name)
+                self.comparison = CFSimulationContainer(name=name,plotconfig=self._plotconfig)
                 currentname = "reference"
+                color = "Crimson"
             elif isinstance(container, CFSimulationContainer):
                 self.comparison = container
                 currentname = name
+                color = "Teal"
             else:
                 raise TypeError(f"container must be a CFSimulationContainer, not {type(container).__name__}")
-            self.comparison.add(self, label=currentname, color="Crimson", linestyle="-", linewidth=2)
+            self.comparison.add(self, label=currentname, color=color, linestyle="-", linewidth=2)
 
         # Distance pair
         self._distancepair = None
@@ -871,7 +1345,10 @@ class SensPatankarResult:
             restart_unsecure=self.restart_unsecure,
             xi=None,
             Cxi=None,
-            _plotconfig=self._plotconfig,
+            SML=self._SML,
+            SMLunit=self._SMLunit,
+            plotSML = self._plotSML,
+            plotconfig=self._plotconfig,
             discrete=True
         )
         if autorecord:
@@ -1039,7 +1516,6 @@ class SensPatankarResult:
         for key in ["tscale", "tunit", "lscale", "lunit", "Cscale", "Cunit"]:
             if key in kwargs:
                 value = kwargs[key]
-
                 if key in ["tscale", "lscale", "Cscale"]:
                     value, unit = checkunits(value)  # Process unit conversion
                     self._plotconfig[key] = value
@@ -1179,7 +1655,10 @@ class SensPatankarResult:
             restart_unsecure=self.restart_unsecure,
             xi=None,
             Cxi=None,
-            _plotconfig=self._plotconfig,
+            SML=self._SML,
+            SMLunit=self._SMLunit,
+            plotSML=self._plotSML,
+            plotconfig=self._plotconfig,
             discrete=self.discrete
         )
 
@@ -1260,7 +1739,12 @@ class SensPatankarResult:
             restart=other.restart,  # Take restart from other (the last valid one)
             restart_unsecure=other.restart_unsecure,  # Take restart from other (the last valid one)
             xi=None,  # xi and Cxi values are available
-            Cxi=None  # only from a fresh simulation
+            Cxi=None,  # only from a fresh simulation
+            SML=other._SML if self._SML is None else self._SML,
+            SMLunit=other._SMLunit if self._SMLunit is None else self._SMLunit,
+            plotSML=other._plotSML if self._plotSML is None else self._plotSML,
+            plotconfig=other._plotconfig if self._plotconfig is None else self._plotconfig,
+            discrete=self.discrete or other.discrete
         )
 
         return merged_result
@@ -1324,12 +1808,12 @@ class SensPatankarResult:
 
     def __str__(self):
         return (f'<{self.__class__.__name__}:{self.name}: '
-            f'CF({(self.ttarget / plotconfig["tscale"]).item():.4g} [{plotconfig["tunit"]}]) = '
-            f'{(self.CFtarget / plotconfig["Cscale"]).item():.4g} [{plotconfig["Cunit"]}]>')
+            f'CF({(self.ttarget / self._plotconfig["tscale"]).item():.4g} [{self._plotconfig["tunit"]}]) = '
+            f'{(self.CFtarget / self._plotconfig["Cscale"]).item():.4g} [{self._plotconfig["Cunit"]}]>')
 
 
 
-    def plotCF(self, t=None, trange=None):
+    def plotCF(self, t=None, trange=None, SML=None, SMLunit=None, plotSML=None, plotconfig=None, title=None, subtitle=None):
         """
         Plot the concentration in the food (CF) as a function of time.
 
@@ -1346,10 +1830,34 @@ class SensPatankarResult:
             If None, the full profile is shown.
             If a float, it is treated as an upper bound (lower bound assumed 0).
             If a list `[t_min, t_max]`, the profile is limited to that range.
+        SML : None or float, optional
+            SML value in final units (usually mg/kg, adapt the value accordingly)
+        plotSML = True (default), bool, optional
+            if True and SML is not None, plot SML limit as an horizontal line
+        plotconfig : dict, optional
+            Dictionary with plotting configuration, containing:
+            - "tunit": Time unit label (e.g., 's').
+            - "Cunit": Concentration unit label (e.g., 'mg/L').
+            - "tscale": Time scaling factor.
+            - "Cscale": Concentration scaling factor.
+        title, subtitle: str, optional
         """
+
+        # plot configuration
         plt.rc('text', usetex=False) # Enable LaTeX formatting for Matplotlib
-        # Extract plot configuration
-        plotconfig = self._plotconfig
+        if plotconfig is not None:
+            if not isinstance(plotconfig, dict):
+                raise TypeError(f"plotconfig must be a dict not a {type(plotconfig).__name__}")
+            plotconfig = {**self._plotconfig, **plotconfig}  # Merge without modifying self._plotconfig
+        else:
+            plotconfig = self._plotconfig.copy()  # Work with a copy to prevent accidental changes
+
+        # SML configuration
+        SML = self._SML if SML is None else SML
+        SMLunit = self._SMLunit if SMLunit is None else SMLunit
+        plotSML = self._plotSML if plotSML is None else plotSML
+
+
         # Ensure t is a list (even if a single value is given)
         if t is None:
             t_values = [self.ttarget]
@@ -1411,13 +1919,28 @@ class SensPatankarResult:
             ax.text(min(t_plot) / plotconfig["tscale"], CF_t_values[i] / plotconfig["Cscale"],
                     f'{(CF_t_values[i] / plotconfig["Cscale"]).item():.2f} {plotconfig["Cunit"]}',
                     verticalalignment='bottom', horizontalalignment='left', fontsize=10, color=color)
+        # add SML values (we assume that the units of SML are already final, no need to use plotconfig["Cscale"])
+        if plotSML:
+            SML = self._SML if SML is None else SML
+            SMLunit = self._SMLunit if SMLunit is None else SMLunit
+            if SML is not None:
+                SMLunit = plotconfig["Cunit"] if SMLunit is None else SMLunit
+                ax.axhline(SML, color="ForestGreen", linestyle=(0, (3, 5, 1, 5)),
+                           linewidth=2, label=f"SML={SML:.4g} {SMLunit}")
+                ax.text(self.ttarget / plotconfig["tscale"], SML, "specific migration limit", fontsize=8, color='ForestGreen', ha='center', va='bottom')
         # Labels and title
         ax.set_xlabel(f'Time [{plotconfig["tunit"]}]')
         ax.set_ylabel(f'Concentration in Food [{plotconfig["Cunit"]}]')
-        title_main = "Concentration in Food vs. Time"
-        if self.discrete:
-            title_main += " (Discrete Data)"
-        title_sub = rf"$\bf{{{self.name}}}$" + (f": {self.description}" if self.description else "")
+        if title:
+            title_main = title
+        else:
+            title_main = "Concentration in Food vs. Time"
+            if self.discrete:
+                title_main += " (Discrete Data)"
+        if subtitle:
+            title_sub = subtitle
+        else:
+            title_sub = rf"$\bf{{{self.name}}}$" + (f": {self.description}" if self.description else "")
         ax.set_title(f"{title_main}\n{title_sub}", fontsize=10)
         #ax.text(0.5, 1.05, title_sub, fontsize=8, ha="center", va="bottom", transform=ax.transAxes)
         ax.legend()
@@ -1429,7 +1952,7 @@ class SensPatankarResult:
 
 
 
-    def plotCx(self, t=None, nmax=15):
+    def plotCx(self, t=None, nmax=15, plotconfig=None, title=None, subtitle=None):
         """
         Plot the concentration profiles (Cx) in the packaging vs. position (x) for different times,
         using a color gradient similar to Parula, based on time values (not index order).
@@ -1442,14 +1965,27 @@ class SensPatankarResult:
             If None, time values are selected using sqrt-spaced distribution.
         nmax : int, optional
             Maximum number of profiles to plot. The default is 15.
+        plotconfig : dict, optional
+            Dictionary with plotting configuration, containing:
+            - "tunit": Time unit label (e.g., 's').
+            - "Cunit": Concentration unit label (e.g., 'mg/L').
+            - "tscale": Time scaling factor.
+            - "Cscale": Concentration scaling factor.
         """
-        plt.rc('text', usetex=False) # Enable LaTeX formatting for Matplotlib
         # short circuit
         if self.discrete:
             print("discrete SensPatankarResult instance does not contain profile data, nothing to plot.")
             return None
-        # extract plotconfig
-        plotconfig = self._plotconfig
+
+        # plot configuration
+        plt.rc('text', usetex=False) # Disable LaTeX for Matplotlib
+        if plotconfig is not None:
+            if not isinstance(plotconfig, dict):
+                raise TypeError(f"plotconfig must be a dict not a {type(plotconfig).__name__}")
+            plotconfig = {**self._plotconfig, **plotconfig}  # Merge without modifying self._plotconfig
+        else:
+            plotconfig = self._plotconfig.copy()  # Work with a copy to prevent accidental changes
+
         # Ensure time values are within the available time range
         if t is None:
             # Default: Select `nmax` time values using sqrt-spacing
@@ -1497,8 +2033,14 @@ class SensPatankarResult:
         cbar.set_label(f'Time [{plotconfig["tunit"]}]')
         ax.set_xlabel(f'Position [{plotconfig["lunit"]}]')
         ax.set_ylabel(f'Concentration in Packaging [{plotconfig["Cunit"]}]')
-        title_main = "Concentration Profiles in Packaging vs. Position"
-        title_sub = rf"$\bf{{{self.name}}}$" + (f": {self.description}" if self.description else "")
+        if title is not None:
+            title_main = title
+        else:
+            title_main = "Concentration Profiles in Packaging vs. Position"
+        if subtitle is not None:
+            title_sub = subtitle
+        else:
+            title_sub = rf"$\bf{{{self.name}}}$" + (f": {self.description}" if self.description else "")
         ax.set_title(f"{title_main}\n{title_sub}", fontsize=10)
         ax.text(0.5, 1.05, title_sub, fontsize=8, ha="center", va="bottom", transform=ax.transAxes)
         ax.set_title(title_main)
@@ -1533,12 +2075,42 @@ class CFSimulationContainer:
         - 'discrete': Boolean indicating discrete data.
     """
 
-    def __init__(self,name="",description=""):
-        """Initialize an empty container for CF results."""
+    def __init__(self,name="",description="", SML = None, SMLunit=None, plotSML=True, plotconfig=None):
+        """
+        Initialize an empty container for CF results.
+        name: str, default =""
+            Name of the container used to save results and shown in title
+        description: str, default =""
+            description of the container, shown in subtitle
+        SML : None or float, optional
+            SML value in final units (usually mg/kg, adapt the value accordingly)
+        SMLunit : str, optional
+            SML units
+        plotSML = True (default), bool, optional
+            if True and SML is not None, plot SML limit as an horizontal line
+        plotconfig : dict, optional
+            Dictionary with plotting configuration, containing:
+            - "tunit": Time unit label (e.g., 's').
+            - "Cunit": Concentration unit label (e.g., 'mg/L').
+            - "tscale": Time scaling factor.
+            - "Cscale": Concentration scaling factor.
+        """
         self.curves = {}
         self._name = name
         self._description = description
-        self._plotconfig = plotconfig
+
+        # SML configuration (if any)
+        self._SML = SML
+        self._SMLunit = SMLunit
+        self._plotSML = plotSML
+
+        # Plot configuration
+        if plotconfig is not None:
+            if not isinstance(plotconfig, dict):
+                raise TypeError(f"plotconfig must be a dict not a {type(plotconfig).__name__}")
+            self._plotconfig = {**plotconfig_default, **plotconfig}  # Merge without modifying plotconfig_default
+        else:
+            self._plotconfig = plotconfig_default.copy()  # Work with a copy to prevent accidental changes
 
     @property
     def name(self):
@@ -1592,6 +2164,11 @@ class CFSimulationContainer:
                 "tmax": simulation_result.t.max(),
                 "interpolant": simulation_result.interp_CF
             })
+        # update SML infos with data added to the container
+        if self._SML is None:
+            self._SML = simulation_result._SML
+        if self._SMLunit is None:
+            self._SMLunit = simulation_result._SMLunit
 
     def delete(self, identifier):
         """
@@ -1771,7 +2348,7 @@ class CFSimulationContainer:
         return colormap("jet", ncolors, tooclear, reverse)
 
 
-    def plotCF(self, t_range=None):
+    def plotCF(self, t_range=None, SML = None, SMLunit=None, plotSML=None, plotconfig=None):
         """
         Plot all stored CF curves in a single figure.
 
@@ -1779,6 +2356,12 @@ class CFSimulationContainer:
         ----------
         t_range : tuple (t_min, t_max), optional
             Time range for plotting. If None, uses each curve's own range.
+        SML : float, optional
+            user SML
+        SMLunit: str, optional
+            user SML units
+        plotSML: bool, default = True
+            True plots SML line
         plotconfig : dict, optional
             Dictionary with plotting configuration, containing:
             - "tunit": Time unit label (e.g., 's').
@@ -1786,10 +2369,21 @@ class CFSimulationContainer:
             - "tscale": Time scaling factor.
             - "Cscale": Concentration scaling factor.
         """
+        # Plot config
+        # force LaTeX only on systems with latex installed
         plt.rc('text', usetex=_LaTeXavailable) # Enable LaTeX formatting for Matplotlib
+        # Create a temporary plotconfig without modifying self._plotconfig
+        if plotconfig is not None:
+            if not isinstance(plotconfig, dict):
+                raise TypeError(f"plotconfig must be a dict not a {type(plotconfig).__name__}")
+            plotconfig = {**self._plotconfig, **plotconfig}  # Merge without modifying self._plotconfig
+        else:
+            plotconfig = self._plotconfig.copy()  # Work with a copy to prevent accidental changes
 
-        # extract plotconfig
-        plotconfig = self._plotconfig
+        # retrieve the SML plot choice (set at construction with possible user overrides)
+        SML = self._SML if SML is None else SML
+        SMLunit = self._SMLunit if SMLunit is None else SMLunit
+        plotSML = self._plotSML if plotSML is None else plotSML
 
         if not self.curves:
             print("No curves to plot.")
@@ -1814,6 +2408,17 @@ class CFSimulationContainer:
                 CF_plot = data["interpolant"](t_plot)
                 ax.plot(t_plot, CF_plot, label=cleantex(data["label"]),
                         color=data["color"], linestyle=data["linestyle"], linewidth=data["linewidth"])
+
+        # add SML values (we assume that the units of SML are already final, no need to use plotconfig["Cscale"])
+        if plotSML:
+            SML = self._SML if SML is None else SML
+            SMLunit = self._SMLunit if SMLunit is None else SMLunit
+            if SML is not None:
+                tmiddle = (t_min+t_max)/2
+                SMLunit = plotconfig["Cunit"] if SMLunit is None else SMLunit
+                ax.axhline(SML, color="ForestGreen", linestyle=(0, (3, 5, 1, 5)),
+                           linewidth=2, label=f"SML={SML:.4g} {SMLunit}")
+                ax.text(tmiddle / plotconfig["tscale"], SML, "specific migration limit", fontsize=8, color='ForestGreen', ha='center', va='bottom')
 
         # Configure the plot
         ax.set_xlabel(f'Time [{plotconfig["tunit"]}]' if plotconfig else "Time")
@@ -2286,7 +2891,10 @@ def senspatankar(multilayer=None, medium=None,
             prev = total_nodes-1 if i==0 else i-1
             hw[i] = (1 / ((de[prev] / D_mesh[prev] * k_mesh[prev] / k_mesh[i]) + dw[i] / D_mesh[i])).item()
     else:
-        hw[0] = (1 / ((1 / k_mesh[0]) / Bi + dw[0] / D_mesh[0])).item()
+        if Bi.item()==0:
+            hw[0] = 0 # to prevent RuntimeWarning: divide by zero encountered in divide
+        else:
+            hw[0] = (1 / ((1 / k_mesh[0]) / Bi + dw[0] / D_mesh[0])).item()
         for i in range(1, total_nodes):
             hw[i] = (1 / ((de[i - 1] / D_mesh[i - 1] * k_mesh[i - 1] / k_mesh[i]) + dw[i] / D_mesh[i])).item()
     he[:-1] = hw[1:] # nodes are the center of FV elements: he = np.roll(hw, -1)
@@ -2593,6 +3201,19 @@ def compute_fc_profile_PBC(C, t, de, dw, he, hw, k, D, xmesh, xreltol=0):
 # Example usage (for debugging / standalone tests)
 # -------------------------------------------------------------------
 if __name__ == '__main__':
+    from patankar.loadpubchem import migrant
+    from patankar.food import nofood
+    from patankar.layer import material
+    from patankar.geometry import Packaging3D
+    m = migrant("benzophenone")
+    B =Packaging3D("bottle",body_radius=(20, "mm"),body_height=(15.5, "cm"),neck_radius=(1.2, "cm"),neck_height=(2,"cm"))
+    HDPE = material('HDPE')(l=(1,'mm'),C0=0) # we assume 0 concentration in the bottle
+    PVC = material('PVC cling film')(l=(150,'um'),C0=1000) # empirical concentral of 1000 ppm in the material
+    P = HDPE+PVC
+    storage = nofood(contacttime=(3,"months"),contacttemperature=(30,'degC'))
+    S = m % storage << B >> P >> storage
+
+
     from patankar.food import ethanol, setoff, nofood
     from patankar.layer import PP
 

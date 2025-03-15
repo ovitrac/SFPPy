@@ -31,13 +31,16 @@ from patankar.food import foodlayer
 medium = foodlayer(name="ethanol", contacttemperature=(40, "degC"))
 ```
 
+**Advanced Operators**
+[substance] in [food] in [packaging] | [layer] >> [condition1] >> [condition2]
+
 
 @version: 1.22
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2023-01-25
-@rev: 2025-03-03
+@rev: 2025-03-13
 
 """
 
@@ -60,7 +63,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.22"
+__version__ = "1.32"
 #%% Private Properties and functions
 
 # List of the default SI units used by physical quantity
@@ -180,6 +183,384 @@ def help_food():
     for row in formatted_rows:
         print(row_format.format(*row))
 
+# %% Widget
+def create_food_tree_widget():
+    """
+    Creates a widget interface for food/contact conditions that uses a hierarchical
+    tree to collect one class name per level. A custom class is then built via multiple
+    inheritance from the classes selected at each level. This custom class is instantiated
+    with overridden contact time and temperature values and stored in builtins.mycontacts.
+
+    The tree is organized as follows (each branch has an associated 'class' and a 'children'
+    dictionary):
+
+    realfood
+      ├─ liquid
+      │    ├─ fat
+      │    │     ├─ frozen
+      │    │     ├─ chilled
+      │    │     ├─ boiling
+      │    │     ├─ pasteurization
+      │    │     ├─ sterilization
+      │    │     ├─ oven
+      │    │     ├─ frying
+      │    │     └─ hotoven
+      │    ├─ aqueous
+      │    │     ├─ frozen
+      │    │     ├─ chilled
+      │    │     ├─ boiling
+      │    │     ├─ pasteurization
+      │    │     └─ sterilization
+      │    └─ intermediate
+      │          ├─ frozen
+      │          ├─ chilled
+      │          ├─ boiling
+      │          ├─ pasteurization
+      │          ├─ sterilization
+      │          ├─ oven
+      │          ├─ frying
+      │          └─ hotoven
+      ├─ semisolid
+      │      ... (similar structure)
+      └─ solid
+             ... (similar structure)
+
+    simulant
+      └─ (various branches; each branch has two leaves: realcontact and testcontact)
+
+    setoff, stacked, rolled, nofood, yogurt, sandwich: with one or two levels
+
+    Returns:
+      An ipywidgets.VBox instance containing the full UI.
+    """
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError("ipywidgets and IPython are required for this interface.") from e
+
+    import builtins
+    # Ensure the global dictionary for storing instantiated food conditions exists.
+    if not hasattr(builtins, "mycontacts"):
+        builtins.mycontacts = {}
+    global mycontacts
+    mycontacts = builtins.mycontacts
+
+    # ---- Build the tree registry as a nested dict.
+    # Each node is a dict with keys:
+    #   "class": the class associated with that branch,
+    #   "children": a dict of further branches (if any).
+    food_tree = {
+        "realfood": {
+            "class": realfood,
+            "children": {
+                "liquid": {
+                    "class": liquid,
+                    "children": {
+                        "fat": {
+                            "class": fat,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven},
+                                "frying": {"class": frying},
+                                "hotoven": {"class": hotoven}
+                            }
+                        },
+                        "aqueous": {
+                            "class": aqueous,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization}
+                            }
+                        },
+                        "intermediate": {
+                            "class": intermediate,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven},
+                                "frying": {"class": frying},
+                                "hotoven": {"class": hotoven}
+                            }
+                        }
+                    }
+                },
+                "semisolid": {
+                    "class": semisolid,
+                    "children": {
+                        "fat": {
+                            "class": fat,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven},
+                                "frying": {"class": frying},
+                                "hotoven": {"class": hotoven}
+                            }
+                        },
+                        "aqueous": {
+                            "class": aqueous,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven}
+                            }
+                        },
+                        "intermediate": {
+                            "class": intermediate,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven},
+                                "frying": {"class": frying},
+                                "hotoven": {"class": hotoven}
+                            }
+                        }
+                    }
+                },
+                "solid": {
+                    "class": solid,
+                    "children": {
+                        "fat": {
+                            "class": fat,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven},
+                                "frying": {"class": frying},
+                                "hotoven": {"class": hotoven}
+                            }
+                        },
+                        "aqueous": {
+                            "class": aqueous,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven},
+                                "frying": {"class": frying},
+                                "hotoven": {"class": hotoven}
+                            }
+                        },
+                        "intermediate": {
+                            "class": intermediate,
+                            "children": {
+                                "ambient": {"class": ambient},
+                                "frozen": {"class": frozen},
+                                "chilled": {"class": chilled},
+                                "boiling": {"class": boiling},
+                                "pasteurization": {"class": pasteurization},
+                                "sterilization": {"class": sterilization},
+                                "oven": {"class": oven},
+                                "frying": {"class": frying},
+                                "hotoven": {"class": hotoven}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "simulant": {
+            "class": simulant,
+            "children": {
+                "fat": {"class": fat, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "aqueous": {"class": aqueous, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "intermediate": {"class": intermediate, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "oliveoil": {"class": oliveoil, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "ethanol95": {"class": ethanol95, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "ethanol50": {"class": ethanol50, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "acetonitrile": {"class": acetonitrile, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "methanol": {"class": methanol, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "water": {"class": water, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "water3aceticacid": {"class": water3aceticacid, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "isooctane": {"class": isooctane, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}}
+            }
+        },
+        "setoff": {
+            "class": setoff,
+            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+        },
+        "stacked": {
+            "class": stacked,
+            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+        },
+        "rolled": {
+            "class": rolled,
+            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+        },
+        "nofood": {
+            "class": nofood,
+            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+        },
+        "yogurt": {
+            "class": yogurt,
+            "children": {"chilled": {"class": yogurt}, "ambient": {"class": yogurt}}
+        },
+    }
+
+    # ---- Create cascading dropdowns for up to 4 levels.
+    dd1 = widgets.Dropdown(options=list(food_tree.keys()), description="Level 1:")
+    dd2 = widgets.Dropdown(options=[], description="Level 2:")
+    dd3 = widgets.Dropdown(options=[], description="Level 3:")
+    dd4 = widgets.Dropdown(options=[], description="Level 4:")
+
+    def update_dd2(*args):
+        selected = dd1.value
+        opts = list(food_tree[selected]["children"].keys())
+        dd2.options = opts
+        dd2.value = opts[0] if opts else None
+        update_dd3()
+    def update_dd3(*args):
+        if dd2.value is None:
+            dd3.options = []
+            dd3.value = None
+        else:
+            selected1 = dd1.value
+            selected2 = dd2.value
+            opts = list(food_tree[selected1]["children"][selected2]["children"].keys())
+            dd3.options = opts
+            dd3.value = opts[0] if opts else None
+        update_dd4()
+    def update_dd4(*args):
+        if dd3.value is None:
+            dd4.options = []
+            dd4.value = None
+        else:
+            selected1 = dd1.value
+            selected2 = dd2.value
+            selected3 = dd3.value
+            subtree = food_tree[selected1]["children"][selected2]["children"][selected3]
+            if "children" in subtree:
+                opts = list(subtree["children"].keys())
+                dd4.options = opts
+                dd4.value = opts[0] if opts else None
+            else:
+                dd4.options = []
+                dd4.value = None
+    dd1.observe(update_dd2, names='value')
+    dd2.observe(update_dd3, names='value')
+    dd3.observe(update_dd4, names='value')
+    update_dd2()  # Initialize
+
+    # ---- Additional inputs for overrides and instance name ----
+    time_val = widgets.FloatText(value=60, description="Contact Time:")
+    time_unit = widgets.Dropdown(options=["s", "min", "h", "days", "months", "years"],
+                                 value="days", description="Time Unit:")
+    temp_val = widgets.FloatText(value=25, description="Contact Temp:")
+    temp_unit = widgets.Dropdown(options=["degC", "K"],
+                                 value="degC", description="Temp Unit:")
+    inst_name = widgets.Text(value="contact1", description="Instance Name:")
+
+    # ---- Button to instantiate the custom food/contact condition ----
+    btn = widgets.Button(description="Instantiate Custom Condition", button_style="success")
+    out = widgets.Output()
+
+    def instantiate_custom(b):
+        with out:
+            out.clear_output()
+            selected_classes = []
+            # Collect the class from Level 1
+            try:
+                cls1 = food_tree[dd1.value]["class"]
+                selected_classes.append(cls1)
+            except Exception as e:
+                print("Error at Level 1:", e)
+                return
+            # Level 2 (if available)
+            if dd2.value is not None:
+                try:
+                    cls2 = food_tree[dd1.value]["children"][dd2.value]["class"]
+                    selected_classes.append(cls2)
+                except Exception as e:
+                    print("Error at Level 2:", e)
+                    return
+            # Level 3 (if available)
+            if dd3.value is not None:
+                try:
+                    cls3 = food_tree[dd1.value]["children"][dd2.value]["children"][dd3.value]["class"]
+                    selected_classes.append(cls3)
+                except Exception as e:
+                    print("Error at Level 3:", e)
+                    return
+            # Level 4 (if available)
+            if dd4.options and dd4.value is not None:
+                try:
+                    cls4 = food_tree[dd1.value]["children"][dd2.value]["children"][dd3.value]["children"][dd4.value]["class"]
+                    selected_classes.append(cls4)
+                except Exception as e:
+                    print("Error at Level 4:", e)
+                    return
+            # Dynamically create a custom class with multiple inheritance.
+            try:
+                CustomClass = type("CustomFood", tuple(selected_classes), {})
+            except Exception:
+                try:
+                    print("I swtich to user class (level 2):", selected_classes[1:2])
+                    CustomClass = type("CustomFood", tuple(selected_classes[1:2]), {})
+                except Exception as e:
+                    print("Error creating custom class:", e)
+                    return
+            # Instantiate the custom class with overrides.
+            try:
+                instance = CustomClass(contacttime=(time_val.value, time_unit.value),
+                                         contacttemperature=(temp_val.value, temp_unit.value))
+            except Exception as e:
+                print("Error instantiating custom class:", e)
+                return
+            name_val = inst_name.value.strip()
+            if not name_val:
+                print("Please provide an instance name.")
+                return
+            instance.update(contacttime=(time_val.value,time_unit.value),
+                            contactemperature=(temp_val.value,temp_unit.value))
+            builtins.mycontacts[name_val] = instance
+            print(f"Instantiated custom condition '{name_val}':")
+            print(instance)
+            print("\nCurrent conditions:", list(builtins.mycontacts.keys()))
+    btn.on_click(instantiate_custom)
+
+    ui = widgets.VBox([
+         widgets.HBox([dd1, dd2, dd3, dd4]),
+         widgets.HBox([time_val, time_unit, temp_val, temp_unit]),
+         inst_name,
+         btn,
+         out
+    ])
+    return ui
+
+
 
 #%% Base physics class
 # -------------------------------------------------------------------
@@ -282,7 +663,9 @@ class foodphysics:
         "physicalstate","chemicalclass", # phase F properties
         "substance","migrant","solute", # i properties with synonyms substance=migrant=solute
         # users use "k", but internally we use k0, keep _kmodel in the instance
-        "k0","k0unit","kmodel","_compute_kmodel" # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        "k0","k0unit","kmodel","_compute_kmodel", # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        # SML properties
+        "SML","SMLunit"
         ]
 
     # ------------------------------------------------------
@@ -427,6 +810,11 @@ class foodphysics:
             self.__class__._transferable_properties["substance"]["foodlayer"]["prototype"] = migrant
             self.__class__._transferable_properties["substance"]["layer"]["prototype"] = layer
             self.__class__._transferable_properties["medium"]["layer"]["prototype"] = layer
+        # Subtance propagation (if needed)
+        if self.hassubstance:
+            if self.substance.hasSML:
+                self.SML = self.substance.SML
+                self.SMLunit = self.substance.SMLunit
 
     # ------- [properties to access/modify simstate] --------
     @property
@@ -522,9 +910,14 @@ class foodphysics:
             """Helper function to convert physical quantities to SI."""
             if isinstance(value, tuple) and len(value) == 2:
                 scale = check_units(value)[0]  # Convert to SI, drop unit
-                return np.array([scale], dtype=float)  # Ensure NumPy array
-            elif isinstance(value, (int, float, np.ndarray)):
+                if isinstance(scale,np.ndarray):
+                    return scale
+                else:
+                    return np.array([scale], dtype=float)  # Ensure NumPy array
+            elif isinstance(value, (int, float)):
                 return np.array([value], dtype=float)  # Ensure NumPy array
+            elif isinstance(value,np.ndarray):
+                return value
             else:
                 raise ValueError(f"Invalid value for physical quantity: {value}")
         # Update `name` and `description` if provided
@@ -667,8 +1060,37 @@ class foodphysics:
     # For convenience, several operators have been overloaded
     #   medium >> packaging      # sets the volume and the surfacearea
     #   medium >> material       # propgates the contact temperature from the medium to the material
-    #   sol = medium << material # simulate migration from the material to the medium
+    #   medium in packaging    # simulate migration from the material to the medium
+    #   medium << packaging
     # --------------------------------------------------------------------
+
+    # method: medium._from(packaging) and its associatd operators in or <<
+    def _from(self, other = None):
+        """Inherit packaging properties"""
+        from patankar.geometry import Packaging3D
+        if not isinstance(other,Packaging3D):
+            raise TypeError(f"other must be a Packaging3d or migrant not a {type(other).__name__}")
+        return other._to(self) # we use the reverse definition
+
+    def __lshift__(self,other):
+        """
+            overload <<
+            food << packaging --> food
+            full example: substance in food << packaging >> layer --> layer
+        """
+        return self._from(other)
+
+    def __rmod__(self,other):
+        """
+            overload % as: migrant % food --> food
+            full example: migrant in food in packaging | layer >> condition >> condition
+        """
+        from patankar.loadpubchem import migrant
+        if not isinstance(other,migrant):
+            raise TypeError(f"other must a migrant and not a {type(other).__name__}")
+        self.update(substance=other)
+        return self
+
 
     # method: medium._to(material) and its associated operator >>
     def _to(self, other = None):
@@ -727,23 +1149,39 @@ class foodphysics:
                 # Register the transfer in other’s inheritance tracking
                 other.acknowledge(what=target_attr, category=category)
 
-                # to chain >>
-                return other
+        # to chain >>
+        return other
 
     def __rshift__(self, other):
-        """Overloads >> to propagate to other."""
+        """
+            Overloads >> to propagate to other.
+            e.g. food>>layer --> layer
+        """
         # inherit substance/migrant from other if self.migrant is None
         if isinstance(other,(layer,foodlayer)):
             if isinstance(self,foodlayer):
                 if self.substance is None and other.substance is not None:
                     self.substance = other.substance
-        return self._to(other) # propagates
+        return self._to(other) # propagates other
 
-    def __matmul__(self, other):
-        """Overload @: equivalent to >> if other is a layer."""
+        # The operators @ and | are depreciated and should not be used anymore
+    def __matmul__(self, other): # depreciated @
+        """
+            Overload @: equivalent to >> if other is a layer.
+            e.g. food@layer --> layer (depreciated)
+        """
         if not isinstance(other, layer):
             raise TypeError(f"Right operand must be a layer not a {type(other).__name__}")
-        return self._to(other)
+        return self._to(other)  # propagates other
+
+    def __or__(self, other): # depreciated |
+        """
+            Overload @: equivalent to >> if other is a layer.
+            e.g. food|layer --> layer (depreciated)
+        """
+        if not isinstance(other, layer):
+            raise TypeError(f"Right operand must be a layer not a {type(other).__name__}")
+        return self._to(other)  # propagates other
 
     # migration method
     def migration(self,material,**kwargs):
@@ -770,7 +1208,10 @@ class foodphysics:
                 return self.kmodel() is not None
         return False
 
-
+    @property
+    def hasSML(self):
+        """Returns True if SML has been defined"""
+        return hasattr(self,"_SML") and self._SML is not None
 # %% Root classes
 # -------------------------------------------------------------------
 # ROOT CLASSES
@@ -925,6 +1366,11 @@ class foodlayer(foodphysics):
     def migrant(self): return self.substance    # synonym
     @property
     def solute(self): return self.substance     # synonym
+    # SML
+    @property
+    def SML(self): return self._SML if self.hasSML else None
+    @property
+    def SMLunit(self): return self._SMLunit if self.hasSML else None
 
     # -----------------------------------------------------------------------------
     # Setter methods for class/instance properties: same definitions as in patankar.layer (mandatory)
@@ -962,12 +1408,33 @@ class foodlayer(foodphysics):
         if not isinstance(value,migrant):
             raise TypeError(f"substance/migrant/solute must be a migrant not a {type(value).__name__}")
         self._substance = value
+        if value.hasSML:
+            self.SML = value.SML
+            self.SMLunit = value.SMLunit
     @migrant.setter
     def migrant(self,value):
         self.substance = value
+        if self.substance.hasSML:
+            self.SML = self.substance.SML
+            self.SMLunit = self.substance.SMLunit
     @solute.setter
     def solute(self,value):
         self.substance = value
+    @SML.setter
+    def SML(self,value):
+        if isinstance(value,np.ndarray):
+            value = value.item(0)
+        if not isinstance(value,(float,int)):
+            raise TypeError(f"SML value must be a float or int not a {type(value).__name__}")
+        self._SML = float(value)
+        self._SMLunit = "mg/kg"
+    @SMLunit.setter
+    def SMLunit(self,units):
+        units = "mg/kg" if units is None else units
+        if not isinstance(units,str):
+            raise TypeError(f"SMLunit value must be a str not a {type(units).__name__}")
+        self._SMLunit = units
+
     # -----------------------------------------------------------------------------
     # Henry-like coefficient k and its alias k0 (internal use)
     # -----------------------------------------------------------------------------
@@ -1019,9 +1486,15 @@ class foodlayer(foodphysics):
         template.update(ispolymer = False)
         def func(**kwargs):
             if self.chemicalsubstance:
-                simulant = migrant(self.chemicalsubstance)
-                template.update(Pk = simulant.polarityindex,
-                                Vk = simulant.molarvolumeMiller)
+                if "+" in self.chemicalsubstance: # mixture (e.g.: water + ethanol)
+                    ks = [migrant(s) for s in self.chemicalsubstance.split("+")] # several k: ks
+                    Pk = np.mean([k.polarityindex for k in ks]) # we average Pk assuming 50:50 mixure
+                    Vk = np.mean([k.molarvolumeMiller for k in ks]) # we average Vk assuming 50:50 mixure
+                else: # pure simulant
+                    simulant = migrant(self.chemicalsubstance)
+                    Pk = simulant.polarityindex
+                    Vk = simulant.molarvolumeMiller
+                template.update(Pk = Pk, Vk = Vk)
                 k = self._substance.k.evaluate(**dict(template, **kwargs))
                 return k
             else:
@@ -1298,7 +1771,7 @@ class ethanol95(ethanol): pass # synonym of ethanol
 
 class ethanol50(simulant, perfectlymixed, intermediate):
     """Ethanol 50% food simulant"""
-    _chemicalsubstance = "ethanol"
+    _chemicalsubstance = "water+ethanol"
     _polarityindex = 7.0 # Intermediate polarity between ethanol and water.
     name = "ethanol 50"
     description = "ethanol 50, food simulant of dairy products"

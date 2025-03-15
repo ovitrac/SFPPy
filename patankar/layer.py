@@ -83,12 +83,12 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.30
+@version: 1.32
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-10
+@rev. 2025-03-13
 
 """
 
@@ -141,9 +141,282 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.30"
+__version__ = "1.32"
 
 # %% Private functions and classes
+
+# Unified registry of materials
+# Each key is the canonical class name (as used in layer.py) and its value is a dictionary with:
+#   - 'description': the full display name
+#   - 'type': one of "polymer", "adhesive", or "other"
+#   - 'synonyms': a list of alternative names that can be used for import purposes
+
+mainregistry = {
+    # Polymers
+    'HDPE': {
+        'description': 'High-Density Polyethylene',
+        'type': 'polymer',
+        'synonyms': ["PEHD","high-density polyethylene"]
+    },
+    'HIPS': {
+        'description': 'High-Impact Polystyrene',
+        'type': 'polymer',
+        'synonyms': ["high-impact polystyrene"]
+    },
+    'LDPE': {
+        'description': 'Low-Density Polyethylene',
+        'type': 'polymer',
+        'synonyms': ["PEBD","PE","low-desnity polyethylne"]
+    },
+    'LLDPE': {
+        'description': 'Linear Low-Density Polyethylene',
+        'type': 'polymer',
+        'synonyms': ["PEBLD","PELBD", "linear low-Density polyethylene"]
+    },
+    'PA6': {
+        'description': 'Polyamide 6',
+        'type': 'polymer',
+        'synonyms': ["PA 6","Polyamide 6"]
+    },
+    'PA66': {
+        'description': 'Polyamide 6,6',
+        'type': 'polymer',
+        'synonyms': ["PA 6,6","polyamide 6,6"]
+    },
+    'PBT': {
+        'description': 'Polybutylene Terephthalate',
+        'type': 'polymer',
+        'synonyms': []
+    },
+    'PEN': {
+        'description': 'Polyethylene Naphthalate',
+        'type': 'polymer',
+        'synonyms': ["polyethylene naphthalate"]
+    },
+    'PMMA': {
+        'description': 'Polymethyl Methacrylate',
+        'type': 'polymer',
+        'synonyms': ["polymethyl methacrylate"]
+    },
+    'PP': {
+        'description': 'Polypropylene',
+        'type': 'polymer',
+        'synonyms': ["polypropylene"]
+    },
+    'PPrubber': {
+        'description': 'Atactic Polypropylene (Rubbery)',
+        'type': 'polymer',
+        'synonyms': ["aPP","atactic PP","atactic polypropylene"]
+    },
+    'PS': {
+        'description': 'Polystyrene',
+        'type': 'polymer',
+        'synonyms': ["GPPS","polystyrene","general purpose polystyrene"]
+    },
+    'PVAc': {
+        'description': 'Polyvinyl Acetate',
+        'type': 'polymer',
+        'synonyms': ["PVAC"]
+    },
+    'SBS': {
+        'description': 'Styrene-Butadiene-Styrene',
+        'type': 'polymer',
+        'synonyms': ["styrene-butadiene-styrene"]
+    },
+    'gPET': {
+        'description': 'Glassy Polyethylene Terephthalate',
+        'type': 'polymer',
+        'synonyms': ['PET', 'PETE', 'polyethylene terephthalate']
+    },
+    'oPP': {
+        'description': 'Oriented Polypropylene',
+        'type': 'polymer',
+        'synonyms': ["oriented polypropylene"]
+    },
+    'plasticizedPVC': {
+        'description': 'Plasticized Polyvinyl Chloride',
+        'type': 'polymer',
+        'synonyms': ["plasticized polyvinyl chloride","PVC cling film"]
+    },
+    'rHIPS': {
+        'description': 'Rubbery High-Impact Polystyrene',
+        'type': 'polymer',
+        'synonyms': ["rubbery HIPS"]
+    },
+    'rPET': {
+        'description': 'Rubbery Polyethylene Terephthalate',
+        'type': 'polymer',
+        'synonyms': ['PET above Tg', 'PETE above Tg', 'PET T>Tg', 'PETE T>Tg']
+    },
+    'rPS': {
+        'description': 'Rubbery Polystyrene',
+        'type': 'polymer',
+        'synonyms': []
+    },
+    'rigidPVC': {
+        'description': 'Rigid Polyvinyl Chloride',
+        'type': 'polymer',
+        'synonyms': ["rigid PVC","PVC","rigid polyvinyl chloride"]
+    },
+    'wPET': {
+        'description': 'Wet (Plasticized) Polyethylene Terephthalate',
+        'type': 'polymer',
+        'synonyms': ['plasticized PET', 'plasticized PETE','wet PET']
+    },
+
+    # Adhesives
+    'AdhesiveAcrylate': {
+        'description': 'Acrylate Adhesive',
+        'type': 'adhesive',
+        'synonyms': ["PMMA adhesive"]
+    },
+    'AdhesiveEVA': {
+        'description': 'EVA Adhesive',
+        'type': 'adhesive',
+        'synonyms': ["EVA adhesive"]
+    },
+    'AdhesiveNaturalRubber': {
+        'description': 'Natural Rubber Adhesive',
+        'type': 'adhesive',
+        'synonyms': ["natural rubber adhesive"]
+    },
+    'AdhesivePU': {
+        'description': 'Polyurethane Adhesive',
+        'type': 'adhesive',
+        'synonyms': ["PU adhesive","polyurethane adhesive"]
+    },
+    'AdhesivePVAC': {
+        'description': 'PVAc Adhesive',
+        'type': 'adhesive',
+        'synonyms': ["adhesive PVAc","adhesive PVAC"]
+    },
+    'AdhesiveSyntheticRubber': {
+        'description': 'Synthetic Rubber Adhesive',
+        'type': 'adhesive',
+        'synonyms': ["synthetic rubber adhesive"]
+    },
+    'AdhesiveVAE': {
+        'description': 'VAE Adhesive',
+        'type': 'adhesive',
+        'synonyms': ["VAE adhesive"]
+    },
+
+    # Other materials
+    'Cardboard': {
+        'description': 'Cardboard',
+        'type': 'other',
+        'synonyms': ["board"]
+    },
+    'Paper': {
+        'description': 'Paper',
+        'type': 'other',
+        'synonyms': ["paper"]
+    },
+    'air': {
+        'description': 'Air',
+        'type': 'other',
+        'synonyms': ["gaz"]
+    }
+}
+
+# Listing all available materials with details
+def list_materials():
+    """
+    Lists all available materials with their descriptions, types, and synonyms
+    as a Markdown table with adjusted column widths.
+    """
+    headers = ["Material Key", "Description", "Type", "Synonyms"]
+    rows = []
+    for key, info in mainregistry.items():
+        synonyms = ", ".join(info["synonyms"]) if info["synonyms"] else "None"
+        rows.append([key, info["description"], info["type"], synonyms])
+    # Compute the maximum width for each column based on headers and rows
+    col_widths = [
+        max(len(headers[i]), *(len(row[i]) for row in rows))
+        for i in range(len(headers))
+    ]
+    # Helper to format a row given the computed widths
+    def format_row(row):
+        return "| " + " | ".join(row[i].ljust(col_widths[i]) for i in range(len(row))) + " |"
+    # Build the Markdown table rows
+    table = [format_row(headers)]
+    # Separator row: use dashes matching the column widths
+    separator = "| " + " | ".join("-" * col_widths[i] for i in range(len(headers))) + " |"
+    table.append(separator)
+    # Data rows
+    for row in rows:
+        table.append(format_row(row))
+
+    # Print the complete Markdown table
+    print("\n".join(table))
+
+
+# Import mechanism based on synonyms
+def resolve_material(name,returnclass=True):
+    """
+    Resolves a material name or any of its synonyms to the canonical registry key.
+
+    Parameters:
+      name (str): The material name or synonym.
+
+    Returns:
+      key (str): The canonical key from the registry.
+
+    Raises:
+      KeyError: If no matching material is found.
+    """
+    name_lower = name.lower()
+    for key, info in mainregistry.items():
+        # Check if the provided name matches the canonical key (case-insensitive)
+        if key.lower() == name_lower:
+            return key
+        # Check if the provided name matches any synonym (case-insensitive)
+        for syn in info['synonyms']:
+            if syn.lower() == name_lower:
+                return key
+    print("List of available materials.\nIf you not find yours, call layer directly for a customized one.")
+    list_materials()
+    raise KeyError(f"Material '{name}' not found in the registry.")
+
+
+def material(name):
+    """
+    Import surrogate that returns the material class corresponding to the given name.
+
+    Usage:
+        from patankar import material
+        mymaterial = material("anyname")  # 'anyname' is resolved to a canonical key,
+                                          # and the corresponding class (or the base 'layer' if applicable)
+                                          # from this module is returned.
+
+    If the provided name is "layer" (case-insensitive), the base layer class is returned.
+
+    Parameters:
+      name (str): The material name or any synonym.
+
+    Returns:
+      A material class that can be instantiated (e.g., mymaterial(l=...)).
+
+    Raises:
+      KeyError: If the provided name (or its synonym) does not match any material in the registry.
+      ImportError: If the material class cannot be found in the module.
+
+    Example:
+        A=material("PEBD")(l=(10,"µm")) # instantiate LDPE with l=100 µm
+    """
+    # If the user requests the base class "layer", return it directly.
+    if name.lower() == "layer":
+        return layer
+    # Resolve the canonical key using the existing resolve_material function.
+    canonical_key = resolve_material(name)
+    try:
+        # Since material is defined in this module, use globals() to fetch the class.
+        mat_class = globals()[canonical_key]
+    except KeyError:
+        raise ImportError(f"Material class '{canonical_key}' not found in the module.")
+    return mat_class
+
+
 
 # Initialize unit conversion (intensive initialization with old Python versions)
 # NB: degC and kelvin must be used for temperature
@@ -163,7 +436,6 @@ if ("SI" not in locals()) or ("qSI" not in locals()):
     T0K,constants["T0K"],constants["T0Kunit"] = toSI(qSI(0,'degC'))
     RT0K,constants["RT0K"],constants["RT0Kunit"] = toSI(R*T0K)
     iRT0K,constants["iRT0K"],constants["iRT0Kunit"] = toSI(1/RT0K)
-
 
 # Concise data validator with unit convertor to SI
 # To prevent many issues with temperature and to adhere to 2024 golden standard in layer
@@ -318,7 +590,312 @@ def help_layer():
         print(row_format.format(*row))
 
 
-# generic class to store linked parameter values in a sparse manner
+# %% Widgets
+
+#ipywidgets: polymer selection
+def create_polymer_dropdown(default_value=None):
+    """
+    Creates and returns a dropdown widget for selecting a polymer.
+    The dropdown options are built from the mainregistry entries with type 'polymer',
+    formatted as "Key: Description". If ipywidgets is not installed, a dummy widget
+    is returned that mimics the basic interface.
+
+    Parameters:
+      default_value (str, optional): The default polymer key to select.
+                                     If not provided, the first polymer key from the registry is used.
+
+    Returns:
+      A widget (ipywidgets.Dropdown or a fallback DummyDropdown) with the polymer options.
+    """
+    # Build polymer options as a list of (display, value) tuples
+    polymer_options = []
+    for key, info in mainregistry.items():
+        if info["type"] == "polymer":
+            display_text = f"{key}: {info['description']}"
+            polymer_options.append((display_text, key))
+
+    if not polymer_options:
+        raise ValueError("No polymers found in the registry.")
+
+    # Set default value if not provided or if not in options
+    valid_keys = [opt[1] for opt in polymer_options]
+    if default_value is None or default_value not in valid_keys:
+        default_value = valid_keys[0]
+
+    # Try to import ipywidgets; if unavailable, define a fallback DummyDropdown.
+    try:
+        import ipywidgets as widgets
+    except ImportError:
+        widgets = None
+
+    if widgets:
+        dropdown = widgets.Dropdown(
+            options=polymer_options,
+            value=default_value,
+            description='Polymer:',
+            layout=widgets.Layout(width='50%')
+        )
+    else:
+        # Fallback dummy widget mimicking ipywidgets.Dropdown
+        class DummyDropdown:
+            def __init__(self, options, value, description, layout):
+                self.options = options
+                self.value = value
+                self.description = description
+                self.layout = layout
+
+            def __repr__(self):
+                return (f"DummyDropdown(value={self.value}, "
+                        f"options={[opt[1] for opt in self.options]}, "
+                        f"description='{self.description}', layout={self.layout})")
+        dropdown = DummyDropdown(
+            options=polymer_options,
+            value=default_value,
+            description='Polymer:',
+            layout={'width': '50%'}
+        )
+
+    return dropdown
+
+
+
+def create_multi_layer_widget(default_polymer="LDPE", default_thickness_value=100, default_thickness_unit="um", default_c0=100):
+    """
+    Creates a widget interface to define multiple layers (1 to 10) with the following parameters for each layer:
+      - Layer Name (unique identifier)
+      - Polymer (dropdown with "Key: Description")
+      - Thickness (a numeric value and a unit)
+      - Initial Concentration C0 (in arbitrary units, a.u.)
+
+    The interface includes:
+      - An IntSlider to choose the number of layers.
+      - Navigation arrows (Previous/Next) with a label showing "Layer X of Y".
+      - Input fields for each layer's parameters.
+      - A button to instantiate all layers. When clicked, each layer is instantiated as:
+            material(layer_def["polymer"])(l=(thickness, unit), D=1e-14, C0=(C0, "a.u."))
+        and stored in a global dictionary (builtins.mylayers) keyed by the layer name.
+
+    The user may add or remove layers by changing the number and editing the layer names.
+
+    Returns:
+      An ipywidgets.VBox instance containing the full UI.
+
+    Raises:
+      ImportError: If ipywidgets/IPython are not available.
+    """
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError("ipywidgets and IPython are required for the widget interface.") from e
+
+    import builtins
+    # Ensure a global dictionary for storing created layers exists
+    if not hasattr(builtins, "mylayers"):
+        builtins.mylayers = {}
+    # Instead of mymaterial, we now use mymaterials:
+    if not hasattr(builtins, "mymaterials"):
+        builtins.mymaterials = {}
+    global mylayers, mymaterials
+    mylayers = builtins.mylayers
+    mymaterials = builtins.mymaterials
+
+    # Widget to select number of layers
+    num_layers_slider = widgets.IntSlider(
+        value=1,
+        min=1,
+        max=10,
+        step=1,
+        description='Num Layers:',
+        continuous_update=False,
+        layout=widgets.Layout(width='50%')
+    )
+
+    # Navigation label (e.g., "Layer 1 of 3")
+    nav_label = widgets.Label(value="Layer 1 of 1")
+
+    # We'll keep track of the current layer index (as a mutable list)
+    current_index = [0]
+
+    # A list to hold definitions for each layer.
+    # Each entry is a dictionary with keys: name, polymer, thickness_value, thickness_unit, C0.
+    layer_definitions = []
+    def initialize_layer_definitions(n):
+        nonlocal layer_definitions
+        layer_definitions = []
+        for i in range(n):
+            layer_definitions.append({
+                "name": f"P{i+1}",
+                "polymer": default_polymer,
+                "thickness_value": default_thickness_value,
+                "thickness_unit": default_thickness_unit,
+                "C0": default_c0
+            })
+    initialize_layer_definitions(num_layers_slider.value)
+
+    # UI components for the current layer
+    layer_name_input = widgets.Text(
+        value=layer_definitions[0]["name"],
+        description="Layer Name:",
+        layout=widgets.Layout(width='50%')
+    )
+    polymer_dropdown = create_polymer_dropdown(default_value=default_polymer)
+    thickness_value_input = widgets.FloatText(
+         value=default_thickness_value,
+         description='Thickness:',
+         layout=widgets.Layout(width='30%')
+    )
+    thickness_unit_dropdown = widgets.Dropdown(
+         options=["nm", "µm", "mm", "cm"],
+         value=default_thickness_unit,
+         description='Unit:',
+         layout=widgets.Layout(width='20%')
+    )
+    c0_input = widgets.FloatText(
+        value=default_c0,
+        description="C0:",
+        layout=widgets.Layout(width='30%')
+    )
+
+    # Navigation buttons: Previous and Next (using arrow icons)
+    prev_button = widgets.Button(description="", icon="arrow-left")
+    next_button = widgets.Button(description="", icon="arrow-right")
+
+    # Button to instantiate all layers
+    instantiate_all_button = widgets.Button(
+         description="Instantiate All Layers",
+         button_style="success",
+         tooltip="Click to instantiate all layers"
+    )
+
+    # Output area for messages/results
+    output = widgets.Output()
+
+    # Function to load the current layer's definition into the UI fields
+    def load_current_layer():
+        idx = current_index[0]
+        nav_label.value = f"Layer {idx+1} of {num_layers_slider.value}"
+        data = layer_definitions[idx]
+        layer_name_input.value = data["name"]
+        polymer_dropdown.value = data["polymer"]
+        thickness_value_input.value = data["thickness_value"]
+        thickness_unit_dropdown.value = data["thickness_unit"]
+        c0_input.value = data["C0"]
+
+    # Function to save current UI field values into the current layer's definition
+    def save_current_layer():
+        idx = current_index[0]
+        layer_definitions[idx]["name"] = layer_name_input.value.strip() or f"P{idx+1}"
+        layer_definitions[idx]["polymer"] = polymer_dropdown.value
+        layer_definitions[idx]["thickness_value"] = thickness_value_input.value
+        layer_definitions[idx]["thickness_unit"] = thickness_unit_dropdown.value
+        layer_definitions[idx]["C0"] = c0_input.value
+
+    # Handlers for Previous and Next navigation buttons
+    def on_prev(b):
+        save_current_layer()
+        if current_index[0] > 0:
+            current_index[0] -= 1
+            load_current_layer()
+
+    def on_next(b):
+        save_current_layer()
+        if current_index[0] < num_layers_slider.value - 1:
+            current_index[0] += 1
+            load_current_layer()
+
+    prev_button.on_click(on_prev)
+    next_button.on_click(on_next)
+
+    # Handler for number-of-layers slider change
+    def on_num_layers_change(change):
+        nonlocal layer_definitions
+        if change['name'] == 'value':
+            save_current_layer()
+            new_n = change['new']
+            current_n = len(layer_definitions)
+            if new_n > current_n:
+                # Append new layer definitions with defaults
+                for i in range(current_n, new_n):
+                    layer_definitions.append({
+                        "name": f"P{i+1}",
+                        "polymer": default_polymer,
+                        "thickness_value": default_thickness_value,
+                        "thickness_unit": default_thickness_unit,
+                        "C0": default_c0
+                    })
+            elif new_n < current_n:
+                layer_definitions = layer_definitions[:new_n]
+                if current_index[0] >= new_n:
+                    current_index[0] = new_n - 1
+            load_current_layer()
+
+    num_layers_slider.observe(on_num_layers_change, names='value')
+
+    # Create a new text field for the assembly key (default "assembly")
+    assembly_name_input = widgets.Text(
+         value="multilayer1",
+         description="Assembly Name:",
+         layout=widgets.Layout(width='20%')
+    )
+
+    # Handler for the Instantiate All Layers button.
+    def instantiate_all(b):
+        save_current_layer()
+        with output:
+            output.clear_output()
+            # Clear the global dictionary first.
+            builtins.mylayers = {}
+            # (We no longer clear a global mymaterial.)
+            # Loop over all layer definitions and instantiate each layer.
+            for i, layer_def in enumerate(layer_definitions):
+                # Use the layer name (if empty, assign a default name)
+                instance_name = layer_def["name"].strip() or f"P{i+1}"
+                # Resolve the polymer class using the material surrogate
+                PolymerClass = material(layer_def["polymer"])
+                # Instantiate the layer; here D is fixed to 1e-12 as a demo.
+                # Pass l and C0 as tuples; for C0, the unit is "a.u."
+                layer_instance = PolymerClass(
+                    l=(layer_def["thickness_value"], layer_def["thickness_unit"]),
+                    D=1e-12,
+                    C0=(layer_def["C0"], "a.u.")
+                )
+                builtins.mylayers[instance_name] = layer_instance
+            # Instead of storing the sum in a single variable, store it in mymaterials using the assembly key.
+            assembly_key = assembly_name_input.value.strip() or "assembly"
+            # Here, layer.sum is assumed to be a class method of layer.
+            builtins.mymaterials[assembly_key] = layer.sum(builtins.mylayers)
+            print("Instantiated Layers:")
+            for name, inst in builtins.mylayers.items():
+                print(f"  {name}: {inst}")
+            print(f"\nAssembly '{assembly_key}' has been created and stored in 'mymaterials'.")
+    instantiate_all_button.on_click(instantiate_all)
+
+    # Arrange the UI components into a layout.
+    navigation_box = widgets.HBox([prev_button, nav_label, next_button])
+    fields_box = widgets.VBox([
+        layer_name_input,
+        polymer_dropdown,
+        widgets.HBox([thickness_value_input, thickness_unit_dropdown]),
+        c0_input
+    ])
+    ui = widgets.VBox([
+         num_layers_slider,
+         navigation_box,
+         fields_box,
+         # Add the assembly name input above the instantiate button:
+         assembly_name_input,
+         instantiate_all_button,
+         output
+    ])
+
+    # Load the first layer's data into the UI.
+    load_current_layer()
+    return ui
+
+
+
+# %% layerLink
 class layerLink:
     """
     A sparse representation of properties (`D`, `k`, `C0`) used in `layer` instances.
@@ -1496,6 +2073,37 @@ class layer:
         else:
             raise ValueError("Invalid layer object")
 
+    # sum: + over a list/dict
+    @classmethod
+    def sum(cls, layers):
+        """
+        Sums all layer instances from a dictionary or list and returns a multilayer instance.
+
+        Parameters:
+          layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.
+
+        Returns:
+          A single layer instance representing the stack (sum) of all input layers.
+
+        Example:
+          mymultilayer = layer.sum(mylayers)
+          # where 'mylayers' could be a dict of layers or a list of layers.
+        """
+        # If layers is a dictionary, iterate over its values.
+        if isinstance(layers, dict):
+            layer_iter = layers.values()
+        else:
+            layer_iter = layers
+        total = None
+        for L in layer_iter:
+            if not isinstance(L,layer):
+                raise TypeError(f"all layers must of class layer not a {type(L).__name__}")
+            if total is None:
+                total = L
+            else:
+                total = total + L  # This uses the overloaded __add__ operator of the layer class.
+        return total
+
 
     # --------------------------------------------------------------------
     # overloading binary multiplication (note that the output is of type layer)
@@ -2346,13 +2954,28 @@ class layer:
         sim.savestate(self,medium) # store store the inputs in sim for chaining
         return sim
 
-    # overloading operation
+    # overloading operation >>
     def __rshift__(self, medium):
-        """Overloads >> to propagate migration to food."""
+        """
+            Overloads >> to propagate migration to food.
+                layer >> food --> simulation --> food (use food.lastsimulation to see it)
+                layer >> condition --> simulation --> condition
+        """
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f"medium must be a foodphysics object not a {type(medium).__name__}")
         return self.contact(medium)
+
+    # overloading in
+    def __rmod__(self,other):
+        """
+            Overload in to enable: susbtance % layer --> layer
+        """
+        from patankar.loadpubchem import migrant
+        if not isinstance(other,migrant):
+            raise TypeError(f"other must a migrant and not a {type(other).__name__}")
+        self.update(substance=other)
+        return self
 
     # --------------------------------------------------------------------
     # Safe update method

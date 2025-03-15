@@ -6,6 +6,8 @@ This directory contains internal modules that are used internally by the SFPPy l
 - `mstruct.py` 📦: Tools for handling structured data.
 - `pint/` 📏: Standard **Pint** library used for SI unit conversions in SFPPy.
 - `pubchempy.py` 🔬: Interface for retrieving chemical data from **PubChem**.
+- `EUFCMannex1.py` 🗄️⚖️: Robust database manager for Annex I of EU Regulation 10/2011
+- `fcm-and-articles-regulation--annex-i---authorised-substances-export.csv` 📄: source file from 🌐 https://echa.europa.eu/plastic-material-food-contact
 - `chemspipy/` ⚠️: Previously used for **ChemSpider** integration but now deprecated (requires API tokens).
 - `toxtree/` ☠️: Local installation folder of the private copy of Toxtree.
 
@@ -24,4 +26,3 @@ This directory contains internal modules that are used internally by the SFPPy l
   <a href="https://github.com/ovitrac/SFPPy" style="color: #fff; text-decoration: underline;">Website</a> |
   <a href="https://ovitrac.github.io/SFPPy/" style="color: #fff; text-decoration: underline;">Documentation</a>
 </div>
-

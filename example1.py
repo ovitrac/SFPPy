@@ -64,7 +64,7 @@ contactTime = (10, "days")  # Contact duration
 # %% Set Parameters with Uncertainty
 # ----------------------------------
 # Concentrations are in arbitrary units (e.g., mg/kg)
-maxConcentration = 5000  # Maximum initial concentration in the polymer
+maxConcentration = 5000  # Maximum initial concentration in the polymer (e.g. 5000 mg/mg)
 
 # %% Define Sandwich Geometry
 # ---------------------------
@@ -73,8 +73,8 @@ Create a **cylindrical sandwich** modeled using `Packaging3D`.
 """
 sandwich_geom = Packaging3D(
     'Cylinder',
-    height=(19, "cm"),  # Cylinder height (19 cm)
-    radius=(6, "mm")    # Cylinder radius (6 mm)
+    length=(19, "cm"),  # Cylinder length/height (19 cm)
+    radius=(30, "mm")    # Cylinder radius (6 mm)
 )
 
 # Compute internal volume (m³) and contact surface area (m²)
@@ -144,12 +144,12 @@ CF = simulation.interpolate_CF(tnew).flatten()
 simulation.plotCx()
 
 # Migration kinetics (CF vs time)
-hfig1 = simulation.plotCF(t=tnew)
+hfig1 = simulation.plotCF(t=tnew) # we set arbitrarily an SML to 30 mg/kg (units are shown as a.u.)
 
 # %% Store Results for Comparison
 # -------------------------------
 # Store the simulation results for **Irganox 1076**
-allCF = store(name="sandwich")
+allCF = store(name="sandwich", SML=10)
 allCF.add(simulation, "Irganox 1076", "r")  # Assign red color "r"
 
 # %% Run Simulation for Irgafos 168
@@ -188,7 +188,7 @@ print(f"m1:I1076 KF/P = {KFP_m1}","\n",f"m2:I168 KF/P = {KFP_m2}")
 # %% Compare Migration Kinetics (Both Migrants)
 # ---------------------------------------------
 # Compare CF vs time for **Irganox 1076** and **Irgafos 168**
-hfig12 = allCF.plotCF()
+hfig12 = allCF.plotCF(plotSML=False) # we do not plot SML since they have different SMLs
 
 # %% Save and Print Figures
 # -------------------------
@@ -196,3 +196,16 @@ printconfig = {"destinationfolder": outputfolder, "overwrite": True}
 print_figure(hfig1, **printconfig)
 print_figure(hfig2, **printconfig)
 print_figure(hfig12, **printconfig)
+
+
+# %% Variant with operators for faster evaluation
+# The general template is:
+#    substance % food << packaging >> layer >> food
+#    food.lastsimulation contains the last result
+
+from patankar.layer import LDPE
+film = LDPE(l=(0.1,"mm")) # a virgin film (no substance, not temperature information)
+m1 % FOODlayer << sandwich_geom >> film >> FOODlayer
+FOODlayer.lastsimulation.plotCF()
+m2 % FOODlayer << sandwich_geom >> film >> FOODlayer
+FOODlayer.lastsimulation.plotCF()

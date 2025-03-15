@@ -1,0 +1,207 @@
+{
+  "cid": 166635,
+  "synonyms": [
+    "Copper hydroxide phosphate (Cu2(OH)(PO4))",
+    "Dicopper hydroxide phosphate",
+    "12158-74-6",
+    "Copper hydroxide phosphate",
+    "dicopper;hydroxide;phosphate",
+    "XUQ279I4I3",
+    "LAZERFLAIR 8840",
+    "UNII-XUQ279I4I3",
+    "DTXSID30872550",
+    "EINECS 235-285-2",
+    "COPPER PHOSPHATE (CU2(OH)(PO4))",
+    "EC 235-285-2",
+    "DTXCID70820196",
+    "WCMHCPWEQCWRSR-UHFFFAOYSA-J",
+    "NS00085709",
+    "A902906",
+    "Q27294005"
+  ],
+  "sids": [
+    10256142,
+    16630799,
+    46240279,
+    51775137,
+    91693710,
+    103816719,
+    113458739,
+    135122099,
+    162475308,
+    176261972,
+    198947179,
+    316388598,
+    355160953,
+    373730304,
+    375927253,
+    385763212,
+    386599887,
+    387168376,
+    439432297,
+    442933628,
+    444234640,
+    445577253,
+    445704770,
+    453565497,
+    468717551,
+    472549696,
+    482000394,
+    489079270,
+    497654383,
+    500771284,
+    504198935
+  ],
+  "aids": [],
+  "elements": [
+    "Cu",
+    "Cu",
+    "P",
+    "O",
+    "O",
+    "O",
+    "O",
+    "O",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Cu",
+      "x": 2,
+      "y": -1.2015,
+      "z": null,
+      "charge": 2
+    },
+    {
+      "aid": 2,
+      "element": "Cu",
+      "x": 4.5,
+      "y": 0.6645,
+      "z": null,
+      "charge": 2
+    },
+    {
+      "aid": 3,
+      "element": "P",
+      "x": 3,
+      "y": -0.2015,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "O",
+      "x": 2,
+      "y": -0.2015,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 5,
+      "element": "O",
+      "x": 3,
+      "y": -1.2015,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 6,
+      "element": "O",
+      "x": 4,
+      "y": -0.2015,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 3,
+      "y": 0.7985,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "O",
+      "x": 5.5,
+      "y": 0.6645,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 9,
+      "element": "H",
+      "x": 5.81,
+      "y": 1.2015,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 3,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 7,
+      "order": 2
+    },
+    {
+      "aid1": 8,
+      "aid2": 9,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "Cu2HO5P",
+  "molecular_weight": "239.07",
+  "canonical_smiles": "[OH-].[O-]P(=O)([O-])[O-].[Cu+2].[Cu+2]",
+  "isomeric_smiles": "[OH-].[O-]P(=O)([O-])[O-].[Cu+2].[Cu+2]",
+  "inchi": "InChI=1S/2Cu.H3O4P.H2O/c;;1-5(2,3)4;/h;;(H3,1,2,3,4);1H2/q2*+2;;/p-4",
+  "inchikey": "WCMHCPWEQCWRSR-UHFFFAOYSA-J",
+  "iupac_name": "dicopper;hydroxide;phosphate",
+  "xlogp": null,
+  "exact_mass": "237.815354",
+  "monoisotopic_mass": "237.815354",
+  "tpsa": 87.3,
+  "complexity": 36.8,
+  "h_bond_donor_count": 1,
+  "h_bond_acceptor_count": 5,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371000038020000000400000000000000000000000000000000000000000000000000000000000008200000000000000000000000100040000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000000000000011100000000010000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000100000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 8,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 4,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

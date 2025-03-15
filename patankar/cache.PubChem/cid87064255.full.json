@@ -1,0 +1,166 @@
+{
+  "cid": 87064255,
+  "synonyms": [
+    "19569-21-2",
+    "CARBONICACID,CALCIUMMAGNESIUMSALT",
+    "SCHEMBL75143",
+    "ADIXYOBIQIMPEH-UHFFFAOYSA-N",
+    "CARBONIC ACID, CALCIUM MAGNESIUM SALT"
+  ],
+  "sids": [
+    226454867,
+    385794445,
+    447502080,
+    464409485,
+    469045804,
+    472573417,
+    486311127,
+    486342829,
+    489040055,
+    504090099,
+    504183751
+  ],
+  "aids": [],
+  "elements": [
+    "Ca",
+    "Mg",
+    "O",
+    "O",
+    "O",
+    "C",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Ca",
+      "x": 0,
+      "y": 1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "Mg",
+      "x": 3.653,
+      "y": 0,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "O",
+      "x": 4.769,
+      "y": 4,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "O",
+      "x": 3.0369,
+      "y": 4,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "O",
+      "x": 3.903,
+      "y": 2.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "C",
+      "x": 3.903,
+      "y": 3.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "H",
+      "x": 5.3059,
+      "y": 3.69,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "H",
+      "x": 2.5,
+      "y": 3.69,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 3,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 6,
+      "order": 2
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "CH2CaMgO3",
+  "molecular_weight": "126.41",
+  "canonical_smiles": "C(=O)(O)O.[Mg].[Ca]",
+  "isomeric_smiles": "C(=O)(O)O.[Mg].[Ca]",
+  "inchi": "InChI=1S/CH2O3.Ca.Mg/c2-1(3)4;;/h(H2,2,3,4);;",
+  "inchikey": "ADIXYOBIQIMPEH-UHFFFAOYSA-N",
+  "iupac_name": null,
+  "xlogp": null,
+  "exact_mass": "125.9480265",
+  "monoisotopic_mass": "125.9480265",
+  "tpsa": 57.5,
+  "complexity": 26.3,
+  "h_bond_donor_count": 2,
+  "h_bond_acceptor_count": 3,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371000030000000280000000000000000000000000000000000000000000000000000000002000008000000000000000008000002000800000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000000000000011000000000000000000000000000000101000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000001000000000000010000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 6,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 3,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

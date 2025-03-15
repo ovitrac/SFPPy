@@ -154,6 +154,10 @@ except ImportError:
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
 
+# --- SFPPy.Comply imports ---
+# European rules
+import patankar.private.EUFCMannex1 as complyEU # Annex 1 (we import all the module as complyEU)
+
 __all__ = ['CompoundIndex', 'dbdefault', 'get_compounds', 'migrant', 'migrantToxtree', 'polarity_index']
 
 __project__ = "SFPPy"
@@ -163,7 +167,15 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.30"
+__version__ = "1.32"
+
+
+# %% SFFy.Comply databases version 2025
+if complyEU.EuFCMannex1.isindexinitialized(): # <EuFCMannex1: 1194 records (Annex 1 of 10/2011/EC)>
+    dbannex1 = complyEU.EuFCMannex1()
+    doSML = True # SML are available
+else:
+    doSML = False # SML are not available (prevent circular references when the index of EuFCMannex1 is refreshed)
 
 # %% Private functions and constants (used by estimators)
 
@@ -173,6 +185,9 @@ _PATANKAR_FOLDER = os.path.dirname(__file__)
 # Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
 PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
 PubChem_lastQueryTime = 0 # global variable
+
+# robust float() function
+floatNone = lambda x: x if isinstance(x, (float, type(None))) else float(x)
 
 # returns polarity index from logP and V
 def polarity_index(logP=None, V=None, name=None,
@@ -241,7 +256,8 @@ def polarity_index(logP=None, V=None, name=None,
     # Fetch logP and V if `name` is given
     if logP is None or V is None:
         if name is None:
-            raise ValueError("Provide either (logP, V) pair or a valid solvent name.")
+            #raise ValueError("Provide either (logP, V) pair or a valid solvent name.")
+            return None
         from patankar.loadpubchem import migrant
         tmp = migrant(name)
         logP, V = tmp.logP, tmp.molarvolumeMiller
@@ -278,6 +294,205 @@ def polarity_index(logP=None, V=None, name=None,
     # Vectorized computation for arrays
     return np.vectorize(compute_P)(logP, V)
 
+# %% Widget
+def create_substance_widget():
+    """
+    Creates a two-step widget interface for selecting a substance via loadpubchem.
+
+    Step 1 (left panel):
+      - A text field (max 60 characters) prompts for a chemical name or CAS.
+      - A “Search Substance” button triggers a call to migrant(substance).
+      - If the returned record is None or not an instance of migrant, an error is shown and Step 2 is not enabled.
+
+    Step 2 (right panel):
+      - Displays record information:
+          • record.compound (short text)
+          • record.name (if a list, a dropdown is shown; if a string, the text is wrapped)
+          • record.CAS
+          • record.cid (if available)
+          • record.formula
+          • record.InChiKey
+          • record.smiles
+          • record.M (displayed as a string)
+          • If record.hasSML is True, shows “{record.SML} [{record.SMLunit}]”
+      - A text field to define a substance name (default “m1”).
+      - A button “Instantiate Substance” stores the record in a global dictionary (builtins.mysubstances).
+      - A “Back” button allows returning to Step 1.
+
+    Usage:
+      In a Jupyter Lab/Notebook cell, do:
+         from patankar.loadpubchem import create_substance_widget
+         widget = create_substance_widget()
+         display(widget)
+      Later, access created substances via builtins.mysubstances.
+    """
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError("ipywidgets and IPython are required for this widget interface.") from e
+
+    # Ensure a global dictionary for substances exists
+    import builtins
+    if not hasattr(builtins, "mysubstances"):
+        builtins.mysubstances = {}
+    global mysubstances
+    mysubstances = builtins.mysubstances
+
+    # --- Step 1: Search Panel ---
+    search_text = widgets.Text(
+        value="Irganox 1010",
+        placeholder="Enter chemical name or CAS",
+        description="Substance:",
+        layout=widgets.Layout(width="100%"),
+        disabled=False
+    )
+    search_text.max_length = 120
+
+    search_button = widgets.Button(
+        description="Search Substance",
+        button_style="primary"
+    )
+    search_output = widgets.Output()
+
+    left_panel = widgets.VBox([search_text, search_button, search_output])
+    left_panel.layout = widgets.Layout(width="40%")
+
+    # --- Step 2: Confirmation Panel ---
+    # These widgets will be populated once a valid record is found.
+    # For each field we use a Label (or a Dropdown for record.name if it is a list).
+    compound_label = widgets.Label(value="Compound: ")
+    # For record.name, we'll initially show an empty Text widget; later we switch to a Dropdown if needed.
+    name_display = widgets.Text(value="", description="Name:", disabled=True, layout=widgets.Layout(width="60%"))
+    cas_label = widgets.Label(value="CAS: ")
+    cid_label = widgets.Label(value="CID: ")
+    formula_label = widgets.Label(value="Formula: ")
+    inchikey_label = widgets.Label(value="InChiKey: ")
+    smiles_label = widgets.Label(value="SMILES: ")
+    M_label = widgets.Label(value="M: ")
+    SML_label = widgets.Label(value="SML: ")
+
+    # Field for the user-defined substance name (default "m1")
+    substance_name = widgets.Text(
+        value="m1",
+        description="Substance Name:",
+        layout=widgets.Layout(width="50%")
+    )
+
+    instantiate_button = widgets.Button(
+        description="Instantiate Substance",
+        button_style="success"
+    )
+    back_button = widgets.Button(
+        description="Back",
+        button_style=""
+    )
+    right_output = widgets.Output()
+
+    right_panel = widgets.VBox([
+        compound_label, name_display, cas_label, cid_label, formula_label,
+        inchikey_label, smiles_label, M_label, SML_label,
+        substance_name,
+        widgets.HBox([instantiate_button, back_button]),
+        right_output
+    ])
+    # Initially, hide the right panel until a successful search.
+    right_panel.layout.display = "none"
+
+    # --- Callbacks ---
+
+    # Step 1: Search callback
+    def search_substance(b):
+        with search_output:
+            search_output.clear_output()
+            query = search_text.value.strip()
+            if not query:
+                print("Please enter a substance name or CAS.")
+                return
+            try:
+                # Call migrant(query). Note: migrant is already defined in loadpubchem.
+                record = migrant(query)
+            except Exception as e:
+                print("Error during search:", e)
+                return
+            # Check if record is a valid migrant instance
+            if record is None or not isinstance(record, migrant):
+                print(f"No valid substance found for '{query}'.")
+                return
+            # If found, populate the right panel with record details.
+            compound_label.value = f"Compound: {str(record.compound)[:40]}"
+            # For record.name: if list, show a Dropdown; if string, use a read-only Text.
+            if isinstance(record.name, list):
+                name_disp = widgets.Dropdown(options=record.name, description="Name:")
+            else:
+                name_disp = widgets.Text(value=record.name, description="Name:", disabled=True, layout=widgets.Layout(width="100%"))
+            # Replace the placeholder widget.
+            right_panel.children = list(right_panel.children[:1]) + [name_disp] + list(right_panel.children[2:])
+            cas_label.value = f"CAS: {record.CAS}"
+            cid_label.value = f"CID: {record.cid}" if record.cid is not None else "CID: N/A"
+            formula_label.value = f"Formula: {record.formula}"
+            inchikey_label.value = f"InChiKey: {record.InChiKey}"
+            smiles_label.value = f"SMILES: {record.smiles}"
+            # For M: if record.M is a numpy array, get its first element; else, use it directly.
+            try:
+                m_val = record.M_array.item(0) if hasattr(record, "M_array") and isinstance(record.M_array, np.ndarray) else record.M
+            except Exception:
+                m_val = record.M
+            M_label.value = f"M: {m_val}"
+            if getattr(record, "hasSML", False):
+                SML_label.value = f"SML: {record.SML} [{record.SMLunit}]"
+            else:
+                SML_label.value = "SML: N/A"
+            # Store the record temporarily in a hidden attribute for later instantiation.
+            right_panel.record = record
+            # Show the right panel.
+            right_panel.layout.display = ""
+            # Optionally, clear the search field.
+            # search_text.value = ""
+
+    search_button.on_click(search_substance)
+
+    # Step 2: Instantiate callback
+    def instantiate_substance(b):
+        with right_output:
+            right_output.clear_output()
+            record = getattr(right_panel, "record", None)
+            if record is None or not isinstance(record,migrant):
+                print("No substance record available.")
+                return
+            sub_name = substance_name.value.strip()
+            if not sub_name:
+                print("Please provide a valid substance name.")
+                return
+            # For this example, we simply store the record in a global dictionary.
+            builtins.mysubstances[sub_name] = record
+            print(f"Substance '{sub_name}' instantiated:")
+            # Display selected properties (short summary)
+            print(f"  Compound: {record.compound}")
+            print(f"  Name: {record.name[:3] if isinstance(record.name,list) else record.name}")
+            print(f"  CAS: {record.CAS}")
+            #print(f"  CID: {record.cid}")
+            #print(f"  Formula: {record.formula}")
+            #print(f"  InChiKey: {record.InChiKey}")
+            #print(f"  SMILES: {record.smiles}")
+            print(f"  M: {record.M}")
+            if getattr(record, "hasSML", False):
+                print(f"  SML: {record.SML} [{record.SMLunit}]")
+            print("\nCurrent substances:", list(builtins.mysubstances.keys()))
+
+    instantiate_button.on_click(instantiate_substance)
+
+    # Step 2: Back callback to return to Step 1
+    def go_back(b):
+        with right_output:
+            right_output.clear_output()
+        right_panel.layout.display = "none"
+
+    back_button.on_click(go_back)
+
+    # Arrange the two panels side by side.
+    ui = widgets.HBox([left_panel, right_panel])
+    return ui
 
 
 # %% Core class (low-level)
@@ -419,12 +634,12 @@ class CompoundIndex:
             "name": name,
             "synonyms": synonyms_list,
             "CAS": cas_list,
-            "M": float(full_data.get("molecular_weight")),
+            "M": floatNone(full_data.get("molecular_weight")),
             "formula": full_data.get("molecular_formula"),
             "SMILES": full_data.get("canonical_smiles"),
             "InChi": full_data.get("inchi"),
             "InChiKey": full_data.get("inchikey"),
-            "logP": float(full_data.get("xlogp")),
+            "logP": floatNone(full_data.get("xlogp")),
             "date": datetime.now().strftime("%Y-%m-%d"),
         }
         return record
@@ -1050,6 +1265,20 @@ class migrant:
                 alpha = 1/0.65 if self.count_rings["aromatic"]>0 else 1.3
                 self.vdWvolume2 = 1/alpha * self.molarvolumeMiller * 10.0/6.02214076 # in A3
 
+                # if dbannex1 is available
+                if doSML:
+                    annex1record = None
+                    if self.cid in dbannex1:
+                        annex1record = dbannex1.bycid(self.cid)
+                    elif self.CAS in dbannex1:
+                        annex1record = dbannex1.byCAS(self.CAS)
+                    if annex1record is not None:
+                        self.SML = annex1record["SML"]
+                        self.SMLunit = annex1record['SMLunit']
+                        self.annex1 = annex1record
+                    else:
+                        self.SML = None # we validate that we looked for an SML but we did not find it
+
 
         # Case (b): name is None, M is provided => generic substance
         # ----------------------------------------------------------------
@@ -1180,7 +1409,15 @@ class migrant:
             return self.k.evaluate(**updated_template)
         return func
 
-
+    # hasSML: False if SML does not exist or is None
+    @property
+    def hasSML(self):
+        """return True if it has an SML defined"""
+        return hasattr(self,"SML") and self.SML is not None
+    @property
+    def hasannex1(self):
+        """return True if annex1 is defined"""
+        return hasattr(self,"annex1") and isinstance(self.annex1,complyEU.annex1record)
 
     def __repr__(self):
         """Formatted string representation summarizing key attributes."""
@@ -1200,7 +1437,24 @@ class migrant:
             "logP": self.logP,
             "P' (calc)": self.polarityindex
         }
+        # Add SML and EU rules
+        if self.hasSML:
+            if self.hasannex1:
+                attributes["--- EC 10/2011"]="-"*15
+                attributes["SML"] = str(self.SML)
+                attributes["SML"]+=f" [{self.SMLunit}]"
+                if self.annex1["SMLTGroupFCMsubstances"] is not None:
+                    attributes["part a group"]=f"of {len(self.annex1['SMLTGroupFCMsubstances'])} substances"
+                attributes["Name"] =self.annex1["name"]
+                attributes["CAS"] = self.annex1["CAS"]
+                attributes["EC|FCM|REF"] = f"{self.annex1['EC']}|{self.annex1['FCM']}|{self.annex1['Ref']}"
+            else:
+                attributes["SML"] = str(self.SML)
+                if hasattr(self,"SMLunit"):
+                    attributes["SML"]+=f" [{self.SMLunit}]"
+        # Add Toxtree attributes
         if isinstance(self,migrantToxtree):
+            attributes["--- ToxTree"]="-"*15
             attributes["Compound"] = self.ToxTree["IUPACTraditionalName"]
             attributes["Name"] = self.ToxTree["IUPACName"]
             attributes["Toxicology"] = self.CramerClass
@@ -1534,7 +1788,7 @@ class migrant:
 
     @property
     def volume_3d(self):
-        """
+        r"""
         Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
         This function applies an empirical, linear-additive scheme:
@@ -1932,6 +2186,8 @@ class migrantToxtree(migrant):
 # ==========================
 if __name__ == "__main__":
     # debug
+    m = migrant("di(2-ethylhexyl) phthalate")
+    repr(m)
     m=migrant("bisphenol A")
     m.count_rings
     m.volume_3d
