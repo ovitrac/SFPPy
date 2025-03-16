@@ -188,7 +188,7 @@ include_patterns=(
     "*.m"         # MATLAB files
     "*.asv"       # Auto-saved files
     "*.m~"        # Backup files
-    "*.pynb"      # Jupyter notebooks
+    "*.ipynb"      # Jupyter notebooks
     "*.py"        # Python scripts
     "*.sh"        # Shell scripts
     "*.txt"       # Text files
@@ -197,6 +197,8 @@ include_patterns=(
     "*.json"      # JSON files
     "*.css"       # CSS files
     "*.manifest"  # Manifest files
+    "*.png"       # image files
+    "*.csv"       # CSV files
 )
 
 # Relative folders to exclude from the backup
@@ -205,18 +207,22 @@ exclude_folders_rel=(
     "./tmp"       # Temporary folder (local)
     "./sandbox"   # Sandbox folder (local)
     "./debug"     # Debug folder (local)
+    "./trash"     # Trash folder (local)
     "./obsolete"  # Obsolete folder (local)
     "./.git"      # Git folder (local)
     "./.vscode"   # Visual Studio Code folder (local)
     "./.spyproject" # Spyder project folder (local)
     "./__all__"   # all (internal to SFPPy)
     "./__pycache__" # Python folder (local)
+    "./.ipynb_checkpoints" # Jupyter folders
 )
 
 # Absolute folders to exclude from the backup
 exclude_folders_abs=(
     "$mainfolder/history"  # History folder
     "$mainfolder/release"  # Release folder
+    "$mainfolder/books"    # books
+    "$mainfolder/external" # external resources
 )
 
 # Specific file patterns to exclude from the backup

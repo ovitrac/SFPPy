@@ -9,8 +9,10 @@ to display original Typora-generated HTML files located in the wiki folder.
 This script scans the SFPPy project's HTML files (converted from Markdown) in the wiki folder,
 copies them to a destination folder (html/wikipages) while preserving the subfolder structure,
 renaming files if duplicates occur (appending a "~" to the filename), and builds a hierarchical,
-collapsible left menu. The index file is written in the destination folder and refers to the
-HTML files from this folder. Initially, the iframe loads wiki.html.
+collapsible left menu. It also parses each HTML file to look for asset references (from "assets/" or "./assets/")
+and copies these files preserving their local folder structure.
+The index file is written in the destination folder and refers to the HTML files from this folder.
+Initially, the iframe loads wiki.html.
 
 Usage:
     Ensure that this script is run from the `SFPPy/utils/` directory.
@@ -20,7 +22,8 @@ Usage:
     ```
 
 Output:
-    - The `html/wikipages` directory will contain the copied HTML files and the generated `index.html` file.
+    - The `html/wikipages` directory will contain the copied HTML files, any referenced assets,
+      and the generated `index.html` file.
 
 Author:
     - **INRAE\Olivier Vitrac**
@@ -30,7 +33,6 @@ Author:
 Version:
     SFPPy v.1.30
 """
-
 
 import os
 import re
@@ -219,7 +221,7 @@ excluded_dirs = [
     "__pycache__",
     ".ipynb_checkpoints",
     "anaconda_projects",
-    "assets",
+    "assets",        # Note: we do not copy an entire assets directory unless referenced by an HTML.
     "history",
     "help",
     "debug",
@@ -242,8 +244,14 @@ def is_excluded(path):
         return True
     return False
 
-# Copy files from source_dir to dest_dir while preserving subfolder structure.
+# Set to track copied assets (destination paths)
+copied_assets = set()
+
+# Copy HTML files from source_dir to dest_dir while preserving subfolder structure.
 # Rename files if duplicates occur.
+# After copying an HTML file, search its content for asset references (assets/ or ./assets/) and copy them.
+asset_pattern = re.compile(r'(?:src|href)\s*=\s*["\'](\.?\/?assets\/[^"\']+)["\']', re.IGNORECASE)
+
 for root, dirs, files in os.walk(source_dir):
     # Remove directories in the exclusion list
     dirs[:] = [d for d in dirs if d not in excluded_dirs]
@@ -257,21 +265,43 @@ for root, dirs, files in os.walk(source_dir):
             dest_folder = os.path.dirname(dest_file)
             if not os.path.exists(dest_folder):
                 os.makedirs(dest_folder)
-            # If destination file already exists, rename the new file by appending "~" to its name
+            # If destination file already exists, rename the new file by appending "~"
             if os.path.exists(dest_file):
                 dest_file = dest_file + "~"
             shutil.copy2(source_file, dest_file)
+            
+            # Now, open the source HTML file and search for asset references
+            with open(source_file, "r", encoding="utf-8", errors="replace") as fin:
+                content = fin.read()
+            for match in asset_pattern.finditer(content):
+                asset_rel_path = match.group(1)
+                # Normalize the asset path (remove leading "./" if any)
+                asset_rel_path = asset_rel_path.lstrip("./")
+                # Determine the source asset file path relative to the current HTML file
+                html_dir = os.path.dirname(source_file)
+                asset_source = os.path.join(html_dir, asset_rel_path)
+                if not os.path.exists(asset_source):
+                    continue  # asset not found; could log a warning here if desired
+                # Determine destination: relative to the destination HTML file's folder.
+                dest_asset = os.path.join(os.path.dirname(dest_file), asset_rel_path)
+                # Create destination folder for the asset if needed
+                asset_dest_folder = os.path.dirname(dest_asset)
+                if not os.path.exists(asset_dest_folder):
+                    os.makedirs(asset_dest_folder)
+                # Apply duplicate renaming rule if asset already exists and hasn't been copied
+                if dest_asset in copied_assets or os.path.exists(dest_asset):
+                    dest_asset = dest_asset + "~"
+                shutil.copy2(asset_source, dest_asset)
+                copied_assets.add(dest_asset)
 
 # Now, build a nested tree representing the folder structure in dest_dir.
 tree = {}
 for root, dirs, files in os.walk(dest_dir):
-    # Ensure we ignore the generated index file in the destination (if present)
     dirs[:] = [d for d in dirs]
     for f in files:
         if f.endswith(".html"):
-            # Skip the generated index file if encountered
             if f == output_file:
-                continue
+                continue  # skip the generated index
             full_path = os.path.join(root, f)
             rel = os.path.relpath(full_path, dest_dir)
             parts = rel.split(os.path.sep)
@@ -283,12 +313,10 @@ for root, dirs, files in os.walk(dest_dir):
 def generate_nav_html(tree):
     """Recursively generate HTML for the navigation tree."""
     html_nav = "<ul>\n"
-    # Files at this level
     if "_files" in tree:
         for fname, relpath in sorted(tree["_files"], key=lambda x: x[0].lower()):
             url = html.escape(relpath)
             html_nav += f"<li><a href='javascript:loadDoc(\"{url}\")'>{html.escape(fname)}</a></li>\n"
-    # Subdirectories
     for key in sorted(tree.keys()):
         if key == "_files":
             continue
@@ -299,7 +327,6 @@ def generate_nav_html(tree):
     return html_nav
 
 nav_html = generate_nav_html(tree)
-# Prepend a "root" header for files in the destination folder's root.
 nav_html = "<div class='folder-title' onclick='toggleFolder(this)'>root</div>\n" + generate_nav_html(tree)
 
 # Generate index.html with an iframe in the main panel in the destination folder.
@@ -325,7 +352,6 @@ with open(index_file, "w", encoding="utf-8") as fout:
     fout.write(nav_html)
     fout.write("  </div>\n")
     fout.write("  <div id='main'>\n")
-    # Initially load wiki.html in the iframe (which has been copied to dest_dir)
     fout.write("    <iframe id='contentFrame' src='wiki.html' title='Content'></iframe>\n")
     fout.write("  </div>\n")
     fout.write("</div>\n")

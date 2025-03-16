@@ -49,7 +49,7 @@ dependencies = [
     "scipy>=1.7.0",
     "pandas>=1.3.0",
     "openpyxl>=3.0.10",
-    "Pillow>=8.0.0"  # Minimal version for PNG image loading and cropping
+    "pillow>=8.0.0"  # Minimal version for PNG image loading and cropping
 ]
 
 conda_channels = ["conda-forge", "defaults"]
@@ -170,7 +170,7 @@ def generate_environment_yml(sfppy_root, dependencies, conda_channels):
 channels:
 {chr(10).join(f"  - {channel}" for channel in conda_channels)}
 dependencies:
-- python=3.10
+  - python=3.10
 {chr(10).join(f"  - {dep}" for dep in conda_deps)}
 """
 
