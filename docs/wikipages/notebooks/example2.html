@@ -3,7 +3,34 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>example2</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>example2</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script><script>
+(function() {
+  function addWidgetsRenderer() {
+    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
+    var scriptElement = document.createElement('script');
+    
+    var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    
+    var widgetState;
+
+    // Fallback for older version:
+    try {
+      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
+
+      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
+        
+        var widgetRendererSrc = 'https://unpkg.com/@jupyter-js-widgets@*/dist/embed.js';
+        
+      }
+    } catch(e) {}
+
+    scriptElement.src = widgetRendererSrc;
+    document.body.appendChild(scriptElement);
+  }
+
+  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
+}());
+</script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7511,6 +7538,27 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=93f10ca8-ca04-47e3-801f-0ad33838ad24">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<div style="border-radius: 8px; padding: 12px; background: linear-gradient(to right, #4CAF50, #FF4D4D);
+            color: white; font-size: 28px; font-weight: bold; display: flex; align-items: center; justify-content: center; position: relative;">
+SFPPy - Notebook 📑
+<a href="https://github.com/ovitrac/SFPPy" style="position: absolute; right: 12px; top: 10%; transform: translateY(-10%);" target="_blank">
+<img alt="GitHub SFPPy" src="https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&amp;logo=github" style="border-radius: 8px;"/>
+</a>
+<div style="position: absolute; right: 16px; top: 60%; transform: translateY(-60%); font-size: 14px; font-weight: bold;">
+<span style="color: white;">v1.37</span>
+<a href="mailto:olivier.vitrac@gmail.com" style="margin-left: 8px;" title="E-mail the author">📩</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=04f4f45c-56dc-4894-8e6c-7e4a56f4c001">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -7546,13 +7594,72 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6000fc24-1176-41c5-9dbb-870e7240c8f6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;"/>
+<p><em>Initialize SFPPy</em></p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c159b6cb-47aa-49e2-953b-8514b04ca56b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Define verbosity flag</span>
+<span class="c1"># Check if SFPPy is initialized; if not, run initialization script</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">patankar.loadpubchem</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"SFPPy is already initialized; skipping initialization."</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"SFPPy not detected; attempting initialization."</span><span class="p">)</span>
+    <span class="n">base_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"../utils"</span><span class="p">,</span> <span class="s2">"./utils"</span><span class="p">,</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">"../../utils"</span><span class="p">,</span> <span class="s2">"../../../utils"</span><span class="p">]</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s2">"initialize_sfppy.py"</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">base_dirs</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s2">"initialize_sfppy.py"</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="n">candidates</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Running initialization script: </span><span class="si">{</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="o">%</span><span class="k">run</span> -i {candidates[0]} --no-verbose --no-cd
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">patankar.loadpubchem</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"SFPPy successfully initialized."</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ERROR: Initialization failed; 'patankar.loadpubchem' is still unavailable.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span><span class="s2">"Current sys.path:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ERROR: Initialization script not found. Check your working directory:</span><span class="se">\n</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Tested Paths"</span><span class="p">);[</span><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">- "</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s2">"initialize_sfppy.py"</span><span class="p">)))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">base_dirs</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>SFPPy is already initialized; skipping initialization.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=27e6c30c-26bf-4294-a9d8-d914cabd9d36">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Dependencies">Dependencies<a class="anchor-link" href="#Dependencies">¶</a></h1>
+<h3 id="Dependencies"><strong>Dependencies</strong><a class="anchor-link" href="#Dependencies">¶</a></h3>
 </div>
 </div>
 </div>
@@ -7587,7 +7694,8 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Reference-migration-conditions">Reference migration conditions<a class="anchor-link" href="#Reference-migration-conditions">¶</a></h1>
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;"/>
+<h1 id="1-%7C-Reference-migration-conditions">1 | Reference migration conditions<a class="anchor-link" href="#1-%7C-Reference-migration-conditions">¶</a></h1>
 </div>
 </div>
 </div>
@@ -7598,7 +7706,7 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Define-the-output-directory-to-store-results">Define the output directory to store results<a class="anchor-link" href="#Define-the-output-directory-to-store-results">¶</a></h2>
+<h2 id="1.1-%7C-Define-the-output-directory-to-store-results">1.1 | Define the output directory to store results<a class="anchor-link" href="#1.1-%7C-Define-the-output-directory-to-store-results">¶</a></h2>
 </div>
 </div>
 </div>
@@ -7624,8 +7732,9 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Store-numbers-with-their-units-in-a-tuple">Store numbers with their units in a tuple<a class="anchor-link" href="#Store-numbers-with-their-units-in-a-tuple">¶</a></h2>
-</div>
+<hr>
+<h2 id="1.2-%7C-Store-numbers-with-their-units-in-a-tuple">1.2 | Store numbers with their units in a tuple<a class="anchor-link" href="#1.2-%7C-Store-numbers-with-their-units-in-a-tuple">¶</a></h2>
+</hr></div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f7a55d45">
@@ -7650,7 +7759,7 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Note:-Concentrations-have-arbitrary-units.-Final-results-maintain-the-same-units.">Note: Concentrations have arbitrary units. Final results maintain the same units.<a class="anchor-link" href="#Note:-Concentrations-have-arbitrary-units.-Final-results-maintain-the-same-units.">¶</a></h2>
+<h3 id="Note:-Concentrations-have-arbitrary-units.-Final-results-maintain-the-same-units.">Note: Concentrations have arbitrary units. Final results maintain the same units.<a class="anchor-link" href="#Note:-Concentrations-have-arbitrary-units.-Final-results-maintain-the-same-units.">¶</a></h3>
 </div>
 </div>
 </div>
@@ -7675,12 +7784,13 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Create-a-1L-bottle-by-assembling-two-cylinders:">Create a <strong>1L bottle</strong> by assembling two cylinders:<a class="anchor-link" href="#Create-a-1L-bottle-by-assembling-two-cylinders:">¶</a></h2><ul>
+<hr>
+<h2 id="1.3-%7C-Create-a-**1L-bottle-by-assembling-two-cylinders**">1.3 | <strong>Create a **1L bottle</strong> by assembling two cylinders**<a class="anchor-link" href="#1.3-%7C-Create-a-**1L-bottle-by-assembling-two-cylinders**">¶</a></h2><ul>
 <li><strong>body</strong></li>
 <li>and <strong>neck</strong>.</li>
 </ul>
 <p>The geometry is defined using the <code>Packaging3D</code> class.</p>
-</div>
+</hr></div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=333bc6f5">
@@ -7713,7 +7823,7 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Retrieve-chemical-properties-of-the-migrant-(toluene)">Retrieve chemical properties of the migrant (toluene)<a class="anchor-link" href="#Retrieve-chemical-properties-of-the-migrant-(toluene)">¶</a></h2>
+<h2 id="1.4-%7C-Retrieve-chemical-properties-of-the-migrant-(toluene)">1.4 | <strong>Retrieve chemical properties of the migrant (toluene)</strong><a class="anchor-link" href="#1.4-%7C-Retrieve-chemical-properties-of-the-migrant-(toluene)">¶</a></h2>
 </div>
 </div>
 </div>
@@ -7770,7 +7880,8 @@ into a <strong>fatty liquid food</strong>. It also examines the <strong>effect o
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Create-bottle-walls">Create bottle walls<a class="anchor-link" href="#Create-bottle-walls">¶</a></h2><p>Create a <strong>300 µm thick PP layer</strong> containing <strong>toluene</strong> at the initial concentration</p>
+<hr/>
+<h2 id="1.5-%7C-Create-bottle-walls">1.5 | <strong>Create bottle walls</strong><a class="anchor-link" href="#1.5-%7C-Create-bottle-walls">¶</a></h2><p>Create a <strong>300 µm thick PP layer</strong> containing <strong>toluene</strong> at the initial concentration</p>
 </div>
 </div>
 </div>
@@ -7837,7 +7948,8 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Define-a-fatty-liquid-food-using-multiple-inheritance-from">Define a <strong>fatty liquid food</strong> using multiple inheritance from<a class="anchor-link" href="#Define-a-fatty-liquid-food-using-multiple-inheritance-from">¶</a></h2><ul>
+<hr/>
+<h2 id="1.6-%7C-Define-a-fatty-liquid-food-using-multiple-inheritance-from:">1.6 | Define a <strong>fatty liquid food</strong> using multiple inheritance from:<a class="anchor-link" href="#1.6-%7C-Define-a-fatty-liquid-food-using-multiple-inheritance-from:">¶</a></h2><ul>
 <li><code>food.realfood</code>,</li>
 <li><code>food.liquid</code>,</li>
 <li>and <code>food.fat</code>.</li>
@@ -7903,8 +8015,8 @@ contacttemperature: 20 [degC]
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr/>
-<h1 id="Reference-simulation">Reference simulation<a class="anchor-link" href="#Reference-simulation">¶</a></h1><h2 id="Simulate-migration-for-the-bottle-without-a-functional-barrier.">Simulate migration for the bottle <strong>without a functional barrier</strong>.<a class="anchor-link" href="#Simulate-migration-for-the-bottle-without-a-functional-barrier.">¶</a></h2>
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;"/>
+<h1 id="2-%7C--Reference-simulation">2 |  <strong>Reference simulation</strong><a class="anchor-link" href="#2-%7C--Reference-simulation">¶</a></h1><h2 id="2.1-%7C-Simulate-migration-for-the-bottle-without-a-functional-barrier.">2.1 | Simulate migration for the bottle <strong>without a functional barrier</strong>.<a class="anchor-link" href="#2.1-%7C-Simulate-migration-for-the-bottle-without-a-functional-barrier.">¶</a></h2>
 </div>
 </div>
 </div>
@@ -7958,8 +8070,9 @@ contacttemperature: 20 [degC]
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Concentration-profiles-at-the-final-time">Concentration profiles at the final time<a class="anchor-link" href="#Concentration-profiles-at-the-final-time">¶</a></h2>
-</div>
+<hr>
+<h2 id="2.2-%7C-Concentration-profiles-at-the-final-contact-time">2.2 | <strong>Concentration profiles at the final contact time</strong><a class="anchor-link" href="#2.2-%7C-Concentration-profiles-at-the-final-contact-time">¶</a></h2>
+</hr></div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=255309f1">
@@ -8001,7 +8114,8 @@ contacttemperature: 20 [degC]
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Migration-kinetics-(CF-vs-time)-for-selected-time-points">Migration kinetics (CF vs time) for selected time points<a class="anchor-link" href="#Migration-kinetics-(CF-vs-time)-for-selected-time-points">¶</a></h2>
+<hr/>
+<h2 id="2.3-Migration-kinetics-(CF-vs-time)-for-selected-time-points">2.3 <strong>Migration kinetics (CF vs time) for selected time points</strong><a class="anchor-link" href="#2.3-Migration-kinetics-(CF-vs-time)-for-selected-time-points">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8039,8 +8153,8 @@ contacttemperature: 20 [degC]
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr/>
-<h1 id="Migration-problem-with-a-functional-barrier">Migration problem with a functional barrier<a class="anchor-link" href="#Migration-problem-with-a-functional-barrier">¶</a></h1>
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;"/>
+<h1 id="3-%7C-Migration-problem-with-a-functional-barrier">3 | <strong>Migration problem with a functional barrier</strong><a class="anchor-link" href="#3-%7C-Migration-problem-with-a-functional-barrier">¶</a></h1>
 </div>
 </div>
 </div>
@@ -8051,7 +8165,7 @@ contacttemperature: 20 [degC]
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Create-a-30-%C2%B5m-thick-PET-layer-as-a-functional-barrier">Create a <strong>30 µm thick PET layer</strong> as a functional barrier<a class="anchor-link" href="#Create-a-30-%C2%B5m-thick-PET-layer-as-a-functional-barrier">¶</a></h2>
+<h2 id="3.1-%7C-Create-a-30-%C2%B5m-thick-PET-layer-as-a-functional-barrier">3.1 | Create a <strong>30 µm thick PET layer</strong> as a functional barrier<a class="anchor-link" href="#3.1-%7C-Create-a-30-%C2%B5m-thick-PET-layer-as-a-functional-barrier">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8165,8 +8279,9 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Combine-PET-and-PP-layers-(Food-is-on-the-left,-PET-is-the-outermost-layer)">Combine PET and PP layers (Food is on the left, PET is the outermost layer)<a class="anchor-link" href="#Combine-PET-and-PP-layers-(Food-is-on-the-left,-PET-is-the-outermost-layer)">¶</a></h2>
-</div>
+<hr>
+<h2 id="3.2-%7C-Combine-PET-and-PP-layers-(Food-is-on-the-left,-PET-is-the-outermost-layer)">3.2 | <strong>Combine PET and PP layers (Food is on the left, PET is the outermost layer)</strong><a class="anchor-link" href="#3.2-%7C-Combine-PET-and-PP-layers-(Food-is-on-the-left,-PET-is-the-outermost-layer)">¶</a></h2>
+</hr></div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fee23c3c-342e-4f20-b135-5c6a36f8b503">
@@ -8242,8 +8357,8 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr/>
-<h1 id="Simulate-migration-with-PET-Functional-Barrier">Simulate migration with <strong>PET Functional Barrier</strong><a class="anchor-link" href="#Simulate-migration-with-PET-Functional-Barrier">¶</a></h1>
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;"/>
+<h1 id="3.-%7C-Simulate-migration-with-PET-Functional-Barrier">3. | Simulate migration with <strong>PET Functional Barrier</strong><a class="anchor-link" href="#3.-%7C-Simulate-migration-with-PET-Functional-Barrier">¶</a></h1>
 </div>
 </div>
 </div>
@@ -8254,7 +8369,7 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="run-the-simulation">run the simulation<a class="anchor-link" href="#run-the-simulation">¶</a></h2>
+<h2 id="3.1-%7C-Run-the-simulation">3.1 | <strong>Run the simulation</strong><a class="anchor-link" href="#3.1-%7C-Run-the-simulation">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8317,8 +8432,9 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Concentration-profiles-at-final-time">Concentration profiles at final time<a class="anchor-link" href="#Concentration-profiles-at-final-time">¶</a></h2>
-</div>
+<hr>
+<h2 id="3.2-Concentration-profiles-at-final-time">3.2 Concentration profiles at final time<a class="anchor-link" href="#3.2-Concentration-profiles-at-final-time">¶</a></h2>
+</hr></div>
 </div>
 </div>
 </div>
@@ -8380,7 +8496,7 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Migration-kinetics-(CF-vs-time)">Migration kinetics (CF vs time)<a class="anchor-link" href="#Migration-kinetics-(CF-vs-time)">¶</a></h2>
+<h2 id="3.3-%7C-Migration-kinetics-(CF-vs-time)">3.3 | <strong>Migration kinetics (CF vs time)</strong><a class="anchor-link" href="#3.3-%7C-Migration-kinetics-(CF-vs-time)">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8437,7 +8553,8 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Store-and-compare-simulations">Store and compare simulations<a class="anchor-link" href="#Store-and-compare-simulations">¶</a></h2>
+<hr/>
+<h2 id="3.4-%7C-Store-and-compare-simulations">3.4 | <strong>Store and compare simulations</strong><a class="anchor-link" href="#3.4-%7C-Store-and-compare-simulations">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8494,8 +8611,8 @@ monolayer of LAYER object:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr/>
-<h1 id="Sensitivity-analysis:-effect-of-the-functional-barrier-thickness">Sensitivity analysis: effect of the functional barrier thickness<a class="anchor-link" href="#Sensitivity-analysis:-effect-of-the-functional-barrier-thickness">¶</a></h1><p>Evaluate migration reduction by <strong>varying the PET barrier thickness</strong> from <strong>2 µm to 60 µm</strong>
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;"/>
+<h1 id="4-%7C-Sensitivity-analysis:-effect-of-the-functional-barrier-thickness">4 | <strong>Sensitivity analysis: effect of the functional barrier thickness</strong><a class="anchor-link" href="#4-%7C-Sensitivity-analysis:-effect-of-the-functional-barrier-thickness">¶</a></h1><p>Evaluate migration reduction by <strong>varying the PET barrier thickness</strong> from <strong>2 µm to 60 µm</strong>
 (step of 4 µm). The results are stored in <code>fullcomparison</code>.</p>
 <blockquote>
 <p>The sensitivity analysis is based on the <code>wet</code> case</p>
@@ -8582,8 +8699,8 @@ Solving for FB = 58 µm
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Print-figures-if-their-available-in-QT">Print figures if their available in QT<a class="anchor-link" href="#Print-figures-if-their-available-in-QT">¶</a></h2><blockquote>
-<p>Embeded figures cannot be printed, they are already static.</p>
+<h1 id="5-%7C-Print-figures-if-they're-available-in-QT">5 | Print figures if they're available in QT<a class="anchor-link" href="#5-%7C-Print-figures-if-they're-available-in-QT">¶</a></h1><blockquote>
+<p>Embedded figures cannot be printed; they are already static.</p>
 </blockquote>
 </div>
 </div>
@@ -8625,6 +8742,26 @@ no valid figure
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b4c40691-7c51-4645-8524-ac77fa1421d6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<hr>
+<div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-weight: bold;">
+<span style="font-size: 20px;">🍏⏩🍎 <strong>SFPPy for Food Contact Compliance and Risk Assessment</strong></span><br/>
+  Contact <a href="mailto:olivier.vitrac@gmail.com" style="color: #fff; text-decoration: underline;">Olivier Vitrac</a> for questions |
+  <a href="https://github.com/ovitrac/SFPPy" style="color: #fff; text-decoration: underline;">Website</a> |
+  <a href="https://ovitrac.github.io/SFPPy/" style="color: #fff; text-decoration: underline;">Documentation</a>
+</div>
+</hr></div>
+</div>
+</div>
+</div>
 </main>
 </body>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {}, "version_major": 2, "version_minor": 0}
+</script>
 </html>
