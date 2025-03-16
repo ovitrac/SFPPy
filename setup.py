@@ -16,7 +16,7 @@ setup(
     url="https://github.com/ovitrac/SFPPy",
     packages=find_packages(include=['patankar', 'patankar.*']),
     install_requires=[
-        "numpy>=1.21.0", "matplotlib>=3.4.0", "scipy>=1.7.0", "pandas>=1.3.0", "openpyxl>=3.0.10", "Pillow>=8.0.0"
+        "numpy>=1.21.0", "matplotlib>=3.4.0", "scipy>=1.7.0", "pandas>=1.3.0", "openpyxl>=3.0.10", "pillow>=8.0.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.10",
