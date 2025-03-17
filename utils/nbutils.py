@@ -11,8 +11,10 @@ Collection of utilities to manage interactive notebooks
 # %% Dependencies
 import os, re, fnmatch
 import ipywidgets as widgets
-from IPython.display import display, HTML
+from IPython.display import display, HTML, Javascript
 from IPython import get_ipython
+import nbformat
+import re
 
 
 # %% Constants
@@ -348,3 +350,296 @@ if __name__ == '__main__':
                                                      actions=["linkcolab", "linklocal"])
     display(nbdropdown_widget)
     for btn in nbbtns.values(): display(btn)
+
+
+# %% Notebook code extractor for codelab
+
+import re
+
+def clean_markdown(text):
+    """
+    Clean a text string by removing extraneous Markdown formatting markers.
+
+    This function removes Markdown heading markers (e.g. "#", "##", etc.) that
+    typically appear at the beginning of lines and also removes emphasis markers
+    (single or double asterisks) used for italic or bold formatting. Multiplication
+    operators (i.e. asterisks surrounded by digits) are preserved. Additionally,
+    consecutive empty lines are collapsed into a single empty line.
+
+    Parameters:
+        text (str): The input text string, which may include Markdown formatting.
+
+    Returns:
+        str: The cleaned text with unnecessary Markdown markers removed.
+    # Example usage:
+    md_text = '''
+    ## Heading Example
+
+    *Italic text* and **bold text** should be cleaned, 
+    but multiplication 3 * 4 must remain unchanged.
+
+    Another paragraph.
+
+
+    Extra blank lines should be collapsed.
+    '''
+    cleaned = clean_markdown(md_text)
+    print(cleaned)
+    """
+    # Remove Markdown headings at the start of lines (e.g. "# ", "## ", etc.)
+    text = re.sub(r'^\s*#+\s+', '', text, flags=re.MULTILINE)
+    # Remove Markdown bold formatting: replace **text** with text.
+    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+    # Remove Markdown italic formatting: replace *text* with text.
+    text = re.sub(r'\*(.*?)\*', r'\1', text)
+    # Remove any remaining asterisks that are not part of a multiplication expression.
+    # A multiplication expression is assumed to have a digit before and after the asterisk.
+    text = re.sub(r'(?<!\d)\*+(?!\d)', '', text)
+    # Collapse multiple empty lines to no more than one empty line.
+    text = re.sub(r'\n\s*\n+', '\n\n', text)
+    return text
+
+
+
+# copy to clipboard
+def copy_to_clipboard(text):
+    """copy text to clipboard, but very challenging"""
+    js = f"""
+    (function() {{
+      // If the secure clipboard API is available, use it.
+      if (navigator.clipboard && window.isSecureContext) {{
+          navigator.clipboard.writeText({repr(text)}).then(function() {{
+              console.log('Copying text was successful.');
+          }}, function(err) {{
+              console.error('Failed to copy text: ', err);
+          }});
+      }} else {{
+          // Fallback to execCommand method
+          var textArea = document.createElement("textarea");
+          textArea.value = {repr(text)};
+          // Avoid scrolling to bottom
+          textArea.style.position = "fixed";
+          textArea.style.top = "-9999px";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {{
+              var successful = document.execCommand('copy');
+              console.log('Copying text command was ' + (successful ? 'successful' : 'unsuccessful'));
+          }} catch (err) {{
+              console.error('Unable to copy', err);
+          }}
+          document.body.removeChild(textArea);
+      }}
+    }})();
+    """
+    print(text)
+    display(Javascript(js))
+
+# nb code extraction
+def extract_code_segments(nb_path):
+    """
+    Extract code segments and their associated comments from a Jupyter Notebook.
+    
+    Reads the notebook at nb_path and returns a list of tuples (comment, code).
+    For each code cell, if the immediately preceding cell is markdown, that cell's 
+    content is used as the comment; otherwise, the comment is an empty string.
+    
+    Parameters:
+        nb_path (str): Path to the notebook (.ipynb).
+    
+    Returns:
+        List[Tuple[str, str]]: A list of (comment, code) pairs.
+
+    Example usage:
+    segments = extract_code_segments("path/to/notebook.ipynb")
+    for comment, code in segments:
+        print("Comment:")
+        print(comment)
+        print("Code:")
+        print(code)
+        print("="*40)
+    """
+    segments = []
+    nb = nbformat.read(nb_path, as_version=4)
+    cells = nb.cells
+    for i, cell in enumerate(cells):
+        if cell.cell_type == "code":
+            comment = ""
+            if i > 0 and cells[i-1].cell_type == "markdown":
+                comment = cells[i-1].source.strip()
+            code = cell.source.strip()
+            segments.append((clean_markdown(comment), code))
+    return segments
+
+#nb selector
+def create_notebook_explorer(folder=""):
+    """
+    Create a widget to select a notebook file from the 'notebooks' directory.
+    
+    It searches in the directory:
+        os.path.join(os.path.dirname(__file__), '..', 'notebooks', folder)
+    for all files matching *.ipynb, and returns a dropdown populated with the filenames.
+    A button labeled "Open Notebook" is also returned. When pressed, it returns the full
+    path to the selected notebook.
+    
+    Parameters:
+        folder (str): Subfolder within the 'notebooks' directory (default: "").
+    
+    Returns:
+        tuple: (dropdown_widget, open_button)
+            dropdown_widget: ipywidgets.Dropdown containing the notebook filenames.
+            open_button: ipywidgets.Button that, when clicked, triggers further actions.
+    """
+    base_dir = os.path.join(os.path.dirname(__file__), '..', 'notebooks', folder)
+    # List all .ipynb files
+    notebooks = sorted([f for f in os.listdir(base_dir) if f.endswith('.ipynb')])
+    
+    dropdown = widgets.Dropdown(options=notebooks, description="Notebook:")
+    open_button = widgets.Button(description="Open Notebook")
+    output_area = widgets.Output()
+
+    # For demonstration, we attach a click handler that prints the full path.
+    def on_open(b):
+        full_path = os.path.abspath(os.path.join(base_dir, dropdown.value))
+        print("Selected notebook:", full_path)
+        with output_area:
+            output_area.clear_output()  # Clear previous output
+            navigator = create_notebook_navigator(full_path)
+            display(navigator)
+    open_button.on_click(on_open)
+    display(dropdown, open_button, output_area)
+
+
+
+def create_notebook_navigator(nb_path=None):
+    """
+    Create a navigation widget for a notebook's code segments.
+    
+    This widget displays a horizontal navigation bar with buttons:
+      [first] [<--] [-->] [last]    "Cell #/N"   [copycode] [copycomment] [close]
+    Below it, the segment's associated comment (limited to three visible lines, with 
+    scrolling if longer) and the full code are shown.
+    
+    Users can navigate among segments, copy either the code or the comment to the clipboard,
+    and close the navigator. This widget helps overcome Colab's limitation of only opening 
+    one notebook at a time by letting users view and copy parts of a notebook.
+    
+    Parameters:
+        nb_path (str): Full path to the notebook (.ipynb) from which to extract segments.
+    
+    Returns:
+        ipywidgets.Widget: A container widget with the navigation interface.
+
+    Example Usage:
+        Notebook Selector widget
+        nb_dropdown, open_btn = create_notebook_selector(folder="")
+        display(nb_dropdown, open_btn)
+
+        To launch the navigator, you might attach a callback to open_btn that creates and displays the navigator:
+
+        def open_notebook_navigator(b):
+            base_dir = os.path.join(os.path.dirname(__file__), '..', 'notebooks', "")
+            nb_path = os.path.abspath(os.path.join(base_dir, nb_dropdown.value))
+            navigator = create_notebook_navigator(nb_path)
+            display(navigator)
+
+        open_btn.on_click(open_notebook_navigator)
+    """
+    segments = extract_code_segments(nb_path)
+    total = len(segments)
+    if total == 0:
+        return widgets.HTML("<b>No code segments found.</b>")
+    
+    current_index = 0  # closure variable for the current segment
+
+    # Navigation buttons
+    first_btn = widgets.Button(description="First")
+    prev_btn  = widgets.Button(description="<--")
+    next_btn  = widgets.Button(description="-->")
+    last_btn  = widgets.Button(description="Last")
+    pos_label = widgets.Label(value=f"Cell 1/{total}")
+    
+    # Copy buttons
+    copycode_btn    = widgets.Button(description="Copy Code")
+    copycomment_btn = widgets.Button(description="Copy Comment")
+    close_btn       = widgets.Button(description="Close")
+    
+    # Display areas for comment and code
+    comment_area = widgets.Textarea(
+        value="", 
+        description="Comment:",
+        layout=widgets.Layout(width="100%", height="80px"),
+        disabled=True
+    )
+    code_area = widgets.Textarea(
+        value="",
+        description="Code:",
+        layout=widgets.Layout(width="100%", height="200px"),
+        disabled=True
+    )
+    
+    # Update function to refresh display based on current_index
+    def update_display():
+        comment, code = segments[current_index]
+        comment_area.value = comment
+        code_area.value = code
+        pos_label.value = f"Cell {current_index+1}/{total}"
+    
+    # Navigation callbacks
+    def on_first(b):
+        nonlocal current_index
+        current_index = 0
+        update_display()
+    def on_prev(b):
+        nonlocal current_index
+        if current_index > 0:
+            current_index -= 1
+            update_display()
+    def on_next(b):
+        nonlocal current_index
+        if current_index < total - 1:
+            current_index += 1
+            update_display()
+    def on_last(b):
+        nonlocal current_index
+        current_index = total - 1
+        update_display()
+    
+    first_btn.on_click(on_first)
+    prev_btn.on_click(on_prev)
+    next_btn.on_click(on_next)
+    last_btn.on_click(on_last)
+    
+    # Copy callbacks using the helper function
+    def on_copycode(b):
+        copy_to_clipboard(segments[current_index][1])
+    def on_copycomment(b):
+        copy_to_clipboard(segments[current_index][0])
+    copycode_btn.on_click(on_copycode)
+    copycomment_btn.on_click(on_copycomment)
+    
+    # Close callback: hides the navigator container.
+    def on_close(b):
+        container.layout.display = "none"
+    close_btn.on_click(on_close)
+    
+    # Assemble the top navigation bar
+    nav_bar = widgets.HBox([
+        first_btn, prev_btn, next_btn, last_btn, 
+        pos_label, 
+        copycode_btn, copycomment_btn, close_btn
+    ])
+    
+    # Create a container for the whole navigator
+    container = widgets.VBox([
+        nav_bar,
+        comment_area,
+        widgets.HTML("<hr>"),
+        code_area
+    ])
+    
+    # Initialize display
+    update_display()
+    return container
+
