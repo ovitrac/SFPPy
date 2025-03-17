@@ -521,7 +521,7 @@ class EuFCMannex1:
             rec_id = self.index["bycid"][str(cid)]
             return self._load_record(rec_id, order=rec_id)
         else:
-            print(f"Warning: No record found for PubChem cid {cid}.")
+            print(f"Warning: No 10/2011/EC record found for PubChem cid {cid}.")
             return None
 
     def bySML(self, min_val, max_val):
