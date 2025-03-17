@@ -26,7 +26,7 @@ Output:
       and the generated `index.html` file.
 
 Author:
-    - **INRAE\Olivier Vitrac**
+    - **INRAE\\Olivier Vitrac**
     - **Email:** olivier.vitrac@agroparistech.fr
     - **Last Revised:** 2025-02-12
 
