@@ -856,7 +856,7 @@ def implement_single_dimensionless_argument_func(func_str):
         return a._REGISTRY.Quantity(func(a_stripped, *args, **kwargs))
 
 
-for func_str in ["cumprod", "cumproduct", "nancumprod"]:
+for func_str in ["cumprod", "nancumprod"]: # "cumproduct", removed on 2025-03-17 (error: AttributeError: module 'numpy' has no attribute 'cumproduct)
     implement_single_dimensionless_argument_func(func_str)
 
 # Handle single-argument consistent unit functions
