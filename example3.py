@@ -135,8 +135,9 @@ Use `help_layer()` to display predefined materials.
 
 | Class Name | Type     | Material                 | Code |
 |------------|---------|---------------------------|------|
-| PP         | polymer | Isotactic Polypropylene   | PP   |
-| gPET       | polymer | Glassy PET                | PET  |
+| PP         | polymer | isotactic Polypropylene   | PP   |
+| gPET       | polymer | glassy PET                | PET  |
+| wPET       | polymer | plasticized PET           | PET  |
 """
 # Import material properties
 from patankar.layer import help_layer, layer
@@ -144,8 +145,8 @@ from patankar.layer import help_layer, layer
 # Display available polymer options
 help_layer()
 
-# Import required polymer classes (Polypropylene, PET)
-from patankar.layer import gPET, PP
+# Import required polymer classes (Polypropylene, PET with two states)
+from patankar.layer import gPET, wPET, PP
 
 # %% Build the materials
 # ----------------------
@@ -164,11 +165,12 @@ Property synonyms:
 | l          | lp, lP                    |
 """
 # Define the PET (A) and PP (B) layers
-A = gPET(l=(20, "um"), migrant=m, C0=0)       # 20 µm PET with no initial migrant
+Aw = wPET(l=(20, "um"), migrant=m, C0=0)      # 20 µm plasticized PET with no initial migrant
 B = PP(l=(0.5, "mm"), migrant=m, CP0=200)    # 500 µm PP with 200 mg/kg limonene
+A = gPET(l=(20, "um"), migrant=m, C0=0)      # 20 µm PET with no initial migrant
 
 # Assemble the multilayer structure: ABA configuration
-ABA = A + B + A
+ABA = Aw + B + A
 
 # Display basic information (default temperature: 40°C)
 print("\nOur ABA technology\n", repr(ABA))

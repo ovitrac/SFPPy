@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Collection of utilities to manage interactive notebooks
 
@@ -6,12 +8,205 @@ Collection of utilities to manage interactive notebooks
     Last Revised: 2025-03-17
 """
 
-import os
-import fnmatch
+# %% Dependencies
+import os, re, fnmatch
 import ipywidgets as widgets
 from IPython.display import display, HTML
 from IPython import get_ipython
 
+
+# %% Constants
+author = "Olivier Vitrac"
+repo = "https://github.com/ovitrac/SFPPy"
+web = "https://ovitrac.github.io/SFPPy/"
+email = "olivier.vitrac@gmail.com"
+badge = "https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&logo=github"
+
+
+# %% static HTML functions
+
+# SFPPy dynamic version number
+def get_version():
+    """Extract the version number of SFPPy from VERSION.txt."""
+    version_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "VERSION.txt"))
+    if not  os.path.exists(version_file):
+        raise FileExistsError(f"Error: {version_file} not found. Please create VERSION.txt with content: version=\"X.Y.Z\"\n")
+    with open(version_file, "r") as f:
+        for line in f:
+            match = re.match(r'^version\s*=\s*"(.*?)"$', line.strip())
+            if match:
+                return match.group(1)
+    raise ValueError(f"Error version keyword missing in {version_file}") 
+
+# alert
+def create_alert(text=None, fontsize=12, color="#FF4D4D"):
+    """return a HTML alert"""
+    if not text:
+        text = "Do not forget to press all green buttons and refresh interfaces with <kbd>Ctrl+enter</kbd>"
+    alert = f"""
+<div style="border-left: 4px solid {color}; padding: 10px; background: transparent; color: {color}; 
+            font-weight: bold; font-size: {fontsize}px; text-align: left;">
+    ⚠️ {text}.
+</div>
+"""
+    return HTML(alert)
+
+# subtitle
+def create_subtitle(text=None, fontsize=20, color="#4CAF50"):
+    """returns a HTML subtitle"""
+    if not text:
+        text = "Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎"
+    subtitle = f"""
+<div style="border-left: 4px solid {color}; padding: 10px; background: transparent; 
+            color: {color}; font-weight: bold; font-size: 18px; text-align: left;">
+    <span style="font-size: {fontsize}px;">{text}</span> 
+</div>
+"""
+    return HTML(subtitle)
+
+# SFPPy logo
+def create_logo():
+    """returns SFPPy logo in HTML"""
+    version = get_version()
+    logo = f"""
+<div style="display: flex; justify-content: space-between; align-items: flex-end; font-family: monospace; 
+            white-space: pre-wrap; overflow: hidden; font-size: 14px; line-height: 1.3; margin-left: 1cm; max-width: 100%;">
+    
+<!-- Left: Emoji Block -->
+<div style="text-align: left;">
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
+🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
+🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍽️🍎🍽️🍽️🍽️🍎🍽️🍽️🐍🍽️🍽️🍽️🐍🍽️
+🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️
+🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
+🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
+</div>
+
+<!-- Center: GitHub Badge -->
+<div style="margin-left: 15px;">
+    <a href="{repo}" target="_blank">
+        <img src="{badge}" 
+             alt="GitHub SFPPy" style="border-radius: 8px;">
+    </a>
+</div>
+
+<!-- Right: Version & Email (aligned at the bottom) -->
+<div style="margin-left: auto; font-weight: bold; font-size: 14px; color: #FF4D4D; text-align: left;">
+    <div style="margin-bottom: 5px;">v{version}</div>
+    <a href="mailto:{email}" title="E-mail the author">📩</a>
+</div>
+
+</div>
+</div>
+"""
+    return HTML(logo)
+
+# synopsis
+def create_synopsis(text=None,color="#4CAF50"):
+    """returns a HTML synopsis"""
+    if not text:
+        text = """
+        This template illustrates how to evaluate the migration of substances from a polymeric sleeve into a packaged food simulant using 
+        SFPPy (<em>Safety of Food Packaging in Python</em>). Automating key tasks—such as retrieving chemical properties, 
+        specifying package geometries, applying polymer parameters, and running mass transfer models ensures transparency
+        and reproducibility in compliance testing.
+        """
+    synopsis = f"""
+<div style="padding: 10px; border-left: 4px solid {color};">
+    <h3 style="color: {color}; margin-top: 0;">Synopsis</h3>
+    <p style="margin-bottom: 1em; color: {color};">
+{text}
+    </p>
+</div>
+"""
+    return HTML(synopsis)
+
+# disclaimer
+def create_disclaimer(fontsize=12):
+    """returns a HTML disclaimer"""
+    disclaimer = f"""
+<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D; 
+            font-weight: bold; font-size: {fontsize}px; text-align: left;">
+    ⚠️ DISCLAIMER: This material is provided “<b>AS IS</b>” solely for demonstration and training purposes. No warranty, express or implied, is given regarding its accuracy, completeness, or fitness for a particular use. 📌 Users are solely responsible for evaluating its suitability and for ensuring compliance with all applicable regulations. 🔬 The illustrative example highlights the risks of misinterpreting mass transfer phenomena when "migration modeling" is treated as a "black box". 🚫 Neither the authors nor their organizations accept any liability arising from reliance on or use of this material.
+</div>
+"""
+    return HTML(disclaimer)
+
+
+# create header with version, footer and separator for notebooks
+def create_header_footer(what="head", title="SFPPy - Notebook Index 📑",height=4):
+    """
+    Create an HTML header or footer block for SFPPy notebooks.
+
+    This function generates a styled HTML block to be used as either a header
+    or a footer in SFPPy-related notebooks. The header includes the notebook
+    title, a GitHub badge linking to the repository, and version and contact
+    information. The footer provides a tagline, contact details, and links to
+    the SFPPy website and documentation.
+
+    Parameters:
+        what (str): Specifies which block to generate.
+                    - If it starts with "head" (e.g., "head" or "header"), the function returns the header.
+                    - If it starts with "foot" (e.g., "foot" or "footer"), the function returns the footer.
+                    - If it starts with "both", header and footer are returned as a tuple (header,footer)
+                    - If it starts with "all", a line separator is added as (header,footer,separator)
+        title (str): The title text to display in the header. Defaults to "SFPPy - Notebook Index 📑".
+        height (int,float): the <hr> height (default=4)
+
+    Returns:
+        IPython.display.HTML: An HTML object containing the header or footer design.
+        (header,footer),  (header,footer,separator)
+
+    Raises:
+        ValueError: If the 'what' parameter does not start with "head" or "foot".
+    """
+
+    version = get_version()
+
+    header =  f"""
+  <div style="border-radius: 8px; padding: 12px; background: linear-gradient(to right, #4CAF50, #FF4D4D);
+              color: white; font-size: 28px; font-weight: bold; display: flex; align-items: center; justify-content: center; position: relative;">
+  {title}
+  <a href="{repo}" target="_blank" 
+    style="position: absolute; right: 12px; top: 10%; transform: translateY(-10%);">
+      <img src="{badge}" 
+          alt="GitHub SFPPy" style="border-radius: 8px;">
+  </a>
+  <div style="position: absolute; right: 48px; top: 82%; transform: translateY(-82%); font-size: 14px; font-weight: bold;">
+      <span style="color: white;">v{version}</span> 
+      <a href="mailto:{email}" title="E-mail the author" style="margin-left: 8px;">📩</a>
+      </div>
+  </div>
+"""
+
+    footer = f"""
+<div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-weight: bold;">
+  <span style="font-size: 20px;">🍏⏩🍎 <strong>SFPPy for Food Contact Compliance and Risk Assessment</strong></span><br>
+  Contact <a href="mailto:{email}" style="color: #fff; text-decoration: underline;">{author}</a> for questions |
+  <a href="{repo}" style="color: #fff; text-decoration: underline;">Website</a> |
+  <a href="{web}" style="color: #fff; text-decoration: underline;">Documentation</a>
+</div>
+"""
+    
+    separator = f"""
+<hr style="height: {height}px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;">
+"""
+
+    if what.startswith("head"):
+        return HTML(header)
+    if what.startswith("foot"):
+        return HTML(footer)
+    if what.startswith("both"):
+        return (HTML(header),HTML(footer))
+    if what.startswith("all"):
+        return (HTML(header),HTML(footer),HTML(separator))
+    raise ValueError(f'{what} is not recognized, use "head", "foot" , both' or 'all')
+
+
+
+# %% Widgets
+# create a dropdown widget for files and their execution
 def create_files_widget(root="/content/SFPPy/", 
                         folder="notebook", 
                         pattern="*.ipynb", 

@@ -1,5 +1,7 @@
 # SFPPy - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎
 
+[![Binder](assets/badge_logo.svg+xml)](https://mybinder.org/v2/gh/ovitrac/SFPPy/HEAD?urlpath=%2Fdoc%2Ftree%2Findex.ipynb)
+
 ## 🛠️ Overview
 
 SFPPy is a Python-based framework for **compliance testing of food contact materials** and **recycled plastic safety assessment** under:
