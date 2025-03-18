@@ -251,6 +251,9 @@ def print_pdf(fig, filename="", destinationfolder=os.getcwd(), overwrite=False, 
     # Generate filename if not provided
     if not filename:
         filename = _generate_figname(fig, ".pdf")
+    # add extension if missing
+    if not filename.endswith(".pdf"):
+        filename = filename+".pdf"
     # Ensure full path
     filename = os.path.join(destinationfolder, filename)
     # Prevent overwriting unless specified
@@ -279,6 +282,9 @@ def print_png(fig, filename="", destinationfolder=os.getcwd(), overwrite=False, 
     # Generate filename if not provided
     if not filename:
         filename = _generate_figname(fig, ".png")
+    # add extension if missing
+    if not filename.endswith(".png"):
+        filename = filename+".png"
     # Ensure full path
     filename = os.path.join(destinationfolder, filename)
     # Prevent overwriting unless specified
@@ -798,7 +804,7 @@ def create_plotmigration_widget():
                 return
             sim = mymigration[key]
             try:
-                sim.plotCF(plotSML=plotSML_checkbox.value)
+                sim.plotCF(plotSML=plotSML_checkbox.value, subtitle=key)
             except Exception as e:
                 print("Error in plotCF:", e)
     plotCF_button.on_click(on_plotCF)
@@ -812,7 +818,7 @@ def create_plotmigration_widget():
                 return
             sim = mymigration[key]
             try:
-                sim.plotCx(nmax=nmax_slider.value)
+                sim.plotCx(nmax=nmax_slider.value, subtitle=key)
             except Exception as e:
                 print("Error in plotCx:", e)
     plotCx_button.on_click(on_plotCx)
@@ -979,6 +985,7 @@ def create_plotmigration_widget():
             sim = mymigration[key]
             fname = filename_field.value.strip() or key
             dest = destination_field.value.strip() or os.getcwd()
+            # save CSV and XLS
             try:
                 sim.save_as_csv_CF(fname + ".csv", destinationfolder=dest, overwrite=True)
                 print("CF data saved as CSV.")
@@ -989,6 +996,17 @@ def create_plotmigration_widget():
                 print("CF data saved as Excel.")
             except Exception as e:
                 print("Error saving CF as Excel:", e)
+            # print in PDF and PNG
+            plt.ioff()
+            try:
+                htmpCF = sim.plotCF(plotSML=plotSML_checkbox.value, subtitle=key, noshow=True)
+                print_figure(htmpCF,fname, destinationfolder=dest, overwrite=True)
+                plt.close(htmpCF)
+                print("CF data printed as PNG and PDF.")
+            except Exception as e:
+                print("Error while printing CF in PNG or PDF", e)
+            plt.ion()
+
 
     def on_save_cx(b):
         with save_output:
@@ -1012,6 +1030,17 @@ def create_plotmigration_widget():
                 print("Cx data saved as Excel.")
             except Exception as e:
                 print("Error saving Cx as Excel:", e)
+            # print in PDF and PNG
+            plt.ioff()
+            try:
+                htmpCx = sim.plotCx(nmax=nmax_slider.value, subtitle=key, noshow=True)
+                print_figure(htmpCx,fname+"_Cx", destinationfolder=dest, overwrite=True)
+                plt.close(htmpCx)
+                print("Cx data printed as PNG and PDF.")
+            except Exception as e:
+                print("Error while printing Cx in PNG or PDF",e)
+            plt.ion()
+
 
     save_cf_button.on_click(on_save_cf)
     save_cx_button.on_click(on_save_cx)
@@ -1882,7 +1911,7 @@ class SensPatankarResult:
 
 
 
-    def plotCF(self, t=None, trange=None, SML=None, SMLunit=None, plotSML=None, plotconfig=None, title=None, subtitle=None):
+    def plotCF(self, t=None, trange=None, SML=None, SMLunit=None, plotSML=None, plotconfig=None, title=None, subtitle=None, noshow=False):
         """
         Plot the concentration in the food (CF) as a function of time.
 
@@ -1910,6 +1939,8 @@ class SensPatankarResult:
             - "tscale": Time scaling factor.
             - "Cscale": Concentration scaling factor.
         title, subtitle: str, optional
+        noshow : bool, optional
+            if True, the figure is not shown (used for printing along with plt.ioff() and plt.ion() )
         """
 
         # plot configuration
@@ -2014,13 +2045,14 @@ class SensPatankarResult:
         #ax.text(0.5, 1.05, title_sub, fontsize=8, ha="center", va="bottom", transform=ax.transAxes)
         ax.legend()
         ax.grid(True)
-        plt.show()
+        if not noshow:
+            plt.show()
         # Store metadata
         setattr(fig, _fig_metadata_atrr_, f"pltCF_{self.name}")
         return fig
 
 
-    def plotCx(self, t=None, nmax=15, plotconfig=None, title=None, subtitle=None):
+    def plotCx(self, t=None, nmax=15, plotconfig=None, title=None, subtitle=None, noshow=False):
         """
         Plot the concentration profiles (Cx) in the packaging vs. position (x) for different times,
         using a color gradient similar to Parula, based on time values (not index order).
@@ -2039,6 +2071,9 @@ class SensPatankarResult:
             - "Cunit": Concentration unit label (e.g., 'mg/L').
             - "tscale": Time scaling factor.
             - "Cscale": Concentration scaling factor.
+            title, subtitle: str, optional
+            noshow : bool, optional
+                if True, the figure is not shown (used for printing along with plt.ioff() and plt.ion() )
         """
         # short circuit
         if self.discrete:
@@ -2114,7 +2149,8 @@ class SensPatankarResult:
         ax.set_title(title_main)
         ax.grid(True)
         ax.legend()
-        plt.show()
+        if not noshow:
+            plt.show()
         # store metadata
         setattr(fig,_fig_metadata_atrr_,f"pltCx_{self.name}")
         return fig
