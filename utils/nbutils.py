@@ -14,8 +14,6 @@ import ipywidgets as widgets
 from IPython.display import display, HTML, Javascript
 from IPython import get_ipython
 import nbformat
-import re
-
 
 # %% Constants
 author = "Olivier Vitrac"
@@ -38,7 +36,7 @@ def get_version():
             match = re.match(r'^version\s*=\s*"(.*?)"$', line.strip())
             if match:
                 return match.group(1)
-    raise ValueError(f"Error version keyword missing in {version_file}") 
+    raise ValueError(f"Error version keyword missing in {version_file}")
 
 # alert
 def create_alert(text=None, fontsize=12, color="#FF4D4D"):
@@ -46,7 +44,7 @@ def create_alert(text=None, fontsize=12, color="#FF4D4D"):
     if not text:
         text = "Do not forget to press all green buttons and refresh interfaces with <kbd>Ctrl+enter</kbd>"
     alert = f"""
-<div style="border-left: 4px solid {color}; padding: 10px; background: transparent; color: {color}; 
+<div style="border-left: 4px solid {color}; padding: 10px; background: transparent; color: {color};
             font-weight: bold; font-size: {fontsize}px; text-align: left;">
     ⚠️ {text}.
 </div>
@@ -59,9 +57,9 @@ def create_subtitle(text=None, fontsize=20, color="#4CAF50"):
     if not text:
         text = "Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎"
     subtitle = f"""
-<div style="border-left: 4px solid {color}; padding: 10px; background: transparent; 
+<div style="border-left: 4px solid {color}; padding: 10px; background: transparent;
             color: {color}; font-weight: bold; font-size: 18px; text-align: left;">
-    <span style="font-size: {fontsize}px;">{text}</span> 
+    <span style="font-size: {fontsize}px;">{text}</span>
 </div>
 """
     return HTML(subtitle)
@@ -71,9 +69,9 @@ def create_logo():
     """returns SFPPy logo in HTML"""
     version = get_version()
     logo = f"""
-<div style="display: flex; justify-content: space-between; align-items: flex-end; font-family: monospace; 
+<div style="display: flex; justify-content: space-between; align-items: flex-end; font-family: monospace;
             white-space: pre-wrap; overflow: hidden; font-size: 14px; line-height: 1.3; margin-left: 1cm; max-width: 100%;">
-    
+
 <!-- Left: Emoji Block -->
 <div style="text-align: left;">
 🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
@@ -88,7 +86,7 @@ def create_logo():
 <!-- Center: GitHub Badge -->
 <div style="margin-left: 15px;">
     <a href="{repo}" target="_blank">
-        <img src="{badge}" 
+        <img src="{badge}"
              alt="GitHub SFPPy" style="border-radius: 8px;">
     </a>
 </div>
@@ -109,8 +107,8 @@ def create_synopsis(text=None,color="#4CAF50"):
     """returns a HTML synopsis"""
     if not text:
         text = """
-        This template illustrates how to evaluate the migration of substances from a polymeric sleeve into a packaged food simulant using 
-        SFPPy (<em>Safety of Food Packaging in Python</em>). Automating key tasks—such as retrieving chemical properties, 
+        This template illustrates how to evaluate the migration of substances from a polymeric sleeve into a packaged food simulant using
+        SFPPy (<em>Safety of Food Packaging in Python</em>). Automating key tasks—such as retrieving chemical properties,
         specifying package geometries, applying polymer parameters, and running mass transfer models ensures transparency
         and reproducibility in compliance testing.
         """
@@ -128,7 +126,7 @@ def create_synopsis(text=None,color="#4CAF50"):
 def create_disclaimer(fontsize=12):
     """returns a HTML disclaimer"""
     disclaimer = f"""
-<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D; 
+<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D;
             font-weight: bold; font-size: {fontsize}px; text-align: left;">
     ⚠️ DISCLAIMER: This material is provided “<b>AS IS</b>” solely for demonstration and training purposes. No warranty, express or implied, is given regarding its accuracy, completeness, or fitness for a particular use. 📌 Users are solely responsible for evaluating its suitability and for ensuring compliance with all applicable regulations. 🔬 The illustrative example highlights the risks of misinterpreting mass transfer phenomena when "migration modeling" is treated as a "black box". 🚫 Neither the authors nor their organizations accept any liability arising from reliance on or use of this material.
 </div>
@@ -170,13 +168,13 @@ def create_header_footer(what="head", title="SFPPy - Notebook Index 📑",height
   <div style="border-radius: 8px; padding: 12px; background: linear-gradient(to right, #4CAF50, #FF4D4D);
               color: white; font-size: 28px; font-weight: bold; display: flex; align-items: center; justify-content: center; position: relative;">
   {title}
-  <a href="{repo}" target="_blank" 
+  <a href="{repo}" target="_blank"
     style="position: absolute; right: 12px; top: 10%; transform: translateY(-10%);">
-      <img src="{badge}" 
+      <img src="{badge}"
           alt="GitHub SFPPy" style="border-radius: 8px;">
   </a>
   <div style="position: absolute; right: 48px; top: 82%; transform: translateY(-82%); font-size: 14px; font-weight: bold;">
-      <span style="color: white;">v{version}</span> 
+      <span style="color: white;">v{version}</span>
       <a href="mailto:{email}" title="E-mail the author" style="margin-left: 8px;">📩</a>
       </div>
   </div>
@@ -190,7 +188,7 @@ def create_header_footer(what="head", title="SFPPy - Notebook Index 📑",height
   <a href="{web}" style="color: #fff; text-decoration: underline;">Documentation</a>
 </div>
 """
-    
+
     separator = f"""
 <hr style="height: {height}px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;">
 """
@@ -209,14 +207,14 @@ def create_header_footer(what="head", title="SFPPy - Notebook Index 📑",height
 
 # %% Widgets
 # create a dropdown widget for files and their execution
-def create_files_widget(root="/content/SFPPy/", 
-                        folder="notebook", 
-                        pattern="*.ipynb", 
-                        excluded="index*", 
+def create_files_widget(root="/content/SFPPy/",
+                        folder="notebook",
+                        pattern="*.ipynb",
+                        excluded="index*",
                         actions=["linkcolab", "linklocal", "run"]):
     """
     Create a dropdown widget with file names and one launch button per specified action.
-    
+
     Parameters:
       - root (str): Full installation path.
       - folder (str or list of str): Folder name(s) (relative to root) to search in.
@@ -226,13 +224,13 @@ def create_files_widget(root="/content/SFPPy/",
              "linkcolab": Button creates an HTML link to open the file on Colab.
              "linklocal": Button creates an HTML link to open the file locally.
              "run":       Button runs a script file (only applicable for .py files).
-    
+
     Returns:
       A tuple: (dropdown_widget, buttons_dict, output_widget)
         - dropdown_widget: an ipywidgets.Dropdown with the list of found files.
         - buttons_dict: a dictionary mapping each action (as key) to its button widget.
         - output_widget: an ipywidgets.Output widget used to capture output (only if "run" is specified), otherwise None.
-        
+
     The user is expected to display these widgets (e.g. via display()).
 
     Example usage:
@@ -248,9 +246,9 @@ def create_files_widget(root="/content/SFPPy/",
             display(btn)
         if output_widget:
             display(output_widget)
-            
+
     """
-    
+
     # Ensure folder, pattern, and excluded are lists.
     if not isinstance(folder, list):
         folder = [folder]
@@ -258,7 +256,7 @@ def create_files_widget(root="/content/SFPPy/",
         pattern = [pattern]
     if not isinstance(excluded, list):
         excluded = [excluded]
-    
+
     # Search for files in each folder.
     file_list = []
     for fld in folder:
@@ -274,25 +272,25 @@ def create_files_widget(root="/content/SFPPy/",
             for f in os.listdir(root):
                 if any(fnmatch.fnmatch(f, pat) for pat in pattern) and not any(fnmatch.fnmatch(f, ex) for ex in excluded):
                     file_list.append(f)
-    
+
     # Sort the list in ascending order.
     file_list = sorted(file_list)
-    
+
     # Create the dropdown widget.
     dropdown = widgets.Dropdown(
         options=file_list,
         description="Files:",
     )
-    
+
     # Create an output widget for "run" action only.
     run_out = widgets.Output() if "run" in actions else None
-    
+
     # Create an HTML widget to display links if any link action is specified.
     link_out = widgets.HTML(value="") if any(a in actions for a in ["linkcolab", "linklocal"]) else None
-    
+
     # Dictionary to hold buttons for each action.
     buttons = {}
-    
+
     # Action: "linkcolab"
     if "linkcolab" in actions:
         btn_colab = widgets.Button(description="Open on Colab")
@@ -307,7 +305,7 @@ def create_files_widget(root="/content/SFPPy/",
                 display(HTML(f'<a href="{colab_url}" target="_blank">Click here to open {selected_file} on Colab</a>'))
         btn_colab.on_click(on_click_colab)
         buttons["linkcolab"] = btn_colab
-    
+
     # Action: "linklocal"
     if "linklocal" in actions:
         btn_local = widgets.Button(description="Open Locally")
@@ -320,7 +318,7 @@ def create_files_widget(root="/content/SFPPy/",
                 display(HTML(f'<a href="{selected_file}" target="_blank">Click here to open {selected_file} locally</a>'))
         btn_local.on_click(on_click_local)
         buttons["linklocal"] = btn_local
-        
+
     # Action: "run"
     if "run" in actions:
         btn_run = widgets.Button(description="Run Script")
@@ -338,24 +336,11 @@ def create_files_widget(root="/content/SFPPy/",
                     print("The selected file is not a Python script (.py).")
         btn_run.on_click(on_click_run)
         buttons["run"] = btn_run
-        
+
     return dropdown, buttons, run_out, link_out
 
-if __name__ == '__main__':
-    from utils.nbutils import create_files_widget
-    nbdropdown_widget, nbbtns,_ = create_files_widget(root='~/natacha/python/',
-                                                     folder="notebooks", 
-                                                     pattern="*.ipynb", 
-                                                     excluded="index*", 
-                                                     actions=["linkcolab", "linklocal"])
-    display(nbdropdown_widget)
-    for btn in nbbtns.values(): display(btn)
 
-
-# %% Notebook code extractor for codelab
-
-import re
-
+# %% Notebook explorer widget and dependencies
 def clean_markdown(text):
     """
     Clean a text string by removing extraneous Markdown formatting markers.
@@ -375,7 +360,7 @@ def clean_markdown(text):
     md_text = '''
     ## Heading Example
 
-    *Italic text* and **bold text** should be cleaned, 
+    *Italic text* and **bold text** should be cleaned,
     but multiplication 3 * 4 must remain unchanged.
 
     Another paragraph.
@@ -440,14 +425,14 @@ def copy_to_clipboard(text):
 def extract_code_segments(nb_path):
     """
     Extract code segments and their associated comments from a Jupyter Notebook.
-    
+
     Reads the notebook at nb_path and returns a list of tuples (comment, code).
-    For each code cell, if the immediately preceding cell is markdown, that cell's 
+    For each code cell, if the immediately preceding cell is markdown, that cell's
     content is used as the comment; otherwise, the comment is an empty string.
-    
+
     Parameters:
         nb_path (str): Path to the notebook (.ipynb).
-    
+
     Returns:
         List[Tuple[str, str]]: A list of (comment, code) pairs.
 
@@ -476,16 +461,16 @@ def extract_code_segments(nb_path):
 def create_notebook_explorer(folder=""):
     """
     Create a widget to select a notebook file from the 'notebooks' directory.
-    
+
     It searches in the directory:
         os.path.join(os.path.dirname(__file__), '..', 'notebooks', folder)
     for all files matching *.ipynb, and returns a dropdown populated with the filenames.
     A button labeled "Open Notebook" is also returned. When pressed, it returns the full
     path to the selected notebook.
-    
+
     Parameters:
         folder (str): Subfolder within the 'notebooks' directory (default: "").
-    
+
     Returns:
         tuple: (dropdown_widget, open_button)
             dropdown_widget: ipywidgets.Dropdown containing the notebook filenames.
@@ -494,7 +479,7 @@ def create_notebook_explorer(folder=""):
     base_dir = os.path.join(os.path.dirname(__file__), '..', 'notebooks', folder)
     # List all .ipynb files
     notebooks = sorted([f for f in os.listdir(base_dir) if f.endswith('.ipynb')])
-    
+
     dropdown = widgets.Dropdown(options=notebooks, description="Notebook:")
     open_button = widgets.Button(description="Open Notebook")
     output_area = widgets.Output()
@@ -515,19 +500,19 @@ def create_notebook_explorer(folder=""):
 def create_notebook_navigator(nb_path=None):
     """
     Create a navigation widget for a notebook's code segments.
-    
+
     This widget displays a horizontal navigation bar with buttons:
       [first] [<--] [-->] [last]    "Cell #/N"   [copycode] [copycomment] [close]
-    Below it, the segment's associated comment (limited to three visible lines, with 
+    Below it, the segment's associated comment (limited to three visible lines, with
     scrolling if longer) and the full code are shown.
-    
+
     Users can navigate among segments, copy either the code or the comment to the clipboard,
-    and close the navigator. This widget helps overcome Colab's limitation of only opening 
+    and close the navigator. This widget helps overcome Colab's limitation of only opening
     one notebook at a time by letting users view and copy parts of a notebook.
-    
+
     Parameters:
         nb_path (str): Full path to the notebook (.ipynb) from which to extract segments.
-    
+
     Returns:
         ipywidgets.Widget: A container widget with the navigation interface.
 
@@ -550,7 +535,7 @@ def create_notebook_navigator(nb_path=None):
     total = len(segments)
     if total == 0:
         return widgets.HTML("<b>No code segments found.</b>")
-    
+
     current_index = 0  # closure variable for the current segment
 
     # Navigation buttons
@@ -559,15 +544,15 @@ def create_notebook_navigator(nb_path=None):
     next_btn  = widgets.Button(description="-->")
     last_btn  = widgets.Button(description="Last")
     pos_label = widgets.Label(value=f"Cell 1/{total}")
-    
+
     # Copy buttons
     copycode_btn    = widgets.Button(description="Copy Code")
     copycomment_btn = widgets.Button(description="Copy Comment")
     close_btn       = widgets.Button(description="Close")
-    
+
     # Display areas for comment and code
     comment_area = widgets.Textarea(
-        value="", 
+        value="",
         description="Comment:",
         layout=widgets.Layout(width="100%", height="80px"),
         disabled=True
@@ -578,14 +563,14 @@ def create_notebook_navigator(nb_path=None):
         layout=widgets.Layout(width="100%", height="200px"),
         disabled=True
     )
-    
+
     # Update function to refresh display based on current_index
     def update_display():
         comment, code = segments[current_index]
         comment_area.value = comment
         code_area.value = code
         pos_label.value = f"Cell {current_index+1}/{total}"
-    
+
     # Navigation callbacks
     def on_first(b):
         nonlocal current_index
@@ -605,12 +590,12 @@ def create_notebook_navigator(nb_path=None):
         nonlocal current_index
         current_index = total - 1
         update_display()
-    
+
     first_btn.on_click(on_first)
     prev_btn.on_click(on_prev)
     next_btn.on_click(on_next)
     last_btn.on_click(on_last)
-    
+
     # Copy callbacks using the helper function
     def on_copycode(b):
         copy_to_clipboard(segments[current_index][1])
@@ -618,19 +603,19 @@ def create_notebook_navigator(nb_path=None):
         copy_to_clipboard(segments[current_index][0])
     copycode_btn.on_click(on_copycode)
     copycomment_btn.on_click(on_copycomment)
-    
+
     # Close callback: hides the navigator container.
     def on_close(b):
         container.layout.display = "none"
     close_btn.on_click(on_close)
-    
+
     # Assemble the top navigation bar
     nav_bar = widgets.HBox([
-        first_btn, prev_btn, next_btn, last_btn, 
-        pos_label, 
+        first_btn, prev_btn, next_btn, last_btn,
+        pos_label,
         copycode_btn, copycomment_btn, close_btn
     ])
-    
+
     # Create a container for the whole navigator
     container = widgets.VBox([
         nav_bar,
@@ -638,8 +623,18 @@ def create_notebook_navigator(nb_path=None):
         widgets.HTML("<hr>"),
         code_area
     ])
-    
+
     # Initialize display
     update_display()
     return container
 
+
+# %% for debugging
+if __name__ == '__main__':
+    nbdropdown_widget, nbbtns,_ = create_files_widget(root='~/natacha/python/',
+                                                     folder="notebooks",
+                                                     pattern="*.ipynb",
+                                                     excluded="index*",
+                                                     actions=["linkcolab", "linklocal"])
+    display(nbdropdown_widget)
+    for btn in nbbtns.values(): display(btn)

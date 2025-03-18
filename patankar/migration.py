@@ -83,12 +83,12 @@ Example
     sol.plotC()
 ```
 
-@version: 1.24
+@version: 1.37
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-01-17
-@rev: 2025-03-05
+@rev: 2025-03-17
 
 """
 # Dependencies
@@ -126,7 +126,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.24"
+__version__ = "1.37"
 
 # Plot configuration (preferred units)
 plotconfig_default = {
@@ -685,53 +685,53 @@ def create_simulation_widget():
 
 def create_plotmigration_widget():
     """
-    Creates a widget interface for managing simulation plots and point evaluations.
-    It uses the global dictionary mymigration (keys like "mig1", etc.) to let the user
-    select a simulation instance, then provides:
+    Creates a widget interface for managing simulation plots, point evaluations,
+    tabulated values, and for saving simulation data. It uses the global dictionary
+    mymigration (keys such as "mig1") to select a simulation instance.
 
-      Panel 1 (Plot Panel):
-         - A dropdown for simulation key.
-         - A checkbox (plotSML, default True).
-         - A button "Plot CF" which calls: simulation.plotCF(plotSML=plotSML)
-         - A slider for nmax (5–30, default 15).
-         - A button "Plot Cx" which calls: simulation.plotCx(nmax=nmax)
+    Panels:
+     1. Plot Panel:
+         - Dropdown to select simulation.
+         - Checkbox (plotSML, default True).
+         - Button "Plot CF" calls: simulation.plotCF(plotSML=plotSML)
+         - Slider for nmax (5–30, default 15).
+         - Button "Plot Cx" calls: simulation.plotCx(nmax=nmax)
 
-      Panel 2 (Point Evaluation):
-         - A FloatText for ttarget.
-         - A dropdown for tunit.
-         - A button "Evaluate Point" which computes:
-               CFtarget = simulation.interp_CF(ttarget * tscale)
-             and prints CF and CF/SML.
+     2. Point Evaluation Panel:
+         - FloatText for ttarget.
+         - Dropdown for tunit.
+         - Button "Evaluate Point" computes and prints CF and CF/SML at ttarget.
 
-      Panel 3 (Tabulated Values):
-         - Two FloatTexts for trange_min and trange_max.
-         - A slider for numberofvalues (3–500, default 5).
-         - A button "Generate Table" that builds a table of t and CF values.
+     3. Tabulated Values Panel:
+         - FloatTexts for trange_min and trange_max.
+         - Slider for number of values (3–500, default 5).
+         - Button "Generate Table" builds an interactive table (DataFrame) of t and CF.
 
-    The panels are arranged vertically. All outputs are shown in an output area.
+     4. Save Panel:
+         - Text field for filename (default: simulation key).
+         - Text field for destination folder (default: os.getcwd()).
+         - Two buttons: "Save CF" and "Save Cx" that trigger saving to CSV (first) and then to Excel.
 
-    The simulation instance is retrieved as:
-         simulation = mymigration[selected_key]
-
-    Note: The function uses check_units((1, tunit))[0].item() to compute tscale.
+    The simulation instance is retrieved as: simulation = mymigration[selected_key]
     """
     try:
         import ipywidgets as widgets
         from IPython.display import display, clear_output
         import numpy as np
+        import pandas as pd
+        import os
     except ImportError as e:
-        raise ImportError("ipywidgets, IPython and numpy are required for this widget.") from e
+        raise ImportError("ipywidgets, IPython, numpy and pandas are required for this widget.") from e
 
-    # Access the global dictionary mymigration
+    # Global dictionary mymigration must exist.
     import builtins
     if not hasattr(builtins, "mymigration"):
         builtins.mymigration = {}
     global mymigration
     mymigration = builtins.mymigration
 
-    # --- Interactive Table ---
+    # ---- Interactive Table helper function ----
     def interactive_table(df):
-        # Create a slider that allows selection of a row range.
         range_slider = widgets.IntRangeSlider(
              value=[0, len(df)],
              min=0,
@@ -751,8 +751,7 @@ def create_plotmigration_widget():
         update_table(None)
         return widgets.VBox([range_slider, out])
 
-
-    # --- Simulation selection ---
+    # ---- Panel 1: Plot Panel ----
     sim_keys = list(mymigration.keys())
     if not sim_keys:
         sim_keys = ["<none>"]
@@ -762,8 +761,6 @@ def create_plotmigration_widget():
          description="Sim:",
          layout=widgets.Layout(width="200px")
     )
-
-    # --- Panel 1: Plotting ---
     plotSML_checkbox = widgets.Checkbox(
          value=True,
          description="Plot SML"
@@ -786,14 +783,41 @@ def create_plotmigration_widget():
          button_style="info"
     )
     plot_out = widgets.Output()
-
     plot_panel = widgets.VBox([
          widgets.HBox([sim_dropdown, plotSML_checkbox]),
          widgets.HBox([plotCF_button, nmax_slider, plotCx_button]),
          plot_out
     ])
 
-    # --- Panel 2: Point Evaluation ---
+    def on_plotCF(b):
+        with plot_out:
+            plot_out.clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            try:
+                sim.plotCF(plotSML=plotSML_checkbox.value)
+            except Exception as e:
+                print("Error in plotCF:", e)
+    plotCF_button.on_click(on_plotCF)
+
+    def on_plotCx(b):
+        with plot_out:
+            plot_out.clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            try:
+                sim.plotCx(nmax=nmax_slider.value)
+            except Exception as e:
+                print("Error in plotCx:", e)
+    plotCx_button.on_click(on_plotCx)
+
+    # ---- Panel 2: Point Evaluation Panel ----
     tunit_dropdown = widgets.Dropdown(
          options=["s", "min", "h", "days", "weeks", "months", "years"],
          value="days",
@@ -808,14 +832,57 @@ def create_plotmigration_widget():
          button_style="success"
     )
     point_out = widgets.Output()
-
     point_panel = widgets.VBox([
          widgets.HBox([ttarget_text, tunit_dropdown]),
          point_button,
          point_out
     ])
 
-    # --- Panel 3: Tabulated Values ---
+    def on_eval_point(b):
+        with point_out:
+            point_out.clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            try:
+                from patankar.layer import check_units
+                tscale = check_units((1, tunit_dropdown.value))[0].item()
+            except Exception as e:
+                print("Error computing tscale:", e)
+                return
+            try:
+                tmin = sim.t[0] / tscale
+                tmax = sim.t[-1] / tscale
+            except Exception:
+                tmin, tmax = 0, 1
+            ttarget = ttarget_text.value
+            if ttarget < tmin or ttarget > tmax:
+                print(f"Warning: ttarget ({ttarget}) is outside simulation time range [{tmin}, {tmax}].")
+            try:
+                CFtarget = sim.interp_CF(ttarget * tscale)
+            except Exception as e:
+                print("Error interpolating CF:", e)
+                return
+            # Concentration unit is assumed to be "a.u."
+            Cunit = "a.u."
+            try:
+                SML = sim._SML
+            except Exception:
+                SML = None
+            print(f"CF at t={ttarget} [{tunit_dropdown.value}]: {CFtarget:.6g} [{Cunit}]")
+            if SML is not None:
+                ratio = CFtarget / SML
+                warn = ""
+                if ratio > 10:
+                    warn = " !!!"
+                elif ratio > 1:
+                    warn = " !"
+                print(f"CF/SML at t={ttarget} [{tunit_dropdown.value}]: {ratio:.6g}{warn}")
+    point_button.on_click(on_eval_point)
+
+    # ---- Panel 3: Tabulated Values Panel ----
     trange_min_text = widgets.FloatText(
          value=0.0,
          description="t_min:"
@@ -838,97 +905,13 @@ def create_plotmigration_widget():
          button_style="success"
     )
     table_out = widgets.Output()
-
     table_panel = widgets.VBox([
          widgets.HBox([trange_min_text, trange_max_text, num_values_slider]),
          table_button,
          table_out
     ])
 
-    # --- Overall output area ---
-    main_out = widgets.Output()
-
-    # --- Callback for Plot CF button ---
-    def on_plotCF(b):
-        with plot_out:
-            plot_out.clear_output()
-            key = sim_dropdown.value
-            if key not in mymigration:
-                print("No simulation selected.")
-                return
-            sim = mymigration[key]
-            try:
-                sim.plotCF(plotSML=plotSML_checkbox.value)
-            except Exception as e:
-                print("Error in plotCF:", e)
-    plotCF_button.on_click(on_plotCF)
-
-    # --- Callback for Plot Cx button ---
-    def on_plotCx(b):
-        with plot_out:
-            plot_out.clear_output()
-            key = sim_dropdown.value
-            if key not in mymigration:
-                print("No simulation selected.")
-                return
-            sim = mymigration[key]
-            try:
-                sim.plotCx(nmax=nmax_slider.value)
-            except Exception as e:
-                print("Error in plotCx:", e)
-    plotCx_button.on_click(on_plotCx)
-
-    # --- Callback for Point Evaluation button ---
-    def on_eval_point(b):
-        with point_out:
-            point_out.clear_output()
-            key = sim_dropdown.value
-            if key not in mymigration:
-                print("No simulation selected.")
-                return
-            sim = mymigration[key]
-            try:
-                # Compute tscale from tunit using check_units
-                from patankar.layer import check_units
-                tscale = check_units((1, tunit_dropdown.value))[0].item()
-            except Exception as e:
-                print("Error computing tscale:", e)
-                return
-            # Use the simulation's t array to determine defaults if needed
-            try:
-                tmin = sim.t[0] / tscale
-                tmax = sim.t[-1] / tscale
-            except Exception:
-                tmin, tmax = 0, 1
-            # Ensure ttarget is between tmin and tmax (or warn)
-            ttarget = ttarget_text.value
-            if ttarget < tmin or ttarget > tmax:
-                print(f"Warning: ttarget ({ttarget}) is outside simulation time range [{tmin}, {tmax}].")
-            try:
-                CFtarget = sim.interp_CF(ttarget * tscale)
-            except Exception as e:
-                print("Error interpolating CF:", e)
-                return
-            # Assume constant concentration unit "a.u." and retrieve SML from simulation
-            Cunit = "a.u."
-            try:
-                SML = sim._SML
-            except Exception:
-                SML = None
-            print(f"CF at t={ttarget} [{tunit_dropdown.value}]: {CFtarget:.6g} [{Cunit}]")
-            if SML is not None:
-                ratio = CFtarget / SML
-                warn = ""
-                if ratio > 10:
-                    warn = " !!!"
-                elif ratio > 1:
-                    warn = " !"
-                print(f"CF/SML at t={ttarget} [{tunit_dropdown.value}]: {ratio:.6g}{warn}")
-    point_button.on_click(on_eval_point)
-
-    # --- Callback for Generate Table button ---
     def on_generate_table(b):
-        Cunit = plotconfig_default["Cunit"]
         with table_out:
             table_out.clear_output()
             key = sim_dropdown.value
@@ -936,10 +919,17 @@ def create_plotmigration_widget():
                 print("No simulation selected.")
                 return
             sim = mymigration[key]
-            tscale = check_units((1, tunit_dropdown.value))[0].item()
-            tmin = sim.t[0] / tscale
-            tmax = sim.t[-1] / tscale
-            # Use widget values if provided; otherwise default to simulation range.
+            try:
+                from patankar.layer import check_units
+                tscale = check_units((1, tunit_dropdown.value))[0].item()
+            except Exception as e:
+                print("Error computing tscale:", e)
+                return
+            try:
+                tmin = sim.t[0] / tscale
+                tmax = sim.t[-1] / tscale
+            except Exception:
+                tmin, tmax = 0, 1
             trange_min = trange_min_text.value if trange_min_text.value is not None else tmin
             trange_max = trange_max_text.value if trange_max_text.value is not None else tmax
             n_vals = num_values_slider.value
@@ -949,16 +939,91 @@ def create_plotmigration_widget():
             except Exception as e:
                 print("Error interpolating CF for table:", e)
                 return
-            # Create a DataFrame with the computed values
             df = pd.DataFrame({
                 f"Time ({tunit_dropdown.value})": trange,
-                f"CF ({Cunit})": CFrange
+                f"CF (a.u.)": CFrange
             })
-            widgetdf = interactive_table(df)
-            display(widgetdf)
+            display(interactive_table(df))
     table_button.on_click(on_generate_table)
 
-    # --- Arrange overall UI ---
+    # ---- Panel 4: Save Panel ----
+    # Filename for saving (default: simulation key)
+    filename_field = widgets.Text(
+         value=sim_dropdown.value,
+         description="Filename:",
+         layout=widgets.Layout(width="300px")
+    )
+    # Destination folder (default: current working directory)
+    destination_field = widgets.Text(
+         value=os.getcwd(),
+         description="Destination:",
+         layout=widgets.Layout(width="400px")
+    )
+    save_cf_button = widgets.Button(
+         description="Save CF",
+         button_style="warning"
+    )
+    save_cx_button = widgets.Button(
+         description="Save Cx",
+         button_style="warning"
+    )
+    save_output = widgets.Output()
+
+    def on_save_cf(b):
+        with save_output:
+            clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            fname = filename_field.value.strip() or key
+            dest = destination_field.value.strip() or os.getcwd()
+            try:
+                sim.save_as_csv_CF(fname + ".csv", destinationfolder=dest, overwrite=True)
+                print("CF data saved as CSV.")
+            except Exception as e:
+                print("Error saving CF as CSV:", e)
+            try:
+                sim.save_as_excel_CF(fname + ".xlsx", destinationfolder=dest, overwrite=True)
+                print("CF data saved as Excel.")
+            except Exception as e:
+                print("Error saving CF as Excel:", e)
+
+    def on_save_cx(b):
+        with save_output:
+            clear_output()
+            key = sim_dropdown.value
+            if key not in mymigration:
+                print("No simulation selected.")
+                return
+            sim = mymigration[key]
+            fname = filename_field.value.strip() or key
+            dest = destination_field.value.strip() or os.getcwd()
+            try:
+                sim.save_as_csv_Cx(fname + "_Cx.csv", destinationfolder=dest, overwrite=True,
+                                   t=None, nmax=nmax_slider.value, long_format=False)
+                print("Cx data saved as CSV.")
+            except Exception as e:
+                print("Error saving Cx as CSV:", e)
+            try:
+                sim.save_as_excel_Cx(fname + "_Cx.xlsx", destinationfolder=dest, overwrite=True,
+                                     t=None, nmax=nmax_slider.value, long_format=False)
+                print("Cx data saved as Excel.")
+            except Exception as e:
+                print("Error saving Cx as Excel:", e)
+
+    save_cf_button.on_click(on_save_cf)
+    save_cx_button.on_click(on_save_cx)
+
+    save_panel = widgets.VBox([
+         widgets.HTML("<h4>Save Simulation Data</h4>"),
+         widgets.HBox([filename_field, destination_field]),
+         widgets.HBox([save_cf_button, save_cx_button]),
+         save_output
+    ])
+
+    # ---- Assemble Overall UI ----
     ui = widgets.VBox([
          widgets.HTML("<h3>Migration Simulation Evaluation</h3>"),
          plot_panel,
@@ -967,9 +1032,10 @@ def create_plotmigration_widget():
          widgets.HTML("<hr>"),
          table_panel,
          widgets.HTML("<hr>"),
-         main_out  # you can use this output for further messages if needed
+         save_panel
     ])
     return ui
+
 
 
 # %% Generic Classes to manipulate results
@@ -1137,6 +1203,9 @@ class Cprofile:
         return f"<{self.__class__.__name__}: including {len(self.x)} points>"
 
 
+# -----------------------------------------------------
+# Container for single simulations
+# -----------------------------------------------------
 
 class SensPatankarResult:
     """
@@ -1951,7 +2020,6 @@ class SensPatankarResult:
         return fig
 
 
-
     def plotCx(self, t=None, nmax=15, plotconfig=None, title=None, subtitle=None):
         """
         Plot the concentration profiles (Cx) in the packaging vs. position (x) for different times,
@@ -2051,8 +2119,233 @@ class SensPatankarResult:
         setattr(fig,_fig_metadata_atrr_,f"pltCx_{self.name}")
         return fig
 
+    # export methods (dataframe, csv, xls) for t,CF and tC,x,Cx
+    def to_CF_dataframe(self):
+        """
+        Returns a two-column DataFrame with columns ["time_s", "CF_a.u."],
+        containing the raw time vector (self.t) and food concentration (self.CF).
+        """
+        return pd.DataFrame({
+            "time_s": self.t,
+            "CF_a.u.": self.CF
+        })
 
+    def to_Cx_dataframe(self, t=None, nmax=15, long_format=False):
+        """
+        Return a DataFrame of concentration profiles (Cx) vs. position (x),
+        at user-specified or automatically sampled times.
+
+        Parameters
+        ----------
+        t : list, array-like, tuple, or None, optional
+            - If None, pick up to nmax time points using sqrt-spacing in self.t.
+            - If array-like, filter to [t.min(), t.max()] within self.t range.
+            - If tuple, e.g. (10, "hours"), convert to SI then use as array.
+        nmax : int, optional
+            Max # of time points to return if t is None or too large.
+        long_format : bool, optional
+            - False => wide: rows=x, columns=times
+            - True  => tidy: columns=["time_s", "x_m", "C_a.u."]
+
+        Returns
+        -------
+        pd.DataFrame
+            See doc for details.
+        """
+        # Example from your previously posted logic...
+        import numpy as np
+        from patankar.layer import check_units
+
+        if self.discrete or (self.Cx is None or self.x is None):
+            print("No continuous profile data available.")
+            return None
+
+        # 1) pick times
+        if t is None:
+            nt = len(self.t)
+            if nt <= nmax:
+                t_values = self.t
+            else:
+                sqrt_t = np.sqrt(self.t)
+                sqrt_t_values = np.linspace(sqrt_t[0], sqrt_t[-1], nmax)
+                t_values = sqrt_t_values ** 2
+        else:
+            if isinstance(t, tuple):
+                t_values = check_units(t)[0]
+                t_values = np.atleast_1d(t_values)
+            else:
+                t_values = np.array(t, dtype=float).ravel()
+            mask = (t_values >= self.t.min()) & (t_values <= self.t.max())
+            t_values = t_values[mask][:nmax]
+
+        if t_values.size == 0:
+            print("Warning: no valid times in the specified range.")
+            return None
+
+        # 2) gather data
+        c_matrix = []
+        for tC in t_values:
+            c_profile = self.interp_Cx(tC)  # shape => (npositions,)
+            c_matrix.append(c_profile)
+        c_matrix = np.vstack(c_matrix)  # shape => (#times, #positions)
+
+        # 3) build the DataFrame
+        if not long_format:
+            # wide => rows=x, columns=time
+            df = pd.DataFrame(
+                data=c_matrix.T,
+                index=self.x,
+                columns=t_values
+            )
+            df.index.name = "x_m"
+            df.columns.name = "time_s"
+        else:
+            # long => columns = time_s, x_m, C_a.u.
+            t2d, x2d = np.meshgrid(t_values, self.x, indexing="ij")
+            df = pd.DataFrame({
+                "time_s": t2d.ravel(),
+                "x_m": x2d.ravel(),
+                "C_a.u.": c_matrix.ravel()
+            })
+
+        return df
+
+    def save_as_excel_CF(self, filename, destinationfolder=None, overwrite=False):
+        """
+        Save the (t, CF) data to an Excel file.
+
+        Parameters
+        ----------
+        filename : str
+            Output Excel filename (e.g., 'myCF.xlsx').
+        destinationfolder : str, optional
+            Folder in which to save the file (default: os.getcwd()).
+        overwrite : bool, optional
+            If False (default), raise an error if file already exists.
+        """
+        df = self.to_CF_dataframe()
+        if df is None:
+            print("No CF data to save.")
+            return
+
+        if destinationfolder is None:
+            destinationfolder = os.getcwd()
+        os.makedirs(destinationfolder, exist_ok=True)
+        fullpath = os.path.join(destinationfolder, filename)
+
+        if not overwrite and os.path.isfile(fullpath):
+            raise FileExistsError(f"File '{fullpath}' already exists. Use overwrite=True to replace it.")
+
+        df.to_excel(fullpath, index=False)
+        print(f"CF data saved to Excel: {fullpath}")
+
+    def save_as_csv_CF(self, filename, destinationfolder=None, overwrite=False):
+        """
+        Save the (t, CF) data to a CSV file.
+
+        Parameters
+        ----------
+        filename : str
+            Output CSV filename (e.g., 'myCF.csv').
+        destinationfolder : str, optional
+            Folder in which to save the file (default: os.getcwd()).
+        overwrite : bool, optional
+            If False (default), raise an error if file already exists.
+        """
+        df = self.to_CF_dataframe()
+        if df is None:
+            print("No CF data to save.")
+            return
+
+        if destinationfolder is None:
+            destinationfolder = os.getcwd()
+        os.makedirs(destinationfolder, exist_ok=True)
+        fullpath = os.path.join(destinationfolder, filename)
+
+        if not overwrite and os.path.isfile(fullpath):
+            raise FileExistsError(f"File '{fullpath}' already exists. Use overwrite=True to replace it.")
+
+        df.to_csv(fullpath, index=False)
+        print(f"CF data saved to CSV: {fullpath}")
+
+    def save_as_excel_Cx(self, filename, destinationfolder=None, overwrite=False,
+                         t=None, nmax=15, long_format=False):
+        """
+        Save the concentration profiles (Cx) to an Excel file.
+
+        Parameters
+        ----------
+        filename : str
+            Output Excel filename (e.g., 'profiles.xlsx').
+        destinationfolder : str, optional
+            Folder in which to save the file (default: os.getcwd()).
+        overwrite : bool, optional
+            If False (default), raise an error if file already exists.
+        t : list, array-like, tuple, or None
+            Time selection (see to_Cx_dataframe doc).
+        nmax : int
+            Max # times (see to_Cx_dataframe doc).
+        long_format : bool
+            True => tidy table; False => wide table.
+        """
+        df = self.to_Cx_dataframe(t=t, nmax=nmax, long_format=long_format)
+        if df is None:
+            print("No profile data to save.")
+            return
+
+        if destinationfolder is None:
+            destinationfolder = os.getcwd()
+        os.makedirs(destinationfolder, exist_ok=True)
+        fullpath = os.path.join(destinationfolder, filename)
+
+        if not overwrite and os.path.isfile(fullpath):
+            raise FileExistsError(f"File '{fullpath}' already exists. Use overwrite=True to replace it.")
+
+        df.to_excel(fullpath, index=not long_format)
+        print(f"Profile data (Cx) saved to Excel: {fullpath}")
+
+    def save_as_csv_Cx(self, filename, destinationfolder=None, overwrite=False,
+                       t=None, nmax=15, long_format=False):
+        """
+        Save the concentration profiles (Cx) to a CSV file.
+
+        Parameters
+        ----------
+        filename : str
+            Output CSV filename (e.g., 'profiles.csv').
+        destinationfolder : str, optional
+            Folder in which to save the file (default: os.getcwd()).
+        overwrite : bool, optional
+            If False (default), raise an error if file already exists.
+        t : list, array-like, tuple, or None
+            Time selection (see to_Cx_dataframe doc).
+        nmax : int
+            Max # times (see to_Cx_dataframe doc).
+        long_format : bool
+            True => tidy table; False => wide table.
+        """
+        df = self.to_Cx_dataframe(t=t, nmax=nmax, long_format=long_format)
+        if df is None:
+            print("No profile data to save.")
+            return
+
+        if destinationfolder is None:
+            destinationfolder = os.getcwd()
+        os.makedirs(destinationfolder, exist_ok=True)
+        fullpath = os.path.join(destinationfolder, filename)
+
+        if not overwrite and os.path.isfile(fullpath):
+            raise FileExistsError(f"File '{fullpath}' already exists. Use overwrite=True to replace it.")
+
+        df.to_csv(fullpath, index=not long_format)
+        print(f"Profile data (Cx) saved to CSV: {fullpath}")
+
+
+
+# -----------------------------------------------------
 # Container for multiple simulations
+# -----------------------------------------------------
+
 class CFSimulationContainer:
     """
     Container to store and compare multiple CF results from different simulations.
