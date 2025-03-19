@@ -4,8 +4,11 @@ This directory is managed by `patankar.private.loadpubchem` and serves as a **lo
 
 ## 📁 Folder Contents
 - `pubchem_index.json` 📖: A local index mapping compound names, CAS numbers, and synonyms to their **CID** (PubChem Compound ID).
+
 - `cidXXXX.full.json` 📂: Full records containing **all available PubChem properties** for a compound.
+
 - `cidXXXX.simple.json` 📑: Lightweight records with only the most essential fields, including:
+
   - CID
   - Name & Synonyms
   - CAS number
@@ -13,7 +16,27 @@ This directory is managed by `patankar.private.loadpubchem` and serves as a **lo
   - Molecular Weight
   - SMILES / InChI / InChIKey
   - LogP value (if available)
-- Additional metadata or temporary files created during data retrieval.
+  - Additional metadata or temporary files created during data retrieval.
+
+- `structure/cidXXXX.sdf` 🧱: Cached **SDF structure file** (Toxtree needs them).
+
+- `thumbs/cidXXXX.png` 🎨: **Cropped PNG image** of the molecule structure.
+
+  
+
+  > These properties are easily accessible from migrant that compute additional quantities from these inputs.
+
+  ```python
+  from loadpubchem import migrant
+  m = migrant("Irganox 1010")
+  print(m.cid)
+  print(m.compound)
+  # etc.
+  m.image # shows the molecule in IPython
+  m.structure["atoms"] # show atom coordinates (DataFrame)
+  m.structure["bonds"] # show bonds (DataFrame)
+  m.structure["metadata"].T # show metadata (DataFrame)
+  ```
 
 ## 🔹 How It Works
 1. When a compound is requested, `loadpubchem` first checks `pubchem_index.json` to see if it exists locally.

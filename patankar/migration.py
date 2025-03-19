@@ -600,6 +600,8 @@ def create_simulation_widget():
     mypackaging = builtins.mypackaging
     mymaterials = builtins.mymaterials
     mymigration = builtins.mymigration
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, "_PREHEATED_") and getattr(builtins, "_PREHEATED_") is True
 
     # Create dropdowns for each parameter.
     substance_dropdown = widgets.Dropdown(
@@ -684,6 +686,9 @@ def create_simulation_widget():
              print("Current simulations:", list(mymigration.keys()))
     launch_button.on_click(launch_simulation)
 
+    if _preheatedGUI_:
+        launch_simulation(None) # We lauch the simulation manually
+
     # Arrange the complete UI.
     ui = widgets.VBox([panels, sim_name_text, launch_button, sim_output])
     return ui
@@ -735,6 +740,8 @@ def create_plotmigration_widget():
         builtins.mymigration = {}
     global mymigration
     mymigration = builtins.mymigration
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, "_PREHEATED_") and getattr(builtins, "_PREHEATED_") is True
 
     # ---- Interactive Table helper function ----
     def interactive_table(df):
@@ -808,6 +815,8 @@ def create_plotmigration_widget():
             except Exception as e:
                 print("Error in plotCF:", e)
     plotCF_button.on_click(on_plotCF)
+    if _preheatedGUI_:
+        on_plotCF(None) # we plot manually
 
     def on_plotCx(b):
         with plot_out:
@@ -997,7 +1006,7 @@ def create_plotmigration_widget():
             except Exception as e:
                 print("Error saving CF as Excel:", e)
             # print in PDF and PNG
-            plt.ioff()
+            plt.ioff() # no interactive plots
             try:
                 htmpCF = sim.plotCF(plotSML=plotSML_checkbox.value, subtitle=key, noshow=True)
                 print_figure(htmpCF,fname, destinationfolder=dest, overwrite=True)
@@ -1005,7 +1014,7 @@ def create_plotmigration_widget():
                 print("CF data printed as PNG and PDF.")
             except Exception as e:
                 print("Error while printing CF in PNG or PDF", e)
-            plt.ion()
+            plt.ion() # reactivate interactive plots
 
 
     def on_save_cx(b):
@@ -1031,7 +1040,7 @@ def create_plotmigration_widget():
             except Exception as e:
                 print("Error saving Cx as Excel:", e)
             # print in PDF and PNG
-            plt.ioff()
+            plt.ioff() # no interactive plots
             try:
                 htmpCx = sim.plotCx(nmax=nmax_slider.value, subtitle=key, noshow=True)
                 print_figure(htmpCx,fname+"_Cx", destinationfolder=dest, overwrite=True)
@@ -1039,7 +1048,7 @@ def create_plotmigration_widget():
                 print("Cx data printed as PNG and PDF.")
             except Exception as e:
                 print("Error while printing Cx in PNG or PDF",e)
-            plt.ion()
+            plt.ion() # reactivate interactive plots
 
 
     save_cf_button.on_click(on_save_cf)

@@ -1,0 +1,271 @@
+{
+  "cid": 123046,
+  "synonyms": [
+    "Phosphorin",
+    "Phosphabenzene",
+    "Phosphinine",
+    "Phosphorine",
+    "Phosphoridine",
+    "289-68-9",
+    "lambda3-Phosphorin",
+    "Phosphate-binding proteolipid",
+    "phosphate binding proteolipid",
+    "A8TY55D4JJ",
+    "DTXSID70183096",
+    "1-phosphacyclohexa-2,4,5-triene",
+    "577782-41-3",
+    "UNII-A8TY55D4JJ",
+    ".LAMBDA.3-PHOSPHORIN",
+    "proteolipid, phosphate binding",
+    "DTXCID80105587",
+    "DTXSID80852781",
+    "Q413798"
+  ],
+  "sids": [
+    589716,
+    10240347,
+    10517227,
+    16930511,
+    29303313,
+    31636354,
+    38385267,
+    39996662,
+    57340274,
+    76591134,
+    104417308,
+    128121815,
+    129157352,
+    129394349,
+    135079978,
+    143200258,
+    162224556,
+    162497380,
+    163285424,
+    242665552,
+    272753778,
+    273504665,
+    274562137,
+    315743475,
+    316382351,
+    319148336,
+    341157053,
+    354311129,
+    376815833,
+    385783741,
+    386281138,
+    386620593,
+    403484924,
+    404745975,
+    419526271,
+    462874032,
+    468888716,
+    470554050,
+    472422829,
+    472480993,
+    481361648,
+    485311115,
+    485743979,
+    496082602,
+    500816920
+  ],
+  "aids": [],
+  "elements": [
+    "P",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "P",
+      "x": 2.866,
+      "y": -1,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "C",
+      "x": 2.866,
+      "y": 1,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "C",
+      "x": 2,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "C",
+      "x": 3.732,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "C",
+      "x": 2,
+      "y": -0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "C",
+      "x": 3.732,
+      "y": -0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "H",
+      "x": 2.866,
+      "y": 1.62,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "H",
+      "x": 1.4631,
+      "y": 0.81,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "H",
+      "x": 4.269,
+      "y": 0.81,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "H",
+      "x": 1.4631,
+      "y": -0.81,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "H",
+      "x": 4.269,
+      "y": -0.81,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 5,
+      "order": 2
+    },
+    {
+      "aid1": 1,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 3,
+      "order": 2
+    },
+    {
+      "aid1": 2,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 6,
+      "order": 2
+    },
+    {
+      "aid1": 4,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 11,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C5H5P",
+  "molecular_weight": "96.07",
+  "canonical_smiles": "C1=CC=PC=C1",
+  "isomeric_smiles": "C1=CC=PC=C1",
+  "inchi": "InChI=1S/C5H5P/c1-2-4-6-5-3-1/h1-5H",
+  "inchikey": "UNQNIRQQBJCMQR-UHFFFAOYSA-N",
+  "iupac_name": "phosphinine",
+  "xlogp": -0.3,
+  "exact_mass": "96.012887157",
+  "monoisotopic_mass": "96.012887157",
+  "tpsa": 0,
+  "complexity": 30.9,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 0,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371806000020000000000000000000000000000000000002400000000000000000180000018080000000008008810003000800000208000204200000200002000000888000000880820228011108020002080000888060000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "10000000011000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001001000000000000000000000000000000000000000000000000000000000000000000000000011000000000000000000000000001100000001000000000000000000000000000000000000000100000000000100010000001000000000000001100000000000010000000000000000000000000100000100000000000000000100000010000100000000000000000000000100000000000000000001000000000000000000000000010001000100000000000000000000000000010001000000010000010000000100010100000000001000100010000100000000010000000000000001000001000000000000000000010001000100000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 6,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

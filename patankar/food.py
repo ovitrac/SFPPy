@@ -144,6 +144,26 @@ def list_food_classes():
 
     return subclasses_info
 
+# class checked for the registry and other applications
+def update_class_list(clslist, clsnew):
+    """
+    Updates clslist with clsnew if clsnew is a subclass of an existing class in clslist.
+    If clsnew is a subclass of clslist[i], clslist[i] is replaced with clsnew.
+    If no subclass relationship is found, clsnew is appended to clslist.
+
+    Parameters:
+        clslist (list): A list of classes.
+        clsnew (type): A new class to check and possibly add.
+    """
+    for i, cls in enumerate(clslist):
+        if issubclass(clsnew, cls):  # Check if clsnew is a subclass of clslist[i]
+            clslist[i] = clsnew  # Replace the parent class with the new subclass
+            return  # Exit immediately after updating
+
+    clslist.append(clsnew)  # If no subclass relationship is found, append clsnew
+
+
+# %% help food
 def help_food():
     """
     Prints all food-related classes with relevant attributes in a **formatted Markdown table**.
@@ -245,6 +265,8 @@ def create_food_tree_widget():
         builtins.mycontacts = {}
     global mycontacts
     mycontacts = builtins.mycontacts
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, "_PREHEATED_") and getattr(builtins, "_PREHEATED_") is True
 
     # ---- Build the tree registry as a nested dict.
     # Each node is a dict with keys:
@@ -395,40 +417,41 @@ def create_food_tree_widget():
         "simulant": {
             "class": simulant,
             "children": {
-                "fat": {"class": fat, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "aqueous": {"class": aqueous, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "intermediate": {"class": intermediate, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "oliveoil": {"class": oliveoil, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "ethanol95": {"class": ethanol95, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "ethanol50": {"class": ethanol50, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "acetonitrile": {"class": acetonitrile, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "methanol": {"class": methanol, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "water": {"class": water, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "water3aceticacid": {"class": water3aceticacid, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
-                "isooctane": {"class": isooctane, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}}
+#                "fat": {"class": fat, "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+#                "aqueous": {"class": aqueous, },# "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+#                "intermediate": {"class": intermediate,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "oliveoil": {"class": oliveoil,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "ethanol95": {"class": ethanol95,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "ethanol50": {"class": ethanol50,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "acetonitrile": {"class": acetonitrile,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "methanol": {"class": methanol,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "water": {"class": water,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "water3aceticacid": {"class": water3aceticacid,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}},
+                "isooctane": {"class": isooctane,}, # "children": {"realcontact": {"class": realcontact}, "testcontact": {"class": testcontact}}}
             }
         },
         "setoff": {
             "class": setoff,
-            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+            "children": {"ambient": {"class": ambient}, "transportation": {"class": transportation}, "hotambient": {"class": hotambient}}
         },
         "stacked": {
             "class": stacked,
-            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+            "children": {"ambient": {"class": ambient}, "transportation": {"class": transportation}, "hotambient": {"class": hotambient}}
         },
         "rolled": {
             "class": rolled,
-            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+            "children": {"ambient": {"class": ambient}, "transportation": {"class": transportation}, "hotambient": {"class": hotambient}}
         },
         "nofood": {
             "class": nofood,
-            "children": {"ambient": {"class": setoff}, "transportation": {"class": setoff}, "hotambient": {"class": setoff}}
+            "children": {"ambient": {"class": ambient}, "transportation": {"class": transportation}, "hotambient": {"class": hotambient}}
         },
         "yogurt": {
             "class": yogurt,
-            "children": {"chilled": {"class": yogurt}, "ambient": {"class": yogurt}}
+            "children": {"chilled": {"class": chilled}, "ambient": {"class": ambient}}
         },
     }
+
 
     # ---- Create cascading dropdowns for up to 4 levels.
     dd1 = widgets.Dropdown(options=list(food_tree.keys()), description="Level 1:")
@@ -438,6 +461,7 @@ def create_food_tree_widget():
 
     def update_dd2(*args):
         selected = dd1.value
+        #print("dd2:",selected)
         opts = list(food_tree[selected]["children"].keys())
         dd2.options = opts
         dd2.value = opts[0] if opts else None
@@ -449,9 +473,15 @@ def create_food_tree_widget():
         else:
             selected1 = dd1.value
             selected2 = dd2.value
-            opts = list(food_tree[selected1]["children"][selected2]["children"].keys())
-            dd3.options = opts
-            dd3.value = opts[0] if opts else None
+            #print("dd3:",selected1,selected2) # debug
+            subtree = food_tree[selected1]["children"][selected2]
+            if "children" in subtree:
+                opts = list(subtree["children"].keys())
+                dd3.options = opts
+                dd3.value = opts[0] if opts else None
+            else:
+                dd3.options = []
+                dd3.value = None
         update_dd4()
     def update_dd4(*args):
         if dd3.value is None:
@@ -461,6 +491,7 @@ def create_food_tree_widget():
             selected1 = dd1.value
             selected2 = dd2.value
             selected3 = dd3.value
+            #print("dd4:",selected1,selected2,selected3) # debug
             subtree = food_tree[selected1]["children"][selected2]["children"][selected3]
             if "children" in subtree:
                 opts = list(subtree["children"].keys())
@@ -502,7 +533,7 @@ def create_food_tree_widget():
             if dd2.value is not None:
                 try:
                     cls2 = food_tree[dd1.value]["children"][dd2.value]["class"]
-                    selected_classes.append(cls2)
+                    update_class_list(selected_classes,cls2) # avoid class conflicts (children replace parents)
                 except Exception as e:
                     print("Error at Level 2:", e)
                     return
@@ -510,7 +541,7 @@ def create_food_tree_widget():
             if dd3.value is not None:
                 try:
                     cls3 = food_tree[dd1.value]["children"][dd2.value]["children"][dd3.value]["class"]
-                    selected_classes.append(cls3)
+                    update_class_list(selected_classes,cls3) # avoid class conflicts (children replace parents)
                 except Exception as e:
                     print("Error at Level 3:", e)
                     return
@@ -518,17 +549,20 @@ def create_food_tree_widget():
             if dd4.options and dd4.value is not None:
                 try:
                     cls4 = food_tree[dd1.value]["children"][dd2.value]["children"][dd3.value]["children"][dd4.value]["class"]
-                    selected_classes.append(cls4)
+                    update_class_list(selected_classes,cls4) # avoid class conflicts (children replace parents)
                 except Exception as e:
                     print("Error at Level 4:", e)
                     return
             # Dynamically create a custom class with multiple inheritance.
             try:
                 CustomClass = type("CustomFood", tuple(selected_classes), {})
-            except Exception:
+            except Exception as e:
                 try:
-                    print("I swtich to user class (level 2):", selected_classes[1:2])
-                    CustomClass = type("CustomFood", tuple(selected_classes[1:2]), {})
+                    # for debugging, we rely on level2 (situation fixed with update_class_list())
+                    print("ERROR detected in foodtree:",e) # for debuging
+                    [print(c.__name__) for c in selected_classes]
+                    print("DEBUG:: keep only the last valid class:", selected_classes[-1])
+                    CustomClass = type("CustomFood", tuple(selected_classes[-1:]), {})
                 except Exception as e:
                     print("Error creating custom class:", e)
                     return
@@ -551,6 +585,9 @@ def create_food_tree_widget():
             print("\nCurrent conditions:", list(builtins.mycontacts.keys()))
     btn.on_click(instantiate_custom)
 
+    if _preheatedGUI_:
+        instantiate_custom(None) # we instantiate manually
+
     ui = widgets.VBox([
          widgets.HBox([dd1, dd2, dd3, dd4]),
          widgets.HBox([time_val, time_unit, temp_val, temp_unit]),
@@ -558,6 +595,7 @@ def create_food_tree_widget():
          btn,
          out
     ])
+
     return ui
 
 
@@ -1837,6 +1875,7 @@ class yogurt(realfood, semisolid, ethanol50):
 # Example usage (for debugging)
 # -------------------------------------------------------------------
 if __name__ == '__main__':
+    food_tree_widget = create_food_tree_widget()
     F = foodlayer()
     E95 = ethanol()
     Y = yogurt()

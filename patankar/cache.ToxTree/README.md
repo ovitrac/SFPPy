@@ -15,8 +15,6 @@ This directory is managed by `patankar.private.loadpubchem.migrantToxtree` and s
   - `eye`
   - `Ames`
 - `cidXXXX.engine.json` 📂: Processed **JSON versions** of the Toxtree outputs for faster lookup.
-- `structure/cidXXXX.sdf` 🧱: Cached **SDF structure file** used as input for Toxtree.
-- `structure/cidXXXX.png` 🎨: **Cropped PNG image** of the molecule structure.
 
 ## 🔹 How It Works
 

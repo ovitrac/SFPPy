@@ -30,12 +30,12 @@ Usage Example:
   >>> if 113194 in db:
   ...     print("PubChem cid 113194 exists.")
 
-@version: 1.30
+@version: 1.37
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-01-10
-@rev: 2025-03-12
+@rev: 2025-03-19
 
 """
 
@@ -56,7 +56,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.30"
+__version__ = "1.37"
 
 # Default value for SML when field is empty.
 SMLdefault = 60.0
@@ -99,6 +99,8 @@ class annex1record(dict):
         order: the record number (from the CSV; if known)
         total: total number of records (if known)
         """
+        if not isinstance(d,dict):
+            raise TypeError("dict must be a dict not a {type(d).__name__}")
         super().__init__(d)
         # Use the value stored in the record (key "record") if available.
         self._order = d.get("record", order)
@@ -114,7 +116,7 @@ class annex1record(dict):
         lines = []
         order_str = f"{self._order}" if self._order is not None else "?"
         total_str = f"{self._total}" if self._total is not None else "?"
-        header = f" ---- [ 10/2011/EC record: {order_str} of {total_str} ] ----"
+        header = f" ---- [ 🇪🇺10/2011/EC record: {order_str} of {total_str} ] ----"
         lines.append(header)
         # Define display order; note that we do not show SMLunit, SMLTunit, csvFile, or date.
         fields_order = [
@@ -140,8 +142,81 @@ class annex1record(dict):
             # Wrap the value to 60 characters; subsequent lines are indented by 25 spaces.
             wrapped_val = custom_wrap(display_val, width=60, indent=" " * 22)
             lines.append(f"{key:>20}: {wrapped_val}")
+
+        # for the extended class
+        if isinstance(self,annex1record):
+            lines.append(f"\n{'--- extended':>20}: properties ---\n")
+            attr_order = ["cid","M","SML","SMLT","n","gFCM","gM","gMmin","gCASmin","gnamemin"]
+            for attr in attr_order:
+                if hasattr(self, attr):
+                    val = getattr(self, attr)
+                    lines.append(f"{attr:>20}: {val}")
+
         print("\n".join(lines))
         return str(self)
+
+    @property
+    def ispubchemok(self):
+        """Returns True if the record may match in PubChem (i.e., compatible with patankar.loadpubchem)"""
+        return self.get("cid") is not None and self.get("CAS") not in ("", None)
+
+# ----------------------------------------------------------------------
+# annex1record_ext: an extension of annex1 records with additional info
+# The EU 10/2011 Annex 1 is not a database with unique susbtances.
+# It is not fully compatible with migrant which requires a unique id.
+# The extended/promoted class try to bridge them and add some info.
+# We need to keep annex1=False when calling migrant to avoid circular references
+# ----------------------------------------------------------------------
+class annex1record_ext(annex1record):
+    """extended annex1record class with additional attributes"""
+
+    def __init__(self,rec,db=None):
+        """instantiate from a record with a consolidated databse: db"""
+        if not isinstance(rec,annex1record):
+            raise TypeError("dict must be a annex1record not a {type(d).__name__}")
+        super().__init__(rec,order=rec._order,total=rec._total)
+        from patankar.loadpubchem import migrant
+        if rec.ispubchemok:
+            try:
+                m = migrant(rec.get("CAS"),annex1=False)
+                M = m.M
+            except Exception:
+                print(f"{rec.get('name')} could not be extended from its CAS {rec.get('CAS')}: not found")
+                M = None
+        else:
+            M = None
+
+        self.cid = self.get("cid")
+        self.SML = self.get("SML")
+        self.SMLT = self.get("SMLT")
+        if self.SMLT and self.SMLT<self.SML:
+            self.SML = self.SMLT
+        self.gFCM = self.get("SMLTGroupFCMsubstances")
+        self.n = len(self.gFCM) if self.gFCM else None
+        self.M = M # molecular mass added if cid was available
+        self.gM = None # molecular masses of sustances in the group
+        self.gMmin = None # minimal molecular mass of substances in the group
+        self.gCASmin = None # CAS of the lightest/smallest substances
+        self.gnamemin = None # its name
+
+        # we will add group info gM, gMin, gCASmin, gnamemin
+        # do not forget, no bijection between rid (record id) and fcm
+        # here fcm2rid[self.gFCM[0]], fcm2rid[self.gFCM[1]],...
+        # are all equal, they give rids (record indices) for the group matching this FCM
+        if db is not None and self.gFCM is not None:
+            fcm2rid = db._fcm2rid
+            rids = fcm2rid[self.gFCM[0]]
+            Mlist = [db._load_record(rid,db=False).M for rid in rids]
+            CASlist = [db._load_record(rid,db=False).get("CAS") for rid in rids]
+            namelist = [db._load_record(rid,db=False).get("name") for rid in rids]
+            # Find index of the smallest non-None molecular mass
+            valid_indices = [i for i, m in enumerate(Mlist) if m is not None]  # Indices of valid values
+            if valid_indices:
+                min_index = min(valid_indices, key=lambda i: Mlist[i])  # Index of minimum valid M value
+                self.gM = [m for m in Mlist if m is not None]
+                self.gMmin = Mlist[min_index]
+                self.gCASmin = CASlist[min_index]
+                self.gnamemin = namelist[min_index]
 
 
 # ----------------------------------------------------------------------
@@ -185,7 +260,7 @@ class EuFCMannex1:
 
     isAnnex1Initialized = False # class attribute
 
-    def __init__(self, cache_dir="cache.EuFCMannex1", index_file="annex1_index.json"):
+    def __init__(self, cache_dir="cache.EuFCMannex1", index_file="annex1_index.json", pubchem=True):
         """
         Initialize the database.
 
@@ -212,6 +287,12 @@ class EuFCMannex1:
         # Internal cache for loaded records.
         self._records_cache = {}
         EuFCMannex1.isAnnex1Initialized = True
+
+        # pubchem extensions
+        # we cache the pairing fcm->rid (record id=primary key)
+        self._pubchem = False # mandatory to avoid circular imports
+        self._fcm2rid = self.SMLT_Groupsubstances if pubchem else None
+        self._pubchem = pubchem # we enforce pubchem, the database is initialized indeed
 
     @classmethod
     def isindexinitialized(cls, cache_dir="cache.EuFCMannex1", index_file="annex1_index.json"):
@@ -325,8 +406,7 @@ class EuFCMannex1:
                         cid_val = missing_pubchem[cas_val]
                     else:
                         try:
-                            cid_val = migrant(cas_val).cid
-                            # No extra sleep here if you are using a module-level throttling mechanism.
+                            cid_val = migrant(cas_val,annex1=False).cid
                         except ValueError:
                             print(f"Warning: substance {rec['name']} (CAS {cas_val}) not found in PubChem.")
                             cid_val = None
@@ -386,13 +466,21 @@ class EuFCMannex1:
         self.order = new_index.get("order", [])
         self._records_cache = {}
 
-    def _load_record(self, rec_id, order=None):
+    def _load_record(self, rec_id, order=None, db=False):
         """
         Load a record (as an annex1record) from its cached JSON file.
         If the file does not exist, return None with a warning.
+        Extended records are managed via the global flag self._pubchem
+        The local flag db sets whether the record will be informed or not from the full database
         """
         if rec_id in self._records_cache:
-            return self._records_cache[rec_id]
+            if self._pubchem:
+                if db:
+                    return annex1record_ext(self._records_cache[rec_id],self)
+                else:
+                    return annex1record_ext(self._records_cache[rec_id])
+            else:
+                return self._records_cache[rec_id]
         json_filename = os.path.join(self.cache_dir, f"rec{rec_id:05d}.annex1.json")
         if not os.path.exists(json_filename):
             print(f"Warning: Record file for record {rec_id} not found.")
@@ -402,7 +490,16 @@ class EuFCMannex1:
         # Pass the record's own "record" field as order.
         record_obj = annex1record(rec, order=rec.get("record"), total=len(self.order))
         self._records_cache[rec_id] = record_obj
-        return record_obj
+        if self._pubchem:
+            self._pubchem = False # mandatory to avoid circular imports
+            self._fcm2rid = self.SMLT_Groupsubstances # we refresh the cache with the new substance
+            self._pubchem = True
+            if db:
+                return annex1record_ext(record_obj,self)
+            else:
+                return annex1record_ext(record_obj)
+        else:
+            return record_obj
 
     def __getitem__(self, key):
         """
@@ -497,12 +594,13 @@ class EuFCMannex1:
         cas = cas[0] if isinstance(cas,list) else cas
         rec_ids = self.index.get("CAS", {}).get(cas, [])
         if len(rec_ids) == 1:
-            return self._load_record(rec_ids[0], order=rec_ids[0])
+            return self._load_record(rec_ids[0], order=rec_ids[0],db=True)
         else:
-            return [self._load_record(rid, order=rid) for rid in rec_ids]
+            return [self._load_record(rid, order=rid,db=True) for rid in rec_ids]
 
     def byFCM(self, fcm):
         fcm = fcm[0] if isinstance(fcm,list) else fcm
+        fcm = str(fcm) if isinstance(fcm,int) else fcm
         rec_ids = self.index.get("FCM", {}).get(fcm, [])
         return [self._load_record(rid, order=rid) for rid in rec_ids]
 
@@ -511,7 +609,7 @@ class EuFCMannex1:
         rec_ids = self.index.get("Ref", {}).get(ref, [])
         return [self._load_record(rid, order=rid) for rid in rec_ids]
 
-    def bycid(self, cid):
+    def bycid(self, cid, verbose=True):
         """
         Search for a record by PubChem cid.
         """
@@ -519,9 +617,10 @@ class EuFCMannex1:
         cidkey = str(cid)
         if "bycid" in self.index and cidkey in self.index["bycid"]:
             rec_id = self.index["bycid"][str(cid)]
-            return self._load_record(rec_id, order=rec_id)
+            return self._load_record(rec_id, order=rec_id,db=True)
         else:
-            print(f"Warning: No 10/2011/EC record found for PubChem cid {cid}.")
+            if verbose:
+                print(f"⚠️Warning: No 🇪🇺10/2011/EC record found for PubChem cid {cid}.")
             return None
 
     def bySML(self, min_val, max_val):
@@ -563,6 +662,7 @@ class EuFCMannex1:
 
     @property
     def SMLT_Groupsubstances(self):
+        """Returns a dictionary G so that G[fcm] = [rid1, rid2]"""
         groups = {}
         for rid in self.order:
             rec = self._load_record(rid)
@@ -586,7 +686,9 @@ class EuFCMannex1:
 # Example usage (for debugging / standalone tests)
 # -------------------------------------------------------------------
 if __name__ == "__main__":
-    dbannex1 = EuFCMannex1()
+    dbannex1 = EuFCMannex1(pubchem=True) # we promote the whole database
+    rec = dbannex1.bycid(6581)
+    repr(rec)
 
     print(repr(dbannex1))
     print(str(dbannex1))
@@ -610,14 +712,10 @@ if __name__ == "__main__":
 
     # Iterate over records:
     for rec in dbannex1:
-        print(rec.get("record"))
+        print(rec.get("cid"))
 
     # Test membership:
     if 10 in dbannex1:
         print("Record 10 exists.")
     if 113194 in dbannex1:
         print("PubChem cid 113194 exists.")
-
-    # Access the SMLT groups property:
-    groups = dbannex1.SMLT_Groupsubstances
-    print(groups)
