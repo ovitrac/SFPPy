@@ -1399,6 +1399,8 @@ class migrant:
                 self.name = [name]
                 self.cid = []
                 self.CAS = []
+                self.InChi = []
+                self.InChiKey = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
@@ -1458,7 +1460,7 @@ class migrant:
 
                     # Process logP similarly (if not None or empty)
                     logp_val = row.get("logP", None)
-                    if logp_val not in (None, ""):
+                    if logp_val not in (None, "",[]):
                         all_data["logp"].append(to_float(logp_val))
                     else:
                         all_data["logp"].append(np.nan)
@@ -1802,7 +1804,7 @@ class migrant:
                 if hasattr(self,"SMLunit"):
                     attributes["SML"]+=f" [{self.SMLunit}]"
         # Add Toxtree attributes
-        if isinstance(self,migrantToxtree) and self.compound not in (None,""):
+        if isinstance(self,migrantToxtree) and self.compound not in (None,"",[]):
             attributes["--- ToxTree"]="-"*15
             attributes["Compound"] = self.ToxTree["IUPACTraditionalName"]
             attributes["Name"] = self.ToxTree["IUPACName"]
@@ -2331,7 +2333,7 @@ class migrantToxtree(migrant):
 
     def __init__(self, compound_name, cache_folder='cache.ToxTree', refresh=False, no_cache=False,  raiseerror=True, verbose=True):
         """migrantToxtree constructor"""
-        isempty = compound_name in (None,"")
+        isempty = compound_name in (None,"",[])
         super().__init__(compound_name, raiseerror=raiseerror, verbose=verbose)
         if isempty:
             return
