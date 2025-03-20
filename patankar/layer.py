@@ -699,6 +699,8 @@ def create_multi_layer_widget(default_polymer="LDPE", default_thickness_value=10
     global mylayers, mymaterials
     mylayers = builtins.mylayers
     mymaterials = builtins.mymaterials
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, "_PREHEATED_") and getattr(builtins, "_PREHEATED_") is True
 
     # Widget to select number of layers
     num_layers_slider = widgets.IntSlider(
@@ -870,6 +872,9 @@ def create_multi_layer_widget(default_polymer="LDPE", default_thickness_value=10
                 print(f"  {name}: {inst}")
             print(f"\nAssembly '{assembly_key}' has been created and stored in 'mymaterials'.")
     instantiate_all_button.on_click(instantiate_all)
+
+    if _preheatedGUI_:
+        instantiate_all(None) # we instantiate manually
 
     # Arrange the UI components into a layout.
     navigation_box = widgets.HBox([prev_button, nav_label, next_button])
@@ -4456,6 +4461,16 @@ class air(layer):
 # ===================================================
 if __name__ == '__main__':
     from patankar.loadpubchem import migrant
+
+    # debug
+    A = layer()
+    D = layerLink("D")
+    D[0]=1.2345e-12
+    A.D = D
+    repr(A)
+
+
+
     list_of_migrants = ["toluene","limonene","BHT","Irganox 1076"]
     m = [migrant(s) for s in list_of_migrants]
     P = PS();

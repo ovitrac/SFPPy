@@ -193,6 +193,9 @@ def create_packaging_widget(default_shape="cylinder", default_instance_name="sha
     global mypackaging
     mypackaging = builtins.mypackaging
 
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, "_PREHEATED_") and getattr(builtins, "_PREHEATED_") is True
+
     # Define the list of available shapes.
     # (You can later expand this list if needed.)
     shape_options = ["cylinder", "cone", "rectangular_prism", "sphere",
@@ -321,6 +324,9 @@ def create_packaging_widget(default_shape="cylinder", default_instance_name="sha
             print("\nCurrent packaging instances:", list(builtins.mypackaging.keys()))
 
     create_btn.on_click(create_packaging_instance)
+
+    if _preheatedGUI_:
+        create_packaging_instance(None) # we instantiate manually
 
     # Arrange the UI elements.
     ui = widgets.VBox([

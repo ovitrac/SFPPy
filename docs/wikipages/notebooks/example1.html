@@ -7535,8 +7535,140 @@ a.anchor-link {
     white-space: normal;
   }
 </style>
-<!-- End of mermaid configuration --></head>
-<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+<!-- End of mermaid configuration --><style type="text/css">
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+header {
+    background: #4CAF50;
+    color: #fff;
+    padding: 10px;
+    position: relative;
+}
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    padding-left: 50px;
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px);
+}
+#nav {
+    width: 300px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+#nav.collapsed {
+    width: 0;
+    padding: 20px 0;
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+.toggle-btn {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 1.2em;
+    border-radius: 4px;
+    z-index: 1001;
+}
+.toggle-btn:hover {
+    background-color: #45a049;
+}
+#toc ul {
+    list-style-type: none;
+    padding-left: 15px;
+    margin: 0;
+}
+#toc li {
+    margin: 5px 0;
+}
+#toc a {
+    text-decoration: none;
+    color: #007BFF;
+}
+#toc a:hover {
+    text-decoration: underline;
+}
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px;
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+}
+</style></head>
+<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light"><header><button aria-expanded="false" aria-label="Toggle Sidebar" class="toggle-btn" id="toggleSidebar">☰</button><h1>🍏⏩🍎 SFPPy Notebooks</h1></header><div id="content"><div id="nav">
+<div style="display: flex; align-items: center; gap: 12px;">
+<a href="https://github.com/ovitrac/SFPPy" target="_blank">
+<img alt="GitHub SFPPy" src="https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&amp;logo=github" style="border-radius: 8px;"/>
+</a>
+<div style="display: flex; align-items: center; font-size: 14px; font-weight: bold;">
+<span style="color: #4CAF50;">SFPPy v1.37</span>
+<a href="mailto:olivier.vitrac@agmail.com" style="margin-left: 8px; font-size: 20px;" title="E-mail the author: Olivier Vitrac">📩</a>
+</div>
+</div>
+<div id="toc"><h2>Table of Contents</h2>
+<ul>
+<li><a href="#%F0%9F%8F%86-SFPPy-Example:-Mass-Transfer-from-Monolayer-Materials">🏆 SFPPy Example: Mass Transfer from Monolayer Materials</a></li>
+<ul>
+<li><a href="#%F0%9F%A5%AA%F0%9F%A5%96-Example-1:-Migration-of-Additives-from-LDPE-Film-into-a-Fatty-Sandwich">🥪🥖 Example 1: Migration of Additives from LDPE Film into a Fatty Sandwich</a></li>
+<ul>
+<li><a href="#%F0%9F%94%8D-Overview">🔍 Overview</a></li>
+<li><a href="#%F0%9F%9B%A0-Simulation-Steps:">🛠 Simulation Steps:</a></li>
+<li><a href="#%F0%9F%8E%AF-Expected-Outcomes:">🎯 Expected Outcomes:</a></li>
+<li><a href="#%F0%9F%94%84-Updates">🔄 Updates</a></li>
+<li><a href="#Minimal-Setup-for-SFPPy-Core-%F0%9F%9A%80%F0%9F%94%A7%E2%9A%99%EF%B8%8F">Minimal Setup for SFPPy Core 🚀🔧⚙️</a></li>
+<li><a href="#Dependencies">Dependencies</a></li>
+</ul>
+<li><a href="#1-%7C-Reference-migration-case-with-Irganox-1076-m1">1 | Reference migration case with Irganox 1076 m1</a></li>
+<ul>
+<li><a href="#1.1-%7C-Define-the-output-directory-to-store-results">1.1 | Define the output directory to store results</a></li>
+<li><a href="#1.2-%7C-Store-numbers-with-their-units-in-a-tuple-()">1.2 | Store numbers with their units in a tuple ()</a></li>
+<li><a href="#1.3-%7C-Concentrations-are-in-arbitrary-units-(e.g.,-mg/kg)">1.3 | Concentrations are in arbitrary units (e.g., mg/kg)</a></li>
+<li><a href="#1.4-%7C-Create-a-**cylindrical-sandwich-modeled-using**-Packaging3D.">1.4 | Create a **cylindrical sandwich modeled using** Packaging3D.</a></li>
+<li><a href="#1.5-%7C-Retrieve-chemical-properties-of-the-migrant-(Irganox-1076)">1.5 | Retrieve chemical properties of the migrant (Irganox 1076)</a></li>
+<li><a href="#1.6-%7C-Create-a-100-%C2%B5m-thick-LDPE-layer-containing-Irganox-1076">1.6 | Create a 100 µm thick LDPE layer containing Irganox 1076</a></li>
+<li><a href="#1.7-%7C-Define-a-fatty-sandwich-using-multiple-inheritance-from">1.7 | Define a fatty sandwich using multiple inheritance from</a></li>
+<li><a href="#1.8-%7C-Instantiate-the-food-layer">1.8 | Instantiate the food layer</a></li>
+</ul>
+<li><a href="#2-%7C-Reference-simulation">2 | Reference simulation</a></li>
+<ul>
+<li><a href="#2.1-%7C-Simulate-migration-for-Irganox-1076-in-LDPE">2.1 | Simulate migration for Irganox 1076 in LDPE</a></li>
+<li><a href="#2.2-%7C-Interpolates-concentration-values-at-specific-contact-times-between-0-and-2-%C3%97-ttarget.">2.2 | Interpolates concentration values at specific contact times between 0 and 2 × ttarget.</a></li>
+<li><a href="#2.3-%7C-Concentration-profiles-at-ttarget">2.3 | Concentration profiles at ttarget</a></li>
+<li><a href="#2.4-%7C-Migration-kinetics-(CF-vs-time)">2.4 | Migration kinetics (CF vs time)</a></li>
+</ul>
+<li><a href="#2.5-%7C-Store-the-simulation-results-for-Irganox-1076">2.5 | Store the simulation results for Irganox 1076</a></li>
+<li><a href="#3-%7C-Repeat-all-operations-for-Irgafos-168-:-substance-denoted-m2">3 | Repeat all operations for Irgafos 168 : substance denoted m2</a></li>
+<li><a href="#4-%7C-Food-to-polymer-partition-coefficients-($K_%7BF/P%7D$)">4 | Food-to-polymer partition coefficients ($K_{F/P}$)</a></li>
+<li><a href="#5-%7C-Compare-CF-vs-time-for-Irganox-1076-and-Irgafos-168">5 | Compare CF vs time for Irganox 1076 and Irgafos 168</a></li>
+<li><a href="#6-%7C-Print-Figures-in-PDF-and-PNG">6 | Print Figures in PDF and PNG</a></li>
+</ul>
+</ul>
+</div>
+</div><div id="main">
 <main>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3cebc15a-da16-49c5-9635-2cd3d1c0f628">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -7739,9 +7871,9 @@ The simulation covers <strong>📆 10 days at 🌡️ 7°C</strong>.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr>
+<hr/>
 <h2 id="1-%7C-Reference-migration-case-with-Irganox-1076-m1">1 | <strong>Reference migration case with Irganox 1076</strong> <code>m1</code><a class="anchor-link" href="#1-%7C-Reference-migration-case-with-Irganox-1076-m1">¶</a></h2>
-</hr></div>
+</div>
 </div>
 </div>
 </div>
@@ -7938,7 +8070,7 @@ Packaging3D(geometry_name='Cylinder', shape=
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>'&lt;migrant: Stearyl  [...] opionate - M=530.9 g/mol&gt;'</pre>
+<pre>'&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;'</pre>
 </div>
 </div>
 </div>
@@ -7995,9 +8127,9 @@ monolayer of LAYER object:
         Tg: -130 [degC]
          l: 0.0001 [meter]
          D: 4.325e-15 [m**2/s]
-          = Dpiringer(LDPE,&lt;migrant: Stearyl  [...] opionate - M=530.9 g/mol&gt;,T=7.0 degC)
+          = Dpiringer(LDPE,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;,T=7.0 degC)
          k: 26.19 [a.u.]
-          = kFHP(&lt;ethylene&gt;,&lt;migrant: Stearyl  [...] opionate - M=530.9 g/mol&gt;)
+          = kFHP(&lt;ethylene&gt;,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;)
         C0: 5000 [a.u.]
          T: 7 [degC]
 </pre>
@@ -8093,7 +8225,7 @@ contacttemperature: 7 [degC]
            density: 1000 [kilogram / meter ** 3]
                  h: 1e-07 [meter / second]
                 k0: 0.63893733 [a.u.]
-                  = kFHP(&lt;ethanol&gt;,&lt;migrant: Stearyl  [...] opionate - M=530.9 g/mol&gt;)
+                  = kFHP(&lt;ethanol&gt;,&lt;migrant: Octadecy [...] opionate - M=530.9 g/mol&gt;)
        surfacearea: 0.0073890259 [meter ** 2]
             volume: 2.1488494e-05 [meter ** 3]
 &lt;sandwich: sandwich&gt;
@@ -8170,11 +8302,11 @@ CF at time t= [864000] [s] =  [116.44534524] [a.u.]
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr>
+<hr/>
 <h3 id="2.2-%7C-Interpolates-concentration-values-at-specific-contact-times-between-0-and-2-%C3%97-ttarget.">2.2 | Interpolates concentration values at <strong>specific contact times</strong> between 0 and <strong>2 × ttarget</strong>.<a class="anchor-link" href="#2.2-%7C-Interpolates-concentration-values-at-specific-contact-times-between-0-and-2-%C3%97-ttarget.">¶</a></h3><blockquote>
 <p>Beyond <code>2 × ttarget</code>, extrapolation is required.</p>
 </blockquote>
-</hr></div>
+</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3224aa9a">
@@ -8401,9 +8533,9 @@ monolayer of LAYER object:
         Tg: -130 [degC]
          l: 0.0001 [meter]
          D: 1.761e-15 [m**2/s]
-          = Dpiringer(LDPE,&lt;migrant: 2,4-BIS( [...] TE (3:1) - M=646.9 g/mol&gt;,T=7.0 degC)
+          = Dpiringer(LDPE,&lt;migrant: Hostanox PAR 24 - M=646.9 g/mol&gt;,T=7.0 degC)
          k: 32.1 [a.u.]
-          = kFHP(&lt;ethylene&gt;,&lt;migrant: 2,4-BIS( [...] TE (3:1) - M=646.9 g/mol&gt;)
+          = kFHP(&lt;ethylene&gt;,&lt;migrant: Hostanox PAR 24 - M=646.9 g/mol&gt;)
         C0: 5000 [a.u.]
          T: 7 [degC]
 SensPatankarResult: I168-LDPE-sandwich
@@ -8588,7 +8720,22 @@ no valid figure
 </div>
 </div>
 </main>
-</body>
+</div></div><script>
+document.addEventListener("DOMContentLoaded", function(){
+    var toggleButton = document.getElementById("toggleSidebar");
+    var nav = document.getElementById("nav");
+    toggleButton.addEventListener("click", function(){
+        nav.classList.toggle("collapsed");
+        if(nav.classList.contains("collapsed")){
+            toggleButton.innerHTML = '<kbd>&#9776;</kbd>';
+            toggleButton.setAttribute('aria-expanded', 'false');
+        } else {
+            toggleButton.innerHTML = '<kbd>&#10005;</kbd>';
+            toggleButton.setAttribute('aria-expanded', 'true');
+        }
+    });
+});
+</script></body>
 <script type="application/vnd.jupyter.widget-state+json">
 {"state": {}, "version_major": 2, "version_minor": 0}
 </script>

@@ -68,7 +68,7 @@ def create_subtitle(text=None, fontsize=20, color="#4CAF50"):
 def create_logo():
     """returns SFPPy logo in HTML"""
     version = get_version()
-    logo = f"""
+    logo_old = f"""
 <div style="display: flex; justify-content: space-between; align-items: flex-end; font-family: monospace;
             white-space: pre-wrap; overflow: hidden; font-size: 14px; line-height: 1.3; margin-left: 1cm; max-width: 100%;">
 
@@ -98,6 +98,27 @@ def create_logo():
 </div>
 
 </div>
+"""
+    logo = f"""
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;">
+<div style="display: flex; align-items: flex-start; font-family: monospace; font-size: 14px; line-height: 1.3; margin: 0.5em 0; max-width: 100%;">
+  <!-- Left: Emoji “Logo” (Single line, scrollable if too wide) -->
+  <div style="white-space: nowrap; overflow-x: auto; margin-right: 15px;">
+    🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br>
+    🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br>
+    🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍽️🍎🍽️🍽️🍽️🍎🍽️🍽️🐍🍽️🍽️🍽️🐍🍽️<br>
+    🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️<br>
+    🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️<br>
+    🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️<br>
+    🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br>
+  </div>
+  <!-- Center: GitHub Badge + Version (column layout) -->
+  <div style="display: flex; flex-direction: column; align-items: center; margin-right: 15px;">
+    <a href="{repo}" target="_blank">
+      <img src="{badge}" alt="GitHub SFPPy" style="border-radius: 8px;">
+    </a>
+    <div style="margin-top: 4px; font-weight: bold; color: #FF4D4D;">v{version} <a href="mailto:{email}" title="E-mail the author">📩</a></div>
+  </div>
 </div>
 """
     return HTML(logo)
@@ -125,10 +146,17 @@ def create_synopsis(text=None,color="#4CAF50"):
 # disclaimer
 def create_disclaimer(fontsize=12):
     """returns a HTML disclaimer"""
-    disclaimer = f"""
+    disclaimer_old = f"""
 <div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D;
             font-weight: bold; font-size: {fontsize}px; text-align: left;">
     ⚠️ DISCLAIMER: This material is provided “<b>AS IS</b>” solely for demonstration and training purposes. No warranty, express or implied, is given regarding its accuracy, completeness, or fitness for a particular use. 📌 Users are solely responsible for evaluating its suitability and for ensuring compliance with all applicable regulations. 🔬 The illustrative example highlights the risks of misinterpreting mass transfer phenomena when "migration modeling" is treated as a "black box". 🚫 Neither the authors nor their organizations accept any liability arising from reliance on or use of this material.
+</div>
+"""
+    disclaimer = f"""
+<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D;
+        font-weight: bold; font-size: {fontsize}px; text-align: left;">
+⚠️ <strong>DISCLAIMER</strong><br>
+This material is provided “AS IS” solely for demonstration and training. No warranty—express or implied—is given regarding its accuracy, completeness, or suitability for any particular purpose. 📌 Users are fully responsible for assessing its relevance and ensuring compliance with all applicable regulations. 🔬 The illustrative example underscores the risks of treating “migration modeling” as a mere “black box,” potentially leading to misinterpretation of mass transfer phenomena. 🚫 Neither the authors nor their organizations accept any liability for reliance on or use of this material.
 </div>
 """
     return HTML(disclaimer)

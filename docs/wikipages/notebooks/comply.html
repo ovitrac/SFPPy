@@ -7535,8 +7535,151 @@ a.anchor-link {
     white-space: normal;
   }
 </style>
-<!-- End of mermaid configuration --></head>
-<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+<!-- End of mermaid configuration --><style type="text/css">
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+header {
+    background: #4CAF50;
+    color: #fff;
+    padding: 10px;
+    position: relative;
+}
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    padding-left: 50px;
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px);
+}
+#nav {
+    width: 300px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+#nav.collapsed {
+    width: 0;
+    padding: 20px 0;
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+.toggle-btn {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 1.2em;
+    border-radius: 4px;
+    z-index: 1001;
+}
+.toggle-btn:hover {
+    background-color: #45a049;
+}
+#toc ul {
+    list-style-type: none;
+    padding-left: 15px;
+    margin: 0;
+}
+#toc li {
+    margin: 5px 0;
+}
+#toc a {
+    text-decoration: none;
+    color: #007BFF;
+}
+#toc a:hover {
+    text-decoration: underline;
+}
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px;
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+}
+</style></head>
+<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light"><header><button aria-expanded="false" aria-label="Toggle Sidebar" class="toggle-btn" id="toggleSidebar">☰</button><h1>🍏⏩🍎 SFPPy Notebooks</h1></header><div id="content"><div id="nav">
+<div style="display: flex; align-items: center; gap: 12px;">
+<a href="https://github.com/ovitrac/SFPPy" target="_blank">
+<img alt="GitHub SFPPy" src="https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&amp;logo=github" style="border-radius: 8px;"/>
+</a>
+<div style="display: flex; align-items: center; font-size: 14px; font-weight: bold;">
+<span style="color: #4CAF50;">SFPPy v1.37</span>
+<a href="mailto:olivier.vitrac@agmail.com" style="margin-left: 8px; font-size: 20px;" title="E-mail the author: Olivier Vitrac">📩</a>
+</div>
+</div>
+<div id="toc"><h2>Table of Contents</h2>
+<ul>
+<li><a href="#%E2%9A%96%EF%B8%8F-SFPPy---Comply-%E2%9C%85">⚖️ SFPPy - Comply ✅</a></li>
+<ul>
+<li><a href="#%F0%9F%93%9C-A-Template-for-Compliance-Testing-%E2%9C%8D">📜 A Template for Compliance Testing ✍</a></li>
+<ul>
+<li><a href="#%F0%9F%94%8D-Synopsis">🔍 Synopsis</a></li>
+<li><a href="#Minimal-Setup-for-SFPPy-Core-%F0%9F%9A%80%F0%9F%94%A7%E2%9A%99%EF%B8%8F">Minimal Setup for SFPPy Core 🚀🔧⚙️</a></li>
+</ul>
+<li><a href="#1-%7C-Problem-Description-%F0%9F%8E%AF">1 | Problem Description 🎯</a></li>
+<ul>
+<li><a href="#1.1-%7C-Mass-Transfer-from-a-PVC-Sleeve-to-an-HDPE-Bottle-Containing-a-Dairy-Product-for-Infants">1.1 | Mass Transfer from a PVC Sleeve to an HDPE Bottle Containing a Dairy Product for Infants</a></li>
+<ul>
+<li><a href="#Target-Migrants:">Target Migrants:</a></li>
+<li><a href="#Mass-Transfer-Pathway">Mass Transfer Pathway</a></li>
+<li><a href="#Key-Factors-Influencing-Migration">Key Factors Influencing Migration</a></li>
+</ul>
+<li><a href="#1.2-%7C-Followed-Approach">1.2 | Followed Approach</a></li>
+</ul>
+<li><a href="#2-%7C-Listing-migrants-M%5Bi%5D-%F0%9F%93%9D">2 | Listing migrants M[i] 📝</a></li>
+<li><a href="#2-%7C-Defining-the-packaging-B:-200-mL-bottle-%F0%9F%AB%99">2 | Defining the packaging B: 200 mL bottle 🫙</a></li>
+<li><a href="#3-%7C-Defining-the-Multilayer-Materials-P=HDPE+PVC-%F0%9F%A7%B1">3 | Defining the Multilayer Materials P=HDPE+PVC 🧱</a></li>
+<li><a href="#4-%7C--Defining-the-Food-Simulant-F-%F0%9F%A7%AA%F0%9F%8C%A1%EF%B8%8F%E2%8F%B1%EF%B8%8F">4 |  Defining the Food Simulant F 🧪🌡️⏱️</a></li>
+<li><a href="#5-%7C-Simulations-%F0%9F%9A%80">5 | Simulations 🚀</a></li>
+<li><a href="#6-%7C-Interpretation-of-$C_%7BP,0%7D%5E%7Bmax%7D$-(in-the-sleeve)-%F0%9F%A4%94">6 | Interpretation of $C_{P,0}^{max}$ (in the sleeve) 🤔</a></li>
+<ul>
+<li><a href="#6.1-%7C-Retrieval-of-SML-values">6.1 | Retrieval of SML values</a></li>
+<li><a href="#6.2-%7C-Derivation-of-$C_%7BP,0%7D%5E%7Bmax%7D$">6.2 | Derivation of $C_{P,0}^{max}$</a></li>
+<li><a href="#6.3-%7C-Summary-of-the-naive-approach">6.3 | Summary of the naive approach</a></li>
+</ul>
+<li><a href="#7-%7C-Input-Data-Summary-%F0%9F%93%8B">7 | Input Data Summary 📋</a></li>
+<li><a href="#8-%7C-Sensitivity-Analysis-%F0%9F%AA%9C:-Food-Simulant-%F0%9F%A7%AA-and-Temperature-Effects-%F0%9F%8C%A1%EF%B8%8F">8 | Sensitivity Analysis 🪜: Food Simulant 🧪 and Temperature Effects 🌡️</a></li>
+<ul>
+<li><a href="#8.1-%7C-Simulations-for-2%C3%972-Combinations">8.1 | Simulations for 2×2 Combinations</a></li>
+<li><a href="#8.2-%7C-Updated-Partition-Coefficients-for-ethanol50">8.2 | Updated Partition Coefficients for ethanol50</a></li>
+<li><a href="#8.3-%7C-Migration-Fraction">8.3 | Migration Fraction</a></li>
+</ul>
+<li><a href="#9-%7C-Adding-a-Storage-Step-Without-Food-for-3-Months-at-Room-Temperature-%F0%9F%97%93%EF%B8%8F">9 | Adding a Storage Step Without Food for 3 Months at Room Temperature 🗓️</a></li>
+<ul>
+<li><a href="#9.1-%7C-Evolution-of-concentration-profiles-during-storage">9.1 | Evolution of concentration profiles during storage</a></li>
+<li><a href="#9.2-%7C-Chaining-Storage-and-Contact-Steps">9.2 | Chaining Storage and Contact Steps</a></li>
+<ul>
+<li><a href="#Symbolic-Interpretation">Symbolic Interpretation</a></li>
+</ul>
+<li><a href="#9.3-%7C-Revised-Safety-Evaluation">9.3 | Revised Safety Evaluation</a></li>
+</ul>
+<li><a href="#10-%7C-Conclusions-%F0%9F%8E%AF">10 | Conclusions 🎯</a></li>
+</ul>
+</ul>
+</div>
+</div><div id="main">
 <main>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a6207a24-0e87-4ffc-90b0-83291aa6489a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -7590,7 +7733,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [77]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [73]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
@@ -7676,7 +7819,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<div style="border-left: 4px solid #4CAF50; padding: 10px; background: transparent; 
+<div style="border-left: 4px solid #4CAF50; padding: 10px; background: transparent;
             color: #4CAF50; font-weight: bold; font-size: 18px; text-align: left;">
 <span style="font-size: 20px;">Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎</span>
 </div>
@@ -7685,9 +7828,10 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D; 
-            font-weight: bold; font-size: 12px; text-align: left;">
-    ⚠️ DISCLAIMER: This material is provided “<b>AS IS</b>” solely for demonstration and training purposes. No warranty, express or implied, is given regarding its accuracy, completeness, or fitness for a particular use. 📌 Users are solely responsible for evaluating its suitability and for ensuring compliance with all applicable regulations. 🔬 The illustrative example highlights the risks of misinterpreting mass transfer phenomena when "migration modeling" is treated as a "black box". 🚫 Neither the authors nor their organizations accept any liability arising from reliance on or use of this material.
+<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D;
+        font-weight: bold; font-size: 12px; text-align: left;">
+⚠️ <strong>DISCLAIMER</strong><br/>
+This material is provided “AS IS” solely for demonstration and training. No warranty—express or implied—is given regarding its accuracy, completeness, or suitability for any particular purpose. 📌 Users are fully responsible for assessing its relevance and ensuring compliance with all applicable regulations. 🔬 The illustrative example underscores the risks of treating “migration modeling” as a mere “black box,” potentially leading to misinterpretation of mass transfer phenomena. 🚫 Neither the authors nor their organizations accept any liability for reliance on or use of this material.
 </div>
 </div>
 </div>
@@ -7706,7 +7850,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr>
+<hr/>
 <h2 id="1-%7C-Problem-Description-%F0%9F%8E%AF">1 | <strong>Problem Description</strong> 🎯<a class="anchor-link" href="#1-%7C-Problem-Description-%F0%9F%8E%AF">¶</a></h2><h3 id="1.1-%7C-Mass-Transfer-from-a-PVC-Sleeve-to-an-HDPE-Bottle-Containing-a-Dairy-Product-for-Infants">1.1 | Mass Transfer from a PVC Sleeve to an HDPE Bottle Containing a Dairy Product for Infants<a class="anchor-link" href="#1.1-%7C-Mass-Transfer-from-a-PVC-Sleeve-to-an-HDPE-Bottle-Containing-a-Dairy-Product-for-Infants">¶</a></h3><p>In this scenario, we aim to assess the <strong>migration risk</strong> associated with a <strong>polyvinyl chloride (PVC) sleeve</strong> used to wrap a <strong>200 mL high-density polyethylene (HDPE) bottle</strong> containing a <strong>dairy product for infants</strong>. The sleeve has a <strong>thickness of 150 µm</strong>, while the HDPE bottle wall is <strong>2 mm thick</strong>. The focus is on the <strong>mass transfer of four specific substances</strong> that may originate from the PVC sleeve and migrate into the dairy product.</p>
 <h4 id="Target-Migrants:"><strong>Target Migrants:</strong><a class="anchor-link" href="#Target-Migrants:">¶</a></h4><table>
 <thead>
@@ -7746,9 +7890,7 @@ a.anchor-link {
 <li><strong>Dibutyl phthalate (DBP)</strong> – Another plasticizer, frequently present in flexible PVC, with potential reproductive toxicity.</li>
 <li><strong>Benzophenone (BP)</strong> – A UV absorber that may be present in the inks or coatings used for printing on the sleeve.</li>
 <li><strong>Ethyl acetate (EA)</strong> – A volatile solvent often used in ink formulations or adhesives.</li></ol></details>
-
-
-<hr/>
+<hr>
 <h4 id="Mass-Transfer-Pathway"><strong>Mass Transfer Pathway</strong><a class="anchor-link" href="#Mass-Transfer-Pathway">¶</a></h4><p>The migration of these substances can occur through multiple steps:</p>
 <ol>
 <li><strong>Diffusion within the PVC sleeve</strong> – Migrants initially present in the bulk phase of the sleeve diffuse toward the inner surface.</li>
@@ -7826,7 +7968,7 @@ pre-storage conditions. The results highlight which parameters  dominate migrati
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># import the substance databases (million of substances are available via PubChem)</span>
@@ -7881,7 +8023,7 @@ pre-storage conditions. The results highlight which parameters  dominate migrati
              logP: [4.7]
         P' (calc): [0.]
    --- EC 10/2011: ---------------
-              SML: 60.0 [mg/kg]
+              SML: 0.6 [mg/kg]
      part a group: of 4 substances
        EC|FCM|REF: 201-557-4|157|74880
 &lt;migrant object&gt;
@@ -7914,7 +8056,7 @@ pre-storage conditions. The results highlight which parameters  dominate migrati
    --- EC 10/2011: ---------------
               SML: 60.0 [mg/kg]
        EC|FCM|REF: 205-500-4|327|30140
-[&lt;migrant: NCGC00091499-07 - M=390.6 g/mol&gt;, &lt;migrant: WLN: 4OVR BVO2 - M=278.34 g/mol&gt;, &lt;migrant: UPCMLD-DP071:001 - M=182.22 g/mol&gt;, &lt;migrant: etyl acetate - M=88.11 g/mol&gt;]
+[&lt;migrant: Phthalic [...] l ester) - M=390.6 g/mol&gt;, &lt;migrant: BUTYL PH [...] [WHO-DD] - M=278.34 g/mol&gt;, &lt;migrant: SPEEDCURE BP - M=182.22 g/mol&gt;, &lt;migrant: Ethyl ac [...] CS grade - M=88.11 g/mol&gt;]
 </pre>
 </div>
 </div>
@@ -7938,8 +8080,8 @@ pre-storage conditions. The results highlight which parameters  dominate migrati
 <div class="highlight"><pre><span></span><span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">annex1</span>
 </pre></div>
 <p>This allows direct access to <strong>regulatory information, properties, and compliance data</strong> for each substance. 🔍📖</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -8119,7 +8261,7 @@ Shape Class: SquarePyramid
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import the packaging databases (shapes)</span>
@@ -8382,7 +8524,7 @@ Shape Class: SquarePyramid
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import materials</span>
@@ -8446,8 +8588,8 @@ Shape Class: SquarePyramid
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>⚠️ <strong>The values of</strong> $D$ <strong>(diffusivity) and</strong> $k$ <strong>(partition coefficient) displayed above have not been explicitly assigned</strong> and currently <strong>correspond to their default values for this polymer</strong>. Their <strong>actual values will be set</strong> once the <strong>substance is injected into the structure</strong> using the <strong><code>%</code> operator</strong>.</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -9376,7 +9518,7 @@ Shape Class: SquarePyramid
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># import food simulants</span>
@@ -9469,7 +9611,7 @@ contacttemperature: 7 [degC]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Simulate all mass transfer and collect </span>
@@ -9512,8 +9654,8 @@ contacttemperature: 7 [degC]
 <h2 id="6-%7C-Interpretation-of-$C_%7BP,0%7D%5E%7Bmax%7D$-(in-the-sleeve)-%F0%9F%A4%94"><strong>6 | Interpretation of</strong> $C_{P,0}^{max}$ <strong>(in the sleeve)</strong> 🤔<a class="anchor-link" href="#6-%7C-Interpretation-of-$C_%7BP,0%7D%5E%7Bmax%7D$-(in-the-sleeve)-%F0%9F%A4%94">¶</a></h2><blockquote>
 <p>📌 Given that we assumed <code>C0guess</code> = <strong>1000 mg/kg</strong> in the <strong>PVC layer</strong>, we can now <strong>invert the results</strong> to determine the <strong>maximum initial concentration</strong> in the sleeve, denoted as $C_{P,0}^{max}$, that would <strong>exactly match</strong> the specific migration limit (<strong>SML</strong>) for each substance.</p>
 </blockquote>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -9542,7 +9684,7 @@ contacttemperature: 7 [degC]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Collect SML</span>
@@ -9561,7 +9703,7 @@ contacttemperature: 7 [degC]
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>SML= [60.0, 60.0, 0.6, 60.0] mg/kg
+<pre>SML= [60.0, 0.6, 0.6, 60.0] mg/kg
 </pre>
 </div>
 </div>
@@ -9620,7 +9762,7 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate CP0max</span>
@@ -9639,7 +9781,7 @@ $$</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>CP0max= [2.7699818454690308e+42, 9.564523631126274e+19, 161295845.58746868, 450094.1960159886] mg/kg
+<pre>CP0max= [2.7699818454690308e+42, 9.564523631126272e+17, 161295845.58746868, 450094.1960159886] mg/kg
 </pre>
 </div>
 </div>
@@ -9667,7 +9809,7 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -9725,28 +9867,28 @@ Maximum tolerable concentration CP0max in the sleeve for each substance.
 <tbody>
 <tr>
 <th>0</th>
-<td>&lt;migrant: NCGC00091499-07 - M=390.6 g/mol&gt;</td>
+<td>&lt;migrant: Phthalic [...] l ester) - M=390.6 g/...</td>
 <td>di(2-ethylhexyl) phthalate</td>
 <td>60.0</td>
 <td>2.769982e+42</td>
 </tr>
 <tr>
 <th>1</th>
-<td>&lt;migrant: WLN: 4OVR BVO2 - M=278.34 g/mol&gt;</td>
+<td>&lt;migrant: BUTYL PH [...] [WHO-DD] - M=278.34 g...</td>
 <td>dibutyl phthalate</td>
-<td>60.0</td>
-<td>9.564524e+19</td>
+<td>0.6</td>
+<td>9.564524e+17</td>
 </tr>
 <tr>
 <th>2</th>
-<td>&lt;migrant: UPCMLD-DP071:001 - M=182.22 g/mol&gt;</td>
+<td>&lt;migrant: SPEEDCURE BP - M=182.22 g/mol&gt;</td>
 <td>benzophenone</td>
 <td>0.6</td>
 <td>1.612958e+08</td>
 </tr>
 <tr>
 <th>3</th>
-<td>&lt;migrant: etyl acetate - M=88.11 g/mol&gt;</td>
+<td>&lt;migrant: Ethyl ac [...] CS grade - M=88.11 g/...</td>
 <td>ethyl acetate</td>
 <td>60.0</td>
 <td>4.500942e+05</td>
@@ -9772,8 +9914,8 @@ Maximum tolerable concentration CP0max in the sleeve for each substance.
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>🚩 <strong>Results suggest that compliance should not be an issue for phthalates under these conditions</strong>; however, this conclusion remains conditional given the <strong>naïve assumptions</strong> of our approach. In contrast, <strong>benzophenone and ethyl acetate require lower initial concentrations in the PVC film</strong> to ensure their migration remains below the SML.</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -9825,7 +9967,7 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># We use NumPy arrays to stack values and do operations on them</span>
@@ -9987,7 +10129,7 @@ Values of diffusivites (D) and partition coefficients (KF/P) used in simulations
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [29]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># anonymous function: calc_CP0max(CFnew)  </span>
@@ -10076,10 +10218,10 @@ Sensitivity analysis: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <tr>
 <th>1</th>
 <td>dibutyl phthalate</td>
-<td>9.564524e+19</td>
-<td>9.544223e+19</td>
-<td>2.954718e+12</td>
-<td>2.954718e+12</td>
+<td>9.564524e+17</td>
+<td>9.544223e+17</td>
+<td>2.954718e+10</td>
+<td>2.954718e+10</td>
 </tr>
 <tr>
 <th>2</th>
@@ -10118,8 +10260,8 @@ Sensitivity analysis: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>🚩 <strong>Higher temperatures lead to increased migration</strong>, as the process is <strong>diffusion-controlled</strong> and follows an <strong>Arrhenius-like dependence on temperature</strong>. In contrast, <strong>switching from ethanol to ethanol50 has a much smaller overall effect</strong>, except in the case of <strong>benzophenone</strong>, where the change in <strong>simulant polarity significantly alters its partitioning behavior</strong>.</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -10156,7 +10298,7 @@ Sensitivity analysis: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [32]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [33]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># udated k0 for F50</span>
@@ -10273,8 +10415,8 @@ Sensitivity analysis: effects of simulants(Et=ethanol, Et50=ethanol 50) on estim
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>🚩 <strong>Since all simulant-to-polymer partition coefficients</strong> $K_{F/P}$ <strong>are greater than unity</strong>, the overall <strong>mass transfer rate is expected to be minimally affected by partitioning</strong>. This suggests that the <strong>diffusive resistance within PVC and HDPE</strong> dominates the migration process, rather than equilibrium partitioning at the interface.</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -10295,7 +10437,7 @@ Sensitivity analysis: effects of simulants(Et=ethanol, Et50=ethanol 50) on estim
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [35]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [36]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># F volume and surface area</span>
@@ -10426,7 +10568,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [37]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [38]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="p">[(</span><span class="n">m</span> <span class="o">%</span> <span class="n">F</span> <span class="o">&lt;&lt;</span> <span class="n">B</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">&gt;&gt;</span> <span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">plotCF</span><span class="p">(</span><span class="n">plotSML</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">subtitle</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">compound</span><span class="si">}</span><span class="s2"> - M=</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">M</span><span class="si">}</span><span class="s2"> g/mol"</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">M</span><span class="p">]</span>
@@ -10481,8 +10623,8 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>🚩 <strong>The strongly delayed kinetics observed with very low migration rates confirm that, while our initially naïve approach is not incorrect, it lacks robustness under more variable conditions.</strong> The migration rate over time (e.g., at <strong>28, 40, 50, and 60 days</strong>) <strong>does not evolve linearly</strong>; instead, it exhibits a <strong>tremendous acceleration</strong> at later stages. This non-linearity suggests that <strong>longer contact times could significantly alter our conclusions</strong>.</p>
 <p>To improve the robustness of our scenario, we need to <strong>move away from the assumption that all substances are initially concentrated in the sleeve at the moment food contact begins</strong>. A more realistic approach should account for <strong>gradual release profiles, pre-existing diffusion within the material, and potential equilibrium adjustments before migration into the food simulant begins</strong>.</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -10514,7 +10656,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [41]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [42]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># we import the condition nofood</span>
@@ -10574,8 +10716,8 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>🚩🚩🚩 <strong>This additional storage step reveals that substances can diffuse toward the bottle interface before filling, significantly altering their initial distribution.</strong> As a result, once food is introduced, <strong>migration rates may increase dramatically</strong> due to the <strong>shortened diffusion path and enhanced local concentration gradients at the interface</strong>.</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -10644,7 +10786,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [45]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [46]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">title</span> <span class="o">=</span> <span class="s2">"Concentration in Ethanol vs. its contact time (i.e. after storage)"</span>
@@ -10710,7 +10852,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [47]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [48]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Revise CF and CP0max</span>
@@ -10737,7 +10879,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>CF after [28.] days @[7]°C (+[91.3125] days @[25]°C) = [0.16056234840763495, 1.2718383106818136, 3.424076459891788, 12.658808297677917]
-CP0max revised = [373686.6120547283, 47175.80803792181, 175.2297318789902, 4739.782654818004] mg/kg
+CP0max revised = [373686.6120547283, 471.7580803792181, 175.2297318789902, 4739.782654818004] mg/kg
 </pre>
 </div>
 </div>
@@ -10767,7 +10909,7 @@ CP0max revised = [373686.6120547283, 47175.80803792181, 175.2297318789902, 4739.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [49]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [50]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fractionalMigration</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">CF</span><span class="o">*</span><span class="n">VF</span> <span class="o">/</span> <span class="n">masst0</span> <span class="c1"># 1=total mass transfer, 0=no mass transfer</span>
@@ -10834,7 +10976,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <tr>
 <th>1</th>
 <td>dibutyl phthalate</td>
-<td>47175.808038</td>
+<td>471.758080</td>
 <td>0.073544</td>
 </tr>
 <tr>
@@ -10872,8 +11014,8 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <p>📢❗🚨 <strong>The revised</strong> $C_{P,0}^{max}$ <strong>values indicate that the situation might be critical for benzophenone, even for residual concentrations in the sleeve as low as 175 mg/kg.</strong> Nearly <strong>20% of its content is transferable</strong> by the <strong>sale-by-date</strong>, highlighting a significant potential for migration.</p>
 <p>For <strong>ethyl acetate</strong>, a scenario assuming <strong>total mass transfer</strong> provides a more conservative and realistic approach.</p>
 <p>Regarding <strong>plasticizers DEHP and DBP</strong>, their migration behavior is less concerning. However, despite DBP exhibiting a <strong>much higher migration rate</strong> than DEHP (<strong>7% vs. less than 1%</strong>), its overall impact remains lower due to its lower initial concentration and regulatory limits.</p>
-<hr>
-</hr></div>
+<hr/>
+</div>
 </div>
 </div>
 </div>
@@ -10889,19 +11031,19 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <li><strong>⚠️ Low molecular weight compounds</strong>, such as <strong>photoinitiators and solvents</strong>, present a <strong>greater concern</strong>, especially when their <strong>Specific Migration Limits (SMLs) are low</strong>. These substances <strong>diffuse more rapidly</strong> across the bottle walls due to their <strong>higher mobility</strong>.</li>
 </ul>
 <p>Additionally, in the <strong>current scenario</strong>, the <strong>bottle wall thickness</strong> is <strong>significantly lower than expected</strong>, though still within <strong>realistic manufacturing limits</strong>. This factor further influences migration rates, <strong>especially for highly mobile substances</strong>.</p>
-<hr>
+<hr/>
 <blockquote>
 <p>📌 <strong>This notebook was prepared for educational purposes</strong> 🏫 to assist in <strong>drafting compliance certificates or regulatory dossiers</strong> 📑. While it serves as a <strong>template source for preparing official documents</strong>, it requires <strong>adaptation</strong> to the <strong>specifics of each case</strong>.</p>
 <p>🔍 For <strong>monolayer materials</strong>, a <strong>single simulation step</strong> may be sufficient. However, in <strong>multilayer systems</strong>, migration predictions must <strong>incorporate prior storage and redistribution steps</strong>, as substances may <strong>accumulate at interfaces</strong> before food contact begins.</p>
 <p>🧪 <strong>Sensitivity analysis is essential in all situations</strong>. For example, special consideration should be given to <strong>printing inks</strong> 🎨 and constituents subjected to <strong>phase change</strong> 🌡️, as their <strong>partitioning behavior (<code>k</code> values)</strong> can vary <strong>significantly with temperature</strong> and should be <strong>modeled accordingly</strong>.</p>
 </blockquote>
-<hr>
+<hr/>
 <blockquote>
-<p>✅ <strong>All regulatory values, chemical properties, and physico-chemical parameters are extracted automatically</strong> through the <strong><code>SFPPy</code> framework</strong>, ensuring <strong>accuracy and compliance</strong>.<br>
-🔧 <strong>End-users can override existing values</strong> by either <strong>removing the "substance injection" step</strong> (operator <code>%</code>) or by <strong>defining custom <code>layerLink</code> values</strong> to modify interlayer interactions.<br>
-📖 For detailed guidance, refer to the <strong>SFPPy Wiki pages</strong>.</br></br></p>
+<p>✅ <strong>All regulatory values, chemical properties, and physico-chemical parameters are extracted automatically</strong> through the <strong><code>SFPPy</code> framework</strong>, ensuring <strong>accuracy and compliance</strong>.<br/>
+🔧 <strong>End-users can override existing values</strong> by either <strong>removing the "substance injection" step</strong> (operator <code>%</code>) or by <strong>defining custom <code>layerLink</code> values</strong> to modify interlayer interactions.<br/>
+📖 For detailed guidance, refer to the <strong>SFPPy Wiki pages</strong>.</p>
 </blockquote>
-</hr></hr></div>
+</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2335dcfb-ac8d-4839-b9b2-e712da835877">
@@ -10909,7 +11051,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [75]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [53]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">footer</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="n">disclaimer</span><span class="p">,</span> <span class="n">logo</span><span class="p">);</span> 
@@ -10942,37 +11084,34 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D; 
-            font-weight: bold; font-size: 12px; text-align: left;">
-    ⚠️ DISCLAIMER: This material is provided “<b>AS IS</b>” solely for demonstration and training purposes. No warranty, express or implied, is given regarding its accuracy, completeness, or fitness for a particular use. 📌 Users are solely responsible for evaluating its suitability and for ensuring compliance with all applicable regulations. 🔬 The illustrative example highlights the risks of misinterpreting mass transfer phenomena when "migration modeling" is treated as a "black box". 🚫 Neither the authors nor their organizations accept any liability arising from reliance on or use of this material.
+<div style="border-left: 4px solid #FF4D4D; padding: 10px; background: transparent; color: #FF4D4D;
+        font-weight: bold; font-size: 12px; text-align: left;">
+⚠️ <strong>DISCLAIMER</strong><br/>
+This material is provided “AS IS” solely for demonstration and training. No warranty—express or implied—is given regarding its accuracy, completeness, or suitability for any particular purpose. 📌 Users are fully responsible for assessing its relevance and ensuring compliance with all applicable regulations. 🔬 The illustrative example underscores the risks of treating “migration modeling” as a mere “black box,” potentially leading to misinterpretation of mass transfer phenomena. 🚫 Neither the authors nor their organizations accept any liability for reliance on or use of this material.
 </div>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<div style="display: flex; justify-content: space-between; align-items: flex-end; font-family: monospace; 
-            white-space: pre-wrap; overflow: hidden; font-size: 14px; line-height: 1.3; margin-left: 1cm; max-width: 100%;">
-<!-- Left: Emoji Block -->
-<div style="text-align: left;">
-🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
-🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
-🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍽️🍎🍽️🍽️🍽️🍎🍽️🍽️🐍🍽️🍽️🍽️🐍🍽️
-🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️
-🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
-🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
-🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️
+<hr style="height: 4px; background-color: #4CAF50; box-shadow: 2px 2px 4px gray; border: none;"/>
+<div style="display: flex; align-items: flex-start; font-family: monospace; font-size: 14px; line-height: 1.3; margin: 0.5em 0; max-width: 100%;">
+<!-- Left: Emoji “Logo” (Single line, scrollable if too wide) -->
+<div style="white-space: nowrap; overflow-x: auto; margin-right: 15px;">
+    🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br/>
+    🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍎🍎🍎🍎🍎🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br/>
+    🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍏🍽️🍽️🍎🍽️🍽️🍽️🍎🍽️🍽️🐍🍽️🍽️🍽️🐍🍽️<br/>
+    🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️<br/>
+    🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️<br/>
+    🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️<br/>
+    🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️<br/>
 </div>
-<!-- Center: GitHub Badge -->
-<div style="margin-left: 15px;">
+<!-- Center: GitHub Badge + Version (column layout) -->
+<div style="display: flex; flex-direction: column; align-items: center; margin-right: 15px;">
 <a href="https://github.com/ovitrac/SFPPy" target="_blank">
 <img alt="GitHub SFPPy" src="https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&amp;logo=github" style="border-radius: 8px;"/>
 </a>
-</div>
-<!-- Right: Version & Email (aligned at the bottom) -->
-<div style="margin-left: auto; font-weight: bold; font-size: 14px; color: #FF4D4D; text-align: left;">
-<div style="margin-bottom: 5px;">v1.37</div>
-<a href="mailto:olivier.vitrac@gmail.com" title="E-mail the author">📩</a>
+<div style="margin-top: 4px; font-weight: bold; color: #FF4D4D;">v1.37 <a href="mailto:olivier.vitrac@gmail.com" title="E-mail the author">📩</a></div>
 </div>
 </div>
 </div>
@@ -10980,9 +11119,23 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 </div>
 </div>
 </div>
-
 </main>
-</body>
+</div></div><script>
+document.addEventListener("DOMContentLoaded", function(){
+    var toggleButton = document.getElementById("toggleSidebar");
+    var nav = document.getElementById("nav");
+    toggleButton.addEventListener("click", function(){
+        nav.classList.toggle("collapsed");
+        if(nav.classList.contains("collapsed")){
+            toggleButton.innerHTML = '<kbd>&#9776;</kbd>';
+            toggleButton.setAttribute('aria-expanded', 'false');
+        } else {
+            toggleButton.innerHTML = '<kbd>&#10005;</kbd>';
+            toggleButton.setAttribute('aria-expanded', 'true');
+        }
+    });
+});
+</script></body>
 <script type="application/vnd.jupyter.widget-state+json">
 {"state": {}, "version_major": 2, "version_minor": 0}
 </script>

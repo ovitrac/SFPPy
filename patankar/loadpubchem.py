@@ -408,8 +408,8 @@ def parse_sdf(filename,useDataFrame=True):
     return molecules
 
 
-# %% Widget
-def create_substance_widget():
+# %% Widget initialized with substance
+def create_substance_widget(substance=None):
     """
     Creates a two-step widget interface for selecting a substance via loadpubchem.
 
@@ -455,6 +455,10 @@ def create_substance_widget():
     # flag for preheated GUI interface (widgets should be initialized manually, instead of being empty)
     _preheatedGUI_ = hasattr(builtins, "_PREHEATED_") and getattr(builtins, "_PREHEATED_") is True
 
+    # arg check (initial substance)
+    substance = "" if substance is None else substance
+    if not isinstance(substance,str):
+        raise TypeError(f"Substance must be str not a {type(substance).__name__}")
 
     # Inject CSS to disable resizing
     display(HTML("""
@@ -467,7 +471,7 @@ def create_substance_widget():
 
     # --- Step 1: Search Panel ---
     search_text = widgets.Text(
-        value="Irganox 1010",
+        value=substance,
         placeholder="Enter chemical name or CAS",
         description="Substance:",
         layout=widgets.Layout(width="96%"),
@@ -563,7 +567,7 @@ def create_substance_widget():
                 print("Please enter a substance name or CAS.")
                 return
             try:
-                record = migrant(query)
+                record = migrant(query,raiseerror=False)
             except Exception as e:
                 print("Error during search:", e)
                 return
@@ -607,7 +611,7 @@ def create_substance_widget():
 
             else:
                 try: # No SML we try get a TTC approach
-                    recordTT = migrantToxtree(query,verbose=False) # verbose=False to prevent duplicated messages
+                    recordTT = migrantToxtree(query,verbose=False,raiseerror=False) # verbose=False to prevent duplicated messages
                     SML_label.value = "<br>".join([
                         '<span style="color: Crimson;">Cramer classification: ' + recordTT.CramerClass + '</span>',
                         '<span style="color: Crimson;">CF TTC adult = ' + f"{recordTT.CFTTC} {recordTT.CFTTCunits}" + '</span>',
@@ -962,6 +966,11 @@ class CompoundIndex:
         :return: pd.DataFrame with the results (possibly multiple rows)
         """
         global PubChem_lastQueryTime
+
+        if query in (None,""):
+            return
+        if not isinstance(query,str):
+            raise TypeError(f"query must be a str not a {type(query).__name__}")
         qlower = query.strip().lower()
 
         if qlower not in self.index:
@@ -1355,7 +1364,7 @@ class migrant:
 
         # special case
         if name==M==None:
-            name = 'toluene'
+            return # name = 'toluene'
 
         # Convert M to a numpy array if given
         if M is not None:
@@ -1382,9 +1391,9 @@ class migrant:
                 raise ValueError("A db instance is required for searching by name when M is None.")
 
             df = db.find(name, output_format="simple")
-            if df.empty:
+            if df is None or df.empty:
                 if raiseerror:
-                    raise ValueError(f"<{name}> not found")
+                    raise ValueError(f"Compound <{name}> not found")
                 print(f"LOADPUBCHEM ERRROR: <{name}> not found - empty object returned")
                 self.compound = name
                 self.name = [name]
@@ -1793,7 +1802,7 @@ class migrant:
                 if hasattr(self,"SMLunit"):
                     attributes["SML"]+=f" [{self.SMLunit}]"
         # Add Toxtree attributes
-        if isinstance(self,migrantToxtree):
+        if isinstance(self,migrantToxtree) and self.compound not in (None,""):
             attributes["--- ToxTree"]="-"*15
             attributes["Compound"] = self.ToxTree["IUPACTraditionalName"]
             attributes["Name"] = self.ToxTree["IUPACName"]
@@ -1895,7 +1904,10 @@ class migrant:
         >>> compound.molarvolumeMiller
         130.5  # Example output
         """
-        return a * self.M**b
+        if self.M is not None:
+            return a * self.M**b
+        else:
+            None
 
 
     @property
@@ -2222,7 +2234,10 @@ class migrant:
             estimates.
 
         """
-        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+        if hasattr(self, 'vdWvolume2'):
+            return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+        else:
+            return None
 
 # %% Class migrantToxtree extending migrant class with Toxtree data
 """
@@ -2314,8 +2329,12 @@ class migrantToxtree(migrant):
     CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
     CFTTCunits = "[mg/kg food intake]"
 
-    def __init__(self, compound_name, cache_folder='cache.ToxTree', refresh=False, no_cache=False, verbose=True):
-        super().__init__(compound_name, verbose=verbose)
+    def __init__(self, compound_name, cache_folder='cache.ToxTree', refresh=False, no_cache=False,  raiseerror=True, verbose=True):
+        """migrantToxtree constructor"""
+        isempty = compound_name in (None,"")
+        super().__init__(compound_name, raiseerror=raiseerror, verbose=verbose)
+        if isempty:
+            return
 
         if isinstance(self.cid, list):
             if len(self.cid) != 1:
