@@ -48,12 +48,14 @@ Defines <strong>food materials</strong> for migration simulations. Models food a
 <pre><code class="language-python">from patankar.food import foodlayer
 medium = foodlayer(name=&quot;ethanol&quot;, contacttemperature=(40, &quot;degC&quot;))
 </code></pre>
+<p><strong>Advanced Operators</strong>
+[substance] in [food] in [packaging] | [layer] &gt;&gt; [condition1] &gt;&gt; [condition2]</p>
 <p>@version: 1.22
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2023-01-25
-@rev: 2025-03-03</p>
+@rev: 2025-03-13</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -91,13 +93,16 @@ from patankar.food import foodlayer
 medium = foodlayer(name=&#34;ethanol&#34;, contacttemperature=(40, &#34;degC&#34;))
 ```
 
+**Advanced Operators**
+[substance] in [food] in [packaging] | [layer] &gt;&gt; [condition1] &gt;&gt; [condition2]
+
 
 @version: 1.22
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2023-01-25
-@rev: 2025-03-03
+@rev: 2025-03-13
 
 &#34;&#34;&#34;
 
@@ -111,7 +116,7 @@ from copy import deepcopy as duplicate
 from patankar.layer import check_units, NoUnits, layer # to convert units to SI
 from patankar.loadpubchem import migrant
 
-__all__ = [&#39;acetonitrile&#39;, &#39;ambient&#39;, &#39;aqueous&#39;, &#39;boiling&#39;, &#39;check_units&#39;, &#39;chemicalaffinity&#39;, &#39;chilled&#39;, &#39;ethanol&#39;, &#39;ethanol50&#39;, &#39;ethanol95&#39;, &#39;fat&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;foodproperty&#39;, &#39;frozen&#39;, &#39;frying&#39;, &#39;get_defined_init_params&#39;, &#39;help_food&#39;, &#39;hotambient&#39;, &#39;hotfilled&#39;, &#39;hotoven&#39;, &#39;intermediate&#39;, &#39;is_valid_classname&#39;, &#39;isooctane&#39;, &#39;layer&#39;, &#39;liquid&#39;, &#39;list_food_classes&#39;, &#39;methanol&#39;, &#39;microwave&#39;, &#39;migrant&#39;, &#39;nofood&#39;, &#39;oil&#39;, &#39;oliveoil&#39;, &#39;oven&#39;, &#39;panfrying&#39;, &#39;pasteurization&#39;, &#39;perfectlymixed&#39;, &#39;realcontact&#39;, &#39;realfood&#39;, &#39;rolled&#39;, &#39;semisolid&#39;, &#39;setoff&#39;, &#39;simulant&#39;, &#39;solid&#39;, &#39;stacked&#39;, &#39;sterilization&#39;, &#39;tenax&#39;, &#39;testcontact&#39;, &#39;texture&#39;, &#39;transportation&#39;, &#39;water&#39;, &#39;water3aceticacid&#39;, &#39;wrap_text&#39;, &#39;yogurt&#39;]
+__all__ = [&#39;acetonitrile&#39;, &#39;ambient&#39;, &#39;aqueous&#39;, &#39;boiling&#39;, &#39;check_units&#39;, &#39;chemicalaffinity&#39;, &#39;chilled&#39;, &#39;create_food_tree_widget&#39;, &#39;ethanol&#39;, &#39;ethanol50&#39;, &#39;ethanol95&#39;, &#39;fat&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;foodproperty&#39;, &#39;frozen&#39;, &#39;frying&#39;, &#39;get_defined_init_params&#39;, &#39;help_food&#39;, &#39;hotambient&#39;, &#39;hotfilled&#39;, &#39;hotoven&#39;, &#39;intermediate&#39;, &#39;is_valid_classname&#39;, &#39;isooctane&#39;, &#39;layer&#39;, &#39;liquid&#39;, &#39;list_food_classes&#39;, &#39;methanol&#39;, &#39;microwave&#39;, &#39;migrant&#39;, &#39;nofood&#39;, &#39;oil&#39;, &#39;oliveoil&#39;, &#39;oven&#39;, &#39;panfrying&#39;, &#39;pasteurization&#39;, &#39;perfectlymixed&#39;, &#39;realcontact&#39;, &#39;realfood&#39;, &#39;rolled&#39;, &#39;semisolid&#39;, &#39;setoff&#39;, &#39;simulant&#39;, &#39;solid&#39;, &#39;stacked&#39;, &#39;sterilization&#39;, &#39;tenax&#39;, &#39;testcontact&#39;, &#39;texture&#39;, &#39;transportation&#39;, &#39;update_class_list&#39;, &#39;water&#39;, &#39;water3aceticacid&#39;, &#39;wrap_text&#39;, &#39;yogurt&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -120,7 +125,7 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.22&#34;
+__version__ = &#34;1.32&#34;
 #%% Private Properties and functions
 
 # List of the default SI units used by physical quantity
@@ -201,6 +206,26 @@ def list_food_classes():
 
     return subclasses_info
 
+# class checked for the registry and other applications
+def update_class_list(clslist, clsnew):
+    &#34;&#34;&#34;
+    Updates clslist with clsnew if clsnew is a subclass of an existing class in clslist.
+    If clsnew is a subclass of clslist[i], clslist[i] is replaced with clsnew.
+    If no subclass relationship is found, clsnew is appended to clslist.
+
+    Parameters:
+        clslist (list): A list of classes.
+        clsnew (type): A new class to check and possibly add.
+    &#34;&#34;&#34;
+    for i, cls in enumerate(clslist):
+        if issubclass(clsnew, cls):  # Check if clsnew is a subclass of clslist[i]
+            clslist[i] = clsnew  # Replace the parent class with the new subclass
+            return  # Exit immediately after updating
+
+    clslist.append(clsnew)  # If no subclass relationship is found, append clsnew
+
+
+# %% help food
 def help_food():
     &#34;&#34;&#34;
     Prints all food-related classes with relevant attributes in a **formatted Markdown table**.
@@ -239,6 +264,402 @@ def help_food():
     # Print all table rows
     for row in formatted_rows:
         print(row_format.format(*row))
+
+# %% Widget
+def create_food_tree_widget():
+    &#34;&#34;&#34;
+    Creates a widget interface for food/contact conditions that uses a hierarchical
+    tree to collect one class name per level. A custom class is then built via multiple
+    inheritance from the classes selected at each level. This custom class is instantiated
+    with overridden contact time and temperature values and stored in builtins.mycontacts.
+
+    The tree is organized as follows (each branch has an associated &#39;class&#39; and a &#39;children&#39;
+    dictionary):
+
+    realfood
+      ├─ liquid
+      │    ├─ fat
+      │    │     ├─ frozen
+      │    │     ├─ chilled
+      │    │     ├─ boiling
+      │    │     ├─ pasteurization
+      │    │     ├─ sterilization
+      │    │     ├─ oven
+      │    │     ├─ frying
+      │    │     └─ hotoven
+      │    ├─ aqueous
+      │    │     ├─ frozen
+      │    │     ├─ chilled
+      │    │     ├─ boiling
+      │    │     ├─ pasteurization
+      │    │     └─ sterilization
+      │    └─ intermediate
+      │          ├─ frozen
+      │          ├─ chilled
+      │          ├─ boiling
+      │          ├─ pasteurization
+      │          ├─ sterilization
+      │          ├─ oven
+      │          ├─ frying
+      │          └─ hotoven
+      ├─ semisolid
+      │      ... (similar structure)
+      └─ solid
+             ... (similar structure)
+
+    simulant
+      └─ (various branches; each branch has two leaves: realcontact and testcontact)
+
+    setoff, stacked, rolled, nofood, yogurt, sandwich: with one or two levels
+
+    Returns:
+      An ipywidgets.VBox instance containing the full UI.
+    &#34;&#34;&#34;
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError(&#34;ipywidgets and IPython are required for this interface.&#34;) from e
+
+    import builtins
+    # Ensure the global dictionary for storing instantiated food conditions exists.
+    if not hasattr(builtins, &#34;mycontacts&#34;):
+        builtins.mycontacts = {}
+    global mycontacts
+    mycontacts = builtins.mycontacts
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, &#34;_PREHEATED_&#34;) and getattr(builtins, &#34;_PREHEATED_&#34;) is True
+
+    # ---- Build the tree registry as a nested dict.
+    # Each node is a dict with keys:
+    #   &#34;class&#34;: the class associated with that branch,
+    #   &#34;children&#34;: a dict of further branches (if any).
+    food_tree = {
+        &#34;realfood&#34;: {
+            &#34;class&#34;: realfood,
+            &#34;children&#34;: {
+                &#34;liquid&#34;: {
+                    &#34;class&#34;: liquid,
+                    &#34;children&#34;: {
+                        &#34;fat&#34;: {
+                            &#34;class&#34;: fat,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;aqueous&#34;: {
+                            &#34;class&#34;: aqueous,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization}
+                            }
+                        },
+                        &#34;intermediate&#34;: {
+                            &#34;class&#34;: intermediate,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        }
+                    }
+                },
+                &#34;semisolid&#34;: {
+                    &#34;class&#34;: semisolid,
+                    &#34;children&#34;: {
+                        &#34;fat&#34;: {
+                            &#34;class&#34;: fat,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;aqueous&#34;: {
+                            &#34;class&#34;: aqueous,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven}
+                            }
+                        },
+                        &#34;intermediate&#34;: {
+                            &#34;class&#34;: intermediate,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        }
+                    }
+                },
+                &#34;solid&#34;: {
+                    &#34;class&#34;: solid,
+                    &#34;children&#34;: {
+                        &#34;fat&#34;: {
+                            &#34;class&#34;: fat,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;aqueous&#34;: {
+                            &#34;class&#34;: aqueous,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;intermediate&#34;: {
+                            &#34;class&#34;: intermediate,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        &#34;simulant&#34;: {
+            &#34;class&#34;: simulant,
+            &#34;children&#34;: {
+#                &#34;fat&#34;: {&#34;class&#34;: fat, &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+#                &#34;aqueous&#34;: {&#34;class&#34;: aqueous, },# &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+#                &#34;intermediate&#34;: {&#34;class&#34;: intermediate,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;oliveoil&#34;: {&#34;class&#34;: oliveoil,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;ethanol95&#34;: {&#34;class&#34;: ethanol95,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;ethanol50&#34;: {&#34;class&#34;: ethanol50,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;acetonitrile&#34;: {&#34;class&#34;: acetonitrile,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;methanol&#34;: {&#34;class&#34;: methanol,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;water&#34;: {&#34;class&#34;: water,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;water3aceticacid&#34;: {&#34;class&#34;: water3aceticacid,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;isooctane&#34;: {&#34;class&#34;: isooctane,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}}
+            }
+        },
+        &#34;setoff&#34;: {
+            &#34;class&#34;: setoff,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;stacked&#34;: {
+            &#34;class&#34;: stacked,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;rolled&#34;: {
+            &#34;class&#34;: rolled,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;nofood&#34;: {
+            &#34;class&#34;: nofood,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;yogurt&#34;: {
+            &#34;class&#34;: yogurt,
+            &#34;children&#34;: {&#34;chilled&#34;: {&#34;class&#34;: chilled}, &#34;ambient&#34;: {&#34;class&#34;: ambient}}
+        },
+    }
+
+
+    # ---- Create cascading dropdowns for up to 4 levels.
+    dd1 = widgets.Dropdown(options=list(food_tree.keys()), description=&#34;Level 1:&#34;)
+    dd2 = widgets.Dropdown(options=[], description=&#34;Level 2:&#34;)
+    dd3 = widgets.Dropdown(options=[], description=&#34;Level 3:&#34;)
+    dd4 = widgets.Dropdown(options=[], description=&#34;Level 4:&#34;)
+
+    def update_dd2(*args):
+        selected = dd1.value
+        #print(&#34;dd2:&#34;,selected)
+        opts = list(food_tree[selected][&#34;children&#34;].keys())
+        dd2.options = opts
+        dd2.value = opts[0] if opts else None
+        update_dd3()
+    def update_dd3(*args):
+        if dd2.value is None:
+            dd3.options = []
+            dd3.value = None
+        else:
+            selected1 = dd1.value
+            selected2 = dd2.value
+            #print(&#34;dd3:&#34;,selected1,selected2) # debug
+            subtree = food_tree[selected1][&#34;children&#34;][selected2]
+            if &#34;children&#34; in subtree:
+                opts = list(subtree[&#34;children&#34;].keys())
+                dd3.options = opts
+                dd3.value = opts[0] if opts else None
+            else:
+                dd3.options = []
+                dd3.value = None
+        update_dd4()
+    def update_dd4(*args):
+        if dd3.value is None:
+            dd4.options = []
+            dd4.value = None
+        else:
+            selected1 = dd1.value
+            selected2 = dd2.value
+            selected3 = dd3.value
+            #print(&#34;dd4:&#34;,selected1,selected2,selected3) # debug
+            subtree = food_tree[selected1][&#34;children&#34;][selected2][&#34;children&#34;][selected3]
+            if &#34;children&#34; in subtree:
+                opts = list(subtree[&#34;children&#34;].keys())
+                dd4.options = opts
+                dd4.value = opts[0] if opts else None
+            else:
+                dd4.options = []
+                dd4.value = None
+    dd1.observe(update_dd2, names=&#39;value&#39;)
+    dd2.observe(update_dd3, names=&#39;value&#39;)
+    dd3.observe(update_dd4, names=&#39;value&#39;)
+    update_dd2()  # Initialize
+
+    # ---- Additional inputs for overrides and instance name ----
+    time_val = widgets.FloatText(value=60, description=&#34;Contact Time:&#34;)
+    time_unit = widgets.Dropdown(options=[&#34;s&#34;, &#34;min&#34;, &#34;h&#34;, &#34;days&#34;, &#34;months&#34;, &#34;years&#34;],
+                                 value=&#34;days&#34;, description=&#34;Time Unit:&#34;)
+    temp_val = widgets.FloatText(value=25, description=&#34;Contact Temp:&#34;)
+    temp_unit = widgets.Dropdown(options=[&#34;degC&#34;, &#34;K&#34;],
+                                 value=&#34;degC&#34;, description=&#34;Temp Unit:&#34;)
+    inst_name = widgets.Text(value=&#34;contact1&#34;, description=&#34;Instance Name:&#34;)
+
+    # ---- Button to instantiate the custom food/contact condition ----
+    btn = widgets.Button(description=&#34;Instantiate Custom Condition&#34;, button_style=&#34;success&#34;)
+    out = widgets.Output()
+
+    def instantiate_custom(b):
+        with out:
+            out.clear_output()
+            selected_classes = []
+            # Collect the class from Level 1
+            try:
+                cls1 = food_tree[dd1.value][&#34;class&#34;]
+                selected_classes.append(cls1)
+            except Exception as e:
+                print(&#34;Error at Level 1:&#34;, e)
+                return
+            # Level 2 (if available)
+            if dd2.value is not None:
+                try:
+                    cls2 = food_tree[dd1.value][&#34;children&#34;][dd2.value][&#34;class&#34;]
+                    update_class_list(selected_classes,cls2) # avoid class conflicts (children replace parents)
+                except Exception as e:
+                    print(&#34;Error at Level 2:&#34;, e)
+                    return
+            # Level 3 (if available)
+            if dd3.value is not None:
+                try:
+                    cls3 = food_tree[dd1.value][&#34;children&#34;][dd2.value][&#34;children&#34;][dd3.value][&#34;class&#34;]
+                    update_class_list(selected_classes,cls3) # avoid class conflicts (children replace parents)
+                except Exception as e:
+                    print(&#34;Error at Level 3:&#34;, e)
+                    return
+            # Level 4 (if available)
+            if dd4.options and dd4.value is not None:
+                try:
+                    cls4 = food_tree[dd1.value][&#34;children&#34;][dd2.value][&#34;children&#34;][dd3.value][&#34;children&#34;][dd4.value][&#34;class&#34;]
+                    update_class_list(selected_classes,cls4) # avoid class conflicts (children replace parents)
+                except Exception as e:
+                    print(&#34;Error at Level 4:&#34;, e)
+                    return
+            # Dynamically create a custom class with multiple inheritance.
+            try:
+                CustomClass = type(&#34;CustomFood&#34;, tuple(selected_classes), {})
+            except Exception as e:
+                try:
+                    # for debugging, we rely on level2 (situation fixed with update_class_list())
+                    print(&#34;ERROR detected in foodtree:&#34;,e) # for debuging
+                    [print(c.__name__) for c in selected_classes]
+                    print(&#34;DEBUG:: keep only the last valid class:&#34;, selected_classes[-1])
+                    CustomClass = type(&#34;CustomFood&#34;, tuple(selected_classes[-1:]), {})
+                except Exception as e:
+                    print(&#34;Error creating custom class:&#34;, e)
+                    return
+            # Instantiate the custom class with overrides.
+            try:
+                instance = CustomClass(contacttime=(time_val.value, time_unit.value),
+                                         contacttemperature=(temp_val.value, temp_unit.value))
+            except Exception as e:
+                print(&#34;Error instantiating custom class:&#34;, e)
+                return
+            name_val = inst_name.value.strip()
+            if not name_val:
+                print(&#34;Please provide an instance name.&#34;)
+                return
+            instance.update(contacttime=(time_val.value,time_unit.value),
+                            contactemperature=(temp_val.value,temp_unit.value))
+            builtins.mycontacts[name_val] = instance
+            print(f&#34;Instantiated custom condition &#39;{name_val}&#39;:&#34;)
+            print(instance)
+            print(&#34;\nCurrent conditions:&#34;, list(builtins.mycontacts.keys()))
+    btn.on_click(instantiate_custom)
+
+    if _preheatedGUI_:
+        instantiate_custom(None) # we instantiate manually
+
+    ui = widgets.VBox([
+         widgets.HBox([dd1, dd2, dd3, dd4]),
+         widgets.HBox([time_val, time_unit, temp_val, temp_unit]),
+         inst_name,
+         btn,
+         out
+    ])
+
+    return ui
+
 
 
 #%% Base physics class
@@ -342,7 +763,9 @@ class foodphysics:
         &#34;physicalstate&#34;,&#34;chemicalclass&#34;, # phase F properties
         &#34;substance&#34;,&#34;migrant&#34;,&#34;solute&#34;, # i properties with synonyms substance=migrant=solute
         # users use &#34;k&#34;, but internally we use k0, keep _kmodel in the instance
-        &#34;k0&#34;,&#34;k0unit&#34;,&#34;kmodel&#34;,&#34;_compute_kmodel&#34; # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        &#34;k0&#34;,&#34;k0unit&#34;,&#34;kmodel&#34;,&#34;_compute_kmodel&#34;, # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        # SML properties
+        &#34;SML&#34;,&#34;SMLunit&#34;
         ]
 
     # ------------------------------------------------------
@@ -487,6 +910,11 @@ class foodphysics:
             self.__class__._transferable_properties[&#34;substance&#34;][&#34;foodlayer&#34;][&#34;prototype&#34;] = migrant
             self.__class__._transferable_properties[&#34;substance&#34;][&#34;layer&#34;][&#34;prototype&#34;] = layer
             self.__class__._transferable_properties[&#34;medium&#34;][&#34;layer&#34;][&#34;prototype&#34;] = layer
+        # Subtance propagation (if needed)
+        if self.hassubstance:
+            if self.substance.hasSML:
+                self.SML = self.substance.SML
+                self.SMLunit = self.substance.SMLunit
 
     # ------- [properties to access/modify simstate] --------
     @property
@@ -582,9 +1010,14 @@ class foodphysics:
             &#34;&#34;&#34;Helper function to convert physical quantities to SI.&#34;&#34;&#34;
             if isinstance(value, tuple) and len(value) == 2:
                 scale = check_units(value)[0]  # Convert to SI, drop unit
-                return np.array([scale], dtype=float)  # Ensure NumPy array
-            elif isinstance(value, (int, float, np.ndarray)):
+                if isinstance(scale,np.ndarray):
+                    return scale
+                else:
+                    return np.array([scale], dtype=float)  # Ensure NumPy array
+            elif isinstance(value, (int, float)):
                 return np.array([value], dtype=float)  # Ensure NumPy array
+            elif isinstance(value,np.ndarray):
+                return value
             else:
                 raise ValueError(f&#34;Invalid value for physical quantity: {value}&#34;)
         # Update `name` and `description` if provided
@@ -727,8 +1160,37 @@ class foodphysics:
     # For convenience, several operators have been overloaded
     #   medium &gt;&gt; packaging      # sets the volume and the surfacearea
     #   medium &gt;&gt; material       # propgates the contact temperature from the medium to the material
-    #   sol = medium &lt;&lt; material # simulate migration from the material to the medium
+    #   medium in packaging    # simulate migration from the material to the medium
+    #   medium &lt;&lt; packaging
     # --------------------------------------------------------------------
+
+    # method: medium._from(packaging) and its associatd operators in or &lt;&lt;
+    def _from(self, other = None):
+        &#34;&#34;&#34;Inherit packaging properties&#34;&#34;&#34;
+        from patankar.geometry import Packaging3D
+        if not isinstance(other,Packaging3D):
+            raise TypeError(f&#34;other must be a Packaging3d or migrant not a {type(other).__name__}&#34;)
+        return other._to(self) # we use the reverse definition
+
+    def __lshift__(self,other):
+        &#34;&#34;&#34;
+            overload &lt;&lt;
+            food &lt;&lt; packaging --&gt; food
+            full example: substance in food &lt;&lt; packaging &gt;&gt; layer --&gt; layer
+        &#34;&#34;&#34;
+        return self._from(other)
+
+    def __rmod__(self,other):
+        &#34;&#34;&#34;
+            overload % as: migrant % food --&gt; food
+            full example: migrant in food in packaging | layer &gt;&gt; condition &gt;&gt; condition
+        &#34;&#34;&#34;
+        from patankar.loadpubchem import migrant
+        if not isinstance(other,migrant):
+            raise TypeError(f&#34;other must a migrant and not a {type(other).__name__}&#34;)
+        self.update(substance=other)
+        return self
+
 
     # method: medium._to(material) and its associated operator &gt;&gt;
     def _to(self, other = None):
@@ -787,23 +1249,39 @@ class foodphysics:
                 # Register the transfer in other’s inheritance tracking
                 other.acknowledge(what=target_attr, category=category)
 
-                # to chain &gt;&gt;
-                return other
+        # to chain &gt;&gt;
+        return other
 
     def __rshift__(self, other):
-        &#34;&#34;&#34;Overloads &gt;&gt; to propagate to other.&#34;&#34;&#34;
+        &#34;&#34;&#34;
+            Overloads &gt;&gt; to propagate to other.
+            e.g. food&gt;&gt;layer --&gt; layer
+        &#34;&#34;&#34;
         # inherit substance/migrant from other if self.migrant is None
         if isinstance(other,(layer,foodlayer)):
             if isinstance(self,foodlayer):
                 if self.substance is None and other.substance is not None:
                     self.substance = other.substance
-        return self._to(other) # propagates
+        return self._to(other) # propagates other
 
-    def __matmul__(self, other):
-        &#34;&#34;&#34;Overload @: equivalent to &gt;&gt; if other is a layer.&#34;&#34;&#34;
+        # The operators @ and | are depreciated and should not be used anymore
+    def __matmul__(self, other): # depreciated @
+        &#34;&#34;&#34;
+            Overload @: equivalent to &gt;&gt; if other is a layer.
+            e.g. food@layer --&gt; layer (depreciated)
+        &#34;&#34;&#34;
         if not isinstance(other, layer):
             raise TypeError(f&#34;Right operand must be a layer not a {type(other).__name__}&#34;)
-        return self._to(other)
+        return self._to(other)  # propagates other
+
+    def __or__(self, other): # depreciated |
+        &#34;&#34;&#34;
+            Overload @: equivalent to &gt;&gt; if other is a layer.
+            e.g. food|layer --&gt; layer (depreciated)
+        &#34;&#34;&#34;
+        if not isinstance(other, layer):
+            raise TypeError(f&#34;Right operand must be a layer not a {type(other).__name__}&#34;)
+        return self._to(other)  # propagates other
 
     # migration method
     def migration(self,material,**kwargs):
@@ -830,7 +1308,10 @@ class foodphysics:
                 return self.kmodel() is not None
         return False
 
-
+    @property
+    def hasSML(self):
+        &#34;&#34;&#34;Returns True if SML has been defined&#34;&#34;&#34;
+        return hasattr(self,&#34;_SML&#34;) and self._SML is not None
 # %% Root classes
 # -------------------------------------------------------------------
 # ROOT CLASSES
@@ -985,6 +1466,11 @@ class foodlayer(foodphysics):
     def migrant(self): return self.substance    # synonym
     @property
     def solute(self): return self.substance     # synonym
+    # SML
+    @property
+    def SML(self): return self._SML if self.hasSML else None
+    @property
+    def SMLunit(self): return self._SMLunit if self.hasSML else None
 
     # -----------------------------------------------------------------------------
     # Setter methods for class/instance properties: same definitions as in patankar.layer (mandatory)
@@ -1022,12 +1508,33 @@ class foodlayer(foodphysics):
         if not isinstance(value,migrant):
             raise TypeError(f&#34;substance/migrant/solute must be a migrant not a {type(value).__name__}&#34;)
         self._substance = value
+        if value.hasSML:
+            self.SML = value.SML
+            self.SMLunit = value.SMLunit
     @migrant.setter
     def migrant(self,value):
         self.substance = value
+        if self.substance.hasSML:
+            self.SML = self.substance.SML
+            self.SMLunit = self.substance.SMLunit
     @solute.setter
     def solute(self,value):
         self.substance = value
+    @SML.setter
+    def SML(self,value):
+        if isinstance(value,np.ndarray):
+            value = value.item(0)
+        if not isinstance(value,(float,int)):
+            raise TypeError(f&#34;SML value must be a float or int not a {type(value).__name__}&#34;)
+        self._SML = float(value)
+        self._SMLunit = &#34;mg/kg&#34;
+    @SMLunit.setter
+    def SMLunit(self,units):
+        units = &#34;mg/kg&#34; if units is None else units
+        if not isinstance(units,str):
+            raise TypeError(f&#34;SMLunit value must be a str not a {type(units).__name__}&#34;)
+        self._SMLunit = units
+
     # -----------------------------------------------------------------------------
     # Henry-like coefficient k and its alias k0 (internal use)
     # -----------------------------------------------------------------------------
@@ -1079,9 +1586,15 @@ class foodlayer(foodphysics):
         template.update(ispolymer = False)
         def func(**kwargs):
             if self.chemicalsubstance:
-                simulant = migrant(self.chemicalsubstance)
-                template.update(Pk = simulant.polarityindex,
-                                Vk = simulant.molarvolumeMiller)
+                if &#34;+&#34; in self.chemicalsubstance: # mixture (e.g.: water + ethanol)
+                    ks = [migrant(s) for s in self.chemicalsubstance.split(&#34;+&#34;)] # several k: ks
+                    Pk = np.mean([k.polarityindex for k in ks]) # we average Pk assuming 50:50 mixure
+                    Vk = np.mean([k.molarvolumeMiller for k in ks]) # we average Vk assuming 50:50 mixure
+                else: # pure simulant
+                    simulant = migrant(self.chemicalsubstance)
+                    Pk = simulant.polarityindex
+                    Vk = simulant.molarvolumeMiller
+                template.update(Pk = Pk, Vk = Vk)
                 k = self._substance.k.evaluate(**dict(template, **kwargs))
                 return k
             else:
@@ -1358,7 +1871,7 @@ class ethanol95(ethanol): pass # synonym of ethanol
 
 class ethanol50(simulant, perfectlymixed, intermediate):
     &#34;&#34;&#34;Ethanol 50% food simulant&#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethanol&#34;
+    _chemicalsubstance = &#34;water+ethanol&#34;
     _polarityindex = 7.0 # Intermediate polarity between ethanol and water.
     name = &#34;ethanol 50&#34;
     description = &#34;ethanol 50, food simulant of dairy products&#34;
@@ -1424,6 +1937,7 @@ class yogurt(realfood, semisolid, ethanol50):
 # Example usage (for debugging)
 # -------------------------------------------------------------------
 if __name__ == &#39;__main__&#39;:
+    food_tree_widget = create_food_tree_widget()
     F = foodlayer()
     E95 = ethanol()
     Y = yogurt()
@@ -1488,6 +2002,488 @@ if __name__ == &#39;__main__&#39;:
         else:
             q0,conversion,units = toSI(qSI(1,ProvidedUnits))
         return np.array([value*conversion]),units</code></pre>
+</details>
+</dd>
+<dt id="food.create_food_tree_widget"><code class="name flex">
+<span>def <span class="ident">create_food_tree_widget</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a widget interface for food/contact conditions that uses a hierarchical
+tree to collect one class name per level. A custom class is then built via multiple
+inheritance from the classes selected at each level. This custom class is instantiated
+with overridden contact time and temperature values and stored in builtins.mycontacts.</p>
+<p>The tree is organized as follows (each branch has an associated 'class' and a 'children'
+dictionary):</p>
+<p>realfood
+├─ liquid
+│
+├─ fat
+│
+│
+├─ frozen
+│
+│
+├─ chilled
+│
+│
+├─ boiling
+│
+│
+├─ pasteurization
+│
+│
+├─ sterilization
+│
+│
+├─ oven
+│
+│
+├─ frying
+│
+│
+└─ hotoven
+│
+├─ aqueous
+│
+│
+├─ frozen
+│
+│
+├─ chilled
+│
+│
+├─ boiling
+│
+│
+├─ pasteurization
+│
+│
+└─ sterilization
+│
+└─ intermediate
+│
+├─ frozen
+│
+├─ chilled
+│
+├─ boiling
+│
+├─ pasteurization
+│
+├─ sterilization
+│
+├─ oven
+│
+├─ frying
+│
+└─ hotoven
+├─ semisolid
+│
+&hellip; (similar structure)
+└─ solid
+&hellip; (similar structure)</p>
+<p>simulant
+└─ (various branches; each branch has two leaves: realcontact and testcontact)</p>
+<p>setoff, stacked, rolled, nofood, yogurt, sandwich: with one or two levels</p>
+<h2 id="returns">Returns</h2>
+<p>An ipywidgets.VBox instance containing the full UI.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_food_tree_widget():
+    &#34;&#34;&#34;
+    Creates a widget interface for food/contact conditions that uses a hierarchical
+    tree to collect one class name per level. A custom class is then built via multiple
+    inheritance from the classes selected at each level. This custom class is instantiated
+    with overridden contact time and temperature values and stored in builtins.mycontacts.
+
+    The tree is organized as follows (each branch has an associated &#39;class&#39; and a &#39;children&#39;
+    dictionary):
+
+    realfood
+      ├─ liquid
+      │    ├─ fat
+      │    │     ├─ frozen
+      │    │     ├─ chilled
+      │    │     ├─ boiling
+      │    │     ├─ pasteurization
+      │    │     ├─ sterilization
+      │    │     ├─ oven
+      │    │     ├─ frying
+      │    │     └─ hotoven
+      │    ├─ aqueous
+      │    │     ├─ frozen
+      │    │     ├─ chilled
+      │    │     ├─ boiling
+      │    │     ├─ pasteurization
+      │    │     └─ sterilization
+      │    └─ intermediate
+      │          ├─ frozen
+      │          ├─ chilled
+      │          ├─ boiling
+      │          ├─ pasteurization
+      │          ├─ sterilization
+      │          ├─ oven
+      │          ├─ frying
+      │          └─ hotoven
+      ├─ semisolid
+      │      ... (similar structure)
+      └─ solid
+             ... (similar structure)
+
+    simulant
+      └─ (various branches; each branch has two leaves: realcontact and testcontact)
+
+    setoff, stacked, rolled, nofood, yogurt, sandwich: with one or two levels
+
+    Returns:
+      An ipywidgets.VBox instance containing the full UI.
+    &#34;&#34;&#34;
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError(&#34;ipywidgets and IPython are required for this interface.&#34;) from e
+
+    import builtins
+    # Ensure the global dictionary for storing instantiated food conditions exists.
+    if not hasattr(builtins, &#34;mycontacts&#34;):
+        builtins.mycontacts = {}
+    global mycontacts
+    mycontacts = builtins.mycontacts
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, &#34;_PREHEATED_&#34;) and getattr(builtins, &#34;_PREHEATED_&#34;) is True
+
+    # ---- Build the tree registry as a nested dict.
+    # Each node is a dict with keys:
+    #   &#34;class&#34;: the class associated with that branch,
+    #   &#34;children&#34;: a dict of further branches (if any).
+    food_tree = {
+        &#34;realfood&#34;: {
+            &#34;class&#34;: realfood,
+            &#34;children&#34;: {
+                &#34;liquid&#34;: {
+                    &#34;class&#34;: liquid,
+                    &#34;children&#34;: {
+                        &#34;fat&#34;: {
+                            &#34;class&#34;: fat,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;aqueous&#34;: {
+                            &#34;class&#34;: aqueous,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization}
+                            }
+                        },
+                        &#34;intermediate&#34;: {
+                            &#34;class&#34;: intermediate,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        }
+                    }
+                },
+                &#34;semisolid&#34;: {
+                    &#34;class&#34;: semisolid,
+                    &#34;children&#34;: {
+                        &#34;fat&#34;: {
+                            &#34;class&#34;: fat,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;aqueous&#34;: {
+                            &#34;class&#34;: aqueous,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven}
+                            }
+                        },
+                        &#34;intermediate&#34;: {
+                            &#34;class&#34;: intermediate,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        }
+                    }
+                },
+                &#34;solid&#34;: {
+                    &#34;class&#34;: solid,
+                    &#34;children&#34;: {
+                        &#34;fat&#34;: {
+                            &#34;class&#34;: fat,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;aqueous&#34;: {
+                            &#34;class&#34;: aqueous,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        },
+                        &#34;intermediate&#34;: {
+                            &#34;class&#34;: intermediate,
+                            &#34;children&#34;: {
+                                &#34;ambient&#34;: {&#34;class&#34;: ambient},
+                                &#34;frozen&#34;: {&#34;class&#34;: frozen},
+                                &#34;chilled&#34;: {&#34;class&#34;: chilled},
+                                &#34;boiling&#34;: {&#34;class&#34;: boiling},
+                                &#34;pasteurization&#34;: {&#34;class&#34;: pasteurization},
+                                &#34;sterilization&#34;: {&#34;class&#34;: sterilization},
+                                &#34;oven&#34;: {&#34;class&#34;: oven},
+                                &#34;frying&#34;: {&#34;class&#34;: frying},
+                                &#34;hotoven&#34;: {&#34;class&#34;: hotoven}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        &#34;simulant&#34;: {
+            &#34;class&#34;: simulant,
+            &#34;children&#34;: {
+#                &#34;fat&#34;: {&#34;class&#34;: fat, &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+#                &#34;aqueous&#34;: {&#34;class&#34;: aqueous, },# &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+#                &#34;intermediate&#34;: {&#34;class&#34;: intermediate,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;oliveoil&#34;: {&#34;class&#34;: oliveoil,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;ethanol95&#34;: {&#34;class&#34;: ethanol95,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;ethanol50&#34;: {&#34;class&#34;: ethanol50,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;acetonitrile&#34;: {&#34;class&#34;: acetonitrile,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;methanol&#34;: {&#34;class&#34;: methanol,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;water&#34;: {&#34;class&#34;: water,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;water3aceticacid&#34;: {&#34;class&#34;: water3aceticacid,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}},
+                &#34;isooctane&#34;: {&#34;class&#34;: isooctane,}, # &#34;children&#34;: {&#34;realcontact&#34;: {&#34;class&#34;: realcontact}, &#34;testcontact&#34;: {&#34;class&#34;: testcontact}}}
+            }
+        },
+        &#34;setoff&#34;: {
+            &#34;class&#34;: setoff,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;stacked&#34;: {
+            &#34;class&#34;: stacked,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;rolled&#34;: {
+            &#34;class&#34;: rolled,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;nofood&#34;: {
+            &#34;class&#34;: nofood,
+            &#34;children&#34;: {&#34;ambient&#34;: {&#34;class&#34;: ambient}, &#34;transportation&#34;: {&#34;class&#34;: transportation}, &#34;hotambient&#34;: {&#34;class&#34;: hotambient}}
+        },
+        &#34;yogurt&#34;: {
+            &#34;class&#34;: yogurt,
+            &#34;children&#34;: {&#34;chilled&#34;: {&#34;class&#34;: chilled}, &#34;ambient&#34;: {&#34;class&#34;: ambient}}
+        },
+    }
+
+
+    # ---- Create cascading dropdowns for up to 4 levels.
+    dd1 = widgets.Dropdown(options=list(food_tree.keys()), description=&#34;Level 1:&#34;)
+    dd2 = widgets.Dropdown(options=[], description=&#34;Level 2:&#34;)
+    dd3 = widgets.Dropdown(options=[], description=&#34;Level 3:&#34;)
+    dd4 = widgets.Dropdown(options=[], description=&#34;Level 4:&#34;)
+
+    def update_dd2(*args):
+        selected = dd1.value
+        #print(&#34;dd2:&#34;,selected)
+        opts = list(food_tree[selected][&#34;children&#34;].keys())
+        dd2.options = opts
+        dd2.value = opts[0] if opts else None
+        update_dd3()
+    def update_dd3(*args):
+        if dd2.value is None:
+            dd3.options = []
+            dd3.value = None
+        else:
+            selected1 = dd1.value
+            selected2 = dd2.value
+            #print(&#34;dd3:&#34;,selected1,selected2) # debug
+            subtree = food_tree[selected1][&#34;children&#34;][selected2]
+            if &#34;children&#34; in subtree:
+                opts = list(subtree[&#34;children&#34;].keys())
+                dd3.options = opts
+                dd3.value = opts[0] if opts else None
+            else:
+                dd3.options = []
+                dd3.value = None
+        update_dd4()
+    def update_dd4(*args):
+        if dd3.value is None:
+            dd4.options = []
+            dd4.value = None
+        else:
+            selected1 = dd1.value
+            selected2 = dd2.value
+            selected3 = dd3.value
+            #print(&#34;dd4:&#34;,selected1,selected2,selected3) # debug
+            subtree = food_tree[selected1][&#34;children&#34;][selected2][&#34;children&#34;][selected3]
+            if &#34;children&#34; in subtree:
+                opts = list(subtree[&#34;children&#34;].keys())
+                dd4.options = opts
+                dd4.value = opts[0] if opts else None
+            else:
+                dd4.options = []
+                dd4.value = None
+    dd1.observe(update_dd2, names=&#39;value&#39;)
+    dd2.observe(update_dd3, names=&#39;value&#39;)
+    dd3.observe(update_dd4, names=&#39;value&#39;)
+    update_dd2()  # Initialize
+
+    # ---- Additional inputs for overrides and instance name ----
+    time_val = widgets.FloatText(value=60, description=&#34;Contact Time:&#34;)
+    time_unit = widgets.Dropdown(options=[&#34;s&#34;, &#34;min&#34;, &#34;h&#34;, &#34;days&#34;, &#34;months&#34;, &#34;years&#34;],
+                                 value=&#34;days&#34;, description=&#34;Time Unit:&#34;)
+    temp_val = widgets.FloatText(value=25, description=&#34;Contact Temp:&#34;)
+    temp_unit = widgets.Dropdown(options=[&#34;degC&#34;, &#34;K&#34;],
+                                 value=&#34;degC&#34;, description=&#34;Temp Unit:&#34;)
+    inst_name = widgets.Text(value=&#34;contact1&#34;, description=&#34;Instance Name:&#34;)
+
+    # ---- Button to instantiate the custom food/contact condition ----
+    btn = widgets.Button(description=&#34;Instantiate Custom Condition&#34;, button_style=&#34;success&#34;)
+    out = widgets.Output()
+
+    def instantiate_custom(b):
+        with out:
+            out.clear_output()
+            selected_classes = []
+            # Collect the class from Level 1
+            try:
+                cls1 = food_tree[dd1.value][&#34;class&#34;]
+                selected_classes.append(cls1)
+            except Exception as e:
+                print(&#34;Error at Level 1:&#34;, e)
+                return
+            # Level 2 (if available)
+            if dd2.value is not None:
+                try:
+                    cls2 = food_tree[dd1.value][&#34;children&#34;][dd2.value][&#34;class&#34;]
+                    update_class_list(selected_classes,cls2) # avoid class conflicts (children replace parents)
+                except Exception as e:
+                    print(&#34;Error at Level 2:&#34;, e)
+                    return
+            # Level 3 (if available)
+            if dd3.value is not None:
+                try:
+                    cls3 = food_tree[dd1.value][&#34;children&#34;][dd2.value][&#34;children&#34;][dd3.value][&#34;class&#34;]
+                    update_class_list(selected_classes,cls3) # avoid class conflicts (children replace parents)
+                except Exception as e:
+                    print(&#34;Error at Level 3:&#34;, e)
+                    return
+            # Level 4 (if available)
+            if dd4.options and dd4.value is not None:
+                try:
+                    cls4 = food_tree[dd1.value][&#34;children&#34;][dd2.value][&#34;children&#34;][dd3.value][&#34;children&#34;][dd4.value][&#34;class&#34;]
+                    update_class_list(selected_classes,cls4) # avoid class conflicts (children replace parents)
+                except Exception as e:
+                    print(&#34;Error at Level 4:&#34;, e)
+                    return
+            # Dynamically create a custom class with multiple inheritance.
+            try:
+                CustomClass = type(&#34;CustomFood&#34;, tuple(selected_classes), {})
+            except Exception as e:
+                try:
+                    # for debugging, we rely on level2 (situation fixed with update_class_list())
+                    print(&#34;ERROR detected in foodtree:&#34;,e) # for debuging
+                    [print(c.__name__) for c in selected_classes]
+                    print(&#34;DEBUG:: keep only the last valid class:&#34;, selected_classes[-1])
+                    CustomClass = type(&#34;CustomFood&#34;, tuple(selected_classes[-1:]), {})
+                except Exception as e:
+                    print(&#34;Error creating custom class:&#34;, e)
+                    return
+            # Instantiate the custom class with overrides.
+            try:
+                instance = CustomClass(contacttime=(time_val.value, time_unit.value),
+                                         contacttemperature=(temp_val.value, temp_unit.value))
+            except Exception as e:
+                print(&#34;Error instantiating custom class:&#34;, e)
+                return
+            name_val = inst_name.value.strip()
+            if not name_val:
+                print(&#34;Please provide an instance name.&#34;)
+                return
+            instance.update(contacttime=(time_val.value,time_unit.value),
+                            contactemperature=(temp_val.value,temp_unit.value))
+            builtins.mycontacts[name_val] = instance
+            print(f&#34;Instantiated custom condition &#39;{name_val}&#39;:&#34;)
+            print(instance)
+            print(&#34;\nCurrent conditions:&#34;, list(builtins.mycontacts.keys()))
+    btn.on_click(instantiate_custom)
+
+    if _preheatedGUI_:
+        instantiate_custom(None) # we instantiate manually
+
+    ui = widgets.VBox([
+         widgets.HBox([dd1, dd2, dd3, dd4]),
+         widgets.HBox([time_val, time_unit, temp_val, temp_unit]),
+         inst_name,
+         btn,
+         out
+    ])
+
+    return ui</code></pre>
 </details>
 </dd>
 <dt id="food.get_defined_init_params"><code class="name flex">
@@ -1626,6 +2622,38 @@ if __name__ == &#39;__main__&#39;:
     return subclasses_info</code></pre>
 </details>
 </dd>
+<dt id="food.update_class_list"><code class="name flex">
+<span>def <span class="ident">update_class_list</span></span>(<span>clslist, clsnew)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Updates clslist with clsnew if clsnew is a subclass of an existing class in clslist.
+If clsnew is a subclass of clslist[i], clslist[i] is replaced with clsnew.
+If no subclass relationship is found, clsnew is appended to clslist.</p>
+<h2 id="parameters">Parameters</h2>
+<p>clslist (list): A list of classes.
+clsnew (type): A new class to check and possibly add.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_class_list(clslist, clsnew):
+    &#34;&#34;&#34;
+    Updates clslist with clsnew if clsnew is a subclass of an existing class in clslist.
+    If clsnew is a subclass of clslist[i], clslist[i] is replaced with clsnew.
+    If no subclass relationship is found, clsnew is appended to clslist.
+
+    Parameters:
+        clslist (list): A list of classes.
+        clsnew (type): A new class to check and possibly add.
+    &#34;&#34;&#34;
+    for i, cls in enumerate(clslist):
+        if issubclass(clsnew, cls):  # Check if clsnew is a subclass of clslist[i]
+            clslist[i] = clsnew  # Replace the parent class with the new subclass
+            return  # Exit immediately after updating
+
+    clslist.append(clsnew)  # If no subclass relationship is found, append clsnew</code></pre>
+</details>
+</dd>
 <dt id="food.wrap_text"><code class="name flex">
 <span>def <span class="ident">wrap_text</span></span>(<span>text, width=20)</span>
 </code></dt>
@@ -1701,6 +2729,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -1777,6 +2806,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -1846,6 +2876,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.chemicalaffinity.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.chemicalaffinity.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.chemicalaffinity.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.chemicalaffinity.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.chemicalaffinity.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.chemicalaffinity.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.chemicalaffinity.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -1922,6 +2953,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -1990,6 +3022,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.foodphysics.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -2066,6 +3099,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -2136,6 +3170,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -2161,7 +3196,7 @@ if __name__ == &#39;__main__&#39;:
 </summary>
 <pre><code class="python">class ethanol50(simulant, perfectlymixed, intermediate):
     &#34;&#34;&#34;Ethanol 50% food simulant&#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethanol&#34;
+    _chemicalsubstance = &#34;water+ethanol&#34;
     _polarityindex = 7.0 # Intermediate polarity between ethanol and water.
     name = &#34;ethanol 50&#34;
     description = &#34;ethanol 50, food simulant of dairy products&#34;
@@ -2206,6 +3241,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -2252,6 +3288,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.ethanol.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.ethanol.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.ethanol.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.ethanol.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.ethanol.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.ethanol.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.ethanol.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -2321,6 +3358,7 @@ if __name__ == &#39;__main__&#39;:
 <li><code><a title="food.chemicalaffinity.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.chemicalaffinity.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.chemicalaffinity.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.chemicalaffinity.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.chemicalaffinity.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.chemicalaffinity.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.chemicalaffinity.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -2565,6 +3603,11 @@ representation of food in contact with packaging.</li>
     def migrant(self): return self.substance    # synonym
     @property
     def solute(self): return self.substance     # synonym
+    # SML
+    @property
+    def SML(self): return self._SML if self.hasSML else None
+    @property
+    def SMLunit(self): return self._SMLunit if self.hasSML else None
 
     # -----------------------------------------------------------------------------
     # Setter methods for class/instance properties: same definitions as in patankar.layer (mandatory)
@@ -2602,12 +3645,33 @@ representation of food in contact with packaging.</li>
         if not isinstance(value,migrant):
             raise TypeError(f&#34;substance/migrant/solute must be a migrant not a {type(value).__name__}&#34;)
         self._substance = value
+        if value.hasSML:
+            self.SML = value.SML
+            self.SMLunit = value.SMLunit
     @migrant.setter
     def migrant(self,value):
         self.substance = value
+        if self.substance.hasSML:
+            self.SML = self.substance.SML
+            self.SMLunit = self.substance.SMLunit
     @solute.setter
     def solute(self,value):
         self.substance = value
+    @SML.setter
+    def SML(self,value):
+        if isinstance(value,np.ndarray):
+            value = value.item(0)
+        if not isinstance(value,(float,int)):
+            raise TypeError(f&#34;SML value must be a float or int not a {type(value).__name__}&#34;)
+        self._SML = float(value)
+        self._SMLunit = &#34;mg/kg&#34;
+    @SMLunit.setter
+    def SMLunit(self,units):
+        units = &#34;mg/kg&#34; if units is None else units
+        if not isinstance(units,str):
+            raise TypeError(f&#34;SMLunit value must be a str not a {type(units).__name__}&#34;)
+        self._SMLunit = units
+
     # -----------------------------------------------------------------------------
     # Henry-like coefficient k and its alias k0 (internal use)
     # -----------------------------------------------------------------------------
@@ -2659,9 +3723,15 @@ representation of food in contact with packaging.</li>
         template.update(ispolymer = False)
         def func(**kwargs):
             if self.chemicalsubstance:
-                simulant = migrant(self.chemicalsubstance)
-                template.update(Pk = simulant.polarityindex,
-                                Vk = simulant.molarvolumeMiller)
+                if &#34;+&#34; in self.chemicalsubstance: # mixture (e.g.: water + ethanol)
+                    ks = [migrant(s) for s in self.chemicalsubstance.split(&#34;+&#34;)] # several k: ks
+                    Pk = np.mean([k.polarityindex for k in ks]) # we average Pk assuming 50:50 mixure
+                    Vk = np.mean([k.molarvolumeMiller for k in ks]) # we average Vk assuming 50:50 mixure
+                else: # pure simulant
+                    simulant = migrant(self.chemicalsubstance)
+                    Pk = simulant.polarityindex
+                    Vk = simulant.molarvolumeMiller
+                template.update(Pk = Pk, Vk = Vk)
                 k = self._substance.k.evaluate(**dict(template, **kwargs))
                 return k
             else:
@@ -2741,6 +3811,28 @@ representation of food in contact with packaging.</li>
 </dl>
 <h3>Instance variables</h3>
 <dl>
+<dt id="food.foodlayer.SML"><code class="name">var <span class="ident">SML</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def SML(self): return self._SML if self.hasSML else None</code></pre>
+</details>
+</dd>
+<dt id="food.foodlayer.SMLunit"><code class="name">var <span class="ident">SMLunit</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def SMLunit(self): return self._SMLunit if self.hasSML else None</code></pre>
+</details>
+</dd>
 <dt id="food.foodlayer.chemicalclass"><code class="name">var <span class="ident">chemicalclass</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -2892,6 +3984,7 @@ def substance(self): return self._substance # substance can be ambiguous</code><
 <li><code><a title="food.foodphysics.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -3088,7 +4181,9 @@ solution.plotCF()
         &#34;physicalstate&#34;,&#34;chemicalclass&#34;, # phase F properties
         &#34;substance&#34;,&#34;migrant&#34;,&#34;solute&#34;, # i properties with synonyms substance=migrant=solute
         # users use &#34;k&#34;, but internally we use k0, keep _kmodel in the instance
-        &#34;k0&#34;,&#34;k0unit&#34;,&#34;kmodel&#34;,&#34;_compute_kmodel&#34; # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        &#34;k0&#34;,&#34;k0unit&#34;,&#34;kmodel&#34;,&#34;_compute_kmodel&#34;, # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
+        # SML properties
+        &#34;SML&#34;,&#34;SMLunit&#34;
         ]
 
     # ------------------------------------------------------
@@ -3233,6 +4328,11 @@ solution.plotCF()
             self.__class__._transferable_properties[&#34;substance&#34;][&#34;foodlayer&#34;][&#34;prototype&#34;] = migrant
             self.__class__._transferable_properties[&#34;substance&#34;][&#34;layer&#34;][&#34;prototype&#34;] = layer
             self.__class__._transferable_properties[&#34;medium&#34;][&#34;layer&#34;][&#34;prototype&#34;] = layer
+        # Subtance propagation (if needed)
+        if self.hassubstance:
+            if self.substance.hasSML:
+                self.SML = self.substance.SML
+                self.SMLunit = self.substance.SMLunit
 
     # ------- [properties to access/modify simstate] --------
     @property
@@ -3328,9 +4428,14 @@ solution.plotCF()
             &#34;&#34;&#34;Helper function to convert physical quantities to SI.&#34;&#34;&#34;
             if isinstance(value, tuple) and len(value) == 2:
                 scale = check_units(value)[0]  # Convert to SI, drop unit
-                return np.array([scale], dtype=float)  # Ensure NumPy array
-            elif isinstance(value, (int, float, np.ndarray)):
+                if isinstance(scale,np.ndarray):
+                    return scale
+                else:
+                    return np.array([scale], dtype=float)  # Ensure NumPy array
+            elif isinstance(value, (int, float)):
                 return np.array([value], dtype=float)  # Ensure NumPy array
+            elif isinstance(value,np.ndarray):
+                return value
             else:
                 raise ValueError(f&#34;Invalid value for physical quantity: {value}&#34;)
         # Update `name` and `description` if provided
@@ -3473,8 +4578,37 @@ solution.plotCF()
     # For convenience, several operators have been overloaded
     #   medium &gt;&gt; packaging      # sets the volume and the surfacearea
     #   medium &gt;&gt; material       # propgates the contact temperature from the medium to the material
-    #   sol = medium &lt;&lt; material # simulate migration from the material to the medium
+    #   medium in packaging    # simulate migration from the material to the medium
+    #   medium &lt;&lt; packaging
     # --------------------------------------------------------------------
+
+    # method: medium._from(packaging) and its associatd operators in or &lt;&lt;
+    def _from(self, other = None):
+        &#34;&#34;&#34;Inherit packaging properties&#34;&#34;&#34;
+        from patankar.geometry import Packaging3D
+        if not isinstance(other,Packaging3D):
+            raise TypeError(f&#34;other must be a Packaging3d or migrant not a {type(other).__name__}&#34;)
+        return other._to(self) # we use the reverse definition
+
+    def __lshift__(self,other):
+        &#34;&#34;&#34;
+            overload &lt;&lt;
+            food &lt;&lt; packaging --&gt; food
+            full example: substance in food &lt;&lt; packaging &gt;&gt; layer --&gt; layer
+        &#34;&#34;&#34;
+        return self._from(other)
+
+    def __rmod__(self,other):
+        &#34;&#34;&#34;
+            overload % as: migrant % food --&gt; food
+            full example: migrant in food in packaging | layer &gt;&gt; condition &gt;&gt; condition
+        &#34;&#34;&#34;
+        from patankar.loadpubchem import migrant
+        if not isinstance(other,migrant):
+            raise TypeError(f&#34;other must a migrant and not a {type(other).__name__}&#34;)
+        self.update(substance=other)
+        return self
+
 
     # method: medium._to(material) and its associated operator &gt;&gt;
     def _to(self, other = None):
@@ -3533,23 +4667,39 @@ solution.plotCF()
                 # Register the transfer in other’s inheritance tracking
                 other.acknowledge(what=target_attr, category=category)
 
-                # to chain &gt;&gt;
-                return other
+        # to chain &gt;&gt;
+        return other
 
     def __rshift__(self, other):
-        &#34;&#34;&#34;Overloads &gt;&gt; to propagate to other.&#34;&#34;&#34;
+        &#34;&#34;&#34;
+            Overloads &gt;&gt; to propagate to other.
+            e.g. food&gt;&gt;layer --&gt; layer
+        &#34;&#34;&#34;
         # inherit substance/migrant from other if self.migrant is None
         if isinstance(other,(layer,foodlayer)):
             if isinstance(self,foodlayer):
                 if self.substance is None and other.substance is not None:
                     self.substance = other.substance
-        return self._to(other) # propagates
+        return self._to(other) # propagates other
 
-    def __matmul__(self, other):
-        &#34;&#34;&#34;Overload @: equivalent to &gt;&gt; if other is a layer.&#34;&#34;&#34;
+        # The operators @ and | are depreciated and should not be used anymore
+    def __matmul__(self, other): # depreciated @
+        &#34;&#34;&#34;
+            Overload @: equivalent to &gt;&gt; if other is a layer.
+            e.g. food@layer --&gt; layer (depreciated)
+        &#34;&#34;&#34;
         if not isinstance(other, layer):
             raise TypeError(f&#34;Right operand must be a layer not a {type(other).__name__}&#34;)
-        return self._to(other)
+        return self._to(other)  # propagates other
+
+    def __or__(self, other): # depreciated |
+        &#34;&#34;&#34;
+            Overload @: equivalent to &gt;&gt; if other is a layer.
+            e.g. food|layer --&gt; layer (depreciated)
+        &#34;&#34;&#34;
+        if not isinstance(other, layer):
+            raise TypeError(f&#34;Right operand must be a layer not a {type(other).__name__}&#34;)
+        return self._to(other)  # propagates other
 
     # migration method
     def migration(self,material,**kwargs):
@@ -3574,7 +4724,12 @@ solution.plotCF()
                 return True
             elif callable(self.kmodel):
                 return self.kmodel() is not None
-        return False</code></pre>
+        return False
+
+    @property
+    def hasSML(self):
+        &#34;&#34;&#34;Returns True if SML has been defined&#34;&#34;&#34;
+        return hasattr(self,&#34;_SML&#34;) and self._SML is not None</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -3624,6 +4779,19 @@ def PBC(self):
     if isinstance(htmp,np.ndarray):
         htmp = htmp.item()
     return htmp is None</code></pre>
+</details>
+</dd>
+<dt id="food.foodphysics.hasSML"><code class="name">var <span class="ident">hasSML</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if SML has been defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasSML(self):
+    &#34;&#34;&#34;Returns True if SML has been defined&#34;&#34;&#34;
+    return hasattr(self,&#34;_SML&#34;) and self._SML is not None</code></pre>
 </details>
 </dd>
 <dt id="food.foodphysics.haskmodel"><code class="name">var <span class="ident">haskmodel</span></code></dt>
@@ -3904,9 +5072,14 @@ The category under which the properties are grouped.</p>
         &#34;&#34;&#34;Helper function to convert physical quantities to SI.&#34;&#34;&#34;
         if isinstance(value, tuple) and len(value) == 2:
             scale = check_units(value)[0]  # Convert to SI, drop unit
-            return np.array([scale], dtype=float)  # Ensure NumPy array
-        elif isinstance(value, (int, float, np.ndarray)):
+            if isinstance(scale,np.ndarray):
+                return scale
+            else:
+                return np.array([scale], dtype=float)  # Ensure NumPy array
+        elif isinstance(value, (int, float)):
             return np.array([value], dtype=float)  # Ensure NumPy array
+        elif isinstance(value,np.ndarray):
+            return value
         else:
             raise ValueError(f&#34;Invalid value for physical quantity: {value}&#34;)
     # Update `name` and `description` if provided
@@ -3989,6 +5162,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.foodlayer.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodlayer.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodlayer.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodlayer.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodlayer.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodlayer.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodlayer.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -4065,6 +5239,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -4141,6 +5316,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -4217,6 +5393,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -4293,6 +5470,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -4369,6 +5547,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -4435,6 +5614,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.chemicalaffinity.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.chemicalaffinity.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.chemicalaffinity.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.chemicalaffinity.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.chemicalaffinity.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.chemicalaffinity.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.chemicalaffinity.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -4501,6 +5681,7 @@ The category under which the properties are grouped.</p>
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -5156,6 +6337,37 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             return res
         else:
             raise ValueError(&#34;Invalid layer object&#34;)
+
+    # sum: + over a list/dict
+    @classmethod
+    def sum(cls, layers):
+        &#34;&#34;&#34;
+        Sums all layer instances from a dictionary or list and returns a multilayer instance.
+
+        Parameters:
+          layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.
+
+        Returns:
+          A single layer instance representing the stack (sum) of all input layers.
+
+        Example:
+          mymultilayer = layer.sum(mylayers)
+          # where &#39;mylayers&#39; could be a dict of layers or a list of layers.
+        &#34;&#34;&#34;
+        # If layers is a dictionary, iterate over its values.
+        if isinstance(layers, dict):
+            layer_iter = layers.values()
+        else:
+            layer_iter = layers
+        total = None
+        for L in layer_iter:
+            if not isinstance(L,layer):
+                raise TypeError(f&#34;all layers must of class layer not a {type(L).__name__}&#34;)
+            if total is None:
+                total = L
+            else:
+                total = total + L  # This uses the overloaded __add__ operator of the layer class.
+        return total
 
 
     # --------------------------------------------------------------------
@@ -6007,13 +7219,28 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         sim.savestate(self,medium) # store store the inputs in sim for chaining
         return sim
 
-    # overloading operation
+    # overloading operation &gt;&gt;
     def __rshift__(self, medium):
-        &#34;&#34;&#34;Overloads &gt;&gt; to propagate migration to food.&#34;&#34;&#34;
+        &#34;&#34;&#34;
+            Overloads &gt;&gt; to propagate migration to food.
+                layer &gt;&gt; food --&gt; simulation --&gt; food (use food.lastsimulation to see it)
+                layer &gt;&gt; condition --&gt; simulation --&gt; condition
+        &#34;&#34;&#34;
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
         return self.contact(medium)
+
+    # overloading in
+    def __rmod__(self,other):
+        &#34;&#34;&#34;
+            Overload in to enable: susbtance % layer --&gt; layer
+        &#34;&#34;&#34;
+        from patankar.loadpubchem import migrant
+        if not isinstance(other,migrant):
+            raise TypeError(f&#34;other must a migrant and not a {type(other).__name__}&#34;)
+        self.update(substance=other)
+        return self
 
     # --------------------------------------------------------------------
     # Safe update method
@@ -6295,6 +7522,53 @@ def resolvename(cls, param_value, param_key, **unresolved):
             f&#34;Conflicting definitions: Multiple synonyms {found_keys} were provided for &#39;{param_key}&#39;.&#34;
         )
     return resolved_value</code></pre>
+</details>
+</dd>
+<dt id="food.layer.sum"><code class="name flex">
+<span>def <span class="ident">sum</span></span>(<span>layers)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sums all layer instances from a dictionary or list and returns a multilayer instance.</p>
+<h2 id="parameters">Parameters</h2>
+<p>layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.</p>
+<h2 id="returns">Returns</h2>
+<p>A single layer instance representing the stack (sum) of all input layers.</p>
+<h2 id="example">Example</h2>
+<p>mymultilayer = layer.sum(mylayers)</p>
+<h1 id="where-mylayers-could-be-a-dict-of-layers-or-a-list-of-layers">where 'mylayers' could be a dict of layers or a list of layers.</h1></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def sum(cls, layers):
+    &#34;&#34;&#34;
+    Sums all layer instances from a dictionary or list and returns a multilayer instance.
+
+    Parameters:
+      layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.
+
+    Returns:
+      A single layer instance representing the stack (sum) of all input layers.
+
+    Example:
+      mymultilayer = layer.sum(mylayers)
+      # where &#39;mylayers&#39; could be a dict of layers or a list of layers.
+    &#34;&#34;&#34;
+    # If layers is a dictionary, iterate over its values.
+    if isinstance(layers, dict):
+        layer_iter = layers.values()
+    else:
+        layer_iter = layers
+    total = None
+    for L in layer_iter:
+        if not isinstance(L,layer):
+            raise TypeError(f&#34;all layers must of class layer not a {type(L).__name__}&#34;)
+        if total is None:
+            total = L
+        else:
+            total = total + L  # This uses the overloaded __add__ operator of the layer class.
+    return total</code></pre>
 </details>
 </dd>
 </dl>
@@ -7584,6 +8858,7 @@ current value of the parameter and its default value.</p></div>
 <li><code><a title="food.texture.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.texture.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.texture.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.texture.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.texture.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.texture.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.texture.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -7650,6 +8925,7 @@ current value of the parameter and its default value.</p></div>
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -7726,6 +9002,7 @@ current value of the parameter and its default value.</p></div>
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -7740,7 +9017,7 @@ current value of the parameter and its default value.</p></div>
 </dd>
 <dt id="food.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;patankar.loadpubchem.CompoundIndex object&gt;, raiseerror=True)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;patankar.loadpubchem.CompoundIndex object&gt;, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -7766,7 +9043,9 @@ In this mode:
 = The first formula
 - logP
 = All logP values concatenated into a numpy array (self.logP_array).
-The main attribute self.logP will be the same array or you may pick a single representative.</p>
+The main attribute self.logP will be the same array or you may pick a single representative.
+- structure_file (str): Path to the SDF file for the compound.
+- image_file (str): Path to the PNG image of the compound.</p>
 <p>2) Case (b) - By numeric molecular weight(s) alone (generic substance):</p>
 <hr>
 <p>Example:
@@ -7905,6 +9184,9 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
              - formula   = The first formula
              - logP      = All logP values concatenated into a numpy array (self.logP_array).
                            The main attribute self.logP will be the same array or you may pick a single representative.
+             - structure_file (str): Path to the SDF file for the compound.
+             - image_file (str): Path to the PNG image of the compound.
+
 
     2) Case (b) - By numeric molecular weight(s) alone (generic substance):
        ---------------------------------------------------------
@@ -7960,6 +9242,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     # class attribute, maximum width
     _maxdisplay = 40
 
+    # Puchem rest engine for strcture and PNG
+    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
+    IMAGE_SIZE = (800, 800)
+
+
     # migrant constructor with its predictor templates
     def __init__(self, name=None,   # substance identified by name
                  M=None, logP=None, # substance identified by M, logP(less reliable)
@@ -7989,7 +9276,13 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                  db=dbdefault, # cache.PubChem database
 
-                 raiseerror=True # raise an error if the susbtance is not found
+                 raiseerror=True, # raise an error if the susbtance is not found
+
+                 no_cache = False, # flag to force nocache for PNG and SDF only
+
+                 verbose = True, # flag to control alert messages on substances
+
+                 annex1 = True, # flag used by EUFCMannex1 to avoid infinite loop
 
                  ):
         &#34;&#34;&#34;
@@ -8057,10 +9350,17 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
+        # cache for structure (SDF) and thumbs (PNG)
+        self.no_cache = no_cache
+        self._cache_PNG_dir = os.path.join(db.cache_dir,&#39;thumbs&#39;)
+        self._cache_SDF_dir = os.path.join(db.cache_dir,&#39;structure&#39;)
+        self.image_file = None        # path of the PNG file
+        self.structure_file = None    # path of the SDF file
+        self.verbose = verbose
 
         # special case
         if name==M==None:
-            name = &#39;toluene&#39;
+            return # name = &#39;toluene&#39;
 
         # Convert M to a numpy array if given
         if M is not None:
@@ -8087,14 +9387,16 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 raise ValueError(&#34;A db instance is required for searching by name when M is None.&#34;)
 
             df = db.find(name, output_format=&#34;simple&#34;)
-            if df.empty:
+            if df is None or df.empty:
                 if raiseerror:
-                    raise ValueError(f&#34;&lt;{name}&gt; not found&#34;)
+                    raise ValueError(f&#34;Compound &lt;{name}&gt; not found&#34;)
                 print(f&#34;LOADPUBCHEM ERRROR: &lt;{name}&gt; not found - empty object returned&#34;)
                 self.compound = name
                 self.name = [name]
                 self.cid = []
                 self.CAS = []
+                self.InChi = []
+                self.InChiKey = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
@@ -8154,7 +9456,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                     # Process logP similarly (if not None or empty)
                     logp_val = row.get(&#34;logP&#34;, None)
-                    if logp_val not in (None, &#34;&#34;):
+                    if logp_val not in (None, &#34;&#34;,[]):
                         all_data[&#34;logp&#34;].append(to_float(logp_val))
                     else:
                         all_data[&#34;logp&#34;].append(np.nan)
@@ -8202,6 +9504,28 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 self.vdWvolume = self.volume_3d # for future use (Dwelle use it)
                 alpha = 1/0.65 if self.count_rings[&#34;aromatic&#34;]&gt;0 else 1.3
                 self.vdWvolume2 = 1/alpha * self.molarvolumeMiller * 10.0/6.02214076 # in A3
+
+                # if dbannex1 is available
+                if doSML and annex1:
+                    annex1record = None
+                    if self.cid in dbannex1:
+                        annex1record = dbannex1.bycid(self.cid,verbose=self.verbose)
+                    elif self.CAS in dbannex1:
+                        annex1record = dbannex1.byCAS(self.CAS,verbose=self.verbose)
+                    if annex1record is not None:
+                        SML = annex1record[&#34;SML&#34;]
+                        SMLT = annex1record.get(&#34;SMLT&#34;)
+                        self.SML = min(SML,SMLT) if SMLT is not None else SML
+                        self.SMLunit = annex1record[&#39;SMLunit&#39;]
+                        self.annex1 = annex1record
+                    else:
+                        self.SML = None # we validate that we looked for an SML but we did not find it
+
+                # add PNG thumb and SDF structure files (without loading them)
+                # we prevent cache filling when it is necessary
+                # self._donwload_PNG() and self._donwload_SDF() will do the job when needed
+                self.image_file = os.path.join(self._cache_PNG_dir, f&#39;{self.cid}.png&#39;)
+                self.structure_file = os.path.join(self._cache_SDF_dir, f&#39;{self.cid}.sdf&#39;)
 
 
         # Case (b): name is None, M is provided =&gt; generic substance
@@ -8278,7 +9602,92 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             self.k = None
             self.ktemplate = None
 
+    # low-level PNG and SDF feeders
+    def _download_pubchem_structuredata(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
+        self._download_SDF()
+        self._download_PNG()
 
+    def _download_SDF(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_SDF_dir, exist_ok=True)
+        if self.structure_file and (not os.path.isfile(self.structure_file) or self.no_cache):
+            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
+            response = requests.get(sdf_url, timeout=2)
+            if response.status_code == 200:
+                with open(self.structure_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+            else:
+                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
+
+    def _download_PNG(self):
+        &#34;&#34;&#34;Downloads and caches the PNG thumb file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_PNG_dir, exist_ok=True)
+        if self.image_file and (not os.path.isfile(self.image_file) or self.no_cache):
+            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
+            response = requests.get(png_url, timeout=1)
+            if response.status_code == 200:
+                with open(self.image_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+                self._crop_image()
+
+    def _crop_image(self):
+        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
+        if not PIL_AVAILABLE:
+            return
+        img = Image.open(self.image_file).convert(&#34;RGB&#34;)  # Convert to RGB to avoid transparency issues
+        def get_whitest_corner_color():
+            &#34;&#34;&#34;Finds the whitest (brightest) color among the four image corners.&#34;&#34;&#34;
+            width, height = img.size
+            corners = { # Get RGB values of the four corners
+                &#34;top_left&#34;: img.getpixel((0, 0)),
+                &#34;top_right&#34;: img.getpixel((width - 1, 0)),
+                &#34;bottom_left&#34;: img.getpixel((0, height - 1)),
+                &#34;bottom_right&#34;: img.getpixel((width - 1, height - 1))
+            }
+            def luminance(color):
+                r, g, b = color
+                return 0.299 * r + 0.587 * g + 0.114 * b
+            # Find the brightest (whitest) corner
+            whitest_corner = max(corners, key=lambda c: luminance(corners[c]))
+            return corners[whitest_corner]  # Return the RGB value of the whitest corner
+        bgcolor = get_whitest_corner_color() # background color, usually (245,245,245) for PubChem
+        bg = Image.new(&#34;RGB&#34;, img.size, bgcolor)  # Create a background image of same size
+        diff = ImageChops.difference(img, bg)  # Find pixels that are different from background
+        bbox = diff.getbbox()  # Get bounding box of non-white pixels
+        if bbox:
+            img = img.crop(bbox)  # Crop the image to the detected bounding box
+            img_array = np.array(img)
+            mask = np.all(img_array == bgcolor, axis=-1)
+            img_array[mask] = [255, 255, 255] # Replace matching pixels with pure white
+            Image.fromarray(img_array).save(self.image_file) # # Convert back to image and save
+
+    # image property
+    @property
+    def image(self):
+        &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            self._download_PNG() # download PNG if not cached
+            return Image.open(self.image_file)
+
+    # rawimage property
+    @property
+    def _rawimage(self):
+        &#34;&#34;&#34;returns the raw (binary) image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            with open(self.image_file, &#34;rb&#34;) as f:
+                image_bytes = f.read()
+            return image_bytes
+
+    # structure
+    @property
+    def structure(self):
+        &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
+        if self.structure_file:
+            self._download_SDF() # download SDF if not cached
+            return parse_sdf(self.structure_file)
+
+    # low-level model validator and property assignment
     def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):
         &#34;&#34;&#34;
         Generic method for validating and setting a migration property model.
@@ -8333,6 +9742,28 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             return self.k.evaluate(**updated_template)
         return func
 
+    # hasSML: False if SML does not exist or is None
+    @property
+    def hasSML(self):
+        &#34;&#34;&#34;Returns True if it has an SML defined&#34;&#34;&#34;
+        return hasattr(self,&#34;SML&#34;) and self.SML is not None
+    @property
+    def hasannex1(self):
+        &#34;&#34;&#34;Returns True if annex1 is defined&#34;&#34;&#34;
+        return hasattr(self,&#34;annex1&#34;) and isinstance(self.annex1,complyEU.annex1record)
+    @property
+    def hasSMLgroup(self):
+        &#34;&#34;&#34;Returns True if the sustance is regulated in a group&#34;&#34;&#34;
+        return self.hasannex1 and self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None
+    @property
+    def nSMLgroup(self):
+        &#34;&#34;&#34;Returns the number of substances in the group&#34;&#34;&#34;
+        if not self.hasSMLgroup:
+            return 0
+        return len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])
+    @property
+    def worstcaseSMLgroup(self):
+        &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;
 
 
     def __repr__(self):
@@ -8353,21 +9784,30 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
-        if isinstance(self,migrantToxtree):
+        # Add SML and EU rules
+        if self.hasSML:
+            if self.hasannex1:
+                attributes[&#34;--- EC 10/2011&#34;]=&#34;-&#34;*15
+                attributes[&#34;SML&#34;] = str(self.SML)
+                attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+                if self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None:
+                    attributes[&#34;part a group&#34;]=f&#34;of {len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])} substances&#34;
+                attributes[&#34;Name&#34;] =self.annex1[&#34;name&#34;]
+                attributes[&#34;CAS&#34;] = self.annex1[&#34;CAS&#34;]
+                attributes[&#34;EC|FCM|REF&#34;] = f&#34;{self.annex1[&#39;EC&#39;]}|{self.annex1[&#39;FCM&#39;]}|{self.annex1[&#39;Ref&#39;]}&#34;
+            else:
+                attributes[&#34;SML&#34;] = str(self.SML)
+                if hasattr(self,&#34;SMLunit&#34;):
+                    attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+        # Add Toxtree attributes
+        if isinstance(self,migrantToxtree) and self.compound not in (None,&#34;&#34;,[]):
+            attributes[&#34;--- ToxTree&#34;]=&#34;-&#34;*15
             attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
             attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
             attributes[&#34;Toxicology&#34;] = self.CramerClass
             attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
             attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
-            alerts = self.alerts
-            # Process alerts
-            alert_index = 0
-            for key, value in alerts.items():
-                if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
-                    alert_index += 1
-                    # Convert key name to readable format (split at capital letters)
-                    alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
-                    attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+            attributes.update(self.showalerts) # Process alerts
 
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
@@ -8462,7 +9902,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &gt;&gt;&gt; compound.molarvolumeMiller
         130.5  # Example output
         &#34;&#34;&#34;
-        return a * self.M**b
+        if self.M is not None:
+            return a * self.M**b
+        else:
+            None
 
 
     @property
@@ -8687,7 +10130,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
     @property
     def volume_3d(self):
-        &#34;&#34;&#34;
+        r&#34;&#34;&#34;
         Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
         This function applies an empirical, linear-additive scheme:
@@ -8789,12 +10232,26 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             estimates.
 
         &#34;&#34;&#34;
-        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
+        if hasattr(self, &#39;vdWvolume2&#39;):
+            return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+        else:
+            return None</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li>patankar.loadpubchem.migrantToxtree</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="food.migrant.IMAGE_SIZE"><code class="name">var <span class="ident">IMAGE_SIZE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="food.migrant.PUBCHEM_ROOT_URL"><code class="name">var <span class="ident">PUBCHEM_ROOT_URL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Instance variables</h3>
 <dl>
 <dt id="food.migrant.Deval"><code class="name">var <span class="ident">Deval</span></code></dt>
@@ -8916,6 +10373,60 @@ def count_rings(self):
         &#39;non_aromatic&#39;: len(non_aromatic_rings),
         &#39;fusions&#39;: fusion_counts
     }</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.hasSML"><code class="name">var <span class="ident">hasSML</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if it has an SML defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasSML(self):
+    &#34;&#34;&#34;Returns True if it has an SML defined&#34;&#34;&#34;
+    return hasattr(self,&#34;SML&#34;) and self.SML is not None</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.hasSMLgroup"><code class="name">var <span class="ident">hasSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if the sustance is regulated in a group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasSMLgroup(self):
+    &#34;&#34;&#34;Returns True if the sustance is regulated in a group&#34;&#34;&#34;
+    return self.hasannex1 and self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.hasannex1"><code class="name">var <span class="ident">hasannex1</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if annex1 is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasannex1(self):
+    &#34;&#34;&#34;Returns True if annex1 is defined&#34;&#34;&#34;
+    return hasattr(self,&#34;annex1&#34;) and isinstance(self.annex1,complyEU.annex1record)</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.image"><code class="name">var <span class="ident">image</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the rasterized image of the migrant</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image(self):
+    &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
+    if self.image_file:
+        self._download_PNG() # download PNG if not cached
+        return Image.open(self.image_file)</code></pre>
 </details>
 </dd>
 <dt id="food.migrant.keval"><code class="name">var <span class="ident">keval</span></code></dt>
@@ -9059,7 +10570,25 @@ def molarvolumeMiller(self, a=0.997, b=1.03):
     &gt;&gt;&gt; compound.molarvolumeMiller
     130.5  # Example output
     &#34;&#34;&#34;
-    return a * self.M**b</code></pre>
+    if self.M is not None:
+        return a * self.M**b
+    else:
+        None</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.nSMLgroup"><code class="name">var <span class="ident">nSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the number of substances in the group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def nSMLgroup(self):
+    &#34;&#34;&#34;Returns the number of substances in the group&#34;&#34;&#34;
+    if not self.hasSMLgroup:
+        return 0
+    return len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])</code></pre>
 </details>
 </dd>
 <dt id="food.migrant.parse_formula"><code class="name">var <span class="ident">parse_formula</span></code></dt>
@@ -9160,6 +10689,21 @@ def polarityindex(self,logP=None,V=None):
                           V=self.molarvolumeMiller if V is None else V)</code></pre>
 </details>
 </dd>
+<dt id="food.migrant.structure"><code class="name">var <span class="ident">structure</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the metadata associated with the migrant</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def structure(self):
+    &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
+    if self.structure_file:
+        self._download_SDF() # download SDF if not cached
+        return parse_sdf(self.structure_file)</code></pre>
+</details>
+</dd>
 <dt id="food.migrant.volumeDwelle"><code class="name">var <span class="ident">volumeDwelle</span></code></dt>
 <dd>
 <div class="desc"><p>Returns the approximate volume as estimated by Dwelle
@@ -9193,7 +10737,10 @@ def volumeDwelle(self):
         estimates.
 
     &#34;&#34;&#34;
-    return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
+    if hasattr(self, &#39;vdWvolume2&#39;):
+        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+    else:
+        return None</code></pre>
 </details>
 </dd>
 <dt id="food.migrant.volume_3d"><code class="name">var <span class="ident">volume_3d</span></code></dt>
@@ -9202,47 +10749,18 @@ def volumeDwelle(self):
 <p>This function applies an empirical, linear-additive scheme:
 Adapted code from: <a href="https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.">https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.</a> The intent is to remove the dependence to babel.</p>
 <p>[
-egin{aligned}
-V_{vdw} =\,&amp; n_H
-imes 7.24 + n_C
-imes 20.58 + n_N
-imes 15.6 + n_O
-imes 14.71 + n_F
-imes 13.31 \
-&amp;+ n_{Cl}
-imes 22.45 + n_{Br}
-imes 26.52 + n_{I}
-imes 32.52 + n_P
-imes 24.43 \
-&amp;+ n_S
-imes 24.43 + n_{Si}
-imes 38.79 + n_{Se}
-imes 28.73 + n_{Te}
-imes 36.62 \
-&amp;- 5.92
-imes (
-ext{bonds}) - 14.7
-imes (
-ext{no_ar}) - 3.8
-imes (
-ext{no_non_ar}) \
-&amp;+ 5
-imes (
-ext{no_f_ring_ArAr}) + 3
-imes (
-ext{no_f_ring_AlAr}) + 1
-imes (
-ext{no_f_ring_AlAl}) \
-&amp;- 5
-imes (
-ext{no_f_ring_S})
+\begin{aligned}
+V_{vdw} =\,&amp; n_H \times 7.24 + n_C \times 20.58 + n_N \times 15.6 + n_O \times 14.71 + n_F \times 13.31 \
+&amp;+ n_{Cl} \times 22.45 + n_{Br} \times 26.52 + n_{I} \times 32.52 + n_P \times 24.43 \
+&amp;+ n_S \times 24.43 + n_{Si} \times 38.79 + n_{Se} \times 28.73 + n_{Te} \times 36.62 \
+&amp;- 5.92 \times (\text{bonds}) - 14.7 \times (\text{no_ar}) - 3.8 \times (\text{no_non_ar}) \
+&amp;+ 5 \times (\text{no_f_ring_ArAr}) + 3 \times (\text{no_f_ring_AlAr}) + 1 \times (\text{no_f_ring_AlAl}) \
+&amp;- 5 \times (\text{no_f_ring_S})
 \end{aligned}
 ]</p>
 <p>Here, the bond count is estimated using the heuristic:</p>
 <p>[
-ext{bonds} pprox (
-ext{number of heavy atoms} - 1) + (
-ext{number of rings})
+\text{bonds} \approx (\text{number of heavy atoms} - 1) + (\text{number of rings})
 ]</p>
 <p>and heavy atoms are all atoms except hydrogen.</p>
 <p>For this implementation:
@@ -9262,7 +10780,7 @@ formula (str): Molecular formula (e.g., 'C15H16O2') to retrieve accurate hydroge
 </summary>
 <pre><code class="python">@property
 def volume_3d(self):
-    &#34;&#34;&#34;
+    r&#34;&#34;&#34;
     Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
     This function applies an empirical, linear-additive scheme:
@@ -9346,6 +10864,18 @@ def volume_3d(self):
             5*(no_f_ring_ArAr) + 3*(no_f_ring_AlAr) + 1*(no_f_ring_AlAl) - 5*(no_f_ring_S)
 
     return V_vdw</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.worstcaseSMLgroup"><code class="name">var <span class="ident">worstcaseSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the substance with the lowest molecular weight in the group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def worstcaseSMLgroup(self):
+    &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 </dl>
@@ -9535,6 +11065,7 @@ def volume_3d(self):
 <li><code><a title="food.foodphysics.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -9581,6 +11112,7 @@ def volume_3d(self):
 <li><code><a title="food.oliveoil.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.oliveoil.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.oliveoil.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.oliveoil.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.oliveoil.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.oliveoil.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.oliveoil.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -9651,6 +11183,7 @@ def volume_3d(self):
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -9727,6 +11260,7 @@ def volume_3d(self):
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -9803,6 +11337,7 @@ def volume_3d(self):
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -9879,6 +11414,7 @@ def volume_3d(self):
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -9952,6 +11488,7 @@ def volume_3d(self):
 <li><code><a title="food.texture.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.texture.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.texture.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.texture.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.texture.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.texture.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.texture.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10044,6 +11581,7 @@ def volume_3d(self):
 <li><code><a title="food.foodphysics.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10097,6 +11635,7 @@ def volume_3d(self):
 <li><code><a title="food.foodproperty.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodproperty.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodproperty.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodproperty.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodproperty.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodproperty.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodproperty.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10155,6 +11694,7 @@ def volume_3d(self):
 <li><code><a title="food.setoff.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.setoff.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.setoff.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.setoff.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.setoff.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.setoff.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.setoff.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10221,6 +11761,7 @@ def volume_3d(self):
 <li><code><a title="food.texture.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.texture.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.texture.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.texture.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.texture.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.texture.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.texture.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10288,6 +11829,7 @@ def volume_3d(self):
 <li><code><a title="food.foodphysics.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10354,6 +11896,7 @@ def volume_3d(self):
 <li><code><a title="food.foodproperty.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodproperty.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodproperty.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodproperty.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodproperty.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodproperty.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodproperty.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10422,6 +11965,7 @@ def volume_3d(self):
 <li><code><a title="food.foodproperty.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodproperty.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodproperty.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodproperty.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodproperty.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodproperty.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodproperty.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10480,6 +12024,7 @@ def volume_3d(self):
 <li><code><a title="food.setoff.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.setoff.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.setoff.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.setoff.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.setoff.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.setoff.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.setoff.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10556,6 +12101,7 @@ def volume_3d(self):
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10620,6 +12166,7 @@ def volume_3d(self):
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10695,6 +12242,7 @@ def volume_3d(self):
 <li><code><a title="food.foodphysics.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10763,6 +12311,7 @@ def volume_3d(self):
 <li><code><a title="food.foodphysics.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10839,6 +12388,7 @@ def volume_3d(self):
 <li><code><a title="food.realcontact.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realcontact.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realcontact.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realcontact.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realcontact.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realcontact.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realcontact.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10905,6 +12455,7 @@ def volume_3d(self):
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -10971,6 +12522,7 @@ def volume_3d(self):
 <li><code><a title="food.simulant.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.simulant.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.simulant.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.simulant.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.simulant.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.simulant.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.simulant.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -11061,6 +12613,7 @@ def volume_3d(self):
 <li><code><a title="food.realfood.contact" href="#food.foodphysics.contact">contact</a></code></li>
 <li><code><a title="food.realfood.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.realfood.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.realfood.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.realfood.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.realfood.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.realfood.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -11085,10 +12638,12 @@ def volume_3d(self):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="food.check_units" href="#food.check_units">check_units</a></code></li>
+<li><code><a title="food.create_food_tree_widget" href="#food.create_food_tree_widget">create_food_tree_widget</a></code></li>
 <li><code><a title="food.get_defined_init_params" href="#food.get_defined_init_params">get_defined_init_params</a></code></li>
 <li><code><a title="food.help_food" href="#food.help_food">help_food</a></code></li>
 <li><code><a title="food.is_valid_classname" href="#food.is_valid_classname">is_valid_classname</a></code></li>
 <li><code><a title="food.list_food_classes" href="#food.list_food_classes">list_food_classes</a></code></li>
+<li><code><a title="food.update_class_list" href="#food.update_class_list">update_class_list</a></code></li>
 <li><code><a title="food.wrap_text" href="#food.wrap_text">wrap_text</a></code></li>
 </ul>
 </li>
@@ -11189,6 +12744,8 @@ def volume_3d(self):
 <ul class="">
 <li><code><a title="food.foodlayer.CF0" href="#food.foodlayer.CF0">CF0</a></code></li>
 <li><code><a title="food.foodlayer.CF0units" href="#food.foodlayer.CF0units">CF0units</a></code></li>
+<li><code><a title="food.foodlayer.SML" href="#food.foodlayer.SML">SML</a></code></li>
+<li><code><a title="food.foodlayer.SMLunit" href="#food.foodlayer.SMLunit">SMLunit</a></code></li>
 <li><code><a title="food.foodlayer.chemicalclass" href="#food.foodlayer.chemicalclass">chemicalclass</a></code></li>
 <li><code><a title="food.foodlayer.chemicalsubstance" href="#food.foodlayer.chemicalsubstance">chemicalsubstance</a></code></li>
 <li><code><a title="food.foodlayer.contactemperature" href="#food.foodlayer.contactemperature">contactemperature</a></code></li>
@@ -11225,6 +12782,7 @@ def volume_3d(self):
 <li><code><a title="food.foodphysics.copy" href="#food.foodphysics.copy">copy</a></code></li>
 <li><code><a title="food.foodphysics.description" href="#food.foodphysics.description">description</a></code></li>
 <li><code><a title="food.foodphysics.get_param" href="#food.foodphysics.get_param">get_param</a></code></li>
+<li><code><a title="food.foodphysics.hasSML" href="#food.foodphysics.hasSML">hasSML</a></code></li>
 <li><code><a title="food.foodphysics.haskmodel" href="#food.foodphysics.haskmodel">haskmodel</a></code></li>
 <li><code><a title="food.foodphysics.hassimulation" href="#food.foodphysics.hassimulation">hassimulation</a></code></li>
 <li><code><a title="food.foodphysics.hassubstance" href="#food.foodphysics.hassubstance">hassubstance</a></code></li>
@@ -11403,6 +12961,7 @@ def volume_3d(self):
 <li><code><a title="food.layer.split" href="#food.layer.split">split</a></code></li>
 <li><code><a title="food.layer.struct" href="#food.layer.struct">struct</a></code></li>
 <li><code><a title="food.layer.substance" href="#food.layer.substance">substance</a></code></li>
+<li><code><a title="food.layer.sum" href="#food.layer.sum">sum</a></code></li>
 <li><code><a title="food.layer.thickness" href="#food.layer.thickness">thickness</a></code></li>
 <li><code><a title="food.layer.type" href="#food.layer.type">type</a></code></li>
 <li><code><a title="food.layer.update" href="#food.layer.update">update</a></code></li>
@@ -11441,18 +13000,27 @@ def volume_3d(self):
 <h4><code><a title="food.migrant" href="#food.migrant">migrant</a></code></h4>
 <ul class="two-column">
 <li><code><a title="food.migrant.Deval" href="#food.migrant.Deval">Deval</a></code></li>
+<li><code><a title="food.migrant.IMAGE_SIZE" href="#food.migrant.IMAGE_SIZE">IMAGE_SIZE</a></code></li>
+<li><code><a title="food.migrant.PUBCHEM_ROOT_URL" href="#food.migrant.PUBCHEM_ROOT_URL">PUBCHEM_ROOT_URL</a></code></li>
 <li><code><a title="food.migrant.check_alt_propclass" href="#food.migrant.check_alt_propclass">check_alt_propclass</a></code></li>
 <li><code><a title="food.migrant.count_rings" href="#food.migrant.count_rings">count_rings</a></code></li>
 <li><code><a title="food.migrant.dispmax" href="#food.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="food.migrant.hasSML" href="#food.migrant.hasSML">hasSML</a></code></li>
+<li><code><a title="food.migrant.hasSMLgroup" href="#food.migrant.hasSMLgroup">hasSMLgroup</a></code></li>
+<li><code><a title="food.migrant.hasannex1" href="#food.migrant.hasannex1">hasannex1</a></code></li>
+<li><code><a title="food.migrant.image" href="#food.migrant.image">image</a></code></li>
 <li><code><a title="food.migrant.keval" href="#food.migrant.keval">keval</a></code></li>
 <li><code><a title="food.migrant.molarvolumeLinear" href="#food.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
 <li><code><a title="food.migrant.molarvolumeMiller" href="#food.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
+<li><code><a title="food.migrant.nSMLgroup" href="#food.migrant.nSMLgroup">nSMLgroup</a></code></li>
 <li><code><a title="food.migrant.parse_formula" href="#food.migrant.parse_formula">parse_formula</a></code></li>
 <li><code><a title="food.migrant.polarityindex" href="#food.migrant.polarityindex">polarityindex</a></code></li>
+<li><code><a title="food.migrant.structure" href="#food.migrant.structure">structure</a></code></li>
 <li><code><a title="food.migrant.suggest_alt_Dclass" href="#food.migrant.suggest_alt_Dclass">suggest_alt_Dclass</a></code></li>
 <li><code><a title="food.migrant.suggest_alt_Dmodel" href="#food.migrant.suggest_alt_Dmodel">suggest_alt_Dmodel</a></code></li>
 <li><code><a title="food.migrant.volumeDwelle" href="#food.migrant.volumeDwelle">volumeDwelle</a></code></li>
 <li><code><a title="food.migrant.volume_3d" href="#food.migrant.volume_3d">volume_3d</a></code></li>
+<li><code><a title="food.migrant.worstcaseSMLgroup" href="#food.migrant.worstcaseSMLgroup">worstcaseSMLgroup</a></code></li>
 </ul>
 </li>
 <li>

@@ -286,7 +286,7 @@ Version History
 &#34;&#34;&#34;
 
 
-import os
+import os,io
 import subprocess
 import requests
 import json
@@ -298,7 +298,7 @@ from datetime import datetime
 import time
 
 try:
-    from PIL import Image
+    from PIL import Image, ImageChops
     PIL_AVAILABLE = True
 except ImportError:
     PIL_AVAILABLE = False
@@ -306,7 +306,11 @@ except ImportError:
 # private version of pubchempy
 from patankar.private.pubchempy import get_compounds
 
-__all__ = [&#39;CompoundIndex&#39;, &#39;dbdefault&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;, &#39;migrantToxtree&#39;, &#39;polarity_index&#39;]
+# --- SFPPy.Comply imports ---
+# European rules
+import patankar.private.EUFCMannex1 as complyEU # Annex 1 (we import all the module as complyEU)
+
+__all__ = [&#39;CompoundIndex&#39;, &#39;create_substance_widget&#39;, &#39;dbannex1&#39;, &#39;dbdefault&#39;, &#39;floatNone&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;, &#39;migrantToxtree&#39;, &#39;parse_molblock&#39;, &#39;parse_sdf&#39;, &#39;polarity_index&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -315,7 +319,15 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.30&#34;
+__version__ = &#34;1.32&#34;
+
+
+# %% SFFy.Comply databases version 2025
+if complyEU.EuFCMannex1.isindexinitialized(): # &lt;EuFCMannex1: 1194 records (Annex 1 of 10/2011/EC)&gt;
+    dbannex1 = complyEU.EuFCMannex1(pubchem=True) # we activate the advanced features (more resources consuming)
+    doSML = True # SML are available
+else:
+    doSML = False # SML are not available (prevent circular references when the index of EuFCMannex1 is refreshed)
 
 # %% Private functions and constants (used by estimators)
 
@@ -325,6 +337,9 @@ _PATANKAR_FOLDER = os.path.dirname(__file__)
 # Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
 PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
 PubChem_lastQueryTime = 0 # global variable
+
+# robust float() function
+floatNone = lambda x: x if isinstance(x, (float, type(None))) else float(x)
 
 # returns polarity index from logP and V
 def polarity_index(logP=None, V=None, name=None,
@@ -393,7 +408,8 @@ def polarity_index(logP=None, V=None, name=None,
     # Fetch logP and V if `name` is given
     if logP is None or V is None:
         if name is None:
-            raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
+            #raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
+            return None
         from patankar.loadpubchem import migrant
         tmp = migrant(name)
         logP, V = tmp.logP, tmp.molarvolumeMiller
@@ -430,6 +446,421 @@ def polarity_index(logP=None, V=None, name=None,
     # Vectorized computation for arrays
     return np.vectorize(compute_P)(logP, V)
 
+# SDF block parser
+def parse_molblock(molblock,useDataFrame=True):
+    &#34;&#34;&#34;
+        Parse a single molecule record (molblock) from an SDF file.
+        Retains header info, atoms, bonds, and metadata.
+        parse_molblock(molblock: List[str], useDataFrame: bool) -&gt; Dict:
+    &#34;&#34;&#34;
+    result = {}
+    # Dynamically detect the counts line by searching for the &#34;V2000&#34; marker.
+    counts_index = None
+    for idx, line in enumerate(molblock):
+        if &#34;V2000&#34; in line:
+            counts_index = idx
+            break
+    if counts_index is None:
+        raise ValueError(&#34;Counts line not found (V2000 marker missing).&#34;)
+
+    # Header: all lines before the counts line.
+    header = molblock[:counts_index]
+    result[&#39;header&#39;] = header
+
+    counts_line = molblock[counts_index]
+    # Parse counts using fixed-width slicing (V2000 specification):
+    # columns 1-3: number of atoms, columns 4-6: number of bonds.
+    try:
+        atoms_count = int(counts_line[0:3])
+        bonds_count = int(counts_line[3:6])
+    except Exception as e:
+        raise ValueError(&#34;Error parsing counts line using fixed-width fields.&#34;) from e
+    result[&#39;atoms_count&#39;] = atoms_count
+    result[&#39;bonds_count&#39;] = bonds_count
+
+    # Parse atoms: the next atoms_count lines after the counts line.
+    atoms = []
+    atom_start = counts_index + 1
+    for i in range(atom_start, atom_start + atoms_count):
+        line = molblock[i]
+        # Even though atom lines are fixed-width, splitting on whitespace works if numbers are separated.
+        parts = line.split()
+        if len(parts) &lt; 4:
+            continue
+        x = float(parts[0])
+        y = float(parts[1])
+        z = float(parts[2])
+        element = parts[3]
+        atoms.append({&#39;x&#39;: x, &#39;y&#39;: y, &#39;z&#39;: z, &#39;element&#39;: element})
+    result[&#39;atoms&#39;] = pd.DataFrame(atoms) if useDataFrame else atoms
+
+    # Parse bonds: the following bonds_count lines.
+    bonds = []
+    bond_start = atom_start + atoms_count
+    for i in range(bond_start, bond_start + bonds_count):
+        line = molblock[i]
+        parts = line.split()
+        if len(parts) &lt; 3:
+            continue
+        # Atom indices are 1-indexed.
+        atom1 = int(parts[0])
+        atom2 = int(parts[1])
+        bond_type = int(parts[2])
+        bonds.append({&#39;atom1&#39;: atom1, &#39;atom2&#39;: atom2, &#39;bond_type&#39;: bond_type})
+    result[&#39;bonds&#39;] = pd.DataFrame(bonds) if useDataFrame else bonds
+
+    # Find the &#34;M  END&#34; marker (should be immediately after the bond block).
+    end_index = bond_start + bonds_count
+    if molblock[end_index].strip() != &#34;M  END&#34;:
+        raise ValueError(&#34;M  END not found where expected.&#34;)
+
+    # Parse metadata: everything after &#34;M  END&#34; until the record terminator ($$$$).
+    metadata = {}
+    meta_lines = molblock[end_index+1:]
+    key = None
+    value_lines = []
+    for line in meta_lines:
+        line = line.rstrip(&#39;\n&#39;)
+        if line.startswith(&#34;$$$$&#34;):
+            break
+        if line.startswith(&#34;&gt; &lt;&#34;):
+            if key is not None:
+                metadata[key] = &#34;\n&#34;.join(value_lines).strip()
+            m = re.match(r&#39;&gt; &lt;(.+)&gt;&#39;, line)
+            key = m.group(1) if m else line
+            value_lines = []
+        else:
+            if key is not None:
+                value_lines.append(line)
+    if key is not None and value_lines:
+        metadata[key] = &#34;\n&#34;.join(value_lines).strip()
+    result[&#39;metadata&#39;] = pd.DataFrame([metadata]) if useDataFrame else metadata
+    return result
+
+# SDF file parser (for QSAR and SQPR)
+def parse_sdf(filename,useDataFrame=True):
+    &#34;&#34;&#34;
+    Parse an SDF file (filename) containing one or more molecule records.
+    Each record is separated by &#34;$$$$&#34;.
+    parse_sdf(filename: str, useDataFrame: bool) -&gt; List[Dict]:
+    &#34;&#34;&#34;
+    with open(filename, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+        sdf_str = f.read()
+    # Split the file into records using the &#34;$$$$&#34; record terminator.
+    records = sdf_str.split(&#34;$$$$&#34;)
+    molecules = []
+    for record in records:
+        lines = record.strip().splitlines()
+        if not lines:
+            continue  # Skip empty records.
+        mol = parse_molblock(lines,useDataFrame=useDataFrame)
+        molecules.append(mol)
+    if len(molecules)==1:
+        molecules = molecules[0] # unnest
+    return molecules
+
+
+# %% Widget initialized with substance
+def create_substance_widget(substance=None):
+    &#34;&#34;&#34;
+    Creates a two-step widget interface for selecting a substance via loadpubchem.
+
+    Step 1 (left panel):
+      - A text field (max 60 characters) prompts for a chemical name or CAS.
+      - A “Search Substance” button triggers a call to migrant(substance).
+      - If the returned record is None or not an instance of migrant, an error is shown and Step 2 is not enabled.
+      - If a valid record is found, an image of the molecule (if available) is displayed centered below the search area.
+
+    Step 2 (right panel):
+      - Displays record information:
+          • record.compound (short text)
+          • record.name (if a list, a dropdown is shown; if a string, the text is wrapped)
+          • record.CAS
+          • record.cid (if available)
+          • record.formula
+          • record.InChiKey
+          • record.smiles
+          • record.M (displayed as a string)
+          • If record.hasSML is True, shows “{record.SML} [{record.SMLunit}]”
+      - A text field to define a substance name (default “m1”).
+      - A button “Instantiate Substance” stores the record in a global dictionary (builtins.mysubstances).
+      - A “Back” button allows returning to Step 1.
+
+    Usage:
+      In a Jupyter Lab/Notebook cell, do:
+         from patankar.loadpubchem import create_substance_widget
+         widget = create_substance_widget()
+         display(widget)
+      Later, access created substances via builtins.mysubstances.
+    &#34;&#34;&#34;
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display, HTML
+    except ImportError as e:
+        raise ImportError(&#34;ipywidgets and IPython are required for this widget interface.&#34;) from e
+
+    import builtins
+    if not hasattr(builtins, &#34;mysubstances&#34;):
+        builtins.mysubstances = {}
+    global mysubstances
+    mysubstances = builtins.mysubstances
+    # flag for preheated GUI interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, &#34;_PREHEATED_&#34;) and getattr(builtins, &#34;_PREHEATED_&#34;) is True
+
+    # arg check (initial substance)
+    substance = &#34;&#34; if substance is None else substance
+    if not isinstance(substance,str):
+        raise TypeError(f&#34;Substance must be str not a {type(substance).__name__}&#34;)
+
+    # Inject CSS to disable resizing
+    display(HTML(&#34;&#34;&#34;
+    &lt;style&gt;
+        .no-resize textarea {
+            resize: none !important;
+        }
+    &lt;/style&gt;
+    &#34;&#34;&#34;))
+
+    # --- Step 1: Search Panel ---
+    search_text = widgets.Text(
+        value=substance,
+        placeholder=&#34;Enter chemical name or CAS&#34;,
+        description=&#34;Substance:&#34;,
+        layout=widgets.Layout(width=&#34;96%&#34;),
+        disabled=False
+    )
+    search_text.max_length = 120
+
+    search_button = widgets.Button(
+        description=&#34;Search Substance&#34;,
+        button_style=&#34;primary&#34;
+    )
+    search_output = widgets.Output()
+
+    left_panel = widgets.VBox([search_text, search_button, search_output])
+
+
+    # --- Step 2: Confirmation Panel ---
+    compound_label = widgets.HTML(value=&#34;Compound: &#34;)
+    # For record.name, initially show an empty Text widget; later switch to Dropdown if needed.
+    name_display = widgets.Text(value=&#34;&#34;, description=&#34;Name:&#34;, disabled=True, layout=widgets.Layout(width=&#34;60%&#34;))
+    cas_label = widgets.HTML(value=&#34;CAS: &#34;)
+    cid_label = widgets.HTML(value=&#34;CID: &#34;)
+    formula_label = widgets.HTML(value=&#34;Formula: &#34;)
+    inchikey_label = widgets.HTML(value=&#34;InChiKey: &#34;)
+    smiles_label = widgets.Textarea(
+            value=&#34;SMILES: &#34;,
+            layout=widgets.Layout(width=&#34;90%&#34;, height=&#34;40px&#34;),  # Auto-stretching
+            disabled=True  # Prevents user input (like a label)
+         )# widgets.Label(value=&#34;SMILES: &#34;)
+    smiles_label.add_class(&#34;no-resize&#34;)  # Attach CSS class
+    M_label = widgets.HTML(value=&#34;M: &#34;)
+    SML_label = widgets.HTML(value=&#34;SML: &#34;)
+
+    substance_name = widgets.Text(
+        value=&#34;m1&#34;,
+        description=&#34;Substance Name:&#34;,
+        layout=widgets.Layout(width=&#34;50%&#34;)
+    )
+
+    instantiate_button = widgets.Button(
+        description=&#34;Instantiate Substance&#34;,
+        button_style=&#34;success&#34;
+    )
+    back_button = widgets.Button(
+        description=&#34;Back&#34;,
+        button_style=&#34;&#34;
+    )
+    right_output = widgets.Output()
+
+    right_panel = widgets.VBox([
+        name_display, compound_label, cas_label, cid_label, formula_label,
+        inchikey_label, smiles_label, M_label, SML_label,
+        substance_name,
+        widgets.HBox([instantiate_button, back_button]),
+        right_output
+    ])
+    right_panel.layout.display = &#34;none&#34;
+
+    # adjust the panel size
+    left_panel.layout = widgets.Layout(width=&#34;45%&#34;)
+    right_panel.layout = widgets.Layout(width=&#34;55%&#34;)
+
+    # cid link
+    cidlink = &#39;&lt;a href=&#34;https://pubchem.ncbi.nlm.nih.gov/compound/{0}&#34; title=&#34;go to PubChem&#34; target=&#34;_blank&#34;&gt;{0}&lt;/a&gt;&#39;
+
+
+    # --- Callbacks ---
+    def pretty(field,value,unit=&#34;&#34;):
+        &#34;&#34;&#34;prettify outputs&#34;&#34;&#34;
+        sep = &#34;&#34; if unit==&#34;&#34; else &#34; &#34;
+        if isinstance(value,list) and len(value)==1:
+            valout = value[0]
+        elif value is None:
+            valout = &#34;N/A&#34;
+        elif isinstance(value,str):
+            if len(value)&gt;40:
+                valout = value[:40]
+                sep=&#34;...&#34;
+            else:
+                valout = value
+        else:
+            valout = value
+        if field == &#34;CID&#34;:
+            valout = [cidlink.format(c) for c in valout] if isinstance(valout,list) else cidlink.format(valout)
+        return f&#34;{field}: &lt;b&gt;{valout}&lt;/b&gt;{sep}{unit}&#34;
+
+
+    def search_substance(b):
+        with search_output:
+            search_output.clear_output()
+            query = search_text.value.strip()
+            if not query:
+                print(&#34;Please enter a substance name or CAS.&#34;)
+                return
+            try:
+                record = migrant(query,raiseerror=False)
+            except Exception as e:
+                print(&#34;Error during search:&#34;, e)
+                return
+            if record is None or not isinstance(record, migrant):
+                print(f&#34;No valid substance found for &#39;{query}&#39;.&#34;)
+                return
+
+            # Populate right panel with record details.
+            compound_label.value = pretty(&#34;Compound&#34;,str(record.compound)[:40])
+            if isinstance(record.name, list):
+                name_disp = widgets.Dropdown(options=record.name, description=&#34;Name:&#34;,
+                                             layout=widgets.Layout(text_align=&#34;left&#34;,width=&#34;60%&#34;))
+            else:
+                name_disp = widgets.HTML(value=pretty(&#34;Name&#34;,record.name))
+            right_panel.children = [name_disp] + list(right_panel.children[1:])
+            cas_label.value = pretty(&#34;CAS&#34;,record.CAS)
+            cid_label.value = pretty(&#34;CID&#34;,record.cid)
+            formula_label.value = pretty(&#34;Formula&#34;,record.formula)
+            inchikey_label.value = pretty(&#34;InChiKey&#34;,record.InChiKey)
+            smiles_label.value = f&#34;SMILES: {record.smiles}&#34;
+            # M value
+            try:
+                m_val = record.M_array.item(0) if hasattr(record, &#34;M_array&#34;) and isinstance(record.M_array, (list, tuple,)) else record.M
+            except Exception:
+                m_val = record.M
+            M_label.value = pretty(&#34;M&#34;,m_val,&#34;[g/mol]&#34;)
+            # SML and toxicological data for non positively listed substances
+            if getattr(record, &#34;hasSML&#34;, False):
+                nomenclature = f&#34;EC: {record.annex1[&#39;EC&#39;]} | FCM: {record.annex1[&#39;FCM&#39;]} | Ref: {record.annex1[&#39;Ref&#39;]} |&amp;nbsp;&#34;
+                category = (
+                    &#34;authorized as additive and monomer&#34; if record.annex1[&#34;Additive_or_PPA&#34;] and record.annex1[&#34;Use_as_monomer_macromolecule&#34;]
+                    else &#34;authorized as additive&#34; if record.annex1[&#34;Additive_or_PPA&#34;]
+                    else &#34;authorized as monomer&#34; if record.annex1[&#34;Use_as_monomer_macromolecule&#34;]
+                    else &#34;&#34;
+                )
+                if record.annex1.n: # we use extended attributes of annex1
+                    group = f&#34;SMLT = {record.annex1.SMLT} [mg/kg] for {record.annex1.n} substances.&lt;br&gt;The smallest is {record.annex1.gnamemin} with CAS {record.annex1.gCASmin}.&#34;
+                else:
+                    group = &#34;&#34;
+                SML_label.value = f&#39;&lt;span style=&#34;color: #4C76CD;&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;SML: &lt;b&gt;{record.SML}&lt;/b&gt; [{record.SMLunit}]&lt;/td&gt;&lt;td&gt;{group}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;🇪🇺 {nomenclature}&lt;/td&gt;&lt;td&gt;{category}&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/span&gt;&#39;
+
+            else:
+                try: # No SML we try get a TTC approach
+                    recordTT = migrantToxtree(query,verbose=False,raiseerror=False) # verbose=False to prevent duplicated messages
+                    SML_label.value = &#34;&lt;br&gt;&#34;.join([
+                        &#39;&lt;span style=&#34;color: Crimson;&#34;&gt;Cramer classification: &#39; + recordTT.CramerClass + &#39;&lt;/span&gt;&#39;,
+                        &#39;&lt;span style=&#34;color: Crimson;&#34;&gt;CF TTC adult = &#39; + f&#34;{recordTT.CFTTC} {recordTT.CFTTCunits}&#34; + &#39;&lt;/span&gt;&#39;,
+                        &#39;&lt;span style=&#34;color: Crimson;&#34;&gt;&lt;b&gt;&#39; + &#34;&lt;br&gt;&#34;.join(f&#34;⚠️ {alertid}: {reason}&#34; for alertid, reason in recordTT.showalerts.items()) + &#39;&lt;/b&gt;&lt;/span&gt;&#39;
+                    ])
+                except:
+                    SML_label.value = &#34;SML: N/A ()&#34; # we return a default value if ToxTree is not installed
+
+            # --- Display image ---
+            pngrecord = record.image
+            max_width,max_height = (600,300)  # Cap at 600 px and 300px
+            if pngrecord:
+                orig_width, orig_height = pngrecord.width, pngrecord.height
+                if orig_height &gt; 1.2*orig_width: # we need to rotate the image if ratio &lt; 1.2
+                    rotated_image = pngrecord.rotate(90, expand=True) # counter-clockwise
+                    img_byte_arr = io.BytesIO()
+                    rotated_image.save(img_byte_arr, format=&#34;PNG&#34;)
+                    img_binary = img_byte_arr.getvalue()
+                    orig_width, orig_height = orig_height, orig_width
+                else:
+                    img_binary = record._rawimage
+                aspect_ratio = orig_width / orig_height
+                if orig_width &gt; max_width or orig_height &gt; max_height:
+                    if orig_width / max_width &gt; orig_height / max_height:
+                        width, height = max_width, int(max_width / aspect_ratio)
+                    else:
+                        height, width = max_height, int(max_height * aspect_ratio)
+                else:
+                    width, height = orig_width, orig_height
+                img_widget = widgets.Image(value=img_binary, format=&#39;png&#39;)
+                # Set the image widget&#39;s size directly.
+                img_widget.width = width
+                img_widget.height = height
+                # Center the image in an HBox without forcing its own width/height.
+                centered_img = widgets.HBox([img_widget], layout=widgets.Layout(justify_content=&#39;center&#39;))
+                left_panel.children = [search_text, search_button, centered_img, search_output]
+            else:
+                # If no image, ensure left_panel has its original layout.
+                left_panel.children = [search_text, search_button, search_output]
+            # Store record for later instantiation.
+            right_panel.record = record
+            right_panel.layout.display = &#34;&#34;
+            # Optionally clear the search field.
+            # search_text.value = &#34;&#34;
+
+    search_button.on_click(search_substance)
+
+    # Step 2: Instantiate callback
+    def instantiate_substance(b):
+        with right_output:
+            right_output.clear_output()
+            record = getattr(right_panel, &#34;record&#34;, None)
+            if record is None or not isinstance(record,migrant):
+                print(&#34;No substance record available.&#34;)
+                return
+            sub_name = substance_name.value.strip()
+            if not sub_name:
+                print(&#34;Please provide a valid substance name.&#34;)
+                return
+            # we store the record in a global dictionary.
+            builtins.mysubstances[sub_name] = record
+            if b:
+                print(f&#34;Substance &#39;{sub_name}&#39; instantiated:&#34;)
+                # Display selected properties (short summary)
+                print(f&#34;  Compound: {record.compound}&#34;)
+                print(f&#34;  Name: {record.name[:3] if isinstance(record.name,list) else record.name}&#34;)
+                print(f&#34;  CAS: {record.CAS}&#34;)
+                #print(f&#34;  CID: {record.cid}&#34;)
+                #print(f&#34;  Formula: {record.formula}&#34;)
+                #print(f&#34;  InChiKey: {record.InChiKey}&#34;)
+                #print(f&#34;  SMILES: {record.smiles}&#34;)
+                print(f&#34;  M: {record.M}&#34;)
+                if getattr(record, &#34;hasSML&#34;, False):
+                    print(f&#34;  SML: {record.SML} [{record.SMLunit}]&#34;)
+                print(&#34;\nCurrent substances:&#34;, list(builtins.mysubstances.keys()))
+
+    instantiate_button.on_click(instantiate_substance)
+
+    if _preheatedGUI_:
+        search_substance(None) # we instatiate manually
+        instantiate_substance(None) # we instantiate manually
+
+    # Step 2: Back callback to return to Step 1
+    def go_back(b):
+        with right_output:
+            right_output.clear_output()
+            if len(left_panel.children) &gt; 3:  # Image included
+                if isinstance(left_panel.children[2], widgets.HBox):  # Ensure it&#39;s the image container
+                    left_panel.children = [search_text, search_button, search_output]
+        right_panel.layout.display = &#34;none&#34;
+
+
+    back_button.on_click(go_back)
+
+    # Arrange the two panels side by side.
+    ui = widgets.HBox([left_panel, right_panel])
+    return ui
 
 
 # %% Core class (low-level)
@@ -571,12 +1002,12 @@ class CompoundIndex:
             &#34;name&#34;: name,
             &#34;synonyms&#34;: synonyms_list,
             &#34;CAS&#34;: cas_list,
-            &#34;M&#34;: float(full_data.get(&#34;molecular_weight&#34;)),
+            &#34;M&#34;: floatNone(full_data.get(&#34;molecular_weight&#34;)),
             &#34;formula&#34;: full_data.get(&#34;molecular_formula&#34;),
             &#34;SMILES&#34;: full_data.get(&#34;canonical_smiles&#34;),
             &#34;InChi&#34;: full_data.get(&#34;inchi&#34;),
             &#34;InChiKey&#34;: full_data.get(&#34;inchikey&#34;),
-            &#34;logP&#34;: float(full_data.get(&#34;xlogp&#34;)),
+            &#34;logP&#34;: floatNone(full_data.get(&#34;xlogp&#34;)),
             &#34;date&#34;: datetime.now().strftime(&#34;%Y-%m-%d&#34;),
         }
         return record
@@ -687,6 +1118,11 @@ class CompoundIndex:
         :return: pd.DataFrame with the results (possibly multiple rows)
         &#34;&#34;&#34;
         global PubChem_lastQueryTime
+
+        if query in (None,&#34;&#34;):
+            return
+        if not isinstance(query,str):
+            raise TypeError(f&#34;query must be a str not a {type(query).__name__}&#34;)
         qlower = query.strip().lower()
 
         if qlower not in self.index:
@@ -904,6 +1340,9 @@ class migrant:
              - formula   = The first formula
              - logP      = All logP values concatenated into a numpy array (self.logP_array).
                            The main attribute self.logP will be the same array or you may pick a single representative.
+             - structure_file (str): Path to the SDF file for the compound.
+             - image_file (str): Path to the PNG image of the compound.
+
 
     2) Case (b) - By numeric molecular weight(s) alone (generic substance):
        ---------------------------------------------------------
@@ -959,6 +1398,11 @@ class migrant:
     # class attribute, maximum width
     _maxdisplay = 40
 
+    # Puchem rest engine for strcture and PNG
+    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
+    IMAGE_SIZE = (800, 800)
+
+
     # migrant constructor with its predictor templates
     def __init__(self, name=None,   # substance identified by name
                  M=None, logP=None, # substance identified by M, logP(less reliable)
@@ -988,7 +1432,13 @@ class migrant:
 
                  db=dbdefault, # cache.PubChem database
 
-                 raiseerror=True # raise an error if the susbtance is not found
+                 raiseerror=True, # raise an error if the susbtance is not found
+
+                 no_cache = False, # flag to force nocache for PNG and SDF only
+
+                 verbose = True, # flag to control alert messages on substances
+
+                 annex1 = True, # flag used by EUFCMannex1 to avoid infinite loop
 
                  ):
         &#34;&#34;&#34;
@@ -1056,10 +1506,17 @@ class migrant:
         self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
+        # cache for structure (SDF) and thumbs (PNG)
+        self.no_cache = no_cache
+        self._cache_PNG_dir = os.path.join(db.cache_dir,&#39;thumbs&#39;)
+        self._cache_SDF_dir = os.path.join(db.cache_dir,&#39;structure&#39;)
+        self.image_file = None        # path of the PNG file
+        self.structure_file = None    # path of the SDF file
+        self.verbose = verbose
 
         # special case
         if name==M==None:
-            name = &#39;toluene&#39;
+            return # name = &#39;toluene&#39;
 
         # Convert M to a numpy array if given
         if M is not None:
@@ -1086,14 +1543,16 @@ class migrant:
                 raise ValueError(&#34;A db instance is required for searching by name when M is None.&#34;)
 
             df = db.find(name, output_format=&#34;simple&#34;)
-            if df.empty:
+            if df is None or df.empty:
                 if raiseerror:
-                    raise ValueError(f&#34;&lt;{name}&gt; not found&#34;)
+                    raise ValueError(f&#34;Compound &lt;{name}&gt; not found&#34;)
                 print(f&#34;LOADPUBCHEM ERRROR: &lt;{name}&gt; not found - empty object returned&#34;)
                 self.compound = name
                 self.name = [name]
                 self.cid = []
                 self.CAS = []
+                self.InChi = []
+                self.InChiKey = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
@@ -1153,7 +1612,7 @@ class migrant:
 
                     # Process logP similarly (if not None or empty)
                     logp_val = row.get(&#34;logP&#34;, None)
-                    if logp_val not in (None, &#34;&#34;):
+                    if logp_val not in (None, &#34;&#34;,[]):
                         all_data[&#34;logp&#34;].append(to_float(logp_val))
                     else:
                         all_data[&#34;logp&#34;].append(np.nan)
@@ -1201,6 +1660,28 @@ class migrant:
                 self.vdWvolume = self.volume_3d # for future use (Dwelle use it)
                 alpha = 1/0.65 if self.count_rings[&#34;aromatic&#34;]&gt;0 else 1.3
                 self.vdWvolume2 = 1/alpha * self.molarvolumeMiller * 10.0/6.02214076 # in A3
+
+                # if dbannex1 is available
+                if doSML and annex1:
+                    annex1record = None
+                    if self.cid in dbannex1:
+                        annex1record = dbannex1.bycid(self.cid,verbose=self.verbose)
+                    elif self.CAS in dbannex1:
+                        annex1record = dbannex1.byCAS(self.CAS,verbose=self.verbose)
+                    if annex1record is not None:
+                        SML = annex1record[&#34;SML&#34;]
+                        SMLT = annex1record.get(&#34;SMLT&#34;)
+                        self.SML = min(SML,SMLT) if SMLT is not None else SML
+                        self.SMLunit = annex1record[&#39;SMLunit&#39;]
+                        self.annex1 = annex1record
+                    else:
+                        self.SML = None # we validate that we looked for an SML but we did not find it
+
+                # add PNG thumb and SDF structure files (without loading them)
+                # we prevent cache filling when it is necessary
+                # self._donwload_PNG() and self._donwload_SDF() will do the job when needed
+                self.image_file = os.path.join(self._cache_PNG_dir, f&#39;{self.cid}.png&#39;)
+                self.structure_file = os.path.join(self._cache_SDF_dir, f&#39;{self.cid}.sdf&#39;)
 
 
         # Case (b): name is None, M is provided =&gt; generic substance
@@ -1277,7 +1758,92 @@ class migrant:
             self.k = None
             self.ktemplate = None
 
+    # low-level PNG and SDF feeders
+    def _download_pubchem_structuredata(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
+        self._download_SDF()
+        self._download_PNG()
 
+    def _download_SDF(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_SDF_dir, exist_ok=True)
+        if self.structure_file and (not os.path.isfile(self.structure_file) or self.no_cache):
+            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
+            response = requests.get(sdf_url, timeout=2)
+            if response.status_code == 200:
+                with open(self.structure_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+            else:
+                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
+
+    def _download_PNG(self):
+        &#34;&#34;&#34;Downloads and caches the PNG thumb file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_PNG_dir, exist_ok=True)
+        if self.image_file and (not os.path.isfile(self.image_file) or self.no_cache):
+            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
+            response = requests.get(png_url, timeout=1)
+            if response.status_code == 200:
+                with open(self.image_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+                self._crop_image()
+
+    def _crop_image(self):
+        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
+        if not PIL_AVAILABLE:
+            return
+        img = Image.open(self.image_file).convert(&#34;RGB&#34;)  # Convert to RGB to avoid transparency issues
+        def get_whitest_corner_color():
+            &#34;&#34;&#34;Finds the whitest (brightest) color among the four image corners.&#34;&#34;&#34;
+            width, height = img.size
+            corners = { # Get RGB values of the four corners
+                &#34;top_left&#34;: img.getpixel((0, 0)),
+                &#34;top_right&#34;: img.getpixel((width - 1, 0)),
+                &#34;bottom_left&#34;: img.getpixel((0, height - 1)),
+                &#34;bottom_right&#34;: img.getpixel((width - 1, height - 1))
+            }
+            def luminance(color):
+                r, g, b = color
+                return 0.299 * r + 0.587 * g + 0.114 * b
+            # Find the brightest (whitest) corner
+            whitest_corner = max(corners, key=lambda c: luminance(corners[c]))
+            return corners[whitest_corner]  # Return the RGB value of the whitest corner
+        bgcolor = get_whitest_corner_color() # background color, usually (245,245,245) for PubChem
+        bg = Image.new(&#34;RGB&#34;, img.size, bgcolor)  # Create a background image of same size
+        diff = ImageChops.difference(img, bg)  # Find pixels that are different from background
+        bbox = diff.getbbox()  # Get bounding box of non-white pixels
+        if bbox:
+            img = img.crop(bbox)  # Crop the image to the detected bounding box
+            img_array = np.array(img)
+            mask = np.all(img_array == bgcolor, axis=-1)
+            img_array[mask] = [255, 255, 255] # Replace matching pixels with pure white
+            Image.fromarray(img_array).save(self.image_file) # # Convert back to image and save
+
+    # image property
+    @property
+    def image(self):
+        &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            self._download_PNG() # download PNG if not cached
+            return Image.open(self.image_file)
+
+    # rawimage property
+    @property
+    def _rawimage(self):
+        &#34;&#34;&#34;returns the raw (binary) image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            with open(self.image_file, &#34;rb&#34;) as f:
+                image_bytes = f.read()
+            return image_bytes
+
+    # structure
+    @property
+    def structure(self):
+        &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
+        if self.structure_file:
+            self._download_SDF() # download SDF if not cached
+            return parse_sdf(self.structure_file)
+
+    # low-level model validator and property assignment
     def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):
         &#34;&#34;&#34;
         Generic method for validating and setting a migration property model.
@@ -1332,6 +1898,28 @@ class migrant:
             return self.k.evaluate(**updated_template)
         return func
 
+    # hasSML: False if SML does not exist or is None
+    @property
+    def hasSML(self):
+        &#34;&#34;&#34;Returns True if it has an SML defined&#34;&#34;&#34;
+        return hasattr(self,&#34;SML&#34;) and self.SML is not None
+    @property
+    def hasannex1(self):
+        &#34;&#34;&#34;Returns True if annex1 is defined&#34;&#34;&#34;
+        return hasattr(self,&#34;annex1&#34;) and isinstance(self.annex1,complyEU.annex1record)
+    @property
+    def hasSMLgroup(self):
+        &#34;&#34;&#34;Returns True if the sustance is regulated in a group&#34;&#34;&#34;
+        return self.hasannex1 and self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None
+    @property
+    def nSMLgroup(self):
+        &#34;&#34;&#34;Returns the number of substances in the group&#34;&#34;&#34;
+        if not self.hasSMLgroup:
+            return 0
+        return len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])
+    @property
+    def worstcaseSMLgroup(self):
+        &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;
 
 
     def __repr__(self):
@@ -1352,21 +1940,30 @@ class migrant:
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
-        if isinstance(self,migrantToxtree):
+        # Add SML and EU rules
+        if self.hasSML:
+            if self.hasannex1:
+                attributes[&#34;--- EC 10/2011&#34;]=&#34;-&#34;*15
+                attributes[&#34;SML&#34;] = str(self.SML)
+                attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+                if self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None:
+                    attributes[&#34;part a group&#34;]=f&#34;of {len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])} substances&#34;
+                attributes[&#34;Name&#34;] =self.annex1[&#34;name&#34;]
+                attributes[&#34;CAS&#34;] = self.annex1[&#34;CAS&#34;]
+                attributes[&#34;EC|FCM|REF&#34;] = f&#34;{self.annex1[&#39;EC&#39;]}|{self.annex1[&#39;FCM&#39;]}|{self.annex1[&#39;Ref&#39;]}&#34;
+            else:
+                attributes[&#34;SML&#34;] = str(self.SML)
+                if hasattr(self,&#34;SMLunit&#34;):
+                    attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+        # Add Toxtree attributes
+        if isinstance(self,migrantToxtree) and self.compound not in (None,&#34;&#34;,[]):
+            attributes[&#34;--- ToxTree&#34;]=&#34;-&#34;*15
             attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
             attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
             attributes[&#34;Toxicology&#34;] = self.CramerClass
             attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
             attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
-            alerts = self.alerts
-            # Process alerts
-            alert_index = 0
-            for key, value in alerts.items():
-                if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
-                    alert_index += 1
-                    # Convert key name to readable format (split at capital letters)
-                    alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
-                    attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+            attributes.update(self.showalerts) # Process alerts
 
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
@@ -1461,7 +2058,10 @@ class migrant:
         &gt;&gt;&gt; compound.molarvolumeMiller
         130.5  # Example output
         &#34;&#34;&#34;
-        return a * self.M**b
+        if self.M is not None:
+            return a * self.M**b
+        else:
+            None
 
 
     @property
@@ -1686,7 +2286,7 @@ class migrant:
 
     @property
     def volume_3d(self):
-        &#34;&#34;&#34;
+        r&#34;&#34;&#34;
         Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
         This function applies an empirical, linear-additive scheme:
@@ -1788,7 +2388,10 @@ class migrant:
             estimates.
 
         &#34;&#34;&#34;
-        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+        if hasattr(self, &#39;vdWvolume2&#39;):
+            return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+        else:
+            return None
 
 # %% Class migrantToxtree extending migrant class with Toxtree data
 &#34;&#34;&#34;
@@ -1822,9 +2425,6 @@ class migrantToxtree(migrant):
         TOXTREE_ENGINES (dict): Mapping of Toxtree engines to class names.
         TOX_CLASSIFICATION (dict): Mapping of classification engines.
         cache_folder (str): Directory to store cached Toxtree results.
-        structure_folder (str): Directory to store cached structure files.
-        structure_file (str): Path to the SDF file for the compound.
-        image_file (str): Path to the PNG image of the compound.
         refresh (bool): If True, forces Toxtree reprocessing from CSV.
         no_cache (bool): If True, forces full cache regeneration.
 
@@ -1858,9 +2458,6 @@ class migrantToxtree(migrant):
         &gt;&gt;&gt; print(&#34;Cramer3 Class:&#34;, c3)
     &#34;&#34;&#34;
 
-    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
-    IMAGE_SIZE = (640, 480)
-
     TOXTREE_ENGINES = {
         &#34;default&#34;: &#34;&#34;,
         &#34;cramer&#34;: &#34;toxTree.tree.cramer.CramerRules&#34;,
@@ -1886,8 +2483,12 @@ class migrantToxtree(migrant):
     CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
     CFTTCunits = &#34;[mg/kg food intake]&#34;
 
-    def __init__(self, compound_name, cache_folder=&#39;cache.ToxTree&#39;, structure_folder=&#39;structure&#39;, refresh=False, no_cache=False):
-        super().__init__(compound_name)
+    def __init__(self, compound_name, cache_folder=&#39;cache.ToxTree&#39;, refresh=False, no_cache=False,  raiseerror=True, verbose=True):
+        &#34;&#34;&#34;migrantToxtree constructor&#34;&#34;&#34;
+        isempty = compound_name in (None,&#34;&#34;,[])
+        super().__init__(compound_name, raiseerror=raiseerror, verbose=verbose)
+        if isempty:
+            return
 
         if isinstance(self.cid, list):
             if len(self.cid) != 1:
@@ -1908,16 +2509,14 @@ class migrantToxtree(migrant):
             )
 
         self.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
-        self.structure_folder = os.path.join(self.cache_folder, structure_folder)
         os.makedirs(self.cache_folder, exist_ok=True)
-        os.makedirs(self.structure_folder, exist_ok=True)
 
-        self.structure_file = os.path.join(self.structure_folder, f&#39;{self.cid}.sdf&#39;)
-        self.image_file = os.path.join(self.structure_folder, f&#39;{self.cid}.png&#39;)
         self.refresh = refresh
         self.no_cache = no_cache
 
-        self._download_pubchem_data()
+        # Refactory / migrant manage all PubChem dependencies
+        self._download_pubchem_structuredata() # loading trigger
+
         tmp = self._run_toxtree(&#34;default&#34;)
         tmp[&#34;CramerValue&#34;]=self.class_roman_to_int(tmp[&#34;CramerRules&#34;])
         self.ToxTree = tmp
@@ -1925,36 +2524,6 @@ class migrantToxtree(migrant):
         self.CramerClass = tmp[&#34;CramerRules&#34;]
         self.TTC = self.TTC[self.CramerValue]
         self.CFTTC = self.CFTTC[self.CramerValue]
-
-    def _download_pubchem_data(self):
-        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
-        if not os.path.isfile(self.structure_file) or self.no_cache:
-            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
-            response = requests.get(sdf_url, timeout=60)
-            if response.status_code == 200:
-                with open(self.structure_file, &#39;wb&#39;) as f:
-                    f.write(response.content)
-            else:
-                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
-        if not os.path.isfile(self.image_file) or self.no_cache:
-            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
-            response = requests.get(png_url, timeout=60)
-            if response.status_code == 200:
-                with open(self.image_file, &#39;wb&#39;) as f:
-                    f.write(response.content)
-                self._crop_image(self.image_file)
-
-    def _crop_image(self, image_path):
-        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
-        if not PIL_AVAILABLE:
-            return
-        img = Image.open(image_path)
-        img = img.convert(&#34;RGBA&#34;)
-        bbox = img.getbbox()
-        if bbox:
-            img = img.crop(bbox)
-            img.save(image_path)
-
 
     def _clean_field_names(self, data):
         &#34;&#34;&#34;Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word.&#34;&#34;&#34;
@@ -2076,6 +2645,22 @@ class migrantToxtree(migrant):
     def has_alerts(self):
         return len(self.alerts) &gt; 0
 
+    @property
+    def showalerts(self):
+        &#34;&#34;&#34;Returns alerts in dict: alert1, alert2, alert3&#34;&#34;&#34;
+        if not self.has_alerts:
+            return {}
+        alerts = self.alerts
+        # Process alerts
+        alert_index = 0
+        attributes = {}
+        for key, value in alerts.items():
+            if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
+                alert_index += 1
+                # Convert key name to readable format (split at capital letters)
+                alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
+                attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+        return attributes
 
 
 # %% debug
@@ -2084,6 +2669,10 @@ class migrantToxtree(migrant):
 # ==========================
 if __name__ == &#34;__main__&#34;:
     # debug
+    m = migrant(&#34;ethane&#34;)
+    migrantToxtree(&#34;acetone&#34;)
+    m = migrant(&#34;di(2-ethylhexyl) phthalate&#34;)
+    repr(m)
     m=migrant(&#34;bisphenol A&#34;)
     m.count_rings
     m.volume_3d
@@ -2186,6 +2775,354 @@ print("no alternative model, use the default one")</p></div>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="loadpubchem.create_substance_widget"><code class="name flex">
+<span>def <span class="ident">create_substance_widget</span></span>(<span>substance=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a two-step widget interface for selecting a substance via loadpubchem.</p>
+<p>Step 1 (left panel):
+- A text field (max 60 characters) prompts for a chemical name or CAS.
+- A “Search Substance” button triggers a call to migrant(substance).
+- If the returned record is None or not an instance of migrant, an error is shown and Step 2 is not enabled.
+- If a valid record is found, an image of the molecule (if available) is displayed centered below the search area.</p>
+<p>Step 2 (right panel):
+- Displays record information:
+• record.compound (short text)
+• record.name (if a list, a dropdown is shown; if a string, the text is wrapped)
+• record.CAS
+• record.cid (if available)
+• record.formula
+• record.InChiKey
+• record.smiles
+• record.M (displayed as a string)
+• If record.hasSML is True, shows “{record.SML} [{record.SMLunit}]”
+- A text field to define a substance name (default “m1”).
+- A button “Instantiate Substance” stores the record in a global dictionary (builtins.mysubstances).
+- A “Back” button allows returning to Step 1.</p>
+<h2 id="usage">Usage</h2>
+<p>In a Jupyter Lab/Notebook cell, do:
+from patankar.loadpubchem import create_substance_widget
+widget = create_substance_widget()
+display(widget)
+Later, access created substances via builtins.mysubstances.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_substance_widget(substance=None):
+    &#34;&#34;&#34;
+    Creates a two-step widget interface for selecting a substance via loadpubchem.
+
+    Step 1 (left panel):
+      - A text field (max 60 characters) prompts for a chemical name or CAS.
+      - A “Search Substance” button triggers a call to migrant(substance).
+      - If the returned record is None or not an instance of migrant, an error is shown and Step 2 is not enabled.
+      - If a valid record is found, an image of the molecule (if available) is displayed centered below the search area.
+
+    Step 2 (right panel):
+      - Displays record information:
+          • record.compound (short text)
+          • record.name (if a list, a dropdown is shown; if a string, the text is wrapped)
+          • record.CAS
+          • record.cid (if available)
+          • record.formula
+          • record.InChiKey
+          • record.smiles
+          • record.M (displayed as a string)
+          • If record.hasSML is True, shows “{record.SML} [{record.SMLunit}]”
+      - A text field to define a substance name (default “m1”).
+      - A button “Instantiate Substance” stores the record in a global dictionary (builtins.mysubstances).
+      - A “Back” button allows returning to Step 1.
+
+    Usage:
+      In a Jupyter Lab/Notebook cell, do:
+         from patankar.loadpubchem import create_substance_widget
+         widget = create_substance_widget()
+         display(widget)
+      Later, access created substances via builtins.mysubstances.
+    &#34;&#34;&#34;
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display, HTML
+    except ImportError as e:
+        raise ImportError(&#34;ipywidgets and IPython are required for this widget interface.&#34;) from e
+
+    import builtins
+    if not hasattr(builtins, &#34;mysubstances&#34;):
+        builtins.mysubstances = {}
+    global mysubstances
+    mysubstances = builtins.mysubstances
+    # flag for preheated GUI interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, &#34;_PREHEATED_&#34;) and getattr(builtins, &#34;_PREHEATED_&#34;) is True
+
+    # arg check (initial substance)
+    substance = &#34;&#34; if substance is None else substance
+    if not isinstance(substance,str):
+        raise TypeError(f&#34;Substance must be str not a {type(substance).__name__}&#34;)
+
+    # Inject CSS to disable resizing
+    display(HTML(&#34;&#34;&#34;
+    &lt;style&gt;
+        .no-resize textarea {
+            resize: none !important;
+        }
+    &lt;/style&gt;
+    &#34;&#34;&#34;))
+
+    # --- Step 1: Search Panel ---
+    search_text = widgets.Text(
+        value=substance,
+        placeholder=&#34;Enter chemical name or CAS&#34;,
+        description=&#34;Substance:&#34;,
+        layout=widgets.Layout(width=&#34;96%&#34;),
+        disabled=False
+    )
+    search_text.max_length = 120
+
+    search_button = widgets.Button(
+        description=&#34;Search Substance&#34;,
+        button_style=&#34;primary&#34;
+    )
+    search_output = widgets.Output()
+
+    left_panel = widgets.VBox([search_text, search_button, search_output])
+
+
+    # --- Step 2: Confirmation Panel ---
+    compound_label = widgets.HTML(value=&#34;Compound: &#34;)
+    # For record.name, initially show an empty Text widget; later switch to Dropdown if needed.
+    name_display = widgets.Text(value=&#34;&#34;, description=&#34;Name:&#34;, disabled=True, layout=widgets.Layout(width=&#34;60%&#34;))
+    cas_label = widgets.HTML(value=&#34;CAS: &#34;)
+    cid_label = widgets.HTML(value=&#34;CID: &#34;)
+    formula_label = widgets.HTML(value=&#34;Formula: &#34;)
+    inchikey_label = widgets.HTML(value=&#34;InChiKey: &#34;)
+    smiles_label = widgets.Textarea(
+            value=&#34;SMILES: &#34;,
+            layout=widgets.Layout(width=&#34;90%&#34;, height=&#34;40px&#34;),  # Auto-stretching
+            disabled=True  # Prevents user input (like a label)
+         )# widgets.Label(value=&#34;SMILES: &#34;)
+    smiles_label.add_class(&#34;no-resize&#34;)  # Attach CSS class
+    M_label = widgets.HTML(value=&#34;M: &#34;)
+    SML_label = widgets.HTML(value=&#34;SML: &#34;)
+
+    substance_name = widgets.Text(
+        value=&#34;m1&#34;,
+        description=&#34;Substance Name:&#34;,
+        layout=widgets.Layout(width=&#34;50%&#34;)
+    )
+
+    instantiate_button = widgets.Button(
+        description=&#34;Instantiate Substance&#34;,
+        button_style=&#34;success&#34;
+    )
+    back_button = widgets.Button(
+        description=&#34;Back&#34;,
+        button_style=&#34;&#34;
+    )
+    right_output = widgets.Output()
+
+    right_panel = widgets.VBox([
+        name_display, compound_label, cas_label, cid_label, formula_label,
+        inchikey_label, smiles_label, M_label, SML_label,
+        substance_name,
+        widgets.HBox([instantiate_button, back_button]),
+        right_output
+    ])
+    right_panel.layout.display = &#34;none&#34;
+
+    # adjust the panel size
+    left_panel.layout = widgets.Layout(width=&#34;45%&#34;)
+    right_panel.layout = widgets.Layout(width=&#34;55%&#34;)
+
+    # cid link
+    cidlink = &#39;&lt;a href=&#34;https://pubchem.ncbi.nlm.nih.gov/compound/{0}&#34; title=&#34;go to PubChem&#34; target=&#34;_blank&#34;&gt;{0}&lt;/a&gt;&#39;
+
+
+    # --- Callbacks ---
+    def pretty(field,value,unit=&#34;&#34;):
+        &#34;&#34;&#34;prettify outputs&#34;&#34;&#34;
+        sep = &#34;&#34; if unit==&#34;&#34; else &#34; &#34;
+        if isinstance(value,list) and len(value)==1:
+            valout = value[0]
+        elif value is None:
+            valout = &#34;N/A&#34;
+        elif isinstance(value,str):
+            if len(value)&gt;40:
+                valout = value[:40]
+                sep=&#34;...&#34;
+            else:
+                valout = value
+        else:
+            valout = value
+        if field == &#34;CID&#34;:
+            valout = [cidlink.format(c) for c in valout] if isinstance(valout,list) else cidlink.format(valout)
+        return f&#34;{field}: &lt;b&gt;{valout}&lt;/b&gt;{sep}{unit}&#34;
+
+
+    def search_substance(b):
+        with search_output:
+            search_output.clear_output()
+            query = search_text.value.strip()
+            if not query:
+                print(&#34;Please enter a substance name or CAS.&#34;)
+                return
+            try:
+                record = migrant(query,raiseerror=False)
+            except Exception as e:
+                print(&#34;Error during search:&#34;, e)
+                return
+            if record is None or not isinstance(record, migrant):
+                print(f&#34;No valid substance found for &#39;{query}&#39;.&#34;)
+                return
+
+            # Populate right panel with record details.
+            compound_label.value = pretty(&#34;Compound&#34;,str(record.compound)[:40])
+            if isinstance(record.name, list):
+                name_disp = widgets.Dropdown(options=record.name, description=&#34;Name:&#34;,
+                                             layout=widgets.Layout(text_align=&#34;left&#34;,width=&#34;60%&#34;))
+            else:
+                name_disp = widgets.HTML(value=pretty(&#34;Name&#34;,record.name))
+            right_panel.children = [name_disp] + list(right_panel.children[1:])
+            cas_label.value = pretty(&#34;CAS&#34;,record.CAS)
+            cid_label.value = pretty(&#34;CID&#34;,record.cid)
+            formula_label.value = pretty(&#34;Formula&#34;,record.formula)
+            inchikey_label.value = pretty(&#34;InChiKey&#34;,record.InChiKey)
+            smiles_label.value = f&#34;SMILES: {record.smiles}&#34;
+            # M value
+            try:
+                m_val = record.M_array.item(0) if hasattr(record, &#34;M_array&#34;) and isinstance(record.M_array, (list, tuple,)) else record.M
+            except Exception:
+                m_val = record.M
+            M_label.value = pretty(&#34;M&#34;,m_val,&#34;[g/mol]&#34;)
+            # SML and toxicological data for non positively listed substances
+            if getattr(record, &#34;hasSML&#34;, False):
+                nomenclature = f&#34;EC: {record.annex1[&#39;EC&#39;]} | FCM: {record.annex1[&#39;FCM&#39;]} | Ref: {record.annex1[&#39;Ref&#39;]} |&amp;nbsp;&#34;
+                category = (
+                    &#34;authorized as additive and monomer&#34; if record.annex1[&#34;Additive_or_PPA&#34;] and record.annex1[&#34;Use_as_monomer_macromolecule&#34;]
+                    else &#34;authorized as additive&#34; if record.annex1[&#34;Additive_or_PPA&#34;]
+                    else &#34;authorized as monomer&#34; if record.annex1[&#34;Use_as_monomer_macromolecule&#34;]
+                    else &#34;&#34;
+                )
+                if record.annex1.n: # we use extended attributes of annex1
+                    group = f&#34;SMLT = {record.annex1.SMLT} [mg/kg] for {record.annex1.n} substances.&lt;br&gt;The smallest is {record.annex1.gnamemin} with CAS {record.annex1.gCASmin}.&#34;
+                else:
+                    group = &#34;&#34;
+                SML_label.value = f&#39;&lt;span style=&#34;color: #4C76CD;&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;SML: &lt;b&gt;{record.SML}&lt;/b&gt; [{record.SMLunit}]&lt;/td&gt;&lt;td&gt;{group}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;🇪🇺 {nomenclature}&lt;/td&gt;&lt;td&gt;{category}&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/span&gt;&#39;
+
+            else:
+                try: # No SML we try get a TTC approach
+                    recordTT = migrantToxtree(query,verbose=False,raiseerror=False) # verbose=False to prevent duplicated messages
+                    SML_label.value = &#34;&lt;br&gt;&#34;.join([
+                        &#39;&lt;span style=&#34;color: Crimson;&#34;&gt;Cramer classification: &#39; + recordTT.CramerClass + &#39;&lt;/span&gt;&#39;,
+                        &#39;&lt;span style=&#34;color: Crimson;&#34;&gt;CF TTC adult = &#39; + f&#34;{recordTT.CFTTC} {recordTT.CFTTCunits}&#34; + &#39;&lt;/span&gt;&#39;,
+                        &#39;&lt;span style=&#34;color: Crimson;&#34;&gt;&lt;b&gt;&#39; + &#34;&lt;br&gt;&#34;.join(f&#34;⚠️ {alertid}: {reason}&#34; for alertid, reason in recordTT.showalerts.items()) + &#39;&lt;/b&gt;&lt;/span&gt;&#39;
+                    ])
+                except:
+                    SML_label.value = &#34;SML: N/A ()&#34; # we return a default value if ToxTree is not installed
+
+            # --- Display image ---
+            pngrecord = record.image
+            max_width,max_height = (600,300)  # Cap at 600 px and 300px
+            if pngrecord:
+                orig_width, orig_height = pngrecord.width, pngrecord.height
+                if orig_height &gt; 1.2*orig_width: # we need to rotate the image if ratio &lt; 1.2
+                    rotated_image = pngrecord.rotate(90, expand=True) # counter-clockwise
+                    img_byte_arr = io.BytesIO()
+                    rotated_image.save(img_byte_arr, format=&#34;PNG&#34;)
+                    img_binary = img_byte_arr.getvalue()
+                    orig_width, orig_height = orig_height, orig_width
+                else:
+                    img_binary = record._rawimage
+                aspect_ratio = orig_width / orig_height
+                if orig_width &gt; max_width or orig_height &gt; max_height:
+                    if orig_width / max_width &gt; orig_height / max_height:
+                        width, height = max_width, int(max_width / aspect_ratio)
+                    else:
+                        height, width = max_height, int(max_height * aspect_ratio)
+                else:
+                    width, height = orig_width, orig_height
+                img_widget = widgets.Image(value=img_binary, format=&#39;png&#39;)
+                # Set the image widget&#39;s size directly.
+                img_widget.width = width
+                img_widget.height = height
+                # Center the image in an HBox without forcing its own width/height.
+                centered_img = widgets.HBox([img_widget], layout=widgets.Layout(justify_content=&#39;center&#39;))
+                left_panel.children = [search_text, search_button, centered_img, search_output]
+            else:
+                # If no image, ensure left_panel has its original layout.
+                left_panel.children = [search_text, search_button, search_output]
+            # Store record for later instantiation.
+            right_panel.record = record
+            right_panel.layout.display = &#34;&#34;
+            # Optionally clear the search field.
+            # search_text.value = &#34;&#34;
+
+    search_button.on_click(search_substance)
+
+    # Step 2: Instantiate callback
+    def instantiate_substance(b):
+        with right_output:
+            right_output.clear_output()
+            record = getattr(right_panel, &#34;record&#34;, None)
+            if record is None or not isinstance(record,migrant):
+                print(&#34;No substance record available.&#34;)
+                return
+            sub_name = substance_name.value.strip()
+            if not sub_name:
+                print(&#34;Please provide a valid substance name.&#34;)
+                return
+            # we store the record in a global dictionary.
+            builtins.mysubstances[sub_name] = record
+            if b:
+                print(f&#34;Substance &#39;{sub_name}&#39; instantiated:&#34;)
+                # Display selected properties (short summary)
+                print(f&#34;  Compound: {record.compound}&#34;)
+                print(f&#34;  Name: {record.name[:3] if isinstance(record.name,list) else record.name}&#34;)
+                print(f&#34;  CAS: {record.CAS}&#34;)
+                #print(f&#34;  CID: {record.cid}&#34;)
+                #print(f&#34;  Formula: {record.formula}&#34;)
+                #print(f&#34;  InChiKey: {record.InChiKey}&#34;)
+                #print(f&#34;  SMILES: {record.smiles}&#34;)
+                print(f&#34;  M: {record.M}&#34;)
+                if getattr(record, &#34;hasSML&#34;, False):
+                    print(f&#34;  SML: {record.SML} [{record.SMLunit}]&#34;)
+                print(&#34;\nCurrent substances:&#34;, list(builtins.mysubstances.keys()))
+
+    instantiate_button.on_click(instantiate_substance)
+
+    if _preheatedGUI_:
+        search_substance(None) # we instatiate manually
+        instantiate_substance(None) # we instantiate manually
+
+    # Step 2: Back callback to return to Step 1
+    def go_back(b):
+        with right_output:
+            right_output.clear_output()
+            if len(left_panel.children) &gt; 3:  # Image included
+                if isinstance(left_panel.children[2], widgets.HBox):  # Ensure it&#39;s the image container
+                    left_panel.children = [search_text, search_button, search_output]
+        right_panel.layout.display = &#34;none&#34;
+
+
+    back_button.on_click(go_back)
+
+    # Arrange the two panels side by side.
+    ui = widgets.HBox([left_panel, right_panel])
+    return ui</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.floatNone"><code class="name flex">
+<span>def <span class="ident">floatNone</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">floatNone = lambda x: x if isinstance(x, (float, type(None))) else float(x)</code></pre>
+</details>
+</dd>
 <dt id="loadpubchem.get_compounds"><code class="name flex">
 <span>def <span class="ident">get_compounds</span></span>(<span>identifier, namespace='cid', searchtype=None, as_dataframe=False, **kwargs)</span>
 </code></dt>
@@ -2214,6 +3151,141 @@ print("no alternative model, use the default one")</p></div>
     if as_dataframe:
         return compounds_to_frame(compounds)
     return compounds</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.parse_molblock"><code class="name flex">
+<span>def <span class="ident">parse_molblock</span></span>(<span>molblock, useDataFrame=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse a single molecule record (molblock) from an SDF file.
+Retains header info, atoms, bonds, and metadata.
+parse_molblock(molblock: List[str], useDataFrame: bool) -&gt; Dict:</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_molblock(molblock,useDataFrame=True):
+    &#34;&#34;&#34;
+        Parse a single molecule record (molblock) from an SDF file.
+        Retains header info, atoms, bonds, and metadata.
+        parse_molblock(molblock: List[str], useDataFrame: bool) -&gt; Dict:
+    &#34;&#34;&#34;
+    result = {}
+    # Dynamically detect the counts line by searching for the &#34;V2000&#34; marker.
+    counts_index = None
+    for idx, line in enumerate(molblock):
+        if &#34;V2000&#34; in line:
+            counts_index = idx
+            break
+    if counts_index is None:
+        raise ValueError(&#34;Counts line not found (V2000 marker missing).&#34;)
+
+    # Header: all lines before the counts line.
+    header = molblock[:counts_index]
+    result[&#39;header&#39;] = header
+
+    counts_line = molblock[counts_index]
+    # Parse counts using fixed-width slicing (V2000 specification):
+    # columns 1-3: number of atoms, columns 4-6: number of bonds.
+    try:
+        atoms_count = int(counts_line[0:3])
+        bonds_count = int(counts_line[3:6])
+    except Exception as e:
+        raise ValueError(&#34;Error parsing counts line using fixed-width fields.&#34;) from e
+    result[&#39;atoms_count&#39;] = atoms_count
+    result[&#39;bonds_count&#39;] = bonds_count
+
+    # Parse atoms: the next atoms_count lines after the counts line.
+    atoms = []
+    atom_start = counts_index + 1
+    for i in range(atom_start, atom_start + atoms_count):
+        line = molblock[i]
+        # Even though atom lines are fixed-width, splitting on whitespace works if numbers are separated.
+        parts = line.split()
+        if len(parts) &lt; 4:
+            continue
+        x = float(parts[0])
+        y = float(parts[1])
+        z = float(parts[2])
+        element = parts[3]
+        atoms.append({&#39;x&#39;: x, &#39;y&#39;: y, &#39;z&#39;: z, &#39;element&#39;: element})
+    result[&#39;atoms&#39;] = pd.DataFrame(atoms) if useDataFrame else atoms
+
+    # Parse bonds: the following bonds_count lines.
+    bonds = []
+    bond_start = atom_start + atoms_count
+    for i in range(bond_start, bond_start + bonds_count):
+        line = molblock[i]
+        parts = line.split()
+        if len(parts) &lt; 3:
+            continue
+        # Atom indices are 1-indexed.
+        atom1 = int(parts[0])
+        atom2 = int(parts[1])
+        bond_type = int(parts[2])
+        bonds.append({&#39;atom1&#39;: atom1, &#39;atom2&#39;: atom2, &#39;bond_type&#39;: bond_type})
+    result[&#39;bonds&#39;] = pd.DataFrame(bonds) if useDataFrame else bonds
+
+    # Find the &#34;M  END&#34; marker (should be immediately after the bond block).
+    end_index = bond_start + bonds_count
+    if molblock[end_index].strip() != &#34;M  END&#34;:
+        raise ValueError(&#34;M  END not found where expected.&#34;)
+
+    # Parse metadata: everything after &#34;M  END&#34; until the record terminator ($$$$).
+    metadata = {}
+    meta_lines = molblock[end_index+1:]
+    key = None
+    value_lines = []
+    for line in meta_lines:
+        line = line.rstrip(&#39;\n&#39;)
+        if line.startswith(&#34;$$$$&#34;):
+            break
+        if line.startswith(&#34;&gt; &lt;&#34;):
+            if key is not None:
+                metadata[key] = &#34;\n&#34;.join(value_lines).strip()
+            m = re.match(r&#39;&gt; &lt;(.+)&gt;&#39;, line)
+            key = m.group(1) if m else line
+            value_lines = []
+        else:
+            if key is not None:
+                value_lines.append(line)
+    if key is not None and value_lines:
+        metadata[key] = &#34;\n&#34;.join(value_lines).strip()
+    result[&#39;metadata&#39;] = pd.DataFrame([metadata]) if useDataFrame else metadata
+    return result</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.parse_sdf"><code class="name flex">
+<span>def <span class="ident">parse_sdf</span></span>(<span>filename, useDataFrame=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse an SDF file (filename) containing one or more molecule records.
+Each record is separated by "$$$$".
+parse_sdf(filename: str, useDataFrame: bool) -&gt; List[Dict]:</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_sdf(filename,useDataFrame=True):
+    &#34;&#34;&#34;
+    Parse an SDF file (filename) containing one or more molecule records.
+    Each record is separated by &#34;$$$$&#34;.
+    parse_sdf(filename: str, useDataFrame: bool) -&gt; List[Dict]:
+    &#34;&#34;&#34;
+    with open(filename, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+        sdf_str = f.read()
+    # Split the file into records using the &#34;$$$$&#34; record terminator.
+    records = sdf_str.split(&#34;$$$$&#34;)
+    molecules = []
+    for record in records:
+        lines = record.strip().splitlines()
+        if not lines:
+            continue  # Skip empty records.
+        mol = parse_molblock(lines,useDataFrame=useDataFrame)
+        molecules.append(mol)
+    if len(molecules)==1:
+        molecules = molecules[0] # unnest
+    return molecules</code></pre>
 </details>
 </dd>
 <dt id="loadpubchem.polarity_index"><code class="name flex">
@@ -2338,7 +3410,8 @@ array([9.2, 4.5, 1.8])  # Example outputs
     # Fetch logP and V if `name` is given
     if logP is None or V is None:
         if name is None:
-            raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
+            #raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
+            return None
         from patankar.loadpubchem import migrant
         tmp = migrant(name)
         logP, V = tmp.logP, tmp.molarvolumeMiller
@@ -2534,12 +3607,12 @@ from actual PubChem queries if needed.</p>
             &#34;name&#34;: name,
             &#34;synonyms&#34;: synonyms_list,
             &#34;CAS&#34;: cas_list,
-            &#34;M&#34;: float(full_data.get(&#34;molecular_weight&#34;)),
+            &#34;M&#34;: floatNone(full_data.get(&#34;molecular_weight&#34;)),
             &#34;formula&#34;: full_data.get(&#34;molecular_formula&#34;),
             &#34;SMILES&#34;: full_data.get(&#34;canonical_smiles&#34;),
             &#34;InChi&#34;: full_data.get(&#34;inchi&#34;),
             &#34;InChiKey&#34;: full_data.get(&#34;inchikey&#34;),
-            &#34;logP&#34;: float(full_data.get(&#34;xlogp&#34;)),
+            &#34;logP&#34;: floatNone(full_data.get(&#34;xlogp&#34;)),
             &#34;date&#34;: datetime.now().strftime(&#34;%Y-%m-%d&#34;),
         }
         return record
@@ -2650,6 +3723,11 @@ from actual PubChem queries if needed.</p>
         :return: pd.DataFrame with the results (possibly multiple rows)
         &#34;&#34;&#34;
         global PubChem_lastQueryTime
+
+        if query in (None,&#34;&#34;):
+            return
+        if not isinstance(query,str):
+            raise TypeError(f&#34;query must be a str not a {type(query).__name__}&#34;)
         qlower = query.strip().lower()
 
         if qlower not in self.index:
@@ -2753,6 +3831,11 @@ match that synonym, returns multiple rows.</p>
     :return: pd.DataFrame with the results (possibly multiple rows)
     &#34;&#34;&#34;
     global PubChem_lastQueryTime
+
+    if query in (None,&#34;&#34;):
+        return
+    if not isinstance(query,str):
+        raise TypeError(f&#34;query must be a str not a {type(query).__name__}&#34;)
     qlower = query.strip().lower()
 
     if qlower not in self.index:
@@ -2885,7 +3968,7 @@ in the cache directory, and regenerating each </em>.simple.json if needed.</p></
 </dd>
 <dt id="loadpubchem.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;loadpubchem.CompoundIndex object&gt;, raiseerror=True)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;loadpubchem.CompoundIndex object&gt;, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -2911,7 +3994,9 @@ In this mode:
 = The first formula
 - logP
 = All logP values concatenated into a numpy array (self.logP_array).
-The main attribute self.logP will be the same array or you may pick a single representative.</p>
+The main attribute self.logP will be the same array or you may pick a single representative.
+- structure_file (str): Path to the SDF file for the compound.
+- image_file (str): Path to the PNG image of the compound.</p>
 <p>2) Case (b) - By numeric molecular weight(s) alone (generic substance):</p>
 <hr>
 <p>Example:
@@ -3050,6 +4135,9 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
              - formula   = The first formula
              - logP      = All logP values concatenated into a numpy array (self.logP_array).
                            The main attribute self.logP will be the same array or you may pick a single representative.
+             - structure_file (str): Path to the SDF file for the compound.
+             - image_file (str): Path to the PNG image of the compound.
+
 
     2) Case (b) - By numeric molecular weight(s) alone (generic substance):
        ---------------------------------------------------------
@@ -3105,6 +4193,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     # class attribute, maximum width
     _maxdisplay = 40
 
+    # Puchem rest engine for strcture and PNG
+    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
+    IMAGE_SIZE = (800, 800)
+
+
     # migrant constructor with its predictor templates
     def __init__(self, name=None,   # substance identified by name
                  M=None, logP=None, # substance identified by M, logP(less reliable)
@@ -3134,7 +4227,13 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                  db=dbdefault, # cache.PubChem database
 
-                 raiseerror=True # raise an error if the susbtance is not found
+                 raiseerror=True, # raise an error if the susbtance is not found
+
+                 no_cache = False, # flag to force nocache for PNG and SDF only
+
+                 verbose = True, # flag to control alert messages on substances
+
+                 annex1 = True, # flag used by EUFCMannex1 to avoid infinite loop
 
                  ):
         &#34;&#34;&#34;
@@ -3202,10 +4301,17 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
+        # cache for structure (SDF) and thumbs (PNG)
+        self.no_cache = no_cache
+        self._cache_PNG_dir = os.path.join(db.cache_dir,&#39;thumbs&#39;)
+        self._cache_SDF_dir = os.path.join(db.cache_dir,&#39;structure&#39;)
+        self.image_file = None        # path of the PNG file
+        self.structure_file = None    # path of the SDF file
+        self.verbose = verbose
 
         # special case
         if name==M==None:
-            name = &#39;toluene&#39;
+            return # name = &#39;toluene&#39;
 
         # Convert M to a numpy array if given
         if M is not None:
@@ -3232,14 +4338,16 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 raise ValueError(&#34;A db instance is required for searching by name when M is None.&#34;)
 
             df = db.find(name, output_format=&#34;simple&#34;)
-            if df.empty:
+            if df is None or df.empty:
                 if raiseerror:
-                    raise ValueError(f&#34;&lt;{name}&gt; not found&#34;)
+                    raise ValueError(f&#34;Compound &lt;{name}&gt; not found&#34;)
                 print(f&#34;LOADPUBCHEM ERRROR: &lt;{name}&gt; not found - empty object returned&#34;)
                 self.compound = name
                 self.name = [name]
                 self.cid = []
                 self.CAS = []
+                self.InChi = []
+                self.InChiKey = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
@@ -3299,7 +4407,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                     # Process logP similarly (if not None or empty)
                     logp_val = row.get(&#34;logP&#34;, None)
-                    if logp_val not in (None, &#34;&#34;):
+                    if logp_val not in (None, &#34;&#34;,[]):
                         all_data[&#34;logp&#34;].append(to_float(logp_val))
                     else:
                         all_data[&#34;logp&#34;].append(np.nan)
@@ -3347,6 +4455,28 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 self.vdWvolume = self.volume_3d # for future use (Dwelle use it)
                 alpha = 1/0.65 if self.count_rings[&#34;aromatic&#34;]&gt;0 else 1.3
                 self.vdWvolume2 = 1/alpha * self.molarvolumeMiller * 10.0/6.02214076 # in A3
+
+                # if dbannex1 is available
+                if doSML and annex1:
+                    annex1record = None
+                    if self.cid in dbannex1:
+                        annex1record = dbannex1.bycid(self.cid,verbose=self.verbose)
+                    elif self.CAS in dbannex1:
+                        annex1record = dbannex1.byCAS(self.CAS,verbose=self.verbose)
+                    if annex1record is not None:
+                        SML = annex1record[&#34;SML&#34;]
+                        SMLT = annex1record.get(&#34;SMLT&#34;)
+                        self.SML = min(SML,SMLT) if SMLT is not None else SML
+                        self.SMLunit = annex1record[&#39;SMLunit&#39;]
+                        self.annex1 = annex1record
+                    else:
+                        self.SML = None # we validate that we looked for an SML but we did not find it
+
+                # add PNG thumb and SDF structure files (without loading them)
+                # we prevent cache filling when it is necessary
+                # self._donwload_PNG() and self._donwload_SDF() will do the job when needed
+                self.image_file = os.path.join(self._cache_PNG_dir, f&#39;{self.cid}.png&#39;)
+                self.structure_file = os.path.join(self._cache_SDF_dir, f&#39;{self.cid}.sdf&#39;)
 
 
         # Case (b): name is None, M is provided =&gt; generic substance
@@ -3423,7 +4553,92 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             self.k = None
             self.ktemplate = None
 
+    # low-level PNG and SDF feeders
+    def _download_pubchem_structuredata(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
+        self._download_SDF()
+        self._download_PNG()
 
+    def _download_SDF(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_SDF_dir, exist_ok=True)
+        if self.structure_file and (not os.path.isfile(self.structure_file) or self.no_cache):
+            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
+            response = requests.get(sdf_url, timeout=2)
+            if response.status_code == 200:
+                with open(self.structure_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+            else:
+                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
+
+    def _download_PNG(self):
+        &#34;&#34;&#34;Downloads and caches the PNG thumb file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_PNG_dir, exist_ok=True)
+        if self.image_file and (not os.path.isfile(self.image_file) or self.no_cache):
+            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
+            response = requests.get(png_url, timeout=1)
+            if response.status_code == 200:
+                with open(self.image_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+                self._crop_image()
+
+    def _crop_image(self):
+        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
+        if not PIL_AVAILABLE:
+            return
+        img = Image.open(self.image_file).convert(&#34;RGB&#34;)  # Convert to RGB to avoid transparency issues
+        def get_whitest_corner_color():
+            &#34;&#34;&#34;Finds the whitest (brightest) color among the four image corners.&#34;&#34;&#34;
+            width, height = img.size
+            corners = { # Get RGB values of the four corners
+                &#34;top_left&#34;: img.getpixel((0, 0)),
+                &#34;top_right&#34;: img.getpixel((width - 1, 0)),
+                &#34;bottom_left&#34;: img.getpixel((0, height - 1)),
+                &#34;bottom_right&#34;: img.getpixel((width - 1, height - 1))
+            }
+            def luminance(color):
+                r, g, b = color
+                return 0.299 * r + 0.587 * g + 0.114 * b
+            # Find the brightest (whitest) corner
+            whitest_corner = max(corners, key=lambda c: luminance(corners[c]))
+            return corners[whitest_corner]  # Return the RGB value of the whitest corner
+        bgcolor = get_whitest_corner_color() # background color, usually (245,245,245) for PubChem
+        bg = Image.new(&#34;RGB&#34;, img.size, bgcolor)  # Create a background image of same size
+        diff = ImageChops.difference(img, bg)  # Find pixels that are different from background
+        bbox = diff.getbbox()  # Get bounding box of non-white pixels
+        if bbox:
+            img = img.crop(bbox)  # Crop the image to the detected bounding box
+            img_array = np.array(img)
+            mask = np.all(img_array == bgcolor, axis=-1)
+            img_array[mask] = [255, 255, 255] # Replace matching pixels with pure white
+            Image.fromarray(img_array).save(self.image_file) # # Convert back to image and save
+
+    # image property
+    @property
+    def image(self):
+        &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            self._download_PNG() # download PNG if not cached
+            return Image.open(self.image_file)
+
+    # rawimage property
+    @property
+    def _rawimage(self):
+        &#34;&#34;&#34;returns the raw (binary) image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            with open(self.image_file, &#34;rb&#34;) as f:
+                image_bytes = f.read()
+            return image_bytes
+
+    # structure
+    @property
+    def structure(self):
+        &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
+        if self.structure_file:
+            self._download_SDF() # download SDF if not cached
+            return parse_sdf(self.structure_file)
+
+    # low-level model validator and property assignment
     def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):
         &#34;&#34;&#34;
         Generic method for validating and setting a migration property model.
@@ -3478,6 +4693,28 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             return self.k.evaluate(**updated_template)
         return func
 
+    # hasSML: False if SML does not exist or is None
+    @property
+    def hasSML(self):
+        &#34;&#34;&#34;Returns True if it has an SML defined&#34;&#34;&#34;
+        return hasattr(self,&#34;SML&#34;) and self.SML is not None
+    @property
+    def hasannex1(self):
+        &#34;&#34;&#34;Returns True if annex1 is defined&#34;&#34;&#34;
+        return hasattr(self,&#34;annex1&#34;) and isinstance(self.annex1,complyEU.annex1record)
+    @property
+    def hasSMLgroup(self):
+        &#34;&#34;&#34;Returns True if the sustance is regulated in a group&#34;&#34;&#34;
+        return self.hasannex1 and self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None
+    @property
+    def nSMLgroup(self):
+        &#34;&#34;&#34;Returns the number of substances in the group&#34;&#34;&#34;
+        if not self.hasSMLgroup:
+            return 0
+        return len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])
+    @property
+    def worstcaseSMLgroup(self):
+        &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;
 
 
     def __repr__(self):
@@ -3498,21 +4735,30 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
-        if isinstance(self,migrantToxtree):
+        # Add SML and EU rules
+        if self.hasSML:
+            if self.hasannex1:
+                attributes[&#34;--- EC 10/2011&#34;]=&#34;-&#34;*15
+                attributes[&#34;SML&#34;] = str(self.SML)
+                attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+                if self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None:
+                    attributes[&#34;part a group&#34;]=f&#34;of {len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])} substances&#34;
+                attributes[&#34;Name&#34;] =self.annex1[&#34;name&#34;]
+                attributes[&#34;CAS&#34;] = self.annex1[&#34;CAS&#34;]
+                attributes[&#34;EC|FCM|REF&#34;] = f&#34;{self.annex1[&#39;EC&#39;]}|{self.annex1[&#39;FCM&#39;]}|{self.annex1[&#39;Ref&#39;]}&#34;
+            else:
+                attributes[&#34;SML&#34;] = str(self.SML)
+                if hasattr(self,&#34;SMLunit&#34;):
+                    attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+        # Add Toxtree attributes
+        if isinstance(self,migrantToxtree) and self.compound not in (None,&#34;&#34;,[]):
+            attributes[&#34;--- ToxTree&#34;]=&#34;-&#34;*15
             attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
             attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
             attributes[&#34;Toxicology&#34;] = self.CramerClass
             attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
             attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
-            alerts = self.alerts
-            # Process alerts
-            alert_index = 0
-            for key, value in alerts.items():
-                if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
-                    alert_index += 1
-                    # Convert key name to readable format (split at capital letters)
-                    alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
-                    attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+            attributes.update(self.showalerts) # Process alerts
 
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
@@ -3607,7 +4853,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &gt;&gt;&gt; compound.molarvolumeMiller
         130.5  # Example output
         &#34;&#34;&#34;
-        return a * self.M**b
+        if self.M is not None:
+            return a * self.M**b
+        else:
+            None
 
 
     @property
@@ -3832,7 +5081,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
     @property
     def volume_3d(self):
-        &#34;&#34;&#34;
+        r&#34;&#34;&#34;
         Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
         This function applies an empirical, linear-additive scheme:
@@ -3934,12 +5183,26 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             estimates.
 
         &#34;&#34;&#34;
-        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
+        if hasattr(self, &#39;vdWvolume2&#39;):
+            return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+        else:
+            return None</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="loadpubchem.migrantToxtree" href="#loadpubchem.migrantToxtree">migrantToxtree</a></li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="loadpubchem.migrant.IMAGE_SIZE"><code class="name">var <span class="ident">IMAGE_SIZE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="loadpubchem.migrant.PUBCHEM_ROOT_URL"><code class="name">var <span class="ident">PUBCHEM_ROOT_URL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Instance variables</h3>
 <dl>
 <dt id="loadpubchem.migrant.Deval"><code class="name">var <span class="ident">Deval</span></code></dt>
@@ -4061,6 +5324,60 @@ def count_rings(self):
         &#39;non_aromatic&#39;: len(non_aromatic_rings),
         &#39;fusions&#39;: fusion_counts
     }</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.hasSML"><code class="name">var <span class="ident">hasSML</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if it has an SML defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasSML(self):
+    &#34;&#34;&#34;Returns True if it has an SML defined&#34;&#34;&#34;
+    return hasattr(self,&#34;SML&#34;) and self.SML is not None</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.hasSMLgroup"><code class="name">var <span class="ident">hasSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if the sustance is regulated in a group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasSMLgroup(self):
+    &#34;&#34;&#34;Returns True if the sustance is regulated in a group&#34;&#34;&#34;
+    return self.hasannex1 and self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.hasannex1"><code class="name">var <span class="ident">hasannex1</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if annex1 is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasannex1(self):
+    &#34;&#34;&#34;Returns True if annex1 is defined&#34;&#34;&#34;
+    return hasattr(self,&#34;annex1&#34;) and isinstance(self.annex1,complyEU.annex1record)</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.image"><code class="name">var <span class="ident">image</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the rasterized image of the migrant</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image(self):
+    &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
+    if self.image_file:
+        self._download_PNG() # download PNG if not cached
+        return Image.open(self.image_file)</code></pre>
 </details>
 </dd>
 <dt id="loadpubchem.migrant.keval"><code class="name">var <span class="ident">keval</span></code></dt>
@@ -4204,7 +5521,25 @@ def molarvolumeMiller(self, a=0.997, b=1.03):
     &gt;&gt;&gt; compound.molarvolumeMiller
     130.5  # Example output
     &#34;&#34;&#34;
-    return a * self.M**b</code></pre>
+    if self.M is not None:
+        return a * self.M**b
+    else:
+        None</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.nSMLgroup"><code class="name">var <span class="ident">nSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the number of substances in the group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def nSMLgroup(self):
+    &#34;&#34;&#34;Returns the number of substances in the group&#34;&#34;&#34;
+    if not self.hasSMLgroup:
+        return 0
+    return len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])</code></pre>
 </details>
 </dd>
 <dt id="loadpubchem.migrant.parse_formula"><code class="name">var <span class="ident">parse_formula</span></code></dt>
@@ -4305,6 +5640,21 @@ def polarityindex(self,logP=None,V=None):
                           V=self.molarvolumeMiller if V is None else V)</code></pre>
 </details>
 </dd>
+<dt id="loadpubchem.migrant.structure"><code class="name">var <span class="ident">structure</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the metadata associated with the migrant</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def structure(self):
+    &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
+    if self.structure_file:
+        self._download_SDF() # download SDF if not cached
+        return parse_sdf(self.structure_file)</code></pre>
+</details>
+</dd>
 <dt id="loadpubchem.migrant.volumeDwelle"><code class="name">var <span class="ident">volumeDwelle</span></code></dt>
 <dd>
 <div class="desc"><p>Returns the approximate volume as estimated by Dwelle
@@ -4338,7 +5688,10 @@ def volumeDwelle(self):
         estimates.
 
     &#34;&#34;&#34;
-    return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
+    if hasattr(self, &#39;vdWvolume2&#39;):
+        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+    else:
+        return None</code></pre>
 </details>
 </dd>
 <dt id="loadpubchem.migrant.volume_3d"><code class="name">var <span class="ident">volume_3d</span></code></dt>
@@ -4347,47 +5700,18 @@ def volumeDwelle(self):
 <p>This function applies an empirical, linear-additive scheme:
 Adapted code from: <a href="https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.">https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.</a> The intent is to remove the dependence to babel.</p>
 <p>[
-egin{aligned}
-V_{vdw} =\,&amp; n_H
-imes 7.24 + n_C
-imes 20.58 + n_N
-imes 15.6 + n_O
-imes 14.71 + n_F
-imes 13.31 \
-&amp;+ n_{Cl}
-imes 22.45 + n_{Br}
-imes 26.52 + n_{I}
-imes 32.52 + n_P
-imes 24.43 \
-&amp;+ n_S
-imes 24.43 + n_{Si}
-imes 38.79 + n_{Se}
-imes 28.73 + n_{Te}
-imes 36.62 \
-&amp;- 5.92
-imes (
-ext{bonds}) - 14.7
-imes (
-ext{no_ar}) - 3.8
-imes (
-ext{no_non_ar}) \
-&amp;+ 5
-imes (
-ext{no_f_ring_ArAr}) + 3
-imes (
-ext{no_f_ring_AlAr}) + 1
-imes (
-ext{no_f_ring_AlAl}) \
-&amp;- 5
-imes (
-ext{no_f_ring_S})
+\begin{aligned}
+V_{vdw} =\,&amp; n_H \times 7.24 + n_C \times 20.58 + n_N \times 15.6 + n_O \times 14.71 + n_F \times 13.31 \
+&amp;+ n_{Cl} \times 22.45 + n_{Br} \times 26.52 + n_{I} \times 32.52 + n_P \times 24.43 \
+&amp;+ n_S \times 24.43 + n_{Si} \times 38.79 + n_{Se} \times 28.73 + n_{Te} \times 36.62 \
+&amp;- 5.92 \times (\text{bonds}) - 14.7 \times (\text{no_ar}) - 3.8 \times (\text{no_non_ar}) \
+&amp;+ 5 \times (\text{no_f_ring_ArAr}) + 3 \times (\text{no_f_ring_AlAr}) + 1 \times (\text{no_f_ring_AlAl}) \
+&amp;- 5 \times (\text{no_f_ring_S})
 \end{aligned}
 ]</p>
 <p>Here, the bond count is estimated using the heuristic:</p>
 <p>[
-ext{bonds} pprox (
-ext{number of heavy atoms} - 1) + (
-ext{number of rings})
+\text{bonds} \approx (\text{number of heavy atoms} - 1) + (\text{number of rings})
 ]</p>
 <p>and heavy atoms are all atoms except hydrogen.</p>
 <p>For this implementation:
@@ -4407,7 +5731,7 @@ formula (str): Molecular formula (e.g., 'C15H16O2') to retrieve accurate hydroge
 </summary>
 <pre><code class="python">@property
 def volume_3d(self):
-    &#34;&#34;&#34;
+    r&#34;&#34;&#34;
     Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
     This function applies an empirical, linear-additive scheme:
@@ -4491,6 +5815,18 @@ def volume_3d(self):
             5*(no_f_ring_ArAr) + 3*(no_f_ring_AlAr) + 1*(no_f_ring_AlAl) - 5*(no_f_ring_S)
 
     return V_vdw</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.migrant.worstcaseSMLgroup"><code class="name">var <span class="ident">worstcaseSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the substance with the lowest molecular weight in the group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def worstcaseSMLgroup(self):
+    &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 </dl>
@@ -4632,7 +5968,7 @@ def volume_3d(self):
 </dd>
 <dt id="loadpubchem.migrantToxtree"><code class="flex name class">
 <span>class <span class="ident">migrantToxtree</span></span>
-<span>(</span><span>compound_name, cache_folder='cache.ToxTree', structure_folder='structure', refresh=False, no_cache=False)</span>
+<span>(</span><span>compound_name, cache_folder='cache.ToxTree', refresh=False, no_cache=False, raiseerror=True, verbose=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Extends the <code><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></code> class to integrate Toxtree for toxicological assessments.
@@ -4656,12 +5992,6 @@ for toxicological classification.</p>
 <dd>Mapping of classification engines.</dd>
 <dt><strong><code>cache_folder</code></strong> :&ensp;<code>str</code></dt>
 <dd>Directory to store cached Toxtree results.</dd>
-<dt><strong><code>structure_folder</code></strong> :&ensp;<code>str</code></dt>
-<dd>Directory to store cached structure files.</dd>
-<dt><strong><code>structure_file</code></strong> :&ensp;<code>str</code></dt>
-<dd>Path to the SDF file for the compound.</dd>
-<dt><strong><code>image_file</code></strong> :&ensp;<code>str</code></dt>
-<dd>Path to the PNG image of the compound.</dd>
 <dt><strong><code>refresh</code></strong> :&ensp;<code>bool</code></dt>
 <dd>If True, forces Toxtree reprocessing from CSV.</dd>
 <dt><strong><code>no_cache</code></strong> :&ensp;<code>bool</code></dt>
@@ -4691,67 +6021,7 @@ has_alerts: Checks if any toxicological alerts were detected.</p>
 &gt;&gt;&gt; print(&quot;Cramer2 Class:&quot;, c2)
 &gt;&gt;&gt; print(&quot;Cramer3 Class:&quot;, c3)
 </code></pre>
-<p>Create a new migrant instance.</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>name</code></strong> :&ensp;<code>str</code> or <code>None</code></dt>
-<dd>
-<ul>
-<li>A textual name for the substance to be looked up in PubChem (case a),
-or a custom name for a surrogate (case c).</li>
-<li>If None, and M is given, we treat it as a numeric-only initialization (case b).</li>
-</ul>
-</dd>
-<dt><strong><code>M</code></strong> :&ensp;<code>float</code> or <code>list/ndarray</code> of <code>float</code> or <code>None</code></dt>
-<dd>
-<ul>
-<li>For case (a): If provided as None, we do a PubChem search by name.</li>
-<li>For case (b): The numeric molecular weight(s). No search is performed if name is None.</li>
-<li>For case (c): Combined name and numeric M =&gt; a surrogate with no search.</li>
-</ul>
-</dd>
-<dt><strong><code>logP</code></strong> :&ensp;<code>float</code> or <code>list/ndarray</code> of <code>float</code> or <code>None</code></dt>
-<dd>
-<ul>
-<li>For case (a): Typically None. If the PubChem search returns logP, it’s stored automatically.</li>
-<li>For case (b,c): user can supply. If given, stored in self.logP as a numpy array.</li>
-</ul>
-</dd>
-<dt><strong><code>db</code></strong> :&ensp;<code>instance</code> of <code><a title="loadpubchem.CompoundIndex" href="#loadpubchem.CompoundIndex">CompoundIndex</a></code> or <code>similar</code>, optional</dt>
-<dd>
-<ul>
-<li>If you want to perform a PubChem search (case a) automatically, pass an instance.</li>
-<li>If omitted or None, no search is attempted, even if name is given.</li>
-</ul>
-</dd>
-<dt><strong><code>raiseerror</code></strong> :&ensp;<code>bool (default=True)</code>, optional</dt>
-<dd>Raise an error if name is not found</dd>
-</dl>
-<h2 id="advanced-parameters">Advanced Parameters</h2>
-<p>Property models from MigrationPropertyModels can be directly attached to the substance.
-Based on the current version of migration.py two models are proposed:
-- Set a diffusivity model using
-- Dmodel="model name"
-default ="Piringer"
-- Dtemplate=template dict coding for the key:value parameters
-(e.g, to bed used Diringer(key1=value1&hellip;))
-note: the template needs to be valid (do not use None)
-default = {"polymer":None, "M":None, "T":None}
-- Set a Henry-like model using
-- kmodel="model name"
-default =None
-- ktemplate=template dict coding for the key:value parameters
-default =
-{"Pi":1.41, "Pk":3.97, "Vi":124.1, "Vk":30.9, "ispolymer":True, "alpha":0.14, "lngmin":0.0,"Psat":1.0}
-other models could be implemented in the future, read the module property.py for details.</p>
-<p>Example of usage of Dpiringer
-m = migrant(name='limonene')
-# without the helper function
-Dvalue = m.D.evaluate(**dict(m.Dtemplate,polymer="LDPE",T=60))
-# with the helper function
-Dvalue = m.Deval(polymer="LDPE",T=60)</p>
-<h2 id="raises">Raises</h2>
-<p>ValueError if insufficient arguments are provided for any scenario.</p></div>
+<p>migrantToxtree constructor</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -4775,9 +6045,6 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         TOXTREE_ENGINES (dict): Mapping of Toxtree engines to class names.
         TOX_CLASSIFICATION (dict): Mapping of classification engines.
         cache_folder (str): Directory to store cached Toxtree results.
-        structure_folder (str): Directory to store cached structure files.
-        structure_file (str): Path to the SDF file for the compound.
-        image_file (str): Path to the PNG image of the compound.
         refresh (bool): If True, forces Toxtree reprocessing from CSV.
         no_cache (bool): If True, forces full cache regeneration.
 
@@ -4811,9 +6078,6 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &gt;&gt;&gt; print(&#34;Cramer3 Class:&#34;, c3)
     &#34;&#34;&#34;
 
-    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
-    IMAGE_SIZE = (640, 480)
-
     TOXTREE_ENGINES = {
         &#34;default&#34;: &#34;&#34;,
         &#34;cramer&#34;: &#34;toxTree.tree.cramer.CramerRules&#34;,
@@ -4839,8 +6103,12 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
     CFTTCunits = &#34;[mg/kg food intake]&#34;
 
-    def __init__(self, compound_name, cache_folder=&#39;cache.ToxTree&#39;, structure_folder=&#39;structure&#39;, refresh=False, no_cache=False):
-        super().__init__(compound_name)
+    def __init__(self, compound_name, cache_folder=&#39;cache.ToxTree&#39;, refresh=False, no_cache=False,  raiseerror=True, verbose=True):
+        &#34;&#34;&#34;migrantToxtree constructor&#34;&#34;&#34;
+        isempty = compound_name in (None,&#34;&#34;,[])
+        super().__init__(compound_name, raiseerror=raiseerror, verbose=verbose)
+        if isempty:
+            return
 
         if isinstance(self.cid, list):
             if len(self.cid) != 1:
@@ -4861,16 +6129,14 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             )
 
         self.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
-        self.structure_folder = os.path.join(self.cache_folder, structure_folder)
         os.makedirs(self.cache_folder, exist_ok=True)
-        os.makedirs(self.structure_folder, exist_ok=True)
 
-        self.structure_file = os.path.join(self.structure_folder, f&#39;{self.cid}.sdf&#39;)
-        self.image_file = os.path.join(self.structure_folder, f&#39;{self.cid}.png&#39;)
         self.refresh = refresh
         self.no_cache = no_cache
 
-        self._download_pubchem_data()
+        # Refactory / migrant manage all PubChem dependencies
+        self._download_pubchem_structuredata() # loading trigger
+
         tmp = self._run_toxtree(&#34;default&#34;)
         tmp[&#34;CramerValue&#34;]=self.class_roman_to_int(tmp[&#34;CramerRules&#34;])
         self.ToxTree = tmp
@@ -4878,36 +6144,6 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         self.CramerClass = tmp[&#34;CramerRules&#34;]
         self.TTC = self.TTC[self.CramerValue]
         self.CFTTC = self.CFTTC[self.CramerValue]
-
-    def _download_pubchem_data(self):
-        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
-        if not os.path.isfile(self.structure_file) or self.no_cache:
-            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
-            response = requests.get(sdf_url, timeout=60)
-            if response.status_code == 200:
-                with open(self.structure_file, &#39;wb&#39;) as f:
-                    f.write(response.content)
-            else:
-                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
-        if not os.path.isfile(self.image_file) or self.no_cache:
-            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
-            response = requests.get(png_url, timeout=60)
-            if response.status_code == 200:
-                with open(self.image_file, &#39;wb&#39;) as f:
-                    f.write(response.content)
-                self._crop_image(self.image_file)
-
-    def _crop_image(self, image_path):
-        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
-        if not PIL_AVAILABLE:
-            return
-        img = Image.open(image_path)
-        img = img.convert(&#34;RGBA&#34;)
-        bbox = img.getbbox()
-        if bbox:
-            img = img.crop(bbox)
-            img.save(image_path)
-
 
     def _clean_field_names(self, data):
         &#34;&#34;&#34;Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word.&#34;&#34;&#34;
@@ -5027,7 +6263,24 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
     @property
     def has_alerts(self):
-        return len(self.alerts) &gt; 0</code></pre>
+        return len(self.alerts) &gt; 0
+
+    @property
+    def showalerts(self):
+        &#34;&#34;&#34;Returns alerts in dict: alert1, alert2, alert3&#34;&#34;&#34;
+        if not self.has_alerts:
+            return {}
+        alerts = self.alerts
+        # Process alerts
+        alert_index = 0
+        attributes = {}
+        for key, value in alerts.items():
+            if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
+                alert_index += 1
+                # Convert key name to readable format (split at capital letters)
+                alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
+                attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+        return attributes</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -5040,14 +6293,6 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 <div class="desc"></div>
 </dd>
 <dt id="loadpubchem.migrantToxtree.CFTTCunits"><code class="name">var <span class="ident">CFTTCunits</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="loadpubchem.migrantToxtree.IMAGE_SIZE"><code class="name">var <span class="ident">IMAGE_SIZE</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="loadpubchem.migrantToxtree.PUBCHEM_ROOT_URL"><code class="name">var <span class="ident">PUBCHEM_ROOT_URL</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -5141,6 +6386,31 @@ def has_alerts(self):
     return len(self.alerts) &gt; 0</code></pre>
 </details>
 </dd>
+<dt id="loadpubchem.migrantToxtree.showalerts"><code class="name">var <span class="ident">showalerts</span></code></dt>
+<dd>
+<div class="desc"><p>Returns alerts in dict: alert1, alert2, alert3</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def showalerts(self):
+    &#34;&#34;&#34;Returns alerts in dict: alert1, alert2, alert3&#34;&#34;&#34;
+    if not self.has_alerts:
+        return {}
+    alerts = self.alerts
+    # Process alerts
+    alert_index = 0
+    attributes = {}
+    for key, value in alerts.items():
+        if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
+            alert_index += 1
+            # Convert key name to readable format (split at capital letters)
+            alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
+            attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+    return attributes</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
@@ -5178,15 +6448,22 @@ def has_alerts(self):
 <li><code><a title="loadpubchem.migrant.check_alt_propclass" href="#loadpubchem.migrant.check_alt_propclass">check_alt_propclass</a></code></li>
 <li><code><a title="loadpubchem.migrant.count_rings" href="#loadpubchem.migrant.count_rings">count_rings</a></code></li>
 <li><code><a title="loadpubchem.migrant.dispmax" href="#loadpubchem.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="loadpubchem.migrant.hasSML" href="#loadpubchem.migrant.hasSML">hasSML</a></code></li>
+<li><code><a title="loadpubchem.migrant.hasSMLgroup" href="#loadpubchem.migrant.hasSMLgroup">hasSMLgroup</a></code></li>
+<li><code><a title="loadpubchem.migrant.hasannex1" href="#loadpubchem.migrant.hasannex1">hasannex1</a></code></li>
+<li><code><a title="loadpubchem.migrant.image" href="#loadpubchem.migrant.image">image</a></code></li>
 <li><code><a title="loadpubchem.migrant.keval" href="#loadpubchem.migrant.keval">keval</a></code></li>
 <li><code><a title="loadpubchem.migrant.molarvolumeLinear" href="#loadpubchem.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
 <li><code><a title="loadpubchem.migrant.molarvolumeMiller" href="#loadpubchem.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
+<li><code><a title="loadpubchem.migrant.nSMLgroup" href="#loadpubchem.migrant.nSMLgroup">nSMLgroup</a></code></li>
 <li><code><a title="loadpubchem.migrant.parse_formula" href="#loadpubchem.migrant.parse_formula">parse_formula</a></code></li>
 <li><code><a title="loadpubchem.migrant.polarityindex" href="#loadpubchem.migrant.polarityindex">polarityindex</a></code></li>
+<li><code><a title="loadpubchem.migrant.structure" href="#loadpubchem.migrant.structure">structure</a></code></li>
 <li><code><a title="loadpubchem.migrant.suggest_alt_Dclass" href="#loadpubchem.migrant.suggest_alt_Dclass">suggest_alt_Dclass</a></code></li>
 <li><code><a title="loadpubchem.migrant.suggest_alt_Dmodel" href="#loadpubchem.migrant.suggest_alt_Dmodel">suggest_alt_Dmodel</a></code></li>
 <li><code><a title="loadpubchem.migrant.volumeDwelle" href="#loadpubchem.migrant.volumeDwelle">volumeDwelle</a></code></li>
 <li><code><a title="loadpubchem.migrant.volume_3d" href="#loadpubchem.migrant.volume_3d">volume_3d</a></code></li>
+<li><code><a title="loadpubchem.migrant.worstcaseSMLgroup" href="#loadpubchem.migrant.worstcaseSMLgroup">worstcaseSMLgroup</a></code></li>
 </ul>
 </li>
 </ul>
@@ -5215,7 +6492,11 @@ def has_alerts(self):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="loadpubchem.create_substance_widget" href="#loadpubchem.create_substance_widget">create_substance_widget</a></code></li>
+<li><code><a title="loadpubchem.floatNone" href="#loadpubchem.floatNone">floatNone</a></code></li>
 <li><code><a title="loadpubchem.get_compounds" href="#loadpubchem.get_compounds">get_compounds</a></code></li>
+<li><code><a title="loadpubchem.parse_molblock" href="#loadpubchem.parse_molblock">parse_molblock</a></code></li>
+<li><code><a title="loadpubchem.parse_sdf" href="#loadpubchem.parse_sdf">parse_sdf</a></code></li>
 <li><code><a title="loadpubchem.polarity_index" href="#loadpubchem.polarity_index">polarity_index</a></code></li>
 </ul>
 </li>
@@ -5232,18 +6513,27 @@ def has_alerts(self):
 <h4><code><a title="loadpubchem.migrant" href="#loadpubchem.migrant">migrant</a></code></h4>
 <ul class="two-column">
 <li><code><a title="loadpubchem.migrant.Deval" href="#loadpubchem.migrant.Deval">Deval</a></code></li>
+<li><code><a title="loadpubchem.migrant.IMAGE_SIZE" href="#loadpubchem.migrant.IMAGE_SIZE">IMAGE_SIZE</a></code></li>
+<li><code><a title="loadpubchem.migrant.PUBCHEM_ROOT_URL" href="#loadpubchem.migrant.PUBCHEM_ROOT_URL">PUBCHEM_ROOT_URL</a></code></li>
 <li><code><a title="loadpubchem.migrant.check_alt_propclass" href="#loadpubchem.migrant.check_alt_propclass">check_alt_propclass</a></code></li>
 <li><code><a title="loadpubchem.migrant.count_rings" href="#loadpubchem.migrant.count_rings">count_rings</a></code></li>
 <li><code><a title="loadpubchem.migrant.dispmax" href="#loadpubchem.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="loadpubchem.migrant.hasSML" href="#loadpubchem.migrant.hasSML">hasSML</a></code></li>
+<li><code><a title="loadpubchem.migrant.hasSMLgroup" href="#loadpubchem.migrant.hasSMLgroup">hasSMLgroup</a></code></li>
+<li><code><a title="loadpubchem.migrant.hasannex1" href="#loadpubchem.migrant.hasannex1">hasannex1</a></code></li>
+<li><code><a title="loadpubchem.migrant.image" href="#loadpubchem.migrant.image">image</a></code></li>
 <li><code><a title="loadpubchem.migrant.keval" href="#loadpubchem.migrant.keval">keval</a></code></li>
 <li><code><a title="loadpubchem.migrant.molarvolumeLinear" href="#loadpubchem.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
 <li><code><a title="loadpubchem.migrant.molarvolumeMiller" href="#loadpubchem.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
+<li><code><a title="loadpubchem.migrant.nSMLgroup" href="#loadpubchem.migrant.nSMLgroup">nSMLgroup</a></code></li>
 <li><code><a title="loadpubchem.migrant.parse_formula" href="#loadpubchem.migrant.parse_formula">parse_formula</a></code></li>
 <li><code><a title="loadpubchem.migrant.polarityindex" href="#loadpubchem.migrant.polarityindex">polarityindex</a></code></li>
+<li><code><a title="loadpubchem.migrant.structure" href="#loadpubchem.migrant.structure">structure</a></code></li>
 <li><code><a title="loadpubchem.migrant.suggest_alt_Dclass" href="#loadpubchem.migrant.suggest_alt_Dclass">suggest_alt_Dclass</a></code></li>
 <li><code><a title="loadpubchem.migrant.suggest_alt_Dmodel" href="#loadpubchem.migrant.suggest_alt_Dmodel">suggest_alt_Dmodel</a></code></li>
 <li><code><a title="loadpubchem.migrant.volumeDwelle" href="#loadpubchem.migrant.volumeDwelle">volumeDwelle</a></code></li>
 <li><code><a title="loadpubchem.migrant.volume_3d" href="#loadpubchem.migrant.volume_3d">volume_3d</a></code></li>
+<li><code><a title="loadpubchem.migrant.worstcaseSMLgroup" href="#loadpubchem.migrant.worstcaseSMLgroup">worstcaseSMLgroup</a></code></li>
 </ul>
 </li>
 <li>
@@ -5251,8 +6541,6 @@ def has_alerts(self):
 <ul class="two-column">
 <li><code><a title="loadpubchem.migrantToxtree.CFTTC" href="#loadpubchem.migrantToxtree.CFTTC">CFTTC</a></code></li>
 <li><code><a title="loadpubchem.migrantToxtree.CFTTCunits" href="#loadpubchem.migrantToxtree.CFTTCunits">CFTTCunits</a></code></li>
-<li><code><a title="loadpubchem.migrantToxtree.IMAGE_SIZE" href="#loadpubchem.migrantToxtree.IMAGE_SIZE">IMAGE_SIZE</a></code></li>
-<li><code><a title="loadpubchem.migrantToxtree.PUBCHEM_ROOT_URL" href="#loadpubchem.migrantToxtree.PUBCHEM_ROOT_URL">PUBCHEM_ROOT_URL</a></code></li>
 <li><code><a title="loadpubchem.migrantToxtree.TOXTREE_ENGINES" href="#loadpubchem.migrantToxtree.TOXTREE_ENGINES">TOXTREE_ENGINES</a></code></li>
 <li><code><a title="loadpubchem.migrantToxtree.TOX_CLASSIFICATION" href="#loadpubchem.migrantToxtree.TOX_CLASSIFICATION">TOX_CLASSIFICATION</a></code></li>
 <li><code><a title="loadpubchem.migrantToxtree.TTC" href="#loadpubchem.migrantToxtree.TTC">TTC</a></code></li>
@@ -5263,6 +6551,7 @@ def has_alerts(self):
 <li><code><a title="loadpubchem.migrantToxtree.cramer2" href="#loadpubchem.migrantToxtree.cramer2">cramer2</a></code></li>
 <li><code><a title="loadpubchem.migrantToxtree.cramer3" href="#loadpubchem.migrantToxtree.cramer3">cramer3</a></code></li>
 <li><code><a title="loadpubchem.migrantToxtree.has_alerts" href="#loadpubchem.migrantToxtree.has_alerts">has_alerts</a></code></li>
+<li><code><a title="loadpubchem.migrantToxtree.showalerts" href="#loadpubchem.migrantToxtree.showalerts">showalerts</a></code></li>
 </ul>
 </li>
 </ul>

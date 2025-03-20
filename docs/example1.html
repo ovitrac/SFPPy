@@ -122,7 +122,7 @@ contactTime = (10, &#34;days&#34;)  # Contact duration
 # %% Set Parameters with Uncertainty
 # ----------------------------------
 # Concentrations are in arbitrary units (e.g., mg/kg)
-maxConcentration = 5000  # Maximum initial concentration in the polymer
+maxConcentration = 5000  # Maximum initial concentration in the polymer (e.g. 5000 mg/mg)
 
 # %% Define Sandwich Geometry
 # ---------------------------
@@ -131,8 +131,8 @@ Create a **cylindrical sandwich** modeled using `Packaging3D`.
 &#34;&#34;&#34;
 sandwich_geom = Packaging3D(
     &#39;Cylinder&#39;,
-    height=(19, &#34;cm&#34;),  # Cylinder height (19 cm)
-    radius=(6, &#34;mm&#34;)    # Cylinder radius (6 mm)
+    length=(19, &#34;cm&#34;),  # Cylinder length/height (19 cm)
+    radius=(30, &#34;mm&#34;)    # Cylinder radius (6 mm)
 )
 
 # Compute internal volume (m³) and contact surface area (m²)
@@ -202,12 +202,12 @@ CF = simulation.interpolate_CF(tnew).flatten()
 simulation.plotCx()
 
 # Migration kinetics (CF vs time)
-hfig1 = simulation.plotCF(t=tnew)
+hfig1 = simulation.plotCF(t=tnew) # we set arbitrarily an SML to 30 mg/kg (units are shown as a.u.)
 
 # %% Store Results for Comparison
 # -------------------------------
 # Store the simulation results for **Irganox 1076**
-allCF = store(name=&#34;sandwich&#34;)
+allCF = store(name=&#34;sandwich&#34;, SML=10)
 allCF.add(simulation, &#34;Irganox 1076&#34;, &#34;r&#34;)  # Assign red color &#34;r&#34;
 
 # %% Run Simulation for Irgafos 168
@@ -246,14 +246,27 @@ print(f&#34;m1:I1076 KF/P = {KFP_m1}&#34;,&#34;\n&#34;,f&#34;m2:I168 KF/P = {KFP
 # %% Compare Migration Kinetics (Both Migrants)
 # ---------------------------------------------
 # Compare CF vs time for **Irganox 1076** and **Irgafos 168**
-hfig12 = allCF.plotCF()
+hfig12 = allCF.plotCF(plotSML=False) # we do not plot SML since they have different SMLs
 
 # %% Save and Print Figures
 # -------------------------
 printconfig = {&#34;destinationfolder&#34;: outputfolder, &#34;overwrite&#34;: True}
 print_figure(hfig1, **printconfig)
 print_figure(hfig2, **printconfig)
-print_figure(hfig12, **printconfig)</code></pre>
+print_figure(hfig12, **printconfig)
+
+
+# %% Variant with operators for faster evaluation
+# The general template is:
+#    substance % food &lt;&lt; packaging &gt;&gt; layer &gt;&gt; food
+#    food.lastsimulation contains the last result
+
+from patankar.layer import LDPE
+film = LDPE(l=(0.1,&#34;mm&#34;)) # a virgin film (no substance, not temperature information)
+m1 % FOODlayer &lt;&lt; sandwich_geom &gt;&gt; film &gt;&gt; FOODlayer
+FOODlayer.lastsimulation.plotCF()
+m2 % FOODlayer &lt;&lt; sandwich_geom &gt;&gt; film &gt;&gt; FOODlayer
+FOODlayer.lastsimulation.plotCF()</code></pre>
 </details>
 </section>
 <section>

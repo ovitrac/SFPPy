@@ -92,12 +92,12 @@ enabling to describe the partitioning between layers. All materials are automati
 a modified finite volume technique exact at steady state and offering good accuracy in non-steady
 conditions.</p>
 <p>A temperature and substance can be assigned to layers.</p>
-<p>@version: 1.30
+<p>@version: 1.32
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-10</p>
+@rev. 2025-03-13</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -187,12 +187,12 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.30
+@version: 1.32
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-10
+@rev. 2025-03-13
 
 &#34;&#34;&#34;
 
@@ -236,7 +236,7 @@ if &#39;migrant&#39; not in dir():
     from patankar.loadpubchem import migrant
 
 
-__all__ = [&#39;AdhesiveAcrylate&#39;, &#39;AdhesiveEVA&#39;, &#39;AdhesiveNaturalRubber&#39;, &#39;AdhesivePU&#39;, &#39;AdhesivePVAC&#39;, &#39;AdhesiveSyntheticRubber&#39;, &#39;AdhesiveVAE&#39;, &#39;Cardboard&#39;, &#39;HDPE&#39;, &#39;HIPS&#39;, &#39;LDPE&#39;, &#39;LLDPE&#39;, &#39;PA6&#39;, &#39;PA66&#39;, &#39;PBT&#39;, &#39;PEN&#39;, &#39;PMMA&#39;, &#39;PP&#39;, &#39;PPrubber&#39;, &#39;PS&#39;, &#39;PVAc&#39;, &#39;Paper&#39;, &#39;R&#39;, &#39;RT0K&#39;, &#39;SBS&#39;, &#39;SI&#39;, &#39;SIbase&#39;, &#39;T0K&#39;, &#39;air&#39;, &#39;check_units&#39;, &#39;fixSIbase&#39;, &#39;format_scientific_latex&#39;, &#39;gPET&#39;, &#39;help_layer&#39;, &#39;iRT0K&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;list_layer_subclasses&#39;, &#39;mesh&#39;, &#39;migrant&#39;, &#39;oPP&#39;, &#39;plasticizedPVC&#39;, &#39;qSI&#39;, &#39;rHIPS&#39;, &#39;rPET&#39;, &#39;rPS&#39;, &#39;rigidPVC&#39;, &#39;toSI&#39;, &#39;wPET&#39;]
+__all__ = [&#39;AdhesiveAcrylate&#39;, &#39;AdhesiveEVA&#39;, &#39;AdhesiveNaturalRubber&#39;, &#39;AdhesivePU&#39;, &#39;AdhesivePVAC&#39;, &#39;AdhesiveSyntheticRubber&#39;, &#39;AdhesiveVAE&#39;, &#39;Cardboard&#39;, &#39;HDPE&#39;, &#39;HIPS&#39;, &#39;LDPE&#39;, &#39;LLDPE&#39;, &#39;PA6&#39;, &#39;PA66&#39;, &#39;PBT&#39;, &#39;PEN&#39;, &#39;PMMA&#39;, &#39;PP&#39;, &#39;PPrubber&#39;, &#39;PS&#39;, &#39;PVAc&#39;, &#39;Paper&#39;, &#39;R&#39;, &#39;RT0K&#39;, &#39;SBS&#39;, &#39;SI&#39;, &#39;SIbase&#39;, &#39;T0K&#39;, &#39;air&#39;, &#39;check_units&#39;, &#39;create_multi_layer_widget&#39;, &#39;create_polymer_dropdown&#39;, &#39;fixSIbase&#39;, &#39;format_scientific_latex&#39;, &#39;gPET&#39;, &#39;help_layer&#39;, &#39;iRT0K&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;list_layer_subclasses&#39;, &#39;list_materials&#39;, &#39;material&#39;, &#39;mesh&#39;, &#39;migrant&#39;, &#39;oPP&#39;, &#39;plasticizedPVC&#39;, &#39;qSI&#39;, &#39;rHIPS&#39;, &#39;rPET&#39;, &#39;rPS&#39;, &#39;resolve_material&#39;, &#39;rigidPVC&#39;, &#39;toSI&#39;, &#39;wPET&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -245,9 +245,282 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.30&#34;
+__version__ = &#34;1.32&#34;
 
 # %% Private functions and classes
+
+# Unified registry of materials
+# Each key is the canonical class name (as used in layer.py) and its value is a dictionary with:
+#   - &#39;description&#39;: the full display name
+#   - &#39;type&#39;: one of &#34;polymer&#34;, &#34;adhesive&#34;, or &#34;other&#34;
+#   - &#39;synonyms&#39;: a list of alternative names that can be used for import purposes
+
+mainregistry = {
+    # Polymers
+    &#39;HDPE&#39;: {
+        &#39;description&#39;: &#39;High-Density Polyethylene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;PEHD&#34;,&#34;high-density polyethylene&#34;]
+    },
+    &#39;HIPS&#39;: {
+        &#39;description&#39;: &#39;High-Impact Polystyrene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;high-impact polystyrene&#34;]
+    },
+    &#39;LDPE&#39;: {
+        &#39;description&#39;: &#39;Low-Density Polyethylene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;PEBD&#34;,&#34;PE&#34;,&#34;low-desnity polyethylne&#34;]
+    },
+    &#39;LLDPE&#39;: {
+        &#39;description&#39;: &#39;Linear Low-Density Polyethylene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;PEBLD&#34;,&#34;PELBD&#34;, &#34;linear low-Density polyethylene&#34;]
+    },
+    &#39;PA6&#39;: {
+        &#39;description&#39;: &#39;Polyamide 6&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;PA 6&#34;,&#34;Polyamide 6&#34;]
+    },
+    &#39;PA66&#39;: {
+        &#39;description&#39;: &#39;Polyamide 6,6&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;PA 6,6&#34;,&#34;polyamide 6,6&#34;]
+    },
+    &#39;PBT&#39;: {
+        &#39;description&#39;: &#39;Polybutylene Terephthalate&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: []
+    },
+    &#39;PEN&#39;: {
+        &#39;description&#39;: &#39;Polyethylene Naphthalate&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;polyethylene naphthalate&#34;]
+    },
+    &#39;PMMA&#39;: {
+        &#39;description&#39;: &#39;Polymethyl Methacrylate&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;polymethyl methacrylate&#34;]
+    },
+    &#39;PP&#39;: {
+        &#39;description&#39;: &#39;Polypropylene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;polypropylene&#34;]
+    },
+    &#39;PPrubber&#39;: {
+        &#39;description&#39;: &#39;Atactic Polypropylene (Rubbery)&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;aPP&#34;,&#34;atactic PP&#34;,&#34;atactic polypropylene&#34;]
+    },
+    &#39;PS&#39;: {
+        &#39;description&#39;: &#39;Polystyrene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;GPPS&#34;,&#34;polystyrene&#34;,&#34;general purpose polystyrene&#34;]
+    },
+    &#39;PVAc&#39;: {
+        &#39;description&#39;: &#39;Polyvinyl Acetate&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;PVAC&#34;]
+    },
+    &#39;SBS&#39;: {
+        &#39;description&#39;: &#39;Styrene-Butadiene-Styrene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;styrene-butadiene-styrene&#34;]
+    },
+    &#39;gPET&#39;: {
+        &#39;description&#39;: &#39;Glassy Polyethylene Terephthalate&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#39;PET&#39;, &#39;PETE&#39;, &#39;polyethylene terephthalate&#39;]
+    },
+    &#39;oPP&#39;: {
+        &#39;description&#39;: &#39;Oriented Polypropylene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;oriented polypropylene&#34;]
+    },
+    &#39;plasticizedPVC&#39;: {
+        &#39;description&#39;: &#39;Plasticized Polyvinyl Chloride&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;plasticized polyvinyl chloride&#34;,&#34;PVC cling film&#34;]
+    },
+    &#39;rHIPS&#39;: {
+        &#39;description&#39;: &#39;Rubbery High-Impact Polystyrene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;rubbery HIPS&#34;]
+    },
+    &#39;rPET&#39;: {
+        &#39;description&#39;: &#39;Rubbery Polyethylene Terephthalate&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#39;PET above Tg&#39;, &#39;PETE above Tg&#39;, &#39;PET T&gt;Tg&#39;, &#39;PETE T&gt;Tg&#39;]
+    },
+    &#39;rPS&#39;: {
+        &#39;description&#39;: &#39;Rubbery Polystyrene&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: []
+    },
+    &#39;rigidPVC&#39;: {
+        &#39;description&#39;: &#39;Rigid Polyvinyl Chloride&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#34;rigid PVC&#34;,&#34;PVC&#34;,&#34;rigid polyvinyl chloride&#34;]
+    },
+    &#39;wPET&#39;: {
+        &#39;description&#39;: &#39;Wet (Plasticized) Polyethylene Terephthalate&#39;,
+        &#39;type&#39;: &#39;polymer&#39;,
+        &#39;synonyms&#39;: [&#39;plasticized PET&#39;, &#39;plasticized PETE&#39;,&#39;wet PET&#39;]
+    },
+
+    # Adhesives
+    &#39;AdhesiveAcrylate&#39;: {
+        &#39;description&#39;: &#39;Acrylate Adhesive&#39;,
+        &#39;type&#39;: &#39;adhesive&#39;,
+        &#39;synonyms&#39;: [&#34;PMMA adhesive&#34;]
+    },
+    &#39;AdhesiveEVA&#39;: {
+        &#39;description&#39;: &#39;EVA Adhesive&#39;,
+        &#39;type&#39;: &#39;adhesive&#39;,
+        &#39;synonyms&#39;: [&#34;EVA adhesive&#34;]
+    },
+    &#39;AdhesiveNaturalRubber&#39;: {
+        &#39;description&#39;: &#39;Natural Rubber Adhesive&#39;,
+        &#39;type&#39;: &#39;adhesive&#39;,
+        &#39;synonyms&#39;: [&#34;natural rubber adhesive&#34;]
+    },
+    &#39;AdhesivePU&#39;: {
+        &#39;description&#39;: &#39;Polyurethane Adhesive&#39;,
+        &#39;type&#39;: &#39;adhesive&#39;,
+        &#39;synonyms&#39;: [&#34;PU adhesive&#34;,&#34;polyurethane adhesive&#34;]
+    },
+    &#39;AdhesivePVAC&#39;: {
+        &#39;description&#39;: &#39;PVAc Adhesive&#39;,
+        &#39;type&#39;: &#39;adhesive&#39;,
+        &#39;synonyms&#39;: [&#34;adhesive PVAc&#34;,&#34;adhesive PVAC&#34;]
+    },
+    &#39;AdhesiveSyntheticRubber&#39;: {
+        &#39;description&#39;: &#39;Synthetic Rubber Adhesive&#39;,
+        &#39;type&#39;: &#39;adhesive&#39;,
+        &#39;synonyms&#39;: [&#34;synthetic rubber adhesive&#34;]
+    },
+    &#39;AdhesiveVAE&#39;: {
+        &#39;description&#39;: &#39;VAE Adhesive&#39;,
+        &#39;type&#39;: &#39;adhesive&#39;,
+        &#39;synonyms&#39;: [&#34;VAE adhesive&#34;]
+    },
+
+    # Other materials
+    &#39;Cardboard&#39;: {
+        &#39;description&#39;: &#39;Cardboard&#39;,
+        &#39;type&#39;: &#39;other&#39;,
+        &#39;synonyms&#39;: [&#34;board&#34;]
+    },
+    &#39;Paper&#39;: {
+        &#39;description&#39;: &#39;Paper&#39;,
+        &#39;type&#39;: &#39;other&#39;,
+        &#39;synonyms&#39;: [&#34;paper&#34;]
+    },
+    &#39;air&#39;: {
+        &#39;description&#39;: &#39;Air&#39;,
+        &#39;type&#39;: &#39;other&#39;,
+        &#39;synonyms&#39;: [&#34;gaz&#34;]
+    }
+}
+
+# Listing all available materials with details
+def list_materials():
+    &#34;&#34;&#34;
+    Lists all available materials with their descriptions, types, and synonyms
+    as a Markdown table with adjusted column widths.
+    &#34;&#34;&#34;
+    headers = [&#34;Material Key&#34;, &#34;Description&#34;, &#34;Type&#34;, &#34;Synonyms&#34;]
+    rows = []
+    for key, info in mainregistry.items():
+        synonyms = &#34;, &#34;.join(info[&#34;synonyms&#34;]) if info[&#34;synonyms&#34;] else &#34;None&#34;
+        rows.append([key, info[&#34;description&#34;], info[&#34;type&#34;], synonyms])
+    # Compute the maximum width for each column based on headers and rows
+    col_widths = [
+        max(len(headers[i]), *(len(row[i]) for row in rows))
+        for i in range(len(headers))
+    ]
+    # Helper to format a row given the computed widths
+    def format_row(row):
+        return &#34;| &#34; + &#34; | &#34;.join(row[i].ljust(col_widths[i]) for i in range(len(row))) + &#34; |&#34;
+    # Build the Markdown table rows
+    table = [format_row(headers)]
+    # Separator row: use dashes matching the column widths
+    separator = &#34;| &#34; + &#34; | &#34;.join(&#34;-&#34; * col_widths[i] for i in range(len(headers))) + &#34; |&#34;
+    table.append(separator)
+    # Data rows
+    for row in rows:
+        table.append(format_row(row))
+
+    # Print the complete Markdown table
+    print(&#34;\n&#34;.join(table))
+
+
+# Import mechanism based on synonyms
+def resolve_material(name,returnclass=True):
+    &#34;&#34;&#34;
+    Resolves a material name or any of its synonyms to the canonical registry key.
+
+    Parameters:
+      name (str): The material name or synonym.
+
+    Returns:
+      key (str): The canonical key from the registry.
+
+    Raises:
+      KeyError: If no matching material is found.
+    &#34;&#34;&#34;
+    name_lower = name.lower()
+    for key, info in mainregistry.items():
+        # Check if the provided name matches the canonical key (case-insensitive)
+        if key.lower() == name_lower:
+            return key
+        # Check if the provided name matches any synonym (case-insensitive)
+        for syn in info[&#39;synonyms&#39;]:
+            if syn.lower() == name_lower:
+                return key
+    print(&#34;List of available materials.\nIf you not find yours, call layer directly for a customized one.&#34;)
+    list_materials()
+    raise KeyError(f&#34;Material &#39;{name}&#39; not found in the registry.&#34;)
+
+
+def material(name):
+    &#34;&#34;&#34;
+    Import surrogate that returns the material class corresponding to the given name.
+
+    Usage:
+        from patankar import material
+        mymaterial = material(&#34;anyname&#34;)  # &#39;anyname&#39; is resolved to a canonical key,
+                                          # and the corresponding class (or the base &#39;layer&#39; if applicable)
+                                          # from this module is returned.
+
+    If the provided name is &#34;layer&#34; (case-insensitive), the base layer class is returned.
+
+    Parameters:
+      name (str): The material name or any synonym.
+
+    Returns:
+      A material class that can be instantiated (e.g., mymaterial(l=...)).
+
+    Raises:
+      KeyError: If the provided name (or its synonym) does not match any material in the registry.
+      ImportError: If the material class cannot be found in the module.
+
+    Example:
+        A=material(&#34;PEBD&#34;)(l=(10,&#34;µm&#34;)) # instantiate LDPE with l=100 µm
+    &#34;&#34;&#34;
+    # If the user requests the base class &#34;layer&#34;, return it directly.
+    if name.lower() == &#34;layer&#34;:
+        return layer
+    # Resolve the canonical key using the existing resolve_material function.
+    canonical_key = resolve_material(name)
+    try:
+        # Since material is defined in this module, use globals() to fetch the class.
+        mat_class = globals()[canonical_key]
+    except KeyError:
+        raise ImportError(f&#34;Material class &#39;{canonical_key}&#39; not found in the module.&#34;)
+    return mat_class
+
+
 
 # Initialize unit conversion (intensive initialization with old Python versions)
 # NB: degC and kelvin must be used for temperature
@@ -267,7 +540,6 @@ if (&#34;SI&#34; not in locals()) or (&#34;qSI&#34; not in locals()):
     T0K,constants[&#34;T0K&#34;],constants[&#34;T0Kunit&#34;] = toSI(qSI(0,&#39;degC&#39;))
     RT0K,constants[&#34;RT0K&#34;],constants[&#34;RT0Kunit&#34;] = toSI(R*T0K)
     iRT0K,constants[&#34;iRT0K&#34;],constants[&#34;iRT0Kunit&#34;] = toSI(1/RT0K)
-
 
 # Concise data validator with unit convertor to SI
 # To prevent many issues with temperature and to adhere to 2024 golden standard in layer
@@ -422,7 +694,317 @@ def help_layer():
         print(row_format.format(*row))
 
 
-# generic class to store linked parameter values in a sparse manner
+# %% Widgets
+
+#ipywidgets: polymer selection
+def create_polymer_dropdown(default_value=None):
+    &#34;&#34;&#34;
+    Creates and returns a dropdown widget for selecting a polymer.
+    The dropdown options are built from the mainregistry entries with type &#39;polymer&#39;,
+    formatted as &#34;Key: Description&#34;. If ipywidgets is not installed, a dummy widget
+    is returned that mimics the basic interface.
+
+    Parameters:
+      default_value (str, optional): The default polymer key to select.
+                                     If not provided, the first polymer key from the registry is used.
+
+    Returns:
+      A widget (ipywidgets.Dropdown or a fallback DummyDropdown) with the polymer options.
+    &#34;&#34;&#34;
+    # Build polymer options as a list of (display, value) tuples
+    polymer_options = []
+    for key, info in mainregistry.items():
+        if info[&#34;type&#34;] == &#34;polymer&#34;:
+            display_text = f&#34;{key}: {info[&#39;description&#39;]}&#34;
+            polymer_options.append((display_text, key))
+
+    if not polymer_options:
+        raise ValueError(&#34;No polymers found in the registry.&#34;)
+
+    # Set default value if not provided or if not in options
+    valid_keys = [opt[1] for opt in polymer_options]
+    if default_value is None or default_value not in valid_keys:
+        default_value = valid_keys[0]
+
+    # Try to import ipywidgets; if unavailable, define a fallback DummyDropdown.
+    try:
+        import ipywidgets as widgets
+    except ImportError:
+        widgets = None
+
+    if widgets:
+        dropdown = widgets.Dropdown(
+            options=polymer_options,
+            value=default_value,
+            description=&#39;Polymer:&#39;,
+            layout=widgets.Layout(width=&#39;50%&#39;)
+        )
+    else:
+        # Fallback dummy widget mimicking ipywidgets.Dropdown
+        class DummyDropdown:
+            def __init__(self, options, value, description, layout):
+                self.options = options
+                self.value = value
+                self.description = description
+                self.layout = layout
+
+            def __repr__(self):
+                return (f&#34;DummyDropdown(value={self.value}, &#34;
+                        f&#34;options={[opt[1] for opt in self.options]}, &#34;
+                        f&#34;description=&#39;{self.description}&#39;, layout={self.layout})&#34;)
+        dropdown = DummyDropdown(
+            options=polymer_options,
+            value=default_value,
+            description=&#39;Polymer:&#39;,
+            layout={&#39;width&#39;: &#39;50%&#39;}
+        )
+
+    return dropdown
+
+
+
+def create_multi_layer_widget(default_polymer=&#34;LDPE&#34;, default_thickness_value=100, default_thickness_unit=&#34;um&#34;, default_c0=100):
+    &#34;&#34;&#34;
+    Creates a widget interface to define multiple layers (1 to 10) with the following parameters for each layer:
+      - Layer Name (unique identifier)
+      - Polymer (dropdown with &#34;Key: Description&#34;)
+      - Thickness (a numeric value and a unit)
+      - Initial Concentration C0 (in arbitrary units, a.u.)
+
+    The interface includes:
+      - An IntSlider to choose the number of layers.
+      - Navigation arrows (Previous/Next) with a label showing &#34;Layer X of Y&#34;.
+      - Input fields for each layer&#39;s parameters.
+      - A button to instantiate all layers. When clicked, each layer is instantiated as:
+            material(layer_def[&#34;polymer&#34;])(l=(thickness, unit), D=1e-14, C0=(C0, &#34;a.u.&#34;))
+        and stored in a global dictionary (builtins.mylayers) keyed by the layer name.
+
+    The user may add or remove layers by changing the number and editing the layer names.
+
+    Returns:
+      An ipywidgets.VBox instance containing the full UI.
+
+    Raises:
+      ImportError: If ipywidgets/IPython are not available.
+    &#34;&#34;&#34;
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError(&#34;ipywidgets and IPython are required for the widget interface.&#34;) from e
+
+    import builtins
+    # Ensure a global dictionary for storing created layers exists
+    if not hasattr(builtins, &#34;mylayers&#34;):
+        builtins.mylayers = {}
+    # Instead of mymaterial, we now use mymaterials:
+    if not hasattr(builtins, &#34;mymaterials&#34;):
+        builtins.mymaterials = {}
+    global mylayers, mymaterials
+    mylayers = builtins.mylayers
+    mymaterials = builtins.mymaterials
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, &#34;_PREHEATED_&#34;) and getattr(builtins, &#34;_PREHEATED_&#34;) is True
+
+    # Widget to select number of layers
+    num_layers_slider = widgets.IntSlider(
+        value=1,
+        min=1,
+        max=10,
+        step=1,
+        description=&#39;Num Layers:&#39;,
+        continuous_update=False,
+        layout=widgets.Layout(width=&#39;50%&#39;)
+    )
+
+    # Navigation label (e.g., &#34;Layer 1 of 3&#34;)
+    nav_label = widgets.Label(value=&#34;Layer 1 of 1&#34;)
+
+    # We&#39;ll keep track of the current layer index (as a mutable list)
+    current_index = [0]
+
+    # A list to hold definitions for each layer.
+    # Each entry is a dictionary with keys: name, polymer, thickness_value, thickness_unit, C0.
+    layer_definitions = []
+    def initialize_layer_definitions(n):
+        nonlocal layer_definitions
+        layer_definitions = []
+        for i in range(n):
+            layer_definitions.append({
+                &#34;name&#34;: f&#34;P{i+1}&#34;,
+                &#34;polymer&#34;: default_polymer,
+                &#34;thickness_value&#34;: default_thickness_value,
+                &#34;thickness_unit&#34;: default_thickness_unit,
+                &#34;C0&#34;: default_c0
+            })
+    initialize_layer_definitions(num_layers_slider.value)
+
+    # UI components for the current layer
+    layer_name_input = widgets.Text(
+        value=layer_definitions[0][&#34;name&#34;],
+        description=&#34;Layer Name:&#34;,
+        layout=widgets.Layout(width=&#39;50%&#39;)
+    )
+    polymer_dropdown = create_polymer_dropdown(default_value=default_polymer)
+    thickness_value_input = widgets.FloatText(
+         value=default_thickness_value,
+         description=&#39;Thickness:&#39;,
+         layout=widgets.Layout(width=&#39;30%&#39;)
+    )
+    thickness_unit_dropdown = widgets.Dropdown(
+         options=[&#34;nm&#34;, &#34;µm&#34;, &#34;mm&#34;, &#34;cm&#34;],
+         value=default_thickness_unit,
+         description=&#39;Unit:&#39;,
+         layout=widgets.Layout(width=&#39;20%&#39;)
+    )
+    c0_input = widgets.FloatText(
+        value=default_c0,
+        description=&#34;C0:&#34;,
+        layout=widgets.Layout(width=&#39;30%&#39;)
+    )
+
+    # Navigation buttons: Previous and Next (using arrow icons)
+    prev_button = widgets.Button(description=&#34;&#34;, icon=&#34;arrow-left&#34;)
+    next_button = widgets.Button(description=&#34;&#34;, icon=&#34;arrow-right&#34;)
+
+    # Button to instantiate all layers
+    instantiate_all_button = widgets.Button(
+         description=&#34;Instantiate All Layers&#34;,
+         button_style=&#34;success&#34;,
+         tooltip=&#34;Click to instantiate all layers&#34;
+    )
+
+    # Output area for messages/results
+    output = widgets.Output()
+
+    # Function to load the current layer&#39;s definition into the UI fields
+    def load_current_layer():
+        idx = current_index[0]
+        nav_label.value = f&#34;Layer {idx+1} of {num_layers_slider.value}&#34;
+        data = layer_definitions[idx]
+        layer_name_input.value = data[&#34;name&#34;]
+        polymer_dropdown.value = data[&#34;polymer&#34;]
+        thickness_value_input.value = data[&#34;thickness_value&#34;]
+        thickness_unit_dropdown.value = data[&#34;thickness_unit&#34;]
+        c0_input.value = data[&#34;C0&#34;]
+
+    # Function to save current UI field values into the current layer&#39;s definition
+    def save_current_layer():
+        idx = current_index[0]
+        layer_definitions[idx][&#34;name&#34;] = layer_name_input.value.strip() or f&#34;P{idx+1}&#34;
+        layer_definitions[idx][&#34;polymer&#34;] = polymer_dropdown.value
+        layer_definitions[idx][&#34;thickness_value&#34;] = thickness_value_input.value
+        layer_definitions[idx][&#34;thickness_unit&#34;] = thickness_unit_dropdown.value
+        layer_definitions[idx][&#34;C0&#34;] = c0_input.value
+
+    # Handlers for Previous and Next navigation buttons
+    def on_prev(b):
+        save_current_layer()
+        if current_index[0] &gt; 0:
+            current_index[0] -= 1
+            load_current_layer()
+
+    def on_next(b):
+        save_current_layer()
+        if current_index[0] &lt; num_layers_slider.value - 1:
+            current_index[0] += 1
+            load_current_layer()
+
+    prev_button.on_click(on_prev)
+    next_button.on_click(on_next)
+
+    # Handler for number-of-layers slider change
+    def on_num_layers_change(change):
+        nonlocal layer_definitions
+        if change[&#39;name&#39;] == &#39;value&#39;:
+            save_current_layer()
+            new_n = change[&#39;new&#39;]
+            current_n = len(layer_definitions)
+            if new_n &gt; current_n:
+                # Append new layer definitions with defaults
+                for i in range(current_n, new_n):
+                    layer_definitions.append({
+                        &#34;name&#34;: f&#34;P{i+1}&#34;,
+                        &#34;polymer&#34;: default_polymer,
+                        &#34;thickness_value&#34;: default_thickness_value,
+                        &#34;thickness_unit&#34;: default_thickness_unit,
+                        &#34;C0&#34;: default_c0
+                    })
+            elif new_n &lt; current_n:
+                layer_definitions = layer_definitions[:new_n]
+                if current_index[0] &gt;= new_n:
+                    current_index[0] = new_n - 1
+            load_current_layer()
+
+    num_layers_slider.observe(on_num_layers_change, names=&#39;value&#39;)
+
+    # Create a new text field for the assembly key (default &#34;assembly&#34;)
+    assembly_name_input = widgets.Text(
+         value=&#34;multilayer1&#34;,
+         description=&#34;Assembly Name:&#34;,
+         layout=widgets.Layout(width=&#39;20%&#39;)
+    )
+
+    # Handler for the Instantiate All Layers button.
+    def instantiate_all(b):
+        save_current_layer()
+        with output:
+            output.clear_output()
+            # Clear the global dictionary first.
+            builtins.mylayers = {}
+            # (We no longer clear a global mymaterial.)
+            # Loop over all layer definitions and instantiate each layer.
+            for i, layer_def in enumerate(layer_definitions):
+                # Use the layer name (if empty, assign a default name)
+                instance_name = layer_def[&#34;name&#34;].strip() or f&#34;P{i+1}&#34;
+                # Resolve the polymer class using the material surrogate
+                PolymerClass = material(layer_def[&#34;polymer&#34;])
+                # Instantiate the layer; here D is fixed to 1e-12 as a demo.
+                # Pass l and C0 as tuples; for C0, the unit is &#34;a.u.&#34;
+                layer_instance = PolymerClass(
+                    l=(layer_def[&#34;thickness_value&#34;], layer_def[&#34;thickness_unit&#34;]),
+                    D=1e-12,
+                    C0=(layer_def[&#34;C0&#34;], &#34;a.u.&#34;)
+                )
+                builtins.mylayers[instance_name] = layer_instance
+            # Instead of storing the sum in a single variable, store it in mymaterials using the assembly key.
+            assembly_key = assembly_name_input.value.strip() or &#34;assembly&#34;
+            # Here, layer.sum is assumed to be a class method of layer.
+            builtins.mymaterials[assembly_key] = layer.sum(builtins.mylayers)
+            print(&#34;Instantiated Layers:&#34;)
+            for name, inst in builtins.mylayers.items():
+                print(f&#34;  {name}: {inst}&#34;)
+            print(f&#34;\nAssembly &#39;{assembly_key}&#39; has been created and stored in &#39;mymaterials&#39;.&#34;)
+    instantiate_all_button.on_click(instantiate_all)
+
+    if _preheatedGUI_:
+        instantiate_all(None) # we instantiate manually
+
+    # Arrange the UI components into a layout.
+    navigation_box = widgets.HBox([prev_button, nav_label, next_button])
+    fields_box = widgets.VBox([
+        layer_name_input,
+        polymer_dropdown,
+        widgets.HBox([thickness_value_input, thickness_unit_dropdown]),
+        c0_input
+    ])
+    ui = widgets.VBox([
+         num_layers_slider,
+         navigation_box,
+         fields_box,
+         # Add the assembly name input above the instantiate button:
+         assembly_name_input,
+         instantiate_all_button,
+         output
+    ])
+
+    # Load the first layer&#39;s data into the UI.
+    load_current_layer()
+    return ui
+
+
+
+# %% layerLink
 class layerLink:
     &#34;&#34;&#34;
     A sparse representation of properties (`D`, `k`, `C0`) used in `layer` instances.
@@ -1600,6 +2182,37 @@ class layer:
         else:
             raise ValueError(&#34;Invalid layer object&#34;)
 
+    # sum: + over a list/dict
+    @classmethod
+    def sum(cls, layers):
+        &#34;&#34;&#34;
+        Sums all layer instances from a dictionary or list and returns a multilayer instance.
+
+        Parameters:
+          layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.
+
+        Returns:
+          A single layer instance representing the stack (sum) of all input layers.
+
+        Example:
+          mymultilayer = layer.sum(mylayers)
+          # where &#39;mylayers&#39; could be a dict of layers or a list of layers.
+        &#34;&#34;&#34;
+        # If layers is a dictionary, iterate over its values.
+        if isinstance(layers, dict):
+            layer_iter = layers.values()
+        else:
+            layer_iter = layers
+        total = None
+        for L in layer_iter:
+            if not isinstance(L,layer):
+                raise TypeError(f&#34;all layers must of class layer not a {type(L).__name__}&#34;)
+            if total is None:
+                total = L
+            else:
+                total = total + L  # This uses the overloaded __add__ operator of the layer class.
+        return total
+
 
     # --------------------------------------------------------------------
     # overloading binary multiplication (note that the output is of type layer)
@@ -2450,13 +3063,28 @@ class layer:
         sim.savestate(self,medium) # store store the inputs in sim for chaining
         return sim
 
-    # overloading operation
+    # overloading operation &gt;&gt;
     def __rshift__(self, medium):
-        &#34;&#34;&#34;Overloads &gt;&gt; to propagate migration to food.&#34;&#34;&#34;
+        &#34;&#34;&#34;
+            Overloads &gt;&gt; to propagate migration to food.
+                layer &gt;&gt; food --&gt; simulation --&gt; food (use food.lastsimulation to see it)
+                layer &gt;&gt; condition --&gt; simulation --&gt; condition
+        &#34;&#34;&#34;
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
         return self.contact(medium)
+
+    # overloading in
+    def __rmod__(self,other):
+        &#34;&#34;&#34;
+            Overload in to enable: susbtance % layer --&gt; layer
+        &#34;&#34;&#34;
+        from patankar.loadpubchem import migrant
+        if not isinstance(other,migrant):
+            raise TypeError(f&#34;other must a migrant and not a {type(other).__name__}&#34;)
+        self.update(substance=other)
+        return self
 
     # --------------------------------------------------------------------
     # Safe update method
@@ -3937,6 +4565,16 @@ class air(layer):
 # ===================================================
 if __name__ == &#39;__main__&#39;:
     from patankar.loadpubchem import migrant
+
+    # debug
+    A = layer()
+    D = layerLink(&#34;D&#34;)
+    D[0]=1.2345e-12
+    A.D = D
+    repr(A)
+
+
+
     list_of_migrants = [&#34;toluene&#34;,&#34;limonene&#34;,&#34;BHT&#34;,&#34;Irganox 1076&#34;]
     m = [migrant(s) for s in list_of_migrants]
     P = PS();
@@ -4051,6 +4689,356 @@ if __name__ == &#39;__main__&#39;:
         else:
             q0,conversion,units = toSI(qSI(1,ProvidedUnits))
         return np.array([value*conversion]),units</code></pre>
+</details>
+</dd>
+<dt id="layer.create_multi_layer_widget"><code class="name flex">
+<span>def <span class="ident">create_multi_layer_widget</span></span>(<span>default_polymer='LDPE', default_thickness_value=100, default_thickness_unit='um', default_c0=100)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a widget interface to define multiple layers (1 to 10) with the following parameters for each layer:
+- Layer Name (unique identifier)
+- Polymer (dropdown with "Key: Description")
+- Thickness (a numeric value and a unit)
+- Initial Concentration C0 (in arbitrary units, a.u.)</p>
+<p>The interface includes:
+- An IntSlider to choose the number of layers.
+- Navigation arrows (Previous/Next) with a label showing "Layer X of Y".
+- Input fields for each layer's parameters.
+- A button to instantiate all layers. When clicked, each layer is instantiated as:
+material(layer_def["polymer"])(l=(thickness, unit), D=1e-14, C0=(C0, "a.u."))
+and stored in a global dictionary (builtins.mylayers) keyed by the layer name.</p>
+<p>The user may add or remove layers by changing the number and editing the layer names.</p>
+<h2 id="returns">Returns</h2>
+<p>An ipywidgets.VBox instance containing the full UI.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ImportError</code></dt>
+<dd>If ipywidgets/IPython are not available.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_multi_layer_widget(default_polymer=&#34;LDPE&#34;, default_thickness_value=100, default_thickness_unit=&#34;um&#34;, default_c0=100):
+    &#34;&#34;&#34;
+    Creates a widget interface to define multiple layers (1 to 10) with the following parameters for each layer:
+      - Layer Name (unique identifier)
+      - Polymer (dropdown with &#34;Key: Description&#34;)
+      - Thickness (a numeric value and a unit)
+      - Initial Concentration C0 (in arbitrary units, a.u.)
+
+    The interface includes:
+      - An IntSlider to choose the number of layers.
+      - Navigation arrows (Previous/Next) with a label showing &#34;Layer X of Y&#34;.
+      - Input fields for each layer&#39;s parameters.
+      - A button to instantiate all layers. When clicked, each layer is instantiated as:
+            material(layer_def[&#34;polymer&#34;])(l=(thickness, unit), D=1e-14, C0=(C0, &#34;a.u.&#34;))
+        and stored in a global dictionary (builtins.mylayers) keyed by the layer name.
+
+    The user may add or remove layers by changing the number and editing the layer names.
+
+    Returns:
+      An ipywidgets.VBox instance containing the full UI.
+
+    Raises:
+      ImportError: If ipywidgets/IPython are not available.
+    &#34;&#34;&#34;
+    try:
+        import ipywidgets as widgets
+        from IPython.display import display
+    except ImportError as e:
+        raise ImportError(&#34;ipywidgets and IPython are required for the widget interface.&#34;) from e
+
+    import builtins
+    # Ensure a global dictionary for storing created layers exists
+    if not hasattr(builtins, &#34;mylayers&#34;):
+        builtins.mylayers = {}
+    # Instead of mymaterial, we now use mymaterials:
+    if not hasattr(builtins, &#34;mymaterials&#34;):
+        builtins.mymaterials = {}
+    global mylayers, mymaterials
+    mylayers = builtins.mylayers
+    mymaterials = builtins.mymaterials
+    # flag for preheated gui interface (widgets should be initialized manually, instead of being empty)
+    _preheatedGUI_ = hasattr(builtins, &#34;_PREHEATED_&#34;) and getattr(builtins, &#34;_PREHEATED_&#34;) is True
+
+    # Widget to select number of layers
+    num_layers_slider = widgets.IntSlider(
+        value=1,
+        min=1,
+        max=10,
+        step=1,
+        description=&#39;Num Layers:&#39;,
+        continuous_update=False,
+        layout=widgets.Layout(width=&#39;50%&#39;)
+    )
+
+    # Navigation label (e.g., &#34;Layer 1 of 3&#34;)
+    nav_label = widgets.Label(value=&#34;Layer 1 of 1&#34;)
+
+    # We&#39;ll keep track of the current layer index (as a mutable list)
+    current_index = [0]
+
+    # A list to hold definitions for each layer.
+    # Each entry is a dictionary with keys: name, polymer, thickness_value, thickness_unit, C0.
+    layer_definitions = []
+    def initialize_layer_definitions(n):
+        nonlocal layer_definitions
+        layer_definitions = []
+        for i in range(n):
+            layer_definitions.append({
+                &#34;name&#34;: f&#34;P{i+1}&#34;,
+                &#34;polymer&#34;: default_polymer,
+                &#34;thickness_value&#34;: default_thickness_value,
+                &#34;thickness_unit&#34;: default_thickness_unit,
+                &#34;C0&#34;: default_c0
+            })
+    initialize_layer_definitions(num_layers_slider.value)
+
+    # UI components for the current layer
+    layer_name_input = widgets.Text(
+        value=layer_definitions[0][&#34;name&#34;],
+        description=&#34;Layer Name:&#34;,
+        layout=widgets.Layout(width=&#39;50%&#39;)
+    )
+    polymer_dropdown = create_polymer_dropdown(default_value=default_polymer)
+    thickness_value_input = widgets.FloatText(
+         value=default_thickness_value,
+         description=&#39;Thickness:&#39;,
+         layout=widgets.Layout(width=&#39;30%&#39;)
+    )
+    thickness_unit_dropdown = widgets.Dropdown(
+         options=[&#34;nm&#34;, &#34;µm&#34;, &#34;mm&#34;, &#34;cm&#34;],
+         value=default_thickness_unit,
+         description=&#39;Unit:&#39;,
+         layout=widgets.Layout(width=&#39;20%&#39;)
+    )
+    c0_input = widgets.FloatText(
+        value=default_c0,
+        description=&#34;C0:&#34;,
+        layout=widgets.Layout(width=&#39;30%&#39;)
+    )
+
+    # Navigation buttons: Previous and Next (using arrow icons)
+    prev_button = widgets.Button(description=&#34;&#34;, icon=&#34;arrow-left&#34;)
+    next_button = widgets.Button(description=&#34;&#34;, icon=&#34;arrow-right&#34;)
+
+    # Button to instantiate all layers
+    instantiate_all_button = widgets.Button(
+         description=&#34;Instantiate All Layers&#34;,
+         button_style=&#34;success&#34;,
+         tooltip=&#34;Click to instantiate all layers&#34;
+    )
+
+    # Output area for messages/results
+    output = widgets.Output()
+
+    # Function to load the current layer&#39;s definition into the UI fields
+    def load_current_layer():
+        idx = current_index[0]
+        nav_label.value = f&#34;Layer {idx+1} of {num_layers_slider.value}&#34;
+        data = layer_definitions[idx]
+        layer_name_input.value = data[&#34;name&#34;]
+        polymer_dropdown.value = data[&#34;polymer&#34;]
+        thickness_value_input.value = data[&#34;thickness_value&#34;]
+        thickness_unit_dropdown.value = data[&#34;thickness_unit&#34;]
+        c0_input.value = data[&#34;C0&#34;]
+
+    # Function to save current UI field values into the current layer&#39;s definition
+    def save_current_layer():
+        idx = current_index[0]
+        layer_definitions[idx][&#34;name&#34;] = layer_name_input.value.strip() or f&#34;P{idx+1}&#34;
+        layer_definitions[idx][&#34;polymer&#34;] = polymer_dropdown.value
+        layer_definitions[idx][&#34;thickness_value&#34;] = thickness_value_input.value
+        layer_definitions[idx][&#34;thickness_unit&#34;] = thickness_unit_dropdown.value
+        layer_definitions[idx][&#34;C0&#34;] = c0_input.value
+
+    # Handlers for Previous and Next navigation buttons
+    def on_prev(b):
+        save_current_layer()
+        if current_index[0] &gt; 0:
+            current_index[0] -= 1
+            load_current_layer()
+
+    def on_next(b):
+        save_current_layer()
+        if current_index[0] &lt; num_layers_slider.value - 1:
+            current_index[0] += 1
+            load_current_layer()
+
+    prev_button.on_click(on_prev)
+    next_button.on_click(on_next)
+
+    # Handler for number-of-layers slider change
+    def on_num_layers_change(change):
+        nonlocal layer_definitions
+        if change[&#39;name&#39;] == &#39;value&#39;:
+            save_current_layer()
+            new_n = change[&#39;new&#39;]
+            current_n = len(layer_definitions)
+            if new_n &gt; current_n:
+                # Append new layer definitions with defaults
+                for i in range(current_n, new_n):
+                    layer_definitions.append({
+                        &#34;name&#34;: f&#34;P{i+1}&#34;,
+                        &#34;polymer&#34;: default_polymer,
+                        &#34;thickness_value&#34;: default_thickness_value,
+                        &#34;thickness_unit&#34;: default_thickness_unit,
+                        &#34;C0&#34;: default_c0
+                    })
+            elif new_n &lt; current_n:
+                layer_definitions = layer_definitions[:new_n]
+                if current_index[0] &gt;= new_n:
+                    current_index[0] = new_n - 1
+            load_current_layer()
+
+    num_layers_slider.observe(on_num_layers_change, names=&#39;value&#39;)
+
+    # Create a new text field for the assembly key (default &#34;assembly&#34;)
+    assembly_name_input = widgets.Text(
+         value=&#34;multilayer1&#34;,
+         description=&#34;Assembly Name:&#34;,
+         layout=widgets.Layout(width=&#39;20%&#39;)
+    )
+
+    # Handler for the Instantiate All Layers button.
+    def instantiate_all(b):
+        save_current_layer()
+        with output:
+            output.clear_output()
+            # Clear the global dictionary first.
+            builtins.mylayers = {}
+            # (We no longer clear a global mymaterial.)
+            # Loop over all layer definitions and instantiate each layer.
+            for i, layer_def in enumerate(layer_definitions):
+                # Use the layer name (if empty, assign a default name)
+                instance_name = layer_def[&#34;name&#34;].strip() or f&#34;P{i+1}&#34;
+                # Resolve the polymer class using the material surrogate
+                PolymerClass = material(layer_def[&#34;polymer&#34;])
+                # Instantiate the layer; here D is fixed to 1e-12 as a demo.
+                # Pass l and C0 as tuples; for C0, the unit is &#34;a.u.&#34;
+                layer_instance = PolymerClass(
+                    l=(layer_def[&#34;thickness_value&#34;], layer_def[&#34;thickness_unit&#34;]),
+                    D=1e-12,
+                    C0=(layer_def[&#34;C0&#34;], &#34;a.u.&#34;)
+                )
+                builtins.mylayers[instance_name] = layer_instance
+            # Instead of storing the sum in a single variable, store it in mymaterials using the assembly key.
+            assembly_key = assembly_name_input.value.strip() or &#34;assembly&#34;
+            # Here, layer.sum is assumed to be a class method of layer.
+            builtins.mymaterials[assembly_key] = layer.sum(builtins.mylayers)
+            print(&#34;Instantiated Layers:&#34;)
+            for name, inst in builtins.mylayers.items():
+                print(f&#34;  {name}: {inst}&#34;)
+            print(f&#34;\nAssembly &#39;{assembly_key}&#39; has been created and stored in &#39;mymaterials&#39;.&#34;)
+    instantiate_all_button.on_click(instantiate_all)
+
+    if _preheatedGUI_:
+        instantiate_all(None) # we instantiate manually
+
+    # Arrange the UI components into a layout.
+    navigation_box = widgets.HBox([prev_button, nav_label, next_button])
+    fields_box = widgets.VBox([
+        layer_name_input,
+        polymer_dropdown,
+        widgets.HBox([thickness_value_input, thickness_unit_dropdown]),
+        c0_input
+    ])
+    ui = widgets.VBox([
+         num_layers_slider,
+         navigation_box,
+         fields_box,
+         # Add the assembly name input above the instantiate button:
+         assembly_name_input,
+         instantiate_all_button,
+         output
+    ])
+
+    # Load the first layer&#39;s data into the UI.
+    load_current_layer()
+    return ui</code></pre>
+</details>
+</dd>
+<dt id="layer.create_polymer_dropdown"><code class="name flex">
+<span>def <span class="ident">create_polymer_dropdown</span></span>(<span>default_value=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates and returns a dropdown widget for selecting a polymer.
+The dropdown options are built from the mainregistry entries with type 'polymer',
+formatted as "Key: Description". If ipywidgets is not installed, a dummy widget
+is returned that mimics the basic interface.</p>
+<h2 id="parameters">Parameters</h2>
+<p>default_value (str, optional): The default polymer key to select.
+If not provided, the first polymer key from the registry is used.</p>
+<h2 id="returns">Returns</h2>
+<p>A widget (ipywidgets.Dropdown or a fallback DummyDropdown) with the polymer options.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_polymer_dropdown(default_value=None):
+    &#34;&#34;&#34;
+    Creates and returns a dropdown widget for selecting a polymer.
+    The dropdown options are built from the mainregistry entries with type &#39;polymer&#39;,
+    formatted as &#34;Key: Description&#34;. If ipywidgets is not installed, a dummy widget
+    is returned that mimics the basic interface.
+
+    Parameters:
+      default_value (str, optional): The default polymer key to select.
+                                     If not provided, the first polymer key from the registry is used.
+
+    Returns:
+      A widget (ipywidgets.Dropdown or a fallback DummyDropdown) with the polymer options.
+    &#34;&#34;&#34;
+    # Build polymer options as a list of (display, value) tuples
+    polymer_options = []
+    for key, info in mainregistry.items():
+        if info[&#34;type&#34;] == &#34;polymer&#34;:
+            display_text = f&#34;{key}: {info[&#39;description&#39;]}&#34;
+            polymer_options.append((display_text, key))
+
+    if not polymer_options:
+        raise ValueError(&#34;No polymers found in the registry.&#34;)
+
+    # Set default value if not provided or if not in options
+    valid_keys = [opt[1] for opt in polymer_options]
+    if default_value is None or default_value not in valid_keys:
+        default_value = valid_keys[0]
+
+    # Try to import ipywidgets; if unavailable, define a fallback DummyDropdown.
+    try:
+        import ipywidgets as widgets
+    except ImportError:
+        widgets = None
+
+    if widgets:
+        dropdown = widgets.Dropdown(
+            options=polymer_options,
+            value=default_value,
+            description=&#39;Polymer:&#39;,
+            layout=widgets.Layout(width=&#39;50%&#39;)
+        )
+    else:
+        # Fallback dummy widget mimicking ipywidgets.Dropdown
+        class DummyDropdown:
+            def __init__(self, options, value, description, layout):
+                self.options = options
+                self.value = value
+                self.description = description
+                self.layout = layout
+
+            def __repr__(self):
+                return (f&#34;DummyDropdown(value={self.value}, &#34;
+                        f&#34;options={[opt[1] for opt in self.options]}, &#34;
+                        f&#34;description=&#39;{self.description}&#39;, layout={self.layout})&#34;)
+        dropdown = DummyDropdown(
+            options=polymer_options,
+            value=default_value,
+            description=&#39;Polymer:&#39;,
+            layout={&#39;width&#39;: &#39;50%&#39;}
+        )
+
+    return dropdown</code></pre>
 </details>
 </dd>
 <dt id="layer.fixSIbase"><code class="name flex">
@@ -4241,6 +5229,159 @@ along with their layertype and layermaterial properties.</p>
                 print(f&#34;🔍 Exception: {e}&#34;)
                 raise  # Rethrow the error with full traceback
     return subclasses_info</code></pre>
+</details>
+</dd>
+<dt id="layer.list_materials"><code class="name flex">
+<span>def <span class="ident">list_materials</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Lists all available materials with their descriptions, types, and synonyms
+as a Markdown table with adjusted column widths.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def list_materials():
+    &#34;&#34;&#34;
+    Lists all available materials with their descriptions, types, and synonyms
+    as a Markdown table with adjusted column widths.
+    &#34;&#34;&#34;
+    headers = [&#34;Material Key&#34;, &#34;Description&#34;, &#34;Type&#34;, &#34;Synonyms&#34;]
+    rows = []
+    for key, info in mainregistry.items():
+        synonyms = &#34;, &#34;.join(info[&#34;synonyms&#34;]) if info[&#34;synonyms&#34;] else &#34;None&#34;
+        rows.append([key, info[&#34;description&#34;], info[&#34;type&#34;], synonyms])
+    # Compute the maximum width for each column based on headers and rows
+    col_widths = [
+        max(len(headers[i]), *(len(row[i]) for row in rows))
+        for i in range(len(headers))
+    ]
+    # Helper to format a row given the computed widths
+    def format_row(row):
+        return &#34;| &#34; + &#34; | &#34;.join(row[i].ljust(col_widths[i]) for i in range(len(row))) + &#34; |&#34;
+    # Build the Markdown table rows
+    table = [format_row(headers)]
+    # Separator row: use dashes matching the column widths
+    separator = &#34;| &#34; + &#34; | &#34;.join(&#34;-&#34; * col_widths[i] for i in range(len(headers))) + &#34; |&#34;
+    table.append(separator)
+    # Data rows
+    for row in rows:
+        table.append(format_row(row))
+
+    # Print the complete Markdown table
+    print(&#34;\n&#34;.join(table))</code></pre>
+</details>
+</dd>
+<dt id="layer.material"><code class="name flex">
+<span>def <span class="ident">material</span></span>(<span>name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Import surrogate that returns the material class corresponding to the given name.</p>
+<h2 id="usage">Usage</h2>
+<p>from patankar import material
+mymaterial = material("anyname")
+# 'anyname' is resolved to a canonical key,
+# and the corresponding class (or the base 'layer' if applicable)
+# from this module is returned.</p>
+<p>If the provided name is "layer" (case-insensitive), the base layer class is returned.</p>
+<h2 id="parameters">Parameters</h2>
+<p>name (str): The material name or any synonym.</p>
+<h2 id="returns">Returns</h2>
+<p>A material class that can be instantiated (e.g., mymaterial(l=&hellip;)).</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>KeyError</code></dt>
+<dd>If the provided name (or its synonym) does not match any material in the registry.</dd>
+<dt><code>ImportError</code></dt>
+<dd>If the material class cannot be found in the module.</dd>
+</dl>
+<h2 id="example">Example</h2>
+<p>A=material("PEBD")(l=(10,"µm")) # instantiate LDPE with l=100 µm</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def material(name):
+    &#34;&#34;&#34;
+    Import surrogate that returns the material class corresponding to the given name.
+
+    Usage:
+        from patankar import material
+        mymaterial = material(&#34;anyname&#34;)  # &#39;anyname&#39; is resolved to a canonical key,
+                                          # and the corresponding class (or the base &#39;layer&#39; if applicable)
+                                          # from this module is returned.
+
+    If the provided name is &#34;layer&#34; (case-insensitive), the base layer class is returned.
+
+    Parameters:
+      name (str): The material name or any synonym.
+
+    Returns:
+      A material class that can be instantiated (e.g., mymaterial(l=...)).
+
+    Raises:
+      KeyError: If the provided name (or its synonym) does not match any material in the registry.
+      ImportError: If the material class cannot be found in the module.
+
+    Example:
+        A=material(&#34;PEBD&#34;)(l=(10,&#34;µm&#34;)) # instantiate LDPE with l=100 µm
+    &#34;&#34;&#34;
+    # If the user requests the base class &#34;layer&#34;, return it directly.
+    if name.lower() == &#34;layer&#34;:
+        return layer
+    # Resolve the canonical key using the existing resolve_material function.
+    canonical_key = resolve_material(name)
+    try:
+        # Since material is defined in this module, use globals() to fetch the class.
+        mat_class = globals()[canonical_key]
+    except KeyError:
+        raise ImportError(f&#34;Material class &#39;{canonical_key}&#39; not found in the module.&#34;)
+    return mat_class</code></pre>
+</details>
+</dd>
+<dt id="layer.resolve_material"><code class="name flex">
+<span>def <span class="ident">resolve_material</span></span>(<span>name, returnclass=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resolves a material name or any of its synonyms to the canonical registry key.</p>
+<h2 id="parameters">Parameters</h2>
+<p>name (str): The material name or synonym.</p>
+<h2 id="returns">Returns</h2>
+<p>key (str): The canonical key from the registry.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>KeyError</code></dt>
+<dd>If no matching material is found.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resolve_material(name,returnclass=True):
+    &#34;&#34;&#34;
+    Resolves a material name or any of its synonyms to the canonical registry key.
+
+    Parameters:
+      name (str): The material name or synonym.
+
+    Returns:
+      key (str): The canonical key from the registry.
+
+    Raises:
+      KeyError: If no matching material is found.
+    &#34;&#34;&#34;
+    name_lower = name.lower()
+    for key, info in mainregistry.items():
+        # Check if the provided name matches the canonical key (case-insensitive)
+        if key.lower() == name_lower:
+            return key
+        # Check if the provided name matches any synonym (case-insensitive)
+        for syn in info[&#39;synonyms&#39;]:
+            if syn.lower() == name_lower:
+                return key
+    print(&#34;List of available materials.\nIf you not find yours, call layer directly for a customized one.&#34;)
+    list_materials()
+    raise KeyError(f&#34;Material &#39;{name}&#39; not found in the registry.&#34;)</code></pre>
 </details>
 </dd>
 <dt id="layer.toSI"><code class="name flex">
@@ -4449,6 +5590,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -4712,6 +5854,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -4944,6 +6087,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -5138,6 +6282,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -5332,6 +6477,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -5564,6 +6710,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -5826,6 +6973,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6000,6 +7148,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6175,6 +7324,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6348,6 +7498,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6522,6 +7673,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6714,6 +7866,7 @@ By default, uses an approximate value between LDPE and HDPE.</p></div>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6958,6 +8111,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7203,6 +8357,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7379,6 +8534,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7623,6 +8779,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7791,6 +8948,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8031,6 +9189,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8275,6 +9434,7 @@ can be adjusted.</p></div>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8448,6 +9608,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8616,6 +9777,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8793,6 +9955,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9032,6 +10195,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9657,6 +10821,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9867,6 +11032,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -10515,6 +11681,37 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
             return res
         else:
             raise ValueError(&#34;Invalid layer object&#34;)
+
+    # sum: + over a list/dict
+    @classmethod
+    def sum(cls, layers):
+        &#34;&#34;&#34;
+        Sums all layer instances from a dictionary or list and returns a multilayer instance.
+
+        Parameters:
+          layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.
+
+        Returns:
+          A single layer instance representing the stack (sum) of all input layers.
+
+        Example:
+          mymultilayer = layer.sum(mylayers)
+          # where &#39;mylayers&#39; could be a dict of layers or a list of layers.
+        &#34;&#34;&#34;
+        # If layers is a dictionary, iterate over its values.
+        if isinstance(layers, dict):
+            layer_iter = layers.values()
+        else:
+            layer_iter = layers
+        total = None
+        for L in layer_iter:
+            if not isinstance(L,layer):
+                raise TypeError(f&#34;all layers must of class layer not a {type(L).__name__}&#34;)
+            if total is None:
+                total = L
+            else:
+                total = total + L  # This uses the overloaded __add__ operator of the layer class.
+        return total
 
 
     # --------------------------------------------------------------------
@@ -11366,13 +12563,28 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         sim.savestate(self,medium) # store store the inputs in sim for chaining
         return sim
 
-    # overloading operation
+    # overloading operation &gt;&gt;
     def __rshift__(self, medium):
-        &#34;&#34;&#34;Overloads &gt;&gt; to propagate migration to food.&#34;&#34;&#34;
+        &#34;&#34;&#34;
+            Overloads &gt;&gt; to propagate migration to food.
+                layer &gt;&gt; food --&gt; simulation --&gt; food (use food.lastsimulation to see it)
+                layer &gt;&gt; condition --&gt; simulation --&gt; condition
+        &#34;&#34;&#34;
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
         return self.contact(medium)
+
+    # overloading in
+    def __rmod__(self,other):
+        &#34;&#34;&#34;
+            Overload in to enable: susbtance % layer --&gt; layer
+        &#34;&#34;&#34;
+        from patankar.loadpubchem import migrant
+        if not isinstance(other,migrant):
+            raise TypeError(f&#34;other must a migrant and not a {type(other).__name__}&#34;)
+        self.update(substance=other)
+        return self
 
     # --------------------------------------------------------------------
     # Safe update method
@@ -11654,6 +12866,53 @@ def resolvename(cls, param_value, param_key, **unresolved):
             f&#34;Conflicting definitions: Multiple synonyms {found_keys} were provided for &#39;{param_key}&#39;.&#34;
         )
     return resolved_value</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.sum"><code class="name flex">
+<span>def <span class="ident">sum</span></span>(<span>layers)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sums all layer instances from a dictionary or list and returns a multilayer instance.</p>
+<h2 id="parameters">Parameters</h2>
+<p>layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.</p>
+<h2 id="returns">Returns</h2>
+<p>A single layer instance representing the stack (sum) of all input layers.</p>
+<h2 id="example">Example</h2>
+<p>mymultilayer = layer.sum(mylayers)</p>
+<h1 id="where-mylayers-could-be-a-dict-of-layers-or-a-list-of-layers">where 'mylayers' could be a dict of layers or a list of layers.</h1></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def sum(cls, layers):
+    &#34;&#34;&#34;
+    Sums all layer instances from a dictionary or list and returns a multilayer instance.
+
+    Parameters:
+      layers (dict or list): A dictionary (whose values are layer instances) or a list of layer instances.
+
+    Returns:
+      A single layer instance representing the stack (sum) of all input layers.
+
+    Example:
+      mymultilayer = layer.sum(mylayers)
+      # where &#39;mylayers&#39; could be a dict of layers or a list of layers.
+    &#34;&#34;&#34;
+    # If layers is a dictionary, iterate over its values.
+    if isinstance(layers, dict):
+        layer_iter = layers.values()
+    else:
+        layer_iter = layers
+    total = None
+    for L in layer_iter:
+        if not isinstance(L,layer):
+            raise TypeError(f&#34;all layers must of class layer not a {type(L).__name__}&#34;)
+        if total is None:
+            total = L
+        else:
+            total = total + L  # This uses the overloaded __add__ operator of the layer class.
+    return total</code></pre>
 </details>
 </dd>
 </dl>
@@ -14208,7 +15467,7 @@ The new property name.</p>
 </dd>
 <dt id="layer.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;patankar.loadpubchem.CompoundIndex object&gt;, raiseerror=True)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;patankar.loadpubchem.CompoundIndex object&gt;, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -14234,7 +15493,9 @@ In this mode:
 = The first formula
 - logP
 = All logP values concatenated into a numpy array (self.logP_array).
-The main attribute self.logP will be the same array or you may pick a single representative.</p>
+The main attribute self.logP will be the same array or you may pick a single representative.
+- structure_file (str): Path to the SDF file for the compound.
+- image_file (str): Path to the PNG image of the compound.</p>
 <p>2) Case (b) - By numeric molecular weight(s) alone (generic substance):</p>
 <hr>
 <p>Example:
@@ -14373,6 +15634,9 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
              - formula   = The first formula
              - logP      = All logP values concatenated into a numpy array (self.logP_array).
                            The main attribute self.logP will be the same array or you may pick a single representative.
+             - structure_file (str): Path to the SDF file for the compound.
+             - image_file (str): Path to the PNG image of the compound.
+
 
     2) Case (b) - By numeric molecular weight(s) alone (generic substance):
        ---------------------------------------------------------
@@ -14428,6 +15692,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     # class attribute, maximum width
     _maxdisplay = 40
 
+    # Puchem rest engine for strcture and PNG
+    PUBCHEM_ROOT_URL = &#34;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound&#34;
+    IMAGE_SIZE = (800, 800)
+
+
     # migrant constructor with its predictor templates
     def __init__(self, name=None,   # substance identified by name
                  M=None, logP=None, # substance identified by M, logP(less reliable)
@@ -14457,7 +15726,13 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                  db=dbdefault, # cache.PubChem database
 
-                 raiseerror=True # raise an error if the susbtance is not found
+                 raiseerror=True, # raise an error if the susbtance is not found
+
+                 no_cache = False, # flag to force nocache for PNG and SDF only
+
+                 verbose = True, # flag to control alert messages on substances
+
+                 annex1 = True, # flag used by EUFCMannex1 to avoid infinite loop
 
                  ):
         &#34;&#34;&#34;
@@ -14525,10 +15800,17 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         self.smiles = None
         self.M_array = None    # np.ndarray
         self.logP = None       # float / np.ndarray / None
+        # cache for structure (SDF) and thumbs (PNG)
+        self.no_cache = no_cache
+        self._cache_PNG_dir = os.path.join(db.cache_dir,&#39;thumbs&#39;)
+        self._cache_SDF_dir = os.path.join(db.cache_dir,&#39;structure&#39;)
+        self.image_file = None        # path of the PNG file
+        self.structure_file = None    # path of the SDF file
+        self.verbose = verbose
 
         # special case
         if name==M==None:
-            name = &#39;toluene&#39;
+            return # name = &#39;toluene&#39;
 
         # Convert M to a numpy array if given
         if M is not None:
@@ -14555,14 +15837,16 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 raise ValueError(&#34;A db instance is required for searching by name when M is None.&#34;)
 
             df = db.find(name, output_format=&#34;simple&#34;)
-            if df.empty:
+            if df is None or df.empty:
                 if raiseerror:
-                    raise ValueError(f&#34;&lt;{name}&gt; not found&#34;)
+                    raise ValueError(f&#34;Compound &lt;{name}&gt; not found&#34;)
                 print(f&#34;LOADPUBCHEM ERRROR: &lt;{name}&gt; not found - empty object returned&#34;)
                 self.compound = name
                 self.name = [name]
                 self.cid = []
                 self.CAS = []
+                self.InChi = []
+                self.InChiKey = []
                 self.M_array = np.array([], dtype=float)
                 self.M = None
                 self.formula = None
@@ -14622,7 +15906,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                     # Process logP similarly (if not None or empty)
                     logp_val = row.get(&#34;logP&#34;, None)
-                    if logp_val not in (None, &#34;&#34;):
+                    if logp_val not in (None, &#34;&#34;,[]):
                         all_data[&#34;logp&#34;].append(to_float(logp_val))
                     else:
                         all_data[&#34;logp&#34;].append(np.nan)
@@ -14670,6 +15954,28 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 self.vdWvolume = self.volume_3d # for future use (Dwelle use it)
                 alpha = 1/0.65 if self.count_rings[&#34;aromatic&#34;]&gt;0 else 1.3
                 self.vdWvolume2 = 1/alpha * self.molarvolumeMiller * 10.0/6.02214076 # in A3
+
+                # if dbannex1 is available
+                if doSML and annex1:
+                    annex1record = None
+                    if self.cid in dbannex1:
+                        annex1record = dbannex1.bycid(self.cid,verbose=self.verbose)
+                    elif self.CAS in dbannex1:
+                        annex1record = dbannex1.byCAS(self.CAS,verbose=self.verbose)
+                    if annex1record is not None:
+                        SML = annex1record[&#34;SML&#34;]
+                        SMLT = annex1record.get(&#34;SMLT&#34;)
+                        self.SML = min(SML,SMLT) if SMLT is not None else SML
+                        self.SMLunit = annex1record[&#39;SMLunit&#39;]
+                        self.annex1 = annex1record
+                    else:
+                        self.SML = None # we validate that we looked for an SML but we did not find it
+
+                # add PNG thumb and SDF structure files (without loading them)
+                # we prevent cache filling when it is necessary
+                # self._donwload_PNG() and self._donwload_SDF() will do the job when needed
+                self.image_file = os.path.join(self._cache_PNG_dir, f&#39;{self.cid}.png&#39;)
+                self.structure_file = os.path.join(self._cache_SDF_dir, f&#39;{self.cid}.sdf&#39;)
 
 
         # Case (b): name is None, M is provided =&gt; generic substance
@@ -14746,7 +16052,92 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             self.k = None
             self.ktemplate = None
 
+    # low-level PNG and SDF feeders
+    def _download_pubchem_structuredata(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file and PNG thumbnail from PubChem.&#34;&#34;&#34;
+        self._download_SDF()
+        self._download_PNG()
 
+    def _download_SDF(self):
+        &#34;&#34;&#34;Downloads and caches the SDF structure file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_SDF_dir, exist_ok=True)
+        if self.structure_file and (not os.path.isfile(self.structure_file) or self.no_cache):
+            sdf_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/SDF&#34;
+            response = requests.get(sdf_url, timeout=2)
+            if response.status_code == 200:
+                with open(self.structure_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+            else:
+                raise ValueError(f&#34;Failed to download SDF file for CID {self.cid}.&#34;)
+
+    def _download_PNG(self):
+        &#34;&#34;&#34;Downloads and caches the PNG thumb file from PubChem.&#34;&#34;&#34;
+        os.makedirs(self._cache_PNG_dir, exist_ok=True)
+        if self.image_file and (not os.path.isfile(self.image_file) or self.no_cache):
+            png_url = f&#34;{self.PUBCHEM_ROOT_URL}/CID/{self.cid}/PNG?image_size={self.IMAGE_SIZE[0]}x{self.IMAGE_SIZE[1]}&#34;
+            response = requests.get(png_url, timeout=1)
+            if response.status_code == 200:
+                with open(self.image_file, &#39;wb&#39;) as f:
+                    f.write(response.content)
+                self._crop_image()
+
+    def _crop_image(self):
+        &#34;&#34;&#34;Crops white background from the PNG image.&#34;&#34;&#34;
+        if not PIL_AVAILABLE:
+            return
+        img = Image.open(self.image_file).convert(&#34;RGB&#34;)  # Convert to RGB to avoid transparency issues
+        def get_whitest_corner_color():
+            &#34;&#34;&#34;Finds the whitest (brightest) color among the four image corners.&#34;&#34;&#34;
+            width, height = img.size
+            corners = { # Get RGB values of the four corners
+                &#34;top_left&#34;: img.getpixel((0, 0)),
+                &#34;top_right&#34;: img.getpixel((width - 1, 0)),
+                &#34;bottom_left&#34;: img.getpixel((0, height - 1)),
+                &#34;bottom_right&#34;: img.getpixel((width - 1, height - 1))
+            }
+            def luminance(color):
+                r, g, b = color
+                return 0.299 * r + 0.587 * g + 0.114 * b
+            # Find the brightest (whitest) corner
+            whitest_corner = max(corners, key=lambda c: luminance(corners[c]))
+            return corners[whitest_corner]  # Return the RGB value of the whitest corner
+        bgcolor = get_whitest_corner_color() # background color, usually (245,245,245) for PubChem
+        bg = Image.new(&#34;RGB&#34;, img.size, bgcolor)  # Create a background image of same size
+        diff = ImageChops.difference(img, bg)  # Find pixels that are different from background
+        bbox = diff.getbbox()  # Get bounding box of non-white pixels
+        if bbox:
+            img = img.crop(bbox)  # Crop the image to the detected bounding box
+            img_array = np.array(img)
+            mask = np.all(img_array == bgcolor, axis=-1)
+            img_array[mask] = [255, 255, 255] # Replace matching pixels with pure white
+            Image.fromarray(img_array).save(self.image_file) # # Convert back to image and save
+
+    # image property
+    @property
+    def image(self):
+        &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            self._download_PNG() # download PNG if not cached
+            return Image.open(self.image_file)
+
+    # rawimage property
+    @property
+    def _rawimage(self):
+        &#34;&#34;&#34;returns the raw (binary) image of the migrant&#34;&#34;&#34;
+        if self.image_file:
+            with open(self.image_file, &#34;rb&#34;) as f:
+                image_bytes = f.read()
+            return image_bytes
+
+    # structure
+    @property
+    def structure(self):
+        &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
+        if self.structure_file:
+            self._download_SDF() # download SDF if not cached
+            return parse_sdf(self.structure_file)
+
+    # low-level model validator and property assignment
     def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):
         &#34;&#34;&#34;
         Generic method for validating and setting a migration property model.
@@ -14801,6 +16192,28 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             return self.k.evaluate(**updated_template)
         return func
 
+    # hasSML: False if SML does not exist or is None
+    @property
+    def hasSML(self):
+        &#34;&#34;&#34;Returns True if it has an SML defined&#34;&#34;&#34;
+        return hasattr(self,&#34;SML&#34;) and self.SML is not None
+    @property
+    def hasannex1(self):
+        &#34;&#34;&#34;Returns True if annex1 is defined&#34;&#34;&#34;
+        return hasattr(self,&#34;annex1&#34;) and isinstance(self.annex1,complyEU.annex1record)
+    @property
+    def hasSMLgroup(self):
+        &#34;&#34;&#34;Returns True if the sustance is regulated in a group&#34;&#34;&#34;
+        return self.hasannex1 and self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None
+    @property
+    def nSMLgroup(self):
+        &#34;&#34;&#34;Returns the number of substances in the group&#34;&#34;&#34;
+        if not self.hasSMLgroup:
+            return 0
+        return len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])
+    @property
+    def worstcaseSMLgroup(self):
+        &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;
 
 
     def __repr__(self):
@@ -14821,21 +16234,30 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             &#34;logP&#34;: self.logP,
             &#34;P&#39; (calc)&#34;: self.polarityindex
         }
-        if isinstance(self,migrantToxtree):
+        # Add SML and EU rules
+        if self.hasSML:
+            if self.hasannex1:
+                attributes[&#34;--- EC 10/2011&#34;]=&#34;-&#34;*15
+                attributes[&#34;SML&#34;] = str(self.SML)
+                attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+                if self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None:
+                    attributes[&#34;part a group&#34;]=f&#34;of {len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])} substances&#34;
+                attributes[&#34;Name&#34;] =self.annex1[&#34;name&#34;]
+                attributes[&#34;CAS&#34;] = self.annex1[&#34;CAS&#34;]
+                attributes[&#34;EC|FCM|REF&#34;] = f&#34;{self.annex1[&#39;EC&#39;]}|{self.annex1[&#39;FCM&#39;]}|{self.annex1[&#39;Ref&#39;]}&#34;
+            else:
+                attributes[&#34;SML&#34;] = str(self.SML)
+                if hasattr(self,&#34;SMLunit&#34;):
+                    attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+        # Add Toxtree attributes
+        if isinstance(self,migrantToxtree) and self.compound not in (None,&#34;&#34;,[]):
+            attributes[&#34;--- ToxTree&#34;]=&#34;-&#34;*15
             attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
             attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
             attributes[&#34;Toxicology&#34;] = self.CramerClass
             attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
             attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
-            alerts = self.alerts
-            # Process alerts
-            alert_index = 0
-            for key, value in alerts.items():
-                if key.startswith(&#34;Alert&#34;) and key != &#34;Alertscounter&#34; and value.upper() == &#34;YES&#34;:
-                    alert_index += 1
-                    # Convert key name to readable format (split at capital letters)
-                    alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
-                    attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+            attributes.update(self.showalerts) # Process alerts
 
         # Determine column width based on longest attribute name
         key_width = max(len(k) for k in attributes.keys()) + 2  # Add padding
@@ -14930,7 +16352,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &gt;&gt;&gt; compound.molarvolumeMiller
         130.5  # Example output
         &#34;&#34;&#34;
-        return a * self.M**b
+        if self.M is not None:
+            return a * self.M**b
+        else:
+            None
 
 
     @property
@@ -15155,7 +16580,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
     @property
     def volume_3d(self):
-        &#34;&#34;&#34;
+        r&#34;&#34;&#34;
         Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
         This function applies an empirical, linear-additive scheme:
@@ -15257,12 +16682,26 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             estimates.
 
         &#34;&#34;&#34;
-        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
+        if hasattr(self, &#39;vdWvolume2&#39;):
+            return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+        else:
+            return None</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li>patankar.loadpubchem.migrantToxtree</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="layer.migrant.IMAGE_SIZE"><code class="name">var <span class="ident">IMAGE_SIZE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="layer.migrant.PUBCHEM_ROOT_URL"><code class="name">var <span class="ident">PUBCHEM_ROOT_URL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Instance variables</h3>
 <dl>
 <dt id="layer.migrant.Deval"><code class="name">var <span class="ident">Deval</span></code></dt>
@@ -15384,6 +16823,60 @@ def count_rings(self):
         &#39;non_aromatic&#39;: len(non_aromatic_rings),
         &#39;fusions&#39;: fusion_counts
     }</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.hasSML"><code class="name">var <span class="ident">hasSML</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if it has an SML defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasSML(self):
+    &#34;&#34;&#34;Returns True if it has an SML defined&#34;&#34;&#34;
+    return hasattr(self,&#34;SML&#34;) and self.SML is not None</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.hasSMLgroup"><code class="name">var <span class="ident">hasSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if the sustance is regulated in a group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasSMLgroup(self):
+    &#34;&#34;&#34;Returns True if the sustance is regulated in a group&#34;&#34;&#34;
+    return self.hasannex1 and self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.hasannex1"><code class="name">var <span class="ident">hasannex1</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if annex1 is defined</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasannex1(self):
+    &#34;&#34;&#34;Returns True if annex1 is defined&#34;&#34;&#34;
+    return hasattr(self,&#34;annex1&#34;) and isinstance(self.annex1,complyEU.annex1record)</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.image"><code class="name">var <span class="ident">image</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the rasterized image of the migrant</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image(self):
+    &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
+    if self.image_file:
+        self._download_PNG() # download PNG if not cached
+        return Image.open(self.image_file)</code></pre>
 </details>
 </dd>
 <dt id="layer.migrant.keval"><code class="name">var <span class="ident">keval</span></code></dt>
@@ -15527,7 +17020,25 @@ def molarvolumeMiller(self, a=0.997, b=1.03):
     &gt;&gt;&gt; compound.molarvolumeMiller
     130.5  # Example output
     &#34;&#34;&#34;
-    return a * self.M**b</code></pre>
+    if self.M is not None:
+        return a * self.M**b
+    else:
+        None</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.nSMLgroup"><code class="name">var <span class="ident">nSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the number of substances in the group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def nSMLgroup(self):
+    &#34;&#34;&#34;Returns the number of substances in the group&#34;&#34;&#34;
+    if not self.hasSMLgroup:
+        return 0
+    return len(self.annex1[&#39;SMLTGroupFCMsubstances&#39;])</code></pre>
 </details>
 </dd>
 <dt id="layer.migrant.parse_formula"><code class="name">var <span class="ident">parse_formula</span></code></dt>
@@ -15628,6 +17139,21 @@ def polarityindex(self,logP=None,V=None):
                           V=self.molarvolumeMiller if V is None else V)</code></pre>
 </details>
 </dd>
+<dt id="layer.migrant.structure"><code class="name">var <span class="ident">structure</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the metadata associated with the migrant</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def structure(self):
+    &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
+    if self.structure_file:
+        self._download_SDF() # download SDF if not cached
+        return parse_sdf(self.structure_file)</code></pre>
+</details>
+</dd>
 <dt id="layer.migrant.volumeDwelle"><code class="name">var <span class="ident">volumeDwelle</span></code></dt>
 <dd>
 <div class="desc"><p>Returns the approximate volume as estimated by Dwelle
@@ -15661,7 +17187,10 @@ def volumeDwelle(self):
         estimates.
 
     &#34;&#34;&#34;
-    return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767</code></pre>
+    if hasattr(self, &#39;vdWvolume2&#39;):
+        return 172.2/221.1 * min(self.vdWvolume,self.vdWvolume2) # 172.2/221.7 = 0.7767
+    else:
+        return None</code></pre>
 </details>
 </dd>
 <dt id="layer.migrant.volume_3d"><code class="name">var <span class="ident">volume_3d</span></code></dt>
@@ -15670,47 +17199,18 @@ def volumeDwelle(self):
 <p>This function applies an empirical, linear-additive scheme:
 Adapted code from: <a href="https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.">https://github.com/hachmannlab/Slonimskii_method_vdW/blob/master/Slonimskii_method_vdW.py.</a> The intent is to remove the dependence to babel.</p>
 <p>[
-egin{aligned}
-V_{vdw} =\,&amp; n_H
-imes 7.24 + n_C
-imes 20.58 + n_N
-imes 15.6 + n_O
-imes 14.71 + n_F
-imes 13.31 \
-&amp;+ n_{Cl}
-imes 22.45 + n_{Br}
-imes 26.52 + n_{I}
-imes 32.52 + n_P
-imes 24.43 \
-&amp;+ n_S
-imes 24.43 + n_{Si}
-imes 38.79 + n_{Se}
-imes 28.73 + n_{Te}
-imes 36.62 \
-&amp;- 5.92
-imes (
-ext{bonds}) - 14.7
-imes (
-ext{no_ar}) - 3.8
-imes (
-ext{no_non_ar}) \
-&amp;+ 5
-imes (
-ext{no_f_ring_ArAr}) + 3
-imes (
-ext{no_f_ring_AlAr}) + 1
-imes (
-ext{no_f_ring_AlAl}) \
-&amp;- 5
-imes (
-ext{no_f_ring_S})
+\begin{aligned}
+V_{vdw} =\,&amp; n_H \times 7.24 + n_C \times 20.58 + n_N \times 15.6 + n_O \times 14.71 + n_F \times 13.31 \
+&amp;+ n_{Cl} \times 22.45 + n_{Br} \times 26.52 + n_{I} \times 32.52 + n_P \times 24.43 \
+&amp;+ n_S \times 24.43 + n_{Si} \times 38.79 + n_{Se} \times 28.73 + n_{Te} \times 36.62 \
+&amp;- 5.92 \times (\text{bonds}) - 14.7 \times (\text{no_ar}) - 3.8 \times (\text{no_non_ar}) \
+&amp;+ 5 \times (\text{no_f_ring_ArAr}) + 3 \times (\text{no_f_ring_AlAr}) + 1 \times (\text{no_f_ring_AlAl}) \
+&amp;- 5 \times (\text{no_f_ring_S})
 \end{aligned}
 ]</p>
 <p>Here, the bond count is estimated using the heuristic:</p>
 <p>[
-ext{bonds} pprox (
-ext{number of heavy atoms} - 1) + (
-ext{number of rings})
+\text{bonds} \approx (\text{number of heavy atoms} - 1) + (\text{number of rings})
 ]</p>
 <p>and heavy atoms are all atoms except hydrogen.</p>
 <p>For this implementation:
@@ -15730,7 +17230,7 @@ formula (str): Molecular formula (e.g., 'C15H16O2') to retrieve accurate hydroge
 </summary>
 <pre><code class="python">@property
 def volume_3d(self):
-    &#34;&#34;&#34;
+    r&#34;&#34;&#34;
     Compute the molecular 3D van-der-Waals volume using a linear additive model.
 
     This function applies an empirical, linear-additive scheme:
@@ -15814,6 +17314,18 @@ def volume_3d(self):
             5*(no_f_ring_ArAr) + 3*(no_f_ring_AlAr) + 1*(no_f_ring_AlAl) - 5*(no_f_ring_S)
 
     return V_vdw</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.worstcaseSMLgroup"><code class="name">var <span class="ident">worstcaseSMLgroup</span></code></dt>
+<dd>
+<div class="desc"><p>Returns the substance with the lowest molecular weight in the group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def worstcaseSMLgroup(self):
+    &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 </dl>
@@ -16127,6 +17639,7 @@ Typically close to isotactic PP around ~910 kg/m^3.</p></div>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -16295,6 +17808,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -16369,6 +17883,7 @@ def porosity(self):
 <li><code><a title="layer.HIPS.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.HIPS.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.HIPS.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.HIPS.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.HIPS.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -16548,6 +18063,7 @@ but with a different expansion slope possible, if needed</p></div>
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -16622,6 +18138,7 @@ but with a different expansion slope possible, if needed</p></div>
 <li><code><a title="layer.PS.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.PS.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.PS.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.PS.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.PS.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -16791,6 +18308,7 @@ def porosity(self):
 <li><code><a title="layer.layer.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -16869,6 +18387,7 @@ def porosity(self):
 <li><code><a title="layer.gPET.simplify" href="#layer.layer.simplify">simplify</a></code></li>
 <li><code><a title="layer.gPET.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.gPET.struct" href="#layer.layer.struct">struct</a></code></li>
+<li><code><a title="layer.gPET.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.gPET.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -16886,10 +18405,15 @@ def porosity(self):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="layer.check_units" href="#layer.check_units">check_units</a></code></li>
+<li><code><a title="layer.create_multi_layer_widget" href="#layer.create_multi_layer_widget">create_multi_layer_widget</a></code></li>
+<li><code><a title="layer.create_polymer_dropdown" href="#layer.create_polymer_dropdown">create_polymer_dropdown</a></code></li>
 <li><code><a title="layer.fixSIbase" href="#layer.fixSIbase">fixSIbase</a></code></li>
 <li><code><a title="layer.format_scientific_latex" href="#layer.format_scientific_latex">format_scientific_latex</a></code></li>
 <li><code><a title="layer.help_layer" href="#layer.help_layer">help_layer</a></code></li>
 <li><code><a title="layer.list_layer_subclasses" href="#layer.list_layer_subclasses">list_layer_subclasses</a></code></li>
+<li><code><a title="layer.list_materials" href="#layer.list_materials">list_materials</a></code></li>
+<li><code><a title="layer.material" href="#layer.material">material</a></code></li>
+<li><code><a title="layer.resolve_material" href="#layer.resolve_material">resolve_material</a></code></li>
 <li><code><a title="layer.toSI" href="#layer.toSI">toSI</a></code></li>
 </ul>
 </li>
@@ -17239,6 +18763,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.substance" href="#layer.layer.substance">substance</a></code></li>
+<li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.thickness" href="#layer.layer.thickness">thickness</a></code></li>
 <li><code><a title="layer.layer.type" href="#layer.layer.type">type</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
@@ -17265,18 +18790,27 @@ def porosity(self):
 <h4><code><a title="layer.migrant" href="#layer.migrant">migrant</a></code></h4>
 <ul class="two-column">
 <li><code><a title="layer.migrant.Deval" href="#layer.migrant.Deval">Deval</a></code></li>
+<li><code><a title="layer.migrant.IMAGE_SIZE" href="#layer.migrant.IMAGE_SIZE">IMAGE_SIZE</a></code></li>
+<li><code><a title="layer.migrant.PUBCHEM_ROOT_URL" href="#layer.migrant.PUBCHEM_ROOT_URL">PUBCHEM_ROOT_URL</a></code></li>
 <li><code><a title="layer.migrant.check_alt_propclass" href="#layer.migrant.check_alt_propclass">check_alt_propclass</a></code></li>
 <li><code><a title="layer.migrant.count_rings" href="#layer.migrant.count_rings">count_rings</a></code></li>
 <li><code><a title="layer.migrant.dispmax" href="#layer.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="layer.migrant.hasSML" href="#layer.migrant.hasSML">hasSML</a></code></li>
+<li><code><a title="layer.migrant.hasSMLgroup" href="#layer.migrant.hasSMLgroup">hasSMLgroup</a></code></li>
+<li><code><a title="layer.migrant.hasannex1" href="#layer.migrant.hasannex1">hasannex1</a></code></li>
+<li><code><a title="layer.migrant.image" href="#layer.migrant.image">image</a></code></li>
 <li><code><a title="layer.migrant.keval" href="#layer.migrant.keval">keval</a></code></li>
 <li><code><a title="layer.migrant.molarvolumeLinear" href="#layer.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
 <li><code><a title="layer.migrant.molarvolumeMiller" href="#layer.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
+<li><code><a title="layer.migrant.nSMLgroup" href="#layer.migrant.nSMLgroup">nSMLgroup</a></code></li>
 <li><code><a title="layer.migrant.parse_formula" href="#layer.migrant.parse_formula">parse_formula</a></code></li>
 <li><code><a title="layer.migrant.polarityindex" href="#layer.migrant.polarityindex">polarityindex</a></code></li>
+<li><code><a title="layer.migrant.structure" href="#layer.migrant.structure">structure</a></code></li>
 <li><code><a title="layer.migrant.suggest_alt_Dclass" href="#layer.migrant.suggest_alt_Dclass">suggest_alt_Dclass</a></code></li>
 <li><code><a title="layer.migrant.suggest_alt_Dmodel" href="#layer.migrant.suggest_alt_Dmodel">suggest_alt_Dmodel</a></code></li>
 <li><code><a title="layer.migrant.volumeDwelle" href="#layer.migrant.volumeDwelle">volumeDwelle</a></code></li>
 <li><code><a title="layer.migrant.volume_3d" href="#layer.migrant.volume_3d">volume_3d</a></code></li>
+<li><code><a title="layer.migrant.worstcaseSMLgroup" href="#layer.migrant.worstcaseSMLgroup">worstcaseSMLgroup</a></code></li>
 </ul>
 </li>
 <li>
