@@ -907,10 +907,10 @@ def create_plotmigration_widget():
          description="t_max:"
     )
     num_values_slider = widgets.IntSlider(
-         value=5,
-         min=3,
-         max=500,
-         step=1,
+         value=300,
+         min=10,
+         max=1000,
+         step=10,
          description="n_vals:",
          continuous_update=False,
          layout=widgets.Layout(width="250px")

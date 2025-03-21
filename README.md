@@ -465,7 +465,7 @@ $2025-02-12$
 > [!IMPORTANT]
 >
 > <a href="https://github.com/ovitrac/SFPPylite" target="_blank" title="SFPPyLite GitHub Repository">
-> <img src="https://img.shields.io/badge/%F0%9F%93%81%20SFPPyLite-GitHub%20Repo-6e5494?style=for-the-badge&logo=github" alt="SFPPyLite GitHub Repository"></a> is a  lightweight, browser-based sister project of <strong>SFPPy</strong>.  It runs entirely in your browser (via <a href="https://jupyterlite.readthedocs.io/" title="JupyterLite official website" target="_blank">JupyterLite</a> — no installation, no Python backend — and is ideal for <strong>editing files</strong>, <strong>exploring materials</strong>, or performing <strong>basic compliance calculations</strong> on the go.
+> <img src="https://img.shields.io/badge/%F0%9F%93%81%20SFPPyLite-GitHub%20Repo-6e5494?style=for-the-badge&logo=github" alt="SFPPyLite GitHub Repository"></a> is a  lightweight, browser-based sister project of <strong>SFPPy</strong>.  It runs entirely in your browser (via <a href="https://jupyterlite.readthedocs.io/" title="JupyterLite official website" target="_blank">JupyterLite</a>) — no installation, no Python backend — and is ideal for <strong>editing files</strong>, <strong>exploring materials</strong>, or performing <strong>basic compliance calculations</strong> on the go.
 >
 > <a href="https://ovitrac.github.io/SFPPylite/" target="_blank" title="Launch SFPPyLite in your browser"><img src="https://img.shields.io/badge/%F0%9F%92%AB%20Test_SFPPyLite-Launch%20Online-7b66b5?style=for-the-badge&logo=jupyter" alt="Launch SFPPyLite"></a>
 
