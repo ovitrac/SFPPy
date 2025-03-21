@@ -82,7 +82,7 @@ def bootstrap_sfppy(verbose=True, clone="ifcolab"):
         run_initialization_script(candidates[0])
         if is_sfppy_available():
             if verbose:
-                print("✅ Sucess")
+                print("✅ Success")
             return True
         else:
             if verbose:
