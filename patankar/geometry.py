@@ -136,7 +136,7 @@ import numpy as np
 from collections import defaultdict
 from patankar.layer import check_units
 
-__all__ = ['CompositeShape', 'Cone', 'Connector', 'Cylinder', 'Hemisphere', 'OpenCone', 'OpenCylinder1', 'OpenCylinder2', 'OpenPrism1', 'OpenPrism2', 'OpenSquare1', 'OpenSquare2', 'Packaging3D', 'RectangularPrism', 'Shape3D', 'Sphere', 'SquarePyramid', 'check_units', 'create_shape_by_name', 'get_all_shapes_info', 'get_geometries_and_synonyms', 'help_geometry']
+__all__ = ['Ball', 'Box', 'CompositeShape', 'Con', 'Cone', 'Connector', 'Cuboid', 'Cyl', 'Cylinder', 'HalfSphere', 'HemiSphere', 'Hemisphere', 'OpenBox', 'OpenBox2', 'OpenCon', 'OpenCone', 'OpenCyl', 'OpenCylinder1', 'OpenCylinder2', 'OpenPrism1', 'OpenPrism2', 'OpenSquare1', 'OpenSquare2', 'OpenSquareBox', 'OpenSquareBox2', 'Packaging3D', 'Pyramid', 'RectangularPrism', 'Shape3D', 'Sphere', 'SquarePyramid', 'Tube', 'check_units', 'create_packaging_widget', 'create_shape_by_name', 'get_all_shapes_info', 'get_geometries_and_synonyms', 'help_geometry']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"

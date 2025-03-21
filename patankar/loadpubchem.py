@@ -118,18 +118,20 @@ Note
 - The synonyms approach: Default matching is **exact** (lowercased). Fuzzy or partial matches require custom logic.
 
 
-@version: 1.30
+@version: 1.37
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-03-10
-@rev: 2025-03-06
+@rev: 2025-03-20
 
 Version History
 ---------------
 - 1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.
 - 1.2: Production
 - 1.21: PubChem cap rate enforced (urgent request)
+- 1.32: migrant Toxtree
+- 1.37: Colab compliance
 
 """
 
@@ -158,7 +160,7 @@ from patankar.private.pubchempy import get_compounds
 # European rules
 import patankar.private.EUFCMannex1 as complyEU # Annex 1 (we import all the module as complyEU)
 
-__all__ = ['CompoundIndex', 'dbdefault', 'get_compounds', 'migrant', 'migrantToxtree', 'polarity_index']
+__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'dbdefault', 'floatNone', 'get_compounds', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -167,7 +169,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.32"
+__version__ = "1.37"
 
 
 # %% SFFy.Comply databases version 2025
@@ -258,7 +260,7 @@ def polarity_index(logP=None, V=None, name=None,
         if name is None:
             #raise ValueError("Provide either (logP, V) pair or a valid solvent name.")
             return None
-        from patankar.loadpubchem import migrant
+        # from patankar.loadpubchem import migrant (not needed anymore since it moved to loadpubchem)
         tmp = migrant(name)
         logP, V = tmp.logP, tmp.molarvolumeMiller
 
@@ -1050,13 +1052,20 @@ class CompoundIndex:
 # %% Configuration of migrant class: cache, available Dmodel and kmodel
 
 # Main compound database
-dbdefault = CompoundIndex(cache_dir="cache.PubChem", index_file="pubchem_index.json")
+dbdefault = None # we prevent a call to CompoundIndex, if the class if not instantiated
+# Delay creation of dbdefault until needed
+def get_default_index():
+    global dbdefault
+    if dbdefault is None:
+        dbdefault = CompoundIndex(cache_dir="cache.PubChem", index_file="pubchem_index.json")
+    return dbdefault
+
 
 # Model extensions to be tested with PropertyModelSelector()
 """
 # ==============================================================================================
-#  Use this emplate to validate the validation of alternative models by PropertyModelSelector()
-#    The syntax is sophisticated and accept multiple paradims and criteria.
+#  Use this template to validate the validation of alternative models by PropertyModelSelector()
+#    The syntax is sophisticated and accepts multiple paradims and criteria.
 #
 #    see patankar.property.PropertyModelSelector documentation for more details
 # ==============================================================================================
@@ -1278,7 +1287,7 @@ class migrant:
                               "porosity":0       # of amorphous phase (1-crystallinity)(1-porosity)
                               }, # do not use None
 
-                 db=dbdefault, # cache.PubChem database
+                 db = None, # should be None to prevent execution at import
 
                  raiseerror=True, # raise an error if the susbtance is not found
 
@@ -1342,8 +1351,11 @@ class migrant:
         """
 
         # local import
-        # import implicity property migration models (e.g., Dpiringer)
+        # import implicitly property migration models (e.g., Dpiringer)
         from patankar.property import MigrationPropertyModels, MigrationPropertyModel_validator
+
+        if db is None: # we use the deferred mechanism (the database is read once for all instances)
+            db = get_default_index() # cache.PubChem database
 
         self.compound = None   # str
         self.name = None       # str or list

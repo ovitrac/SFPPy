@@ -195,6 +195,7 @@ check_script "./generate_post_docs.py"
 check_script "./generate_diagrams.sh"
 check_script "./convert_py_to_html.py"
 check_script "./pdocme.sh"
+check_script = "./addtoctonb.sh"
 
 # Run the documentation generation scripts with status messages
 echo "Launch 'generate_setup.py'to update the version (repored also in documentatation)..."
@@ -227,7 +228,8 @@ echo "Completed 'pdocme.sh'."
 xdg-open ../html/index.html
 
 # do wikipages last, if not they will be renamed with ~
-echo "Running 'generate_wiki.py'..."
+echo "Running 'addtoctonb.sh + generate_wiki.py'..."
+./addtoctonb.sh
 ./generate_wiki.py
 echo "Completed 'generate_wiki.py'."
 xdg-open ../html/wikipages/index.html

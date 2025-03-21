@@ -9017,7 +9017,7 @@ current value of the parameter and its default value.</p></div>
 </dd>
 <dt id="food.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;patankar.loadpubchem.CompoundIndex object&gt;, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=None, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -9274,7 +9274,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                               &#34;porosity&#34;:0       # of amorphous phase (1-crystallinity)(1-porosity)
                               }, # do not use None
 
-                 db=dbdefault, # cache.PubChem database
+                 db = None, # should be None to prevent execution at import
 
                  raiseerror=True, # raise an error if the susbtance is not found
 
@@ -9338,8 +9338,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &#34;&#34;&#34;
 
         # local import
-        # import implicity property migration models (e.g., Dpiringer)
+        # import implicitly property migration models (e.g., Dpiringer)
         from patankar.property import MigrationPropertyModels, MigrationPropertyModel_validator
+
+        if db is None: # we use the deferred mechanism (the database is read once for all instances)
+            db = get_default_index() # cache.PubChem database
 
         self.compound = None   # str
         self.name = None       # str or list

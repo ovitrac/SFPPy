@@ -54,7 +54,7 @@ from copy import deepcopy as duplicate
 from patankar.layer import check_units, NoUnits, layer # to convert units to SI
 from patankar.loadpubchem import migrant
 
-__all__ = ['acetonitrile', 'ambient', 'aqueous', 'boiling', 'check_units', 'chemicalaffinity', 'chilled', 'ethanol', 'ethanol50', 'ethanol95', 'fat', 'foodlayer', 'foodphysics', 'foodproperty', 'frozen', 'frying', 'get_defined_init_params', 'help_food', 'hotambient', 'hotfilled', 'hotoven', 'intermediate', 'is_valid_classname', 'isooctane', 'layer', 'liquid', 'list_food_classes', 'methanol', 'microwave', 'migrant', 'nofood', 'oil', 'oliveoil', 'oven', 'panfrying', 'pasteurization', 'perfectlymixed', 'realcontact', 'realfood', 'rolled', 'semisolid', 'setoff', 'simulant', 'solid', 'stacked', 'sterilization', 'tenax', 'testcontact', 'texture', 'transportation', 'water', 'water3aceticacid', 'wrap_text', 'yogurt']
+__all__ = ['acetonitrile', 'ambient', 'aqueous', 'boiling', 'check_units', 'chemicalaffinity', 'chilled', 'create_food_tree_widget', 'ethanol', 'ethanol50', 'ethanol95', 'fat', 'foodlayer', 'foodphysics', 'foodproperty', 'frozen', 'frying', 'get_defined_init_params', 'help_food', 'hotambient', 'hotfilled', 'hotoven', 'intermediate', 'is_valid_classname', 'isooctane', 'layer', 'liquid', 'list_food_classes', 'methanol', 'microwave', 'migrant', 'nofood', 'oil', 'oliveoil', 'oven', 'panfrying', 'pasteurization', 'perfectlymixed', 'realcontact', 'realfood', 'rolled', 'semisolid', 'setoff', 'simulant', 'solid', 'stacked', 'sterilization', 'tenax', 'testcontact', 'texture', 'transportation', 'update_class_list', 'water', 'water3aceticacid', 'wrap_text', 'yogurt']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"

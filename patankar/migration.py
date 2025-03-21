@@ -117,7 +117,7 @@ import pandas as pd
 from patankar.layer import layer, check_units, layerLink
 from patankar.food import foodphysics,foodlayer
 
-__all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'cleantex', 'colormap', 'compute_fc_profile_PBC', 'compute_fv_profile', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_latex_available', 'is_valid_figure', 'layer', 'layerLink', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear']
+__all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'cleantex', 'colormap', 'compute_fc_profile_PBC', 'compute_fv_profile', 'create_plotmigration_widget', 'create_simulation_widget', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_latex_available', 'is_valid_figure', 'layer', 'layerLink', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"

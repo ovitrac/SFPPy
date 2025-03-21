@@ -1,6 +1,6 @@
 # SFPPy Modules Documentation
 
-Generated on: **2025-03-20 22:04:03**
+Generated on: **2025-03-21 15:45:32**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -2903,47 +2903,48 @@ object --> migrant
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `create_substance_widget` | Creates a two-step widget interface for selecting a substance via loadpubchem. | 300 | 1.32 |
-| (module-level) | `<lambda>` |  | 1 | 1.32 |
-| (module-level) | `parse_molblock` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.32 |
-| (module-level) | `parse_sdf` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.32 |
-| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.32 |
-| `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.32 |
-| `CompoundIndex` | `_add_synonym_to_index` | Helper to map a single synonym→cid in self.index. | 9 | 1.32 |
-| `CompoundIndex` | `_atom_to_dict` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.32 |
-| `CompoundIndex` | `_bond_to_dict` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.32 |
-| `CompoundIndex` | `_extract_all_pubchem_properties` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.32 |
-| `CompoundIndex` | `_gather_synonyms` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.32 |
-| `CompoundIndex` | `_generate_simple_dict` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.32 |
-| `CompoundIndex` | `find` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 91 | 1.32 |
-| `CompoundIndex` | `refresh_index` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.32 |
-| `migrant` | `__init__` | Create a new migrant instance. | 353 | 1.32 |
-| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 55 | 1.32 |
-| `migrant` | `__str__` | Formatted string representing the migrant | 4 | 1.32 |
-| `migrant` | `_crop_image` | Crops white background from the PNG image. | 30 | 1.32 |
-| `migrant` | `_download_PNG` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.32 |
-| `migrant` | `_download_SDF` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.32 |
-| `migrant` | `_download_pubchem_structuredata` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.32 |
-| `migrant` | `_validate_and_set_model` | Generic method for validating and setting a migration property model. | 31 | 1.32 |
-| `migrant` | `check_alt_propclass` | returns True if a class property exists in patankar.property | 12 | 1.32 |
-| `migrant` | `dispmax` | optimize display | 9 | 1.32 |
-| `migrant` | `suggest_alt_Dclass` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.32 |
-| `migrant` | `suggest_alt_Dmodel` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.32 |
-| `migrantToxtree` | `__init__` | migrantToxtree constructor | 41 | 1.32 |
-| `migrantToxtree` | `__repr__` | Formatted string representation summarizing key attributes. | 55 | 1.32 |
-| `migrantToxtree` | `__str__` | Formatted string representing the migrant | 4 | 1.32 |
-| `migrantToxtree` | `_clean_field_names` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.32 |
-| `migrantToxtree` | `_crop_image` | Crops white background from the PNG image. | 30 | 1.32 |
-| `migrantToxtree` | `_download_PNG` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.32 |
-| `migrantToxtree` | `_download_SDF` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.32 |
-| `migrantToxtree` | `_download_pubchem_structuredata` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.32 |
-| `migrantToxtree` | `_run_toxtree` |  | 42 | 1.32 |
-| `migrantToxtree` | `_validate_and_set_model` | Generic method for validating and setting a migration property model. | 31 | 1.32 |
-| `migrantToxtree` | `check_alt_propclass` | returns True if a class property exists in patankar.property | 12 | 1.32 |
-| `migrantToxtree` | `class_roman_to_int` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.32 |
-| `migrantToxtree` | `dispmax` | optimize display | 9 | 1.32 |
-| `migrantToxtree` | `suggest_alt_Dclass` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.32 |
-| `migrantToxtree` | `suggest_alt_Dmodel` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.32 |
+| (module-level) | `create_substance_widget` | Creates a two-step widget interface for selecting a substance via loadpubchem. | 300 | 1.37 |
+| (module-level) | `<lambda>` |  | 1 | 1.37 |
+| (module-level) | `get_default_index` |  | 5 | 1.37 |
+| (module-level) | `parse_molblock` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.37 |
+| (module-level) | `parse_sdf` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.37 |
+| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.37 |
+| `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.37 |
+| `CompoundIndex` | `_add_synonym_to_index` | Helper to map a single synonym→cid in self.index. | 9 | 1.37 |
+| `CompoundIndex` | `_atom_to_dict` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.37 |
+| `CompoundIndex` | `_bond_to_dict` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.37 |
+| `CompoundIndex` | `_extract_all_pubchem_properties` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.37 |
+| `CompoundIndex` | `_gather_synonyms` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.37 |
+| `CompoundIndex` | `_generate_simple_dict` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.37 |
+| `CompoundIndex` | `find` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 91 | 1.37 |
+| `CompoundIndex` | `refresh_index` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.37 |
+| `migrant` | `__init__` | Create a new migrant instance. | 356 | 1.37 |
+| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 55 | 1.37 |
+| `migrant` | `__str__` | Formatted string representing the migrant | 4 | 1.37 |
+| `migrant` | `_crop_image` | Crops white background from the PNG image. | 30 | 1.37 |
+| `migrant` | `_download_PNG` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.37 |
+| `migrant` | `_download_SDF` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.37 |
+| `migrant` | `_download_pubchem_structuredata` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.37 |
+| `migrant` | `_validate_and_set_model` | Generic method for validating and setting a migration property model. | 31 | 1.37 |
+| `migrant` | `check_alt_propclass` | returns True if a class property exists in patankar.property | 12 | 1.37 |
+| `migrant` | `dispmax` | optimize display | 9 | 1.37 |
+| `migrant` | `suggest_alt_Dclass` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.37 |
+| `migrant` | `suggest_alt_Dmodel` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.37 |
+| `migrantToxtree` | `__init__` | migrantToxtree constructor | 41 | 1.37 |
+| `migrantToxtree` | `__repr__` | Formatted string representation summarizing key attributes. | 55 | 1.37 |
+| `migrantToxtree` | `__str__` | Formatted string representing the migrant | 4 | 1.37 |
+| `migrantToxtree` | `_clean_field_names` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.37 |
+| `migrantToxtree` | `_crop_image` | Crops white background from the PNG image. | 30 | 1.37 |
+| `migrantToxtree` | `_download_PNG` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.37 |
+| `migrantToxtree` | `_download_SDF` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.37 |
+| `migrantToxtree` | `_download_pubchem_structuredata` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.37 |
+| `migrantToxtree` | `_run_toxtree` |  | 42 | 1.37 |
+| `migrantToxtree` | `_validate_and_set_model` | Generic method for validating and setting a migration property model. | 31 | 1.37 |
+| `migrantToxtree` | `check_alt_propclass` | returns True if a class property exists in patankar.property | 12 | 1.37 |
+| `migrantToxtree` | `class_roman_to_int` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.37 |
+| `migrantToxtree` | `dispmax` | optimize display | 9 | 1.37 |
+| `migrantToxtree` | `suggest_alt_Dclass` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.37 |
+| `migrantToxtree` | `suggest_alt_Dmodel` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.37 |
 
 <a id="patankar_migration" name="patankar_migration"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_loadpubchem" title="Go to Previous Module: patankar.loadpubchem" style="text-decoration: none;">⬅️ Previous</a>

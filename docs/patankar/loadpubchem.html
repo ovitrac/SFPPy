@@ -134,17 +134,19 @@ Main user-facing method. Returns a pandas DataFrame of matching records (possibl
 <li>Large-scale usage: For large compound sets, consider optimizing the index or storing data in a more robust database.</li>
 <li>The synonyms approach: Default matching is <strong>exact</strong> (lowercased). Fuzzy or partial matches require custom logic.</li>
 </ul>
-<p>@version: 1.30
+<p>@version: 1.37
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-03-10
-@rev: 2025-03-06</p>
+@rev: 2025-03-20</p>
 <h2 id="version-history">Version History</h2>
 <ul>
 <li>1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.</li>
 <li>1.2: Production</li>
 <li>1.21: PubChem cap rate enforced (urgent request)</li>
+<li>1.32: migrant Toxtree</li>
+<li>1.37: Colab compliance</li>
 </ul>
 <details class="source">
 <summary>
@@ -270,18 +272,20 @@ Note
 - The synonyms approach: Default matching is **exact** (lowercased). Fuzzy or partial matches require custom logic.
 
 
-@version: 1.30
+@version: 1.37
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-03-10
-@rev: 2025-03-06
+@rev: 2025-03-20
 
 Version History
 ---------------
 - 1.0: Initial version, supporting local caching, synonyms index, and direct PubChem lookup.
 - 1.2: Production
 - 1.21: PubChem cap rate enforced (urgent request)
+- 1.32: migrant Toxtree
+- 1.37: Colab compliance
 
 &#34;&#34;&#34;
 
@@ -310,7 +314,7 @@ from patankar.private.pubchempy import get_compounds
 # European rules
 import patankar.private.EUFCMannex1 as complyEU # Annex 1 (we import all the module as complyEU)
 
-__all__ = [&#39;CompoundIndex&#39;, &#39;create_substance_widget&#39;, &#39;dbannex1&#39;, &#39;dbdefault&#39;, &#39;floatNone&#39;, &#39;get_compounds&#39;, &#39;migrant&#39;, &#39;migrantToxtree&#39;, &#39;parse_molblock&#39;, &#39;parse_sdf&#39;, &#39;polarity_index&#39;]
+__all__ = [&#39;CompoundIndex&#39;, &#39;create_substance_widget&#39;, &#39;dbannex1&#39;, &#39;floatNone&#39;, &#39;get_compounds&#39;, &#39;get_default_index&#39;, &#39;migrant&#39;, &#39;migrantToxtree&#39;, &#39;parse_molblock&#39;, &#39;parse_sdf&#39;, &#39;polarity_index&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -319,7 +323,7 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.32&#34;
+__version__ = &#34;1.37&#34;
 
 
 # %% SFFy.Comply databases version 2025
@@ -410,7 +414,7 @@ def polarity_index(logP=None, V=None, name=None,
         if name is None:
             #raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
             return None
-        from patankar.loadpubchem import migrant
+        # from patankar.loadpubchem import migrant (not needed anymore since it moved to loadpubchem)
         tmp = migrant(name)
         logP, V = tmp.logP, tmp.molarvolumeMiller
 
@@ -1202,13 +1206,20 @@ class CompoundIndex:
 # %% Configuration of migrant class: cache, available Dmodel and kmodel
 
 # Main compound database
-dbdefault = CompoundIndex(cache_dir=&#34;cache.PubChem&#34;, index_file=&#34;pubchem_index.json&#34;)
+dbdefault = None # we prevent a call to CompoundIndex, if the class if not instantiated
+# Delay creation of dbdefault until needed
+def get_default_index():
+    global dbdefault
+    if dbdefault is None:
+        dbdefault = CompoundIndex(cache_dir=&#34;cache.PubChem&#34;, index_file=&#34;pubchem_index.json&#34;)
+    return dbdefault
+
 
 # Model extensions to be tested with PropertyModelSelector()
 &#34;&#34;&#34;
 # ==============================================================================================
-#  Use this emplate to validate the validation of alternative models by PropertyModelSelector()
-#    The syntax is sophisticated and accept multiple paradims and criteria.
+#  Use this template to validate the validation of alternative models by PropertyModelSelector()
+#    The syntax is sophisticated and accepts multiple paradims and criteria.
 #
 #    see patankar.property.PropertyModelSelector documentation for more details
 # ==============================================================================================
@@ -1430,7 +1441,7 @@ class migrant:
                               &#34;porosity&#34;:0       # of amorphous phase (1-crystallinity)(1-porosity)
                               }, # do not use None
 
-                 db=dbdefault, # cache.PubChem database
+                 db = None, # should be None to prevent execution at import
 
                  raiseerror=True, # raise an error if the susbtance is not found
 
@@ -1494,8 +1505,11 @@ class migrant:
         &#34;&#34;&#34;
 
         # local import
-        # import implicity property migration models (e.g., Dpiringer)
+        # import implicitly property migration models (e.g., Dpiringer)
         from patankar.property import MigrationPropertyModels, MigrationPropertyModel_validator
+
+        if db is None: # we use the deferred mechanism (the database is read once for all instances)
+            db = get_default_index() # cache.PubChem database
 
         self.compound = None   # str
         self.name = None       # str or list
@@ -2723,54 +2737,6 @@ if __name__ == &#34;__main__&#34;:
 <section>
 </section>
 <section>
-<h2 class="section-title" id="header-variables">Global variables</h2>
-<dl>
-<dt id="loadpubchem.dbdefault"><code class="name">var <span class="ident">dbdefault</span></code></dt>
-<dd>
-<div class="desc"><h1 id="_1">==============================================================================================</h1>
-<h1 id="use-this-emplate-to-validate-the-validation-of-alternative-models-by-propertymodelselector">Use this emplate to validate the validation of alternative models by PropertyModelSelector()</h1>
-<h1 id="the-syntax-is-sophisticated-and-accept-multiple-paradims-and-criteria">The syntax is sophisticated and accept multiple paradims and criteria.</h1>
-<h1 id="_2"></h1>
-<h1 id="see-patankarpropertypropertymodelselector-documentation-for-more-details">see patankar.property.PropertyModelSelector documentation for more details</h1>
-<h1 id="_3">==============================================================================================</h1>
-<h1 id="evaluate-first-dmodel_extensions">Evaluate first Dmodel_extensions</h1>
-<h1 id="dependencies">Dependencies</h1>
-<p>from pprint import pp as disp
-from patankar.loadpubchem import migrant
-from patankar.layer import gPET, PS, PP, LDPE, rigidPVC
-from patankar.property import PropertyModelSelector</p>
-<h1 id="case-study">Case study</h1>
-<p>m1 = migrant("toluene")
-m2 = migrant("BHT")
-material = gPET()+PS()+PP()+LDPE()+rigidPVC()
-disp(Dmodel_extensions,depth=7,width=60) # show Dmodel_extensinos</p>
-<h1 id="we-build-objects-on-which-rules-will-be-tested">we build objects on which rules will be tested</h1>
-<h1 id="use-material-first-since-all-dmodels-check-against-material-but-not-all-against-migrant">use material first since all Dmodels check against material, but not all against migrant</h1>
-<h1 id="index-refers-the-the-layer-index-it-should-be-last">index refers the the layer index (it should be last)</h1>
-<p>objects = {"material":material,"migrant":m1,"index":2}</p>
-<h1 id="check-dmodels-with-objects">check Dmodels with objects</h1>
-<p>availableExtensions = list(Dmodel_extensions.keys())
-applicableExtensions = [False]*len(availableExtensions)
-for imodel,modelCode in enumerate(availableExtensions):
-modelObjects = [objects[o] for o in Dmodel_extensions[modelCode]["objects"]]
-modelRules = Dmodel_extensions[modelCode]["rules"].copy()
-modelRules_layer = modelRules[0]["list"][1] # 0=polymer rules, 1=polymer type
-modelRules_layer["index"] = objects["index"] # layer index
-applicableExtensions[imodel] = PropertyModelSelector(modelRules,modelObjects)
-# nice display
-print(f'{modelCode}('
-f'{objects["material"][objects["index"]].layerclass_history[0]},'
-f'{objects["migrant"].compound}) = ',
-applicableExtensions[imodel]
-)
-first_true_index = next((i for i, val in enumerate(applicableExtensions) if val), None)
-if first_true_index is not None:
-firstApplicableExtension = availableExtensions[first_true_index]
-print(f"first applicable model: {firstApplicableExtension}")
-else:
-print("no alternative model, use the default one")</p></div>
-</dd>
-</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
@@ -3153,6 +3119,22 @@ Later, access created substances via builtins.mysubstances.</p></div>
     return compounds</code></pre>
 </details>
 </dd>
+<dt id="loadpubchem.get_default_index"><code class="name flex">
+<span>def <span class="ident">get_default_index</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_default_index():
+    global dbdefault
+    if dbdefault is None:
+        dbdefault = CompoundIndex(cache_dir=&#34;cache.PubChem&#34;, index_file=&#34;pubchem_index.json&#34;)
+    return dbdefault</code></pre>
+</details>
+</dd>
 <dt id="loadpubchem.parse_molblock"><code class="name flex">
 <span>def <span class="ident">parse_molblock</span></span>(<span>molblock, useDataFrame=True)</span>
 </code></dt>
@@ -3412,7 +3394,7 @@ array([9.2, 4.5, 1.8])  # Example outputs
         if name is None:
             #raise ValueError(&#34;Provide either (logP, V) pair or a valid solvent name.&#34;)
             return None
-        from patankar.loadpubchem import migrant
+        # from patankar.loadpubchem import migrant (not needed anymore since it moved to loadpubchem)
         tmp = migrant(name)
         logP, V = tmp.logP, tmp.molarvolumeMiller
 
@@ -3968,7 +3950,7 @@ in the cache directory, and regenerating each </em>.simple.json if needed.</p></
 </dd>
 <dt id="loadpubchem.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=&lt;loadpubchem.CompoundIndex object&gt;, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=None, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -4225,7 +4207,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                               &#34;porosity&#34;:0       # of amorphous phase (1-crystallinity)(1-porosity)
                               }, # do not use None
 
-                 db=dbdefault, # cache.PubChem database
+                 db = None, # should be None to prevent execution at import
 
                  raiseerror=True, # raise an error if the susbtance is not found
 
@@ -4289,8 +4271,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &#34;&#34;&#34;
 
         # local import
-        # import implicity property migration models (e.g., Dpiringer)
+        # import implicitly property migration models (e.g., Dpiringer)
         from patankar.property import MigrationPropertyModels, MigrationPropertyModel_validator
+
+        if db is None: # we use the deferred mechanism (the database is read once for all instances)
+            db = get_default_index() # cache.PubChem database
 
         self.compound = None   # str
         self.name = None       # str or list
@@ -6485,16 +6470,12 @@ def showalerts(self):
 </ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-variables">Global variables</a></h3>
-<ul class="">
-<li><code><a title="loadpubchem.dbdefault" href="#loadpubchem.dbdefault">dbdefault</a></code></li>
-</ul>
-</li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="loadpubchem.create_substance_widget" href="#loadpubchem.create_substance_widget">create_substance_widget</a></code></li>
 <li><code><a title="loadpubchem.floatNone" href="#loadpubchem.floatNone">floatNone</a></code></li>
 <li><code><a title="loadpubchem.get_compounds" href="#loadpubchem.get_compounds">get_compounds</a></code></li>
+<li><code><a title="loadpubchem.get_default_index" href="#loadpubchem.get_default_index">get_default_index</a></code></li>
 <li><code><a title="loadpubchem.parse_molblock" href="#loadpubchem.parse_molblock">parse_molblock</a></code></li>
 <li><code><a title="loadpubchem.parse_sdf" href="#loadpubchem.parse_sdf">parse_sdf</a></code></li>
 <li><code><a title="loadpubchem.polarity_index" href="#loadpubchem.polarity_index">polarity_index</a></code></li>

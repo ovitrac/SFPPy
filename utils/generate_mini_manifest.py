@@ -38,9 +38,9 @@ def main():
     ignore_extensions = [
         '.manifest', '.py~', '.sh~', '.pyc',
         '.sample', '.cache', '.xml', '.iml', '.zip', '.js',
-        '.pdf', '.png', '.mp4', '.avi', '.html~', '.gitignore~',
+        '.pdf', '.avi', '.html~', '.gitignore~',
         '.gif', '.pptx','.fig','.egg-info', '.jar'
-    ]
+    ] #  '.png', '.mp4'
     
 
     ignore_dirs = [
