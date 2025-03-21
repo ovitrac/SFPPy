@@ -54,6 +54,9 @@ def bootstrap_sfppy(verbose=True, clone="ifcolab"):
     def is_sfppy_available():
         try:
             import patankar.loadpubchem
+            sfppy_folder = os.path.abspath(os.path.join(os.path.dirname(patankar.loadpubchem.__file__), ".."))
+            if verbose:
+                print("📁 SFPPy installation folder:", sfppy_folder)
             return True
         except ImportError:
             return False
@@ -77,7 +80,14 @@ def bootstrap_sfppy(verbose=True, clone="ifcolab"):
 
     if candidates:
         run_initialization_script(candidates[0])
-        return is_sfppy_available()
+        if is_sfppy_available():
+            if verbose:
+                print("✅ Sucess")
+            return True
+        else:
+            if verbose:
+                print("❌ Failure.\n❓ Is your installation corrupted?")
+            return False
 
     # No local script found — try cloning (if allowed)
     if clone == "never" or (clone == "ifcolab" and not IN_COLAB):
