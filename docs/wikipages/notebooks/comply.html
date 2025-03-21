@@ -7636,7 +7636,7 @@ header h1 {
 <li><a href="#%F0%9F%93%9C-A-Template-for-Compliance-Testing-%E2%9C%8D">📜 A Template for Compliance Testing ✍</a></li>
 <ul>
 <li><a href="#%F0%9F%94%8D-Synopsis">🔍 Synopsis</a></li>
-<li><a href="#Minimal-Setup-for-SFPPy-Core-%F0%9F%9A%80%F0%9F%94%A7%E2%9A%99%EF%B8%8F">Minimal Setup for SFPPy Core 🚀🔧⚙️</a></li>
+<li><a href="#%E2%9A%99%EF%B8%8F-Minimal-SFPPy-Setup-%E2%80%93-Works-Anywhere-%F0%9F%9A%80">⚙️ Minimal SFPPy Setup – Works Anywhere 🚀</a></li>
 </ul>
 <li><a href="#1-%7C-Problem-Description-%F0%9F%8E%AF">1 | Problem Description 🎯</a></li>
 <ul>
@@ -7706,24 +7706,19 @@ header h1 {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Minimal-Setup-for-SFPPy-Core-%F0%9F%9A%80%F0%9F%94%A7%E2%9A%99%EF%B8%8F">Minimal Setup for SFPPy Core 🚀🔧⚙️<a class="anchor-link" href="#Minimal-Setup-for-SFPPy-Core-%F0%9F%9A%80%F0%9F%94%A7%E2%9A%99%EF%B8%8F">¶</a></h3><blockquote>
-<p>This setup is designed to work on any machine – whether SFPPy is already installed or not.</p>
+<h3 id="%E2%9A%99%EF%B8%8F-Minimal-SFPPy-Setup-%E2%80%93-Works-Anywhere-%F0%9F%9A%80">⚙️ Minimal SFPPy Setup – Works Anywhere 🚀<a class="anchor-link" href="#%E2%9A%99%EF%B8%8F-Minimal-SFPPy-Setup-%E2%80%93-Works-Anywhere-%F0%9F%9A%80">¶</a></h3><blockquote>
+<p>This cell ensures that SFPPy is accessible, whether it's already installed or needs to be initialized on the fly.</p>
 </blockquote>
-<details>
-<summary>Click to Expand</summary>
-<blockquote>
-<p>The cell attempts to import the core module <code>patankar.loadpubchem</code>.</p>
+<details> <summary>What this cell does (click to expand)</summary>
+It first tries to import the core module: <code>patankar.loadpubchem.</code><br/>
 <ul>
-<li>If it <strong>succeeds</strong>, SFPPy is already initialized, and no further action is needed.</li>
-<li>If it <strong>fails</strong>, the cell will try to run the initialization script <code>initialize_sfppy.py</code> (searched from several candidate paths).<ul>
-<li>If the script is found, it will be executed.</li>
-<li>If not, the repository will be cloned (or refreshed) and then initialized.</li>
+<li>✅ If the import succeeds, SFPPy is ready, and nothing more happens.</li>
+<li>❌ If it fails, it looks for the initialize_sfppy.py script in a list of likely folders.</li>
+<li>If found, the script is executed to initialize the environment.</li>
+<li><b>If not, the SFPPy repository is cloned (or updated) from GitHub, then initialized.</b></li>
+<li>After a successful setup, the script prints the full path to the SFPPy installation folder.</li>
+<li>💡 This setup is designed to work in Colab, Jupyter, or local notebooks, even in read-only or temporary environments.</li>
 </ul>
-</li>
-</ul>
-<p>After successful initialization, the full path to the SFPPy installation folder is displayed.</p>
-<p><strong>Note:</strong> Make sure you are in a directory with access to SFPPy (or that can clone it). In a read-only environment, this cell will help you set up SFPPy temporarily.</p>
-</blockquote>
 </details>
 </div>
 </div>
@@ -7733,52 +7728,15 @@ header h1 {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [73]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
-
-<span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Set verbosity flag</span>
-<span class="n">clone</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># True enable cloning from GitHub repo</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">patankar.loadpubchem</span>
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ SFPPy is already initialized; skipping initialization."</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"⚠️ SFPPy not detected; attempting initialization."</span><span class="p">)</span>
-    <span class="n">base_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"./SFPPy/utils"</span><span class="p">,</span> <span class="s2">"../utils"</span><span class="p">,</span> <span class="s2">"./utils"</span><span class="p">,</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">"../../utils"</span><span class="p">,</span> <span class="s2">"../../../utils"</span><span class="p">]</span>
-    <span class="c1"># Find candidates for the initialization script in various base directories.</span>
-    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s2">"initialize_sfppy.py"</span><span class="p">))</span>
-                  <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">base_dirs</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s2">"initialize_sfppy.py"</span><span class="p">))]</span>
-    <span class="k">if</span> <span class="n">candidates</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"🔍 Running initialization script: </span><span class="si">{</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="o">%</span><span class="k">run</span> -i {candidates[0]} --no-verbose --no-cd
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">patankar.loadpubchem</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ SFPPy successfully initialized."</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"❌ ERROR: Initialization failed; 'patankar.loadpubchem' is still unavailable.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"Current sys.path:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">clone</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">"SFPPy"</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"📥 SFPPy repository not found. Cloning the repository – please be patient."</span><span class="p">)</span>
-            <span class="o">!</span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ovitrac/SFPPy.git<span class="w">  </span>#<span class="w"> </span>First<span class="w"> </span>time:<span class="w"> </span>clone<span class="w"> </span>the<span class="w"> </span>repository
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"🔄 Refreshing the SFPPy repository."</span><span class="p">)</span>
-            <span class="o">!</span>git<span class="w"> </span>-C<span class="w"> </span>SFPPy<span class="w"> </span>pull<span class="w">  </span>#<span class="w"> </span>Subsequent<span class="w"> </span>times:<span class="w"> </span>update<span class="w"> </span>the<span class="w"> </span>repository<span class="w"> </span><span class="k">if</span><span class="w"> </span>needed
-        <span class="o">%</span><span class="k">cd</span> SFPPy
-        <span class="n">installationscript</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">"utils"</span><span class="p">,</span> <span class="s2">"initialize_sfppy.py"</span><span class="p">))</span>
-        <span class="o">%</span><span class="k">run</span> -i {installationscript} --no-verbose --no-cd
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">patankar.loadpubchem</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ SFPPy successfully initialized."</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"❌ ERROR: Initialization failed; 'patankar.loadpubchem' is still unavailable.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"Current sys.path:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">"❌ ERROR: Either set clone=True or start the notebook from a valid SFPPy installation.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="n">SFPPymainfolder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">patankar</span><span class="o">.</span><span class="n">loadpubchem</span><span class="o">.</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">".."</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"📁 SFPPy installation folder:"</span><span class="p">,</span> <span class="n">SFPPymainfolder</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># main installer</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="n">exec</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">"https://raw.githubusercontent.com/ovitrac/SFPPy/main/utils/bootstrap_sfppy.py"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">bootstrap_sfppy</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"SFPPy failed to initialize."</span><span class="p">)</span>
+<span class="c1"># extra displays</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 <span class="kn">from</span> <span class="nn">utils.nbutils</span> <span class="kn">import</span> <span class="n">create_header_footer</span><span class="p">,</span> <span class="n">create_logo</span><span class="p">,</span> <span class="n">create_subtitle</span><span class="p">,</span> <span class="n">create_synopsis</span><span class="p">,</span> <span class="n">create_disclaimer</span>   <span class="c1"># SFPPy utilities for notebooks</span>
 <span class="p">(</span><span class="n">header</span><span class="p">,</span><span class="n">footer</span><span class="p">,</span><span class="n">separator</span><span class="p">)</span> <span class="o">=</span> <span class="n">create_header_footer</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"SFPPy - Comply ✅"</span><span class="p">,</span><span class="n">what</span><span class="o">=</span><span class="s2">"all"</span><span class="p">);</span>
 <span class="n">logo</span><span class="p">,</span> <span class="n">subtitle</span><span class="p">,</span> <span class="n">synopsis</span><span class="p">,</span> <span class="n">disclaimer</span> <span class="o">=</span> <span class="n">create_logo</span><span class="p">(),</span> <span class="n">create_subtitle</span><span class="p">(),</span> <span class="n">create_synopsis</span><span class="p">(),</span> <span class="n">create_disclaimer</span><span class="p">()</span>
@@ -7795,8 +7753,10 @@ header h1 {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>✅ SFPPy is already initialized; skipping initialization.
+<pre>⚠️  SFPPy not detected. Attempting initialization...
+🔧 Running initialization script: /home/olivi/natacha/python/utils/initialize_sfppy.py
 📁 SFPPy installation folder: /home/olivi/natacha/python
+✅ Success
 </pre>
 </div>
 </div>
@@ -7968,7 +7928,7 @@ pre-storage conditions. The results highlight which parameters  dominate migrati
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># import the substance databases (million of substances are available via PubChem)</span>
@@ -8056,7 +8016,7 @@ pre-storage conditions. The results highlight which parameters  dominate migrati
    --- EC 10/2011: ---------------
               SML: 60.0 [mg/kg]
        EC|FCM|REF: 205-500-4|327|30140
-[&lt;migrant: Phthalic [...] l ester) - M=390.6 g/mol&gt;, &lt;migrant: BUTYL PH [...] [WHO-DD] - M=278.34 g/mol&gt;, &lt;migrant: SPEEDCURE BP - M=182.22 g/mol&gt;, &lt;migrant: Ethyl ac [...] CS grade - M=88.11 g/mol&gt;]
+[&lt;migrant: 1,2-Benz [...] l) ester - M=390.6 g/mol&gt;, &lt;migrant: Dibutyl  [...] Standard - M=278.34 g/mol&gt;, &lt;migrant: SPEEDCURE BP - M=182.22 g/mol&gt;, &lt;migrant: CH3CO2Et - M=88.11 g/mol&gt;]
 </pre>
 </div>
 </div>
@@ -8261,7 +8221,7 @@ Shape Class: SquarePyramid
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import the packaging databases (shapes)</span>
@@ -8524,7 +8484,7 @@ Shape Class: SquarePyramid
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import materials</span>
@@ -9518,7 +9478,7 @@ Shape Class: SquarePyramid
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># import food simulants</span>
@@ -9611,7 +9571,7 @@ contacttemperature: 7 [degC]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Simulate all mass transfer and collect </span>
@@ -9684,7 +9644,7 @@ contacttemperature: 7 [degC]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Collect SML</span>
@@ -9762,7 +9722,7 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate CP0max</span>
@@ -9809,7 +9769,7 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -9867,14 +9827,14 @@ Maximum tolerable concentration CP0max in the sleeve for each substance.
 <tbody>
 <tr>
 <th>0</th>
-<td>&lt;migrant: Phthalic [...] l ester) - M=390.6 g/...</td>
+<td>&lt;migrant: 1,2-Benz [...] l) ester - M=390.6 g/...</td>
 <td>di(2-ethylhexyl) phthalate</td>
 <td>60.0</td>
 <td>2.769982e+42</td>
 </tr>
 <tr>
 <th>1</th>
-<td>&lt;migrant: BUTYL PH [...] [WHO-DD] - M=278.34 g...</td>
+<td>&lt;migrant: Dibutyl  [...] Standard - M=278.34 g...</td>
 <td>dibutyl phthalate</td>
 <td>0.6</td>
 <td>9.564524e+17</td>
@@ -9888,7 +9848,7 @@ Maximum tolerable concentration CP0max in the sleeve for each substance.
 </tr>
 <tr>
 <th>3</th>
-<td>&lt;migrant: Ethyl ac [...] CS grade - M=88.11 g/...</td>
+<td>&lt;migrant: CH3CO2Et - M=88.11 g/mol&gt;</td>
 <td>ethyl acetate</td>
 <td>60.0</td>
 <td>4.500942e+05</td>
@@ -9967,7 +9927,7 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># We use NumPy arrays to stack values and do operations on them</span>
@@ -10129,7 +10089,7 @@ Values of diffusivites (D) and partition coefficients (KF/P) used in simulations
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [29]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># anonymous function: calc_CP0max(CFnew)  </span>
@@ -10298,7 +10258,7 @@ Sensitivity analysis: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [33]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [32]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># udated k0 for F50</span>
@@ -10437,7 +10397,7 @@ Sensitivity analysis: effects of simulants(Et=ethanol, Et50=ethanol 50) on estim
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [36]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [35]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># F volume and surface area</span>
@@ -10568,7 +10528,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [38]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [37]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="p">[(</span><span class="n">m</span> <span class="o">%</span> <span class="n">F</span> <span class="o">&lt;&lt;</span> <span class="n">B</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">&gt;&gt;</span> <span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">plotCF</span><span class="p">(</span><span class="n">plotSML</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">subtitle</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">compound</span><span class="si">}</span><span class="s2"> - M=</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">M</span><span class="si">}</span><span class="s2"> g/mol"</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">M</span><span class="p">]</span>
@@ -10656,7 +10616,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [42]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [41]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># we import the condition nofood</span>
@@ -10786,7 +10746,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [46]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [45]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">title</span> <span class="o">=</span> <span class="s2">"Concentration in Ethanol vs. its contact time (i.e. after storage)"</span>
@@ -10852,7 +10812,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [48]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [47]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Revise CF and CP0max</span>
@@ -10909,7 +10869,7 @@ CP0max revised = [373686.6120547283, 471.7580803792181, 175.2297318789902, 4739.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [50]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [49]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fractionalMigration</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">CF</span><span class="o">*</span><span class="n">VF</span> <span class="o">/</span> <span class="n">masst0</span> <span class="c1"># 1=total mass transfer, 0=no mass transfer</span>
@@ -11051,7 +11011,7 @@ Fractional migration: effects of simulants(Et=ethanol, Et50=ethanol 50) and temp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [53]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [52]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">footer</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="n">disclaimer</span><span class="p">,</span> <span class="n">logo</span><span class="p">);</span> 

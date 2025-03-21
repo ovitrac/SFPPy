@@ -21,7 +21,7 @@ repo = "https://github.com/ovitrac/SFPPy"
 web = "https://ovitrac.github.io/SFPPy/"
 email = "olivier.vitrac@gmail.com"
 badge = "https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&logo=github"
-
+sfppy_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),'..')) # SFPPy folder
 
 # %% static HTML functions
 
@@ -235,8 +235,8 @@ def create_header_footer(what="head", title="SFPPy - Notebook Index 📑",height
 
 # %% Widgets
 # create a dropdown widget for files and their execution
-def create_files_widget(root="/content/SFPPy/",
-                        folder="notebook",
+def create_files_widget(root=sfppy_folder,
+                        folder="",
                         pattern="*.ipynb",
                         excluded="index*",
                         actions=["linkcolab", "linklocal", "run"]):

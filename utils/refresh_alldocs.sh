@@ -195,7 +195,7 @@ check_script "./generate_post_docs.py"
 check_script "./generate_diagrams.sh"
 check_script "./convert_py_to_html.py"
 check_script "./pdocme.sh"
-check_script = "./addtoctonb.sh"
+check_script "./addtoctonb.sh"
 
 # Run the documentation generation scripts with status messages
 echo "Launch 'generate_setup.py'to update the version (repored also in documentatation)..."
