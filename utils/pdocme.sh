@@ -258,7 +258,7 @@ excluded_dirs=(
     "help"
     "debug"
     "sandbox"
-    "utils"
+#    "utils" (included for notebooks)
     "trash"
     "books"
     "fork"

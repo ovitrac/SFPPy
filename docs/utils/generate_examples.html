@@ -1,0 +1,1711 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>generate_examples API documentation</title>
+<meta name="description" content="generate_examples.py
+…" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>generate_examples</code></h1>
+</header>
+<section id="section-intro">
+<h1 id="generate_examplespy">generate_examples.py</h1>
+<h2 id="purpose"><strong>Purpose:</strong></h2>
+<p>This script processes a list of Python modules to extract usage examples from their <code>__main__</code> sections. It generates two primary outputs:
+1. An HTML file (<code>class_examples.html</code>) containing formatted usage examples for each module.
+2. A JSON file (<code>modules_details.json</code>) containing metadata about each processed module, including paths, anchors, and the number of examples.</p>
+<p>This script is called by <code>utils/generate_diagrams.sh</code>.
+The outputs are used by <code>utils/generate_mermaid.py</code>.
+The whole ecosystem is called by <code>generate_diagrams.sh</code> (use this script to update the entire documentation).</p>
+<h2 id="functionality"><strong>Functionality:</strong></h2>
+<ul>
+<li><strong>Module Validation:</strong> Ensures each module file exists and contains a <code>__main__</code> section.</li>
+<li><strong>Example Extraction:</strong> Parses the <code>__main__</code> section to extract descriptive comments and corresponding code blocks.</li>
+<li><strong>HTML Generation:</strong> Formats the extracted examples into collapsible HTML sections for easy viewing.</li>
+<li><strong>JSON Metadata:</strong> Compiles module details into a structured JSON file for integration with other documentation tools.</li>
+</ul>
+<h2 id="usage"><strong>Usage:</strong></h2>
+<p>Run the script from the <code>SFPPy/utils/</code> directory using the following command:</p>
+<pre><code class="language-bash">./generate_examples.py output_examples.html modules_details.json &lt; modules_withexamples_list.txt
+</code></pre>
+<p>Use this command to generate an input file from <code>utils/</code>:</p>
+<pre><code class="language-bash">mainfolder=&quot;$(realpath ../)&quot;
+find &quot;$mainfolder/patankar&quot; &quot;$mainfolder/patankar/private&quot; -maxdepth 1 -type f -name '*.py' | sed &quot;s|$mainfolder/||&quot; | sort &gt; ../html/modules_withexamples_list.txt
+</code></pre>
+<p>For production use this minimal example (see generate_diagrams.sh)</p>
+<pre><code class="language-bash">    mainfolder=&quot;$(realpath ../)&quot;
+    output_markdown=&quot;$mainfolder/html/patanakar_classes_documentation.md&quot;
+    output_dir=&quot;$(dirname &quot;$output_markdown&quot;)&quot;
+    moduleexamplesList=&quot;modules_withexamples_list.txt&quot;
+    moduleexamplesDetails=&quot;class_examples_details.json&quot;
+    moduleexamplesHTML=&quot;class_examples.html&quot;
+    lookfolders=(
+        &quot;$mainfolder/patankar&quot;
+        &quot;$mainfolder/patankar/private&quot;
+    )
+    find &quot;${lookfolders[@]}&quot; -maxdepth 1 -type f -name '*.py' | sed &quot;s|$mainfolder/||&quot; | sort &gt; &quot;$output_dir/$moduleexamplesList&quot;
+    ./generate_examples.py &quot;$output_dir/$moduleexamplesHTML&quot; &quot;$output_dir/$moduleexamplesDetails&quot; &lt; &quot;$output_dir/$moduleexamplesList&quot;
+</code></pre>
+<h2 id="arguments"><strong>Arguments:</strong></h2>
+<ol>
+<li><code>output_examples.html</code>: Path to the output HTML file that will contain the usage examples.</li>
+<li><code>modules_details.json</code>: Path to the output JSON file that will store module metadata.</li>
+<li><code>&lt; modules_withexamples_list.txt</code>: A file containing a list of module paths (one per line) to be processed.</li>
+</ol>
+<h2 id="inputs"><strong>Inputs:</strong></h2>
+<ul>
+<li><strong>Standard Input (<code>STDIN</code>):</strong> A list of module paths in the format <code>patankar.module_name.py</code> (e.g., <code>patankar.migration.py</code>).</li>
+</ul>
+<h2 id="outputs"><strong>Outputs:</strong></h2>
+<ol>
+<li><strong>HTML File (<code>output_examples.html</code>):</strong> Contains usage examples with descriptions and code snippets for each module.</li>
+<li><strong>JSON File (<code>modules_details.json</code>):</strong> Stores metadata for each module, including:</li>
+<li><code>full_path</code>: Absolute file path.</li>
+<li><code>local_path</code>: Relative file path as provided.</li>
+<li><code>url_anchor</code>: HTML anchor for linking.</li>
+<li><code>number_of_examples</code>: Count of extracted examples.</li>
+</ol>
+<h2 id="dependencies"><strong>Dependencies:</strong></h2>
+<ul>
+<li><strong>Python 3.x</strong></li>
+<li><strong>Optional:</strong> <code>pygments</code> library for syntax highlighting. If not installed, the script will use minimal syntax highlighting.</li>
+</ul>
+<h2 id="error-handling"><strong>Error Handling:</strong></h2>
+<ul>
+<li><strong>Missing Files:</strong> Warns and skips modules that do not exist.</li>
+<li><strong>Missing <code>__main__</code> Sections:</strong> Skips modules without a <code>__main__</code> section.</li>
+<li><strong>No Examples Found:</strong> Skips modules without extractable examples.</li>
+</ul>
+<h2 id="author"><strong>Author:</strong></h2>
+<p>INRAE\Olivier Vitrac<br>
+Email: olivier.vitrac@agroparistech.fr<br>
+Last Revised: 2024-12-23</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+generate_examples.py
+====================
+
+**Purpose:**
+-----------
+This script processes a list of Python modules to extract usage examples from their `__main__` sections. It generates two primary outputs:
+1. An HTML file (`class_examples.html`) containing formatted usage examples for each module.
+2. A JSON file (`modules_details.json`) containing metadata about each processed module, including paths, anchors, and the number of examples.
+
+This script is called by `utils/generate_diagrams.sh`.
+The outputs are used by `utils/generate_mermaid.py`.
+The whole ecosystem is called by `generate_diagrams.sh` (use this script to update the entire documentation).
+
+**Functionality:**
+------------------
+- **Module Validation:** Ensures each module file exists and contains a `__main__` section.
+- **Example Extraction:** Parses the `__main__` section to extract descriptive comments and corresponding code blocks.
+- **HTML Generation:** Formats the extracted examples into collapsible HTML sections for easy viewing.
+- **JSON Metadata:** Compiles module details into a structured JSON file for integration with other documentation tools.
+
+**Usage:**
+---------
+Run the script from the `SFPPy/utils/` directory using the following command:
+
+```bash
+./generate_examples.py output_examples.html modules_details.json &lt; modules_withexamples_list.txt
+```
+
+Use this command to generate an input file from `utils/`:
+
+```bash
+mainfolder=&#34;$(realpath ../)&#34;
+find &#34;$mainfolder/patankar&#34; &#34;$mainfolder/patankar/private&#34; -maxdepth 1 -type f -name &#39;*.py&#39; | sed &#34;s|$mainfolder/||&#34; | sort &gt; ../html/modules_withexamples_list.txt
+```
+
+For production use this minimal example (see generate_diagrams.sh)
+```bash
+    mainfolder=&#34;$(realpath ../)&#34;
+    output_markdown=&#34;$mainfolder/html/patanakar_classes_documentation.md&#34;
+    output_dir=&#34;$(dirname &#34;$output_markdown&#34;)&#34;
+    moduleexamplesList=&#34;modules_withexamples_list.txt&#34;
+    moduleexamplesDetails=&#34;class_examples_details.json&#34;
+    moduleexamplesHTML=&#34;class_examples.html&#34;
+    lookfolders=(
+        &#34;$mainfolder/patankar&#34;
+        &#34;$mainfolder/patankar/private&#34;
+    )
+    find &#34;${lookfolders[@]}&#34; -maxdepth 1 -type f -name &#39;*.py&#39; | sed &#34;s|$mainfolder/||&#34; | sort &gt; &#34;$output_dir/$moduleexamplesList&#34;
+    ./generate_examples.py &#34;$output_dir/$moduleexamplesHTML&#34; &#34;$output_dir/$moduleexamplesDetails&#34; &lt; &#34;$output_dir/$moduleexamplesList&#34;
+```
+
+**Arguments:**
+------------
+1. `output_examples.html`: Path to the output HTML file that will contain the usage examples.
+2. `modules_details.json`: Path to the output JSON file that will store module metadata.
+3. `&lt; modules_withexamples_list.txt`: A file containing a list of module paths (one per line) to be processed.
+
+**Inputs:**
+---------
+- **Standard Input (`STDIN`):** A list of module paths in the format `patankar.module_name.py` (e.g., `patankar.migration.py`).
+
+**Outputs:**
+----------
+1. **HTML File (`output_examples.html`):** Contains usage examples with descriptions and code snippets for each module.
+2. **JSON File (`modules_details.json`):** Stores metadata for each module, including:
+   - `full_path`: Absolute file path.
+   - `local_path`: Relative file path as provided.
+   - `url_anchor`: HTML anchor for linking.
+   - `number_of_examples`: Count of extracted examples.
+
+**Dependencies:**
+---------------
+- **Python 3.x**
+- **Optional:** `pygments` library for syntax highlighting. If not installed, the script will use minimal syntax highlighting.
+
+**Error Handling:**
+------------------
+- **Missing Files:** Warns and skips modules that do not exist.
+- **Missing `__main__` Sections:** Skips modules without a `__main__` section.
+- **No Examples Found:** Skips modules without extractable examples.
+
+**Author:**
+---------
+INRAE\Olivier Vitrac  
+Email: olivier.vitrac@agroparistech.fr  
+Last Revised: 2024-12-23
+
+&#34;&#34;&#34;
+
+import sys
+import os
+import re
+import json
+from collections import defaultdict
+from datetime import datetime
+from html import escape
+from pathlib import Path
+
+try:
+    from pygments import highlight
+    from pygments.lexers import PythonLexer
+    from pygments.formatters import HtmlFormatter
+    USE_PYGMENTS = True
+except ImportError:
+    USE_PYGMENTS = False
+
+def ensure_run_from_utils():
+    &#34;&#34;&#34;Ensure the script is run from SFPPy/utils/ directory by checking for pdocme.sh.&#34;&#34;&#34;
+    if not os.path.isfile(&#34;pdocme.sh&#34;):
+        print(&#34;Error: This script must be run from the SFPPy/utils/ directory.&#34;, file=sys.stderr)
+        sys.exit(1)
+
+def get_version():
+    &#34;&#34;&#34;Extract the version number of SFPPy from version_file.&#34;&#34;&#34;
+    mainfolder = os.path.realpath(os.path.join(&#34;..&#34;))
+    version_file = os.path.join(mainfolder, &#34;utils&#34;, &#34;VERSION.txt&#34;)
+    if not os.path.isfile(version_file):
+        sys.stderr.write(f&#34;Error: {version_file} not found. Please create a file with content: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+        sys.exit(1)
+    with open(version_file, &#34;r&#34;) as f:
+        for line in f:
+            line = line.strip()
+            match = re.match(r&#39;^version\s*=\s*&#34;(.*?)&#34;$&#39;, line)
+            if match:
+                return match.group(1)
+    sys.stderr.write(f&#34;Error: No valid version string found in {version_file}. Ensure it contains: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+    sys.exit(1)
+
+def read_module_list():
+    &#34;&#34;&#34;Reads module paths from STDIN, one per line.&#34;&#34;&#34;
+    modules = [line.strip() for line in sys.stdin if line.strip()]
+    return modules
+
+def file_has_main_section(file_content):
+    &#34;&#34;&#34;Check if the file contains a &#39;__main__&#39; section.&#34;&#34;&#34;
+    return re.search(r&#34;if\s+__name__\s*==\s*[&#39;\&#34;]__main__[&#39;\&#34;]\s*:&#34;, file_content) is not None
+
+def extract_examples(file_content):
+    &#34;&#34;&#34;
+    Extracts examples from the `if __name__ == &#39;__main__&#39;:` section.
+    Returns a list of tuples: (description, code)
+    &#34;&#34;&#34;
+    examples = []
+    # Match the if __name__ == &#39;__main__&#39;: block
+    pattern = re.compile(r&#34;if\s+__name__\s*==\s*[&#39;\&#34;]__main__[&#39;\&#34;]\s*:\s*(.*)&#34;, re.DOTALL)
+    match = pattern.search(file_content)
+    if not match:
+        return examples  # No examples found
+
+    main_block = match.group(1)
+
+    lines = main_block.splitlines()
+    idx = 0
+    n = len(lines)
+
+    while idx &lt; n:
+        # Skip empty lines
+        while idx &lt; n and lines[idx].strip() == &#39;&#39;:
+            idx += 1
+        if idx &gt;= n:
+            break
+
+        # Check for description: contiguous comment lines or docstrings
+        desc_lines = []
+        if lines[idx].strip().startswith(&#39;#&#39;) or lines[idx].strip().startswith((&#39;&#34;&#34;&#34;&#39;, &#34;&#39;&#39;&#39;&#34;)):
+            # Collect all leading comment lines or a docstring
+            while idx &lt; n:
+                line = lines[idx]
+                stripped = line.strip()
+                if stripped.startswith(&#39;#&#39;):
+                    desc_lines.append(re.sub(r&#39;^#+\s*&#39;, &#39;&#39;, stripped))
+                    idx += 1
+                elif stripped.startswith((&#39;&#34;&#34;&#34;&#39;, &#34;&#39;&#39;&#39;&#34;)):
+                    delimiter = stripped[:3]
+                    if stripped.count(delimiter) &gt;= 2:
+                        # Single-line docstring
+                        doc_content = stripped.strip(delimiter)
+                        desc_lines.append(doc_content)
+                        idx += 1
+                    else:
+                        # Multiline docstring
+                        doc_content = stripped.lstrip(delimiter)
+                        desc_lines.append(doc_content)
+                        idx += 1
+                        while idx &lt; n:
+                            doc_line = lines[idx]
+                            if doc_line.strip().endswith(delimiter):
+                                doc_content = doc_line.strip().rstrip(delimiter)
+                                desc_lines.append(doc_content)
+                                idx += 1
+                                break
+                            else:
+                                desc_lines.append(doc_line.strip())
+                                idx += 1
+                else:
+                    break
+            description = &#39;\n&#39;.join(desc_lines).strip()
+        else:
+            description = &#39;&#39;
+
+        # Collect code lines until the next description or end
+        code_lines = []
+        while idx &lt; n:
+            line = lines[idx]
+            stripped = line.strip()
+            if stripped == &#39;&#39;:
+                idx += 1
+                continue
+            if stripped.startswith(&#39;#&#39;) or stripped.startswith((&#39;&#34;&#34;&#34;&#39;, &#34;&#39;&#39;&#39;&#34;)):
+                # Possible new description starts here
+                break
+            else:
+                code_lines.append(line)
+                idx += 1
+        code = &#39;\n&#39;.join(code_lines).strip()
+
+        if code:
+            examples.append((description, code))
+
+    return examples
+
+def organize_modules(module_paths):
+    &#34;&#34;&#34;
+    Organizes modules into a nested dictionary based on their directory structure.
+    module_paths: List of module paths relative to mainfolder, e.g., &#39;patankar/geometry.py&#39;
+    Returns a nested dictionary representing the folder structure.
+    &#34;&#34;&#34;
+    tree = {}
+    for path in module_paths:
+        parts = Path(path).parts  # e.g., (&#39;patankar&#39;, &#39;migration.py&#39;) or (&#39;patankar&#39;, &#39;private&#39;, &#39;geometry.py&#39;)
+        current = tree
+        for part in parts[:-1]:  # All parts except the last (file)
+            current = current.setdefault(part, {})
+        current.setdefault(&#39;_files&#39;, []).append(parts[-1])
+    return tree
+
+def generate_nav_html(tree, parent_path=&#39;&#39;):
+    &#34;&#34;&#34;
+    Recursively generates the HTML for the navigation menu.
+    &#34;&#34;&#34;
+    html = &#39;&lt;ul&gt;\n&#39;
+    for key in sorted(tree.keys()):
+        if key == &#39;_files&#39;:
+            for file in sorted(tree[&#39;_files&#39;]):
+                module_relative_path = f&#34;{parent_path}/{file}&#34; if parent_path else file
+                # Remove the .py extension for the anchor without appending &#39;_examples&#39;
+                module_anchor = module_relative_path.replace(&#39;/&#39;, &#39;_&#39;).replace(&#39;.py&#39;, &#39;&#39;)
+                html += f&#39;&lt;li class=&#34;file&#34;&gt;&lt;a href=&#34;#{module_anchor}&#34; onclick=&#34;loadDoc(\&#39;{module_anchor}\&#39;)&#34;&gt;{file}&lt;/a&gt;&lt;/li&gt;\n&#39;
+        else:
+            new_path = f&#34;{parent_path}/{key}&#34; if parent_path else key
+            html += f&#39;&lt;li class=&#34;folder&#34;&gt;\n&#39;
+            html += f&#39;&lt;div class=&#34;folder-title&#34; onclick=&#34;toggleFolder(this)&#34;&gt;{key}&lt;/div&gt;\n&#39;
+            html += f&#39;&lt;ul class=&#34;folder-content&#34;&gt;\n&#39;
+            html += generate_nav_html(tree[key], new_path)
+            html += &#39;&lt;/ul&gt;\n&lt;/li&gt;\n&#39;
+    html += &#39;&lt;/ul&gt;\n&#39;
+    return html
+
+def syntax_highlight(code):
+    &#34;&#34;&#34;Applies syntax highlighting to the code block.&#34;&#34;&#34;
+    if USE_PYGMENTS:
+        formatter = HtmlFormatter(nowrap=True)
+        return highlight(code, PythonLexer(), formatter)
+    else:
+        # Minimal syntax highlighting based on CSS classes
+        # This is a very simplistic approach and can be improved
+        code = escape(code)
+        # Highlight keywords
+        keywords = r&#39;\b(False|class|finally|is|return|None|continue|for|lambda|try|&#39; \
+                   r&#39;True|def|from|nonlocal|while|and|del|global|not|with|&#39; \
+                   r&#39;as|elif|if|or|yield|assert|else|import|pass|break|except|&#39; \
+                   r&#39;in|raise)\b&#39;
+        code = re.sub(keywords, r&#39;&lt;span class=&#34;keyword&#34;&gt;\1&lt;/span&gt;&#39;, code)
+        # Highlight strings
+        code = re.sub(r&#39;(\&#39;[^\&#39;]*\&#39;|&#34;[^&#34;]*&#34;)&#39;, r&#39;&lt;span class=&#34;string&#34;&gt;\1&lt;/span&gt;&#39;, code)
+        # Highlight comments (only inline comments)
+        code = re.sub(r&#39;(?&lt;!#)#.*&#39;, r&#39;&lt;span class=&#34;comment&#34;&gt;\g&lt;0&gt;&lt;/span&gt;&#39;, code)
+        return code
+
+def generate_example_html(module_anchor, examples):
+    &#34;&#34;&#34;
+    Generates the HTML for a single module&#39;s examples.
+    &#34;&#34;&#34;
+    html = f&#39;&lt;div id=&#34;{module_anchor}&#34; class=&#34;module-content&#34; style=&#34;display:none;&#34;&gt;\n&#39;
+    html += &#39;&lt;button onclick=&#34;toggleAllCode(this)&#34; class=&#34;collapsible&#34;&gt;Toggle All Code Sections&lt;/button&gt;\n&#39;
+    for idx, (desc, code) in enumerate(examples):
+        if desc:
+            # Replace line breaks with &lt;br&gt; for HTML
+            desc_html = escape(desc).replace(&#39;\n&#39;, &#39;&lt;br&gt;&#39;)
+            html += f&#39;&lt;p&gt;{desc_html}&lt;/p&gt;\n&#39;
+        if code:
+            highlighted_code = syntax_highlight(code)
+            html += f&#39;&#39;&#39;
+    &lt;button type=&#34;button&#34; class=&#34;collapsible&#34;&gt;Show Code Example {idx + 1}&lt;/button&gt;
+    &lt;div class=&#34;content&#34;&gt;
+    &lt;pre class=&#34;code&#34;&gt;{highlighted_code}&lt;/pre&gt;
+    &lt;/div&gt;
+    &#39;&#39;&#39;
+    html += &#39;&lt;/div&gt;\n&#39;
+    return html
+
+def generate_welcome_html(generation_datetime):
+    &#34;&#34;&#34;
+    Generates the HTML for the welcome page.
+    &#34;&#34;&#34;
+    welcome_text = f&#34;&#34;&#34;
+&lt;h2&gt;Welcome to Usage Class Examples&lt;/h2&gt;
+&lt;p&gt;Select a module in the left menu to view usage examples. These examples are not for production and are automatically extracted from the main section of each module.&lt;/p&gt;
+&lt;p&gt;Back to the &lt;a href=&#39;index.html&#39;&gt;Python&#39;SFPPy documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When no module is selected, you see this welcome page. They are used to test classes with typical codes. The main section often serves as a testing script, example usage block, or self-contained test block. It&#39;s a way to demonstrate how the module&#39;s functionality works or to run simple unit tests and examples inline.&lt;/p&gt;
+&lt;p&gt;Generated on: {generation_datetime}&lt;/p&gt;
+&#34;&#34;&#34;
+    return f&#39;&lt;div id=&#34;welcome&#34; class=&#34;module-content&#34; style=&#34;display:block;&#34;&gt;\n{welcome_text}\n&lt;/div&gt;\n&#39;
+
+def generate_full_html(nav_html, content_html, base_css, pygments_css, generation_datetime):
+    &#34;&#34;&#34;
+    Combines all parts into the full HTML document.
+    &#34;&#34;&#34;
+    html = f&#39;&#39;&#39;&lt;!DOCTYPE html&gt;
+&lt;html lang=&#39;en&#39;&gt;
+&lt;head&gt;
+&lt;meta charset=&#39;UTF-8&#39;&gt;
+&lt;meta name=&#39;viewport&#39; content=&#39;width=device-width, initial-scale=1.0&#39;&gt;
+&lt;title&gt;SFPPy Usage/Class Examples&lt;/title&gt;
+&lt;style&gt;
+{base_css}
+
+{pygments_css}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header&gt;
+    &lt;!-- Toggle Sidebar Button --&gt;
+    &lt;button class=&#39;toggle-btn&#39; id=&#39;toggleSidebar&#39; aria-label=&#39;Toggle Sidebar&#39; aria-expanded=&#39;false&#39;&gt;
+        &lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;
+    &lt;/button&gt;
+    &lt;h1&gt;SFPPy Documentation - Usage Examples&lt;/h1&gt;
+&lt;/header&gt;
+&lt;div id=&#39;content&#39;&gt;
+&lt;div id=&#39;nav&#39;&gt;
+&lt;p&gt;&lt;strong&gt;Version:&lt;/strong&gt; SFPPy v.{get_version()}&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Maintained by:&lt;/strong&gt; INRAE\\olivier.vitrac@agroparistech.fr&lt;/p&gt;
+&lt;hr&gt;
+{nav_html}
+&lt;/div&gt;
+&lt;div id=&#39;main&#39;&gt;
+{generate_welcome_html(generation_datetime)}
+{content_html}
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;footer&gt;
+&lt;p&gt;&amp;copy; {datetime.now().year} SFPPy Project. All rights reserved.&lt;/p&gt;
+&lt;/footer&gt;
+&lt;script&gt;
+// Toggle visibility of folder contents
+function toggleFolder(element) {{
+    var content = element.nextElementSibling;
+    if (content.style.display === &#34;block&#34;) {{
+        content.style.display = &#34;none&#34;;
+    }} else {{
+        content.style.display = &#34;block&#34;;
+    }}
+}}
+
+// Load documentation into the main panel
+function loadDoc(moduleId) {{
+    var modules = document.getElementsByClassName(&#39;module-content&#39;);
+    for (var i = 0; i &lt; modules.length; i++) {{
+        modules[i].style.display = &#39;none&#39;;
+    }}
+    var welcome = document.getElementById(&#39;welcome&#39;);
+    welcome.style.display = &#39;none&#39;;
+    var selected = document.getElementById(moduleId);
+    if (selected) {{
+        selected.style.display = &#39;block&#39;;
+    }}
+}}
+
+// Toggle All Code Sections
+function toggleAllCode(button) {{
+    var moduleContent = button.parentElement;
+    var collapsibles = moduleContent.querySelectorAll(&#39;.collapsible&#39;);
+    var contents = moduleContent.querySelectorAll(&#39;.content&#39;);
+    var shouldExpand = true;
+    // Determine if we should expand or collapse based on the first content&#39;s display
+    if (contents.length &gt; 0 &amp;&amp; (contents[0].style.display === &#39;block&#39;)) {{
+        shouldExpand = false;
+    }}
+    collapsibles.forEach(function(collapsible, index) {{
+        var content = collapsibles[index].nextElementSibling;
+        if (shouldExpand) {{
+            content.style.display = &#39;block&#39;;
+            collapsible.textContent = &#39;Hide Code Example &#39; + (index + 1);
+        }} else {{
+            content.style.display = &#39;none&#39;;
+            collapsible.textContent = &#39;Show Code Example &#39; + (index + 1);
+        }}
+    }});
+    button.textContent = shouldExpand ? &#39;Collapse All Code Sections&#39; : &#39;Expand All Code Sections&#39;;
+}}
+
+// Initialize all collapsible buttons and handle URL hash on page load
+document.addEventListener(&#34;DOMContentLoaded&#34;, function() {{
+    var coll = document.getElementsByClassName(&#34;collapsible&#34;);
+    for (var i = 0; i &lt; coll.length; i++) {{
+        coll[i].addEventListener(&#34;click&#34;, function() {{
+            this.classList.toggle(&#34;active&#34;);
+            var content = this.nextElementSibling;
+            if (content.style.display === &#34;block&#34;) {{
+                content.style.display = &#34;none&#34;;
+                this.textContent = this.textContent.replace(&#39;Hide&#39;, &#39;Show&#39;);
+            }} else {{
+                content.style.display = &#34;block&#34;;
+                this.textContent = this.textContent.replace(&#39;Show&#39;, &#39;Hide&#39;);
+            }}
+        }});
+    }}
+    
+    // Handle URL hash on page load to display the corresponding module examples
+    var hash = window.location.hash.substring(1); // Remove the #
+    if (hash) {{
+        loadDoc(hash);
+    }}
+}});
+
+// Toggle Sidebar Functionality
+const toggleButton = document.getElementById(&#39;toggleSidebar&#39;);
+const nav = document.getElementById(&#39;nav&#39;);
+
+toggleButton.addEventListener(&#39;click&#39;, () =&gt; {{
+    nav.classList.toggle(&#39;collapsed&#39;);
+    document.body.classList.toggle(&#39;nav-open&#39;); // Toggle overlay on small screens
+    // Change icon based on sidebar state
+    if(nav.classList.contains(&#39;collapsed&#39;)) {{
+        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;&#39;; // Hamburger icon
+        toggleButton.setAttribute(&#39;aria-expanded&#39;, &#39;false&#39;);
+    }} else {{
+        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#10005;&lt;/kbd&gt;&#39;; // Close icon (X)
+        toggleButton.setAttribute(&#39;aria-expanded&#39;, &#39;true&#39;);
+    }}
+}});
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&#39;&#39;&#39;
+    return html
+
+def main():
+    ensure_run_from_utils()
+
+    if len(sys.argv) != 3:
+        print(&#34;Usage: generate_examples.py output_examples.html modules_details.json &lt; modules_withexamples_list.txt&#34;, file=sys.stderr)
+        sys.exit(1)
+
+    output_html = sys.argv[1]
+    output_json = sys.argv[2]
+    modules_with_paths = read_module_list()
+    if not modules_with_paths:
+        print(&#34;No modules provided.&#34;, file=sys.stderr)
+        sys.exit(1)
+
+    # Configuration
+    mainfolder = os.path.realpath(os.path.join(&#34;..&#34;))
+
+    # Validate and filter modules
+    valid_module_paths = []
+    modules_details = {}
+    for module_path in modules_with_paths:
+        full_path = os.path.join(mainfolder, module_path)
+        if not os.path.isfile(full_path):
+            print(f&#34;Warning: File &#39;{module_path}&#39; does not exist. Skipping.&#34;, file=sys.stderr)
+            continue
+        with open(full_path, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+            content = f.read()
+        if not file_has_main_section(content):
+            # Discard files without a &#39;__main__&#39; section
+            print(f&#34;Info: File &#39;{module_path}&#39; does not contain a &#39;__main__&#39; section. Skipping.&#34;, file=sys.stderr)
+            continue
+        examples = extract_examples(content)
+        if not examples:
+            print(f&#34;Info: No examples found in &#39;{module_path}&#39;. Skipping.&#34;, file=sys.stderr)
+            continue
+        valid_module_paths.append(module_path)
+        
+        # === MODIFICATION START ===
+        # Replace slashes with dots and remove .py to match module naming
+        module_name = module_path.replace(&#39;/&#39;, &#39;.&#39;).replace(&#39;.py&#39;, &#39;&#39;)
+        
+        # Generate an anchor by replacing dots with underscores
+        module_anchor = module_name.replace(&#39;.&#39;, &#39;_&#39;)
+        
+        # Update the modules_details dictionary with the module name as the key
+        modules_details[module_name] = {
+            &#34;full_path&#34;: full_path,
+            &#34;local_path&#34;: module_path,
+            &#34;url_anchor&#34;: f&#34;#{module_anchor}&#34;,
+            &#34;number_of_examples&#34;: len(examples)
+        }
+        # === MODIFICATION END ===
+
+    if not valid_module_paths:
+        print(&#34;No valid modules with &#39;__main__&#39; sections and examples to process.&#34;, file=sys.stderr)
+        sys.exit(1)
+
+    # Organize modules into folder structure
+    module_tree = organize_modules(valid_module_paths)
+
+    # Generate navigation HTML
+    nav_html = generate_nav_html(module_tree)
+
+    # Process each module and generate content HTML
+    content_html = &#39;&#39;
+    for module_path in valid_module_paths:
+        full_path = os.path.join(mainfolder, module_path)
+        with open(full_path, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+            content = f.read()
+        examples = extract_examples(content)
+        if not examples:
+            continue
+        # === MODIFICATION START ===
+        # Convert module_path to module_name to retrieve details
+        module_name = module_path.replace(&#39;/&#39;, &#39;.&#39;).replace(&#39;.py&#39;, &#39;&#39;)
+        module_detail = modules_details.get(module_name)
+        if not module_detail:
+            continue
+        module_anchor = module_detail[&#34;url_anchor&#34;].lstrip(&#39;#&#39;)
+        # === MODIFICATION END ===
+        
+        content_html += generate_example_html(module_anchor, examples)
+
+    # Get current date and time
+    generation_datetime = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+
+    # Define base CSS
+    base_css = &#34;&#34;&#34;
+body {
+    font-family: &#39;Segoe UI&#39;, Arial, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #f9f9f9; 
+    color: #333;
+}
+header {
+    background: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    position: relative; /* For positioning the toggle button */
+}
+header h1 {
+    margin: 0; 
+    font-size: 1.5em;
+    color: #fff; /* Explicitly set to white */
+    padding-left: 50px; /* Space for the toggle button */
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px); /* Adjusted for header height */
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+#nav {
+    width: 300px; /* Set a fixed width */
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: width 0.3s ease, padding 0.3s ease; /* Transition for smooth animations */
+    flex-shrink: 0; /* Prevent flexbox from shrinking */
+}
+#nav.collapsed {
+    width: 0; /* Hide the sidebar completely */
+    padding: 20px 0; /* Optionally adjust padding */
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+header .toggle-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    left: 10px; /* Place the button on the left */
+    background-color: #4CAF50; /* Green background */
+    border: none;
+    color: white; /* Ensure the hamburger icon is white */
+    padding: 10px 12px; /* Adjust padding for larger button */
+    cursor: pointer;
+    font-size: 1.2em; /* Increase font size for better visibility */
+    border-radius: 4px;
+    z-index: 1001; /* Ensure the button is above other elements */
+}
+header .toggle-btn:hover {
+    background-color: #45a049;
+}
+header .toggle-btn kbd {
+    font-family: &#39;Arial&#39;, sans-serif; /* Match the header font */
+    color: white; /* Ensure the hamburger icon is white */
+    font-size: 1.2em; /* Same size as the button text */
+    background: none; /* Remove any background styling from &lt;kbd&gt; */
+    border: none; /* Remove any borders from &lt;kbd&gt; */
+}
+h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+h2 {
+    color: #333; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 5px;
+}
+a {
+    text-decoration: none; 
+    color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul {
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+}
+li {
+    margin: 5px 0;
+}
+.folder-title {
+    font-weight: bold; 
+    color: #333; 
+    padding: 5px 0;
+    cursor: pointer;
+}
+.folder-content {
+    margin-left: 20px;
+    display: none; /* start collapsed */
+}
+.file {
+    margin-left: 20px;
+}
+hr {
+    margin: 20px 0; 
+    border: 1px solid #ddd;
+}
+footer {
+    font-size: 0.9em; 
+    color: #666; 
+    margin-top: 20px; 
+    text-align: center;
+}
+/* Enhanced Table Styling with Banded Colors */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+tr:nth-child(odd) {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green for odd rows */
+}
+/* Collapsible Code Section */
+.collapsible {
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+}
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+/* Minimal Syntax Highlighting */
+.code {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    font-family: &#39;Courier New&#39;, Courier, monospace;
+    color: #333;
+}
+.keyword {
+    color: #007BFF;
+    font-weight: bold;
+}
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+.string {
+    color: #a31515;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px; /* Height of the header */
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+    #nav.collapsed {
+        width: 0; /* Hide the sidebar completely */
+        padding: 20px 0; /* Adjust padding */
+    }
+    #main {
+        flex: 1;
+    }
+    /* Add overlay when sidebar is open on mobile */
+    body.nav-open::before {
+        content: &#34;&#34;;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 50px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+&#34;&#34;&#34;
+
+    # Initialize pygments_css
+    pygments_css = &#34;&#34;
+    if USE_PYGMENTS:
+        # Generate PYGMENTS CSS styles
+        formatter = HtmlFormatter()
+        pygments_css = formatter.get_style_defs(&#39;.code&#39;)
+    else:
+        print(&#34;Warning: PYGMENTS is not installed. Code will have minimal syntax highlighting.&#34;, file=sys.stderr)
+
+    # Generate the full HTML with both base CSS and Pygments CSS
+    full_html = generate_full_html(nav_html, content_html, base_css, pygments_css, generation_datetime)
+
+    # Write the HTML to the output file
+    with open(output_html, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        f.write(full_html)
+
+    # Write the modules details dictionary to a JSON file
+    with open(output_json, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        json.dump(modules_details, f, indent=4)
+
+    print(f&#34;HTML documentation generated successfully at &#39;{output_html}&#39;&#34;)
+    print(f&#34;Module details dictionary saved at &#39;{output_json}&#39;&#34;)
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="generate_examples.ensure_run_from_utils"><code class="name flex">
+<span>def <span class="ident">ensure_run_from_utils</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Ensure the script is run from SFPPy/utils/ directory by checking for pdocme.sh.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_run_from_utils():
+    &#34;&#34;&#34;Ensure the script is run from SFPPy/utils/ directory by checking for pdocme.sh.&#34;&#34;&#34;
+    if not os.path.isfile(&#34;pdocme.sh&#34;):
+        print(&#34;Error: This script must be run from the SFPPy/utils/ directory.&#34;, file=sys.stderr)
+        sys.exit(1)</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.extract_examples"><code class="name flex">
+<span>def <span class="ident">extract_examples</span></span>(<span>file_content)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extracts examples from the <code>if __name__ == '__main__':</code> section.
+Returns a list of tuples: (description, code)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_examples(file_content):
+    &#34;&#34;&#34;
+    Extracts examples from the `if __name__ == &#39;__main__&#39;:` section.
+    Returns a list of tuples: (description, code)
+    &#34;&#34;&#34;
+    examples = []
+    # Match the if __name__ == &#39;__main__&#39;: block
+    pattern = re.compile(r&#34;if\s+__name__\s*==\s*[&#39;\&#34;]__main__[&#39;\&#34;]\s*:\s*(.*)&#34;, re.DOTALL)
+    match = pattern.search(file_content)
+    if not match:
+        return examples  # No examples found
+
+    main_block = match.group(1)
+
+    lines = main_block.splitlines()
+    idx = 0
+    n = len(lines)
+
+    while idx &lt; n:
+        # Skip empty lines
+        while idx &lt; n and lines[idx].strip() == &#39;&#39;:
+            idx += 1
+        if idx &gt;= n:
+            break
+
+        # Check for description: contiguous comment lines or docstrings
+        desc_lines = []
+        if lines[idx].strip().startswith(&#39;#&#39;) or lines[idx].strip().startswith((&#39;&#34;&#34;&#34;&#39;, &#34;&#39;&#39;&#39;&#34;)):
+            # Collect all leading comment lines or a docstring
+            while idx &lt; n:
+                line = lines[idx]
+                stripped = line.strip()
+                if stripped.startswith(&#39;#&#39;):
+                    desc_lines.append(re.sub(r&#39;^#+\s*&#39;, &#39;&#39;, stripped))
+                    idx += 1
+                elif stripped.startswith((&#39;&#34;&#34;&#34;&#39;, &#34;&#39;&#39;&#39;&#34;)):
+                    delimiter = stripped[:3]
+                    if stripped.count(delimiter) &gt;= 2:
+                        # Single-line docstring
+                        doc_content = stripped.strip(delimiter)
+                        desc_lines.append(doc_content)
+                        idx += 1
+                    else:
+                        # Multiline docstring
+                        doc_content = stripped.lstrip(delimiter)
+                        desc_lines.append(doc_content)
+                        idx += 1
+                        while idx &lt; n:
+                            doc_line = lines[idx]
+                            if doc_line.strip().endswith(delimiter):
+                                doc_content = doc_line.strip().rstrip(delimiter)
+                                desc_lines.append(doc_content)
+                                idx += 1
+                                break
+                            else:
+                                desc_lines.append(doc_line.strip())
+                                idx += 1
+                else:
+                    break
+            description = &#39;\n&#39;.join(desc_lines).strip()
+        else:
+            description = &#39;&#39;
+
+        # Collect code lines until the next description or end
+        code_lines = []
+        while idx &lt; n:
+            line = lines[idx]
+            stripped = line.strip()
+            if stripped == &#39;&#39;:
+                idx += 1
+                continue
+            if stripped.startswith(&#39;#&#39;) or stripped.startswith((&#39;&#34;&#34;&#34;&#39;, &#34;&#39;&#39;&#39;&#34;)):
+                # Possible new description starts here
+                break
+            else:
+                code_lines.append(line)
+                idx += 1
+        code = &#39;\n&#39;.join(code_lines).strip()
+
+        if code:
+            examples.append((description, code))
+
+    return examples</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.file_has_main_section"><code class="name flex">
+<span>def <span class="ident">file_has_main_section</span></span>(<span>file_content)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if the file contains a '<strong>main</strong>' section.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def file_has_main_section(file_content):
+    &#34;&#34;&#34;Check if the file contains a &#39;__main__&#39; section.&#34;&#34;&#34;
+    return re.search(r&#34;if\s+__name__\s*==\s*[&#39;\&#34;]__main__[&#39;\&#34;]\s*:&#34;, file_content) is not None</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.generate_example_html"><code class="name flex">
+<span>def <span class="ident">generate_example_html</span></span>(<span>module_anchor, examples)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates the HTML for a single module's examples.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_example_html(module_anchor, examples):
+    &#34;&#34;&#34;
+    Generates the HTML for a single module&#39;s examples.
+    &#34;&#34;&#34;
+    html = f&#39;&lt;div id=&#34;{module_anchor}&#34; class=&#34;module-content&#34; style=&#34;display:none;&#34;&gt;\n&#39;
+    html += &#39;&lt;button onclick=&#34;toggleAllCode(this)&#34; class=&#34;collapsible&#34;&gt;Toggle All Code Sections&lt;/button&gt;\n&#39;
+    for idx, (desc, code) in enumerate(examples):
+        if desc:
+            # Replace line breaks with &lt;br&gt; for HTML
+            desc_html = escape(desc).replace(&#39;\n&#39;, &#39;&lt;br&gt;&#39;)
+            html += f&#39;&lt;p&gt;{desc_html}&lt;/p&gt;\n&#39;
+        if code:
+            highlighted_code = syntax_highlight(code)
+            html += f&#39;&#39;&#39;
+    &lt;button type=&#34;button&#34; class=&#34;collapsible&#34;&gt;Show Code Example {idx + 1}&lt;/button&gt;
+    &lt;div class=&#34;content&#34;&gt;
+    &lt;pre class=&#34;code&#34;&gt;{highlighted_code}&lt;/pre&gt;
+    &lt;/div&gt;
+    &#39;&#39;&#39;
+    html += &#39;&lt;/div&gt;\n&#39;
+    return html</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.generate_full_html"><code class="name flex">
+<span>def <span class="ident">generate_full_html</span></span>(<span>nav_html, content_html, base_css, pygments_css, generation_datetime)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Combines all parts into the full HTML document.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_full_html(nav_html, content_html, base_css, pygments_css, generation_datetime):
+    &#34;&#34;&#34;
+    Combines all parts into the full HTML document.
+    &#34;&#34;&#34;
+    html = f&#39;&#39;&#39;&lt;!DOCTYPE html&gt;
+&lt;html lang=&#39;en&#39;&gt;
+&lt;head&gt;
+&lt;meta charset=&#39;UTF-8&#39;&gt;
+&lt;meta name=&#39;viewport&#39; content=&#39;width=device-width, initial-scale=1.0&#39;&gt;
+&lt;title&gt;SFPPy Usage/Class Examples&lt;/title&gt;
+&lt;style&gt;
+{base_css}
+
+{pygments_css}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header&gt;
+    &lt;!-- Toggle Sidebar Button --&gt;
+    &lt;button class=&#39;toggle-btn&#39; id=&#39;toggleSidebar&#39; aria-label=&#39;Toggle Sidebar&#39; aria-expanded=&#39;false&#39;&gt;
+        &lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;
+    &lt;/button&gt;
+    &lt;h1&gt;SFPPy Documentation - Usage Examples&lt;/h1&gt;
+&lt;/header&gt;
+&lt;div id=&#39;content&#39;&gt;
+&lt;div id=&#39;nav&#39;&gt;
+&lt;p&gt;&lt;strong&gt;Version:&lt;/strong&gt; SFPPy v.{get_version()}&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Maintained by:&lt;/strong&gt; INRAE\\olivier.vitrac@agroparistech.fr&lt;/p&gt;
+&lt;hr&gt;
+{nav_html}
+&lt;/div&gt;
+&lt;div id=&#39;main&#39;&gt;
+{generate_welcome_html(generation_datetime)}
+{content_html}
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;footer&gt;
+&lt;p&gt;&amp;copy; {datetime.now().year} SFPPy Project. All rights reserved.&lt;/p&gt;
+&lt;/footer&gt;
+&lt;script&gt;
+// Toggle visibility of folder contents
+function toggleFolder(element) {{
+    var content = element.nextElementSibling;
+    if (content.style.display === &#34;block&#34;) {{
+        content.style.display = &#34;none&#34;;
+    }} else {{
+        content.style.display = &#34;block&#34;;
+    }}
+}}
+
+// Load documentation into the main panel
+function loadDoc(moduleId) {{
+    var modules = document.getElementsByClassName(&#39;module-content&#39;);
+    for (var i = 0; i &lt; modules.length; i++) {{
+        modules[i].style.display = &#39;none&#39;;
+    }}
+    var welcome = document.getElementById(&#39;welcome&#39;);
+    welcome.style.display = &#39;none&#39;;
+    var selected = document.getElementById(moduleId);
+    if (selected) {{
+        selected.style.display = &#39;block&#39;;
+    }}
+}}
+
+// Toggle All Code Sections
+function toggleAllCode(button) {{
+    var moduleContent = button.parentElement;
+    var collapsibles = moduleContent.querySelectorAll(&#39;.collapsible&#39;);
+    var contents = moduleContent.querySelectorAll(&#39;.content&#39;);
+    var shouldExpand = true;
+    // Determine if we should expand or collapse based on the first content&#39;s display
+    if (contents.length &gt; 0 &amp;&amp; (contents[0].style.display === &#39;block&#39;)) {{
+        shouldExpand = false;
+    }}
+    collapsibles.forEach(function(collapsible, index) {{
+        var content = collapsibles[index].nextElementSibling;
+        if (shouldExpand) {{
+            content.style.display = &#39;block&#39;;
+            collapsible.textContent = &#39;Hide Code Example &#39; + (index + 1);
+        }} else {{
+            content.style.display = &#39;none&#39;;
+            collapsible.textContent = &#39;Show Code Example &#39; + (index + 1);
+        }}
+    }});
+    button.textContent = shouldExpand ? &#39;Collapse All Code Sections&#39; : &#39;Expand All Code Sections&#39;;
+}}
+
+// Initialize all collapsible buttons and handle URL hash on page load
+document.addEventListener(&#34;DOMContentLoaded&#34;, function() {{
+    var coll = document.getElementsByClassName(&#34;collapsible&#34;);
+    for (var i = 0; i &lt; coll.length; i++) {{
+        coll[i].addEventListener(&#34;click&#34;, function() {{
+            this.classList.toggle(&#34;active&#34;);
+            var content = this.nextElementSibling;
+            if (content.style.display === &#34;block&#34;) {{
+                content.style.display = &#34;none&#34;;
+                this.textContent = this.textContent.replace(&#39;Hide&#39;, &#39;Show&#39;);
+            }} else {{
+                content.style.display = &#34;block&#34;;
+                this.textContent = this.textContent.replace(&#39;Show&#39;, &#39;Hide&#39;);
+            }}
+        }});
+    }}
+    
+    // Handle URL hash on page load to display the corresponding module examples
+    var hash = window.location.hash.substring(1); // Remove the #
+    if (hash) {{
+        loadDoc(hash);
+    }}
+}});
+
+// Toggle Sidebar Functionality
+const toggleButton = document.getElementById(&#39;toggleSidebar&#39;);
+const nav = document.getElementById(&#39;nav&#39;);
+
+toggleButton.addEventListener(&#39;click&#39;, () =&gt; {{
+    nav.classList.toggle(&#39;collapsed&#39;);
+    document.body.classList.toggle(&#39;nav-open&#39;); // Toggle overlay on small screens
+    // Change icon based on sidebar state
+    if(nav.classList.contains(&#39;collapsed&#39;)) {{
+        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;&#39;; // Hamburger icon
+        toggleButton.setAttribute(&#39;aria-expanded&#39;, &#39;false&#39;);
+    }} else {{
+        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#10005;&lt;/kbd&gt;&#39;; // Close icon (X)
+        toggleButton.setAttribute(&#39;aria-expanded&#39;, &#39;true&#39;);
+    }}
+}});
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&#39;&#39;&#39;
+    return html</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.generate_nav_html"><code class="name flex">
+<span>def <span class="ident">generate_nav_html</span></span>(<span>tree, parent_path='')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Recursively generates the HTML for the navigation menu.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_nav_html(tree, parent_path=&#39;&#39;):
+    &#34;&#34;&#34;
+    Recursively generates the HTML for the navigation menu.
+    &#34;&#34;&#34;
+    html = &#39;&lt;ul&gt;\n&#39;
+    for key in sorted(tree.keys()):
+        if key == &#39;_files&#39;:
+            for file in sorted(tree[&#39;_files&#39;]):
+                module_relative_path = f&#34;{parent_path}/{file}&#34; if parent_path else file
+                # Remove the .py extension for the anchor without appending &#39;_examples&#39;
+                module_anchor = module_relative_path.replace(&#39;/&#39;, &#39;_&#39;).replace(&#39;.py&#39;, &#39;&#39;)
+                html += f&#39;&lt;li class=&#34;file&#34;&gt;&lt;a href=&#34;#{module_anchor}&#34; onclick=&#34;loadDoc(\&#39;{module_anchor}\&#39;)&#34;&gt;{file}&lt;/a&gt;&lt;/li&gt;\n&#39;
+        else:
+            new_path = f&#34;{parent_path}/{key}&#34; if parent_path else key
+            html += f&#39;&lt;li class=&#34;folder&#34;&gt;\n&#39;
+            html += f&#39;&lt;div class=&#34;folder-title&#34; onclick=&#34;toggleFolder(this)&#34;&gt;{key}&lt;/div&gt;\n&#39;
+            html += f&#39;&lt;ul class=&#34;folder-content&#34;&gt;\n&#39;
+            html += generate_nav_html(tree[key], new_path)
+            html += &#39;&lt;/ul&gt;\n&lt;/li&gt;\n&#39;
+    html += &#39;&lt;/ul&gt;\n&#39;
+    return html</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.generate_welcome_html"><code class="name flex">
+<span>def <span class="ident">generate_welcome_html</span></span>(<span>generation_datetime)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates the HTML for the welcome page.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_welcome_html(generation_datetime):
+    &#34;&#34;&#34;
+    Generates the HTML for the welcome page.
+    &#34;&#34;&#34;
+    welcome_text = f&#34;&#34;&#34;
+&lt;h2&gt;Welcome to Usage Class Examples&lt;/h2&gt;
+&lt;p&gt;Select a module in the left menu to view usage examples. These examples are not for production and are automatically extracted from the main section of each module.&lt;/p&gt;
+&lt;p&gt;Back to the &lt;a href=&#39;index.html&#39;&gt;Python&#39;SFPPy documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When no module is selected, you see this welcome page. They are used to test classes with typical codes. The main section often serves as a testing script, example usage block, or self-contained test block. It&#39;s a way to demonstrate how the module&#39;s functionality works or to run simple unit tests and examples inline.&lt;/p&gt;
+&lt;p&gt;Generated on: {generation_datetime}&lt;/p&gt;
+&#34;&#34;&#34;
+    return f&#39;&lt;div id=&#34;welcome&#34; class=&#34;module-content&#34; style=&#34;display:block;&#34;&gt;\n{welcome_text}\n&lt;/div&gt;\n&#39;</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.get_version"><code class="name flex">
+<span>def <span class="ident">get_version</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract the version number of SFPPy from version_file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_version():
+    &#34;&#34;&#34;Extract the version number of SFPPy from version_file.&#34;&#34;&#34;
+    mainfolder = os.path.realpath(os.path.join(&#34;..&#34;))
+    version_file = os.path.join(mainfolder, &#34;utils&#34;, &#34;VERSION.txt&#34;)
+    if not os.path.isfile(version_file):
+        sys.stderr.write(f&#34;Error: {version_file} not found. Please create a file with content: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+        sys.exit(1)
+    with open(version_file, &#34;r&#34;) as f:
+        for line in f:
+            line = line.strip()
+            match = re.match(r&#39;^version\s*=\s*&#34;(.*?)&#34;$&#39;, line)
+            if match:
+                return match.group(1)
+    sys.stderr.write(f&#34;Error: No valid version string found in {version_file}. Ensure it contains: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+    sys.exit(1)</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    ensure_run_from_utils()
+
+    if len(sys.argv) != 3:
+        print(&#34;Usage: generate_examples.py output_examples.html modules_details.json &lt; modules_withexamples_list.txt&#34;, file=sys.stderr)
+        sys.exit(1)
+
+    output_html = sys.argv[1]
+    output_json = sys.argv[2]
+    modules_with_paths = read_module_list()
+    if not modules_with_paths:
+        print(&#34;No modules provided.&#34;, file=sys.stderr)
+        sys.exit(1)
+
+    # Configuration
+    mainfolder = os.path.realpath(os.path.join(&#34;..&#34;))
+
+    # Validate and filter modules
+    valid_module_paths = []
+    modules_details = {}
+    for module_path in modules_with_paths:
+        full_path = os.path.join(mainfolder, module_path)
+        if not os.path.isfile(full_path):
+            print(f&#34;Warning: File &#39;{module_path}&#39; does not exist. Skipping.&#34;, file=sys.stderr)
+            continue
+        with open(full_path, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+            content = f.read()
+        if not file_has_main_section(content):
+            # Discard files without a &#39;__main__&#39; section
+            print(f&#34;Info: File &#39;{module_path}&#39; does not contain a &#39;__main__&#39; section. Skipping.&#34;, file=sys.stderr)
+            continue
+        examples = extract_examples(content)
+        if not examples:
+            print(f&#34;Info: No examples found in &#39;{module_path}&#39;. Skipping.&#34;, file=sys.stderr)
+            continue
+        valid_module_paths.append(module_path)
+        
+        # === MODIFICATION START ===
+        # Replace slashes with dots and remove .py to match module naming
+        module_name = module_path.replace(&#39;/&#39;, &#39;.&#39;).replace(&#39;.py&#39;, &#39;&#39;)
+        
+        # Generate an anchor by replacing dots with underscores
+        module_anchor = module_name.replace(&#39;.&#39;, &#39;_&#39;)
+        
+        # Update the modules_details dictionary with the module name as the key
+        modules_details[module_name] = {
+            &#34;full_path&#34;: full_path,
+            &#34;local_path&#34;: module_path,
+            &#34;url_anchor&#34;: f&#34;#{module_anchor}&#34;,
+            &#34;number_of_examples&#34;: len(examples)
+        }
+        # === MODIFICATION END ===
+
+    if not valid_module_paths:
+        print(&#34;No valid modules with &#39;__main__&#39; sections and examples to process.&#34;, file=sys.stderr)
+        sys.exit(1)
+
+    # Organize modules into folder structure
+    module_tree = organize_modules(valid_module_paths)
+
+    # Generate navigation HTML
+    nav_html = generate_nav_html(module_tree)
+
+    # Process each module and generate content HTML
+    content_html = &#39;&#39;
+    for module_path in valid_module_paths:
+        full_path = os.path.join(mainfolder, module_path)
+        with open(full_path, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+            content = f.read()
+        examples = extract_examples(content)
+        if not examples:
+            continue
+        # === MODIFICATION START ===
+        # Convert module_path to module_name to retrieve details
+        module_name = module_path.replace(&#39;/&#39;, &#39;.&#39;).replace(&#39;.py&#39;, &#39;&#39;)
+        module_detail = modules_details.get(module_name)
+        if not module_detail:
+            continue
+        module_anchor = module_detail[&#34;url_anchor&#34;].lstrip(&#39;#&#39;)
+        # === MODIFICATION END ===
+        
+        content_html += generate_example_html(module_anchor, examples)
+
+    # Get current date and time
+    generation_datetime = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+
+    # Define base CSS
+    base_css = &#34;&#34;&#34;
+body {
+    font-family: &#39;Segoe UI&#39;, Arial, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #f9f9f9; 
+    color: #333;
+}
+header {
+    background: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    position: relative; /* For positioning the toggle button */
+}
+header h1 {
+    margin: 0; 
+    font-size: 1.5em;
+    color: #fff; /* Explicitly set to white */
+    padding-left: 50px; /* Space for the toggle button */
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px); /* Adjusted for header height */
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+#nav {
+    width: 300px; /* Set a fixed width */
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: width 0.3s ease, padding 0.3s ease; /* Transition for smooth animations */
+    flex-shrink: 0; /* Prevent flexbox from shrinking */
+}
+#nav.collapsed {
+    width: 0; /* Hide the sidebar completely */
+    padding: 20px 0; /* Optionally adjust padding */
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+header .toggle-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    left: 10px; /* Place the button on the left */
+    background-color: #4CAF50; /* Green background */
+    border: none;
+    color: white; /* Ensure the hamburger icon is white */
+    padding: 10px 12px; /* Adjust padding for larger button */
+    cursor: pointer;
+    font-size: 1.2em; /* Increase font size for better visibility */
+    border-radius: 4px;
+    z-index: 1001; /* Ensure the button is above other elements */
+}
+header .toggle-btn:hover {
+    background-color: #45a049;
+}
+header .toggle-btn kbd {
+    font-family: &#39;Arial&#39;, sans-serif; /* Match the header font */
+    color: white; /* Ensure the hamburger icon is white */
+    font-size: 1.2em; /* Same size as the button text */
+    background: none; /* Remove any background styling from &lt;kbd&gt; */
+    border: none; /* Remove any borders from &lt;kbd&gt; */
+}
+h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+h2 {
+    color: #333; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 5px;
+}
+a {
+    text-decoration: none; 
+    color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul {
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+}
+li {
+    margin: 5px 0;
+}
+.folder-title {
+    font-weight: bold; 
+    color: #333; 
+    padding: 5px 0;
+    cursor: pointer;
+}
+.folder-content {
+    margin-left: 20px;
+    display: none; /* start collapsed */
+}
+.file {
+    margin-left: 20px;
+}
+hr {
+    margin: 20px 0; 
+    border: 1px solid #ddd;
+}
+footer {
+    font-size: 0.9em; 
+    color: #666; 
+    margin-top: 20px; 
+    text-align: center;
+}
+/* Enhanced Table Styling with Banded Colors */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+tr:nth-child(odd) {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green for odd rows */
+}
+/* Collapsible Code Section */
+.collapsible {
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+}
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+/* Minimal Syntax Highlighting */
+.code {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    font-family: &#39;Courier New&#39;, Courier, monospace;
+    color: #333;
+}
+.keyword {
+    color: #007BFF;
+    font-weight: bold;
+}
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+.string {
+    color: #a31515;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px; /* Height of the header */
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+    #nav.collapsed {
+        width: 0; /* Hide the sidebar completely */
+        padding: 20px 0; /* Adjust padding */
+    }
+    #main {
+        flex: 1;
+    }
+    /* Add overlay when sidebar is open on mobile */
+    body.nav-open::before {
+        content: &#34;&#34;;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 50px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+&#34;&#34;&#34;
+
+    # Initialize pygments_css
+    pygments_css = &#34;&#34;
+    if USE_PYGMENTS:
+        # Generate PYGMENTS CSS styles
+        formatter = HtmlFormatter()
+        pygments_css = formatter.get_style_defs(&#39;.code&#39;)
+    else:
+        print(&#34;Warning: PYGMENTS is not installed. Code will have minimal syntax highlighting.&#34;, file=sys.stderr)
+
+    # Generate the full HTML with both base CSS and Pygments CSS
+    full_html = generate_full_html(nav_html, content_html, base_css, pygments_css, generation_datetime)
+
+    # Write the HTML to the output file
+    with open(output_html, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        f.write(full_html)
+
+    # Write the modules details dictionary to a JSON file
+    with open(output_json, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        json.dump(modules_details, f, indent=4)
+
+    print(f&#34;HTML documentation generated successfully at &#39;{output_html}&#39;&#34;)
+    print(f&#34;Module details dictionary saved at &#39;{output_json}&#39;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.organize_modules"><code class="name flex">
+<span>def <span class="ident">organize_modules</span></span>(<span>module_paths)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Organizes modules into a nested dictionary based on their directory structure.
+module_paths: List of module paths relative to mainfolder, e.g., 'patankar/geometry.py'
+Returns a nested dictionary representing the folder structure.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def organize_modules(module_paths):
+    &#34;&#34;&#34;
+    Organizes modules into a nested dictionary based on their directory structure.
+    module_paths: List of module paths relative to mainfolder, e.g., &#39;patankar/geometry.py&#39;
+    Returns a nested dictionary representing the folder structure.
+    &#34;&#34;&#34;
+    tree = {}
+    for path in module_paths:
+        parts = Path(path).parts  # e.g., (&#39;patankar&#39;, &#39;migration.py&#39;) or (&#39;patankar&#39;, &#39;private&#39;, &#39;geometry.py&#39;)
+        current = tree
+        for part in parts[:-1]:  # All parts except the last (file)
+            current = current.setdefault(part, {})
+        current.setdefault(&#39;_files&#39;, []).append(parts[-1])
+    return tree</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.read_module_list"><code class="name flex">
+<span>def <span class="ident">read_module_list</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads module paths from STDIN, one per line.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_module_list():
+    &#34;&#34;&#34;Reads module paths from STDIN, one per line.&#34;&#34;&#34;
+    modules = [line.strip() for line in sys.stdin if line.strip()]
+    return modules</code></pre>
+</details>
+</dd>
+<dt id="generate_examples.syntax_highlight"><code class="name flex">
+<span>def <span class="ident">syntax_highlight</span></span>(<span>code)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Applies syntax highlighting to the code block.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def syntax_highlight(code):
+    &#34;&#34;&#34;Applies syntax highlighting to the code block.&#34;&#34;&#34;
+    if USE_PYGMENTS:
+        formatter = HtmlFormatter(nowrap=True)
+        return highlight(code, PythonLexer(), formatter)
+    else:
+        # Minimal syntax highlighting based on CSS classes
+        # This is a very simplistic approach and can be improved
+        code = escape(code)
+        # Highlight keywords
+        keywords = r&#39;\b(False|class|finally|is|return|None|continue|for|lambda|try|&#39; \
+                   r&#39;True|def|from|nonlocal|while|and|del|global|not|with|&#39; \
+                   r&#39;as|elif|if|or|yield|assert|else|import|pass|break|except|&#39; \
+                   r&#39;in|raise)\b&#39;
+        code = re.sub(keywords, r&#39;&lt;span class=&#34;keyword&#34;&gt;\1&lt;/span&gt;&#39;, code)
+        # Highlight strings
+        code = re.sub(r&#39;(\&#39;[^\&#39;]*\&#39;|&#34;[^&#34;]*&#34;)&#39;, r&#39;&lt;span class=&#34;string&#34;&gt;\1&lt;/span&gt;&#39;, code)
+        # Highlight comments (only inline comments)
+        code = re.sub(r&#39;(?&lt;!#)#.*&#39;, r&#39;&lt;span class=&#34;comment&#34;&gt;\g&lt;0&gt;&lt;/span&gt;&#39;, code)
+        return code</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#generate_examplespy">generate_examples.py</a><ul>
+<li><a href="#purpose">Purpose:</a></li>
+<li><a href="#functionality">Functionality:</a></li>
+<li><a href="#usage">Usage:</a></li>
+<li><a href="#arguments">Arguments:</a></li>
+<li><a href="#inputs">Inputs:</a></li>
+<li><a href="#outputs">Outputs:</a></li>
+<li><a href="#dependencies">Dependencies:</a></li>
+<li><a href="#error-handling">Error Handling:</a></li>
+<li><a href="#author">Author:</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="generate_examples.ensure_run_from_utils" href="#generate_examples.ensure_run_from_utils">ensure_run_from_utils</a></code></li>
+<li><code><a title="generate_examples.extract_examples" href="#generate_examples.extract_examples">extract_examples</a></code></li>
+<li><code><a title="generate_examples.file_has_main_section" href="#generate_examples.file_has_main_section">file_has_main_section</a></code></li>
+<li><code><a title="generate_examples.generate_example_html" href="#generate_examples.generate_example_html">generate_example_html</a></code></li>
+<li><code><a title="generate_examples.generate_full_html" href="#generate_examples.generate_full_html">generate_full_html</a></code></li>
+<li><code><a title="generate_examples.generate_nav_html" href="#generate_examples.generate_nav_html">generate_nav_html</a></code></li>
+<li><code><a title="generate_examples.generate_welcome_html" href="#generate_examples.generate_welcome_html">generate_welcome_html</a></code></li>
+<li><code><a title="generate_examples.get_version" href="#generate_examples.get_version">get_version</a></code></li>
+<li><code><a title="generate_examples.main" href="#generate_examples.main">main</a></code></li>
+<li><code><a title="generate_examples.organize_modules" href="#generate_examples.organize_modules">organize_modules</a></code></li>
+<li><code><a title="generate_examples.read_module_list" href="#generate_examples.read_module_list">read_module_list</a></code></li>
+<li><code><a title="generate_examples.syntax_highlight" href="#generate_examples.syntax_highlight">syntax_highlight</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

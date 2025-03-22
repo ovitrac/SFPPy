@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>compare_and_list API documentation</title>
+<meta name="description" content="compare_and_list.py …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>compare_and_list</code></h1>
+</header>
+<section id="section-intro">
+<p>compare_and_list.py</p>
+<hr>
+<p>This script compares files in the local directory structure (source)
+against a destination folder (remote copy). It checks for:
+- missing files
+- "obsolete" files (based on file size, last modification date, or both)</p>
+<p>NEW FEATURES:
+- For MISSING files, display (YYYY-MM-DD) and size of the source file.
+- Third argument "missing" =&gt; only show missing files
+"update"
+=&gt; show missing and obsolete files (default).</p>
+<h2 id="usage">Usage</h2>
+<p>./compare_and_list.py <destination_folder> [comparison_mode] [operation_mode] [create_missing_folders_flag]</p>
+<h2 id="examples">Examples</h2>
+<p>./compare_and_list.py /path/to/remote
+# Default: comparison_mode=date, operation_mode=update, no folder creation
+./compare_and_list.py /path/to/remote size missing yes
+=&gt; Compare by size only; display only missing files; create missing folders.</p>
+<p>Production Examples:
+/compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3</p>
+<p>OUTPUT FORMAT (examples):
+(size diff: +2.3 KB, time diff: +45.0 min) OBSOLETE: /path/to/source -&gt; /path/to/dest
+(source: 2025-01-05, 12 KB) MISSING: /path/to/source -&gt; /path/to/dest</p>
+<hr>
+<pre><code># Documentation
+
+## Overview
+
+This script, *compare_and_list.py*, inspects a local *Pizza3* project directory (which we call the **source**) and a remote copy (which we call the **destination**). It reports files that are:
+- **Missing** in the destination.
+- **Obsolete** in the destination, based on one of three modes:
+- **date**: The source file has a more recent modification date.
+- **size**: The source file is larger than the destination file.
+- **both**: Either the source is newer or the source is larger.
+
+By default, *compare_and_list.py* compares using the **date** mode.
+
+It also checks the **inclusion** and **exclusion** patterns defined in the script, mirroring a backup configuration. Only files that match an inclusion pattern and do **not** match an exclusion pattern will be considered for comparison.
+
+## Prerequisites
+
+1. **Script location**: The script must reside in `$mainfolder/utils/` and must be run from there.
+2. **Name of the current folder**: The script checks that the current directory’s name is &lt;code&gt;utils&lt;/code&gt;. If not, it fails.
+3. **Presence of pdocme.sh**: The script requires a file named &lt;code&gt;pdocme.sh&lt;/code&gt; in the `utils/` folder to confirm the environment is correct.
+4. **Destination folder**: The script requires a mandatory first argument indicating the destination folder. It checks that this folder has a `utils/` subfolder containing &lt;code&gt;pdocme.sh&lt;/code&gt;, ensuring it is a remote copy of the same structure.
+
+## Command-Line Arguments
+
+The script takes up to four arguments:
+
+1. **destination_folder** (mandatory)  
+The path to the remote/copy of the main folder. If relative, the script automatically converts it to an absolute path.  
+Example: `$HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3`
+
+2. **comparison_mode** (optional)  
+Specifies the comparison mode:  
+- **date** : Compare the modification times (source newer =&gt; replace needed).  
+- **size** : Compare the sizes (source bigger =&gt; replace needed).  
+- **both** : Compare both criteria (if source is either newer or bigger =&gt; replace needed).  
+If not provided, the default is **date**.
+
+3. **operation_mode** (optional)  
+- **missing**: Only list missing files.  
+- **update** (default): List missing and obsolete.
+
+4. **create_missing_folders_flag** (optional)  
+- **yes** : If set to 'yes', the script will automatically create any missing folders in the destination when a missing file is found.  
+- **no**  : No folder creation if the file’s destination path doesn’t exist.  
+The default is **no**.
+
+## Usage Examples
+
+### Example 1: Compare only by date, no folder creation
+
+```bash
+cd $HOME/han/dev/Pizza3/utils/
+./compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3
+```
+
+1. The script changes into the *utils* directory:  
+*$HOME/han/dev/Pizza3/utils/*
+2. Runs the script with only one argument: the destination folder.  
+3. Uses the default comparison mode (**date**).  
+4. Does **not** create missing folders.
+
+Any files missing or “obsolete by date” in the destination are listed in the output, which can be redirected as needed, for example:
+
+```bash
+./compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3 &gt; missing_or_obsolete.txt
+```
+
+### Example 2: Compare by size and create missing folders
+
+```bash
+cd $HOME/han/dev/Pizza3/utils/
+./compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3 size yes
+```
+
+1. The script again is run from the same local directory (*utils*).
+2. **destination_folder** is `$HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3`.  
+3. **comparison_mode** is &lt;code&gt;size&lt;/code&gt;.  
+4. **create_missing_folders_flag** is &lt;code&gt;yes&lt;/code&gt;, so any required subfolders that do not exist in the destination will be created.
+
+The script outputs lines like:
+
+- `MISSING: source_file_path -&gt; destination_file_path`  
+- `OBSOLETE: source_file_path -&gt; destination_file_path`
+
+You can filter or redirect this output to logs or another program.
+
+## Explanation of Output Lines
+
+- **MISSING:** A file was found in the source but is absent in the destination.  
+- **OBSOLETE:** A file exists in both locations, but the source is considered “newer” or “larger” (depending on the mode), meaning a replacement is appropriate.
+
+Each line contains the **full path** of the source file and the **corresponding path** in the destination. This format is convenient for other scripts or tooling to parse and handle necessary copies.
+
+## Inclusion/Exclusion Patterns
+
+- **include_patterns**: List of filename patterns (wildcards) that must match for the file to be considered (e.g., `*.py`, `*.m`, `*.txt`, etc.).  
+- **exclude_files**: Specific file patterns to exclude (e.g., `*.log`, &lt;code&gt;backupme.README.md&lt;/code&gt;, etc.).  
+- **exclude_folders_rel**: Relative folders to exclude (e.g., `./old`, `./tmp`).  
+- **exclude_folders_abs**: Absolute folders to exclude, relevant to `$mainfolder` (e.g., `$mainfolder/release`).
+
+The script automatically ignores files and folders that match any exclusion pattern.
+
+## Logging and Creation of Folders
+
+- When *create_missing_folders_flag* is set to **yes**, the script attempts to create the destination folder structure if it is missing. Upon successful creation, it logs a line such as:  
+`Created missing folder: /path/to/new/folder`
+
+- In all cases, the script **never** modifies the source files or folders. It only prints actions that might be needed in the destination directory.
+
+## Error Handling
+
+1. **Script not in utils**: The script will refuse to run if the current directory name is not “utils”.  
+2. **pdocme.sh missing**: The script checks for this file as a marker that `$mainfolder/utils` is correct.  
+3. **Destination folder not found**: The script exits with an error if the user-supplied destination folder path does not exist.  
+4. **Invalid remote copy**: If the destination path lacks `utils/pdocme.sh`, the script fails.  
+5. **Invalid comparison mode**: If the user supplies an unrecognized mode, the script warns and reverts to the default “date” mode.
+
+---
+</code></pre>
+<h2 id="author"><strong>Author:</strong></h2>
+<p>INRAE\Olivier Vitrac<br>
+Email: olivier.vitrac@agroparistech.fr<br>
+Last Revised: 2025-01-09</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#39;&#39;&#39;
+    compare_and_list.py
+
+----------------------------------------------------------------------
+This script compares files in the local directory structure (source)
+against a destination folder (remote copy). It checks for:
+  - missing files
+  - &#34;obsolete&#34; files (based on file size, last modification date, or both)
+
+NEW FEATURES:
+  - For MISSING files, display (YYYY-MM-DD) and size of the source file.
+  - Third argument &#34;missing&#34; =&gt; only show missing files
+                &#34;update&#34;  =&gt; show missing and obsolete files (default).
+
+Usage:
+  ./compare_and_list.py &lt;destination_folder&gt; [comparison_mode] [operation_mode] [create_missing_folders_flag]
+
+Examples:
+  ./compare_and_list.py /path/to/remote  # Default: comparison_mode=date, operation_mode=update, no folder creation
+  ./compare_and_list.py /path/to/remote size missing yes
+    =&gt; Compare by size only; display only missing files; create missing folders.
+
+Production Examples:
+    /compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3
+
+OUTPUT FORMAT (examples):
+  (size diff: +2.3 KB, time diff: +45.0 min) OBSOLETE: /path/to/source -&gt; /path/to/dest
+  (source: 2025-01-05, 12 KB) MISSING: /path/to/source -&gt; /path/to/dest
+
+----------------------------------------------------------------------
+
+    # Documentation
+
+    ## Overview
+
+    This script, *compare_and_list.py*, inspects a local *Pizza3* project directory (which we call the **source**) and a remote copy (which we call the **destination**). It reports files that are:
+    - **Missing** in the destination.
+    - **Obsolete** in the destination, based on one of three modes:
+    - **date**: The source file has a more recent modification date.
+    - **size**: The source file is larger than the destination file.
+    - **both**: Either the source is newer or the source is larger.
+
+    By default, *compare_and_list.py* compares using the **date** mode.
+
+    It also checks the **inclusion** and **exclusion** patterns defined in the script, mirroring a backup configuration. Only files that match an inclusion pattern and do **not** match an exclusion pattern will be considered for comparison.
+
+    ## Prerequisites
+
+    1. **Script location**: The script must reside in `$mainfolder/utils/` and must be run from there.
+    2. **Name of the current folder**: The script checks that the current directory’s name is `utils`. If not, it fails.
+    3. **Presence of pdocme.sh**: The script requires a file named `pdocme.sh` in the `utils/` folder to confirm the environment is correct.
+    4. **Destination folder**: The script requires a mandatory first argument indicating the destination folder. It checks that this folder has a `utils/` subfolder containing `pdocme.sh`, ensuring it is a remote copy of the same structure.
+
+    ## Command-Line Arguments
+
+    The script takes up to four arguments:
+
+    1. **destination_folder** (mandatory)  
+    The path to the remote/copy of the main folder. If relative, the script automatically converts it to an absolute path.  
+    Example: `$HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3`
+
+    2. **comparison_mode** (optional)  
+    Specifies the comparison mode:  
+    - **date** : Compare the modification times (source newer =&gt; replace needed).  
+    - **size** : Compare the sizes (source bigger =&gt; replace needed).  
+    - **both** : Compare both criteria (if source is either newer or bigger =&gt; replace needed).  
+    If not provided, the default is **date**.
+
+    3. **operation_mode** (optional)  
+    - **missing**: Only list missing files.  
+    - **update** (default): List missing and obsolete.  
+
+    4. **create_missing_folders_flag** (optional)  
+    - **yes** : If set to &#39;yes&#39;, the script will automatically create any missing folders in the destination when a missing file is found.  
+    - **no**  : No folder creation if the file’s destination path doesn’t exist.  
+    The default is **no**.
+
+    ## Usage Examples
+
+    ### Example 1: Compare only by date, no folder creation
+
+    ```bash
+    cd $HOME/han/dev/Pizza3/utils/
+    ./compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3
+    ```
+
+    1. The script changes into the *utils* directory:  
+    *$HOME/han/dev/Pizza3/utils/*
+    2. Runs the script with only one argument: the destination folder.  
+    3. Uses the default comparison mode (**date**).  
+    4. Does **not** create missing folders.
+
+    Any files missing or “obsolete by date” in the destination are listed in the output, which can be redirected as needed, for example:
+
+    ```bash
+    ./compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3 &gt; missing_or_obsolete.txt
+    ```
+
+    ### Example 2: Compare by size and create missing folders
+
+    ```bash
+    cd $HOME/han/dev/Pizza3/utils/
+    ./compare_and_list.py $HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3 size yes
+    ```
+
+    1. The script again is run from the same local directory (*utils*).
+    2. **destination_folder** is `$HOME/onedriveOV_AgroParisTech/Han/dev/Pizza3`.  
+    3. **comparison_mode** is `size`.  
+    4. **create_missing_folders_flag** is `yes`, so any required subfolders that do not exist in the destination will be created.
+
+    The script outputs lines like:
+
+    - `MISSING: source_file_path -&gt; destination_file_path`  
+    - `OBSOLETE: source_file_path -&gt; destination_file_path`  
+
+    You can filter or redirect this output to logs or another program.
+
+    ## Explanation of Output Lines
+
+    - **MISSING:** A file was found in the source but is absent in the destination.  
+    - **OBSOLETE:** A file exists in both locations, but the source is considered “newer” or “larger” (depending on the mode), meaning a replacement is appropriate.
+
+    Each line contains the **full path** of the source file and the **corresponding path** in the destination. This format is convenient for other scripts or tooling to parse and handle necessary copies.
+
+    ## Inclusion/Exclusion Patterns
+
+    - **include_patterns**: List of filename patterns (wildcards) that must match for the file to be considered (e.g., `*.py`, `*.m`, `*.txt`, etc.).  
+    - **exclude_files**: Specific file patterns to exclude (e.g., `*.log`, `backupme.README.md`, etc.).  
+    - **exclude_folders_rel**: Relative folders to exclude (e.g., `./old`, `./tmp`).  
+    - **exclude_folders_abs**: Absolute folders to exclude, relevant to `$mainfolder` (e.g., `$mainfolder/release`).  
+
+    The script automatically ignores files and folders that match any exclusion pattern.
+
+    ## Logging and Creation of Folders
+
+    - When *create_missing_folders_flag* is set to **yes**, the script attempts to create the destination folder structure if it is missing. Upon successful creation, it logs a line such as:  
+    `Created missing folder: /path/to/new/folder`
+
+    - In all cases, the script **never** modifies the source files or folders. It only prints actions that might be needed in the destination directory.
+
+    ## Error Handling
+
+    1. **Script not in utils**: The script will refuse to run if the current directory name is not “utils”.  
+    2. **pdocme.sh missing**: The script checks for this file as a marker that `$mainfolder/utils` is correct.  
+    3. **Destination folder not found**: The script exits with an error if the user-supplied destination folder path does not exist.  
+    4. **Invalid remote copy**: If the destination path lacks `utils/pdocme.sh`, the script fails.  
+    5. **Invalid comparison mode**: If the user supplies an unrecognized mode, the script warns and reverts to the default “date” mode.
+
+    --- 
+
+**Author:**
+---------
+INRAE\Olivier Vitrac  
+Email: olivier.vitrac@agroparistech.fr  
+Last Revised: 2025-01-09
+&#39;&#39;&#39;
+
+import os
+import sys
+import fnmatch
+import time
+import datetime
+
+# ----------------------------------------------------------------------
+# Global Patterns for Inclusions and Exclusions
+# ----------------------------------------------------------------------
+include_patterns = [
+    &#34;*.m&#34;,       # MATLAB files
+    &#34;*.asv&#34;,     # Auto-saved files
+    &#34;*.m~&#34;,      # Backup files
+    &#34;*.pynb&#34;,    # Jupyter notebooks
+    &#34;*.py&#34;,      # Python scripts
+    &#34;*.sh&#34;,      # Shell scripts
+    &#34;*.txt&#34;,     # Text files
+    &#34;*.md&#34;,      # Markdown files
+    &#34;*.html&#34;,    # HTML files
+    &#34;*.json&#34;,    # JSON files
+    &#34;*.css&#34;,     # CSS files
+    &#34;*.manifest&#34; # Manifest files
+]
+
+exclude_folders_rel = [
+    &#34;./old&#34;,
+    &#34;./tmp&#34;,
+    &#34;./sandbox&#34;,
+    &#34;./debug&#34;,
+    &#34;./obsolete&#34;,
+    &#34;./.git&#34;,
+    &#34;./.vscode&#34;,
+    &#34;./.spyproject&#34;,
+    &#34;./__all__&#34;,
+    &#34;./__pycache__&#34;
+]
+
+exclude_folders_abs = [
+    # e.g. &#34;/absolute/path/to/history&#34;,
+    # e.g. &#34;/absolute/path/to/release&#34;,
+]
+
+exclude_files = [
+    &#34;*.log&#34;,
+    &#34;*.zip&#34;,
+    &#34;backupme.README.md&#34;
+]
+
+# ----------------------------------------------------------------------
+# Additional constants
+# ----------------------------------------------------------------------
+TIME_DIFF_TOLERANCE = 3600  # e.g., 1 hour
+
+def is_included(filename):
+    &#34;&#34;&#34;
+    Checks if a file should be included based on the include_patterns.
+    &#34;&#34;&#34;
+    return any(fnmatch.fnmatch(filename, pat) for pat in include_patterns)
+
+def is_excluded_file(filename):
+    &#34;&#34;&#34;
+    Checks if a file is explicitly excluded based on exclude_files.
+    &#34;&#34;&#34;
+    return any(fnmatch.fnmatch(filename, pat) for pat in exclude_files)
+
+def is_excluded_folder(path, mainfolder):
+    &#34;&#34;&#34;
+    Checks if a folder should be excluded based on:
+      1) The relative folder exclusions (exclude_folders_rel)
+      2) The absolute folder exclusions (exclude_folders_abs)
+    &#34;&#34;&#34;
+    abs_path = os.path.abspath(path)
+    
+    # Check relative folder patterns
+    for rel_excl in exclude_folders_rel:
+        if path.endswith(rel_excl.lstrip(&#34;./&#34;)):
+            return True
+    
+    # Check absolute folder patterns
+    for abs_excl in exclude_folders_abs:
+        if abs_path.startswith(abs_excl):
+            return True
+    
+    return False
+
+def usage():
+    &#34;&#34;&#34;
+    Prints usage instructions and exits.
+    &#34;&#34;&#34;
+    print(&#34;Usage:&#34;)
+    print(&#34;  ./compare_and_list.py &lt;destination_folder&gt; [comparison_mode] [operation_mode] [create_missing_folders_flag]&#34;)
+    print(&#34;&#34;)
+    print(&#34;Where:&#34;)
+    print(&#34;  &lt;destination_folder&gt; : Mandatory. Path to remote/copy of mainfolder.&#34;)
+    print(&#34;  [comparison_mode]    : Optional. &#39;date&#39;, &#39;size&#39;, or &#39;both&#39;. Default is &#39;date&#39;.&#34;)
+    print(&#34;  [operation_mode]     : Optional. &#39;missing&#39; or &#39;update&#39;. Default is &#39;update&#39;.&#34;)
+    print(&#34;      &#39;missing&#39; =&gt; only show missing files&#34;)
+    print(&#34;      &#39;update&#39;  =&gt; show missing and obsolete files&#34;)
+    print(&#34;  [create_missing_folders_flag] : Optional. &#39;yes&#39; or &#39;no&#39;. Default is &#39;no&#39;.&#34;)
+    sys.exit(1)
+
+# ----------------------------------------------------------------------
+# Helper functions to format size/time differences
+# ----------------------------------------------------------------------
+def format_size(bytes_val):
+    &#34;&#34;&#34;
+    Return a short string for a file size in bytes, e.g. &#39;12 B&#39;, &#39;1.2 KB&#39;, &#39;3.4 MB&#39;, etc.
+    &#34;&#34;&#34;
+    if bytes_val &lt; 1024:
+        return f&#34;{bytes_val} B&#34;
+    elif bytes_val &lt; 1024**2:
+        return f&#34;{bytes_val/1024:.1f} KB&#34;
+    else:
+        return f&#34;{bytes_val/(1024**2):.1f} MB&#34;
+
+def format_size_diff(size_diff_bytes):
+    sign = &#34;+&#34; if size_diff_bytes &gt;= 0 else &#34;-&#34;
+    abs_val = abs(size_diff_bytes)
+    if abs_val &lt; 1024:
+        return f&#34;{sign}{abs_val} B&#34;
+    elif abs_val &lt; 1024**2:
+        return f&#34;{sign}{abs_val/1024:.1f} KB&#34;
+    else:
+        return f&#34;{sign}{abs_val/(1024**2):.1f} MB&#34;
+
+def format_time_diff(time_diff_seconds):
+    sign = &#34;+&#34; if time_diff_seconds &gt;= 0 else &#34;-&#34;
+    abs_diff = abs(time_diff_seconds)
+    # if &lt; 60 seconds
+    if abs_diff &lt; 60:
+        return f&#34;{sign}{int(abs_diff)} s&#34;
+    elif abs_diff &lt; 3600:
+        mins = abs_diff / 60.0
+        return f&#34;{sign}{mins:.1f} min&#34;
+    elif abs_diff &lt; 86400:
+        hours = abs_diff / 3600.0
+        return f&#34;{sign}{hours:.1f} h&#34;
+    else:
+        days = abs_diff / 86400.0
+        return f&#34;{sign}{days:.1f} days&#34;
+
+def format_date(timestamp):
+    &#34;&#34;&#34;
+    Convert an epoch timestamp (float or int) to YYYY-MM-DD.
+    &#34;&#34;&#34;
+    dt = datetime.datetime.fromtimestamp(timestamp)
+    return dt.strftime(&#34;%Y-%m-%d&#34;)
+
+def main():
+    # -------------------------------------------------
+    # Step 0: Preliminary checks on script location
+    # -------------------------------------------------
+    current_dir = os.path.basename(os.getcwd())
+    if current_dir != &#34;utils&#34;:
+        print(&#34;Error: You must run this script from the &#39;utils&#39; folder.&#34;)
+        sys.exit(1)
+    # Check presence of pdocme.sh
+    if not os.path.exists(&#34;pdocme.sh&#34;):
+        print(&#34;Error: &#39;pdocme.sh&#39; is not found in the current folder. Execution aborted.&#34;)
+        sys.exit(1)
+    
+    # -------------------------------------------------
+    # Step 1: Parse arguments
+    # -------------------------------------------------
+    if len(sys.argv) &lt; 2:
+        usage()
+    destination_folder_input = sys.argv[1]
+    comparison_mode = &#34;date&#34;  # default
+    operation_mode = &#34;update&#34; # default
+    create_missing_folders = False
+    
+    # Arg2: comparison_mode
+    if len(sys.argv) &gt;= 3:
+        arg2 = sys.argv[2].lower()
+        if arg2 in [&#34;date&#34;, &#34;size&#34;, &#34;both&#34;]:
+            comparison_mode = arg2
+        elif arg2 in [&#34;missing&#34;, &#34;update&#34;]:
+            # If user provided &#39;missing&#39; or &#39;update&#39; as second arg, treat that as operation_mode
+            operation_mode = arg2
+        else:
+            # not recognized =&gt; keep default comparison_mode
+            pass
+    
+    # Arg3: either operation_mode or create_missing_folders_flag
+    if len(sys.argv) &gt;= 4:
+        arg3 = sys.argv[3].lower()
+        if arg3 in [&#34;missing&#34;, &#34;update&#34;]:
+            operation_mode = arg3
+        elif arg3 in [&#34;yes&#34;, &#34;no&#34;]:
+            create_missing_folders = (arg3 == &#34;yes&#34;)
+        else:
+            # not recognized
+            pass
+    
+    # Arg4: possibly leftover for create_missing_folders_flag
+    if len(sys.argv) &gt;= 5:
+        arg4 = sys.argv[4].lower()
+        if arg4 in [&#34;yes&#34;, &#34;no&#34;]:
+            create_missing_folders = (arg4 == &#34;yes&#34;)
+    
+    # -------------------------------------------------
+    # Step 2: Validate destination folder
+    # -------------------------------------------------
+    destination_folder = os.path.abspath(destination_folder_input)
+    
+    if not os.path.exists(destination_folder):
+        print(f&#34;Error: Destination folder &#39;{destination_folder}&#39; does not exist.&#34;)
+        sys.exit(1)
+    
+    # Check that destination_folder includes &#39;utils&#39; subfolder and &#39;pdocme.sh&#39;
+    utils_subfolder = os.path.join(destination_folder, &#34;utils&#34;)
+    pdocme_file = os.path.join(utils_subfolder, &#34;pdocme.sh&#34;)
+    if not os.path.exists(utils_subfolder) or not os.path.exists(pdocme_file):
+        print(&#34;Error: Destination folder is not a valid remote copy of the mainfolder. &#34;
+              &#34;It must contain &#39;utils/pdocme.sh&#39;.&#34;)
+        sys.exit(1)
+    
+    # -------------------------------------------------
+    # Step 3: Walk through the source folder ($mainfolder)
+    # -------------------------------------------------
+    mainfolder = os.path.dirname(os.path.abspath(os.getcwd()))
+    
+    for root, dirs, files in os.walk(mainfolder):
+        rel_path = os.path.relpath(root, mainfolder)
+        if rel_path == &#34;.&#34;:
+            rel_path = &#34;&#34;
+        
+        if is_excluded_folder(root, mainfolder):
+            dirs[:] = []
+            continue
+        
+        for filename in files:
+            source_file = os.path.join(root, filename)
+            
+            if not is_included(filename):
+                continue
+            if is_excluded_file(filename):
+                continue
+            
+            dest_file = os.path.join(destination_folder, rel_path, filename)
+            source_stat = os.stat(source_file)
+            
+            # Check if file is missing
+            if not os.path.exists(dest_file):
+                if operation_mode == &#34;update&#34; or operation_mode == &#34;missing&#34;:
+                    # We do display missing if mode is &#39;missing&#39; or &#39;update&#39;
+                    # Show date + size of the source
+                    source_date = format_date(source_stat.st_mtime)
+                    source_size = format_size(source_stat.st_size)
+                    msg = f&#34;(source: {source_date}, {source_size}) MISSING: {source_file} -&gt; {dest_file}&#34;
+                    print(msg)
+                    if create_missing_folders:
+                        dest_dir = os.path.dirname(dest_file)
+                        if not os.path.exists(dest_dir):
+                            os.makedirs(dest_dir, exist_ok=True)
+                            print(f&#34;Created missing folder: {dest_dir}&#34;)
+                # No need to check obsolete logic because it&#39;s missing
+                continue
+            
+            # If operation_mode == &#34;missing&#34;, we skip checking obsolete
+            if operation_mode == &#34;missing&#34;:
+                continue
+            
+            # operation_mode == &#34;update&#34;: check if it is obsolete
+            dest_stat = os.stat(dest_file)
+            replace_required = False
+            
+            # Evaluate time difference
+            time_diff = source_stat.st_mtime - dest_stat.st_mtime
+            # Evaluate size difference
+            size_diff = source_stat.st_size - dest_stat.st_size
+            
+            # Check date
+            if comparison_mode in [&#34;date&#34;, &#34;both&#34;]:
+                if time_diff &gt; TIME_DIFF_TOLERANCE:
+                    replace_required = True
+            
+            # Check size
+            if comparison_mode in [&#34;size&#34;, &#34;both&#34;]:
+                if source_stat.st_size &gt; dest_stat.st_size:
+                    replace_required = True
+            
+            if replace_required:
+                size_diff_str = format_size_diff(size_diff)
+                time_diff_str = format_time_diff(time_diff)
+                print(f&#34;({size_diff_str}, {time_diff_str}) OBSOLETE: {source_file} -&gt; {dest_file}&#34;)
+    
+    print(&#34;Comparison completed.&#34;)
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="compare_and_list.format_date"><code class="name flex">
+<span>def <span class="ident">format_date</span></span>(<span>timestamp)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert an epoch timestamp (float or int) to YYYY-MM-DD.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def format_date(timestamp):
+    &#34;&#34;&#34;
+    Convert an epoch timestamp (float or int) to YYYY-MM-DD.
+    &#34;&#34;&#34;
+    dt = datetime.datetime.fromtimestamp(timestamp)
+    return dt.strftime(&#34;%Y-%m-%d&#34;)</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.format_size"><code class="name flex">
+<span>def <span class="ident">format_size</span></span>(<span>bytes_val)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a short string for a file size in bytes, e.g. '12 B', '1.2 KB', '3.4 MB', etc.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def format_size(bytes_val):
+    &#34;&#34;&#34;
+    Return a short string for a file size in bytes, e.g. &#39;12 B&#39;, &#39;1.2 KB&#39;, &#39;3.4 MB&#39;, etc.
+    &#34;&#34;&#34;
+    if bytes_val &lt; 1024:
+        return f&#34;{bytes_val} B&#34;
+    elif bytes_val &lt; 1024**2:
+        return f&#34;{bytes_val/1024:.1f} KB&#34;
+    else:
+        return f&#34;{bytes_val/(1024**2):.1f} MB&#34;</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.format_size_diff"><code class="name flex">
+<span>def <span class="ident">format_size_diff</span></span>(<span>size_diff_bytes)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def format_size_diff(size_diff_bytes):
+    sign = &#34;+&#34; if size_diff_bytes &gt;= 0 else &#34;-&#34;
+    abs_val = abs(size_diff_bytes)
+    if abs_val &lt; 1024:
+        return f&#34;{sign}{abs_val} B&#34;
+    elif abs_val &lt; 1024**2:
+        return f&#34;{sign}{abs_val/1024:.1f} KB&#34;
+    else:
+        return f&#34;{sign}{abs_val/(1024**2):.1f} MB&#34;</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.format_time_diff"><code class="name flex">
+<span>def <span class="ident">format_time_diff</span></span>(<span>time_diff_seconds)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def format_time_diff(time_diff_seconds):
+    sign = &#34;+&#34; if time_diff_seconds &gt;= 0 else &#34;-&#34;
+    abs_diff = abs(time_diff_seconds)
+    # if &lt; 60 seconds
+    if abs_diff &lt; 60:
+        return f&#34;{sign}{int(abs_diff)} s&#34;
+    elif abs_diff &lt; 3600:
+        mins = abs_diff / 60.0
+        return f&#34;{sign}{mins:.1f} min&#34;
+    elif abs_diff &lt; 86400:
+        hours = abs_diff / 3600.0
+        return f&#34;{sign}{hours:.1f} h&#34;
+    else:
+        days = abs_diff / 86400.0
+        return f&#34;{sign}{days:.1f} days&#34;</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.is_excluded_file"><code class="name flex">
+<span>def <span class="ident">is_excluded_file</span></span>(<span>filename)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if a file is explicitly excluded based on exclude_files.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_excluded_file(filename):
+    &#34;&#34;&#34;
+    Checks if a file is explicitly excluded based on exclude_files.
+    &#34;&#34;&#34;
+    return any(fnmatch.fnmatch(filename, pat) for pat in exclude_files)</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.is_excluded_folder"><code class="name flex">
+<span>def <span class="ident">is_excluded_folder</span></span>(<span>path, mainfolder)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if a folder should be excluded based on:
+1) The relative folder exclusions (exclude_folders_rel)
+2) The absolute folder exclusions (exclude_folders_abs)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_excluded_folder(path, mainfolder):
+    &#34;&#34;&#34;
+    Checks if a folder should be excluded based on:
+      1) The relative folder exclusions (exclude_folders_rel)
+      2) The absolute folder exclusions (exclude_folders_abs)
+    &#34;&#34;&#34;
+    abs_path = os.path.abspath(path)
+    
+    # Check relative folder patterns
+    for rel_excl in exclude_folders_rel:
+        if path.endswith(rel_excl.lstrip(&#34;./&#34;)):
+            return True
+    
+    # Check absolute folder patterns
+    for abs_excl in exclude_folders_abs:
+        if abs_path.startswith(abs_excl):
+            return True
+    
+    return False</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.is_included"><code class="name flex">
+<span>def <span class="ident">is_included</span></span>(<span>filename)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if a file should be included based on the include_patterns.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_included(filename):
+    &#34;&#34;&#34;
+    Checks if a file should be included based on the include_patterns.
+    &#34;&#34;&#34;
+    return any(fnmatch.fnmatch(filename, pat) for pat in include_patterns)</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    # -------------------------------------------------
+    # Step 0: Preliminary checks on script location
+    # -------------------------------------------------
+    current_dir = os.path.basename(os.getcwd())
+    if current_dir != &#34;utils&#34;:
+        print(&#34;Error: You must run this script from the &#39;utils&#39; folder.&#34;)
+        sys.exit(1)
+    # Check presence of pdocme.sh
+    if not os.path.exists(&#34;pdocme.sh&#34;):
+        print(&#34;Error: &#39;pdocme.sh&#39; is not found in the current folder. Execution aborted.&#34;)
+        sys.exit(1)
+    
+    # -------------------------------------------------
+    # Step 1: Parse arguments
+    # -------------------------------------------------
+    if len(sys.argv) &lt; 2:
+        usage()
+    destination_folder_input = sys.argv[1]
+    comparison_mode = &#34;date&#34;  # default
+    operation_mode = &#34;update&#34; # default
+    create_missing_folders = False
+    
+    # Arg2: comparison_mode
+    if len(sys.argv) &gt;= 3:
+        arg2 = sys.argv[2].lower()
+        if arg2 in [&#34;date&#34;, &#34;size&#34;, &#34;both&#34;]:
+            comparison_mode = arg2
+        elif arg2 in [&#34;missing&#34;, &#34;update&#34;]:
+            # If user provided &#39;missing&#39; or &#39;update&#39; as second arg, treat that as operation_mode
+            operation_mode = arg2
+        else:
+            # not recognized =&gt; keep default comparison_mode
+            pass
+    
+    # Arg3: either operation_mode or create_missing_folders_flag
+    if len(sys.argv) &gt;= 4:
+        arg3 = sys.argv[3].lower()
+        if arg3 in [&#34;missing&#34;, &#34;update&#34;]:
+            operation_mode = arg3
+        elif arg3 in [&#34;yes&#34;, &#34;no&#34;]:
+            create_missing_folders = (arg3 == &#34;yes&#34;)
+        else:
+            # not recognized
+            pass
+    
+    # Arg4: possibly leftover for create_missing_folders_flag
+    if len(sys.argv) &gt;= 5:
+        arg4 = sys.argv[4].lower()
+        if arg4 in [&#34;yes&#34;, &#34;no&#34;]:
+            create_missing_folders = (arg4 == &#34;yes&#34;)
+    
+    # -------------------------------------------------
+    # Step 2: Validate destination folder
+    # -------------------------------------------------
+    destination_folder = os.path.abspath(destination_folder_input)
+    
+    if not os.path.exists(destination_folder):
+        print(f&#34;Error: Destination folder &#39;{destination_folder}&#39; does not exist.&#34;)
+        sys.exit(1)
+    
+    # Check that destination_folder includes &#39;utils&#39; subfolder and &#39;pdocme.sh&#39;
+    utils_subfolder = os.path.join(destination_folder, &#34;utils&#34;)
+    pdocme_file = os.path.join(utils_subfolder, &#34;pdocme.sh&#34;)
+    if not os.path.exists(utils_subfolder) or not os.path.exists(pdocme_file):
+        print(&#34;Error: Destination folder is not a valid remote copy of the mainfolder. &#34;
+              &#34;It must contain &#39;utils/pdocme.sh&#39;.&#34;)
+        sys.exit(1)
+    
+    # -------------------------------------------------
+    # Step 3: Walk through the source folder ($mainfolder)
+    # -------------------------------------------------
+    mainfolder = os.path.dirname(os.path.abspath(os.getcwd()))
+    
+    for root, dirs, files in os.walk(mainfolder):
+        rel_path = os.path.relpath(root, mainfolder)
+        if rel_path == &#34;.&#34;:
+            rel_path = &#34;&#34;
+        
+        if is_excluded_folder(root, mainfolder):
+            dirs[:] = []
+            continue
+        
+        for filename in files:
+            source_file = os.path.join(root, filename)
+            
+            if not is_included(filename):
+                continue
+            if is_excluded_file(filename):
+                continue
+            
+            dest_file = os.path.join(destination_folder, rel_path, filename)
+            source_stat = os.stat(source_file)
+            
+            # Check if file is missing
+            if not os.path.exists(dest_file):
+                if operation_mode == &#34;update&#34; or operation_mode == &#34;missing&#34;:
+                    # We do display missing if mode is &#39;missing&#39; or &#39;update&#39;
+                    # Show date + size of the source
+                    source_date = format_date(source_stat.st_mtime)
+                    source_size = format_size(source_stat.st_size)
+                    msg = f&#34;(source: {source_date}, {source_size}) MISSING: {source_file} -&gt; {dest_file}&#34;
+                    print(msg)
+                    if create_missing_folders:
+                        dest_dir = os.path.dirname(dest_file)
+                        if not os.path.exists(dest_dir):
+                            os.makedirs(dest_dir, exist_ok=True)
+                            print(f&#34;Created missing folder: {dest_dir}&#34;)
+                # No need to check obsolete logic because it&#39;s missing
+                continue
+            
+            # If operation_mode == &#34;missing&#34;, we skip checking obsolete
+            if operation_mode == &#34;missing&#34;:
+                continue
+            
+            # operation_mode == &#34;update&#34;: check if it is obsolete
+            dest_stat = os.stat(dest_file)
+            replace_required = False
+            
+            # Evaluate time difference
+            time_diff = source_stat.st_mtime - dest_stat.st_mtime
+            # Evaluate size difference
+            size_diff = source_stat.st_size - dest_stat.st_size
+            
+            # Check date
+            if comparison_mode in [&#34;date&#34;, &#34;both&#34;]:
+                if time_diff &gt; TIME_DIFF_TOLERANCE:
+                    replace_required = True
+            
+            # Check size
+            if comparison_mode in [&#34;size&#34;, &#34;both&#34;]:
+                if source_stat.st_size &gt; dest_stat.st_size:
+                    replace_required = True
+            
+            if replace_required:
+                size_diff_str = format_size_diff(size_diff)
+                time_diff_str = format_time_diff(time_diff)
+                print(f&#34;({size_diff_str}, {time_diff_str}) OBSOLETE: {source_file} -&gt; {dest_file}&#34;)
+    
+    print(&#34;Comparison completed.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="compare_and_list.usage"><code class="name flex">
+<span>def <span class="ident">usage</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints usage instructions and exits.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def usage():
+    &#34;&#34;&#34;
+    Prints usage instructions and exits.
+    &#34;&#34;&#34;
+    print(&#34;Usage:&#34;)
+    print(&#34;  ./compare_and_list.py &lt;destination_folder&gt; [comparison_mode] [operation_mode] [create_missing_folders_flag]&#34;)
+    print(&#34;&#34;)
+    print(&#34;Where:&#34;)
+    print(&#34;  &lt;destination_folder&gt; : Mandatory. Path to remote/copy of mainfolder.&#34;)
+    print(&#34;  [comparison_mode]    : Optional. &#39;date&#39;, &#39;size&#39;, or &#39;both&#39;. Default is &#39;date&#39;.&#34;)
+    print(&#34;  [operation_mode]     : Optional. &#39;missing&#39; or &#39;update&#39;. Default is &#39;update&#39;.&#34;)
+    print(&#34;      &#39;missing&#39; =&gt; only show missing files&#34;)
+    print(&#34;      &#39;update&#39;  =&gt; show missing and obsolete files&#34;)
+    print(&#34;  [create_missing_folders_flag] : Optional. &#39;yes&#39; or &#39;no&#39;. Default is &#39;no&#39;.&#34;)
+    sys.exit(1)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#author">Author:</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="compare_and_list.format_date" href="#compare_and_list.format_date">format_date</a></code></li>
+<li><code><a title="compare_and_list.format_size" href="#compare_and_list.format_size">format_size</a></code></li>
+<li><code><a title="compare_and_list.format_size_diff" href="#compare_and_list.format_size_diff">format_size_diff</a></code></li>
+<li><code><a title="compare_and_list.format_time_diff" href="#compare_and_list.format_time_diff">format_time_diff</a></code></li>
+<li><code><a title="compare_and_list.is_excluded_file" href="#compare_and_list.is_excluded_file">is_excluded_file</a></code></li>
+<li><code><a title="compare_and_list.is_excluded_folder" href="#compare_and_list.is_excluded_folder">is_excluded_folder</a></code></li>
+<li><code><a title="compare_and_list.is_included" href="#compare_and_list.is_included">is_included</a></code></li>
+<li><code><a title="compare_and_list.main" href="#compare_and_list.main">main</a></code></li>
+<li><code><a title="compare_and_list.usage" href="#compare_and_list.usage">usage</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -223,7 +223,7 @@ tr:nth-child(odd) {
 </header>
 <div id='content'>
 <div id='nav'>
-<p><strong>Version:</strong> Pizza3 v.1.22</p>
+<p><strong>Version:</strong> Pizza3 v.1.37</p>
 <p><strong>Maintained by:</strong> INRAE\olivier.vitrac@agroparistech.fr</p>
 <hr>
 <ul class='folder-list'>
@@ -239,6 +239,12 @@ tr:nth-child(odd) {
 <li class='file'><a href='#testcase' onclick="loadDoc('testcase')">testcase</a></li>
 </ul>
 </li>
+<li class='folder'>
+<div class='folder-title' onclick='toggleFolder(this)'>wiki/diffusivities</div>
+<ul class='folder-content'>
+<li class='file'><a href='#DFVtol' onclick="loadDoc('DFVtol')">DFVtol</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div id='main'>
@@ -249,7 +255,7 @@ tr:nth-child(odd) {
 <p>Back to the <a href='index.html'>Python'Pizza3 documentation</a>.</p>
 <hr>
 <p><i>When no function is selected, you see this welcome page.</i></p>
-Generated on: 2025-03-03 21:46:16</div>
+Generated on: 2025-03-22 12:48:24</div>
 <div id='testcase' class='doc-content' style='display: none;'>
 <h1>reference system</h1>
 <button class="collapsible">Show MATLAB Code</button>
@@ -289,6 +295,143 @@ F = struct(...
 S = senspatankar(F)
 figure
 plot(S.t,S.CF)</code></pre></div>
+</div>
+<div id='DFVtol' class='doc-content' style='display: none;'>
+<h1>This script shows the prediction of difusivities of toluene using hole Free-Volume theory</h1>
+<p>at different temperatures in different polymers (LDPE, PMMA, PS, PVAc, PET).<br/>gPET corresponds to dry PET (unplasticized) and wPET coresponds to plasticized PET</p>
+<button class="collapsible">Show MATLAB Code</button>
+<div class="content"><pre class="code"><code class="language-matlab"><span class="comment">% This script shows the prediction of difusivities of toluene using hole Free-Volume theory</span>
+<span class="comment">% at different temperatures in different polymers (LDPE, PMMA, PS, PVAc, PET).</span>
+<span class="comment">% gPET corresponds to dry PET (unplasticized) and wPET coresponds to plasticized PET</span>
+
+
+<span class="comment">% Data have been extracted from the script figure8_revSep2019_2025.m used to generate</span>
+<span class="comment">% Figure 9 <span class="keyword">for</span> the reference mentioned below.</span>
+
+<span class="comment">% REFERENCE</span>
+<span class="comment">% Zhu Y., Welle, F. and Vitrac O. A blob model to parameterize polymer hole free volumes and solute diffusion",</span>
+<span class="comment">% *Soft Matter* **2019**, 15(42), 8912-8932. DOI: https://doi.org/10.1039/C9SM01556F</span>
+<span class="comment">% </span>
+<span class="comment">% ABSTRACT</span>
+<span class="comment">% Solute diffusion in solid polymers has tremendous applications in packaging,</span>
+<span class="comment">% reservoir, and biomedical technologies but remains poorly understood. Diffusion</span>
+<span class="comment">% of non-entangled linear solutes with chemically identical patterns (blobs) deviates</span>
+<span class="comment">% dramatically in polymers in the solid-state (αlin > 1, Macromolecules 2013, 46, 874)</span>
+<span class="comment">% from their behaviors in the molten state (αlin = 1, Macromolecules, 2007, 40, 3970).</span>
+<span class="comment">% This work uses the scale invariance of the diffusivities, D, of linear probes</span>
+<span class="comment">% D(N·Mblob + Manchor,T,Tg) = N−αlin(T,Tg)D(Mblob + Manchor,T,Tg) comprising</span>
+<span class="comment">% N identical blobs of mass Mblob and possibly one different terminal pattern (anchor of</span>
+<span class="comment">% mass Manchor) to evaluate the amounts of hole-free volume in seven polymers (aliphatic,</span>
+<span class="comment">% semi-aromatic and aromatic) over a broad range of temperatures (−70 K ≤ T − Tg ≤ 160 K).</span>
+<span class="comment">% The new parameterization of the concept of hole-free volumes opens the application of</span>
+<span class="comment">% the free-volume theory (FVT) developed by Vrentas and Duda to practically any polymer,</span>
+<span class="comment">% regardless of the availability of free-volume parameters. The quality of the estimations</span>
+<span class="comment">% was tested with various probes including n-alkanes, 1-alcohols, n-alkyl acetates, and</span>
+<span class="comment">% n-alkylbenzene. The effects of enthalpic and entropic effects of the blobs and the anchor</span>
+<span class="comment">% were analyzed and quantified. Blind validation of the reformulated FVT was tested </span>
+<span class="comment">% successfully by predicting from first principles the diffusivities of water and toluene</span>
+<span class="comment">% in amorphous polyethylene terephthalate from 4 °C to 180 °C and in various other polymers.</span>
+<span class="comment">% The new blob model would open the rational design of additives with controlled diffusivities</span>
+<span class="comment">% in thermoplastics.</span>
+
+
+<span class="comment">% Constants</span>
+R = 8.31;
+T0K = 273.15; <span class="comment">% K</span>
+
+data = cell2table(...
+   { <span class="comment">% Tg are in K</span>
+    <span class="string">'LDPE'</span>     148.15    1.87e-08     0.615      3     144    40    0    0.5
+    <span class="string">'PMMA'</span>     381.15    1.87e-08      0.56      2     252    65    0    0.5 <span class="comment">% original better</span>
+<span class="comment">%    <span class="string">'PMMA'</span>    381.15     4.8e-08      0.56      2     144    40    0    0.5</span>
+<span class="comment">%    <span class="string">'PS'</span>       373.15    1.87e-08     0.584        1     112    90    0    0.5</span>
+    <span class="string">'PS'</span>       373.15     4.8e-08    0.584      2     144    40    0    0.5  <span class="comment">% variant better</span>
+    <span class="string">'PVAc'</span>     305.15    1.87e-08      0.86      4     142    40    0    0.5
+    <span class="string">'gPET'</span>      349.15    1.0205e-08    0.6761    5     252    65   0    0.6153 <span class="comment">% dry</span>
+    <span class="string">'wPET'</span>      316.15    1.02046e-08   0.6761    5     252    65   0    0.277734 <span class="comment">% wet</span>
+    }, ...
+    <span class="string">'VariableNames'</span>,{<span class="string">'polymer'</span>,<span class="string">'Tg'</span>,<span class="string">'D0'</span>,<span class="string">'xi'</span>,<span class="string">'ref'</span>,<span class="string">'Ka'</span>,<span class="string">'Kb'</span>,<span class="string">'E'</span>,<span class="string">'r'</span>})
+
+<span class="comment">% references</span>
+references = {
+<span class="string">'Vrentas and Vrentas, 1994'</span>
+<span class="string">'Zielinski and Duda, 1992'</span>
+<span class="string">'Lutzow \itet al.\rm, 1999'</span>
+<span class="string">'Hong, 1995'</span>
+<span class="comment">% toluene in PET</span>
+<span class="string">'Welle,2008'</span>
+<span class="string">'Pennarun \itet al.\rm, 2004'</span>
+<span class="string">'Welle,2013'</span>
+<span class="string">'our work (permeation)'</span>
+<span class="string">'our work (sorption)'</span>
+};
+
+
+lookup = @(P,p) data.(p)(find(ismember(data.polymer,P),1,<span class="string">'first'</span>)); 
+alpha = @(T,Tg,Ka,Kb) 1+ Ka/(T-Tg+Kb);<span class="comment">% <span class="keyword">for</span> T>=Tg </span>
+alphag = @(T,Tg,Ka,Kb,r) 1+Ka/(r*(T-Tg)+Kb); <span class="comment">% <span class="keyword">for</span> T<Tg</span>
+deltaT = 2; <span class="comment">% (K) sharpness of the transition at Tg</span>
+H = @(T,Tg) 1/2*(1+tanh(4/deltaT*(T-Tg))); <span class="comment">% Heaviside <span class="keyword">function</span></span>
+alphaT = @(T,Tg,Ka,Kb,r) H(Tg,T)*alphag(T,Tg,Ka,Kb,r) + H(T,Tg)*alpha(T,Tg,Ka,Kb); <span class="comment">% note H(Tg,T) = - H(T,Tg)</span>
+betalin = 1;
+Plike = @(T,P) (alphaT(T,lookup(P,<span class="string">'Tg'</span>),lookup(P,<span class="string">'Ka'</span>),lookup(P,<span class="string">'Kb'</span>),lookup(P,<span class="string">'r'</span>))+betalin)/0.24;
+DscalingPlike = @(T,P) lookup(P,<span class="string">'D0'</span>) * ...
+    exp(-lookup(P,<span class="string">'E'</span>)/(R*T)) * exp(-lookup(P,<span class="string">'xi'</span>)*Plike(T,P));
+
+<span class="comment">%% example</span>
+test = cell2table( {
+  <span class="comment">%  polymer       T          D        Dpred</span>
+  <span class="comment">% _________    ______    ________    ____________</span>
+     <span class="string">'PS'</span>        451.15       4e-11     3.1418e-11 
+     <span class="string">'PS'</span>        433.15     1.5e-11     2.5938e-11 
+     <span class="string">'PS'</span>        413.15       2e-12     1.8558e-11 
+     <span class="string">'PS'</span>        383.15     1.5e-13     9.9371e-12 
+     <span class="string">'PMMA'</span>      433.15       9e-13     1.1549e-12 
+     <span class="string">'PMMA'</span>      413.15       2e-13     4.0974e-13 
+     <span class="string">'PMMA'</span>      403.15       8e-14     2.0413e-13 
+     <span class="string">'LDPE'</span>      343.15       7e-11     2.3129e-11 
+     <span class="string">'PVAc'</span>      383.15       2e-12     1.9349e-13 
+     <span class="string">'PVAc'</span>      353.15       1e-13     4.4486e-14 
+     <span class="string">'PVAc'</span>      313.15       8e-16      3.594e-16 
+     <span class="string">'PS'</span>        388.15     7.2e-13     7.7047e-12 
+     <span class="string">'PS'</span>        451.15       4e-11     8.3385e-12 
+     <span class="string">'PS'</span>        433.15     1.5e-11     4.9264e-12 
+     <span class="string">'PS'</span>        413.15       2e-12     1.9212e-12 
+     <span class="string">'PS'</span>        383.15     1.5e-13     1.4127e-13 
+     <span class="string">'PS'</span>        388.15     7.2e-13     1.4933e-13 
+     <span class="string">'PMMA'</span>      433.15       9e-13     4.5605e-12 
+     <span class="string">'PMMA'</span>      413.15       2e-13     1.6536e-12 
+     <span class="string">'PMMA'</span>      403.15       8e-14       7.79e-13 
+     <span class="string">'wPET'</span>      313.15     4.1e-16     2.3712e-16 
+     <span class="string">'gPET'</span>      313.15       2e-18     2.3215e-18 
+     <span class="string">'gPET'</span>      313.15     3.8e-18     2.3215e-18 
+     <span class="string">'gPET'</span>      333.15     2.6e-17     9.3638e-17 
+     <span class="string">'wPET'</span>      313.15     6.3e-17     2.3712e-16 
+     <span class="string">'wPET'</span>      313.15     2.1e-16     2.3712e-16 
+     <span class="string">'wPET'</span>      313.15     4.8e-16     2.3712e-16  <span class="comment">% 27</span>
+     <span class="string">'wPET'</span>      323.15     4.1e-16     4.0409e-16 
+     <span class="string">'wPET'</span>      323.15     6.1e-16     4.0409e-16 
+     <span class="string">'gPET'</span>      373.15    3.26e-15     1.2513e-14 
+     <span class="string">'gPET'</span>      453.15    2.78e-12     5.4614e-13 
+     <span class="string">'gPET'</span>      434.15    1.17e-12     3.2078e-13 
+     <span class="string">'gPET'</span>      414.15     1.9e-13     1.5487e-13 
+     <span class="string">'gPET'</span>      394.15    2.47e-14     5.7378e-14 
+     },<span class="string">'VariableNames'</span>,{<span class="string">'polymer'</span>,<span class="string">'T'</span>,<span class="string">'Dexp'</span>,<span class="string">'Dpred'</span>});
+
+ntests = height(test);
+Dtest = zeros(ntests,1);
+<span class="keyword">for</span> i=1:ntests
+    T = test.T(i);    
+    P = test.polymer{i};
+    Dtest(i) = DscalingPlike(T,P);
+<span class="keyword">end</span>
+
+figure, plot(test.Dexp,Dtest,<span class="string">'o'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>)
+set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>,<span class="string">'yscale'</span>,<span class="string">'log'</span>)
+hr=refline(1,0); set(hr,<span class="string">'color'</span>,<span class="string">'k'</span>)
+xlabel(<span class="string">'experimental D values (m2/s)'</span>)
+ylabel(<span class="string">'predicted D values (m2/s)'</span>)
+title(<span class="string">'DFV vs. experimental D values'</span>)</code></pre></div>
 </div>
 </div>
 </div>

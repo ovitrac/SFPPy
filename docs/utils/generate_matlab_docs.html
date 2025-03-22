@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>generate_matlab_docs API documentation</title>
+<meta name="description" content="generate_matlab_docs.py …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>generate_matlab_docs</code></h1>
+</header>
+<section id="section-intro">
+<p>generate_matlab_docs.py</p>
+<p>Generates self-contained HTML documentation for the MATLAB functions of the Pizza3 project.</p>
+<p>This script scans the Pizza3 project's MATLAB (.m) files, extracts documentation from their comments,
+and compiles them into a structured, navigable HTML format. The generated documentation includes
+function descriptions, examples, notes, and collapsible sections for MATLAB code with minimal
+syntax highlighting.</p>
+<h2 id="usage">Usage</h2>
+<p>Ensure that this script is run from the <code>Pizza3/utils/</code> directory. If not, the script will exit
+with an error message.</p>
+<pre><code class="language-bash">python generate_matlab_docs.py
+</code></pre>
+<h2 id="output">Output</h2>
+<ul>
+<li>An <code>html</code> directory is created in the main project folder.</li>
+<li>An <code>index_matlab.html</code> file is generated within the <code>html</code> directory, containing the compiled
+documentation.</li>
+</ul>
+<h2 id="features">Features</h2>
+<ul>
+<li><strong>Directory and File Filtering</strong>: Excludes specified directories and files to avoid processing
+unwanted content.</li>
+<li><strong>Documentation Extraction</strong>: Extracts and formats help documentation from MATLAB comment blocks.</li>
+<li><strong>HTML Generation</strong>: Creates a navigable HTML interface with a sidebar for function navigation
+and a main panel for content display.</li>
+<li><strong>Styling and Interactivity</strong>: Includes CSS for styling and JavaScript for interactive elements
+such as collapsible code sections and dynamic content loading.</li>
+<li><strong>Syntax Highlighting</strong>: Applies minimal syntax highlighting to MATLAB code snippets.</li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<ul>
+<li><code>mainfolder</code>: The main project directory path.</li>
+<li><code>output_dir</code>: Directory path for the generated HTML documentation.</li>
+<li><code>output_file</code>: Name of the main HTML file.</li>
+<li><code>PIZZA3_VERSION</code>: Version identifier for the documentation.</li>
+<li><code>CONTACT</code>: Contact information for the maintainer.</li>
+<li><code>CSS_STYLE</code>: CSS styles applied to the generated HTML.</li>
+<li><code>JS_SCRIPT</code>: JavaScript for interactive functionality in the HTML.</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>Python 3.x</li>
+<li>Standard Python libraries:<ul>
+<li><code>os</code></li>
+<li><code>re</code></li>
+<li><code>sys</code></li>
+<li><code>datetime</code></li>
+<li><code>html</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>The script must be executed from the <code>Pizza3/utils/</code> directory where <code>pdocme.sh</code> is present.</li>
+</ul>
+<h2 id="example">Example</h2>
+<p>After running the script, open the generated <code>html/index_matlab.html</code> in a web browser to view the
+documentation.</p>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The script ensures that all generated HTML elements have valid IDs to facilitate internal linking.</li>
+<li>Collapsible sections enhance readability by allowing users to hide or show MATLAB code as needed.</li>
+<li>The navigation menu mirrors the directory structure of the MATLAB files, providing an intuitive
+browsing experience.</li>
+</ul>
+<h2 id="author">Author</h2>
+<ul>
+<li><strong>INRAE\Olivier Vitrac</strong></li>
+<li><strong>Email:</strong> olivier.vitrac@agroparistech.fr</li>
+<li><strong>Last Revised:</strong> 2025-01-17</li>
+</ul>
+<h2 id="version">Version</h2>
+<p>Pizza3 v.1.00</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+generate_matlab_docs.py
+
+Generates self-contained HTML documentation for the MATLAB functions of the Pizza3 project.
+
+This script scans the Pizza3 project&#39;s MATLAB (.m) files, extracts documentation from their comments,
+and compiles them into a structured, navigable HTML format. The generated documentation includes
+function descriptions, examples, notes, and collapsible sections for MATLAB code with minimal
+syntax highlighting.
+
+Usage:
+    Ensure that this script is run from the `Pizza3/utils/` directory. If not, the script will exit
+    with an error message.
+
+    ```bash
+    python generate_matlab_docs.py
+    ```
+
+Output:
+    - An `html` directory is created in the main project folder.
+    - An `index_matlab.html` file is generated within the `html` directory, containing the compiled
+      documentation.
+
+Features:
+    - **Directory and File Filtering**: Excludes specified directories and files to avoid processing
+      unwanted content.
+    - **Documentation Extraction**: Extracts and formats help documentation from MATLAB comment blocks.
+    - **HTML Generation**: Creates a navigable HTML interface with a sidebar for function navigation
+      and a main panel for content display.
+    - **Styling and Interactivity**: Includes CSS for styling and JavaScript for interactive elements
+      such as collapsible code sections and dynamic content loading.
+    - **Syntax Highlighting**: Applies minimal syntax highlighting to MATLAB code snippets.
+
+Configuration:
+    - `mainfolder`: The main project directory path.
+    - `output_dir`: Directory path for the generated HTML documentation.
+    - `output_file`: Name of the main HTML file.
+    - `PIZZA3_VERSION`: Version identifier for the documentation.
+    - `CONTACT`: Contact information for the maintainer.
+    - `CSS_STYLE`: CSS styles applied to the generated HTML.
+    - `JS_SCRIPT`: JavaScript for interactive functionality in the HTML.
+
+Dependencies:
+    - Python 3.x
+    - Standard Python libraries:
+        - `os`
+        - `re`
+        - `sys`
+        - `datetime`
+        - `html`
+
+Requirements:
+    - The script must be executed from the `Pizza3/utils/` directory where `pdocme.sh` is present.
+
+Example:
+    After running the script, open the generated `html/index_matlab.html` in a web browser to view the
+    documentation.
+
+Notes:
+    - The script ensures that all generated HTML elements have valid IDs to facilitate internal linking.
+    - Collapsible sections enhance readability by allowing users to hide or show MATLAB code as needed.
+    - The navigation menu mirrors the directory structure of the MATLAB files, providing an intuitive
+      browsing experience.
+
+Author:
+    - **INRAE\Olivier Vitrac**
+    - **Email:** olivier.vitrac@agroparistech.fr
+    - **Last Revised:** 2025-01-17
+
+Version:
+    Pizza3 v.1.00
+
+&#34;&#34;&#34;
+
+import os
+import re
+import sys
+from datetime import datetime
+import html
+
+# Ensure the script is run from Pizza3/utils/
+if not os.path.isfile(&#34;pdocme.sh&#34;):
+    print(&#34;Error: This script must be run from the Pizza3/utils/ directory.&#34;)
+    sys.exit(1)
+
+# Root folder and version file
+mainfolder = os.path.realpath(os.path.join(&#34;..&#34;))
+version_file = os.path.join(mainfolder, &#34;utils&#34;, &#34;VERSION.txt&#34;)
+def get_version():
+    &#34;&#34;&#34;Extract the version number of Pizza3 from version_file.&#34;&#34;&#34;
+    if not os.path.isfile(version_file):
+        sys.stderr.write(f&#34;Error: {version_file} not found. Please create a file with content: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+        sys.exit(1)
+    with open(version_file, &#34;r&#34;) as f:
+        for line in f:
+            line = line.strip()
+            match = re.match(r&#39;^version\s*=\s*&#34;(.*?)&#34;$&#39;, line)
+            if match:
+                return match.group(1)
+    sys.stderr.write(f&#34;Error: No valid version string found in {version_file}. Ensure it contains: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+    sys.exit(1)
+
+# Configuration
+output_dir = os.path.join(mainfolder, &#34;html&#34;)
+output_file = &#34;index_matlab.html&#34;
+PIZZA3_VERSION = f&#34;Pizza3 v.{get_version()}&#34;
+CONTACT = &#34;INRAE\\olivier.vitrac@agroparistech.fr&#34;
+
+# CSS Style with toggle button integration and dynamic sidebar collapse
+CSS_STYLE = &#34;&#34;&#34;
+body {
+    font-family: &#39;Segoe UI&#39;, Arial, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #f9f9f9; 
+    color: #333;
+}
+header {
+    background: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    position: relative; /* For positioning the toggle button */
+}
+header h1 {
+    margin: 0; 
+    font-size: 1.5em;
+    color: #fff; /* Explicitly set to white */
+    padding-left: 50px; /* Space for the toggle button */
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px); /* Adjusted for header height */
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+#nav {
+    width: 300px; /* Set a fixed width */
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: width 0.3s ease, padding 0.3s ease; /* Transition for smooth animations */
+    flex-shrink: 0; /* Prevent flexbox from shrinking */
+}
+#nav.collapsed {
+    width: 0; /* Hide the sidebar completely */
+    padding: 20px 0; /* Optionally adjust padding */
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Enable transitions for smooth animations */
+}
+header .toggle-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    left: 10px; /* Place the button on the left */
+    background-color: #4CAF50; /* Green background */
+    border: none;
+    color: white; /* Ensure the hamburger icon is white */
+    padding: 10px 12px; /* Adjust padding for larger button */
+    cursor: pointer;
+    font-size: 1.2em; /* Increase font size for better visibility */
+    border-radius: 4px;
+    z-index: 1001; /* Ensure the button is above other elements */
+}
+header .toggle-btn:hover {
+    background-color: #45a049;
+}
+header .toggle-btn kbd {
+    font-family: &#39;Arial&#39;, sans-serif; /* Match the header font */
+    color: white; /* Ensure the hamburger icon is white */
+    font-size: 1.2em; /* Same size as the button text */
+    background: none; /* Remove any background styling from &lt;kbd&gt; */
+    border: none; /* Remove any borders from &lt;kbd&gt; */
+}
+h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+h2 {
+    color: #333; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 5px;
+}
+a {
+    text-decoration: none; 
+    color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul {
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+}
+li {
+    margin: 5px 0;
+}
+.folder-title {
+    font-weight: bold; 
+    color: #333; 
+    padding: 5px 0;
+    cursor: pointer;
+}
+.folder-content {
+    margin-left: 20px;
+    display: none; /* start collapsed */
+}
+.file {
+    margin-left: 20px;
+}
+hr {
+    margin: 20px 0; 
+    border: 1px solid #ddd;
+}
+footer {
+    font-size: 0.9em; 
+    color: #666; 
+    margin-top: 20px; 
+    text-align: center;
+}
+/* Enhanced Table Styling with Banded Colors */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+tr:nth-child(odd) {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green for odd rows */
+}
+/* Collapsible Code Section */
+.collapsible {
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+}
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+/* Minimal Syntax Highlighting */
+.code {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    font-family: &#39;Courier New&#39;, Courier, monospace;
+    color: #333;
+}
+.keyword {
+    color: #007BFF;
+    font-weight: bold;
+}
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+.string {
+    color: #a31515;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px; /* Height of the header */
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+    #nav.collapsed {
+        width: 0; /* Hide the sidebar completely */
+        padding: 20px 0; /* Adjust padding */
+    }
+    #main {
+        flex: 1;
+    }
+    /* Add overlay when sidebar is open on mobile */
+    body.nav-open::before {
+        content: &#34;&#34;;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 50px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+&#34;&#34;&#34;
+
+# JavaScript for toggle functionality and dynamic content display
+JS_SCRIPT = &#34;&#34;&#34;
+// Toggle visibility of folder contents
+function toggleFolder(el) {
+    var content = el.nextElementSibling;
+    if (content.style.display === &#34;none&#34; || content.style.display === &#34;&#34;) {
+        content.style.display = &#34;block&#34;;
+    } else {
+        content.style.display = &#34;none&#34;;
+    }
+};
+
+// Load documentation into the main panel
+function loadDoc(id) {
+    // Hide all documentation sections
+    var docs = document.getElementsByClassName(&#39;doc-content&#39;);
+    for (var i = 0; i &lt; docs.length; i++) {
+        docs[i].style.display = &#39;none&#39;;
+    }
+    // Hide the welcome message
+    var welcome = document.getElementById(&#39;welcome-message&#39;);
+    if (welcome) {
+        welcome.style.display = &#39;none&#39;;
+    }
+    // Show the selected documentation
+    var selectedDoc = document.getElementById(id);
+    if (selectedDoc) {
+        selectedDoc.style.display = &#39;block&#39;;
+    }
+    
+    // Reinitialize collapsible buttons within the displayed documentation
+    var coll = selectedDoc.getElementsByClassName(&#34;collapsible&#34;);
+    for (var i = 0; i &lt; coll.length; i++) {
+        // Remove existing event listeners to prevent multiple bindings
+        coll[i].removeEventListener(&#34;click&#34;, toggleCollapsible);
+        // Add event listener
+        coll[i].addEventListener(&#34;click&#34;, toggleCollapsible);
+    }
+}
+
+// Function to toggle collapsible sections
+function toggleCollapsible() {
+    this.classList.toggle(&#34;active&#34;);
+    var content = this.nextElementSibling;
+    if (content.style.display === &#34;block&#34;) {
+        content.style.display = &#34;none&#34;;
+    } else {
+        content.style.display = &#34;block&#34;;
+    }
+}
+
+// Toggle Sidebar Functionality
+const toggleButton = document.getElementById(&#39;toggleSidebar&#39;);
+const nav = document.getElementById(&#39;nav&#39;);
+
+toggleButton.addEventListener(&#39;click&#39;, () =&gt; {
+    nav.classList.toggle(&#39;collapsed&#39;);
+    document.body.classList.toggle(&#39;nav-open&#39;); // Toggle overlay on small screens
+    // Change icon based on sidebar state
+    if(nav.classList.contains(&#39;collapsed&#39;)) {
+        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;&#39;; // Hamburger icon
+        toggleButton.setAttribute(&#39;aria-expanded&#39;, &#39;false&#39;);
+    } else {
+        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#10005;&lt;/kbd&gt;&#39;; // Close icon (X)
+        toggleButton.setAttribute(&#39;aria-expanded&#39;, &#39;true&#39;);
+    }
+});
+
+// Handle URL hash on page load to display the corresponding documentation or welcome page
+window.addEventListener(&#39;load&#39;, function() {
+    const hash = window.location.hash.substring(1);
+    const docs = document.querySelectorAll(&#39;.doc-content&#39;);
+    if(hash) {
+        docs.forEach(doc =&gt; {
+            if(doc.id === hash) {
+                doc.style.display = &#39;block&#39;;
+            } else {
+                doc.style.display = &#39;none&#39;;
+            }
+        });
+        // If sidebar is open on small screens, ensure it&#39;s visible
+        if (window.innerWidth &lt;= 768 &amp;&amp; !nav.classList.contains(&#39;collapsed&#39;)) {
+            document.body.classList.add(&#39;nav-open&#39;);
+        }
+    } else {
+        // Show welcome content if no hash is present
+        const welcome = document.getElementById(&#39;welcome-message&#39;);
+        if(welcome) {
+            welcome.style.display = &#39;block&#39;;
+        }
+    }
+});
+&#34;&#34;&#34;
+
+# Build a list of MATLAB files, excluding certain directories or files
+excluded_dirs = [
+    &#34;fork&#34;,
+    &#34;history&#34;,
+    &#34;help&#34;,
+    &#34;debug&#34;,
+    &#34;fork&#34;,
+    &#34;tmp&#34;,
+    &#34;PIL&#34;,
+    &#34;restore&#34;,
+    &#34;__all__&#34;,
+    &#34;windowsONLY&#34;
+]
+
+excluded_files = [
+    &#34;__init__.m&#34;,
+    &#34;__main__.m&#34;,
+    &#34;manifest.m&#34;,
+    &#34;debug.m&#34;
+]
+
+def is_excluded(path):
+    # Check if path contains any excluded directory
+    for d in excluded_dirs:
+        if os.path.sep + d + os.path.sep in path:
+            return True
+    # Check if file is excluded
+    basename = os.path.basename(path)
+    if basename in excluded_files:
+        return True
+    return False
+
+matlab_files = []
+for root, dirs, files in os.walk(mainfolder):
+    # filter out excluded dirs
+    dirs[:] = [d for d in dirs if d not in excluded_dirs]
+    for f in files:
+        if f.endswith(&#34;.m&#34;):
+            full_path = os.path.join(root, f)
+            if not is_excluded(full_path):
+                matlab_files.append(full_path)
+
+matlab_files.sort()
+
+# Function to extract documentation from a MATLAB file
+def extract_matlab_doc(filepath):
+    &#34;&#34;&#34;
+    Extracts MATLAB help from a .m file according to the standard MATLAB format.
+    Enhancements:
+    - Correctly captures the function name from the function definition.
+    - If no function line is found, uses the filename as the function name.
+    - Ensures that the entire help block is captured, not just until the first empty line.
+    - Recognizes &#34;NOTE:&#34;, &#34;Note:&#34;, &#34;note:&#34;, &#34;EXAMPLES:&#34;, etc., and handles multi-line content.
+    - Includes the MATLAB code in a collapsible section with minimal syntax highlighting.
+    &#34;&#34;&#34;
+    doc_lines = []
+    function_name = None
+    inside_help = False
+    with open(filepath, &#39;r&#39;, encoding=&#39;utf-8&#39;, errors=&#39;replace&#39;) as f:
+        lines = f.readlines()
+
+    # First pass: Try to find the function line with improved regex
+    for idx, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith(&#34;function&#34;):
+            # Improved regex to capture the function name correctly
+            match = re.match(r&#39;^function\s+(?:\[[^\]]*\]\s*=\s*)?(?:[A-Za-z0-9_]+\s*=\s*)?([A-Za-z0-9_]+)&#39;, stripped)
+            if match:
+                function_name = match.group(1)
+            # Start looking for help after this line
+            help_start_idx = idx + 1
+            break
+    else:
+        # No function line found; use filename as function name
+        function_name = os.path.splitext(os.path.basename(filepath))[0]
+        help_start_idx = 0  # Start from the beginning of the file
+
+    # Extract help lines
+    for line in lines[help_start_idx:]:
+        stripped = line.strip()
+        if stripped.startswith(&#34;%&#34;):
+            # Remove the leading &#39;%&#39; and one space if present
+            helpline = stripped.lstrip(&#39;%&#39;).lstrip()
+            doc_lines.append(helpline)
+            inside_help = True
+        else:
+            # If we were inside help and hit a non-% line, stop
+            if inside_help:
+                break
+
+    # If no help was found after function line, and no function line exists, check for leading comments
+    if not doc_lines and function_name == os.path.splitext(os.path.basename(filepath))[0]:
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith(&#34;%&#34;):
+                helpline = stripped.lstrip(&#39;%&#39;).lstrip()
+                doc_lines.append(helpline)
+            else:
+                break  # Stop at first non-comment line
+
+    # Now doc_lines contains the help block
+    if not doc_lines:
+        # No help available
+        html_content = &#34;&lt;p&gt;No help available.&lt;/p&gt;&#34;
+    else:
+        # Process help lines
+        # The first line is considered the synopsis
+        title_line = doc_lines[0]
+        html_lines = []
+        html_lines.append(f&#34;&lt;h1&gt;{html.escape(title_line)}&lt;/h1&gt;&#34;)
+
+        # Define keywords and their corresponding HTML tags
+        keywords = {
+            &#34;EXAMPLES:&#34;: &#34;Examples&#34;,
+            &#34;EXAMPLE:&#34;: &#34;Example&#34;,
+            &#34;SEE ALSO:&#34;: &#34;See also&#34;,
+            &#34;CREDITS:&#34;: &#34;Credits&#34;,
+            &#34;NOTE:&#34;: &#34;Note&#34;,
+            &#34;NOTES:&#34;: &#34;Notes&#34;,
+            &#34;AUTHOR:&#34;: &#34;Author&#34;,
+            &#34;AUTHORS:&#34;: &#34;Authors&#34;
+        }
+
+        # Regular expression to detect keywords
+        keyword_regex = re.compile(r&#39;^(EXAMPLES?:|SEE ALSO:|CREDITS?:|NOTES?:|AUTHORS?:)&#39;, re.IGNORECASE)
+
+        current_section = None
+        section_content = []
+
+        def flush_section():
+            nonlocal current_section, section_content
+            if current_section:
+                if current_section.lower() == &#34;see also&#34;:
+                    # Process SEE ALSO links
+                    links = []
+                    for item in re.split(r&#39;[,\s]+&#39;, &#39; &#39;.join(section_content)):
+                        if item in all_functions:
+                            # Construct internal link
+                            links.append(f&#39;&lt;a href=&#34;#{item}&#34;&gt;{html.escape(item)}&lt;/a&gt;&#39;)
+                        else:
+                            links.append(html.escape(item))
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    html_lines.append(&#34;&lt;p&gt;&#34; + &#34;, &#34;.join(links) + &#34;&lt;/p&gt;&#34;)
+                elif current_section.lower() in [&#34;examples&#34;, &#34;example&#34;]:
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    # Preserve indentation and line breaks
+                    html_lines.append(&#34;&lt;pre class=&#39;code&#39;&gt;&lt;code class=&#39;language-matlab&#39;&gt;&#34; + html.escape(&#39;\n&#39;.join(section_content)) + &#34;&lt;/code&gt;&lt;/pre&gt;&#34;)
+                elif current_section.lower() in [&#34;note&#34;, &#34;notes&#34;]:
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    html_lines.append(&#34;&lt;p&gt;&#34; + &#34;&lt;br/&gt;&#34;.join(html.escape(line) for line in section_content) + &#34;&lt;/p&gt;&#34;)
+                else:
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    html_lines.append(&#34;&lt;p&gt;&#34; + &#34;&lt;br/&gt;&#34;.join(html.escape(line) for line in section_content) + &#34;&lt;/p&gt;&#34;)
+                section_content = []
+            elif section_content:
+                # Regular paragraph
+                html_lines.append(&#34;&lt;p&gt;&#34; + &#34;&lt;br/&gt;&#34;.join(html.escape(line) for line in section_content) + &#34;&lt;/p&gt;&#34;)
+                section_content = []
+
+        # Collect all function names for linking in SEE ALSO
+        all_functions = [os.path.splitext(os.path.basename(x))[0] for x in matlab_files]
+
+        # Iterate over the help lines starting from the second line
+        for line in doc_lines[1:]:
+            if not line.strip():
+                flush_section()
+                continue
+            keyword_match = keyword_regex.match(line)
+            if keyword_match:
+                flush_section()
+                key = keyword_match.group(1).rstrip(&#39;:&#39;).capitalize()
+                current_section = keywords.get(keyword_match.group(1).upper(), key)
+                remainder = line[keyword_match.end():].strip()
+                if remainder:
+                    section_content.append(remainder)
+            else:
+                section_content.append(line)
+
+        # Flush any remaining content
+        flush_section()
+
+        # Insert collapsible MATLAB code
+        # Extract the MATLAB code from the file
+        matlab_code = &#39;&#39;.join(lines)
+        # Minimal Syntax Highlighting using CSS classes
+        # Simple regex-based highlighting for keywords, comments, and strings
+        def syntax_highlight(code):
+            # Highlight comments
+            code = re.sub(r&#39;(%[^\n]*)&#39;, r&#39;&lt;span class=&#34;comment&#34;&gt;\1&lt;/span&gt;&#39;, code)
+            # Highlight strings
+            code = re.sub(r&#39;(\&#39;[^\&#39;]*\&#39;)&#39;, r&#39;&lt;span class=&#34;string&#34;&gt;\1&lt;/span&gt;&#39;, code)
+            # Highlight keywords (a minimal set)
+            keywords = [&#39;function&#39;, &#39;end&#39;, &#39;if&#39;, &#39;else&#39;, &#39;elseif&#39;, &#39;for&#39;, &#39;while&#39;, &#39;switch&#39;, &#39;case&#39;, &#39;otherwise&#39;, &#39;return&#39;]
+            pattern = r&#39;\b(&#39; + &#39;|&#39;.join(keywords) + r&#39;)\b&#39;
+            code = re.sub(pattern, r&#39;&lt;span class=&#34;keyword&#34;&gt;\1&lt;/span&gt;&#39;, code)
+            return code
+
+        highlighted_code = syntax_highlight(matlab_code)
+
+        # Add collapsible section
+        html_lines.append(&#39;&lt;button class=&#34;collapsible&#34;&gt;Show MATLAB Code&lt;/button&gt;&#39;)
+        html_lines.append(&#39;&lt;div class=&#34;content&#34;&gt;&lt;pre class=&#34;code&#34;&gt;&lt;code class=&#34;language-matlab&#34;&gt;&#39; + highlighted_code + &#39;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&#39;)
+
+        # Join all HTML lines
+        html_content = &#34;\n&#34;.join(html_lines)
+
+    return function_name, html_content
+
+# Extract docs from all .m files and generate HTML snippets
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+# Collect all function names for linking purposes
+all_function_names = [os.path.splitext(os.path.basename(x))[0] for x in matlab_files]
+
+# Create a structure (directory nav) similar to the Python version
+file_structure = {}
+for fpath in matlab_files:
+    rel = os.path.relpath(fpath, mainfolder)
+    d = os.path.dirname(rel)
+    b = os.path.splitext(os.path.basename(rel))[0]
+    if d not in file_structure:
+        file_structure[d] = []
+    file_structure[d].append(b)
+
+# Sort directories and files
+sorted_dirs = sorted(file_structure.keys())
+for d in sorted_dirs:
+    file_structure[d].sort()
+
+# Generate individual HTML content for each function (hidden by default)
+docs_html = &#34;&#34;
+for fpath in matlab_files:
+    function_name, html_doc = extract_matlab_doc(fpath)
+    # Ensure that function_name is a valid HTML id (no spaces, special chars)
+    valid_id = re.sub(r&#39;\s+&#39;, &#39;_&#39;, function_name)
+    valid_id = re.sub(r&#39;[^\w\-]&#39;, &#39;&#39;, valid_id)
+    # Create a div with id equal to valid_id
+    docs_html += f&#34;&lt;div id=&#39;{html.escape(valid_id)}&#39; class=&#39;doc-content&#39; style=&#39;display: none;&#39;&gt;\n&#34;
+    docs_html += html_doc + &#34;\n&#34;
+    docs_html += &#34;&lt;/div&gt;\n&#34;
+
+# Generate index_matlab.html
+index_file = os.path.join(output_dir, output_file)
+with open(index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as fout:
+    fout.write(&#34;&lt;!DOCTYPE html&gt;\n&lt;html lang=&#39;en&#39;&gt;\n&lt;head&gt;\n&#34;)
+    fout.write(&#34;&lt;meta charset=&#39;UTF-8&#39;&gt;\n&#34;)
+    fout.write(&#34;&lt;meta name=&#39;viewport&#39; content=&#39;width=device-width, initial-scale=1.0&#39;&gt;\n&#34;)
+    fout.write(&#34;&lt;title&gt;Pizza3 Matlab Documentation&lt;/title&gt;\n&#34;)
+    fout.write(f&#34;&lt;style&gt;{CSS_STYLE}&lt;/style&gt;\n&#34;)
+    fout.write(&#34;&lt;/head&gt;\n&lt;body&gt;\n&#34;)
+    fout.write(&#34;&lt;header&gt;\n&#34;)
+    fout.write(&#34;    &lt;!-- Toggle Sidebar Button --&gt;\n&#34;)
+    fout.write(&#34;    &lt;button class=&#39;toggle-btn&#39; id=&#39;toggleSidebar&#39; aria-label=&#39;Toggle Sidebar&#39; aria-expanded=&#39;false&#39;&gt;\n&#34;)
+    fout.write(&#34;        &lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;\n&#34;)
+    fout.write(&#34;    &lt;/button&gt;\n&#34;)
+    fout.write(&#34;    &lt;h1&gt;Pizza3 Documentation&lt;/h1&gt;\n&#34;)
+    fout.write(&#34;&lt;/header&gt;\n&#34;)
+    fout.write(&#34;&lt;div id=&#39;content&#39;&gt;\n&#34;)
+    fout.write(&#34;&lt;div id=&#39;nav&#39;&gt;\n&#34;)
+    fout.write(f&#34;&lt;p&gt;&lt;strong&gt;Version:&lt;/strong&gt; {html.escape(PIZZA3_VERSION)}&lt;/p&gt;\n&#34;)
+    fout.write(f&#34;&lt;p&gt;&lt;strong&gt;Maintained by:&lt;/strong&gt; {html.escape(CONTACT)}&lt;/p&gt;\n&#34;)
+    fout.write(&#34;&lt;hr&gt;\n&#34;)
+    # Build the nav menu
+    fout.write(&#34;&lt;ul class=&#39;folder-list&#39;&gt;\n&#34;)
+    for d in sorted_dirs:
+        dirname = d if d != &#34;.&#34; else &#34;(root)&#34;
+        fout.write(f&#34;&lt;li class=&#39;folder&#39;&gt;\n&#34;)
+        fout.write(f&#34;&lt;div class=&#39;folder-title&#39; onclick=&#39;toggleFolder(this)&#39;&gt;{html.escape(dirname)}&lt;/div&gt;\n&#34;)
+        fout.write(&#34;&lt;ul class=&#39;folder-content&#39;&gt;\n&#34;)
+        for fname in file_structure[d]:
+            # Ensure that fname corresponds to a valid_id
+            valid_id = re.sub(r&#39;\s+&#39;, &#39;_&#39;, fname)
+            valid_id = re.sub(r&#39;[^\w\-]&#39;, &#39;&#39;, valid_id)
+            fout.write(f&#34;&lt;li class=&#39;file&#39;&gt;&lt;a href=&#39;#{html.escape(valid_id)}&#39; onclick=\&#34;loadDoc(&#39;{html.escape(valid_id)}&#39;)\&#34;&gt;{html.escape(fname)}&lt;/a&gt;&lt;/li&gt;\n&#34;)
+        fout.write(&#34;&lt;/ul&gt;\n&lt;/li&gt;\n&#34;)
+    fout.write(&#34;&lt;/ul&gt;\n&lt;/div&gt;\n&#34;)  # end nav
+    fout.write(&#34;&lt;div id=&#39;main&#39;&gt;\n&#34;)
+    fout.write(&#34;&lt;div id=&#39;welcome-message&#39;&gt;\n&#34;)
+    fout.write(&#34;&lt;h2&gt;Welcome to Pizza3 Matlab Documentation&lt;/h2&gt;\n&#34;)
+    fout.write(&#34;&lt;p&gt;Select a function in the left menu to view its documentation.&lt;/p&gt;\n&#34;)
+    fout.write(&#34;&lt;p&gt;POST examples are fully detailed &lt;a href=&#39;post/index_post.html&#39; target=&#39;_blank&#39;&gt;here&lt;/a&gt;.&lt;/p&gt;\n&#34;)
+    fout.write(&#34;&lt;p&gt;Back to the &lt;a href=&#39;index.html&#39;&gt;Python&#39;Pizza3 documentation&lt;/a&gt;.&lt;/p&gt;\n&#34;)
+    fout.write(&#34;&lt;hr&gt;\n&#34;)
+    fout.write(&#34;&lt;p&gt;&lt;i&gt;When no function is selected, you see this welcome page.&lt;/i&gt;&lt;/p&gt;\n&#34;)
+    # Print the date
+    current_datetime = datetime.now()
+    formatted_datetime = current_datetime.strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+    fout.write(f&#34;Generated on: {formatted_datetime}&#34;)
+    fout.write(&#34;&lt;/div&gt;\n&#34;)
+    # Insert all documentation content inside #main
+    fout.write(docs_html)
+    fout.write(&#34;&lt;/div&gt;\n&#34;)  # end main
+    fout.write(&#34;&lt;/div&gt;\n&#34;)  # end content
+    # Insert JavaScript at the end of the body
+    fout.write(&#34;&lt;script&gt;&#34;)
+    fout.write(JS_SCRIPT)
+    fout.write(&#34;&lt;/script&gt;\n&#34;)
+    fout.write(&#34;&lt;/body&gt;\n&lt;/html&gt;&#34;)
+
+print(f&#34;Documentation generation completed. Output in {output_dir}&#34;)
+print(f&#34;Index created at {index_file}&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="generate_matlab_docs.extract_matlab_doc"><code class="name flex">
+<span>def <span class="ident">extract_matlab_doc</span></span>(<span>filepath)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extracts MATLAB help from a .m file according to the standard MATLAB format.
+Enhancements:
+- Correctly captures the function name from the function definition.
+- If no function line is found, uses the filename as the function name.
+- Ensures that the entire help block is captured, not just until the first empty line.
+- Recognizes "NOTE:", "Note:", "note:", "EXAMPLES:", etc., and handles multi-line content.
+- Includes the MATLAB code in a collapsible section with minimal syntax highlighting.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_matlab_doc(filepath):
+    &#34;&#34;&#34;
+    Extracts MATLAB help from a .m file according to the standard MATLAB format.
+    Enhancements:
+    - Correctly captures the function name from the function definition.
+    - If no function line is found, uses the filename as the function name.
+    - Ensures that the entire help block is captured, not just until the first empty line.
+    - Recognizes &#34;NOTE:&#34;, &#34;Note:&#34;, &#34;note:&#34;, &#34;EXAMPLES:&#34;, etc., and handles multi-line content.
+    - Includes the MATLAB code in a collapsible section with minimal syntax highlighting.
+    &#34;&#34;&#34;
+    doc_lines = []
+    function_name = None
+    inside_help = False
+    with open(filepath, &#39;r&#39;, encoding=&#39;utf-8&#39;, errors=&#39;replace&#39;) as f:
+        lines = f.readlines()
+
+    # First pass: Try to find the function line with improved regex
+    for idx, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith(&#34;function&#34;):
+            # Improved regex to capture the function name correctly
+            match = re.match(r&#39;^function\s+(?:\[[^\]]*\]\s*=\s*)?(?:[A-Za-z0-9_]+\s*=\s*)?([A-Za-z0-9_]+)&#39;, stripped)
+            if match:
+                function_name = match.group(1)
+            # Start looking for help after this line
+            help_start_idx = idx + 1
+            break
+    else:
+        # No function line found; use filename as function name
+        function_name = os.path.splitext(os.path.basename(filepath))[0]
+        help_start_idx = 0  # Start from the beginning of the file
+
+    # Extract help lines
+    for line in lines[help_start_idx:]:
+        stripped = line.strip()
+        if stripped.startswith(&#34;%&#34;):
+            # Remove the leading &#39;%&#39; and one space if present
+            helpline = stripped.lstrip(&#39;%&#39;).lstrip()
+            doc_lines.append(helpline)
+            inside_help = True
+        else:
+            # If we were inside help and hit a non-% line, stop
+            if inside_help:
+                break
+
+    # If no help was found after function line, and no function line exists, check for leading comments
+    if not doc_lines and function_name == os.path.splitext(os.path.basename(filepath))[0]:
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith(&#34;%&#34;):
+                helpline = stripped.lstrip(&#39;%&#39;).lstrip()
+                doc_lines.append(helpline)
+            else:
+                break  # Stop at first non-comment line
+
+    # Now doc_lines contains the help block
+    if not doc_lines:
+        # No help available
+        html_content = &#34;&lt;p&gt;No help available.&lt;/p&gt;&#34;
+    else:
+        # Process help lines
+        # The first line is considered the synopsis
+        title_line = doc_lines[0]
+        html_lines = []
+        html_lines.append(f&#34;&lt;h1&gt;{html.escape(title_line)}&lt;/h1&gt;&#34;)
+
+        # Define keywords and their corresponding HTML tags
+        keywords = {
+            &#34;EXAMPLES:&#34;: &#34;Examples&#34;,
+            &#34;EXAMPLE:&#34;: &#34;Example&#34;,
+            &#34;SEE ALSO:&#34;: &#34;See also&#34;,
+            &#34;CREDITS:&#34;: &#34;Credits&#34;,
+            &#34;NOTE:&#34;: &#34;Note&#34;,
+            &#34;NOTES:&#34;: &#34;Notes&#34;,
+            &#34;AUTHOR:&#34;: &#34;Author&#34;,
+            &#34;AUTHORS:&#34;: &#34;Authors&#34;
+        }
+
+        # Regular expression to detect keywords
+        keyword_regex = re.compile(r&#39;^(EXAMPLES?:|SEE ALSO:|CREDITS?:|NOTES?:|AUTHORS?:)&#39;, re.IGNORECASE)
+
+        current_section = None
+        section_content = []
+
+        def flush_section():
+            nonlocal current_section, section_content
+            if current_section:
+                if current_section.lower() == &#34;see also&#34;:
+                    # Process SEE ALSO links
+                    links = []
+                    for item in re.split(r&#39;[,\s]+&#39;, &#39; &#39;.join(section_content)):
+                        if item in all_functions:
+                            # Construct internal link
+                            links.append(f&#39;&lt;a href=&#34;#{item}&#34;&gt;{html.escape(item)}&lt;/a&gt;&#39;)
+                        else:
+                            links.append(html.escape(item))
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    html_lines.append(&#34;&lt;p&gt;&#34; + &#34;, &#34;.join(links) + &#34;&lt;/p&gt;&#34;)
+                elif current_section.lower() in [&#34;examples&#34;, &#34;example&#34;]:
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    # Preserve indentation and line breaks
+                    html_lines.append(&#34;&lt;pre class=&#39;code&#39;&gt;&lt;code class=&#39;language-matlab&#39;&gt;&#34; + html.escape(&#39;\n&#39;.join(section_content)) + &#34;&lt;/code&gt;&lt;/pre&gt;&#34;)
+                elif current_section.lower() in [&#34;note&#34;, &#34;notes&#34;]:
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    html_lines.append(&#34;&lt;p&gt;&#34; + &#34;&lt;br/&gt;&#34;.join(html.escape(line) for line in section_content) + &#34;&lt;/p&gt;&#34;)
+                else:
+                    html_lines.append(f&#34;&lt;h2&gt;{html.escape(current_section)}&lt;/h2&gt;&#34;)
+                    html_lines.append(&#34;&lt;p&gt;&#34; + &#34;&lt;br/&gt;&#34;.join(html.escape(line) for line in section_content) + &#34;&lt;/p&gt;&#34;)
+                section_content = []
+            elif section_content:
+                # Regular paragraph
+                html_lines.append(&#34;&lt;p&gt;&#34; + &#34;&lt;br/&gt;&#34;.join(html.escape(line) for line in section_content) + &#34;&lt;/p&gt;&#34;)
+                section_content = []
+
+        # Collect all function names for linking in SEE ALSO
+        all_functions = [os.path.splitext(os.path.basename(x))[0] for x in matlab_files]
+
+        # Iterate over the help lines starting from the second line
+        for line in doc_lines[1:]:
+            if not line.strip():
+                flush_section()
+                continue
+            keyword_match = keyword_regex.match(line)
+            if keyword_match:
+                flush_section()
+                key = keyword_match.group(1).rstrip(&#39;:&#39;).capitalize()
+                current_section = keywords.get(keyword_match.group(1).upper(), key)
+                remainder = line[keyword_match.end():].strip()
+                if remainder:
+                    section_content.append(remainder)
+            else:
+                section_content.append(line)
+
+        # Flush any remaining content
+        flush_section()
+
+        # Insert collapsible MATLAB code
+        # Extract the MATLAB code from the file
+        matlab_code = &#39;&#39;.join(lines)
+        # Minimal Syntax Highlighting using CSS classes
+        # Simple regex-based highlighting for keywords, comments, and strings
+        def syntax_highlight(code):
+            # Highlight comments
+            code = re.sub(r&#39;(%[^\n]*)&#39;, r&#39;&lt;span class=&#34;comment&#34;&gt;\1&lt;/span&gt;&#39;, code)
+            # Highlight strings
+            code = re.sub(r&#39;(\&#39;[^\&#39;]*\&#39;)&#39;, r&#39;&lt;span class=&#34;string&#34;&gt;\1&lt;/span&gt;&#39;, code)
+            # Highlight keywords (a minimal set)
+            keywords = [&#39;function&#39;, &#39;end&#39;, &#39;if&#39;, &#39;else&#39;, &#39;elseif&#39;, &#39;for&#39;, &#39;while&#39;, &#39;switch&#39;, &#39;case&#39;, &#39;otherwise&#39;, &#39;return&#39;]
+            pattern = r&#39;\b(&#39; + &#39;|&#39;.join(keywords) + r&#39;)\b&#39;
+            code = re.sub(pattern, r&#39;&lt;span class=&#34;keyword&#34;&gt;\1&lt;/span&gt;&#39;, code)
+            return code
+
+        highlighted_code = syntax_highlight(matlab_code)
+
+        # Add collapsible section
+        html_lines.append(&#39;&lt;button class=&#34;collapsible&#34;&gt;Show MATLAB Code&lt;/button&gt;&#39;)
+        html_lines.append(&#39;&lt;div class=&#34;content&#34;&gt;&lt;pre class=&#34;code&#34;&gt;&lt;code class=&#34;language-matlab&#34;&gt;&#39; + highlighted_code + &#39;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&#39;)
+
+        # Join all HTML lines
+        html_content = &#34;\n&#34;.join(html_lines)
+
+    return function_name, html_content</code></pre>
+</details>
+</dd>
+<dt id="generate_matlab_docs.get_version"><code class="name flex">
+<span>def <span class="ident">get_version</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract the version number of Pizza3 from version_file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_version():
+    &#34;&#34;&#34;Extract the version number of Pizza3 from version_file.&#34;&#34;&#34;
+    if not os.path.isfile(version_file):
+        sys.stderr.write(f&#34;Error: {version_file} not found. Please create a file with content: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+        sys.exit(1)
+    with open(version_file, &#34;r&#34;) as f:
+        for line in f:
+            line = line.strip()
+            match = re.match(r&#39;^version\s*=\s*&#34;(.*?)&#34;$&#39;, line)
+            if match:
+                return match.group(1)
+    sys.stderr.write(f&#34;Error: No valid version string found in {version_file}. Ensure it contains: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+    sys.exit(1)</code></pre>
+</details>
+</dd>
+<dt id="generate_matlab_docs.is_excluded"><code class="name flex">
+<span>def <span class="ident">is_excluded</span></span>(<span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_excluded(path):
+    # Check if path contains any excluded directory
+    for d in excluded_dirs:
+        if os.path.sep + d + os.path.sep in path:
+            return True
+    # Check if file is excluded
+    basename = os.path.basename(path)
+    if basename in excluded_files:
+        return True
+    return False</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="generate_matlab_docs.extract_matlab_doc" href="#generate_matlab_docs.extract_matlab_doc">extract_matlab_doc</a></code></li>
+<li><code><a title="generate_matlab_docs.get_version" href="#generate_matlab_docs.get_version">get_version</a></code></li>
+<li><code><a title="generate_matlab_docs.is_excluded" href="#generate_matlab_docs.is_excluded">is_excluded</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

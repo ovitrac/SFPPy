@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>generate_post_docs API documentation</title>
+<meta name="description" content="generate_post_docs.py
+…" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>generate_post_docs</code></h1>
+</header>
+<section id="section-intro">
+<h1 id="generate_post_docspy">generate_post_docs.py</h1>
+<h2 id="purpose"><strong>Purpose:</strong></h2>
+<p>Automate the generation of the POST examples documentation page for Pizza3. The script performs the following tasks:
+1. Archives the existing <code>post</code> folder by zipping it with maximum compression and appending the creation/modification date to its name. The ZIP is stored in <code>history/</code>.
+2. Copies and renames HTML and PDF files from the source directory to the destination directory (<code>html/post/</code>).
+3. Generates a JSON manifest pairing the renamed HTML and PDF files.
+4. Extracts synopses from the HTML files.
+5. Generates a comprehensive HTML documentation page with a left navigation menu and a right content panel.
+6. Incorporates the provided CSS styles to maintain a consistent layout.
+7. Appends contact information and the documentation creation date at the end of the right panel.</p>
+<ul>
+<li><strong><code>FILE_MAPPING</code></strong>: Dictionary mapping the modified names to their original HTML and PDF filenames.</li>
+</ul>
+<pre><code class="language-python">FILE_MAPPING = {
+    &quot;POST_example1&quot;: (&quot;example1.html&quot;, &quot;Pizza3 - WORKSHOP - PostTreatment - Part 1.pdf&quot;),
+    &quot;POST_example2&quot;: (&quot;example2.html&quot;, &quot;Pizza3 - WORKSHOP - PostTreatment - Part 2.pdf&quot;),
+    &quot;POST_example3&quot;: (&quot;example2bis.html&quot;, &quot;Pizza3 - WORKSHOP - PostTreatment - Part 2bis.pdf&quot;),
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Modified Name</th>
+<th>Original HTML Filename</th>
+<th>Original PDF Filename</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST_example1</code></td>
+<td><code>example1.html</code></td>
+<td><code>Pizza3 - WORKSHOP - PostTreatment - Part 1.pdf</code></td>
+</tr>
+<tr>
+<td><code>POST_example2</code></td>
+<td><code>example2.html</code></td>
+<td><code>Pizza3 - WORKSHOP - PostTreatment - Part 2.pdf</code></td>
+</tr>
+<tr>
+<td><code>POST_example3</code></td>
+<td><code>example2bis.html</code></td>
+<td><code>Pizza3 - WORKSHOP - PostTreatment - Part 2bis.pdf</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="usage"><strong>Usage:</strong></h2>
+<p>Run the script from the <code>utils/</code> directory:</p>
+<pre><code class="language-bash">python3 generate_post_docs.py
+</code></pre>
+<h2 id="dependencies"><strong>Dependencies:</strong></h2>
+<ul>
+<li>Python 3.x</li>
+<li><code>beautifulsoup4</code> library</li>
+</ul>
+<h2 id="author"><strong>Author:</strong></h2>
+<p>INRAE\Olivier Vitrac<br>
+Email: olivier.vitrac@agroparistech.fr<br>
+Last Revised: 2025-01-09</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+generate_post_docs.py
+=====================
+
+**Purpose:**
+-----------
+Automate the generation of the POST examples documentation page for Pizza3. The script performs the following tasks:
+1. Archives the existing `post` folder by zipping it with maximum compression and appending the creation/modification date to its name. The ZIP is stored in `history/`.
+2. Copies and renames HTML and PDF files from the source directory to the destination directory (`html/post/`).
+3. Generates a JSON manifest pairing the renamed HTML and PDF files.
+4. Extracts synopses from the HTML files.
+5. Generates a comprehensive HTML documentation page with a left navigation menu and a right content panel.
+6. Incorporates the provided CSS styles to maintain a consistent layout.
+7. Appends contact information and the documentation creation date at the end of the right panel.
+
+- **`FILE_MAPPING`**: Dictionary mapping the modified names to their original HTML and PDF filenames.
+
+```python
+FILE_MAPPING = {
+    &#34;POST_example1&#34;: (&#34;example1.html&#34;, &#34;Pizza3 - WORKSHOP - PostTreatment - Part 1.pdf&#34;),
+    &#34;POST_example2&#34;: (&#34;example2.html&#34;, &#34;Pizza3 - WORKSHOP - PostTreatment - Part 2.pdf&#34;),
+    &#34;POST_example3&#34;: (&#34;example2bis.html&#34;, &#34;Pizza3 - WORKSHOP - PostTreatment - Part 2bis.pdf&#34;),
+}
+```
+
+| Modified Name    | Original HTML Filename         | Original PDF Filename                                    |
+|------------------|--------------------------------|----------------------------------------------------------|
+| `POST_example1`  | `example1.html`                | `Pizza3 - WORKSHOP - PostTreatment - Part 1.pdf`         |
+| `POST_example2`  | `example2.html`                | `Pizza3 - WORKSHOP - PostTreatment - Part 2.pdf`         |
+| `POST_example3`  | `example2bis.html`             | `Pizza3 - WORKSHOP - PostTreatment - Part 2bis.pdf`      |
+
+**Usage:**
+----------
+Run the script from the `utils/` directory:
+```bash
+python3 generate_post_docs.py
+```
+
+**Dependencies:**
+---------------
+- Python 3.x
+- `beautifulsoup4` library
+
+**Author:**
+---------
+INRAE\Olivier Vitrac  
+Email: olivier.vitrac@agroparistech.fr  
+Last Revised: 2025-01-09
+
+&#34;&#34;&#34;
+
+import os
+import shutil
+import json
+from pathlib import Path
+from datetime import datetime
+from bs4 import BeautifulSoup
+import zipfile
+import sys
+import re
+
+# Root folder and version file
+MAINFOLDER = Path(&#34;../&#34;).resolve()
+version_file = os.path.join(MAINFOLDER, &#34;utils&#34;, &#34;VERSION.txt&#34;)
+
+# Configuration
+SOURCE_DIR = MAINFOLDER / &#34;post&#34; / &#34;html&#34;
+DEST_DIR = MAINFOLDER / &#34;html&#34; / &#34;post&#34;
+HISTORY_DIR = MAINFOLDER / &#34;history&#34;
+HTML_POST_FOLDER = MAINFOLDER / &#34;html&#34; / &#34;post&#34;
+
+# Mapping: Modified Name -&gt; (Original HTML, Original PDF)
+FILE_MAPPING = {
+    &#34;POST_example1&#34;: (&#34;example1.html&#34;, &#34;Pizza3 - WORKSHOP - PostTreatment - Part 1.pdf&#34;),
+    &#34;POST_example2&#34;: (&#34;example2.html&#34;, &#34;Pizza3 - WORKSHOP - PostTreatment - Part 2.pdf&#34;),
+    &#34;POST_example3&#34;: (&#34;example2bis.html&#34;, &#34;Pizza3 - WORKSHOP - PostTreatment - Part 2bis.pdf&#34;),
+}
+
+# Provided CSS
+BASE_CSS = &#34;&#34;&#34;
+body {
+    font-family: &#39;Segoe UI&#39;, Arial, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #f9f9f9; 
+    color: #333;
+}
+header {
+    background: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    position: relative; /* For positioning the toggle button */
+}
+header h1 {
+    margin: 0; 
+    font-size: 1.5em;
+    color: #fff; /* Explicitly set to white */
+    padding-left: 50px; /* Space for the toggle button */
+}
+#content {
+    display: flex;
+    height: calc(100vh - 50px); /* Adjusted for header height */
+    transition: all 0.3s ease;
+}
+#nav {
+    min-width: 250px;
+    max-width: 250px; /* Fixed width */
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+#nav.collapsed {
+    margin-left: -250px; /* Hide the sidebar */
+}
+#main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+header .toggle-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center the button vertically */
+    left: 10px; /* Place the button on the left */
+    background-color: #4CAF50; /* Green background */
+    border: none;
+    color: white; /* Ensure the hamburger icon is white */
+    padding: 10px 12px; /* Adjust padding for larger button */
+    cursor: pointer;
+    font-size: 1.2em; /* Increase font size for better visibility */
+    border-radius: 4px;
+    z-index: 1001; /* Ensure the button is above other elements */
+}
+header .toggle-btn:hover {
+    background-color: #45a049;
+}
+header .toggle-btn kbd {
+    font-family: &#39;Arial&#39;, sans-serif; /* Match the header font */
+    color: white; /* Ensure the hamburger icon is white */
+    font-size: 1.2em; /* Same size as the button text */
+    background: none; /* Remove any background styling from &lt;kbd&gt; */
+    border: none; /* Remove any borders from &lt;kbd&gt; */
+}
+h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+h2 {
+    color: #333; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 5px;
+}
+a {
+    text-decoration: none; 
+    color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul {
+    list-style-type: none; 
+    padding-left: 0;
+    margin: 0;
+}
+li {
+    margin: 5px 0;
+}
+.folder-title {
+    font-weight: bold; 
+    color: #333; 
+    padding: 5px 0;
+    cursor: pointer;
+}
+.folder-content {
+    margin-left: 20px;
+    display: none; /* start collapsed */
+}
+.file {
+    margin-left: 20px;
+}
+hr {
+    margin: 20px 0; 
+    border: 1px solid #ddd;
+}
+footer {
+    font-size: 0.9em; 
+    color: #666; 
+    margin-top: 20px; 
+    text-align: center;
+}
+/* Enhanced Table Styling with Banded Colors */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+tr:nth-child(odd) {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green for odd rows */
+}
+/* Collapsible Code Section */
+.collapsible {
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1em;
+}
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+/* Minimal Syntax Highlighting */
+.code {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-x: auto;
+    font-family: &#39;Courier New&#39;, Courier, monospace;
+    color: #333;
+}
+.keyword {
+    color: #007BFF;
+    font-weight: bold;
+}
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+.string {
+    color: #a31515;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #nav {
+        position: absolute;
+        left: 0;
+        top: 50px; /* Height of the header */
+        height: calc(100% - 50px);
+        z-index: 1000;
+    }
+    #nav.collapsed {
+        margin-left: -250px;
+    }
+    #main {
+        flex: 1;
+    }
+}
+&#34;&#34;&#34;
+
+def get_version():
+    &#34;&#34;&#34;Extract the version number of Pizza3 from version_file.&#34;&#34;&#34;
+    if not os.path.isfile(version_file):
+        sys.stderr.write(f&#34;Error: {version_file} not found. Please create a file with content: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+        sys.exit(1)
+    with open(version_file, &#34;r&#34;) as f:
+        for line in f:
+            line = line.strip()
+            match = re.match(r&#39;^version\s*=\s*&#34;(.*?)&#34;$&#39;, line)
+            if match:
+                return match.group(1)
+    sys.stderr.write(f&#34;Error: No valid version string found in {version_file}. Ensure it contains: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+    sys.exit(1)
+
+def print_header(title):
+    &#34;&#34;&#34;Prints a formatted header for better readability in the terminal.&#34;&#34;&#34;
+    print(&#34;\n&#34; + &#34;=&#34;*60)
+    print(title)
+    print(&#34;=&#34;*60 + &#34;\n&#34;)
+
+def verify_execution_directory():
+    &#34;&#34;&#34;Verifies that the script is being run from the &#39;utils&#39; directory.&#34;&#34;&#34;
+    current_dir = Path.cwd().name
+    if current_dir != &#34;utils&#34;:
+        print(f&#34;Error: This script must be run from the &#39;utils&#39; directory. Currently in &#39;{current_dir}&#39;.&#34;)
+        sys.exit(1)
+    else:
+        print(f&#34;Verified: Running from &#39;{current_dir}&#39; directory.&#34;)
+
+def archive_existing_html_post_folder():
+    &#34;&#34;&#34;
+    Archives the existing &#39;html/post&#39; folder by zipping it with maximum compression,
+    appending the creation/modification date to the ZIP filename, and saving it in &#39;history/&#39;.
+    &#34;&#34;&#34;
+    if not HTML_POST_FOLDER.exists():
+        print(&#34;No existing &#39;html/post&#39; folder found. Skipping archiving.&#34;)
+        return
+
+    # Ensure history directory exists
+    if not HISTORY_DIR.exists():
+        print(f&#34;Creating history directory at &#39;{HISTORY_DIR}&#39;.&#34;)
+        HISTORY_DIR.mkdir(parents=True)
+        print(&#34;History directory created.&#34;)
+    else:
+        print(f&#34;History directory &#39;{HISTORY_DIR}&#39; already exists.&#34;)
+
+    # Define ZIP filename with current date
+    current_date = datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;)
+    zip_filename = f&#34;post_backup_{current_date}.zip&#34;
+    zip_path = HISTORY_DIR / zip_filename
+
+    # Create ZIP archive with maximum compression
+    print(f&#34;Archiving &#39;html/post&#39; folder to &#39;{zip_path}&#39; with maximum compression.&#34;)
+    with zipfile.ZipFile(zip_path, &#39;w&#39;, zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(HTML_POST_FOLDER):
+            for file in files:
+                file_path = Path(root) / file
+                # Calculate the relative path to maintain folder structure in ZIP
+                relative_path = file_path.relative_to(MAINFOLDER)
+                zipf.write(file_path, arcname=relative_path)
+    print(f&#34;Archived &#39;html/post&#39; folder successfully as &#39;{zip_filename}&#39;.&#34;)
+
+    # Remove the existing &#39;html/post&#39; folder
+    print(f&#34;Removing the existing &#39;html/post&#39; folder at &#39;{HTML_POST_FOLDER}&#39;.&#34;)
+    shutil.rmtree(HTML_POST_FOLDER)
+    print(&#34;&#39;html/post&#39; folder removed successfully.&#34;)
+
+    # Recreate a fresh &#39;html/post&#39; folder
+    print(f&#34;Recreating a fresh &#39;html/post&#39; folder at &#39;{HTML_POST_FOLDER}&#39;.&#34;)
+    HTML_POST_FOLDER.mkdir(parents=True)
+    print(&#34;&#39;html/post&#39; folder recreated successfully.&#34;)
+
+def copy_and_rename_files():
+    &#34;&#34;&#34;
+    Copies and renames HTML and PDF files from the source directory to the destination directory.
+    Generates a JSON manifest pairing the renamed HTML and PDF files.
+    &#34;&#34;&#34;
+    print_header(&#34;Copying and Renaming Files&#34;)
+
+    # Create destination directory if it doesn&#39;t exist
+    if not DEST_DIR.exists():
+        print(f&#34;Creating destination directory at &#39;{DEST_DIR}&#39;.&#34;)
+        DEST_DIR.mkdir(parents=True)
+        print(&#34;Destination directory created.&#34;)
+    else:
+        print(f&#34;Destination directory &#39;{DEST_DIR}&#39; already exists.&#34;)
+
+    manifest = []
+
+    for mod_name, (html_orig, pdf_orig) in FILE_MAPPING.items():
+        src_html = SOURCE_DIR / html_orig
+        src_pdf = SOURCE_DIR / pdf_orig
+
+        # Define new filenames
+        new_html = DEST_DIR / f&#34;{mod_name}.html&#34;
+        new_pdf = DEST_DIR / f&#34;{mod_name}.pdf&#34;
+
+        # Check if source files exist
+        if not src_html.exists():
+            print(f&#34;Warning: Source HTML file &#39;{html_orig}&#39; does not exist. Skipping &#39;{mod_name}&#39;.&#34;)
+            continue
+        if not src_pdf.exists():
+            print(f&#34;Warning: Source PDF file &#39;{pdf_orig}&#39; does not exist. Skipping &#39;{mod_name}&#39;.&#34;)
+            continue
+
+        # Copy and rename HTML
+        shutil.copy2(src_html, new_html)
+        print(f&#34;Copied and renamed &#39;{html_orig}&#39; to &#39;{new_html.name}&#39;.&#34;)
+
+        # Copy and rename PDF
+        shutil.copy2(src_pdf, new_pdf)
+        print(f&#34;Copied and renamed &#39;{pdf_orig}&#39; to &#39;{new_pdf.name}&#39;.&#34;)
+
+        # Append to manifest
+        manifest.append({
+            &#34;modified_name&#34;: mod_name,
+            &#34;html_filename&#34;: new_html.name,
+            &#34;pdf_filename&#34;: new_pdf.name
+        })
+
+    # Save manifest to JSON
+    manifest_path = DEST_DIR / &#34;manifest.json&#34;
+    with open(manifest_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        json.dump(manifest, f, indent=4)
+    print(f&#34;Manifest file created at &#39;{manifest_path}&#39;.&#34;)
+
+    return manifest
+
+def extract_synopsis(html_file):
+    &#34;&#34;&#34;
+    Extracts the synopsis from an HTML file.
+    The synopsis is defined as the content between &lt;h2&gt;Synopsis&lt;/h2&gt; and the next &lt;h2&gt; tag.
+    &#34;&#34;&#34;
+    with open(html_file, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+        soup = BeautifulSoup(f, &#39;html.parser&#39;)
+
+    # Find the &lt;h2&gt;Synopsis&lt;/h2&gt; tag
+    synopsis_header = soup.find(&#39;h2&#39;, string=lambda text: text and &#39;Synopsis&#39; in text)
+    if not synopsis_header:
+        print(f&#34;Warning: &#39;Synopsis&#39; section not found in &#39;{html_file.name}&#39;.&#34;)
+        return &#34;&lt;p&gt;No synopsis available.&lt;/p&gt;&#34;
+
+    # Initialize an empty BeautifulSoup object for the synopsis content
+    synopsis_content = BeautifulSoup(&#34;&#34;, &#39;html.parser&#39;)
+
+    # Iterate through the siblings after the synopsis header until the next &lt;h2&gt;
+    for sibling in synopsis_header.find_next_siblings():
+        if sibling.name == &#39;h2&#39;:
+            break
+        synopsis_content.append(sibling)
+
+    return str(synopsis_content)
+
+def generate_documentation(manifest):
+    &#34;&#34;&#34;
+    Generates the final HTML documentation page with a left navigation menu and a right content panel.
+    Incorporates the provided CSS and includes introductory text and contact details.
+    &#34;&#34;&#34;
+    print_header(&#34;Generating Documentation HTML Page&#34;)
+
+    # Start building the navigation menu
+    nav_html = &#39;&lt;ul&gt;\n&#39;
+    for item in manifest:
+        mod_name = item[&#34;modified_name&#34;]
+        nav_html += f&#39;    &lt;li&gt;&lt;a href=&#34;#{mod_name}&#34;&gt;{mod_name}&lt;/a&gt;&lt;/li&gt;\n&#39;
+    nav_html += &#39;&lt;/ul&gt;\n&#39;
+
+    # Start building the main content
+    main_content = &#39;&#39;
+    for item in manifest:
+        mod_name = item[&#34;modified_name&#34;]
+        html_filename = item[&#34;html_filename&#34;]
+        pdf_filename = item[&#34;pdf_filename&#34;]
+        html_file = DEST_DIR / html_filename
+
+        # Extract synopsis
+        synopsis = extract_synopsis(html_file)
+
+        # Build the HTML block for this example
+        example_html = f&#39;&#39;&#39;
+        &lt;div id=&#34;{mod_name}&#34; class=&#34;example-content&#34; style=&#34;display:none;&#34;&gt;
+            &lt;h2&gt;{mod_name}&lt;/h2&gt;
+            &lt;div class=&#34;synopsis&#34;&gt;
+                {synopsis}
+            &lt;/div&gt;
+            &lt;div class=&#34;links&#34;&gt;
+                &lt;a href=&#34;{html_filename}&#34; target=&#34;_blank&#34;&gt;View HTML&lt;/a&gt; | 
+                &lt;a href=&#34;{pdf_filename}&#34; target=&#34;_blank&#34;&gt;Download PDF&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &#39;&#39;&#39;
+        main_content += example_html
+
+    # Define the introductory text with a link to ../index_matlab.html
+    introductory_text = f&#34;&#34;&#34;
+    &lt;h1&gt;Pizza3 POST Documentation Index&lt;/h1&gt;
+    &lt;p&gt;Select a POST example from the left panel to view its documentation. You can have access to the &lt;a href=&#34;../index_matlab.html&#34;&gt;POST tools documentation here&lt;/a&gt;.&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Version:&lt;/strong&gt; Pizza3 v.{get_version()}&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Maintained by:&lt;/strong&gt; INRAE\\olivier.vitrac@agroparistech.fr&lt;/p&gt;
+    &#34;&#34;&#34;
+
+    # Get the current date and time for the footer
+    creation_datetime = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+
+    # Define the full HTML structure with the provided CSS
+    full_html = f&#39;&#39;&#39;
+    &lt;!DOCTYPE html&gt;
+    &lt;html lang=&#34;en&#34;&gt;
+    &lt;head&gt;
+        &lt;meta charset=&#34;UTF-8&#34;&gt;
+        &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+        &lt;title&gt;Pizza3 POST Documentation Examples&lt;/title&gt;
+        &lt;style&gt;
+            {BASE_CSS}
+        &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;header&gt;
+            &lt;!-- Toggle Sidebar Button --&gt;
+            &lt;button class=&#34;toggle-btn&#34; id=&#34;toggleSidebar&#34; aria-label=&#34;Toggle Sidebar&#34;&gt;
+                &lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;
+            &lt;/button&gt;
+            &lt;h1&gt;Pizza3 POST Documentation Index&lt;/h1&gt;
+        &lt;/header&gt;
+        &lt;div id=&#34;content&#34;&gt;
+            &lt;div id=&#34;nav&#34;&gt;
+                {nav_html}
+            &lt;/div&gt;
+            &lt;div id=&#34;main&#34;&gt;
+                {introductory_text}
+                {main_content}
+                &lt;hr&gt;
+                &lt;p&gt;Contact: INRAE\\olivier.vitrac@agroparistech.fr&lt;/p&gt;
+                &lt;p&gt;Documentation Created on: {creation_datetime}&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;footer&gt;
+            &lt;p&gt;&amp;copy; {datetime.now().year} Pizza3 Project. All rights reserved.&lt;/p&gt;
+        &lt;/footer&gt;
+        &lt;script&gt;
+            // Function to handle navigation clicks
+            const navLinks = document.querySelectorAll(&#39;#nav ul li a&#39;);
+            navLinks.forEach(link =&gt; {{
+                link.addEventListener(&#39;click&#39;, function(e) {{
+                    e.preventDefault();
+                    const targetId = this.getAttribute(&#39;href&#39;).substring(1);
+                    const examples = document.querySelectorAll(&#39;.example-content&#39;);
+                    examples.forEach(example =&gt; {{
+                        example.style.display = &#39;none&#39;;
+                    }});
+                    const target = document.getElementById(targetId);
+                    if(target) {{
+                        target.style.display = &#39;block&#39;;
+                        target.scrollIntoView({{behavior: &#34;smooth&#34;}});
+                    }}
+                    // Collapse sidebar on small screens after selection
+                    if (window.innerWidth &lt;= 768) {{
+                        nav.classList.add(&#39;collapsed&#39;);
+                        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;&#39;;
+                    }}
+                }});
+            }});
+
+            // Toggle Sidebar Functionality
+            const toggleButton = document.getElementById(&#39;toggleSidebar&#39;);
+            const nav = document.getElementById(&#39;nav&#39;);
+
+            toggleButton.addEventListener(&#39;click&#39;, () =&gt; {{
+                nav.classList.toggle(&#39;collapsed&#39;);
+                // Change icon based on sidebar state
+                if(nav.classList.contains(&#39;collapsed&#39;)) {{
+                    toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;&#39;; // Hamburger icon
+                }} else {{
+                    toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#10005;&lt;/kbd&gt;&#39;; // Close icon (X)
+                }}
+            }});
+
+            // Handle URL hash on page load to display the corresponding module examples or welcome page
+            window.addEventListener(&#39;load&#39;, function() {{
+                const hash = window.location.hash.substring(1);
+                const examples = document.querySelectorAll(&#39;.example-content&#39;);
+                if(hash) {{
+                    examples.forEach(example =&gt; {{
+                        if(example.id === hash) {{
+                            example.style.display = &#39;block&#39;;
+                        }} else {{
+                            example.style.display = &#39;none&#39;;
+                        }}
+                    }});
+                }} else {{
+                    // Show welcome content if no hash is present
+                    document.querySelector(&#39;#main&#39;).scrollTop = 0;
+                }}
+            }});
+        &lt;/script&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+    &#39;&#39;&#39;
+
+    # Write the HTML to the destination directory
+    doc_path = DEST_DIR / &#34;index_post.html&#34;
+    with open(doc_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        f.write(full_html)
+    print(f&#34;POST Documentation HTML page created at &#39;{doc_path}&#39;.&#34;)
+
+def main():
+    &#34;&#34;&#34;Main function to orchestrate the documentation generation.&#34;&#34;&#34;
+    print_header(&#34;Starting POST Examples Documentation Generation&#34;)
+
+    # Step 1: Verify Execution Directory
+    verify_execution_directory()
+
+    # Step 2: Archive Existing &#39;html/post&#39; Folder if it exists
+    archive_existing_html_post_folder()
+
+    # Step 3: Copy and Rename Files, Generate Manifest
+    manifest = copy_and_rename_files()
+
+    if not manifest:
+        print(&#34;No files were copied and renamed. Exiting.&#34;)
+        sys.exit(1)
+
+    # Step 4: Generate Documentation HTML Page
+    generate_documentation(manifest)
+
+    print_header(&#34;Documentation Generation Completed Successfully&#34;)
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="generate_post_docs.archive_existing_html_post_folder"><code class="name flex">
+<span>def <span class="ident">archive_existing_html_post_folder</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Archives the existing 'html/post' folder by zipping it with maximum compression,
+appending the creation/modification date to the ZIP filename, and saving it in 'history/'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def archive_existing_html_post_folder():
+    &#34;&#34;&#34;
+    Archives the existing &#39;html/post&#39; folder by zipping it with maximum compression,
+    appending the creation/modification date to the ZIP filename, and saving it in &#39;history/&#39;.
+    &#34;&#34;&#34;
+    if not HTML_POST_FOLDER.exists():
+        print(&#34;No existing &#39;html/post&#39; folder found. Skipping archiving.&#34;)
+        return
+
+    # Ensure history directory exists
+    if not HISTORY_DIR.exists():
+        print(f&#34;Creating history directory at &#39;{HISTORY_DIR}&#39;.&#34;)
+        HISTORY_DIR.mkdir(parents=True)
+        print(&#34;History directory created.&#34;)
+    else:
+        print(f&#34;History directory &#39;{HISTORY_DIR}&#39; already exists.&#34;)
+
+    # Define ZIP filename with current date
+    current_date = datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;)
+    zip_filename = f&#34;post_backup_{current_date}.zip&#34;
+    zip_path = HISTORY_DIR / zip_filename
+
+    # Create ZIP archive with maximum compression
+    print(f&#34;Archiving &#39;html/post&#39; folder to &#39;{zip_path}&#39; with maximum compression.&#34;)
+    with zipfile.ZipFile(zip_path, &#39;w&#39;, zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(HTML_POST_FOLDER):
+            for file in files:
+                file_path = Path(root) / file
+                # Calculate the relative path to maintain folder structure in ZIP
+                relative_path = file_path.relative_to(MAINFOLDER)
+                zipf.write(file_path, arcname=relative_path)
+    print(f&#34;Archived &#39;html/post&#39; folder successfully as &#39;{zip_filename}&#39;.&#34;)
+
+    # Remove the existing &#39;html/post&#39; folder
+    print(f&#34;Removing the existing &#39;html/post&#39; folder at &#39;{HTML_POST_FOLDER}&#39;.&#34;)
+    shutil.rmtree(HTML_POST_FOLDER)
+    print(&#34;&#39;html/post&#39; folder removed successfully.&#34;)
+
+    # Recreate a fresh &#39;html/post&#39; folder
+    print(f&#34;Recreating a fresh &#39;html/post&#39; folder at &#39;{HTML_POST_FOLDER}&#39;.&#34;)
+    HTML_POST_FOLDER.mkdir(parents=True)
+    print(&#34;&#39;html/post&#39; folder recreated successfully.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="generate_post_docs.copy_and_rename_files"><code class="name flex">
+<span>def <span class="ident">copy_and_rename_files</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Copies and renames HTML and PDF files from the source directory to the destination directory.
+Generates a JSON manifest pairing the renamed HTML and PDF files.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_and_rename_files():
+    &#34;&#34;&#34;
+    Copies and renames HTML and PDF files from the source directory to the destination directory.
+    Generates a JSON manifest pairing the renamed HTML and PDF files.
+    &#34;&#34;&#34;
+    print_header(&#34;Copying and Renaming Files&#34;)
+
+    # Create destination directory if it doesn&#39;t exist
+    if not DEST_DIR.exists():
+        print(f&#34;Creating destination directory at &#39;{DEST_DIR}&#39;.&#34;)
+        DEST_DIR.mkdir(parents=True)
+        print(&#34;Destination directory created.&#34;)
+    else:
+        print(f&#34;Destination directory &#39;{DEST_DIR}&#39; already exists.&#34;)
+
+    manifest = []
+
+    for mod_name, (html_orig, pdf_orig) in FILE_MAPPING.items():
+        src_html = SOURCE_DIR / html_orig
+        src_pdf = SOURCE_DIR / pdf_orig
+
+        # Define new filenames
+        new_html = DEST_DIR / f&#34;{mod_name}.html&#34;
+        new_pdf = DEST_DIR / f&#34;{mod_name}.pdf&#34;
+
+        # Check if source files exist
+        if not src_html.exists():
+            print(f&#34;Warning: Source HTML file &#39;{html_orig}&#39; does not exist. Skipping &#39;{mod_name}&#39;.&#34;)
+            continue
+        if not src_pdf.exists():
+            print(f&#34;Warning: Source PDF file &#39;{pdf_orig}&#39; does not exist. Skipping &#39;{mod_name}&#39;.&#34;)
+            continue
+
+        # Copy and rename HTML
+        shutil.copy2(src_html, new_html)
+        print(f&#34;Copied and renamed &#39;{html_orig}&#39; to &#39;{new_html.name}&#39;.&#34;)
+
+        # Copy and rename PDF
+        shutil.copy2(src_pdf, new_pdf)
+        print(f&#34;Copied and renamed &#39;{pdf_orig}&#39; to &#39;{new_pdf.name}&#39;.&#34;)
+
+        # Append to manifest
+        manifest.append({
+            &#34;modified_name&#34;: mod_name,
+            &#34;html_filename&#34;: new_html.name,
+            &#34;pdf_filename&#34;: new_pdf.name
+        })
+
+    # Save manifest to JSON
+    manifest_path = DEST_DIR / &#34;manifest.json&#34;
+    with open(manifest_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        json.dump(manifest, f, indent=4)
+    print(f&#34;Manifest file created at &#39;{manifest_path}&#39;.&#34;)
+
+    return manifest</code></pre>
+</details>
+</dd>
+<dt id="generate_post_docs.extract_synopsis"><code class="name flex">
+<span>def <span class="ident">extract_synopsis</span></span>(<span>html_file)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extracts the synopsis from an HTML file.
+The synopsis is defined as the content between <h2>Synopsis</h2> and the next <h2> tag.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_synopsis(html_file):
+    &#34;&#34;&#34;
+    Extracts the synopsis from an HTML file.
+    The synopsis is defined as the content between &lt;h2&gt;Synopsis&lt;/h2&gt; and the next &lt;h2&gt; tag.
+    &#34;&#34;&#34;
+    with open(html_file, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+        soup = BeautifulSoup(f, &#39;html.parser&#39;)
+
+    # Find the &lt;h2&gt;Synopsis&lt;/h2&gt; tag
+    synopsis_header = soup.find(&#39;h2&#39;, string=lambda text: text and &#39;Synopsis&#39; in text)
+    if not synopsis_header:
+        print(f&#34;Warning: &#39;Synopsis&#39; section not found in &#39;{html_file.name}&#39;.&#34;)
+        return &#34;&lt;p&gt;No synopsis available.&lt;/p&gt;&#34;
+
+    # Initialize an empty BeautifulSoup object for the synopsis content
+    synopsis_content = BeautifulSoup(&#34;&#34;, &#39;html.parser&#39;)
+
+    # Iterate through the siblings after the synopsis header until the next &lt;h2&gt;
+    for sibling in synopsis_header.find_next_siblings():
+        if sibling.name == &#39;h2&#39;:
+            break
+        synopsis_content.append(sibling)
+
+    return str(synopsis_content)</code></pre>
+</details>
+</dd>
+<dt id="generate_post_docs.generate_documentation"><code class="name flex">
+<span>def <span class="ident">generate_documentation</span></span>(<span>manifest)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates the final HTML documentation page with a left navigation menu and a right content panel.
+Incorporates the provided CSS and includes introductory text and contact details.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_documentation(manifest):
+    &#34;&#34;&#34;
+    Generates the final HTML documentation page with a left navigation menu and a right content panel.
+    Incorporates the provided CSS and includes introductory text and contact details.
+    &#34;&#34;&#34;
+    print_header(&#34;Generating Documentation HTML Page&#34;)
+
+    # Start building the navigation menu
+    nav_html = &#39;&lt;ul&gt;\n&#39;
+    for item in manifest:
+        mod_name = item[&#34;modified_name&#34;]
+        nav_html += f&#39;    &lt;li&gt;&lt;a href=&#34;#{mod_name}&#34;&gt;{mod_name}&lt;/a&gt;&lt;/li&gt;\n&#39;
+    nav_html += &#39;&lt;/ul&gt;\n&#39;
+
+    # Start building the main content
+    main_content = &#39;&#39;
+    for item in manifest:
+        mod_name = item[&#34;modified_name&#34;]
+        html_filename = item[&#34;html_filename&#34;]
+        pdf_filename = item[&#34;pdf_filename&#34;]
+        html_file = DEST_DIR / html_filename
+
+        # Extract synopsis
+        synopsis = extract_synopsis(html_file)
+
+        # Build the HTML block for this example
+        example_html = f&#39;&#39;&#39;
+        &lt;div id=&#34;{mod_name}&#34; class=&#34;example-content&#34; style=&#34;display:none;&#34;&gt;
+            &lt;h2&gt;{mod_name}&lt;/h2&gt;
+            &lt;div class=&#34;synopsis&#34;&gt;
+                {synopsis}
+            &lt;/div&gt;
+            &lt;div class=&#34;links&#34;&gt;
+                &lt;a href=&#34;{html_filename}&#34; target=&#34;_blank&#34;&gt;View HTML&lt;/a&gt; | 
+                &lt;a href=&#34;{pdf_filename}&#34; target=&#34;_blank&#34;&gt;Download PDF&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &#39;&#39;&#39;
+        main_content += example_html
+
+    # Define the introductory text with a link to ../index_matlab.html
+    introductory_text = f&#34;&#34;&#34;
+    &lt;h1&gt;Pizza3 POST Documentation Index&lt;/h1&gt;
+    &lt;p&gt;Select a POST example from the left panel to view its documentation. You can have access to the &lt;a href=&#34;../index_matlab.html&#34;&gt;POST tools documentation here&lt;/a&gt;.&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Version:&lt;/strong&gt; Pizza3 v.{get_version()}&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Maintained by:&lt;/strong&gt; INRAE\\olivier.vitrac@agroparistech.fr&lt;/p&gt;
+    &#34;&#34;&#34;
+
+    # Get the current date and time for the footer
+    creation_datetime = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+
+    # Define the full HTML structure with the provided CSS
+    full_html = f&#39;&#39;&#39;
+    &lt;!DOCTYPE html&gt;
+    &lt;html lang=&#34;en&#34;&gt;
+    &lt;head&gt;
+        &lt;meta charset=&#34;UTF-8&#34;&gt;
+        &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+        &lt;title&gt;Pizza3 POST Documentation Examples&lt;/title&gt;
+        &lt;style&gt;
+            {BASE_CSS}
+        &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;header&gt;
+            &lt;!-- Toggle Sidebar Button --&gt;
+            &lt;button class=&#34;toggle-btn&#34; id=&#34;toggleSidebar&#34; aria-label=&#34;Toggle Sidebar&#34;&gt;
+                &lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;
+            &lt;/button&gt;
+            &lt;h1&gt;Pizza3 POST Documentation Index&lt;/h1&gt;
+        &lt;/header&gt;
+        &lt;div id=&#34;content&#34;&gt;
+            &lt;div id=&#34;nav&#34;&gt;
+                {nav_html}
+            &lt;/div&gt;
+            &lt;div id=&#34;main&#34;&gt;
+                {introductory_text}
+                {main_content}
+                &lt;hr&gt;
+                &lt;p&gt;Contact: INRAE\\olivier.vitrac@agroparistech.fr&lt;/p&gt;
+                &lt;p&gt;Documentation Created on: {creation_datetime}&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;footer&gt;
+            &lt;p&gt;&amp;copy; {datetime.now().year} Pizza3 Project. All rights reserved.&lt;/p&gt;
+        &lt;/footer&gt;
+        &lt;script&gt;
+            // Function to handle navigation clicks
+            const navLinks = document.querySelectorAll(&#39;#nav ul li a&#39;);
+            navLinks.forEach(link =&gt; {{
+                link.addEventListener(&#39;click&#39;, function(e) {{
+                    e.preventDefault();
+                    const targetId = this.getAttribute(&#39;href&#39;).substring(1);
+                    const examples = document.querySelectorAll(&#39;.example-content&#39;);
+                    examples.forEach(example =&gt; {{
+                        example.style.display = &#39;none&#39;;
+                    }});
+                    const target = document.getElementById(targetId);
+                    if(target) {{
+                        target.style.display = &#39;block&#39;;
+                        target.scrollIntoView({{behavior: &#34;smooth&#34;}});
+                    }}
+                    // Collapse sidebar on small screens after selection
+                    if (window.innerWidth &lt;= 768) {{
+                        nav.classList.add(&#39;collapsed&#39;);
+                        toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;&#39;;
+                    }}
+                }});
+            }});
+
+            // Toggle Sidebar Functionality
+            const toggleButton = document.getElementById(&#39;toggleSidebar&#39;);
+            const nav = document.getElementById(&#39;nav&#39;);
+
+            toggleButton.addEventListener(&#39;click&#39;, () =&gt; {{
+                nav.classList.toggle(&#39;collapsed&#39;);
+                // Change icon based on sidebar state
+                if(nav.classList.contains(&#39;collapsed&#39;)) {{
+                    toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#9776;&lt;/kbd&gt;&#39;; // Hamburger icon
+                }} else {{
+                    toggleButton.innerHTML = &#39;&lt;kbd&gt;&amp;#10005;&lt;/kbd&gt;&#39;; // Close icon (X)
+                }}
+            }});
+
+            // Handle URL hash on page load to display the corresponding module examples or welcome page
+            window.addEventListener(&#39;load&#39;, function() {{
+                const hash = window.location.hash.substring(1);
+                const examples = document.querySelectorAll(&#39;.example-content&#39;);
+                if(hash) {{
+                    examples.forEach(example =&gt; {{
+                        if(example.id === hash) {{
+                            example.style.display = &#39;block&#39;;
+                        }} else {{
+                            example.style.display = &#39;none&#39;;
+                        }}
+                    }});
+                }} else {{
+                    // Show welcome content if no hash is present
+                    document.querySelector(&#39;#main&#39;).scrollTop = 0;
+                }}
+            }});
+        &lt;/script&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+    &#39;&#39;&#39;
+
+    # Write the HTML to the destination directory
+    doc_path = DEST_DIR / &#34;index_post.html&#34;
+    with open(doc_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        f.write(full_html)
+    print(f&#34;POST Documentation HTML page created at &#39;{doc_path}&#39;.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="generate_post_docs.get_version"><code class="name flex">
+<span>def <span class="ident">get_version</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract the version number of Pizza3 from version_file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_version():
+    &#34;&#34;&#34;Extract the version number of Pizza3 from version_file.&#34;&#34;&#34;
+    if not os.path.isfile(version_file):
+        sys.stderr.write(f&#34;Error: {version_file} not found. Please create a file with content: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+        sys.exit(1)
+    with open(version_file, &#34;r&#34;) as f:
+        for line in f:
+            line = line.strip()
+            match = re.match(r&#39;^version\s*=\s*&#34;(.*?)&#34;$&#39;, line)
+            if match:
+                return match.group(1)
+    sys.stderr.write(f&#34;Error: No valid version string found in {version_file}. Ensure it contains: version=\&#34;XX.YY.ZZ\&#34;\n&#34;)
+    sys.exit(1)</code></pre>
+</details>
+</dd>
+<dt id="generate_post_docs.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Main function to orchestrate the documentation generation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    &#34;&#34;&#34;Main function to orchestrate the documentation generation.&#34;&#34;&#34;
+    print_header(&#34;Starting POST Examples Documentation Generation&#34;)
+
+    # Step 1: Verify Execution Directory
+    verify_execution_directory()
+
+    # Step 2: Archive Existing &#39;html/post&#39; Folder if it exists
+    archive_existing_html_post_folder()
+
+    # Step 3: Copy and Rename Files, Generate Manifest
+    manifest = copy_and_rename_files()
+
+    if not manifest:
+        print(&#34;No files were copied and renamed. Exiting.&#34;)
+        sys.exit(1)
+
+    # Step 4: Generate Documentation HTML Page
+    generate_documentation(manifest)
+
+    print_header(&#34;Documentation Generation Completed Successfully&#34;)</code></pre>
+</details>
+</dd>
+<dt id="generate_post_docs.print_header"><code class="name flex">
+<span>def <span class="ident">print_header</span></span>(<span>title)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints a formatted header for better readability in the terminal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_header(title):
+    &#34;&#34;&#34;Prints a formatted header for better readability in the terminal.&#34;&#34;&#34;
+    print(&#34;\n&#34; + &#34;=&#34;*60)
+    print(title)
+    print(&#34;=&#34;*60 + &#34;\n&#34;)</code></pre>
+</details>
+</dd>
+<dt id="generate_post_docs.verify_execution_directory"><code class="name flex">
+<span>def <span class="ident">verify_execution_directory</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Verifies that the script is being run from the 'utils' directory.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def verify_execution_directory():
+    &#34;&#34;&#34;Verifies that the script is being run from the &#39;utils&#39; directory.&#34;&#34;&#34;
+    current_dir = Path.cwd().name
+    if current_dir != &#34;utils&#34;:
+        print(f&#34;Error: This script must be run from the &#39;utils&#39; directory. Currently in &#39;{current_dir}&#39;.&#34;)
+        sys.exit(1)
+    else:
+        print(f&#34;Verified: Running from &#39;{current_dir}&#39; directory.&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#generate_post_docspy">generate_post_docs.py</a><ul>
+<li><a href="#purpose">Purpose:</a></li>
+<li><a href="#usage">Usage:</a></li>
+<li><a href="#dependencies">Dependencies:</a></li>
+<li><a href="#author">Author:</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="generate_post_docs.archive_existing_html_post_folder" href="#generate_post_docs.archive_existing_html_post_folder">archive_existing_html_post_folder</a></code></li>
+<li><code><a title="generate_post_docs.copy_and_rename_files" href="#generate_post_docs.copy_and_rename_files">copy_and_rename_files</a></code></li>
+<li><code><a title="generate_post_docs.extract_synopsis" href="#generate_post_docs.extract_synopsis">extract_synopsis</a></code></li>
+<li><code><a title="generate_post_docs.generate_documentation" href="#generate_post_docs.generate_documentation">generate_documentation</a></code></li>
+<li><code><a title="generate_post_docs.get_version" href="#generate_post_docs.get_version">get_version</a></code></li>
+<li><code><a title="generate_post_docs.main" href="#generate_post_docs.main">main</a></code></li>
+<li><code><a title="generate_post_docs.print_header" href="#generate_post_docs.print_header">print_header</a></code></li>
+<li><code><a title="generate_post_docs.verify_execution_directory" href="#generate_post_docs.verify_execution_directory">verify_execution_directory</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
