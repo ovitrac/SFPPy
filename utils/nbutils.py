@@ -26,8 +26,43 @@ sfppy_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),'..')) # S
 
 # %% global configurators and exporters
 
-# robust exporter for notebooks
-def export_notebook(filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder="reports", keep_files=False):
+def search_notebook_candidates(filename, search_root=".", max_depth=5):
+    """
+    Search for matching notebook files downward from `search_root` up to `max_depth`.
+
+    Parameters:
+    -----------
+    filename : str
+        Base name of the notebook (with or without .ipynb).
+    search_root : str or Path
+        Starting directory for search.
+    max_depth : int
+        Maximum depth for recursive search.
+
+    Returns:
+    --------
+    list of Path: All matching .ipynb files with matching base name
+    """
+    from pathlib import Path
+    filename = Path(filename).stem  # strip extension if given
+    root = Path(search_root).resolve()
+    matches = []
+
+    def _search(path, depth):
+        if depth > max_depth:
+            return
+        for entry in path.iterdir():
+            if entry.is_dir():
+                _search(entry, depth + 1)
+            elif entry.is_file() and entry.name.endswith(".ipynb") and entry.stem == filename:
+                matches.append(entry.resolve())
+
+    _search(root, 0)
+    return matches
+
+
+# robust exporter for notebooks (several fallbacks for colab)
+def export_notebook(filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder="reports", keep_files=False, colab_download=True):
     """
     Export the current notebook as PDF (Jupyter) or HTML (Colab fallback),
     and also include the original .ipynb and HTML files.
@@ -64,6 +99,9 @@ def export_notebook(filename=None, add_username=False, fallback_html=True, verbo
     keep_files : bool (default: False)
         If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is False.
 
+    colab_download bool (default: True)
+        If True, the downloader widget of colab is triggered to download the report file.
+
     Returns:
     --------
     str : Path to the exported file (PDF or HTML, or ZIP if zipped)
@@ -81,7 +119,21 @@ def export_notebook(filename=None, add_username=False, fallback_html=True, verbo
     notebook_path = path if path.suffix == ".ipynb" else path.with_suffix(".ipynb")
 
     if not notebook_path.exists():
-        raise FileNotFoundError(f"❌ Could not find notebook: {notebook_path}. Please provide the correct filename.")
+        candidates = search_notebook_candidates(filename, search_root=".", max_depth=3)
+        if len(candidates) == 1:
+            notebook_path = candidates[0]
+            if verbose:
+                print(f"✅ Notebook found automatically: {notebook_path}")
+        elif len(candidates) > 1:
+            print("❌ Multiple candidate notebooks found:")
+            for i, match in enumerate(candidates, 1):
+                print(f"  {i}. {match}")
+            print("👉 Please change to the correct folder using:")
+            print(f"   %cd {candidates[0].parent}")
+            raise FileNotFoundError("❌ Multiple matching notebooks found. Please disambiguate manually.")
+        else:
+            raise FileNotFoundError(f"❌ Could not find notebook: {notebook_path}. Please provide the correct filename.")
+
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     user = os.environ.get("USER") or os.environ.get("USERNAME") or "unknown"
@@ -141,9 +193,13 @@ def export_notebook(filename=None, add_username=False, fallback_html=True, verbo
     if display_link:
         try:
             target_path = zip_path if save_as_zip else output_path
-            rel_path = os.path.relpath(target_path, os.getcwd())
-            label = f"📄 Download {target_path.name}"
-            display(HTML(f"<a href='{rel_path}' target='_blank'>{label}</a>"))
+            if IN_COLAB:
+                from google.colab import files
+                files.download(str(target_path))  # trigger download
+            else:
+                rel_path = os.path.relpath(target_path, os.getcwd())
+                label = f"📄 Download {target_path.name}"
+                display(HTML(f"<a href='{rel_path}' target='_blank'>{label}</a>"))
         except Exception as e:
             if verbose:
                 print(f"⚠️ Could not generate display link.\n Reason: {e}")
