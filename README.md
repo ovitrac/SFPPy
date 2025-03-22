@@ -38,8 +38,9 @@ This project implements **first-principles chemical migration modeling** and int
 
 > [!NOTE]
 >
-> ⋆.˚☁️⋆ You can use **SFPPy** entirely through **Google Colab**, with no installation and minimal code. **GUI**-based tools, complete templates, and progressively complex examples are all available through the Colab badges above.
+> ⋆.˚☁️⋆ You can use **SFPPy** entirely through **Google Colab**, with no installation and minimal code. **GUI**-based tools, complete templates, and progressively complex examples are all available through the **Colab badges** above.
 >
+> 🤖 +⚖️ *Can robots like **GPT** really evaluate food contact compliance using **SFPPy**?* *Check out the intriguing answers from two GPT-powered experts [here](https://github.com/ovitrac/SFPPy/wiki/🤖-Ask-GPT-to-demonstrate-compliance-with-SFPPy)!*.
 
 
 
