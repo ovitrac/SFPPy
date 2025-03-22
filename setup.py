@@ -9,7 +9,7 @@ if sfppy_root not in sys.path:
 
 setup(
     name="SFPPy",
-    version="1.30",
+    version="1.37",
     description="Software Simulating Mass Transfer from Food Packaging",
     author="Olivier Vitrac",
     author_email="olivier.vitrac@agroparistech.fr",

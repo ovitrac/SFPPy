@@ -59,8 +59,43 @@ sfppy_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),&#39;..&#3
 
 # %% global configurators and exporters
 
-# robust exporter for notebooks
-def export_notebook(filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder=&#34;reports&#34;, keep_files=False):
+def search_notebook_candidates(filename, search_root=&#34;.&#34;, max_depth=5):
+    &#34;&#34;&#34;
+    Search for matching notebook files downward from `search_root` up to `max_depth`.
+
+    Parameters:
+    -----------
+    filename : str
+        Base name of the notebook (with or without .ipynb).
+    search_root : str or Path
+        Starting directory for search.
+    max_depth : int
+        Maximum depth for recursive search.
+
+    Returns:
+    --------
+    list of Path: All matching .ipynb files with matching base name
+    &#34;&#34;&#34;
+    from pathlib import Path
+    filename = Path(filename).stem  # strip extension if given
+    root = Path(search_root).resolve()
+    matches = []
+
+    def _search(path, depth):
+        if depth &gt; max_depth:
+            return
+        for entry in path.iterdir():
+            if entry.is_dir():
+                _search(entry, depth + 1)
+            elif entry.is_file() and entry.name.endswith(&#34;.ipynb&#34;) and entry.stem == filename:
+                matches.append(entry.resolve())
+
+    _search(root, 0)
+    return matches
+
+
+# robust exporter for notebooks (several fallbacks for colab)
+def export_notebook(filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder=&#34;reports&#34;, keep_files=False, colab_download=True):
     &#34;&#34;&#34;
     Export the current notebook as PDF (Jupyter) or HTML (Colab fallback),
     and also include the original .ipynb and HTML files.
@@ -97,6 +132,9 @@ def export_notebook(filename=None, add_username=False, fallback_html=True, verbo
     keep_files : bool (default: False)
         If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is False.
 
+    colab_download bool (default: True)
+        If True, the downloader widget of colab is triggered to download the report file.
+
     Returns:
     --------
     str : Path to the exported file (PDF or HTML, or ZIP if zipped)
@@ -114,7 +152,21 @@ def export_notebook(filename=None, add_username=False, fallback_html=True, verbo
     notebook_path = path if path.suffix == &#34;.ipynb&#34; else path.with_suffix(&#34;.ipynb&#34;)
 
     if not notebook_path.exists():
-        raise FileNotFoundError(f&#34;❌ Could not find notebook: {notebook_path}. Please provide the correct filename.&#34;)
+        candidates = search_notebook_candidates(filename, search_root=&#34;.&#34;, max_depth=3)
+        if len(candidates) == 1:
+            notebook_path = candidates[0]
+            if verbose:
+                print(f&#34;✅ Notebook found automatically: {notebook_path}&#34;)
+        elif len(candidates) &gt; 1:
+            print(&#34;❌ Multiple candidate notebooks found:&#34;)
+            for i, match in enumerate(candidates, 1):
+                print(f&#34;  {i}. {match}&#34;)
+            print(&#34;👉 Please change to the correct folder using:&#34;)
+            print(f&#34;   %cd {candidates[0].parent}&#34;)
+            raise FileNotFoundError(&#34;❌ Multiple matching notebooks found. Please disambiguate manually.&#34;)
+        else:
+            raise FileNotFoundError(f&#34;❌ Could not find notebook: {notebook_path}. Please provide the correct filename.&#34;)
+
 
     timestamp = datetime.datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;)
     user = os.environ.get(&#34;USER&#34;) or os.environ.get(&#34;USERNAME&#34;) or &#34;unknown&#34;
@@ -174,9 +226,13 @@ def export_notebook(filename=None, add_username=False, fallback_html=True, verbo
     if display_link:
         try:
             target_path = zip_path if save_as_zip else output_path
-            rel_path = os.path.relpath(target_path, os.getcwd())
-            label = f&#34;📄 Download {target_path.name}&#34;
-            display(HTML(f&#34;&lt;a href=&#39;{rel_path}&#39; target=&#39;_blank&#39;&gt;{label}&lt;/a&gt;&#34;))
+            if IN_COLAB:
+                from google.colab import files
+                files.download(str(target_path))  # trigger download
+            else:
+                rel_path = os.path.relpath(target_path, os.getcwd())
+                label = f&#34;📄 Download {target_path.name}&#34;
+                display(HTML(f&#34;&lt;a href=&#39;{rel_path}&#39; target=&#39;_blank&#39;&gt;{label}&lt;/a&gt;&#34;))
         except Exception as e:
             if verbose:
                 print(f&#34;⚠️ Could not generate display link.\n Reason: {e}&#34;)
@@ -1686,7 +1742,7 @@ open_btn.on_click(open_notebook_navigator)
 </details>
 </dd>
 <dt id="nbutils.export_notebook"><code class="name flex">
-<span>def <span class="ident">export_notebook</span></span>(<span>filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder='reports', keep_files=False)</span>
+<span>def <span class="ident">export_notebook</span></span>(<span>filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder='reports', keep_files=False, colab_download=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Export the current notebook as PDF (Jupyter) or HTML (Colab fallback),
@@ -1713,13 +1769,15 @@ If True, create a .zip archive of the exported files.</p>
 Folder to store the export if filename is not a full path.</p>
 <p>keep_files : bool (default: False)
 If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is False.</p>
+<p>colab_download bool (default: True)
+If True, the downloader widget of colab is triggered to download the report file.</p>
 <h2 id="returns">Returns:</h2>
 <p>str : Path to the exported file (PDF or HTML, or ZIP if zipped)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def export_notebook(filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder=&#34;reports&#34;, keep_files=False):
+<pre><code class="python">def export_notebook(filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder=&#34;reports&#34;, keep_files=False, colab_download=True):
     &#34;&#34;&#34;
     Export the current notebook as PDF (Jupyter) or HTML (Colab fallback),
     and also include the original .ipynb and HTML files.
@@ -1756,6 +1814,9 @@ If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is 
     keep_files : bool (default: False)
         If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is False.
 
+    colab_download bool (default: True)
+        If True, the downloader widget of colab is triggered to download the report file.
+
     Returns:
     --------
     str : Path to the exported file (PDF or HTML, or ZIP if zipped)
@@ -1773,7 +1834,21 @@ If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is 
     notebook_path = path if path.suffix == &#34;.ipynb&#34; else path.with_suffix(&#34;.ipynb&#34;)
 
     if not notebook_path.exists():
-        raise FileNotFoundError(f&#34;❌ Could not find notebook: {notebook_path}. Please provide the correct filename.&#34;)
+        candidates = search_notebook_candidates(filename, search_root=&#34;.&#34;, max_depth=3)
+        if len(candidates) == 1:
+            notebook_path = candidates[0]
+            if verbose:
+                print(f&#34;✅ Notebook found automatically: {notebook_path}&#34;)
+        elif len(candidates) &gt; 1:
+            print(&#34;❌ Multiple candidate notebooks found:&#34;)
+            for i, match in enumerate(candidates, 1):
+                print(f&#34;  {i}. {match}&#34;)
+            print(&#34;👉 Please change to the correct folder using:&#34;)
+            print(f&#34;   %cd {candidates[0].parent}&#34;)
+            raise FileNotFoundError(&#34;❌ Multiple matching notebooks found. Please disambiguate manually.&#34;)
+        else:
+            raise FileNotFoundError(f&#34;❌ Could not find notebook: {notebook_path}. Please provide the correct filename.&#34;)
+
 
     timestamp = datetime.datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S&#34;)
     user = os.environ.get(&#34;USER&#34;) or os.environ.get(&#34;USERNAME&#34;) or &#34;unknown&#34;
@@ -1833,9 +1908,13 @@ If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is 
     if display_link:
         try:
             target_path = zip_path if save_as_zip else output_path
-            rel_path = os.path.relpath(target_path, os.getcwd())
-            label = f&#34;📄 Download {target_path.name}&#34;
-            display(HTML(f&#34;&lt;a href=&#39;{rel_path}&#39; target=&#39;_blank&#39;&gt;{label}&lt;/a&gt;&#34;))
+            if IN_COLAB:
+                from google.colab import files
+                files.download(str(target_path))  # trigger download
+            else:
+                rel_path = os.path.relpath(target_path, os.getcwd())
+                label = f&#34;📄 Download {target_path.name}&#34;
+                display(HTML(f&#34;&lt;a href=&#39;{rel_path}&#39; target=&#39;_blank&#39;&gt;{label}&lt;/a&gt;&#34;))
         except Exception as e:
             if verbose:
                 print(f&#34;⚠️ Could not generate display link.\n Reason: {e}&#34;)
@@ -1926,6 +2005,59 @@ print("="*40)</p></div>
             if match:
                 return match.group(1)
     raise ValueError(f&#34;Error version keyword missing in {version_file}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="nbutils.search_notebook_candidates"><code class="name flex">
+<span>def <span class="ident">search_notebook_candidates</span></span>(<span>filename, search_root='.', max_depth=5)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Search for matching notebook files downward from <code>search_root</code> up to <code>max_depth</code>.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>filename : str
+Base name of the notebook (with or without .ipynb).
+search_root : str or Path
+Starting directory for search.
+max_depth : int
+Maximum depth for recursive search.</p>
+<h2 id="returns">Returns:</h2>
+<p>list of Path: All matching .ipynb files with matching base name</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def search_notebook_candidates(filename, search_root=&#34;.&#34;, max_depth=5):
+    &#34;&#34;&#34;
+    Search for matching notebook files downward from `search_root` up to `max_depth`.
+
+    Parameters:
+    -----------
+    filename : str
+        Base name of the notebook (with or without .ipynb).
+    search_root : str or Path
+        Starting directory for search.
+    max_depth : int
+        Maximum depth for recursive search.
+
+    Returns:
+    --------
+    list of Path: All matching .ipynb files with matching base name
+    &#34;&#34;&#34;
+    from pathlib import Path
+    filename = Path(filename).stem  # strip extension if given
+    root = Path(search_root).resolve()
+    matches = []
+
+    def _search(path, depth):
+        if depth &gt; max_depth:
+            return
+        for entry in path.iterdir():
+            if entry.is_dir():
+                _search(entry, depth + 1)
+            elif entry.is_file() and entry.name.endswith(&#34;.ipynb&#34;) and entry.stem == filename:
+                matches.append(entry.resolve())
+
+    _search(root, 0)
+    return matches</code></pre>
 </details>
 </dd>
 <dt id="nbutils.set_figure_format"><code class="name flex">
@@ -2025,6 +2157,7 @@ print("="*40)</p></div>
 <li><code><a title="nbutils.export_notebook" href="#nbutils.export_notebook">export_notebook</a></code></li>
 <li><code><a title="nbutils.extract_code_segments" href="#nbutils.extract_code_segments">extract_code_segments</a></code></li>
 <li><code><a title="nbutils.get_version" href="#nbutils.get_version">get_version</a></code></li>
+<li><code><a title="nbutils.search_notebook_candidates" href="#nbutils.search_notebook_candidates">search_notebook_candidates</a></code></li>
 <li><code><a title="nbutils.set_figure_format" href="#nbutils.set_figure_format">set_figure_format</a></code></li>
 </ul>
 </li>
