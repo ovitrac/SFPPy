@@ -38,14 +38,13 @@ This project implements **first-principles chemical migration modeling** and int
 
 > [!NOTE]
 >
-> ⋆.˚☁️⋆ You can use **SFPPy** entirely through **Google Colab**, with no installation and minimal code. **GUI**-based tools, complete templates, and progressively complex examples are all available through the **Colab badges** above.
->
+> ⋆.˚☁️⋆ You can use **SFPPy** entirely through **Google Colab**, with <u>no installation</u> and minimal code. **GUI**-based tools, complete templates, and progressively complex examples are all available through the **Colab badges** above ( [🎬 full video](https://ovitrac.github.io/SFPPy/wikipages/colab/colab_demo.html)).
+> 
+> ![SFPPy_GUI](https://github.com/ovitrac/SFPPy/blob/main/docs/videos/SFPPy_GUI.gif)
+> 
 > 🤖 +⚖️ *Can robots like **GPT** really evaluate food contact compliance using **SFPPy**?* *Check out the intriguing answers from two GPT-powered experts [here](https://github.com/ovitrac/SFPPy/wiki/🤖-Ask-GPT-to-demonstrate-compliance-with-SFPPy)!*.
-
-<video width="100%" controls  autoplay loop muted playsinline">
-  <source src="https://ovitrac.github.io/SFPPy/videos/SFPPy_GUI.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+>
+> 
 
 
 
@@ -97,7 +96,7 @@ pip install -r requirements.txt
 >
 > 💻 Prefer local work? Use [**Jupyter**](https://jupyter.org/) on your machine.
 >
-> 💫 Need a lightweight web version? Try [**SFPPyLite**](https://ovitrac.github.io/SFPPylite/l) in your browser — no setup required — for editing and basic calculations.
+> 💫 Need a lightweight web version? Try [**SFPPyLite**](https://ovitrac.github.io/SFPPylite/l) in your browser — no setup required — for editing and basic calculations (🚧).
 
 
 ***
