@@ -278,7 +278,8 @@ def is_valid_figure(fig):
     Returns:
     - bool: True if `fig` is a valid, open Matplotlib figure.
     &#34;&#34;&#34;
-    return isinstance(fig, Figure) and plt.fignum_exists(fig.number)
+    return isinstance(fig, Figure) and hasattr(fig, &#39;canvas&#39;) and fig.canvas is not None
+
 
 def _generate_figname(fig, extension):
     &#34;&#34;&#34;
@@ -1010,10 +1011,10 @@ def create_plotmigration_widget():
          description=&#34;t_max:&#34;
     )
     num_values_slider = widgets.IntSlider(
-         value=5,
-         min=3,
-         max=500,
-         step=1,
+         value=300,
+         min=10,
+         max=1000,
+         step=10,
          description=&#34;n_vals:&#34;,
          continuous_update=False,
          layout=widgets.Layout(width=&#34;250px&#34;)
@@ -4475,10 +4476,10 @@ mymigration (keys such as "mig1") to select a simulation instance.</p>
          description=&#34;t_max:&#34;
     )
     num_values_slider = widgets.IntSlider(
-         value=5,
-         min=3,
-         max=500,
-         step=1,
+         value=300,
+         min=10,
+         max=1000,
+         step=10,
          description=&#34;n_vals:&#34;,
          continuous_update=False,
          layout=widgets.Layout(width=&#34;250px&#34;)
@@ -4888,7 +4889,7 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
     Returns:
     - bool: True if `fig` is a valid, open Matplotlib figure.
     &#34;&#34;&#34;
-    return isinstance(fig, Figure) and plt.fignum_exists(fig.number)</code></pre>
+    return isinstance(fig, Figure) and hasattr(fig, &#39;canvas&#39;) and fig.canvas is not None</code></pre>
 </details>
 </dd>
 <dt id="migration.print_figure"><code class="name flex">
@@ -5061,7 +5062,7 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:uuyhzz', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:aNZwjX', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer

@@ -5,14 +5,15 @@ Collection of utilities to manage interactive notebooks
 
     Author: INRAE\\Olivier Vitrac
     Email: olivier.vitrac@agroparistech.fr
-    Last Revised: 2025-03-17
+    Last Revised: 2025-03-22
 """
 
 # %% Dependencies
-import os, re, fnmatch
+import os, sys, re, fnmatch, datetime, zipfile, shutil, subprocess
 import ipywidgets as widgets
 from IPython.display import display, HTML, Javascript
 from IPython import get_ipython
+from pathlib import Path
 import nbformat
 
 # %% Constants
@@ -22,6 +23,181 @@ web = "https://ovitrac.github.io/SFPPy/"
 email = "olivier.vitrac@gmail.com"
 badge = "https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&logo=github"
 sfppy_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),'..')) # SFPPy folder
+
+# %% global configurators and exporters
+
+# robust exporter for notebooks
+def export_notebook(filename=None, add_username=False, fallback_html=True, verbose=True, display_link=True, save_as_zip=True, outputfolder="reports", keep_files=False):
+    """
+    Export the current notebook as PDF (Jupyter) or HTML (Colab fallback),
+    and also include the original .ipynb and HTML files.
+    Adds a timestamp and optional username@host to the file name.
+    Optionally creates a .zip archive in the specified output folder.
+
+    If SVG output is used in matplotlib, only HTML export is allowed (PDF would fail).
+
+    Parameters:
+    -----------
+    filename : str or Path (default: environment variable JPY_SESSION_NAME)
+        Name of the notebook to export (with or without .ipynb extension).
+        If full path is given, it determines the destination folder.
+        If not provided and cannot be inferred, an error is raised.
+
+    add_username : bool (default: False)
+        Include the system username@hostname in the exported filename.
+
+    fallback_html : bool (default: True)
+        In Colab, fallback to HTML export instead of PDF.
+
+    verbose : bool (default: True)
+        Print status messages.
+
+    display_link : bool (default: True)
+        Show a download/open link after export (in Colab or Jupyter).
+
+    save_as_zip : bool (default: True)
+        If True, create a .zip archive of the exported files.
+
+    outputfolder : str or Path (default: "reports")
+        Folder to store the export if filename is not a full path.
+
+    keep_files : bool (default: False)
+        If False, remove .ipynb and .html/.pdf after zipping. Ignored if save_as_zip is False.
+
+    Returns:
+    --------
+    str : Path to the exported file (PDF or HTML, or ZIP if zipped)
+    """
+    import matplotlib as mpl
+
+    IN_COLAB = 'google.colab' in sys.modules
+
+    if filename is None:
+        filename = os.getenv("JPY_SESSION_NAME")
+        if not filename:
+            raise RuntimeError("❌ Cannot determine notebook name. Please provide it using the 'filename' argument.")
+
+    path = Path(filename).expanduser().resolve() if Path(filename).is_absolute() else Path(os.getcwd()) / filename
+    notebook_path = path if path.suffix == ".ipynb" else path.with_suffix(".ipynb")
+
+    if not notebook_path.exists():
+        raise FileNotFoundError(f"❌ Could not find notebook: {notebook_path}. Please provide the correct filename.")
+
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    user = os.environ.get("USER") or os.environ.get("USERNAME") or "unknown"
+    host = os.uname().nodename if hasattr(os, 'uname') else os.environ.get("COMPUTERNAME", "unknown-host")
+    userhost = f"{user}@{host}" if add_username else ""
+    suffix = f"{timestamp}_{userhost}".strip("_")
+
+    using_svg = mpl.rcParams.get("figure.format", None) == "svg"
+    if using_svg:
+        if verbose:
+            print("⚠️ Matplotlib is using SVG output. PDF export will be disabled.")
+            print("👉 Please add `from IPython.display import set_matplotlib_formats; set_matplotlib_formats('retina')` to enable PDF export.")
+        fallback_html = True
+
+    output_ext = "html" if IN_COLAB or fallback_html else "pdf"
+    base_filename = f"{notebook_path.stem}_{suffix}"
+    output_dir = notebook_path.parent if Path(filename).is_absolute() else Path(outputfolder).resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    output_path = output_dir / f"{base_filename}.{output_ext}"
+    output_ipynb_path = output_dir / f"{base_filename}.ipynb"
+    zip_path = output_dir / f"{base_filename}.zip"
+
+    command = [
+        "jupyter", "nbconvert",
+        "--to", output_ext,
+        "--output", output_path.name,
+        "--output-dir", str(output_dir),
+        str(notebook_path.name)
+    ]
+
+    try:
+        subprocess.run(command, check=True, cwd=notebook_path.parent, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        raise RuntimeError(f"❌ Failed to export notebook to {output_ext.upper()}") from e
+
+    try:
+        shutil.copy(notebook_path, output_ipynb_path)
+        if verbose:
+            print(f"📚 Copied .ipynb as: {output_ipynb_path}")
+    except Exception as e:
+        raise RuntimeError("❌ Failed to copy .ipynb file.") from e
+
+    if verbose:
+        print(f"📤 Exported to: {output_path}")
+
+    if save_as_zip:
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipf.write(output_path, arcname=output_path.name)
+            zipf.write(output_ipynb_path, arcname=output_ipynb_path.name)
+        if not keep_files:
+            os.remove(output_path)
+            os.remove(output_ipynb_path)
+        if verbose:
+            print(f"📦 Zipped export to: {zip_path}")
+
+    if display_link:
+        try:
+            target_path = zip_path if save_as_zip else output_path
+            rel_path = os.path.relpath(target_path, os.getcwd())
+            label = f"📄 Download {target_path.name}"
+            display(HTML(f"<a href='{rel_path}' target='_blank'>{label}</a>"))
+        except Exception as e:
+            if verbose:
+                print(f"⚠️ Could not generate display link.\n Reason: {e}")
+
+    return str(zip_path if save_as_zip else output_path)
+
+
+
+
+def set_figure_format(fmt="png", verbose=True):
+    """
+    Set the inline figure rendering format for Jupyter or Colab notebooks.
+
+    Parameters
+    ----------
+    fmt : str
+        One of: 'png', 'jpg', 'jpeg', 'svg', 'pdf', 'retina', 'png2x'
+        - 'retina' and 'png2x' are aliases for high-DPI PNG (2x resolution)
+        - 'pdf' and 'svg' are vector formats (great for publication)
+        - 'png' is the default (fastest and most compatible)
+
+    verbose : bool
+        If True, prints a confirmation message.
+
+    Raises
+    ------
+    ValueError
+        If an unsupported format is provided.
+    """
+    VALID_FORMATS = ['jpg', 'jpeg', 'png', 'svg', 'pdf', 'retina', 'png2x']
+    fmt = fmt.lower()
+    if fmt not in VALID_FORMATS:
+        raise ValueError(f"Unsupported figure format: '{fmt}'. Must be one of {VALID_FORMATS}.")
+
+    ipy = get_ipython()
+    if ipy is None:
+        raise RuntimeError("This function must be run inside a Jupyter or Colab notebook.")
+
+    # Use inline backend with appropriate format
+    ipy.run_line_magic("matplotlib", "inline")
+
+    # Retina and png2x are aliases for high-DPI PNG
+    if fmt in ["retina", "png2x"]:
+        fmt = "retina"
+    elif fmt in ["jpg", "jpeg"]:
+        # InlineBackend does not support jpg; fallback to PNG and show a warning
+        if verbose:
+            print("⚠️ Inline display of 'jpg/jpeg' is not supported. Falling back to PNG.")
+        fmt = "png"
+
+    ipy.run_line_magic("config", f"InlineBackend.figure_format = '{fmt}'")
+    if verbose:
+        print(f"📊 Matplotlib inline figure format set to: {fmt}")
+
 
 # %% static HTML functions
 

@@ -175,7 +175,8 @@ def is_valid_figure(fig):
     Returns:
     - bool: True if `fig` is a valid, open Matplotlib figure.
     """
-    return isinstance(fig, Figure) and plt.fignum_exists(fig.number)
+    return isinstance(fig, Figure) and hasattr(fig, 'canvas') and fig.canvas is not None
+
 
 def _generate_figname(fig, extension):
     """
