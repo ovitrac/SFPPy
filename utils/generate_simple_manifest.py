@@ -38,8 +38,8 @@ def main():
         '.manifest', '.py~', '.sh~', '.pyc',
         '.sample', '.cache', '.xml', '.iml', '.zip', '.js',
         '.pdf', '.avi', '.html~', '.gitignore~',
-        '.gif','.pptx','.egg-info'
-    ] # '.png', '.mp4'
+        '.pptx','.egg-info'
+    ] # '.png', '.mp4', '.gif'
     
     ignore_dirs = [
         ".env",

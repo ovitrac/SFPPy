@@ -76,7 +76,8 @@ def main():
         "tmp",
         "html",
         ".spyproject",
-        ".ipynb_checkpoints"
+        ".ipynb_checkpoints",
+        "videos"
     ]
 
     # Determine the current working directory
