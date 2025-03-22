@@ -42,6 +42,11 @@ This project implements **first-principles chemical migration modeling** and int
 >
 > 🤖 +⚖️ *Can robots like **GPT** really evaluate food contact compliance using **SFPPy**?* *Check out the intriguing answers from two GPT-powered experts [here](https://github.com/ovitrac/SFPPy/wiki/🤖-Ask-GPT-to-demonstrate-compliance-with-SFPPy)!*.
 
+<video width="100%" controls  autoplay loop muted playsinline">
+  <source src="https://ovitrac.github.io/SFPPy/videos/SFPPy_GUI.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 
 
 ## 📁 Main Modules (Located in `patankar/`)
