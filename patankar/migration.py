@@ -451,7 +451,7 @@ _LaTeXavailable = is_latex_available()
 
 # Clean tex
 def cleantex(text,islatexavailable=_LaTeXavailable):
-    """
+    r"""
     Process a LaTeX string to guess the plain text by performing substitutions
     and removing formatting characters, while preserving inner content as much as possible.
 

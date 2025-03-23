@@ -238,6 +238,8 @@ class gFHP(ActivityCoefficients):
             rik = Vi/Vk
             nik = (rik - 5)/5
             chimin = 0
+        if Pi is None or Pk is None:
+            raise RuntimeError("✋🏻🛑⛔️ At least, one of the elements (migrant/medium/polymer) lacks ⌬ chemical information.")
         chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
         lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
         return gscale * np.exp(lngik)

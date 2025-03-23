@@ -160,7 +160,7 @@ from patankar.private.pubchempy import get_compounds
 # European rules
 import patankar.private.EUFCMannex1 as complyEU # Annex 1 (we import all the module as complyEU)
 
-__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'dbdefault', 'floatNone', 'get_compounds', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index']
+__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'floatNone', 'get_compounds', 'get_default_index', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -1684,16 +1684,22 @@ class migrant:
         """Returns the rasterized image of the migrant"""
         if self.image_file:
             self._download_PNG() # download PNG if not cached
-            return Image.open(self.image_file)
+            if os.path.isfile(self.image_file):
+                return Image.open(self.image_file)
+            else:
+                print(f"the expected file {self.image_file} does not exist")
 
     # rawimage property
     @property
     def _rawimage(self):
         """returns the raw (binary) image of the migrant"""
         if self.image_file:
-            with open(self.image_file, "rb") as f:
-                image_bytes = f.read()
-            return image_bytes
+            if os.path.isfile(self.image_file):
+                with open(self.image_file, "rb") as f:
+                    image_bytes = f.read()
+                return image_bytes
+            else:
+                print(f"the expected file {self.image_file} does not exist")
 
     # structure
     @property
@@ -1701,7 +1707,10 @@ class migrant:
         """Returns the metadata associated with the migrant"""
         if self.structure_file:
             self._download_SDF() # download SDF if not cached
-            return parse_sdf(self.structure_file)
+            if os.path.isfile(self.structure_file):
+                return parse_sdf(self.structure_file)
+            else:
+                print(f"the expected file {self.structure_file} does not exist")
 
     # low-level model validator and property assignment
     def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):

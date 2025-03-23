@@ -16121,16 +16121,22 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
         if self.image_file:
             self._download_PNG() # download PNG if not cached
-            return Image.open(self.image_file)
+            if os.path.isfile(self.image_file):
+                return Image.open(self.image_file)
+            else:
+                print(f&#34;the expected file {self.image_file} does not exist&#34;)
 
     # rawimage property
     @property
     def _rawimage(self):
         &#34;&#34;&#34;returns the raw (binary) image of the migrant&#34;&#34;&#34;
         if self.image_file:
-            with open(self.image_file, &#34;rb&#34;) as f:
-                image_bytes = f.read()
-            return image_bytes
+            if os.path.isfile(self.image_file):
+                with open(self.image_file, &#34;rb&#34;) as f:
+                    image_bytes = f.read()
+                return image_bytes
+            else:
+                print(f&#34;the expected file {self.image_file} does not exist&#34;)
 
     # structure
     @property
@@ -16138,7 +16144,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
         if self.structure_file:
             self._download_SDF() # download SDF if not cached
-            return parse_sdf(self.structure_file)
+            if os.path.isfile(self.structure_file):
+                return parse_sdf(self.structure_file)
+            else:
+                print(f&#34;the expected file {self.structure_file} does not exist&#34;)
 
     # low-level model validator and property assignment
     def _validate_and_set_model(self, prop, model, template, update_params,PropertyModel,PropertyModelValidator):
@@ -16879,7 +16888,10 @@ def image(self):
     &#34;&#34;&#34;Returns the rasterized image of the migrant&#34;&#34;&#34;
     if self.image_file:
         self._download_PNG() # download PNG if not cached
-        return Image.open(self.image_file)</code></pre>
+        if os.path.isfile(self.image_file):
+            return Image.open(self.image_file)
+        else:
+            print(f&#34;the expected file {self.image_file} does not exist&#34;)</code></pre>
 </details>
 </dd>
 <dt id="layer.migrant.keval"><code class="name">var <span class="ident">keval</span></code></dt>
@@ -17154,7 +17166,10 @@ def structure(self):
     &#34;&#34;&#34;Returns the metadata associated with the migrant&#34;&#34;&#34;
     if self.structure_file:
         self._download_SDF() # download SDF if not cached
-        return parse_sdf(self.structure_file)</code></pre>
+        if os.path.isfile(self.structure_file):
+            return parse_sdf(self.structure_file)
+        else:
+            print(f&#34;the expected file {self.structure_file} does not exist&#34;)</code></pre>
 </details>
 </dd>
 <dt id="layer.migrant.volumeDwelle"><code class="name">var <span class="ident">volumeDwelle</span></code></dt>

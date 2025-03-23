@@ -554,7 +554,7 @@ _LaTeXavailable = is_latex_available()
 
 # Clean tex
 def cleantex(text,islatexavailable=_LaTeXavailable):
-    &#34;&#34;&#34;
+    r&#34;&#34;&#34;
     Process a LaTeX string to guess the plain text by performing substitutions
     and removing formatting characters, while preserving inner content as much as possible.
 
@@ -3811,7 +3811,7 @@ if __name__ == &#39;__main__&#39;:
 and removing formatting characters, while preserving inner content as much as possible.</p>
 <p>Replacements performed:
 - Replace '\,' with a space.
-- Replace 'rac{num}{denom}' with 'num/denom'.
+- Replace '\frac{num}{denom}' with 'num/denom'.
 - Replace '\sum' with 'sum'.
 - Replace '\int' with 'int'.</p>
 <p>Afterwards, it removes:
@@ -3833,7 +3833,7 @@ and removing formatting characters, while preserving inner content as much as po
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cleantex(text,islatexavailable=_LaTeXavailable):
-    &#34;&#34;&#34;
+    r&#34;&#34;&#34;
     Process a LaTeX string to guess the plain text by performing substitutions
     and removing formatting characters, while preserving inner content as much as possible.
 
@@ -5062,7 +5062,7 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:77Sj7h', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:sKK2ur', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000.0, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer

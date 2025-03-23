@@ -307,6 +307,8 @@ class gFHP(ActivityCoefficients):
             rik = Vi/Vk
             nik = (rik - 5)/5
             chimin = 0
+        if Pi is None or Pk is None:
+            raise RuntimeError(&#34;✋🏻🛑⛔️ At least, one of the elements (migrant/medium/polymer) lacks ⌬ chemical information.&#34;)
         chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
         lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
         return gscale * np.exp(lngik)
@@ -3764,6 +3766,8 @@ gscale: activity coefficient (default=1.0)</p>
             rik = Vi/Vk
             nik = (rik - 5)/5
             chimin = 0
+        if Pi is None or Pk is None:
+            raise RuntimeError(&#34;✋🏻🛑⛔️ At least, one of the elements (migrant/medium/polymer) lacks ⌬ chemical information.&#34;)
         chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
         lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
         return gscale * np.exp(lngik)</code></pre>
@@ -3819,6 +3823,8 @@ def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
         rik = Vi/Vk
         nik = (rik - 5)/5
         chimin = 0
+    if Pi is None or Pk is None:
+        raise RuntimeError(&#34;✋🏻🛑⛔️ At least, one of the elements (migrant/medium/polymer) lacks ⌬ chemical information.&#34;)
     chiik = np.maximum(chimin,alpha * (Pi - Pk)**2)
     lngik = np.maximum(lngmin,chiik + 1 - (rik - nik))
     return gscale * np.exp(lngik)</code></pre>
