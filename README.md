@@ -1,4 +1,4 @@
-# SFPPy - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎
+# **SFPPy** - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎
 
 <div align="right">
 
@@ -18,7 +18,9 @@
 <a href="https://ovitrac.github.io/SFPPy/wikipages/" target="_blank" title="SFPPy Wiki: Main Index"><img src="https://img.shields.io/badge/%F0%9F%93%96_SFPPy%20Wiki-Main%20Index-0097A7?style=for-the-badge" alt="SFPPy Wiki: Main Index"></a>
 
 <!-- Lite & Docs -->
-<a href="https://ovitrac.github.io/SFPPylite/lab/index.html" target="_blank" title="SFPPyLite Demo – mainly to edit files (runs in your browser)"><img src="https://img.shields.io/badge/%F0%9F%A7%AA_SFPPyLite-Demo%20Editor-7b66b5?style=for-the-badge" alt="SFPPyLite Demo"></a>
+<a href="https://ovitrac.github.io/SFPPylite/lab/index.html" target="_blank" title="SFPPyLite Demo – edit and run notebooks directly in your browser">
+  <img src="https://img.shields.io/badge/%F0%9F%8C%90%20SFPPyLite-Runs%20in%20Browser-7b66b5?style=for-the-badge" alt="🌐 SFPPyLite – Browser Demo">
+</a>
 <a href="https://ovitrac.github.io/SFPPy/" target="_blank" title="SFPPy Documentation Website"><img src="https://img.shields.io/badge/%F0%9F%93%98%20SFPPy-Documentation-8a2be2?style=for-the-badge" alt="SFPPy Documentation"></a>
 
 </div>
@@ -39,6 +41,8 @@ This project implements **first-principles chemical migration modeling** and int
 > [!NOTE]
 >
 > ⋆.˚☁️⋆ You can use **SFPPy** entirely through **Google Colab**, with <u>no installation</u> and minimal code. **GUI**-based tools, complete templates, and progressively complex examples are all available through the **Colab badges** above ( [🎬 full video](https://ovitrac.github.io/SFPPy/wikipages/colab/colab_demo.html)).
+>
+> A sister project — [**SFPPyLite 🌐**](https://github.com/ovitrac/SFPPylite) — lets you run **SFPPy notebooks directly in your browser**, with no installation or server required.
 > 
 > ![SFPPy_GUI](https://github.com/ovitrac/SFPPy/blob/main/docs/videos/SFPPy_GUI.gif)
 > 
