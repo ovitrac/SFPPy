@@ -100,7 +100,7 @@ pip install -r requirements.txt
 >
 > 💻 Prefer local work? Use [**Jupyter**](https://jupyter.org/) on your machine.
 >
-> 💫 Need a lightweight web version? Try [**SFPPyLite**](https://ovitrac.github.io/SFPPylite/l) in your browser — no setup required — for editing and basic calculations (🚧).
+> 💫 Need a lightweight web version? Try [**SFPPyLite🌐**](https://ovitrac.github.io/SFPPylite/l) in your browser — no setup required — for editing and from basic to advanced calculations.  ⚠️ Note: Available chemical databases are more limited (🚧).
 
 
 ***
