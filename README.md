@@ -18,7 +18,7 @@
 <a href="https://ovitrac.github.io/SFPPy/wikipages/" target="_blank" title="SFPPy Wiki: Main Index"><img src="https://img.shields.io/badge/%F0%9F%93%96_SFPPy%20Wiki-Main%20Index-0097A7?style=for-the-badge" alt="SFPPy Wiki: Main Index"></a>
 
 <!-- Lite & Docs -->
-<a href="https://ovitrac.github.io/SFPPylite/lab/index.html" target="_blank" title="SFPPyLite Demo – edit and run notebooks directly in your browser">
+<a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=demo.ipynb" target="_blank" title="SFPPyLite Demo – edit and run notebooks directly in your browser">
   <img src="https://img.shields.io/badge/%F0%9F%8C%90%20SFPPyLite-Runs%20in%20Browser-7b66b5?style=for-the-badge" alt="🌐 SFPPyLite – Browser Demo">
 </a>
 <a href="https://ovitrac.github.io/SFPPy/" target="_blank" title="SFPPy Documentation Website"><img src="https://img.shields.io/badge/%F0%9F%93%98%20SFPPy-Documentation-8a2be2?style=for-the-badge" alt="SFPPy Documentation"></a>
