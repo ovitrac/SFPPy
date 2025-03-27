@@ -1,8 +1,16 @@
 # **SFPPy** - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎
 
+<div aligb="center">
+
+| ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it wit AI. |
+| ---------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------- |
+
+</div>
+
+---
+
+
 <div align="right">
-
-
 <!-- Colab Badges -->
 <a href="https://colab.research.google.com/github/ovitrac/SFPPy/blob/main/notebooks/gui.ipynb" target="_blank" title="Try SFPPy with a graphical interface on Google Colab"><img src="https://img.shields.io/badge/Colab-GUI%20Interface-FF4D4D?logo=googlecolab&style=for-the-badge"></a>
 <a href="https://colab.research.google.com/github/ovitrac/SFPPy/blob/main/notebooks/comply.ipynb" target="_blank" title="Edit your compliance SFPPy notebook on Google Colab"><img src="https://img.shields.io/badge/Colab-Comply%20Template-DB0E27?logo=googlecolab&style=for-the-badge"></a>
@@ -11,12 +19,10 @@
 <a href="https://colab.research.google.com/github/ovitrac/SFPPy/blob/main/notebooks/example3.ipynb" target="_blank" title="Run example 3 on Google Colab"><img src="https://img.shields.io/badge/Colab-Example%203_MULTI--STEPS-3C8C40?logo=googlecolab&style=for-the-badge"></a>
 <a href="https://colab.research.google.com/github/ovitrac/SFPPy/blob/main/notebooks/example4.ipynb" target="_blank" title="Run example 4 on Google Colab"><img src="https://img.shields.io/badge/Colab-Example%204_CURVE_FITTING-357A38?logo=googlecolab&style=for-the-badge"></a>
 <a href="https://colab.research.google.com/github/ovitrac/SFPPy/blob/main/index.ipynb" target="_blank" title="Our collection of tools on Google Colab"><img src="https://img.shields.io/badge/Colab-Launcher-FF9802?logo=googlecolab&style=for-the-badge"></a>
-
 <!-- Wiki Badges -->
 <a href="https://ovitrac.github.io/SFPPy/wikipages/colab/colab.html" target="_blank" title="SFPPy Wiki: Colab"><img src="https://img.shields.io/badge/%F0%9F%93%96_SFPPy%20Wiki-Colab-1B76D2?style=for-the-badge" alt="SFPPy Wiki: Colab"></a>
 <a href="https://ovitrac.github.io/SFPPy/wikipages/gui/gui_manual.html" target="_blank" title="SFPPy Wiki: GUI Manual"><img src="https://img.shields.io/badge/%F0%9F%93%96_SFPPy%20Wiki-GUI%20Manual-1B76D2?style=for-the-badge" alt="SFPPy Wiki: GUI Manual"></a>
 <a href="https://ovitrac.github.io/SFPPy/wikipages/" target="_blank" title="SFPPy Wiki: Main Index"><img src="https://img.shields.io/badge/%F0%9F%93%96_SFPPy%20Wiki-Main%20Index-0097A7?style=for-the-badge" alt="SFPPy Wiki: Main Index"></a>
-
 <!-- Lite & Docs -->
 <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=demo.ipynb" target="_blank" title="SFPPyLite Demo – edit and run notebooks directly in your browser">
   <img src="https://img.shields.io/badge/%F0%9F%8C%90%20SFPPyLite-Runs%20in%20Browser-7b66b5?style=for-the-badge" alt="🌐 SFPPyLite – Browser Demo">
@@ -44,10 +50,8 @@ This project implements **first-principles chemical migration modeling** and int
 >
 > A sister project — [**SFPPyLite 🌐**](https://github.com/ovitrac/SFPPylite) — lets you run **SFPPy notebooks directly in your browser**, with no installation or server required.
 > 
-> ![SFPPy_GUI](https://github.com/ovitrac/SFPPy/blob/main/docs/videos/SFPPy_GUI.gif)
+> ![SFPPy_GUI](docs/videos/SFPPy_GUI.gif)
 > 
-> 🤖 +⚖️ *Can robots like **GPT** really evaluate food contact compliance using **SFPPy**?* *Check out the intriguing answers from two GPT-powered experts [here](https://github.com/ovitrac/SFPPy/wiki/🤖-Ask-GPT-to-demonstrate-compliance-with-SFPPy)!*.
->
 > 
 
 
@@ -140,7 +144,7 @@ solution.comparison.save_as_excel("myresult.xlsx") # Excel format
 > 📌 $D$ is the diffusivity, $l$ is the thickness layer, and $C_0$ is the initial concentration.
 
 
-![CF](demo1.png)![Cx](demo2.png)
+![CF](docs/assets/demo1.png)![Cx](docs/assets/demo2.png)
 
 
 </details>
@@ -306,7 +310,7 @@ sol123.plotCF()
 
 ```
 
-![CF](demo3.png)
+![CF](docs/assets/demo3.png)
 
 ### **🧩 How It Works**
 
@@ -477,4 +481,16 @@ $2025-02-12$
 > <img src="https://img.shields.io/badge/%F0%9F%93%81%20SFPPyLite-GitHub%20Repo-6e5494?style=for-the-badge&logo=github" alt="SFPPyLite GitHub Repository"></a> is a  lightweight, browser-based sister project of <strong>SFPPy</strong>.  It runs entirely in your browser (via <a href="https://jupyterlite.readthedocs.io/" title="JupyterLite official website" target="_blank">JupyterLite</a>) — no installation, no Python backend — and is ideal for <strong>editing files</strong>, <strong>exploring materials</strong>, or performing <strong>basic compliance calculations</strong> on the go.
 >
 > <a href="https://ovitrac.github.io/SFPPylite/" target="_blank" title="Launch SFPPyLite in your browser"><img src="https://img.shields.io/badge/%F0%9F%92%AB%20Test_SFPPyLite-Launch%20Online-7b66b5?style=for-the-badge&logo=jupyter" alt="Launch SFPPyLite"></a>
+
+
+
+---
+
+### 🍏⏩🍎 `SFPPy`: Built for AI. Ready for Simulation.
+
+🤖 +⚖️ *Can robots like **GPT** really evaluate food contact compliance using **SFPPy**?* *Check out the intriguing answers from two GPT-powered experts [here](https://github.com/ovitrac/SFPPy/wiki/🤖-Ask-GPT-to-demonstrate-compliance-with-SFPPy)!*.
+
+| [<img src="docs/assets/page1.png" alt="page1" style="zoom:50%;" />](https://github.com/ovitrac/generativeSimulation)<small>☝🏻Click on the image to learn more.</small> | 🔮**Explore the future.**  Coding is a language—and with generative AI, we can bridge real-world problems to simulation-ready computer code. Python is the medium of choice, as it remains the most fluent language for AI systems.<br /><br />╰┈➤***Prompts accelerate simulation prototyping** and the design of complex case scenarios. Thanks to the abstract nature of this interface, there are no constraints on the level of complexity: it operates independently of the underlying mathematical or numerical methods.*<br /> |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| <small>Credits: [Olivier Vitrac](mailto:olivier.vitrac@gmail.com)</small> | 🤔**With respect to regulatory compliance**, AI assists you by generating informed scenarios and interpretations—but **you remain the decision-maker**.<br /> |
 

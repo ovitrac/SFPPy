@@ -92,12 +92,12 @@ enabling to describe the partitioning between layers. All materials are automati
 a modified finite volume technique exact at steady state and offering good accuracy in non-steady
 conditions.</p>
 <p>A temperature and substance can be assigned to layers.</p>
-<p>@version: 1.32
+<p>@version: 1.40
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-13</p>
+@rev. 2025-03-26</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -187,18 +187,18 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.32
+@version: 1.40
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-13
+@rev. 2025-03-26
 
 &#34;&#34;&#34;
 
 # ---- History ----
 # Created on Tue Jan 18 09:14:34 2022
-# 2022-01-19 RC
+# 2025-01-19 RC
 # 2022-01-20 full indexing and simplification
 # 2022-01-21 add split()
 # 2022-01-22 add child classes for common polymers
@@ -234,9 +234,10 @@ if &#39;SIbase&#39; not in dir(): # avoid loading it twice
     from patankar.private.pint import set_application_registry as fixSIbase
 if &#39;migrant&#39; not in dir():
     from patankar.loadpubchem import migrant
+from patankar.useroverride import useroverride # useroverride is already an instance (not a class)
 
 
-__all__ = [&#39;AdhesiveAcrylate&#39;, &#39;AdhesiveEVA&#39;, &#39;AdhesiveNaturalRubber&#39;, &#39;AdhesivePU&#39;, &#39;AdhesivePVAC&#39;, &#39;AdhesiveSyntheticRubber&#39;, &#39;AdhesiveVAE&#39;, &#39;Cardboard&#39;, &#39;HDPE&#39;, &#39;HIPS&#39;, &#39;LDPE&#39;, &#39;LLDPE&#39;, &#39;PA6&#39;, &#39;PA66&#39;, &#39;PBT&#39;, &#39;PEN&#39;, &#39;PMMA&#39;, &#39;PP&#39;, &#39;PPrubber&#39;, &#39;PS&#39;, &#39;PVAc&#39;, &#39;Paper&#39;, &#39;R&#39;, &#39;RT0K&#39;, &#39;SBS&#39;, &#39;SI&#39;, &#39;SIbase&#39;, &#39;T0K&#39;, &#39;air&#39;, &#39;check_units&#39;, &#39;create_multi_layer_widget&#39;, &#39;create_polymer_dropdown&#39;, &#39;fixSIbase&#39;, &#39;format_scientific_latex&#39;, &#39;gPET&#39;, &#39;help_layer&#39;, &#39;iRT0K&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;list_layer_subclasses&#39;, &#39;list_materials&#39;, &#39;material&#39;, &#39;mesh&#39;, &#39;migrant&#39;, &#39;oPP&#39;, &#39;plasticizedPVC&#39;, &#39;qSI&#39;, &#39;rHIPS&#39;, &#39;rPET&#39;, &#39;rPS&#39;, &#39;resolve_material&#39;, &#39;rigidPVC&#39;, &#39;toSI&#39;, &#39;wPET&#39;]
+__all__ = [&#39;AdhesiveAcrylate&#39;, &#39;AdhesiveEVA&#39;, &#39;AdhesiveNaturalRubber&#39;, &#39;AdhesivePU&#39;, &#39;AdhesivePVAC&#39;, &#39;AdhesiveSyntheticRubber&#39;, &#39;AdhesiveVAE&#39;, &#39;Cardboard&#39;, &#39;HDPE&#39;, &#39;HIPS&#39;, &#39;LDPE&#39;, &#39;LLDPE&#39;, &#39;PA6&#39;, &#39;PA66&#39;, &#39;PBT&#39;, &#39;PEN&#39;, &#39;PMMA&#39;, &#39;PP&#39;, &#39;PPrubber&#39;, &#39;PS&#39;, &#39;PVAc&#39;, &#39;Paper&#39;, &#39;R&#39;, &#39;RT0K&#39;, &#39;SBS&#39;, &#39;SI&#39;, &#39;SIbase&#39;, &#39;T0K&#39;, &#39;air&#39;, &#39;check_units&#39;, &#39;create_multi_layer_widget&#39;, &#39;create_polymer_dropdown&#39;, &#39;fixSIbase&#39;, &#39;format_scientific_latex&#39;, &#39;gPET&#39;, &#39;help_layer&#39;, &#39;iRT0K&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;list_layer_subclasses&#39;, &#39;list_materials&#39;, &#39;material&#39;, &#39;mesh&#39;, &#39;migrant&#39;, &#39;oPP&#39;, &#39;plasticizedPVC&#39;, &#39;qSI&#39;, &#39;rHIPS&#39;, &#39;rPET&#39;, &#39;rPS&#39;, &#39;resolve_material&#39;, &#39;rigidPVC&#39;, &#39;toSI&#39;, &#39;useroverride&#39;, &#39;wPET&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -245,7 +246,7 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.32&#34;
+__version__ = &#34;1.40&#34;
 
 # %% Private functions and classes
 
@@ -1907,6 +1908,10 @@ class layer:
         nmeshmin = nmeshmin if nmeshmin is not None else layer._defaults[&#34;nmeshmin&#34;]
         verbose = verbose if verbose is not None else layer._defaults[&#34;verbose&#34;]
         verbosity = verbosity if verbosity is not None else layer._defaults[&#34;verbosity&#34;]
+
+        # add user overrides
+        nmesh = useroverride(&#34;nmesh&#34;,nmesh)
+        nmeshmin = useroverride(&#34;nmeshin&#34;,nmeshmin)
 
         # Assign layer id properties
         layername = layername if layername is not None else layer._defaults[&#34;layername&#34;]
@@ -11407,6 +11412,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         nmeshmin = nmeshmin if nmeshmin is not None else layer._defaults[&#34;nmeshmin&#34;]
         verbose = verbose if verbose is not None else layer._defaults[&#34;verbose&#34;]
         verbosity = verbosity if verbosity is not None else layer._defaults[&#34;verbosity&#34;]
+
+        # add user overrides
+        nmesh = useroverride(&#34;nmesh&#34;,nmesh)
+        nmeshmin = useroverride(&#34;nmeshin&#34;,nmeshmin)
 
         # Assign layer id properties
         layername = layername if layername is not None else layer._defaults[&#34;layername&#34;]

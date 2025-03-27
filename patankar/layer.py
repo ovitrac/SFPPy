@@ -83,18 +83,18 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.32
+@version: 1.40
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-13
+@rev. 2025-03-26
 
 """
 
 # ---- History ----
 # Created on Tue Jan 18 09:14:34 2022
-# 2022-01-19 RC
+# 2025-01-19 RC
 # 2022-01-20 full indexing and simplification
 # 2022-01-21 add split()
 # 2022-01-22 add child classes for common polymers
@@ -130,9 +130,10 @@ if 'SIbase' not in dir(): # avoid loading it twice
     from patankar.private.pint import set_application_registry as fixSIbase
 if 'migrant' not in dir():
     from patankar.loadpubchem import migrant
+from patankar.useroverride import useroverride # useroverride is already an instance (not a class)
 
 
-__all__ = ['AdhesiveAcrylate', 'AdhesiveEVA', 'AdhesiveNaturalRubber', 'AdhesivePU', 'AdhesivePVAC', 'AdhesiveSyntheticRubber', 'AdhesiveVAE', 'Cardboard', 'HDPE', 'HIPS', 'LDPE', 'LLDPE', 'PA6', 'PA66', 'PBT', 'PEN', 'PMMA', 'PP', 'PPrubber', 'PS', 'PVAc', 'Paper', 'R', 'RT0K', 'SBS', 'SI', 'SIbase', 'T0K', 'air', 'check_units', 'create_multi_layer_widget', 'create_polymer_dropdown', 'fixSIbase', 'format_scientific_latex', 'gPET', 'help_layer', 'iRT0K', 'layer', 'layerLink', 'list_layer_subclasses', 'list_materials', 'material', 'mesh', 'migrant', 'oPP', 'plasticizedPVC', 'qSI', 'rHIPS', 'rPET', 'rPS', 'resolve_material', 'rigidPVC', 'toSI', 'wPET']
+__all__ = ['AdhesiveAcrylate', 'AdhesiveEVA', 'AdhesiveNaturalRubber', 'AdhesivePU', 'AdhesivePVAC', 'AdhesiveSyntheticRubber', 'AdhesiveVAE', 'Cardboard', 'HDPE', 'HIPS', 'LDPE', 'LLDPE', 'PA6', 'PA66', 'PBT', 'PEN', 'PMMA', 'PP', 'PPrubber', 'PS', 'PVAc', 'Paper', 'R', 'RT0K', 'SBS', 'SI', 'SIbase', 'T0K', 'air', 'check_units', 'create_multi_layer_widget', 'create_polymer_dropdown', 'fixSIbase', 'format_scientific_latex', 'gPET', 'help_layer', 'iRT0K', 'layer', 'layerLink', 'list_layer_subclasses', 'list_materials', 'material', 'mesh', 'migrant', 'oPP', 'plasticizedPVC', 'qSI', 'rHIPS', 'rPET', 'rPS', 'resolve_material', 'rigidPVC', 'toSI', 'useroverride', 'wPET']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -141,7 +142,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.32"
+__version__ = "1.40"
 
 # %% Private functions and classes
 
@@ -1803,6 +1804,10 @@ class layer:
         nmeshmin = nmeshmin if nmeshmin is not None else layer._defaults["nmeshmin"]
         verbose = verbose if verbose is not None else layer._defaults["verbose"]
         verbosity = verbosity if verbosity is not None else layer._defaults["verbosity"]
+
+        # add user overrides
+        nmesh = useroverride("nmesh",nmesh)
+        nmeshmin = useroverride("nmeshin",nmeshmin)
 
         # Assign layer id properties
         layername = layername if layername is not None else layer._defaults["layername"]

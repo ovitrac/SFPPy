@@ -83,12 +83,12 @@ Example
     sol.plotC()
 ```
 
-@version: 1.37
+@version: 1.40
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-01-17
-@rev: 2025-03-17
+@rev: 2025-03-26
 
 """
 # Dependencies
@@ -116,8 +116,9 @@ import pandas as pd
 # Local dependencies
 from patankar.layer import layer, check_units, layerLink
 from patankar.food import foodphysics,foodlayer
+from patankar.useroverride import useroverride # useroverride is already an instance (not a class)
 
-__all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'cleantex', 'colormap', 'compute_fc_profile_PBC', 'compute_fv_profile', 'create_plotmigration_widget', 'create_simulation_widget', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_latex_available', 'is_valid_figure', 'layer', 'layerLink', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear']
+__all__ = ['CFSimulationContainer', 'Cprofile', 'PrintableFigure', 'SensPatankarResult', 'autoname', 'check_units', 'cleantex', 'colormap', 'compute_fc_profile_PBC', 'compute_fv_profile', 'create_plotmigration_widget', 'create_simulation_widget', 'custom_plt_figure', 'custom_plt_subplots', 'foodlayer', 'foodphysics', 'is_latex_available', 'is_valid_figure', 'layer', 'layerLink', 'print_figure', 'print_pdf', 'print_png', 'restartfile', 'restartfile_senspantakar', 'rgb', 'senspatankar', 'tooclear', 'useroverride']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -126,15 +127,15 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.37"
+__version__ = "1.40"
 
 # Plot configuration (preferred units)
 plotconfig_default = {
-    "tscale": 24 * 3600, # days used as time scale
+    "tscale": 24.0 * 3600, # days used as time scale
     "tunit": "days",
     "lscale": 1e-6, # µm
     "lunit": "µm",
-    "Cscale": 1,
+    "Cscale": 1.0,
     "Cunit": "a.u."
     }
 _fig_metadata_atrr_ = "__filename__"
@@ -1654,18 +1655,19 @@ class SensPatankarResult:
             raise TypeError(f"the container should be a CFSimulationContainer not a {type(CFSimulationContainer).__name__}")
         # rerun the simulation using unsecure restart data
         inputs = self.restart_unsecure.inputs # all previous inputs
-        R = senspatankar(multilayer=inputs["multilayer"],
-                              medium=inputs["medium"],
-                              name=name if name is not None else inputs["name"],
-                              description=kwargs.get("description",inputs["description"]),
-                              t=kwargs.get("t",inputs["t"]),
-                              autotime=kwargs.get("autotime",inputs["autotime"]),
-                              timescale=kwargs.get("timescale",inputs["timescale"]),
-                              Cxprevious=inputs["Cxprevious"],
-                              ntimes=kwargs.get("ntimes",inputs["ntimes"]),
-                              RelTol=kwargs.get("RelTol",inputs["RelTol"]),
-                              AbsTol=kwargs.get("AbsTol",inputs["AbsTol"]),
-                              container=container)
+        R = senspatankar(
+                multilayer=inputs["multilayer"],
+                medium=inputs["medium"],
+                name=name if name is not None else inputs["name"],
+                description=kwargs.get("description",inputs["description"]),
+                t=kwargs.get("t",inputs["t"]),
+                autotime=kwargs.get("autotime",inputs["autotime"]),
+                timescale=useroverride("timescale",kwargs.get("timescale",inputs["timescale"]),valuelist=("linear","sqrt")),
+                Cxprevious=inputs["Cxprevious"],
+                ntimes=useroverride("ntimes",kwargs.get("ntimes",inputs["ntimes"]),valuemin=10,valuemax=20000),
+                RelTol=useroverride("RelTol",kwargs.get("RelTol",inputs["RelTol"]),valuemin=1e-9,valuemax=1e-3),
+                AbsTol=useroverride("AbsTol",kwargs.get("AbsTol",inputs["AbsTol"]),valuemin=1e-9,valuemax=1e-3),
+                container=container)
         # Update numeric data in self whith those in R
         self.t = R.t
         self.C = R.C
@@ -1722,17 +1724,19 @@ class SensPatankarResult:
 
         # extend the existing solution
         inputs = self.restart.inputs # all previous inputs
-        newsol = senspatankar(multilayer=inputs["multilayer"],
-                              medium=newmedium,
-                              name=kwargs.get("name",inputs["name"]),
-                              description=kwargs.get("description",inputs["description"]),
-                              t=t,
-                              autotime=kwargs.get("autotime",inputs["autotime"]),
-                              timescale=kwargs.get("timescale",inputs["timescale"]),
-                              Cxprevious=newCx0,
-                              ntimes=kwargs.get("ntimes",inputs["ntimes"]),
-                              RelTol=kwargs.get("RelTol",inputs["RelTol"]),
-                              AbsTol=kwargs.get("AbsTol",inputs["AbsTol"]))
+        newsol = senspatankar(
+                multilayer=inputs["multilayer"],
+                medium=newmedium,
+                name=kwargs.get("name",inputs["name"]),
+                description=kwargs.get("description",inputs["description"]),
+                t=t,
+                autotime=kwargs.get("autotime",inputs["autotime"]),
+                timescale=useroverride("timescale",kwargs.get("timescale",inputs["timescale"]),valuelist=("linear","sqrt")),
+                Cxprevious=newCx0,
+                ntimes=useroverride("ntimes",kwargs.get("ntimes",inputs["ntimes"]),valuemin=10,valuemax=20000),
+                RelTol=useroverride("RelTol",kwargs.get("RelTol",inputs["RelTol"]),valuemin=1e-9,valuemax=1e-3),
+                AbsTol=useroverride("AbsTol",kwargs.get("AbsTol",inputs["AbsTol"]),valuemin=1e-9,valuemax=1e-3)
+                )
         return newsol
 
 
@@ -1967,6 +1971,9 @@ class SensPatankarResult:
         SMLunit = self._SMLunit if SMLunit is None else SMLunit
         plotSML = self._plotSML if plotSML is None else plotSML
 
+        # we apply eventual user overrides
+        plotconfig = useroverride("plotconfig",plotconfig,expected_type=dict)
+        plotSML = useroverride("plotSML",plotSML,expected_type=bool)
 
         # Ensure t is a list (even if a single value is given)
         if t is None:
@@ -2098,6 +2105,10 @@ class SensPatankarResult:
             plotconfig = {**self._plotconfig, **plotconfig}  # Merge without modifying self._plotconfig
         else:
             plotconfig = self._plotconfig.copy()  # Work with a copy to prevent accidental changes
+
+        # we apply eventual user overrides
+        plotconfig = useroverride("plotconfig",plotconfig,expected_type=dict)
+        nmax = useroverride("nmax",nmax,valuemin=3,valuemax=50)
 
         # Ensure time values are within the available time range
         if t is None:
@@ -2724,6 +2735,10 @@ class CFSimulationContainer:
         SMLunit = self._SMLunit if SMLunit is None else SMLunit
         plotSML = self._plotSML if plotSML is None else plotSML
 
+        # we apply eventual user overrides
+        plotconfig = useroverride("plotconfig",plotconfig,expected_type=dict)
+        plotSML = useroverride("plotSML",plotSML,expected_type=bool)
+
         if not self.curves:
             print("No curves to plot.")
             return
@@ -2944,6 +2959,11 @@ class restartfile_senspantakar(restartfile):
                  t,autotime,timescale,Cxprevious,
                  ntimes,RelTol,AbsTol,deepcopy=True):
         """constructor to be called at the intialization"""
+
+        # eventual user override (for memory management)
+        # deepcopy=False (unsecure copy) must never be overriden (if not the kernel will crash !!!)
+        deepcopy = useroverride("deepcopy",deepcopy,expected_type=bool) if deepcopy else deepcopy
+
         if deepcopy:
             inputs = {
                 "multilayer":multilayer.copy(),
@@ -3008,7 +3028,7 @@ class restartfile_senspantakar(restartfile):
 def senspatankar(multilayer=None, medium=None,
                  name=f"senspatantkar:{autoname(6)}", description="",
                  t=None, autotime=True, timescale="sqrt", Cxprevious=None,
-                 ntimes=1e3, RelTol=1e-6, AbsTol=1e-6,
+                 ntimes=1000, RelTol=1e-6, AbsTol=1e-6,
                  container=None):
     """
     Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -3102,7 +3122,6 @@ def senspatankar(multilayer=None, medium=None,
         sol.plotCF()
         sol.plotC()
     """
-
     # Check arguments
     if not isinstance(multilayer, layer):
         raise TypeError(f"the input multilayer must be of class layer, not {type(multilayer).__name__}")
@@ -3110,6 +3129,12 @@ def senspatankar(multilayer=None, medium=None,
         raise TypeError(f"the input medium must be of class foodlayer, not {type(medium).__name__}")
     if not isinstance(timescale, str):
         raise TypeError(f"timescale must be a string, not {type(timescale).__name__}")
+
+    # Apply User overrides if any
+    timescale = useroverride("timescale",timescale,valuelist=("linear","sqrt"))
+    ntimes = useroverride("ntimes",ntimes,valuemin=10,valuemax=20000)
+    RelTol = useroverride("RelTol",RelTol,valuemin=1e-9,valuemax=1e-3)
+    AbsTol = useroverride("AbsTol",AbsTol,valuemin=1e-9,valuemax=1e-3)
 
     # Refresh the physics of medium for parameters tunned by the end-user
     medium.refresh()

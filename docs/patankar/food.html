@@ -6064,6 +6064,10 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         verbose = verbose if verbose is not None else layer._defaults[&#34;verbose&#34;]
         verbosity = verbosity if verbosity is not None else layer._defaults[&#34;verbosity&#34;]
 
+        # add user overrides
+        nmesh = useroverride(&#34;nmesh&#34;,nmesh)
+        nmeshmin = useroverride(&#34;nmeshin&#34;,nmeshmin)
+
         # Assign layer id properties
         layername = layername if layername is not None else layer._defaults[&#34;layername&#34;]
         layertype = layertype if layertype is not None else layer._defaults[&#34;layertype&#34;]

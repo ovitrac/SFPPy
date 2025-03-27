@@ -2538,7 +2538,10 @@ class migrantToxtree(migrant):
 # ==========================
 if __name__ == "__main__":
     # debug
-    m = migrant("ethane")
+    [print(migrant(m)) for m in ["toluene", "anisole", "limonene", "BHT", "DEHP", "Irganox 1076", "Irgafos 168"]]
+
+    m = migrant("Cyclohexylbenzene")
+    #m = migrant("phenylcyclohexane")
     migrantToxtree("acetone")
     m = migrant("di(2-ethylhexyl) phthalate")
     repr(m)

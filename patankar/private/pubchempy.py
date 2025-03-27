@@ -52,7 +52,7 @@ log.addHandler(logging.NullHandler())
 if sys.version_info[0] == 3:
     text_types = str, bytes
 else:
-    text_types = basestring # Python 2 only (normal you seen an error in Python 3) - Olivier Vitrac
+    text_types = basestring # Python 2 only (normal you see an error in Python 3) - Olivier Vitrac
 
 
 class CompoundIdType(object):
