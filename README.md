@@ -2,8 +2,8 @@
 
 <div aligb="center">
 
-| ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it wit AI. |
-| ---------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------- |
+| ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it with AI. |
+| ---------------------------------------------- | ------------------------------------------------------------ | --------------------------------- |
 
 </div>
 
