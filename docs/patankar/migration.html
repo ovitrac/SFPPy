@@ -3683,6 +3683,15 @@ if __name__ == &#39;__main__&#39;:
 
     from patankar.food import ethanol, setoff, nofood
     from patankar.layer import PP
+    from patankar.useroverride import useroverride
+    useroverride.update(
+        ntimes = 100,     # instead of 1000 (number of simulation times kept)
+        nmesh = 300,       # instead of 600 (Finite-Volume resolution, number of FV nodes)
+        tunit = &#34;weeks&#34;,    # time units (can be any value s,min,days,weeks,months,years)
+        lunit = &#34;µm&#34;,      # length units (can be any value, nm, µm or um, mm,cm or even in)
+        Cunit = &#34;mg/kg&#34;,  # set concentration units instead of a.u.
+        )
+
 
     medium = ethanol()
     medium.CF0 = 100 # works
@@ -5087,7 +5096,7 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:MgMZKL', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:rDvIh8', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer

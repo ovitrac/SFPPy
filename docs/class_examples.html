@@ -314,6 +314,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <li class="file"><a href="#patankar_loadpubchem" onclick="loadDoc('patankar_loadpubchem')">loadpubchem.py</a></li>
 <li class="file"><a href="#patankar_migration" onclick="loadDoc('patankar_migration')">migration.py</a></li>
 <li class="file"><a href="#patankar_property" onclick="loadDoc('patankar_property')">property.py</a></li>
+<li class="file"><a href="#patankar_useroverride" onclick="loadDoc('patankar_useroverride')">useroverride.py</a></li>
 <li class="folder">
 <div class="folder-title" onclick="toggleFolder(this)">private</div>
 <ul class="folder-content">
@@ -337,7 +338,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <p>Select a module in the left menu to view usage examples. These examples are not for production and are automatically extracted from the main section of each module.</p>
 <p>Back to the <a href='index.html'>Python'SFPPy documentation</a>.</p>
 <p>When no module is selected, you see this welcome page. They are used to test classes with typical codes. The main section often serves as a testing script, example usage block, or self-contained test block. It's a way to demonstrate how the module's functionality works or to run simple unit tests and examples inline.</p>
-<p>Generated on: 2025-03-27 14:11:41</p>
+<p>Generated on: 2025-03-30 23:23:25</p>
 
 </div>
 
@@ -608,6 +609,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">S</span> <span class="o">=</span> <span class="n">m</span> <span class="o">%</span> <span class="n">storage</span> <span class="o">&lt;&lt;</span> <span class="n">B</span> <span class="o">&gt;&gt;</span> <span class="n">P</span> <span class="o">&gt;&gt;</span> <span class="n">storage</span>
     <span class="kn">from</span> <span class="nn">patankar.food</span> <span class="kn">import</span> <span class="n">ethanol</span><span class="p">,</span> <span class="n">setoff</span><span class="p">,</span> <span class="n">nofood</span>
     <span class="kn">from</span> <span class="nn">patankar.layer</span> <span class="kn">import</span> <span class="n">PP</span>
+    <span class="kn">from</span> <span class="nn">patankar.useroverride</span> <span class="kn">import</span> <span class="n">useroverride</span>
+    <span class="n">useroverride</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">ntimes</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>     <span class="c1"># instead of 1000 (number of simulation times kept)</span>
+        <span class="n">nmesh</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>       <span class="c1"># instead of 600 (Finite-Volume resolution, number of FV nodes)</span>
+        <span class="n">tunit</span> <span class="o">=</span> <span class="s2">&quot;weeks&quot;</span><span class="p">,</span>    <span class="c1"># time units (can be any value s,min,days,weeks,months,years)</span>
+        <span class="n">lunit</span> <span class="o">=</span> <span class="s2">&quot;µm&quot;</span><span class="p">,</span>      <span class="c1"># length units (can be any value, nm, µm or um, mm,cm or even in)</span>
+        <span class="n">Cunit</span> <span class="o">=</span> <span class="s2">&quot;mg/kg&quot;</span><span class="p">,</span>  <span class="c1"># set concentration units instead of a.u.</span>
+        <span class="p">)</span>
     <span class="n">medium</span> <span class="o">=</span> <span class="n">ethanol</span><span class="p">()</span>
     <span class="n">medium</span><span class="o">.</span><span class="n">CF0</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># works</span>
     <span class="n">medium</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">CF0</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># works also</span>
@@ -1150,6 +1159,18 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="s2">&quot;toluene&quot;</span><span class="p">)</span>
     <span class="n">istoluene</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;list&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;InChiKey&quot;</span><span class="p">,</span> <span class="s2">&quot;op&quot;</span><span class="p">:</span> <span class="s2">&quot;==&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;YXFVVABEGXRONW-UHFFFAOYSA-N&quot;</span><span class="p">}]}</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">PropertyModelSelector</span><span class="p">(</span><span class="n">istoluene</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_useroverride" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">useroverride</span><span class="o">.</span><span class="n">plotconfig</span><span class="p">(</span><span class="n">tscale</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">useroverride</span><span class="o">.</span><span class="n">plotconfig</span><span class="p">)</span>            <span class="c1"># should print full validated dict</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">useroverride</span><span class="o">.</span><span class="n">_plotconfig</span><span class="p">)</span>           <span class="c1"># should match</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">useroverride</span><span class="o">.</span><span class="n">plotconfig</span><span class="o">.</span><span class="n">tscale</span><span class="p">)</span>     <span class="c1"># should match _plotconfig[&quot;tscale&quot;]</span>
 </pre>
     </div>
     </div>

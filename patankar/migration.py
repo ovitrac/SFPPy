@@ -3580,6 +3580,15 @@ if __name__ == '__main__':
 
     from patankar.food import ethanol, setoff, nofood
     from patankar.layer import PP
+    from patankar.useroverride import useroverride
+    useroverride.update(
+        ntimes = 100,     # instead of 1000 (number of simulation times kept)
+        nmesh = 300,       # instead of 600 (Finite-Volume resolution, number of FV nodes)
+        tunit = "weeks",    # time units (can be any value s,min,days,weeks,months,years)
+        lunit = "µm",      # length units (can be any value, nm, µm or um, mm,cm or even in)
+        Cunit = "mg/kg",  # set concentration units instead of a.u.
+        )
+
 
     medium = ethanol()
     medium.CF0 = 100 # works

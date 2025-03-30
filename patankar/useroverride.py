@@ -29,9 +29,19 @@ From the side of the program, useroverride.check("param",defaultvalue, constrain
 
 The check method can be omitted and seroverride("param",defaultvalue,...) works also (syntax used in SFPPy).
 
+    2) plotconfig configuration with a flexible syntax
+    Setting the units alone will change automatically the scale (for t and l, not for C0)
+
+    useroverride.plotconfig(tunit="month",lunit="mm",Cunit="ppm"); # note ";" to suppress output
+    useroverride.plotconfig.tunit = "week"
+    useroverride.plotconfig.tunit = (1,"week")
+    useroverride.plotconfig.tscale = lref**2/Dref # diffusion time based on lref and Dref
+    useroverride.plotconfig.tunit = "-"
+    useroverride.plotconfig["tunit"] = "-" # works also
+
 Legacy usage:
 ---------------
-    2) Call the inject() method so that SetSFPPy is defined globally. You can also pass a dictionary with initial parameters if desired.
+    3) Call the inject() method so that SetSFPPy is defined globally. You can also pass a dictionary with initial parameters if desired.
 
     # Inject without an update dictionary; SetSFPPy will be an empty dict initially.
     useroverride.inject()
@@ -49,12 +59,12 @@ Synopsis:
 The intended design is that SFPPy's code accesses a single, predominantly read-only instance (via SetSFPPy) while user-side scripts rarely inject new values to update it. This ensures that all parts of SFPPy consistently refer to one global configuration, avoiding the potential pitfalls of having multiple conflicting instances. The mechanism is meant to decouple parameter management from function arguments, enabling a clear, centralized override process.
 
 
-@version: 1.40
+@version: 1.41
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-03-10
-@rev: 2025-03-26
+@rev: 2025-03-30
 """
 
 
@@ -77,6 +87,70 @@ if not hasattr(builtins, 'SetSFPPy'):
     # Fallback: create an empty configuration dictionary
     builtins.SetSFPPy = {}
 
+# plotcondfig keys
+plotconfig_keys = {"tscale", "tunit", "lscale", "lunit", "Cscale", "Cunit"}
+
+# plotconfig Class container
+class _PlotConfigDescriptor:
+    """
+    A callable property-like descriptor for plotconfig that supports dual usage:
+        1. Getter: returns always-valid config
+            cfg = obj.plotconfig
+        2. Callable: updates and returns config
+            cfg = obj.plotconfig(tscale=(1, "hours"), Cunit="mg/kg")
+    """
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        return self._Wrapper(instance)
+
+    class _Wrapper:
+        def __init__(self, instance):
+            object.__setattr__(self, "instance", instance)
+
+
+        def __call__(self, **kwargs):
+            validated = self.instance.plotconfig_validator(self.instance._plotconfig, **kwargs)
+            self.instance._plotconfig = validated
+            return validated
+
+        def __getattr__(self, name):
+            if self.instance._plotconfig is None:
+                self()  # triggers default init
+            try:
+                return self.instance._plotconfig[name]
+            except KeyError:
+                raise AttributeError(f"'plotconfig' has no key '{name}'")
+
+        def __getitem__(self, key):
+            if self.instance._plotconfig is None:
+                self()
+            return self.instance._plotconfig[key]
+
+        def __setitem__(self, key, value):
+            if self.instance._plotconfig is None:
+                self()
+            validated = self.instance.plotconfig_validator(self.instance._plotconfig, **{key: value})
+            self.instance._plotconfig = validated
+
+        def __setattr__(self, name, value):
+            if name == "instance":
+                object.__setattr__(self, name, value)
+            else:
+                self.__setitem__(name, value)
+
+        def __repr__(self):
+            return repr(self())
+
+        def as_dict(self):
+            return self()
+
+        def __bool__(self):
+            return True
+
+
+
+# main class UserOverride (do not call it directly, import its instance useroverride)
 class UserOverride(MutableMapping):
     r"""
     A dynamic override container for SFPPy parameters.
@@ -107,6 +181,16 @@ class UserOverride(MutableMapping):
         # Update several parameters:
         useroverride.update(gamma=100, delta=[1, 2, 3])
 
+    Special case for plotconfig (a flexible interface with validation has been implemented):
+        useroverride = UserOverride()
+        useroverride.plotconfig.tscale = 3600          # Attribute-style
+        useroverride.plotconfig.tunit = "seconds"
+        useroverride.plotconfig["Cunit"] = "mg/kg"     # Dict-style
+        useroverride.plotconfig(tscale=(2, "days"))    # Callable-style
+        useroverride.plotconfig(tunit="min",lunit="nm")# Callable style that will set tscale and lscale
+        print(useroverride.plotconfig.tscale)          # Access as attribute
+        print(useroverride.plotconfig["Cunit"])        # Access as key
+
     Parameters are stored internally and always available via the global
     variable `SetSFPPy` (after injection).
 
@@ -115,9 +199,12 @@ class UserOverride(MutableMapping):
     Project: SFPPy, Version: 1.40
     """
 
+    plotconfig = _PlotConfigDescriptor()
+
     def __init__(self):
         # Internal dictionary to hold override parameters.
         super().__setattr__("_data", {})
+        super().__setattr__("_plotconfig", None) # special container for plotconfig
         # List to hold messages (warnings, errors, info)
         super().__setattr__("_messages", [])
 
@@ -132,13 +219,9 @@ class UserOverride(MutableMapping):
             update_dict (dict, optional): A dictionary with additional parameters
                 to update the override container.
 
-        Returns:
-            bool: True if a parameter named "param" exists in the overrides,
-                  False otherwise.
-
         Example:
             >>> useroverride.inject({"param": 10})
-            True
+
         """
         if update_dict:
             if not isinstance(update_dict, dict):
@@ -146,8 +229,7 @@ class UserOverride(MutableMapping):
             else:
                 self._data.update(update_dict)
         # Inject the instance into the builtins so that SFPPy modules can access it
-        builtins.SetSFPPy = self
-        return "param" in self._data
+        builtins.SetSFPPy = self # we provide now the full instance, not only self._data
 
     def add_message(self, message, level="info"):
         r"""
@@ -194,6 +276,9 @@ class UserOverride(MutableMapping):
             ...                                valuemin=0.0, valuemax=10.0)
             >>> print(alpha_val)  # Will print a NumPy array of floats.
         """
+        if key == "plotconfig":      # shortcut / plotconfig is well protected with _PlotConfigDescriptor
+            return self.plotconfig
+
         if key not in self._data:
             return default
 
@@ -265,15 +350,28 @@ class UserOverride(MutableMapping):
         r"""
         Update the override parameters using keyword arguments.
 
-        Accepts keyword arguments in the form:
+        Special handling:
+        -----------------
+        - If 'plotconfig' is provided, it is validated and stored in _plotconfig.
+        - If any of the individual plotconfig keys (tscale, tunit, lscale, lunit, Cscale, Cunit)
+          are provided, they are passed to self.plotconfig(...) and removed from _data.
 
-            update(alpha=3.14, beta=42, ...)
-
-        The method updates the internal parameters accordingly.
+        All other keys are stored in the internal override dictionary (_data).
 
         Example:
-            >>> useroverride.update(alpha=3.14, beta=42)
+            >>> useroverride.update(alpha=3.14, tscale=(1, "days"))
         """
+        # 1. Handle full plotconfig
+        if "plotconfig" in kwargs:
+            cfg = kwargs.pop("plotconfig")
+            self._plotconfig = self.plotconfig_validator(cfg)
+
+        # 2. Handle individual plotconfig keys
+        pc_kwargs = {k: kwargs.pop(k) for k in list(kwargs) if k in plotconfig_keys}
+        if pc_kwargs:
+            self.plotconfig(**pc_kwargs)
+
+        # 3. Update remaining keys into _data
         self._data.update(kwargs)
 
 
@@ -299,7 +397,12 @@ class UserOverride(MutableMapping):
         return self._data.get(key, None)
 
     def __setitem__(self, key, value):
-        self._data[key] = value
+        if key == "plotconfig":
+            self._plotconfig = self.plotconfig_validator(value)
+        elif key in plotconfig_keys:
+            self.plotconfig(**{key: value})
+        else:
+            self._data[key] = value
 
     def __delitem__(self, key):
         if key in self._data:
@@ -338,17 +441,26 @@ class UserOverride(MutableMapping):
         """
         if name in self._data:
             return self._data[name]
+        # 🛠 FIX: allow access to descriptors like plotconfig
+        cls_attr = getattr(type(self), name, None)
+        if hasattr(cls_attr, "__get__"):
+            return cls_attr.__get__(self, type(self))
         raise AttributeError(f"'UserOverride' object has no attribute '{name}'")
+
 
     def __setattr__(self, name, value):
         """
         Enables dynamic attribute setting.
 
-        Attributes that are not internal (i.e. not '_data' or '_messages')
-        are stored in the internal parameter dictionary.
+        Attributes that are not internal (i.e., not '_data', '_plotconfig', etc.)
+        are stored in the internal parameter dictionary or delegated to plotconfig.
         """
-        if name in {"_data", "_messages"} or name.startswith("__"):
+        if name in {"_data", "_messages", "_plotconfig"} or name.startswith("__"):
             super().__setattr__(name, value)
+        elif name == "plotconfig":
+            self._plotconfig = self.plotconfig_validator(value)
+        elif name in plotconfig_keys:
+            self.plotconfig(**{name: value})
         else:
             self._data[name] = value
 
@@ -370,6 +482,7 @@ class UserOverride(MutableMapping):
         lines = []
         for k, v in self._data.items():
             lines.append(f"{str(k).rjust(max_len)}: {v}")
+        lines.append(f"{'plotconfig'.rjust(max_len)}: {self.plotconfig}")
         print("\n".join(lines))
         return str(self)
 
@@ -382,21 +495,157 @@ class UserOverride(MutableMapping):
         """
         return f"<{type(self).__name__}: {len(self._data)} parameters defined>"
 
+    # --- plotconfig validator ---
+    @staticmethod
+    def plotconfig_validator(plotconfig=None,
+            tscale=None, tunit=None,
+            lscale=None, lunit=None,
+            Cscale=None, Cunit=None
+        ):
+        """
+        Validate and complete a plot configuration dictionary for postprocessing.
+
+        This static method takes an optional `plotconfig` dictionary and individual keyword overrides
+        to build a fully defined configuration used to scale and label time, space, and concentration
+        in plots.
+
+        Key behavior:
+        -------------
+        - Only missing or `None` fields are filled using default values.
+        - If `tscale` or `lscale` are provided as `(value, unit)` tuples, they override any value in `plotconfig`.
+        - If only scalar values are available in `plotconfig` or as keyword arguments, corresponding unit keys
+          (`tunit`, `lunit`) must also be present to enable conversion via `_toSI()`.
+        - The function expects and returns SI-based scaling factors internally.
+
+        Parameters:
+        -----------
+        plotconfig : dict or None
+            An optional dictionary that may contain keys:
+            "tscale", "tunit", "lscale", "lunit", "Cscale", "Cunit".
+
+        tscale : float or (value, unit) tuple, optional
+            Time scale. If given as a tuple, it takes precedence over `plotconfig`.
+
+        tunit : str, optional
+            Time unit. Used only if `tscale` is a scalar and needs conversion to SI.
+
+        lscale : float or (value, unit) tuple, optional
+            Length scale. If given as a tuple, it takes precedence over `plotconfig`.
+
+        lunit : str, optional
+            Length unit. Used only if `lscale` is a scalar and needs conversion to SI.
+
+        Cscale : float, optional
+            Concentration scaling factor. Defaults to 1.0 if not provided or found in `plotconfig`.
+
+        Cunit : str, optional
+            Concentration unit label. Defaults to "a.u.".
+
+        Returns:
+        --------
+        dict
+            A validated plot configuration dictionary with the following keys:
+            - "tscale": float (SI)
+            - "tunit" : str
+            - "lscale": float (SI)
+            - "lunit" : str
+            - "Cscale": float
+            - "Cunit" : str
+
+        Note:
+        -----
+        (value, unit) tuples have precedence over existing or default values.
+        Default values are only applied when fields are missing or None.
+        """
+
+        default = {
+            "tscale": (1, "days"),
+            "tunit": "days",
+            "lscale": (1, "µm"),
+            "lunit": "µm",
+            "Cscale": 1.0,
+            "Cunit": "a.u."
+        }
+        from patankar.layer import _toSI
+        cfg = {} if plotconfig is None else plotconfig.copy()
+
+        def _tofloat(x, keyname="value"):
+            """
+            Convert a value to float with the following rules:
+            - int → float
+            - float → float
+            - ndarray → first element → float
+            - otherwise: raise TypeError
+            """
+            import numpy as np
+            if isinstance(x, (int, float)):
+                return float(x)
+            elif isinstance(x, np.ndarray):
+                try:
+                    return float(x.flat[0])  # works on any shape
+                except Exception:
+                    raise TypeError(f"{keyname} (ndarray) must contain at least one element.")
+            else:
+                raise TypeError(f"{keyname} must be a float, int, or ndarray, not {type(x).__name__}")
+
+        # TIME SCALE
+        if isinstance(tscale, tuple):
+            cfg["tscale"] = _toSI(tscale).item()
+            cfg["tunit"] = tscale[1]
+        elif tscale is not None:
+            cfg["tscale"] = tscale
+            if tunit is not None:
+                cfg["tunit"] = tunit
+        elif tscale is None and tunit is not None:
+            if not isinstance(tunit,str):
+                TypeError(f"tunit must be str not a {type(tunit).__name__}")
+            try:
+                cfg["tscale"] = _toSI((1,tunit)).item()
+            except AttributeError:
+                print(f"Warning: the unit [ {tunit} ] is not convertible to SI.\nYou need to adjust also tscale.")
+            cfg["tunit"] = tunit
+        elif "tscale" not in cfg or cfg.get("tscale") is None:
+            cfg["tscale"] = _toSI(default["tscale"]).item()
+            cfg["tunit"] = default["tunit"]
+
+        # LENGTH SCALE
+        if isinstance(lscale, tuple):
+            cfg["lscale"] = _toSI(lscale).item()
+            cfg["lunit"] = lscale[1]
+        elif lscale is not None:
+            cfg["lscale"] = lscale
+            if lunit is not None:
+                cfg["lunit"] = lunit
+        elif lscale is None and lunit is not None:
+            if not isinstance(lunit,str):
+                TypeError(f"tunit must be str not a {type(tunit).__name__}")
+            try:
+                cfg["lscale"] = _toSI((1,lunit)).item()
+            except AttributeError:
+                print(f"Warning: the unit [ {lunit} ] is not convertible to SI.\nYou need to adjust also lscale.")
+            cfg["lunit"] = lunit
+        elif "lscale" not in cfg or cfg.get("lscale") is None:
+            cfg["lscale"] = _toSI(default["lscale"]).item()
+            cfg["lunit"] = default["lunit"]
+
+        # CONCENTRATION SCALE (no conversion, just scalars)
+        cfg["Cscale"] = Cscale if Cscale is not None else cfg.get("Cscale", default["Cscale"])
+        cfg["Cunit"]  = Cunit  if Cunit  is not None else cfg.get("Cunit",  default["Cunit"])
+
+        # Final validation
+        cfg["tscale"] = _tofloat(cfg["tscale"], "tscale")
+        cfg["lscale"] = _tofloat(cfg["lscale"], "lscale")
+        cfg["Cscale"] = _tofloat(cfg["Cscale"], "Cscale")
+
+        # Return validated/updated plotconfig
+        return cfg
+
 
 
 # Create a global instance to be used throughout SFPPy.
 useroverride = UserOverride()
 
-
 # Here a list of useful overrides for patankar.migration
-useroverride.plotconfig = {
-    "tscale": 24.0 * 3600, # days used as time scale
-    "tunit": "days",       # units
-    "lscale": 1e-6,        # length scale (from SI), here µm
-    "lunit": "µm",         # units
-    "Cscale": 1.0,         # concentration conversion
-    "Cunit": "a.u."        # use "mg/kg" if you are sure of your units
-    }
 useroverride.ntimes = 1000      # number of stored simulation times (max=20000)
 useroverride.timescale = "sqrt" # best for the first step
 useroverride.RelTol=1e-6        # relative tolerance for integration of PDE in time
@@ -412,3 +661,9 @@ useroverride.nmesh = 600   # total number of FV volumes in the assembly (the res
 
 # Optionally (legacy), one could automatically inject the override container into builtins (set SFPPy):
 #useroverride.inject()
+
+if __name__ == '__main__':
+    useroverride.plotconfig(tscale=(1,'s'))
+    print(useroverride.plotconfig)            # should print full validated dict
+    print(useroverride._plotconfig)           # should match
+    print(useroverride.plotconfig.tscale)     # should match _plotconfig["tscale"]

@@ -435,7 +435,7 @@
                 const markdownContent = `
 # SFPPy Modules Documentation
 
-Generated on: **2025-03-27 14:11:41**
+Generated on: **2025-03-30 23:23:25**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -4018,10 +4018,12 @@ object --> migrationProperty
 <div class="mermaid">
 graph TD;
 UserOverride
+_PlotConfigDescriptor
 MutableMapping --> UserOverride
+object --> _PlotConfigDescriptor
 </div>
 
-**Class Examples:** Not available.
+**[Class Examples for \`patankar/useroverride.py\` (1)](class_examples.html#patankar_useroverride)**
 
 ### Methods Table
 
@@ -4029,22 +4031,24 @@ MutableMapping --> UserOverride
 |-------|---------|---------------------------|---------|-------------|
 | \`UserOverride\` | \`__call__\` | Allows the UserOverride instance to be called directly as a shortcut to the check() method. | 14 | 1.40 |
 | \`UserOverride\` | \`__delitem__\` |  | 3 | 1.40 |
-| \`UserOverride\` | \`__getattr__\` | Enables dynamic attribute access. | 10 | 1.40 |
+| \`UserOverride\` | \`__getattr__\` | Enables dynamic attribute access. | 14 | 1.40 |
 | \`UserOverride\` | \`__getitem__\` |  | 2 | 1.40 |
-| \`UserOverride\` | \`__init__\` | Initialize self.  See help(type(self)) for accurate signature. | 5 | 1.40 |
+| \`UserOverride\` | \`__init__\` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.40 |
 | \`UserOverride\` | \`__iter__\` |  | 2 | 1.40 |
 | \`UserOverride\` | \`__len__\` |  | 2 | 1.40 |
-| \`UserOverride\` | \`__repr__\` | Returns a tabulated representation of the override parameters. | 19 | 1.40 |
-| \`UserOverride\` | \`__setattr__\` | Enables dynamic attribute setting. | 11 | 1.40 |
-| \`UserOverride\` | \`__setitem__\` |  | 2 | 1.40 |
+| \`UserOverride\` | \`__repr__\` | Returns a tabulated representation of the override parameters. | 20 | 1.40 |
+| \`UserOverride\` | \`__setattr__\` | Enables dynamic attribute setting. | 15 | 1.40 |
+| \`UserOverride\` | \`__setitem__\` |  | 7 | 1.40 |
 | \`UserOverride\` | \`__str__\` | Returns a short summary of the override container. | 8 | 1.40 |
 | \`UserOverride\` | \`add_message\` | Adds a message to the internal message list for errors, warnings, or info. | 12 | 1.40 |
-| \`UserOverride\` | \`check\` | Validates and returns the parameter value. | 97 | 1.40 |
-| \`UserOverride\` | \`inject\` | Injects the current override container into the global namespace as 'SetSFPPy'. | 27 | 1.40 |
+| \`UserOverride\` | \`check\` | Validates and returns the parameter value. | 100 | 1.40 |
+| \`UserOverride\` | \`inject\` | Injects the current override container into the global namespace as 'SetSFPPy'. | 22 | 1.40 |
 | \`UserOverride\` | \`keys\` | Return a set-like object providing a view on the override parameter keys. | 3 | 1.40 |
+| \`UserOverride\` | \`plotconfig_validator\` | Validate and complete a plot configuration dictionary for postprocessing. | 143 | 1.40 |
 | \`UserOverride\` | \`todict\` | Returns a shallow copy of the override parameters as a plain dictionary. | 8 | 1.40 |
-| \`UserOverride\` | \`update\` | Update the override parameters using keyword arguments. | 14 | 1.40 |
+| \`UserOverride\` | \`update\` | Update the override parameters using keyword arguments. | 27 | 1.40 |
 | \`UserOverride\` | \`values\` | Return an object providing a view on the override parameter values. | 3 | 1.40 |
+| \`_PlotConfigDescriptor\` | \`__get__\` |  | 4 | 1.40 |
 
                 `;
             
