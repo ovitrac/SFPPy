@@ -724,8 +724,8 @@ class EuFCMannex1:
     def __repr__(self):
         csv_filename = os.path.basename(self.csv_file)
         index_date = self.index.get("index_date", "unknown")
-        print(f"Annex 1 of EU regulation 10/2011 EC ({len(self.order)} records)")
-        print(f"imported from CSC {csv_filename} and indexed on {index_date}")
+        print(f"Annex 1 of 🇪🇺EU regulation 10/2011 EC ({len(self.order)} records)")
+        print(f"Imported from CSC {csv_filename} and indexed on {index_date}")
         return str(self)
 
     def __str__(self):

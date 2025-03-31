@@ -1,6 +1,6 @@
 # SFPPy Modules Documentation
 
-Generated on: **2025-03-30 23:23:25**
+Generated on: **2025-04-01 00:10:10**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -134,23 +134,28 @@ python yourscript.py # or `conda activate sfppy && python yourscript.py`
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
+<a href="#patankar_private_USFDAfcn" style="text-decoration: none; font-weight: bold;">
+8. patankar.private.USFDAfcn
+</a>
+</div>
+<div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_private_mstruct" style="text-decoration: none; font-weight: bold;">
-8. patankar.private.mstruct
+9. patankar.private.mstruct
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_private_pubchempy" style="text-decoration: none; font-weight: bold;">
-9. patankar.private.pubchempy
+10. patankar.private.pubchempy
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_property" style="text-decoration: none; font-weight: bold;">
-10. patankar.property
+11. patankar.property
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_useroverride" style="text-decoration: none; font-weight: bold;">
-11. patankar.useroverride
+12. patankar.useroverride
 </a>
 </div>
 </div>
@@ -2902,7 +2907,7 @@ object --> CompoundIndex
 object --> migrant
 ```
 
-**[Class Examples for `patankar/loadpubchem.py` (7)](class_examples.html#patankar_loadpubchem)**
+**[Class Examples for `patankar/loadpubchem.py` (8)](class_examples.html#patankar_loadpubchem)**
 
 ### Methods Table
 
@@ -2914,6 +2919,7 @@ object --> migrant
 | (module-level) | `parse_molblock` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.37 |
 | (module-level) | `parse_sdf` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.37 |
 | (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.37 |
+| (module-level) | `unique` | Return unique elements from `lst`, with optional order preservation and scalar unwrapping. | 27 | 1.37 |
 | `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.37 |
 | `CompoundIndex` | `_add_synonym_to_index` | Helper to map a single synonym→cid in self.index. | 9 | 1.37 |
 | `CompoundIndex` | `_atom_to_dict` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.37 |
@@ -2923,8 +2929,8 @@ object --> migrant
 | `CompoundIndex` | `_generate_simple_dict` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.37 |
 | `CompoundIndex` | `find` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 91 | 1.37 |
 | `CompoundIndex` | `refresh_index` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.37 |
-| `migrant` | `__init__` | Create a new migrant instance. | 356 | 1.37 |
-| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 55 | 1.37 |
+| `migrant` | `__init__` | Create a new migrant instance. | 390 | 1.37 |
+| `migrant` | `__repr__` | Formatted string representation summarizing key attributes. | 65 | 1.37 |
 | `migrant` | `__str__` | Formatted string representing the migrant | 4 | 1.37 |
 | `migrant` | `_crop_image` | Crops white background from the PNG image. | 30 | 1.37 |
 | `migrant` | `_download_PNG` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.37 |
@@ -2936,7 +2942,7 @@ object --> migrant
 | `migrant` | `suggest_alt_Dclass` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.37 |
 | `migrant` | `suggest_alt_Dmodel` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.37 |
 | `migrantToxtree` | `__init__` | migrantToxtree constructor | 41 | 1.37 |
-| `migrantToxtree` | `__repr__` | Formatted string representation summarizing key attributes. | 55 | 1.37 |
+| `migrantToxtree` | `__repr__` | Formatted string representation summarizing key attributes. | 65 | 1.37 |
 | `migrantToxtree` | `__str__` | Formatted string representing the migrant | 4 | 1.37 |
 | `migrantToxtree` | `_clean_field_names` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.37 |
 | `migrantToxtree` | `_crop_image` | Crops white background from the PNG image. | 30 | 1.37 |
@@ -3077,7 +3083,7 @@ restartfile --> restartfile_senspantakar
 <a id="patankar_private_EUFCMannex1" name="patankar_private_EUFCMannex1"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_migration" title="Go to Previous Module: patankar.migration" style="text-decoration: none;">⬅️ Previous</a>
 <a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
-<a href="#patankar_private_mstruct" title="Go to Next Module: patankar.private.mstruct" style="text-decoration: none;">➡️ Next</a>
+<a href="#patankar_private_USFDAfcn" title="Go to Next Module: patankar.private.USFDAfcn" style="text-decoration: none;">➡️ Next</a>
 </div>
 
 ## Module `patankar.private.EUFCMannex1`
@@ -3125,8 +3131,58 @@ object --> EuFCMannex1
 | `annex1record_ext` | `__repr__` | Return repr(self). | 42 | 1.37 |
 | `annex1record_ext` | `__str__` | Return str(self). | 5 | 1.37 |
 
-<a id="patankar_private_mstruct" name="patankar_private_mstruct"></a>
+<a id="patankar_private_USFDAfcn" name="patankar_private_USFDAfcn"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_EUFCMannex1" title="Go to Previous Module: patankar.private.EUFCMannex1" style="text-decoration: none;">⬅️ Previous</a>
+<a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
+<a href="#patankar_private_mstruct" title="Go to Next Module: patankar.private.mstruct" style="text-decoration: none;">➡️ Next</a>
+</div>
+
+## Module `patankar.private.USFDAfcn`
+
+### Class Inheritance Diagram
+```mermaid
+graph TD;
+USFDAfcn
+fcnrecord
+fcnrecord_ext
+dict --> fcnrecord
+fcnrecord --> fcnrecord_ext
+object --> USFDAfcn
+```
+
+**[Class Examples for `patankar/private/USFDAfcn.py` (2)](class_examples.html#patankar_private_USFDAfcn)**
+
+### Methods Table
+
+| Class | Method | Docstring First Paragraph | # Lines | __version__ |
+|-------|---------|---------------------------|---------|-------------|
+| (module-level) | `clean_html` |  | 2 | 1.41 |
+| (module-level) | `custom_wrap` |  | 10 | 1.41 |
+| (module-level) | `parse_food_contact_substance` | Parses the full FoodContactSubstance field to extract the chemical name(s) and CAS number(s). | 53 | 1.41 |
+| `USFDAfcn` | `__call__` | Call self as a function. | 24 | 1.41 |
+| `USFDAfcn` | `__contains__` |  | 8 | 1.41 |
+| `USFDAfcn` | `__getitem__` |  | 36 | 1.41 |
+| `USFDAfcn` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.41 |
+| `USFDAfcn` | `__iter__` |  | 3 | 1.41 |
+| `USFDAfcn` | `__len__` |  | 2 | 1.41 |
+| `USFDAfcn` | `__repr__` | Return repr(self). | 6 | 1.41 |
+| `USFDAfcn` | `__str__` | Return str(self). | 2 | 1.41 |
+| `USFDAfcn` | `_load_record` |  | 21 | 1.41 |
+| `USFDAfcn` | `byCAS` |  | 7 | 1.41 |
+| `USFDAfcn` | `byFCNNo` |  | 7 | 1.41 |
+| `USFDAfcn` | `byFCSreplacedby` |  | 7 | 1.41 |
+| `USFDAfcn` | `bycid` |  | 10 | 1.41 |
+| `USFDAfcn` | `byname` |  | 4 | 1.41 |
+| `USFDAfcn` | `refresh_index` |  | 168 | 1.41 |
+| `fcnrecord` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.41 |
+| `fcnrecord` | `__repr__` | Return repr(self). | 24 | 1.41 |
+| `fcnrecord` | `__str__` | Return str(self). | 5 | 1.41 |
+| `fcnrecord_ext` | `__init__` | Instantiate from a base fcnrecord. If a valid CAS is available, perform PubChem lookup via the 'migrant' function. | 30 | 1.41 |
+| `fcnrecord_ext` | `__repr__` | Return repr(self). | 24 | 1.41 |
+| `fcnrecord_ext` | `__str__` | Return str(self). | 5 | 1.41 |
+
+<a id="patankar_private_mstruct" name="patankar_private_mstruct"></a>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_USFDAfcn" title="Go to Previous Module: patankar.private.USFDAfcn" style="text-decoration: none;">⬅️ Previous</a>
 <a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
 <a href="#patankar_private_pubchempy" title="Go to Next Module: patankar.private.pubchempy" style="text-decoration: none;">➡️ Next</a>
 </div>

@@ -320,6 +320,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <ul class="folder-content">
 <ul>
 <li class="file"><a href="#patankar_private_EUFCMannex1" onclick="loadDoc('patankar_private_EUFCMannex1')">EUFCMannex1.py</a></li>
+<li class="file"><a href="#patankar_private_USFDAfcn" onclick="loadDoc('patankar_private_USFDAfcn')">USFDAfcn.py</a></li>
 <li class="file"><a href="#patankar_private_mstruct" onclick="loadDoc('patankar_private_mstruct')">mstruct.py</a></li>
 <li class="file"><a href="#patankar_private_pubchempy" onclick="loadDoc('patankar_private_pubchempy')">pubchempy.py</a></li>
 </ul>
@@ -338,7 +339,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <p>Select a module in the left menu to view usage examples. These examples are not for production and are automatically extracted from the main section of each module.</p>
 <p>Back to the <a href='index.html'>Python'SFPPy documentation</a>.</p>
 <p>When no module is selected, you see this welcome page. They are used to test classes with typical codes. The main section often serves as a testing script, example usage block, or self-contained test block. It's a way to demonstrate how the module's functionality works or to run simple unit tests and examples inline.</p>
-<p>Generated on: 2025-03-30 23:23:25</p>
+<p>Generated on: 2025-04-01 00:10:10</p>
 
 </div>
 
@@ -507,17 +508,24 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
 <div id="patankar_loadpubchem" class="module-content" style="display:none;">
 <button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
-<p>debug</p>
 
     <button type="button" class="collapsible">Show Code Example 1</button>
     <div class="content">
-    <pre class="code"><span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="n">migrant</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;toluene&quot;</span><span class="p">,</span> <span class="s2">&quot;anisole&quot;</span><span class="p">,</span> <span class="s2">&quot;limonene&quot;</span><span class="p">,</span> <span class="s2">&quot;BHT&quot;</span><span class="p">,</span> <span class="s2">&quot;DEHP&quot;</span><span class="p">,</span> <span class="s2">&quot;Irganox 1076&quot;</span><span class="p">,</span> <span class="s2">&quot;Irgafos 168&quot;</span><span class="p">]]</span>
+    <pre class="code"><span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="s2">&quot;Irgafos 168&quot;</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="s2">&quot;toluene&quot;</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>debug</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="n">migrant</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;toluene&quot;</span><span class="p">,</span> <span class="s2">&quot;anisole&quot;</span><span class="p">,</span> <span class="s2">&quot;limonene&quot;</span><span class="p">,</span> <span class="s2">&quot;BHT&quot;</span><span class="p">,</span> <span class="s2">&quot;DEHP&quot;</span><span class="p">,</span> <span class="s2">&quot;Irganox 1076&quot;</span><span class="p">,</span> <span class="s2">&quot;Irgafos 168&quot;</span><span class="p">,</span><span class="s2">&quot;Lindane&quot;</span><span class="p">]]</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="s2">&quot;Cyclohexylbenzene&quot;</span><span class="p">)</span>
 </pre>
     </div>
     <p>m = migrant(&quot;phenylcyclohexane&quot;)</p>
 
-    <button type="button" class="collapsible">Show Code Example 2</button>
+    <button type="button" class="collapsible">Show Code Example 3</button>
     <div class="content">
     <pre class="code"><span class="n">migrantToxtree</span><span class="p">(</span><span class="s2">&quot;acetone&quot;</span><span class="p">)</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="s2">&quot;di(2-ethylhexyl) phthalate&quot;</span><span class="p">)</span>
@@ -531,7 +539,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     <p>examples</p>
 
-    <button type="button" class="collapsible">Show Code Example 3</button>
+    <button type="button" class="collapsible">Show Code Example 4</button>
     <div class="content">
     <pre class="code"><span class="n">db</span> <span class="o">=</span> <span class="n">CompoundIndex</span><span class="p">()</span>
     <span class="n">df_simple</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;limonene&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
@@ -545,7 +553,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     <p>for migration modeling</p>
 
-    <button type="button" class="collapsible">Show Code Example 4</button>
+    <button type="button" class="collapsible">Show Code Example 5</button>
     <div class="content">
     <pre class="code"><span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;anisole&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
@@ -555,13 +563,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;irgafos 168&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">()</span> <span class="c1"># toluene</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">migrant</span><span class="p">(</span><span class="s2">&quot;toluene&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 </pre>
     </div>
     <p>Piringer D value (several models can be implemented in module property.py)</p>
 
-    <button type="button" class="collapsible">Show Code Example 5</button>
+    <button type="button" class="collapsible">Show Code Example 6</button>
     <div class="content">
     <pre class="code"><span class="n">Dval</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Deval</span><span class="p">(</span><span class="n">polymer</span><span class="o">=</span><span class="s2">&quot;PET&quot;</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">Dval</span><span class="p">)</span>
@@ -569,7 +577,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     <p>MigranToxtree tests</p>
 
-    <button type="button" class="collapsible">Show Code Example 6</button>
+    <button type="button" class="collapsible">Show Code Example 7</button>
     <div class="content">
     <pre class="code"><span class="n">substance</span> <span class="o">=</span> <span class="n">migrantToxtree</span><span class="p">(</span><span class="s2">&quot;irganox 1010&quot;</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">substance</span><span class="o">.</span><span class="n">cramer</span>
@@ -582,7 +590,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     <p>suggest an alternative D model</p>
 
-    <button type="button" class="collapsible">Show Code Example 7</button>
+    <button type="button" class="collapsible">Show Code Example 8</button>
     <div class="content">
     <pre class="code"><span class="kn">from</span> <span class="nn">patankar.layer</span> <span class="kn">import</span> <span class="n">gPET</span><span class="p">,</span> <span class="n">LDPE</span><span class="p">,</span> <span class="n">PP</span><span class="p">,</span> <span class="n">rigidPVC</span>
     <span class="n">material</span> <span class="o">=</span> <span class="n">gPET</span><span class="p">()</span><span class="o">+</span><span class="n">LDPE</span><span class="p">()</span><span class="o">+</span><span class="n">PP</span><span class="p">()</span><span class="o">+</span><span class="n">rigidPVC</span><span class="p">()</span>
@@ -1075,6 +1083,28 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <div class="content">
     <pre class="code"><span class="s1">&#39;date&#39;</span> <span class="p">:</span> <span class="s2">&quot;add here the date of the record&quot;</span>
        <span class="p">}</span>
+</pre>
+    </div>
+    </div>
+<div id="patankar_private_USFDAfcn" class="module-content" style="display:none;">
+<button onclick="toggleAllCode(this)" class="collapsible">Toggle All Code Sections</button>
+<p>For debugging or standalone tests, one can initialize the database:</p>
+
+    <button type="button" class="collapsible">Show Code Example 1</button>
+    <div class="content">
+    <pre class="code"><span class="n">db</span> <span class="o">=</span> <span class="n">USFDAfcn</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+</pre>
+    </div>
+    <p>Example lookup:</p>
+
+    <button type="button" class="collapsible">Show Code Example 2</button>
+    <div class="content">
+    <pre class="code"><span class="k">try</span><span class="p">:</span>
+        <span class="n">rec</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error retrieving record 1: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre>
     </div>
     </div>

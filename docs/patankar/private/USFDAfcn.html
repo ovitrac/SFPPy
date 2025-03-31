@@ -1,0 +1,1680 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>USFDAfcn API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>USFDAfcn</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">__all__ = [&#39;USFDAfcn&#39;, &#39;clean_html&#39;, &#39;custom_wrap&#39;, &#39;fcnrecord&#39;, &#39;fcnrecord_ext&#39;, &#39;parse_food_contact_substance&#39;]
+&#34;&#34;&#34;
+Module: USFDAfcn
+
+This module implements a robust database manager for the US Inventory of Effective Food Contact
+Substance (FCS) notifications as provided by the US FDA. The CSV file (exported from the US FDA website)
+contains the official Food Contact Substance Notification list but with information not well organized.
+
+Each row in the CSV file is converted into a JSON record (named as recXXXXX.fcn.json in the cache directory)
+with the following ordered fields:
+  - &#34;record&#34;: the sequential record number (1-based)
+  - &#34;cid&#34;: the PubChem compound identifier (or list of cids if a mixture)
+  - &#34;name&#34;: the chemical name (a string for single substances or a list for mixtures)
+  - &#34;CAS&#34;: the CAS number (a string or list if a mixture)
+  - &#34;FCNNo&#34;: the FCN number extracted from the first column (e.g. =T(&#34;2355&#34;) becomes &#34;2355&#34;)
+  - &#34;FoodContactSubstance&#34;: the full original field text from the CSV
+  - &#34;mixture&#34;: boolean (True if the substance is a mixture, i.e. compound and CAS are lists)
+  - &#34;FCSreplacedby&#34;: field as provided (if the notification has been replaced)
+  - &#34;FCSreplacedby_record&#34;: the record number corresponding to the replacement (if available)
+  - &#34;notifier&#34;: the notifier field from the CSV
+  - &#34;manufacturer&#34;: from the CSV field &#34;Manufacture/Supplier&#34;
+  - &#34;NotificationDate&#34;: the notification date from the CSV
+
+At the end, traceability fields &#34;engine&#34;, &#34;csfile&#34;, and &#34;date&#34; are added.
+
+The module also builds a global index (stored in fcn_index.json) mapping key fields:
+  - &#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;, &#34;FCSreplacedby&#34; and PubChem cid (&#34;bycid&#34;)
+to the corresponding record numbers.
+
+Key features include:
+  - Robust parsing of the FoodContactSubstance field using regular expressions.
+  - Handling of mixtures (multiple chemicals in one notification) where the chemical names and CAS numbers
+    are stored as lists.
+  - PubChem lookup for each CAS number (implemented via patankar.loadpubchem.migrant) to retrieve the corresponding cid.
+  - A secondary pass to resolve FCSreplacedby: if a record indicates that it has been replaced by another notification,
+    a new field &#34;FCSreplacedby_record&#34; is added corresponding to the record number of the replacement notification.
+  - Lookup methods by record number, by CAS, by FCNNo, and by PubChem cid.
+  - Caching of missing PubChem results in &#34;missing.pubchem.fcn.json&#34; to avoid repeated failed queries.
+
+@version: 1.41
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-01-10
+@rev: 2025-03-31
+
+&#34;&#34;&#34;
+
+import os
+import csv
+import json
+import datetime
+import re
+import textwrap
+
+__project__ = &#34;SFPPy&#34;
+__author__ = &#34;Olivier Vitrac&#34;
+__copyright__ = &#34;Copyright 2022&#34;
+__credits__ = [&#34;Olivier Vitrac&#34;]
+__license__ = &#34;MIT&#34;
+__maintainer__ = &#34;Olivier Vitrac&#34;
+__email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
+__version__ = &#34;1.41&#34;
+
+
+# Default PubChem lookup error value (if not found, value remains None)
+# (This can be adapted if needed)
+DEFAULT_PUBCHEM = None
+
+# ----------------------------------------------------------------------
+# Utility function: custom_wrap (for pretty printing)
+# ----------------------------------------------------------------------
+def custom_wrap(text, width=60, indent=&#34; &#34; * 22):
+    # Wrap first line to specified width.
+    first_line = textwrap.wrap(text, width=width)
+    if not first_line:
+        return &#34;&#34;
+    first = first_line[0]
+    remaining = text[len(first):].lstrip()
+    subsequent_lines = textwrap.wrap(remaining, width=width)
+    wrapped = [first] + [indent + line for line in subsequent_lines]
+    return &#34;\n&#34;.join(wrapped)
+
+# ----------------------------------------------------------------------
+# *New helper function to remove HTML tags*
+# ----------------------------------------------------------------------
+def clean_html(text):
+    return re.sub(r&#39;&lt;[^&gt;]*&gt;&#39;, &#39;&#39;, text).strip()
+
+# ----------------------------------------------------------------------
+# Helper function to parse FoodContactSubstance field
+# ----------------------------------------------------------------------
+def parse_food_contact_substance(text):
+    &#34;&#34;&#34;
+    Parses the full FoodContactSubstance field to extract the chemical name(s) and CAS number(s).
+
+    For a single chemical, the name is defined as the portion of the text from the start until the first
+    occurrence of &#34;(CAS Reg. No.&#34; (after removing a trailing phrase such as &#34; (produced by ...&#34;).
+
+    For mixtures (multiple occurrences), a fallback using re.findall is used.
+
+    Returns:
+       name: a string if one match is found, or a list of names for mixtures.
+       CAS: a string if one match is found, or a list of CAS numbers for mixtures.
+       mixture: Boolean, True if more than one match is found.
+    &#34;&#34;&#34;
+    text = text.strip()
+    # If there is no CAS pattern, return the full text.
+    if &#34;(CAS Reg. No.&#34; not in text:
+        return text, &#34;&#34;, False
+
+    count = text.count(&#34;(CAS Reg. No.&#34;)
+    if count == 1:
+        idx = text.find(&#34;(CAS Reg. No.&#34;)
+        candidate = text[:idx].strip()
+        # If the candidate contains a trailing phrase like &#34; (produced by&#34;, remove it.
+        p_idx = candidate.lower().rfind(&#34; (produced by&#34;)
+        if p_idx != -1:
+            candidate = candidate[:p_idx].strip()
+        candidate = candidate.rstrip(&#34;,;&#34;).strip()
+        m = re.search(r&#39;\(CAS Reg\. No\. ([\d-]+)\)&#39;, text[idx:])
+        cas = m.group(1) if m else &#34;&#34;
+        return candidate, cas.strip(), False
+    else:
+        # For mixtures, use re.findall to capture all occurrences.
+        # This pattern attempts to capture a chemical name (without leading commas/semicolons)
+        # and its corresponding CAS number.
+        pattern = r&#39;([^,(;]+(?:\([^)]*\))?[^,(;]*)\s*\(CAS Reg\. No\. ([\d-]+)\)&#39;
+        matches = re.findall(pattern, text)
+        if not matches:
+            # Fallback: treat as single if no matches are found.
+            idx = text.find(&#34;(CAS Reg. No.&#34;)
+            candidate = text[:idx].strip().rstrip(&#34;,;&#34;)
+            m = re.search(r&#39;\(CAS Reg\. No\. ([\d-]+)\)&#39;, text[idx:])
+            cas = m.group(1) if m else &#34;&#34;
+            return candidate, cas.strip(), False
+        names = []
+        cas_list = []
+        for nm, cas in matches:
+            nm_clean = nm.strip().lstrip(&#34;,;&#34;).strip()
+            names.append(nm_clean)
+            cas_list.append(cas.strip())
+        if len(names) == 1:
+            return names[0], cas_list[0], False
+        return names, cas_list, True
+
+# ----------------------------------------------------------------------
+# Class: fcnrecord
+# ----------------------------------------------------------------------
+class fcnrecord(dict):
+    &#34;&#34;&#34;
+    Represents a single Food Contact Substance Notification record from the US FDA database.
+
+    Keys include:
+      - &#34;record&#34;: the sequential record number (1-based)
+      - &#34;cid&#34;: PubChem compound identifier (or list of cids for mixtures; may be None)
+      - &#34;name&#34;: interpreted chemical name (string or list for mixtures)
+      - &#34;CAS&#34;: CAS number (string or list for mixtures)
+      - &#34;FCNNo&#34;: the FCN number extracted from the CSV row (e.g. from =T(&#34;2355&#34;))
+      - &#34;FoodContactSubstance&#34;: the full field text from the CSV
+      - &#34;mixture&#34;: boolean flag indicating if the record represents a mixture
+      - &#34;FCSreplacedby&#34;: original field (as provided) indicating a replacement notification
+      - &#34;FCSreplacedby_record&#34;: record number (if found) corresponding to the replacement notification
+      - &#34;notifier&#34;, &#34;manufacturer&#34;, &#34;NotificationDate&#34;: additional fields from the CSV
+      - Traceability fields: &#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;
+    &#34;&#34;&#34;
+
+    def __init__(self, d, order=None, total=None):
+        if not isinstance(d, dict):
+            raise TypeError(&#34;Input must be a dict, not a {}&#34;.format(type(d).__name__))
+        super().__init__(d)
+        self._order = d.get(&#34;record&#34;, order)
+        self._total = total
+
+    def __str__(self):
+        cid = self.get(&#34;cid&#34;, None)
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        return f&#34;&lt;{self.__class__.__name__} with cid:{cid} - record {order_str} of {total_str} (US FDA FCS)&gt;&#34;
+
+    def __repr__(self):
+        lines = []
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        header = f&#34; ---- [ US FDA FCS record: {order_str} of {total_str} ] ----&#34;
+        lines.append(header)
+        fields_order = [
+            &#34;record&#34;, &#34;cid&#34;, &#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;,
+            &#34;FoodContactSubstance&#34;, &#34;mixture&#34;, &#34;FCSreplacedby&#34;, &#34;FCSreplacedby_record&#34;,
+            &#34;notifier&#34;, &#34;manufacturer&#34;, &#34;NotificationDate&#34;
+        ]
+        for key in fields_order:
+            if key not in self:
+                continue
+            val = self[key]
+            if val is None or (isinstance(val, str) and not val.strip()):
+                continue
+            wrapped_val = custom_wrap(str(val), width=60, indent=&#34; &#34; * 22)
+            lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+        for key in [&#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;]:
+            if key in self:
+                wrapped_val = custom_wrap(str(self[key]), width=60, indent=&#34; &#34; * 22)
+                lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+        return &#34;\n&#34;.join(lines)
+
+    @property
+    def ispubchemok(self):
+        cas = self.get(&#34;CAS&#34;)
+        if self.get(&#34;mixture&#34;, False):
+            return bool(cas and any(c.strip() for c in cas))
+        return cas not in (&#34;&#34;, None)
+
+# ----------------------------------------------------------------------
+# Class: fcnrecord_ext
+# ----------------------------------------------------------------------
+class fcnrecord_ext(fcnrecord):
+    &#34;&#34;&#34;
+    Extended fcnrecord that automatically retrieves additional chemical information from PubChem.
+
+    For each CAS number (or each CAS in a mixture) the PubChem lookup is performed.
+    The field &#34;cid&#34; is updated to be either a single PubChem CID or a list of CIDs.
+    &#34;&#34;&#34;
+    def __init__(self, rec, db=None):
+        &#34;&#34;&#34;
+        Instantiate from a base fcnrecord.
+        If a valid CAS is available, perform PubChem lookup via the &#39;migrant&#39; function.
+        &#34;&#34;&#34;
+        if not isinstance(rec, fcnrecord):
+            raise TypeError(&#34;Input must be an fcnrecord, not a {}&#34;.format(type(rec).__name__))
+        super().__init__(rec, order=rec._order, total=rec._total)
+        from patankar.loadpubchem import migrant
+        if self.ispubchemok:
+            if self.get(&#34;mixture&#34;, False):
+                cids = []
+                for cas in self.get(&#34;CAS&#34;, []):
+                    try:
+                        m = migrant(cas, annex1=False)
+                        cids.append(m.cid)
+                    except Exception:
+                        print(f&#34;Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                        cids.append(DEFAULT_PUBCHEM)
+                self.cid = cids
+            else:
+                cas = self.get(&#34;CAS&#34;)
+                try:
+                    m = migrant(cas, annex1=False)
+                    self.cid = m.cid
+                except Exception:
+                    print(f&#34;Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                    self.cid = DEFAULT_PUBCHEM
+        else:
+            self.cid = None
+
+
+# ----------------------------------------------------------------------
+# Class: USFDAfcn
+# ----------------------------------------------------------------------
+class USFDAfcn:
+    &#34;&#34;&#34;
+    Manages the US FDA Food Contact Substance Notification CSV file and caches its data for efficient lookup.
+
+    This class reads the official CSV file and processes each row into a JSON record (recXXXXX.fcn.json)
+    stored in a cache directory (default &#34;cache.USFDAfcn&#34;). It then builds a global index (stored as fcn_index.json)
+    mapping key fields—such as &#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;, &#34;FCSreplacedby&#34; and PubChem cid—to their corresponding record numbers.
+
+    Lookup methods include:
+      - __getitem__: lookup by sequential record number or by CAS string.
+      - __call__: callable access by record number, PubChem cid, or CAS.
+      - byname, byCAS, byFCNNo, byFCSreplacedby, bycid: dedicated search methods.
+
+    Global Rate Limiting:
+      PubChem lookups are assumed to be managed by a module-level variable in patankar.loadpubchem.
+    &#34;&#34;&#34;
+    isInitialized = False
+
+    def __init__(self, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;fcn_index.json&#34;, pubchem=True):
+        self.base_dir = os.path.dirname(__file__)
+        self.csv_file = os.path.join(self.base_dir, &#34;FCN.csv&#34;)
+        if not os.path.exists(self.csv_file):
+            raise FileNotFoundError(f&#34;CSV file {self.csv_file} not found.&#34;)
+        self.cache_dir = os.path.join(self.base_dir, cache_dir)
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+        self.index_file = os.path.join(self.cache_dir, index_file)
+        if os.path.exists(self.index_file):
+            with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                self.index = json.load(f)
+        else:
+            self.refresh_index()
+        self.order = self.index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+        self._pubchem = pubchem
+        USFDAfcn.isInitialized = True
+
+    @classmethod
+    def isindexinitialized(cls, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;fcn_index.json&#34;):
+        return os.path.exists(os.path.join(os.path.dirname(__file__), cache_dir, index_file))
+
+    def refresh_index(self):
+        from patankar.loadpubchem import migrant
+        new_index = {}
+        index_date = datetime.datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+        new_index[&#34;index_date&#34;] = index_date
+        new_index[&#34;csv_file&#34;] = os.path.basename(self.csv_file)
+        new_index[&#34;order&#34;] = []
+        for key in [&#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;, &#34;FCSreplacedby&#34;]:
+            new_index[key] = {}
+        new_index[&#34;bycid&#34;] = {}
+
+        missing_file = os.path.join(self.cache_dir, &#34;missing.pubchem.fcn.json&#34;)
+        if os.path.exists(missing_file):
+            with open(missing_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as mf:
+                missing_pubchem = json.load(mf)
+        else:
+            missing_pubchem = {}
+
+        records_list = []
+        fcnno2recid = {}
+
+        rec_num = 0
+        with open(self.csv_file, &#34;r&#34;, encoding=&#34;latin1&#34;) as f:
+            while True:
+                pos = f.tell()
+                line = f.readline()
+                if not line:
+                    break
+                if line.lstrip().startswith(&#34;FCN No&#34;):
+                    f.seek(pos)
+                    break
+            reader = csv.reader(f, delimiter=&#34;,&#34;)
+            header = next(reader, None)
+            for row in reader:
+                if not row or len(row) &lt; 7:
+                    continue
+                rec_num += 1
+                rec = {}
+                fcn_no_match = re.search(r&#39;=T\(&#34;(\d+)&#34;\)&#39;, row[0])
+                if fcn_no_match:
+                    fcn_no = fcn_no_match.group(1)
+                else:
+                    fcn_no = row[0].strip()
+                rec[&#34;FCNNo&#34;] = fcn_no
+
+                # Parse Food Contact Substance from column 6
+                fcs_text = row[6].strip()
+                rec[&#34;FoodContactSubstance&#34;] = fcs_text
+                name_val, cas_val, is_mixture = parse_food_contact_substance(fcs_text)
+                rec[&#34;name&#34;] = name_val
+                rec[&#34;CAS&#34;] = cas_val
+                rec[&#34;mixture&#34;] = is_mixture
+
+                # FCS REPLACED BY from column 7
+                rec[&#34;FCSreplacedby&#34;] = row[7].strip() if len(row) &gt; 7 else &#34;&#34;
+                # Notifier from column 8
+                rec[&#34;notifier&#34;] = row[8].strip() if len(row) &gt; 8 else &#34;&#34;
+                # *Clean manufacturer field by removing HTML tags (from column 9)*
+                rec[&#34;manufacturer&#34;] = clean_html(row[9].strip()) if len(row) &gt; 9 else &#34;&#34;
+                # Notification Date from column 12 (Effective Date)
+                rec[&#34;NotificationDate&#34;] = row[12].strip() if len(row) &gt; 12 else &#34;&#34;
+
+                rec[&#34;csvFile&#34;] = os.path.basename(self.csv_file)
+                rec[&#34;date&#34;] = index_date
+                rec[&#34;engine&#34;] = f&#34;SFPPy: {os.path.basename(__file__)}&#34;
+                rec[&#34;record&#34;] = rec_num
+                rec[&#34;cid&#34;] = None
+
+                if rec[&#34;CAS&#34;] and not rec.get(&#34;mixture&#34;, False):
+                    cas = rec[&#34;CAS&#34;]
+                    if cas in missing_pubchem:
+                        cid_val = missing_pubchem[cas]
+                    else:
+                        try:
+                            cid_val = migrant(cas, annex1=False).cid
+                        except Exception:
+                            print(f&#34;Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
+                            cid_val = None
+                            missing_pubchem[cas] = None
+                    rec[&#34;cid&#34;] = cid_val
+                elif rec[&#34;CAS&#34;] and rec.get(&#34;mixture&#34;, False):
+                    cid_list = []
+                    for cas in rec[&#34;CAS&#34;]:
+                        if cas in missing_pubchem:
+                            cid_val = missing_pubchem[cas]
+                        else:
+                            try:
+                                cid_val = migrant(cas, annex1=False).cid
+                            except Exception:
+                                print(f&#34;Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
+                                cid_val = None
+                                missing_pubchem[cas] = None
+                        cid_list.append(cid_val)
+                    rec[&#34;cid&#34;] = cid_list
+
+                ordered_rec = {
+                    &#34;record&#34;: rec[&#34;record&#34;],
+                    &#34;cid&#34;: rec[&#34;cid&#34;],
+                    &#34;name&#34;: rec[&#34;name&#34;],
+                    &#34;CAS&#34;: rec[&#34;CAS&#34;],
+                    &#34;FCNNo&#34;: rec[&#34;FCNNo&#34;],
+                    &#34;FoodContactSubstance&#34;: rec[&#34;FoodContactSubstance&#34;],
+                    &#34;mixture&#34;: rec[&#34;mixture&#34;],
+                    &#34;FCSreplacedby&#34;: rec[&#34;FCSreplacedby&#34;],
+                    &#34;FCSreplacedby_record&#34;: None,
+                    &#34;notifier&#34;: rec[&#34;notifier&#34;],
+                    &#34;manufacturer&#34;: rec[&#34;manufacturer&#34;],
+                    &#34;NotificationDate&#34;: rec[&#34;NotificationDate&#34;],
+                    &#34;engine&#34;: rec[&#34;engine&#34;],
+                    &#34;csfile&#34;: rec[&#34;csvFile&#34;],
+                    &#34;date&#34;: rec[&#34;date&#34;]
+                }
+                rec_filename = f&#34;rec{rec_num:05d}.fcn.json&#34;
+                json_filename = os.path.join(self.cache_dir, rec_filename)
+                with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                    json.dump(ordered_rec, jf, ensure_ascii=False, indent=2)
+
+                new_index[&#34;order&#34;].append(rec_num)
+                if rec.get(&#34;mixture&#34;, False):
+                    for nm in rec[&#34;name&#34;]:
+                        new_index[&#34;name&#34;].setdefault(nm, []).append(rec_num)
+                else:
+                    new_index[&#34;name&#34;].setdefault(rec[&#34;name&#34;], []).append(rec_num)
+                if rec.get(&#34;mixture&#34;, False):
+                    for cas in rec[&#34;CAS&#34;]:
+                        new_index[&#34;CAS&#34;].setdefault(cas, []).append(rec_num)
+                else:
+                    new_index[&#34;CAS&#34;].setdefault(rec[&#34;CAS&#34;], []).append(rec_num)
+                new_index[&#34;FCNNo&#34;].setdefault(rec[&#34;FCNNo&#34;], []).append(rec_num)
+                if rec[&#34;FCSreplacedby&#34;]:
+                    new_index[&#34;FCSreplacedby&#34;].setdefault(rec[&#34;FCSreplacedby&#34;], []).append(rec_num)
+                if rec[&#34;cid&#34;] is not None:
+                    if rec.get(&#34;mixture&#34;, False):
+                        for cid in rec[&#34;cid&#34;]:
+                            if cid is not None:
+                                new_index[&#34;bycid&#34;][str(cid)] = rec_num
+                    else:
+                        new_index[&#34;bycid&#34;][str(rec[&#34;cid&#34;])] = rec_num
+
+                fcnno2recid[rec[&#34;FCNNo&#34;]] = rec_num
+                records_list.append((rec_num, ordered_rec))
+
+        # Second pass: resolve FCSreplacedby_record using FCNNo mapping
+        for rec_id, rec in records_list:
+            fcsrep_field = rec.get(&#34;FCSreplacedby&#34;, &#34;&#34;).strip()
+            if fcsrep_field:
+                # *Extract FCN number from FCSreplacedby field if present*
+                fcsrep_match = re.search(r&#39;FCN\s*(\d+)&#39;, fcsrep_field, re.IGNORECASE)
+                if fcsrep_match:
+                    fcsrep = fcsrep_match.group(1)
+                else:
+                    fcsrep = fcsrep_field
+                rep_recid = fcnno2recid.get(fcsrep)
+                rec[&#34;FCSreplacedby_record&#34;] = rep_recid
+                json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.fcn.json&#34;)
+                try:
+                    with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                        json.dump(rec, jf, ensure_ascii=False, indent=2)
+                except Exception as e:
+                    print(f&#34;Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
+
+        with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f_index:
+            json.dump(new_index, f_index, ensure_ascii=False, indent=2)
+        with open(missing_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as mf:
+            json.dump(missing_pubchem, mf, ensure_ascii=False, indent=2)
+        self.index = new_index
+        self.order = new_index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+
+    def _load_record(self, rec_id, order=None, db=False):
+        if rec_id in self._records_cache:
+            if self._pubchem:
+                if db:
+                    return fcnrecord_ext(self._records_cache[rec_id], self)
+                else:
+                    return fcnrecord_ext(self._records_cache[rec_id])
+            else:
+                return self._records_cache[rec_id]
+        json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.fcn.json&#34;)
+        if not os.path.exists(json_filename):
+            print(f&#34;Warning: Record file for record {rec_id} not found.&#34;)
+            return None
+        with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
+            rec = json.load(jf)
+        record_obj = fcnrecord(rec, order=rec.get(&#34;record&#34;), total=len(self.order))
+        self._records_cache[rec_id] = record_obj
+        if self._pubchem:
+            return fcnrecord_ext(record_obj, self)
+        else:
+            return record_obj
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            start = key.start if key.start is not None else min(self.order)
+            stop = key.stop if key.stop is not None else max(self.order) + 1
+            rec_ids = [rid for rid in self.order if start &lt;= rid &lt; stop]
+            if not rec_ids:
+                raise KeyError(f&#34;No records found in range {start} to {stop - 1}. Valid records range from {min(self.order)} to {max(self.order)}.&#34;)
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+        elif isinstance(key, int):
+            if key in self.order:
+                return self._load_record(key, order=key)
+            else:
+                raise KeyError(f&#34;Record number {key} not found. Valid records range from {min(self.order)} to {max(self.order)}.&#34;)
+        elif isinstance(key, (list, tuple)):
+            return [self.__getitem__(k) for k in key]
+        elif isinstance(key, str):
+            # First, try CAS lookup.
+            if key in self.index.get(&#34;CAS&#34;, {}):
+                rec_ids = self.index[&#34;CAS&#34;][key]
+                if len(rec_ids) == 1:
+                    return self._load_record(rec_ids[0], order=rec_ids[0])
+                else:
+                    return [self._load_record(rid, order=rid) for rid in rec_ids]
+            # Then, if key is all digits, try FCNNo lookup.
+            elif key.isdigit() and key in self.index.get(&#34;FCNNo&#34;, {}):
+                rec_ids = self.index[&#34;FCNNo&#34;][key]
+                if len(rec_ids) == 1:
+                    return self._load_record(rec_ids[0], order=rec_ids[0])
+                else:
+                    return [self._load_record(rid, order=rid) for rid in rec_ids]
+            else:
+                available = list(self.index.get(&#34;CAS&#34;, {}).keys()) + list(self.index.get(&#34;FCNNo&#34;, {}).keys())
+                sample = &#34;, &#34;.join(available[:10]) + (&#34; ...&#34; if len(available) &gt; 10 else &#34;&#34;)
+                raise KeyError(f&#34;Key &#39;{key}&#39; not found in index. Valid keys include: {sample}&#34;)
+        else:
+            raise KeyError(f&#34;Unsupported key type: {type(key)}&#34;)
+
+    def __call__(self, *args):
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
+            args = args[0]
+        results = []
+        for arg in args:
+            if isinstance(arg, int):
+                argkey = str(arg)
+                if arg in self.order:
+                    results.append(self._load_record(arg))
+                elif &#34;bycid&#34; in self.index and argkey in self.index[&#34;bycid&#34;]:
+                    rec_id = self.index[&#34;bycid&#34;][argkey]
+                    results.append(self._load_record(rec_id))
+                else:
+                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    results.append(None)
+            elif isinstance(arg, str):
+                result_item = self.__getitem__(arg)
+                if isinstance(result_item, list):
+                    results.extend(result_item)
+                else:
+                    results.append(result_item)
+            else:
+                raise KeyError(f&#34;Unsupported key type in call: {type(arg)}&#34;)
+        return results[0] if len(results) == 1 else results
+
+    def byname(self, name):
+        name = name[0] if isinstance(name, list) else name
+        rec_ids = self.index.get(&#34;name&#34;, {}).get(name, [])
+        return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def byCAS(self, cas):
+        cas = cas[0] if isinstance(cas, list) else cas
+        rec_ids = self.index.get(&#34;CAS&#34;, {}).get(cas, [])
+        if len(rec_ids) == 1:
+            return self._load_record(rec_ids[0], order=rec_ids[0])
+        else:
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def byFCNNo(self, fcn_no):
+        fcn_no = fcn_no[0] if isinstance(fcn_no, list) else fcn_no
+        rec_ids = self.index.get(&#34;FCNNo&#34;, {}).get(fcn_no, [])
+        if len(rec_ids) == 1:
+            return self._load_record(rec_ids[0], order=rec_ids[0])
+        else:
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def byFCSreplacedby(self, fcsrep):
+        fcsrep = fcsrep[0] if isinstance(fcsrep, list) else fcsrep
+        rec_ids = self.index.get(&#34;FCSreplacedby&#34;, {}).get(fcsrep, [])
+        if len(rec_ids) == 1:
+            return self._load_record(rec_ids[0], order=rec_ids[0])
+        else:
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def bycid(self, cid, verbose=True):
+        cid = cid[0] if isinstance(cid, list) else cid
+        cidkey = str(cid)
+        if &#34;bycid&#34; in self.index and cidkey in self.index[&#34;bycid&#34;]:
+            rec_id = self.index[&#34;bycid&#34;][cidkey]
+            return self._load_record(rec_id, order=rec_id)
+        else:
+            if verbose:
+                print(f&#34;⚠️Warning: No 🇺🇸US FDA FCS record found for PubChem cid {cid}.&#34;)
+            return None
+
+    def __iter__(self):
+        for rid in self.order:
+            yield self._load_record(rid, order=rid)
+
+    def __len__(self):
+        return len(self.order)
+
+    def __contains__(self, item):
+        if isinstance(item, list):
+            item = item[0]
+        if isinstance(item, int):
+            return item in self.order or ((&#34;bycid&#34; in self.index) and (str(item) in self.index[&#34;bycid&#34;]))
+        if isinstance(item, str):
+            return item in self.index.get(&#34;CAS&#34;, {}) or item in self.index.get(&#34;FCNNo&#34;, {})
+        return False
+
+    def __repr__(self):
+        csv_filename = os.path.basename(self.csv_file)
+        index_date = self.index.get(&#34;index_date&#34;, &#34;unknown&#34;)
+        print(f&#34;🇺🇸US FDA FCS database ({len(self.order)} records)&#34;)
+        print(f&#34;Imported from CSV {csv_filename} and indexed on {index_date}&#34;)
+        return str(self)
+
+    def __str__(self):
+        return f&#34;&lt;{self.__class__.__name__}: {len(self.order)} records (US FDA FCS)&gt;&#34;
+
+
+# ----------------------------------------------------------------------
+# Standalone test / debugging section
+# ----------------------------------------------------------------------
+if __name__ == &#34;__main__&#34;:
+    # For debugging or standalone tests, one can initialize the database:
+    db = USFDAfcn()
+    print(db)
+    # Example lookup:
+    try:
+        rec = db[1]
+        print(rec)
+    except Exception as e:
+        print(f&#34;Error retrieving record 1: {e}&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="USFDAfcn.clean_html"><code class="name flex">
+<span>def <span class="ident">clean_html</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean_html(text):
+    return re.sub(r&#39;&lt;[^&gt;]*&gt;&#39;, &#39;&#39;, text).strip()</code></pre>
+</details>
+</dd>
+<dt id="USFDAfcn.custom_wrap"><code class="name flex">
+<span>def <span class="ident">custom_wrap</span></span>(<span>text, width=60, indent='
+')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def custom_wrap(text, width=60, indent=&#34; &#34; * 22):
+    # Wrap first line to specified width.
+    first_line = textwrap.wrap(text, width=width)
+    if not first_line:
+        return &#34;&#34;
+    first = first_line[0]
+    remaining = text[len(first):].lstrip()
+    subsequent_lines = textwrap.wrap(remaining, width=width)
+    wrapped = [first] + [indent + line for line in subsequent_lines]
+    return &#34;\n&#34;.join(wrapped)</code></pre>
+</details>
+</dd>
+<dt id="USFDAfcn.parse_food_contact_substance"><code class="name flex">
+<span>def <span class="ident">parse_food_contact_substance</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parses the full FoodContactSubstance field to extract the chemical name(s) and CAS number(s).</p>
+<p>For a single chemical, the name is defined as the portion of the text from the start until the first
+occurrence of "(CAS Reg. No." (after removing a trailing phrase such as " (produced by &hellip;").</p>
+<p>For mixtures (multiple occurrences), a fallback using re.findall is used.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>name</code></dt>
+<dd>a string if one match is found, or a list of names for mixtures.</dd>
+<dt><code>CAS</code></dt>
+<dd>a string if one match is found, or a list of CAS numbers for mixtures.</dd>
+<dt><code>mixture</code></dt>
+<dd>Boolean, True if more than one match is found.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_food_contact_substance(text):
+    &#34;&#34;&#34;
+    Parses the full FoodContactSubstance field to extract the chemical name(s) and CAS number(s).
+
+    For a single chemical, the name is defined as the portion of the text from the start until the first
+    occurrence of &#34;(CAS Reg. No.&#34; (after removing a trailing phrase such as &#34; (produced by ...&#34;).
+
+    For mixtures (multiple occurrences), a fallback using re.findall is used.
+
+    Returns:
+       name: a string if one match is found, or a list of names for mixtures.
+       CAS: a string if one match is found, or a list of CAS numbers for mixtures.
+       mixture: Boolean, True if more than one match is found.
+    &#34;&#34;&#34;
+    text = text.strip()
+    # If there is no CAS pattern, return the full text.
+    if &#34;(CAS Reg. No.&#34; not in text:
+        return text, &#34;&#34;, False
+
+    count = text.count(&#34;(CAS Reg. No.&#34;)
+    if count == 1:
+        idx = text.find(&#34;(CAS Reg. No.&#34;)
+        candidate = text[:idx].strip()
+        # If the candidate contains a trailing phrase like &#34; (produced by&#34;, remove it.
+        p_idx = candidate.lower().rfind(&#34; (produced by&#34;)
+        if p_idx != -1:
+            candidate = candidate[:p_idx].strip()
+        candidate = candidate.rstrip(&#34;,;&#34;).strip()
+        m = re.search(r&#39;\(CAS Reg\. No\. ([\d-]+)\)&#39;, text[idx:])
+        cas = m.group(1) if m else &#34;&#34;
+        return candidate, cas.strip(), False
+    else:
+        # For mixtures, use re.findall to capture all occurrences.
+        # This pattern attempts to capture a chemical name (without leading commas/semicolons)
+        # and its corresponding CAS number.
+        pattern = r&#39;([^,(;]+(?:\([^)]*\))?[^,(;]*)\s*\(CAS Reg\. No\. ([\d-]+)\)&#39;
+        matches = re.findall(pattern, text)
+        if not matches:
+            # Fallback: treat as single if no matches are found.
+            idx = text.find(&#34;(CAS Reg. No.&#34;)
+            candidate = text[:idx].strip().rstrip(&#34;,;&#34;)
+            m = re.search(r&#39;\(CAS Reg\. No\. ([\d-]+)\)&#39;, text[idx:])
+            cas = m.group(1) if m else &#34;&#34;
+            return candidate, cas.strip(), False
+        names = []
+        cas_list = []
+        for nm, cas in matches:
+            nm_clean = nm.strip().lstrip(&#34;,;&#34;).strip()
+            names.append(nm_clean)
+            cas_list.append(cas.strip())
+        if len(names) == 1:
+            return names[0], cas_list[0], False
+        return names, cas_list, True</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="USFDAfcn.USFDAfcn"><code class="flex name class">
+<span>class <span class="ident">USFDAfcn</span></span>
+<span>(</span><span>cache_dir='cache.USFDAfcn', index_file='fcn_index.json', pubchem=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Manages the US FDA Food Contact Substance Notification CSV file and caches its data for efficient lookup.</p>
+<p>This class reads the official CSV file and processes each row into a JSON record (recXXXXX.fcn.json)
+stored in a cache directory (default "cache.USFDAfcn"). It then builds a global index (stored as fcn_index.json)
+mapping key fields—such as "name", "CAS", "FCNNo", "FCSreplacedby" and PubChem cid—to their corresponding record numbers.</p>
+<p>Lookup methods include:
+- <strong>getitem</strong>: lookup by sequential record number or by CAS string.
+- <strong>call</strong>: callable access by record number, PubChem cid, or CAS.
+- byname, byCAS, byFCNNo, byFCSreplacedby, bycid: dedicated search methods.</p>
+<p>Global Rate Limiting:
+PubChem lookups are assumed to be managed by a module-level variable in patankar.loadpubchem.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class USFDAfcn:
+    &#34;&#34;&#34;
+    Manages the US FDA Food Contact Substance Notification CSV file and caches its data for efficient lookup.
+
+    This class reads the official CSV file and processes each row into a JSON record (recXXXXX.fcn.json)
+    stored in a cache directory (default &#34;cache.USFDAfcn&#34;). It then builds a global index (stored as fcn_index.json)
+    mapping key fields—such as &#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;, &#34;FCSreplacedby&#34; and PubChem cid—to their corresponding record numbers.
+
+    Lookup methods include:
+      - __getitem__: lookup by sequential record number or by CAS string.
+      - __call__: callable access by record number, PubChem cid, or CAS.
+      - byname, byCAS, byFCNNo, byFCSreplacedby, bycid: dedicated search methods.
+
+    Global Rate Limiting:
+      PubChem lookups are assumed to be managed by a module-level variable in patankar.loadpubchem.
+    &#34;&#34;&#34;
+    isInitialized = False
+
+    def __init__(self, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;fcn_index.json&#34;, pubchem=True):
+        self.base_dir = os.path.dirname(__file__)
+        self.csv_file = os.path.join(self.base_dir, &#34;FCN.csv&#34;)
+        if not os.path.exists(self.csv_file):
+            raise FileNotFoundError(f&#34;CSV file {self.csv_file} not found.&#34;)
+        self.cache_dir = os.path.join(self.base_dir, cache_dir)
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+        self.index_file = os.path.join(self.cache_dir, index_file)
+        if os.path.exists(self.index_file):
+            with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                self.index = json.load(f)
+        else:
+            self.refresh_index()
+        self.order = self.index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+        self._pubchem = pubchem
+        USFDAfcn.isInitialized = True
+
+    @classmethod
+    def isindexinitialized(cls, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;fcn_index.json&#34;):
+        return os.path.exists(os.path.join(os.path.dirname(__file__), cache_dir, index_file))
+
+    def refresh_index(self):
+        from patankar.loadpubchem import migrant
+        new_index = {}
+        index_date = datetime.datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+        new_index[&#34;index_date&#34;] = index_date
+        new_index[&#34;csv_file&#34;] = os.path.basename(self.csv_file)
+        new_index[&#34;order&#34;] = []
+        for key in [&#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;, &#34;FCSreplacedby&#34;]:
+            new_index[key] = {}
+        new_index[&#34;bycid&#34;] = {}
+
+        missing_file = os.path.join(self.cache_dir, &#34;missing.pubchem.fcn.json&#34;)
+        if os.path.exists(missing_file):
+            with open(missing_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as mf:
+                missing_pubchem = json.load(mf)
+        else:
+            missing_pubchem = {}
+
+        records_list = []
+        fcnno2recid = {}
+
+        rec_num = 0
+        with open(self.csv_file, &#34;r&#34;, encoding=&#34;latin1&#34;) as f:
+            while True:
+                pos = f.tell()
+                line = f.readline()
+                if not line:
+                    break
+                if line.lstrip().startswith(&#34;FCN No&#34;):
+                    f.seek(pos)
+                    break
+            reader = csv.reader(f, delimiter=&#34;,&#34;)
+            header = next(reader, None)
+            for row in reader:
+                if not row or len(row) &lt; 7:
+                    continue
+                rec_num += 1
+                rec = {}
+                fcn_no_match = re.search(r&#39;=T\(&#34;(\d+)&#34;\)&#39;, row[0])
+                if fcn_no_match:
+                    fcn_no = fcn_no_match.group(1)
+                else:
+                    fcn_no = row[0].strip()
+                rec[&#34;FCNNo&#34;] = fcn_no
+
+                # Parse Food Contact Substance from column 6
+                fcs_text = row[6].strip()
+                rec[&#34;FoodContactSubstance&#34;] = fcs_text
+                name_val, cas_val, is_mixture = parse_food_contact_substance(fcs_text)
+                rec[&#34;name&#34;] = name_val
+                rec[&#34;CAS&#34;] = cas_val
+                rec[&#34;mixture&#34;] = is_mixture
+
+                # FCS REPLACED BY from column 7
+                rec[&#34;FCSreplacedby&#34;] = row[7].strip() if len(row) &gt; 7 else &#34;&#34;
+                # Notifier from column 8
+                rec[&#34;notifier&#34;] = row[8].strip() if len(row) &gt; 8 else &#34;&#34;
+                # *Clean manufacturer field by removing HTML tags (from column 9)*
+                rec[&#34;manufacturer&#34;] = clean_html(row[9].strip()) if len(row) &gt; 9 else &#34;&#34;
+                # Notification Date from column 12 (Effective Date)
+                rec[&#34;NotificationDate&#34;] = row[12].strip() if len(row) &gt; 12 else &#34;&#34;
+
+                rec[&#34;csvFile&#34;] = os.path.basename(self.csv_file)
+                rec[&#34;date&#34;] = index_date
+                rec[&#34;engine&#34;] = f&#34;SFPPy: {os.path.basename(__file__)}&#34;
+                rec[&#34;record&#34;] = rec_num
+                rec[&#34;cid&#34;] = None
+
+                if rec[&#34;CAS&#34;] and not rec.get(&#34;mixture&#34;, False):
+                    cas = rec[&#34;CAS&#34;]
+                    if cas in missing_pubchem:
+                        cid_val = missing_pubchem[cas]
+                    else:
+                        try:
+                            cid_val = migrant(cas, annex1=False).cid
+                        except Exception:
+                            print(f&#34;Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
+                            cid_val = None
+                            missing_pubchem[cas] = None
+                    rec[&#34;cid&#34;] = cid_val
+                elif rec[&#34;CAS&#34;] and rec.get(&#34;mixture&#34;, False):
+                    cid_list = []
+                    for cas in rec[&#34;CAS&#34;]:
+                        if cas in missing_pubchem:
+                            cid_val = missing_pubchem[cas]
+                        else:
+                            try:
+                                cid_val = migrant(cas, annex1=False).cid
+                            except Exception:
+                                print(f&#34;Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
+                                cid_val = None
+                                missing_pubchem[cas] = None
+                        cid_list.append(cid_val)
+                    rec[&#34;cid&#34;] = cid_list
+
+                ordered_rec = {
+                    &#34;record&#34;: rec[&#34;record&#34;],
+                    &#34;cid&#34;: rec[&#34;cid&#34;],
+                    &#34;name&#34;: rec[&#34;name&#34;],
+                    &#34;CAS&#34;: rec[&#34;CAS&#34;],
+                    &#34;FCNNo&#34;: rec[&#34;FCNNo&#34;],
+                    &#34;FoodContactSubstance&#34;: rec[&#34;FoodContactSubstance&#34;],
+                    &#34;mixture&#34;: rec[&#34;mixture&#34;],
+                    &#34;FCSreplacedby&#34;: rec[&#34;FCSreplacedby&#34;],
+                    &#34;FCSreplacedby_record&#34;: None,
+                    &#34;notifier&#34;: rec[&#34;notifier&#34;],
+                    &#34;manufacturer&#34;: rec[&#34;manufacturer&#34;],
+                    &#34;NotificationDate&#34;: rec[&#34;NotificationDate&#34;],
+                    &#34;engine&#34;: rec[&#34;engine&#34;],
+                    &#34;csfile&#34;: rec[&#34;csvFile&#34;],
+                    &#34;date&#34;: rec[&#34;date&#34;]
+                }
+                rec_filename = f&#34;rec{rec_num:05d}.fcn.json&#34;
+                json_filename = os.path.join(self.cache_dir, rec_filename)
+                with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                    json.dump(ordered_rec, jf, ensure_ascii=False, indent=2)
+
+                new_index[&#34;order&#34;].append(rec_num)
+                if rec.get(&#34;mixture&#34;, False):
+                    for nm in rec[&#34;name&#34;]:
+                        new_index[&#34;name&#34;].setdefault(nm, []).append(rec_num)
+                else:
+                    new_index[&#34;name&#34;].setdefault(rec[&#34;name&#34;], []).append(rec_num)
+                if rec.get(&#34;mixture&#34;, False):
+                    for cas in rec[&#34;CAS&#34;]:
+                        new_index[&#34;CAS&#34;].setdefault(cas, []).append(rec_num)
+                else:
+                    new_index[&#34;CAS&#34;].setdefault(rec[&#34;CAS&#34;], []).append(rec_num)
+                new_index[&#34;FCNNo&#34;].setdefault(rec[&#34;FCNNo&#34;], []).append(rec_num)
+                if rec[&#34;FCSreplacedby&#34;]:
+                    new_index[&#34;FCSreplacedby&#34;].setdefault(rec[&#34;FCSreplacedby&#34;], []).append(rec_num)
+                if rec[&#34;cid&#34;] is not None:
+                    if rec.get(&#34;mixture&#34;, False):
+                        for cid in rec[&#34;cid&#34;]:
+                            if cid is not None:
+                                new_index[&#34;bycid&#34;][str(cid)] = rec_num
+                    else:
+                        new_index[&#34;bycid&#34;][str(rec[&#34;cid&#34;])] = rec_num
+
+                fcnno2recid[rec[&#34;FCNNo&#34;]] = rec_num
+                records_list.append((rec_num, ordered_rec))
+
+        # Second pass: resolve FCSreplacedby_record using FCNNo mapping
+        for rec_id, rec in records_list:
+            fcsrep_field = rec.get(&#34;FCSreplacedby&#34;, &#34;&#34;).strip()
+            if fcsrep_field:
+                # *Extract FCN number from FCSreplacedby field if present*
+                fcsrep_match = re.search(r&#39;FCN\s*(\d+)&#39;, fcsrep_field, re.IGNORECASE)
+                if fcsrep_match:
+                    fcsrep = fcsrep_match.group(1)
+                else:
+                    fcsrep = fcsrep_field
+                rep_recid = fcnno2recid.get(fcsrep)
+                rec[&#34;FCSreplacedby_record&#34;] = rep_recid
+                json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.fcn.json&#34;)
+                try:
+                    with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                        json.dump(rec, jf, ensure_ascii=False, indent=2)
+                except Exception as e:
+                    print(f&#34;Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
+
+        with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f_index:
+            json.dump(new_index, f_index, ensure_ascii=False, indent=2)
+        with open(missing_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as mf:
+            json.dump(missing_pubchem, mf, ensure_ascii=False, indent=2)
+        self.index = new_index
+        self.order = new_index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+
+    def _load_record(self, rec_id, order=None, db=False):
+        if rec_id in self._records_cache:
+            if self._pubchem:
+                if db:
+                    return fcnrecord_ext(self._records_cache[rec_id], self)
+                else:
+                    return fcnrecord_ext(self._records_cache[rec_id])
+            else:
+                return self._records_cache[rec_id]
+        json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.fcn.json&#34;)
+        if not os.path.exists(json_filename):
+            print(f&#34;Warning: Record file for record {rec_id} not found.&#34;)
+            return None
+        with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
+            rec = json.load(jf)
+        record_obj = fcnrecord(rec, order=rec.get(&#34;record&#34;), total=len(self.order))
+        self._records_cache[rec_id] = record_obj
+        if self._pubchem:
+            return fcnrecord_ext(record_obj, self)
+        else:
+            return record_obj
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            start = key.start if key.start is not None else min(self.order)
+            stop = key.stop if key.stop is not None else max(self.order) + 1
+            rec_ids = [rid for rid in self.order if start &lt;= rid &lt; stop]
+            if not rec_ids:
+                raise KeyError(f&#34;No records found in range {start} to {stop - 1}. Valid records range from {min(self.order)} to {max(self.order)}.&#34;)
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+        elif isinstance(key, int):
+            if key in self.order:
+                return self._load_record(key, order=key)
+            else:
+                raise KeyError(f&#34;Record number {key} not found. Valid records range from {min(self.order)} to {max(self.order)}.&#34;)
+        elif isinstance(key, (list, tuple)):
+            return [self.__getitem__(k) for k in key]
+        elif isinstance(key, str):
+            # First, try CAS lookup.
+            if key in self.index.get(&#34;CAS&#34;, {}):
+                rec_ids = self.index[&#34;CAS&#34;][key]
+                if len(rec_ids) == 1:
+                    return self._load_record(rec_ids[0], order=rec_ids[0])
+                else:
+                    return [self._load_record(rid, order=rid) for rid in rec_ids]
+            # Then, if key is all digits, try FCNNo lookup.
+            elif key.isdigit() and key in self.index.get(&#34;FCNNo&#34;, {}):
+                rec_ids = self.index[&#34;FCNNo&#34;][key]
+                if len(rec_ids) == 1:
+                    return self._load_record(rec_ids[0], order=rec_ids[0])
+                else:
+                    return [self._load_record(rid, order=rid) for rid in rec_ids]
+            else:
+                available = list(self.index.get(&#34;CAS&#34;, {}).keys()) + list(self.index.get(&#34;FCNNo&#34;, {}).keys())
+                sample = &#34;, &#34;.join(available[:10]) + (&#34; ...&#34; if len(available) &gt; 10 else &#34;&#34;)
+                raise KeyError(f&#34;Key &#39;{key}&#39; not found in index. Valid keys include: {sample}&#34;)
+        else:
+            raise KeyError(f&#34;Unsupported key type: {type(key)}&#34;)
+
+    def __call__(self, *args):
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
+            args = args[0]
+        results = []
+        for arg in args:
+            if isinstance(arg, int):
+                argkey = str(arg)
+                if arg in self.order:
+                    results.append(self._load_record(arg))
+                elif &#34;bycid&#34; in self.index and argkey in self.index[&#34;bycid&#34;]:
+                    rec_id = self.index[&#34;bycid&#34;][argkey]
+                    results.append(self._load_record(rec_id))
+                else:
+                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    results.append(None)
+            elif isinstance(arg, str):
+                result_item = self.__getitem__(arg)
+                if isinstance(result_item, list):
+                    results.extend(result_item)
+                else:
+                    results.append(result_item)
+            else:
+                raise KeyError(f&#34;Unsupported key type in call: {type(arg)}&#34;)
+        return results[0] if len(results) == 1 else results
+
+    def byname(self, name):
+        name = name[0] if isinstance(name, list) else name
+        rec_ids = self.index.get(&#34;name&#34;, {}).get(name, [])
+        return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def byCAS(self, cas):
+        cas = cas[0] if isinstance(cas, list) else cas
+        rec_ids = self.index.get(&#34;CAS&#34;, {}).get(cas, [])
+        if len(rec_ids) == 1:
+            return self._load_record(rec_ids[0], order=rec_ids[0])
+        else:
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def byFCNNo(self, fcn_no):
+        fcn_no = fcn_no[0] if isinstance(fcn_no, list) else fcn_no
+        rec_ids = self.index.get(&#34;FCNNo&#34;, {}).get(fcn_no, [])
+        if len(rec_ids) == 1:
+            return self._load_record(rec_ids[0], order=rec_ids[0])
+        else:
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def byFCSreplacedby(self, fcsrep):
+        fcsrep = fcsrep[0] if isinstance(fcsrep, list) else fcsrep
+        rec_ids = self.index.get(&#34;FCSreplacedby&#34;, {}).get(fcsrep, [])
+        if len(rec_ids) == 1:
+            return self._load_record(rec_ids[0], order=rec_ids[0])
+        else:
+            return [self._load_record(rid, order=rid) for rid in rec_ids]
+
+    def bycid(self, cid, verbose=True):
+        cid = cid[0] if isinstance(cid, list) else cid
+        cidkey = str(cid)
+        if &#34;bycid&#34; in self.index and cidkey in self.index[&#34;bycid&#34;]:
+            rec_id = self.index[&#34;bycid&#34;][cidkey]
+            return self._load_record(rec_id, order=rec_id)
+        else:
+            if verbose:
+                print(f&#34;⚠️Warning: No 🇺🇸US FDA FCS record found for PubChem cid {cid}.&#34;)
+            return None
+
+    def __iter__(self):
+        for rid in self.order:
+            yield self._load_record(rid, order=rid)
+
+    def __len__(self):
+        return len(self.order)
+
+    def __contains__(self, item):
+        if isinstance(item, list):
+            item = item[0]
+        if isinstance(item, int):
+            return item in self.order or ((&#34;bycid&#34; in self.index) and (str(item) in self.index[&#34;bycid&#34;]))
+        if isinstance(item, str):
+            return item in self.index.get(&#34;CAS&#34;, {}) or item in self.index.get(&#34;FCNNo&#34;, {})
+        return False
+
+    def __repr__(self):
+        csv_filename = os.path.basename(self.csv_file)
+        index_date = self.index.get(&#34;index_date&#34;, &#34;unknown&#34;)
+        print(f&#34;🇺🇸US FDA FCS database ({len(self.order)} records)&#34;)
+        print(f&#34;Imported from CSV {csv_filename} and indexed on {index_date}&#34;)
+        return str(self)
+
+    def __str__(self):
+        return f&#34;&lt;{self.__class__.__name__}: {len(self.order)} records (US FDA FCS)&gt;&#34;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="USFDAfcn.USFDAfcn.isInitialized"><code class="name">var <span class="ident">isInitialized</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="USFDAfcn.USFDAfcn.isindexinitialized"><code class="name flex">
+<span>def <span class="ident">isindexinitialized</span></span>(<span>cache_dir='cache.USFDAfcn', index_file='fcn_index.json')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def isindexinitialized(cls, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;fcn_index.json&#34;):
+    return os.path.exists(os.path.join(os.path.dirname(__file__), cache_dir, index_file))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="USFDAfcn.USFDAfcn.byCAS"><code class="name flex">
+<span>def <span class="ident">byCAS</span></span>(<span>self, cas)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def byCAS(self, cas):
+    cas = cas[0] if isinstance(cas, list) else cas
+    rec_ids = self.index.get(&#34;CAS&#34;, {}).get(cas, [])
+    if len(rec_ids) == 1:
+        return self._load_record(rec_ids[0], order=rec_ids[0])
+    else:
+        return [self._load_record(rid, order=rid) for rid in rec_ids]</code></pre>
+</details>
+</dd>
+<dt id="USFDAfcn.USFDAfcn.byFCNNo"><code class="name flex">
+<span>def <span class="ident">byFCNNo</span></span>(<span>self, fcn_no)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def byFCNNo(self, fcn_no):
+    fcn_no = fcn_no[0] if isinstance(fcn_no, list) else fcn_no
+    rec_ids = self.index.get(&#34;FCNNo&#34;, {}).get(fcn_no, [])
+    if len(rec_ids) == 1:
+        return self._load_record(rec_ids[0], order=rec_ids[0])
+    else:
+        return [self._load_record(rid, order=rid) for rid in rec_ids]</code></pre>
+</details>
+</dd>
+<dt id="USFDAfcn.USFDAfcn.byFCSreplacedby"><code class="name flex">
+<span>def <span class="ident">byFCSreplacedby</span></span>(<span>self, fcsrep)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def byFCSreplacedby(self, fcsrep):
+    fcsrep = fcsrep[0] if isinstance(fcsrep, list) else fcsrep
+    rec_ids = self.index.get(&#34;FCSreplacedby&#34;, {}).get(fcsrep, [])
+    if len(rec_ids) == 1:
+        return self._load_record(rec_ids[0], order=rec_ids[0])
+    else:
+        return [self._load_record(rid, order=rid) for rid in rec_ids]</code></pre>
+</details>
+</dd>
+<dt id="USFDAfcn.USFDAfcn.bycid"><code class="name flex">
+<span>def <span class="ident">bycid</span></span>(<span>self, cid, verbose=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bycid(self, cid, verbose=True):
+    cid = cid[0] if isinstance(cid, list) else cid
+    cidkey = str(cid)
+    if &#34;bycid&#34; in self.index and cidkey in self.index[&#34;bycid&#34;]:
+        rec_id = self.index[&#34;bycid&#34;][cidkey]
+        return self._load_record(rec_id, order=rec_id)
+    else:
+        if verbose:
+            print(f&#34;⚠️Warning: No 🇺🇸US FDA FCS record found for PubChem cid {cid}.&#34;)
+        return None</code></pre>
+</details>
+</dd>
+<dt id="USFDAfcn.USFDAfcn.byname"><code class="name flex">
+<span>def <span class="ident">byname</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def byname(self, name):
+    name = name[0] if isinstance(name, list) else name
+    rec_ids = self.index.get(&#34;name&#34;, {}).get(name, [])
+    return [self._load_record(rid, order=rid) for rid in rec_ids]</code></pre>
+</details>
+</dd>
+<dt id="USFDAfcn.USFDAfcn.refresh_index"><code class="name flex">
+<span>def <span class="ident">refresh_index</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def refresh_index(self):
+    from patankar.loadpubchem import migrant
+    new_index = {}
+    index_date = datetime.datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+    new_index[&#34;index_date&#34;] = index_date
+    new_index[&#34;csv_file&#34;] = os.path.basename(self.csv_file)
+    new_index[&#34;order&#34;] = []
+    for key in [&#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;, &#34;FCSreplacedby&#34;]:
+        new_index[key] = {}
+    new_index[&#34;bycid&#34;] = {}
+
+    missing_file = os.path.join(self.cache_dir, &#34;missing.pubchem.fcn.json&#34;)
+    if os.path.exists(missing_file):
+        with open(missing_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as mf:
+            missing_pubchem = json.load(mf)
+    else:
+        missing_pubchem = {}
+
+    records_list = []
+    fcnno2recid = {}
+
+    rec_num = 0
+    with open(self.csv_file, &#34;r&#34;, encoding=&#34;latin1&#34;) as f:
+        while True:
+            pos = f.tell()
+            line = f.readline()
+            if not line:
+                break
+            if line.lstrip().startswith(&#34;FCN No&#34;):
+                f.seek(pos)
+                break
+        reader = csv.reader(f, delimiter=&#34;,&#34;)
+        header = next(reader, None)
+        for row in reader:
+            if not row or len(row) &lt; 7:
+                continue
+            rec_num += 1
+            rec = {}
+            fcn_no_match = re.search(r&#39;=T\(&#34;(\d+)&#34;\)&#39;, row[0])
+            if fcn_no_match:
+                fcn_no = fcn_no_match.group(1)
+            else:
+                fcn_no = row[0].strip()
+            rec[&#34;FCNNo&#34;] = fcn_no
+
+            # Parse Food Contact Substance from column 6
+            fcs_text = row[6].strip()
+            rec[&#34;FoodContactSubstance&#34;] = fcs_text
+            name_val, cas_val, is_mixture = parse_food_contact_substance(fcs_text)
+            rec[&#34;name&#34;] = name_val
+            rec[&#34;CAS&#34;] = cas_val
+            rec[&#34;mixture&#34;] = is_mixture
+
+            # FCS REPLACED BY from column 7
+            rec[&#34;FCSreplacedby&#34;] = row[7].strip() if len(row) &gt; 7 else &#34;&#34;
+            # Notifier from column 8
+            rec[&#34;notifier&#34;] = row[8].strip() if len(row) &gt; 8 else &#34;&#34;
+            # *Clean manufacturer field by removing HTML tags (from column 9)*
+            rec[&#34;manufacturer&#34;] = clean_html(row[9].strip()) if len(row) &gt; 9 else &#34;&#34;
+            # Notification Date from column 12 (Effective Date)
+            rec[&#34;NotificationDate&#34;] = row[12].strip() if len(row) &gt; 12 else &#34;&#34;
+
+            rec[&#34;csvFile&#34;] = os.path.basename(self.csv_file)
+            rec[&#34;date&#34;] = index_date
+            rec[&#34;engine&#34;] = f&#34;SFPPy: {os.path.basename(__file__)}&#34;
+            rec[&#34;record&#34;] = rec_num
+            rec[&#34;cid&#34;] = None
+
+            if rec[&#34;CAS&#34;] and not rec.get(&#34;mixture&#34;, False):
+                cas = rec[&#34;CAS&#34;]
+                if cas in missing_pubchem:
+                    cid_val = missing_pubchem[cas]
+                else:
+                    try:
+                        cid_val = migrant(cas, annex1=False).cid
+                    except Exception:
+                        print(f&#34;Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
+                        cid_val = None
+                        missing_pubchem[cas] = None
+                rec[&#34;cid&#34;] = cid_val
+            elif rec[&#34;CAS&#34;] and rec.get(&#34;mixture&#34;, False):
+                cid_list = []
+                for cas in rec[&#34;CAS&#34;]:
+                    if cas in missing_pubchem:
+                        cid_val = missing_pubchem[cas]
+                    else:
+                        try:
+                            cid_val = migrant(cas, annex1=False).cid
+                        except Exception:
+                            print(f&#34;Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
+                            cid_val = None
+                            missing_pubchem[cas] = None
+                    cid_list.append(cid_val)
+                rec[&#34;cid&#34;] = cid_list
+
+            ordered_rec = {
+                &#34;record&#34;: rec[&#34;record&#34;],
+                &#34;cid&#34;: rec[&#34;cid&#34;],
+                &#34;name&#34;: rec[&#34;name&#34;],
+                &#34;CAS&#34;: rec[&#34;CAS&#34;],
+                &#34;FCNNo&#34;: rec[&#34;FCNNo&#34;],
+                &#34;FoodContactSubstance&#34;: rec[&#34;FoodContactSubstance&#34;],
+                &#34;mixture&#34;: rec[&#34;mixture&#34;],
+                &#34;FCSreplacedby&#34;: rec[&#34;FCSreplacedby&#34;],
+                &#34;FCSreplacedby_record&#34;: None,
+                &#34;notifier&#34;: rec[&#34;notifier&#34;],
+                &#34;manufacturer&#34;: rec[&#34;manufacturer&#34;],
+                &#34;NotificationDate&#34;: rec[&#34;NotificationDate&#34;],
+                &#34;engine&#34;: rec[&#34;engine&#34;],
+                &#34;csfile&#34;: rec[&#34;csvFile&#34;],
+                &#34;date&#34;: rec[&#34;date&#34;]
+            }
+            rec_filename = f&#34;rec{rec_num:05d}.fcn.json&#34;
+            json_filename = os.path.join(self.cache_dir, rec_filename)
+            with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                json.dump(ordered_rec, jf, ensure_ascii=False, indent=2)
+
+            new_index[&#34;order&#34;].append(rec_num)
+            if rec.get(&#34;mixture&#34;, False):
+                for nm in rec[&#34;name&#34;]:
+                    new_index[&#34;name&#34;].setdefault(nm, []).append(rec_num)
+            else:
+                new_index[&#34;name&#34;].setdefault(rec[&#34;name&#34;], []).append(rec_num)
+            if rec.get(&#34;mixture&#34;, False):
+                for cas in rec[&#34;CAS&#34;]:
+                    new_index[&#34;CAS&#34;].setdefault(cas, []).append(rec_num)
+            else:
+                new_index[&#34;CAS&#34;].setdefault(rec[&#34;CAS&#34;], []).append(rec_num)
+            new_index[&#34;FCNNo&#34;].setdefault(rec[&#34;FCNNo&#34;], []).append(rec_num)
+            if rec[&#34;FCSreplacedby&#34;]:
+                new_index[&#34;FCSreplacedby&#34;].setdefault(rec[&#34;FCSreplacedby&#34;], []).append(rec_num)
+            if rec[&#34;cid&#34;] is not None:
+                if rec.get(&#34;mixture&#34;, False):
+                    for cid in rec[&#34;cid&#34;]:
+                        if cid is not None:
+                            new_index[&#34;bycid&#34;][str(cid)] = rec_num
+                else:
+                    new_index[&#34;bycid&#34;][str(rec[&#34;cid&#34;])] = rec_num
+
+            fcnno2recid[rec[&#34;FCNNo&#34;]] = rec_num
+            records_list.append((rec_num, ordered_rec))
+
+    # Second pass: resolve FCSreplacedby_record using FCNNo mapping
+    for rec_id, rec in records_list:
+        fcsrep_field = rec.get(&#34;FCSreplacedby&#34;, &#34;&#34;).strip()
+        if fcsrep_field:
+            # *Extract FCN number from FCSreplacedby field if present*
+            fcsrep_match = re.search(r&#39;FCN\s*(\d+)&#39;, fcsrep_field, re.IGNORECASE)
+            if fcsrep_match:
+                fcsrep = fcsrep_match.group(1)
+            else:
+                fcsrep = fcsrep_field
+            rep_recid = fcnno2recid.get(fcsrep)
+            rec[&#34;FCSreplacedby_record&#34;] = rep_recid
+            json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.fcn.json&#34;)
+            try:
+                with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                    json.dump(rec, jf, ensure_ascii=False, indent=2)
+            except Exception as e:
+                print(f&#34;Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
+
+    with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f_index:
+        json.dump(new_index, f_index, ensure_ascii=False, indent=2)
+    with open(missing_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as mf:
+        json.dump(missing_pubchem, mf, ensure_ascii=False, indent=2)
+    self.index = new_index
+    self.order = new_index.get(&#34;order&#34;, [])
+    self._records_cache = {}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="USFDAfcn.fcnrecord"><code class="flex name class">
+<span>class <span class="ident">fcnrecord</span></span>
+<span>(</span><span>d, order=None, total=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents a single Food Contact Substance Notification record from the US FDA database.</p>
+<p>Keys include:
+- "record": the sequential record number (1-based)
+- "cid": PubChem compound identifier (or list of cids for mixtures; may be None)
+- "name": interpreted chemical name (string or list for mixtures)
+- "CAS": CAS number (string or list for mixtures)
+- "FCNNo": the FCN number extracted from the CSV row (e.g. from =T("2355"))
+- "FoodContactSubstance": the full field text from the CSV
+- "mixture": boolean flag indicating if the record represents a mixture
+- "FCSreplacedby": original field (as provided) indicating a replacement notification
+- "FCSreplacedby_record": record number (if found) corresponding to the replacement notification
+- "notifier", "manufacturer", "NotificationDate": additional fields from the CSV
+- Traceability fields: "engine", "csfile", "date"</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class fcnrecord(dict):
+    &#34;&#34;&#34;
+    Represents a single Food Contact Substance Notification record from the US FDA database.
+
+    Keys include:
+      - &#34;record&#34;: the sequential record number (1-based)
+      - &#34;cid&#34;: PubChem compound identifier (or list of cids for mixtures; may be None)
+      - &#34;name&#34;: interpreted chemical name (string or list for mixtures)
+      - &#34;CAS&#34;: CAS number (string or list for mixtures)
+      - &#34;FCNNo&#34;: the FCN number extracted from the CSV row (e.g. from =T(&#34;2355&#34;))
+      - &#34;FoodContactSubstance&#34;: the full field text from the CSV
+      - &#34;mixture&#34;: boolean flag indicating if the record represents a mixture
+      - &#34;FCSreplacedby&#34;: original field (as provided) indicating a replacement notification
+      - &#34;FCSreplacedby_record&#34;: record number (if found) corresponding to the replacement notification
+      - &#34;notifier&#34;, &#34;manufacturer&#34;, &#34;NotificationDate&#34;: additional fields from the CSV
+      - Traceability fields: &#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;
+    &#34;&#34;&#34;
+
+    def __init__(self, d, order=None, total=None):
+        if not isinstance(d, dict):
+            raise TypeError(&#34;Input must be a dict, not a {}&#34;.format(type(d).__name__))
+        super().__init__(d)
+        self._order = d.get(&#34;record&#34;, order)
+        self._total = total
+
+    def __str__(self):
+        cid = self.get(&#34;cid&#34;, None)
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        return f&#34;&lt;{self.__class__.__name__} with cid:{cid} - record {order_str} of {total_str} (US FDA FCS)&gt;&#34;
+
+    def __repr__(self):
+        lines = []
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        header = f&#34; ---- [ US FDA FCS record: {order_str} of {total_str} ] ----&#34;
+        lines.append(header)
+        fields_order = [
+            &#34;record&#34;, &#34;cid&#34;, &#34;name&#34;, &#34;CAS&#34;, &#34;FCNNo&#34;,
+            &#34;FoodContactSubstance&#34;, &#34;mixture&#34;, &#34;FCSreplacedby&#34;, &#34;FCSreplacedby_record&#34;,
+            &#34;notifier&#34;, &#34;manufacturer&#34;, &#34;NotificationDate&#34;
+        ]
+        for key in fields_order:
+            if key not in self:
+                continue
+            val = self[key]
+            if val is None or (isinstance(val, str) and not val.strip()):
+                continue
+            wrapped_val = custom_wrap(str(val), width=60, indent=&#34; &#34; * 22)
+            lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+        for key in [&#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;]:
+            if key in self:
+                wrapped_val = custom_wrap(str(self[key]), width=60, indent=&#34; &#34; * 22)
+                lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+        return &#34;\n&#34;.join(lines)
+
+    @property
+    def ispubchemok(self):
+        cas = self.get(&#34;CAS&#34;)
+        if self.get(&#34;mixture&#34;, False):
+            return bool(cas and any(c.strip() for c in cas))
+        return cas not in (&#34;&#34;, None)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="USFDAfcn.fcnrecord_ext" href="#USFDAfcn.fcnrecord_ext">fcnrecord_ext</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="USFDAfcn.fcnrecord.ispubchemok"><code class="name">var <span class="ident">ispubchemok</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ispubchemok(self):
+    cas = self.get(&#34;CAS&#34;)
+    if self.get(&#34;mixture&#34;, False):
+        return bool(cas and any(c.strip() for c in cas))
+    return cas not in (&#34;&#34;, None)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="USFDAfcn.fcnrecord_ext"><code class="flex name class">
+<span>class <span class="ident">fcnrecord_ext</span></span>
+<span>(</span><span>rec, db=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extended fcnrecord that automatically retrieves additional chemical information from PubChem.</p>
+<p>For each CAS number (or each CAS in a mixture) the PubChem lookup is performed.
+The field "cid" is updated to be either a single PubChem CID or a list of CIDs.</p>
+<p>Instantiate from a base fcnrecord.
+If a valid CAS is available, perform PubChem lookup via the 'migrant' function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class fcnrecord_ext(fcnrecord):
+    &#34;&#34;&#34;
+    Extended fcnrecord that automatically retrieves additional chemical information from PubChem.
+
+    For each CAS number (or each CAS in a mixture) the PubChem lookup is performed.
+    The field &#34;cid&#34; is updated to be either a single PubChem CID or a list of CIDs.
+    &#34;&#34;&#34;
+    def __init__(self, rec, db=None):
+        &#34;&#34;&#34;
+        Instantiate from a base fcnrecord.
+        If a valid CAS is available, perform PubChem lookup via the &#39;migrant&#39; function.
+        &#34;&#34;&#34;
+        if not isinstance(rec, fcnrecord):
+            raise TypeError(&#34;Input must be an fcnrecord, not a {}&#34;.format(type(rec).__name__))
+        super().__init__(rec, order=rec._order, total=rec._total)
+        from patankar.loadpubchem import migrant
+        if self.ispubchemok:
+            if self.get(&#34;mixture&#34;, False):
+                cids = []
+                for cas in self.get(&#34;CAS&#34;, []):
+                    try:
+                        m = migrant(cas, annex1=False)
+                        cids.append(m.cid)
+                    except Exception:
+                        print(f&#34;Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                        cids.append(DEFAULT_PUBCHEM)
+                self.cid = cids
+            else:
+                cas = self.get(&#34;CAS&#34;)
+                try:
+                    m = migrant(cas, annex1=False)
+                    self.cid = m.cid
+                except Exception:
+                    print(f&#34;Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                    self.cid = DEFAULT_PUBCHEM
+        else:
+            self.cid = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="USFDAfcn.fcnrecord" href="#USFDAfcn.fcnrecord">fcnrecord</a></li>
+<li>builtins.dict</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="USFDAfcn.clean_html" href="#USFDAfcn.clean_html">clean_html</a></code></li>
+<li><code><a title="USFDAfcn.custom_wrap" href="#USFDAfcn.custom_wrap">custom_wrap</a></code></li>
+<li><code><a title="USFDAfcn.parse_food_contact_substance" href="#USFDAfcn.parse_food_contact_substance">parse_food_contact_substance</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="USFDAfcn.USFDAfcn" href="#USFDAfcn.USFDAfcn">USFDAfcn</a></code></h4>
+<ul class="two-column">
+<li><code><a title="USFDAfcn.USFDAfcn.byCAS" href="#USFDAfcn.USFDAfcn.byCAS">byCAS</a></code></li>
+<li><code><a title="USFDAfcn.USFDAfcn.byFCNNo" href="#USFDAfcn.USFDAfcn.byFCNNo">byFCNNo</a></code></li>
+<li><code><a title="USFDAfcn.USFDAfcn.byFCSreplacedby" href="#USFDAfcn.USFDAfcn.byFCSreplacedby">byFCSreplacedby</a></code></li>
+<li><code><a title="USFDAfcn.USFDAfcn.bycid" href="#USFDAfcn.USFDAfcn.bycid">bycid</a></code></li>
+<li><code><a title="USFDAfcn.USFDAfcn.byname" href="#USFDAfcn.USFDAfcn.byname">byname</a></code></li>
+<li><code><a title="USFDAfcn.USFDAfcn.isInitialized" href="#USFDAfcn.USFDAfcn.isInitialized">isInitialized</a></code></li>
+<li><code><a title="USFDAfcn.USFDAfcn.isindexinitialized" href="#USFDAfcn.USFDAfcn.isindexinitialized">isindexinitialized</a></code></li>
+<li><code><a title="USFDAfcn.USFDAfcn.refresh_index" href="#USFDAfcn.USFDAfcn.refresh_index">refresh_index</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="USFDAfcn.fcnrecord" href="#USFDAfcn.fcnrecord">fcnrecord</a></code></h4>
+<ul class="">
+<li><code><a title="USFDAfcn.fcnrecord.ispubchemok" href="#USFDAfcn.fcnrecord.ispubchemok">ispubchemok</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="USFDAfcn.fcnrecord_ext" href="#USFDAfcn.fcnrecord_ext">fcnrecord_ext</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

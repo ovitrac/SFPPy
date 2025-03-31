@@ -585,7 +585,7 @@ class USFDAfcn:
             return self._load_record(rec_id, order=rec_id)
         else:
             if verbose:
-                print(f"Warning: No US FDA FCS record found for PubChem cid {cid}.")
+                print(f"⚠️Warning: No 🇺🇸US FDA FCS record found for PubChem cid {cid}.")
             return None
 
     def __iter__(self):
@@ -607,7 +607,7 @@ class USFDAfcn:
     def __repr__(self):
         csv_filename = os.path.basename(self.csv_file)
         index_date = self.index.get("index_date", "unknown")
-        print(f"US FDA FCS database ({len(self.order)} records)")
+        print(f"🇺🇸US FDA FCS database ({len(self.order)} records)")
         print(f"Imported from CSV {csv_filename} and indexed on {index_date}")
         return str(self)
 

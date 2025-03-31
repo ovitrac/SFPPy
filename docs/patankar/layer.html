@@ -15741,7 +15741,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                  verbose = True, # flag to control alert messages on substances
 
-                 annex1 = True, # flag used by EUFCMannex1 to avoid infinite loop
+                 annex1 = True, # flag used by EUFCMannex1/USFDAfcn to avoid infinite loop
 
                  ):
         &#34;&#34;&#34;
@@ -15973,7 +15973,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                     if self.cid in dbannex1:
                         annex1record = dbannex1.bycid(self.cid,verbose=self.verbose)
                     elif self.CAS in dbannex1:
-                        annex1record = dbannex1.byCAS(self.CAS,verbose=self.verbose)
+                        annex1record = dbannex1.byCAS(self.CAS)
                     if annex1record is not None:
                         SML = annex1record[&#34;SML&#34;]
                         SMLT = annex1record.get(&#34;SMLT&#34;)
@@ -15982,6 +15982,40 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                         self.annex1 = annex1record
                     else:
                         self.SML = None # we validate that we looked for an SML but we did not find it
+
+                # if dbfcn is available (note that FCN include mixtures)
+                if doFCN and annex1:
+                    fcnrecord = None
+                    if self.cid in dbfcn:
+                        fcnrecord = dbfcn.bycid(self.cid,verbose=self.verbose)
+                        if fcnrecord is not None:
+                            cascandidate = fcnrecord[&#34;CAS&#34;]
+                            if cascandidate in dbfcn:
+                                fcnrecord = dbfcn.byCAS(cascandidate)
+                    elif self.CAS in dbfcn:
+                        fcnrecord = dbfcn.byCAS(self.CAS)
+                    if fcnrecord is not None:
+                        if isinstance(fcnrecord,list):
+                            self.FCNNo = [int(f[&#34;FCNNo&#34;]) for f in fcnrecord]
+                            self.FCNcid = unique([f[&#34;cid&#34;] for f in fcnrecord])
+                            self.FCNCAS = unique([f[&#34;CAS&#34;] for f in fcnrecord])
+                            self.FCNnotificationDate = unique([f[&#34;NotificationDate&#34;] for f in fcnrecord])
+                            self.FCNnotifier = unique([f[&#34;notifier&#34;] for f in fcnrecord])
+                            self.FCNmanufacturer = unique([f[&#34;manufacturer&#34;] for f in fcnrecord])
+                            self.FCNmixture = unique([f[&#34;mixture&#34;] for f in fcnrecord])
+                            self.FCNnsubstances = len(fcnrecord)
+                        else:
+                            self.FCNNo = int(fcnrecord[&#34;FCNNo&#34;])
+                            self.FCNcid = fcnrecord[&#34;cid&#34;]
+                            self.FCNCAS = fcnrecord[&#34;CAS&#34;]
+                            self.FCNnotificationDate = fcnrecord[&#34;NotificationDate&#34;]
+                            self.FCNnotifier = fcnrecord[&#34;notifier&#34;]
+                            self.FCNmanufacturer = fcnrecord[&#34;manufacturer&#34;]
+                            self.FCNmixture = fcnrecord[&#34;mixture&#34;]
+                            self.FCNnsubstances = len(fcnrecord.cid) if self.FCNmixture else 1
+                        self.FCN = fcnrecord
+                    else:
+                        self.FCNNo = None # we validate that we looked for a FCN No but we did not find it
 
                 # add PNG thumb and SDF structure files (without loading them)
                 # we prevent cache filling when it is necessary
@@ -16235,7 +16269,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     @property
     def worstcaseSMLgroup(self):
         &#34;&#34;&#34;Returns the substance with the lowest molecular weight in the group&#34;&#34;&#34;
-
+    @property
+    def hasFCN(self):
+        &#34;&#34;&#34;Returns True if the substance is a registered in the US FDA FCN inventory list&#34;&#34;&#34;
+        return hasattr(self, &#34;FCNNo&#34;) and self.FCNNo is not None
 
     def __repr__(self):
         &#34;&#34;&#34;Formatted string representation summarizing key attributes.&#34;&#34;&#34;
@@ -16258,7 +16295,7 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         # Add SML and EU rules
         if self.hasSML:
             if self.hasannex1:
-                attributes[&#34;--- EC 10/2011&#34;]=&#34;-&#34;*15
+                attributes[&#34;---🇪🇺 EC 10/2011&#34;]=&#34;-&#34;*15
                 attributes[&#34;SML&#34;] = str(self.SML)
                 attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
                 if self.annex1[&#34;SMLTGroupFCMsubstances&#34;] is not None:
@@ -16270,9 +16307,19 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 attributes[&#34;SML&#34;] = str(self.SML)
                 if hasattr(self,&#34;SMLunit&#34;):
                     attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+
+        if self.hasFCN:
+            attributes[&#34;---🇺🇸 US FCN list&#34;]=&#34;-&#34;*15
+            attributes[&#34;FCM No&#34;] = str(self.FCNNo)
+            attributes[&#34;Notifier&#34;] = self.FCNnotifier
+            attributes[&#34;Manufacturer&#34;] = self.FCNmanufacturer
+            attributes[&#34;N. Date&#34;] = self.FCNnotificationDate
+            if self.FCNmixture:
+                attributes[&#34;Mixture&#34;] = f&#34;part of a mixture of {self.FCNnsubstances} substances&#34;
+
         # Add Toxtree attributes
         if isinstance(self,migrantToxtree) and self.compound not in (None,&#34;&#34;,[]):
-            attributes[&#34;--- ToxTree&#34;]=&#34;-&#34;*15
+            attributes[&#34;---𖣂︎ ToxTree&#34;]=&#34;-&#34;*15
             attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
             attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
             attributes[&#34;Toxicology&#34;] = self.CramerClass
@@ -16844,6 +16891,19 @@ def count_rings(self):
         &#39;non_aromatic&#39;: len(non_aromatic_rings),
         &#39;fusions&#39;: fusion_counts
     }</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.hasFCN"><code class="name">var <span class="ident">hasFCN</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if the substance is a registered in the US FDA FCN inventory list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasFCN(self):
+    &#34;&#34;&#34;Returns True if the substance is a registered in the US FDA FCN inventory list&#34;&#34;&#34;
+    return hasattr(self, &#34;FCNNo&#34;) and self.FCNNo is not None</code></pre>
 </details>
 </dd>
 <dt id="layer.migrant.hasSML"><code class="name">var <span class="ident">hasSML</span></code></dt>
@@ -18822,6 +18882,7 @@ def porosity(self):
 <li><code><a title="layer.migrant.check_alt_propclass" href="#layer.migrant.check_alt_propclass">check_alt_propclass</a></code></li>
 <li><code><a title="layer.migrant.count_rings" href="#layer.migrant.count_rings">count_rings</a></code></li>
 <li><code><a title="layer.migrant.dispmax" href="#layer.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="layer.migrant.hasFCN" href="#layer.migrant.hasFCN">hasFCN</a></code></li>
 <li><code><a title="layer.migrant.hasSML" href="#layer.migrant.hasSML">hasSML</a></code></li>
 <li><code><a title="layer.migrant.hasSMLgroup" href="#layer.migrant.hasSMLgroup">hasSMLgroup</a></code></li>
 <li><code><a title="layer.migrant.hasannex1" href="#layer.migrant.hasannex1">hasannex1</a></code></li>
