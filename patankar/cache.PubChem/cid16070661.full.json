@@ -1,0 +1,387 @@
+{
+  "cid": 16070661,
+  "synonyms": [
+    "127542-89-6",
+    "2-(2-hydroperoxy-2-oxoethyl)-2-hydroxybutanedioic acid",
+    "DTXSID30581756",
+    "peroxycitric acid",
+    "CERAPP_49384",
+    "SCHEMBL1767651",
+    "SCHEMBL8212325",
+    "SCHEMBL9411234",
+    "DTXCID30532521",
+    "DTXSID30869980"
+  ],
+  "sids": [
+    24713120,
+    28685794,
+    29955025,
+    128529774,
+    162384858,
+    162426171,
+    227946475,
+    233740930,
+    234818309,
+    313617165,
+    316111944,
+    341445477,
+    349625703,
+    403827279,
+    415568683,
+    426747431,
+    469494588,
+    472308327,
+    481242792,
+    495886990,
+    504549154
+  ],
+  "aids": [],
+  "elements": [
+    "O",
+    "O",
+    "O",
+    "O",
+    "O",
+    "O",
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "O",
+      "x": 5.635,
+      "y": -1.0005,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "O",
+      "x": 6.8671,
+      "y": -0.1345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "O",
+      "x": 6.001,
+      "y": 1.3655,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "O",
+      "x": 3.403,
+      "y": -2.1345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "O",
+      "x": 3.135,
+      "y": 1.5976,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "O",
+      "x": 5.135,
+      "y": -2.1345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 3.135,
+      "y": -0.1345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "O",
+      "x": 2.5369,
+      "y": -1.6345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 5.135,
+      "y": -0.1345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 4.269,
+      "y": -0.6345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 4.635,
+      "y": 0.7315,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "C",
+      "x": 6.001,
+      "y": 0.3655,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "C",
+      "x": 4.269,
+      "y": -1.6345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "C",
+      "x": 3.635,
+      "y": 0.7315,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "H",
+      "x": 4.0569,
+      "y": -0.0519,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "H",
+      "x": 3.6584,
+      "y": -0.7422,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "H",
+      "x": 5.2176,
+      "y": 0.9436,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "H",
+      "x": 4.5274,
+      "y": 1.3421,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "H",
+      "x": 5.325,
+      "y": -1.5374,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "H",
+      "x": 7.404,
+      "y": 0.1755,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "H",
+      "x": 3.445,
+      "y": 2.1345,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 22,
+      "element": "H",
+      "x": 2,
+      "y": -1.9445,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 19,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 20,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 12,
+      "order": 2
+    },
+    {
+      "aid1": 4,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 21,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 13,
+      "order": 2
+    },
+    {
+      "aid1": 7,
+      "aid2": 14,
+      "order": 2
+    },
+    {
+      "aid1": 8,
+      "aid2": 22,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 15,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 18,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C6H8O8",
+  "molecular_weight": "208.12",
+  "canonical_smiles": "C(C(=O)O)C(CC(=O)OO)(C(=O)O)O",
+  "isomeric_smiles": "C(C(=O)O)C(CC(=O)OO)(C(=O)O)O",
+  "inchi": "InChI=1S/C6H8O8/c7-3(8)1-6(12,5(10)11)2-4(9)14-13/h12-13H,1-2H2,(H,7,8)(H,10,11)",
+  "inchikey": "LRDUPNFEHGGCHQ-UHFFFAOYSA-N",
+  "iupac_name": "2-(2-hydroperoxy-2-oxoethyl)-2-hydroxybutanedioic acid",
+  "xlogp": -1.9,
+  "exact_mass": "208.02191721",
+  "monoisotopic_mass": "208.02191721",
+  "tpsa": 141,
+  "complexity": 259,
+  "h_bond_donor_count": 4,
+  "h_bond_acceptor_count": 8,
+  "rotatable_bond_count": 6,
+  "fingerprint": "00000371C0603C00000000000000000000000000000000000000000000000000000000000000001A00000C00000C44808000000800000200080000900802000000000000000001400000010016000000004000052000010000CB26000A00000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "11000000011000000011110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101000000000000000000000110000000000000000000000110001000100100000001000000000000000000000000000100000000000000000000000001000000000000010000000000000000000100100000000100000000010000000000000000000000000000000000000000000000000000000000000000000000001010000000000000000000000000000010000000000010110000000000000000000000000000000000100000000000000000001010010000000000000000000010000000000000000110010110010011000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 14,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 1,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 1,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

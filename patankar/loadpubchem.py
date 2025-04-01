@@ -159,9 +159,10 @@ from patankar.private.pubchempy import get_compounds
 # --- SFPPy.Comply imports ---
 # European rules
 import patankar.private.EUFCMannex1 as complyEU # Annex 1 (we import all the module as complyEU)
+# US rules
 import patankar.private.USFDAfcn as complyUS # US FCN inventory list (idem)
 
-__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'floatNone', 'get_compounds', 'get_default_index', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index']
+__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'dbfcn', 'floatNone', 'get_compounds', 'get_default_index', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index', 'unique']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -170,7 +171,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.37"
+__version__ = "1.41"
 
 
 # %% SFFy.Comply databases version 2025

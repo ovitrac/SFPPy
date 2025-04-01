@@ -1,0 +1,183 @@
+{
+  "cid": 165360057,
+  "synonyms": [
+    "DTXSID001335802",
+    "Magnesium sodium fluoride silicate (Mg5Na2F4(Si2O5)4)",
+    "QHGHQCANXAIYHN-UHFFFAOYSA-M",
+    "DTXCID701765707",
+    "56450-90-9"
+  ],
+  "sids": [
+    472174466,
+    489165821,
+    504091858,
+    504139446,
+    505796312
+  ],
+  "aids": [],
+  "elements": [
+    "Si",
+    "Si",
+    "Mg",
+    "Na",
+    "F",
+    "O",
+    "O",
+    "O",
+    "O",
+    "O"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Si",
+      "x": 4.5981,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "Si",
+      "x": 6.3301,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "Mg",
+      "x": 2.866,
+      "y": 0.25,
+      "z": null,
+      "charge": 2
+    },
+    {
+      "aid": 4,
+      "element": "Na",
+      "x": 8.0622,
+      "y": 0.25,
+      "z": null,
+      "charge": 1
+    },
+    {
+      "aid": 5,
+      "element": "F",
+      "x": 2,
+      "y": 0.75,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 6,
+      "element": "O",
+      "x": 5.4641,
+      "y": 0.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 3.732,
+      "y": 0.75,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 8,
+      "element": "O",
+      "x": 7.1962,
+      "y": 0.75,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 9,
+      "element": "O",
+      "x": 4.5981,
+      "y": -0.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "O",
+      "x": 6.3301,
+      "y": -0.75,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 9,
+      "order": 2
+    },
+    {
+      "aid1": 2,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 10,
+      "order": 2
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "FMgNaO5Si2",
+  "molecular_weight": "202.46",
+  "canonical_smiles": "[O-][Si](=O)O[Si](=O)[O-].[F-].[Na+].[Mg+2]",
+  "isomeric_smiles": "[O-][Si](=O)O[Si](=O)[O-].[F-].[Na+].[Mg+2]",
+  "inchi": "InChI=1S/FH.Mg.Na.O5Si2/c;;;1-6(2)5-7(3)4/h1H;;;/q;+2;+1;-2/p-1",
+  "inchikey": "QHGHQCANXAIYHN-UHFFFAOYSA-M",
+  "iupac_name": "magnesium;sodium;oxido-[oxido(oxo)silyl]oxy-oxosilane;fluoride",
+  "xlogp": null,
+  "exact_mass": "201.9016403",
+  "monoisotopic_mass": "201.9016403",
+  "tpsa": 89.5,
+  "complexity": 71.2,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 6,
+  "rotatable_bond_count": 0,
+  "fingerprint": "000003710000392C0000200000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000000000000011100100101100000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 10,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 4,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}
