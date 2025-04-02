@@ -43,14 +43,9 @@ The main manager class, *GBappendixA*, builds an index for fast lookup by CAS, F
 
 """
 
-import os
-import csv
-import json
-import datetime
-import re
-import textwrap
+import os, csv, json, datetime, time, re, textwrap
 
-__all__ = ['GBappendixA', 'gbrecord', 'gbrecord_ext', 'custom_wrap']
+__all__ = ['GBappendixA', 'custom_wrap', 'extract_number_before_keyword', 'extract_number_before_keyword_in_parentheses', 'gbrecord', 'gbrecord_ext', 'split_col5_content', 'unwrap']
 
 
 __project__ = "SFPPy"
@@ -62,6 +57,10 @@ __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
 __version__ = "1.41"
 
+
+# Module-level variables to track last warning message and its timestamp
+_LAST_WARN_ = None
+_T_LAST_WARN_ = 0.0
 
 # ----------------------------------------------------------------------
 # Custom text wrapping function (similar to EU module)
@@ -76,6 +75,27 @@ def custom_wrap(text, width=60, indent=" " * 22):
     wrapped = [first] + [indent + line for line in subsequent_lines]
     return "\n".join(wrapped)
 
+# ----------------------------------------------------------------------
+# Show warnings without repeating them
+def printWARN(message: str, tsilent: float = 10.0):
+    """
+    Print a warning message only if:
+    - it's different from the last one, or
+    - more than `tsilent` seconds have passed since the last identical warning.
+
+    Parameters:
+    ----------
+    message : str
+        The warning message to display.
+    tsilent : float, optional
+        Minimum time (in seconds) between repeated identical warnings.
+    """
+    global _LAST_WARN_, _T_LAST_WARN_
+    tnow = time.time()
+    if message != _LAST_WARN_ or (tnow - _T_LAST_WARN_ > tsilent):
+        print(message)
+        _LAST_WARN_ = message
+        _T_LAST_WARN_ = tnow
 
 # ----------------------------------------------------------------------
 # robust numeric extract for GB document
@@ -509,7 +529,7 @@ class GBappendixA:
                             try:
                                 cid_val = migrant(cas_lookup, annex1=False).cid
                             except ValueError:
-                                print(f"Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.")
+                                printWARN(f"🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.")
                                 cid_val = None
                                 missing_pubchem[cas_lookup] = None
                     else:
@@ -594,7 +614,7 @@ class GBappendixA:
                 return self._records_cache[fca]
         json_filename = os.path.join(self.cache_dir, f"FCA{int(fca):04d}.json")
         if not os.path.exists(json_filename):
-            print(f"Warning: Record file for FCA {fca} not found.")
+            print(f"⚠️ Warning: Record file for 🇨🇳 FCA {fca} not found.")
             return None
         with open(json_filename, "r", encoding="utf-8") as jf:
             rec = json.load(jf)
@@ -657,7 +677,7 @@ class GBappendixA:
                     fca = self.index["bycid"][arg_str]
                     results.append(self._load_record(fca))
                 else:
-                    print(f"Warning: Record for identifier {arg} not found.")
+                    print(f"🇨🇳 Warning: Record for identifier {arg} not found.")
                     results.append(None)
             elif isinstance(arg, str):
                 try:
@@ -687,7 +707,7 @@ class GBappendixA:
         if fca_str in self.order:
             return self._load_record(fca_str, order=fca_str)
         else:
-            raise KeyError(f"FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.")
+            raise KeyError(f"🇨🇳 FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.")
 
     def bycid(self, cid, verbose=True):
         cid_str = str(cid)
@@ -696,7 +716,7 @@ class GBappendixA:
             return self._load_record(fca, order=fca, db=True)
         else:
             if verbose:
-                print(f"Warning: No GB 9685-2016 record found for PubChem cid {cid}.")
+                print(f"⚠️ Warning: No 🇨🇳 GB 9685-2016 record found for PubChem cid {cid}.")
             return None
 
     def __iter__(self):

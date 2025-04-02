@@ -2668,7 +2668,7 @@ class migrantToxtree(migrant):
                 alert_index += 1
                 # Convert key name to readable format (split at capital letters)
                 alert_text = ''.join([' ' + char if char.isupper() and i > 0 else char for i, char in enumerate(key)])
-                attributes[f"alert {alert_index}"] = alert_text.strip()  # Remove leading space
+                attributes[f"⚠️ Alert {alert_index}"] = alert_text.strip()  # Remove leading space
         return attributes
 
 

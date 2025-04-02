@@ -26,7 +26,7 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">__all__ = [&#39;USFDAfcn&#39;, &#39;clean_html&#39;, &#39;custom_wrap&#39;, &#39;fcnrecord&#39;, &#39;fcnrecord_ext&#39;, &#39;parse_food_contact_substance&#39;]
+<pre><code class="python">__all__ = [&#39;USFDAfcn&#39;, &#39;clean_html&#39;, &#39;custom_wrap&#39;, &#39;fcnrecord&#39;, &#39;fcnrecord_ext&#39;, &#39;parse_food_contact_substance&#39;, &#39;printWARN&#39;]
 &#34;&#34;&#34;
 Module: USFDAfcn
 
@@ -74,12 +74,7 @@ Key features include:
 
 &#34;&#34;&#34;
 
-import os
-import csv
-import json
-import datetime
-import re
-import textwrap
+import os, csv, json, datetime, time, re, textwrap
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -95,6 +90,10 @@ __version__ = &#34;1.41&#34;
 # (This can be adapted if needed)
 DEFAULT_PUBCHEM = None
 
+# Module-level variables to track last warning message and its timestamp
+_LAST_WARN_ = None
+_T_LAST_WARN_ = 0.0
+
 # ----------------------------------------------------------------------
 # Utility function: custom_wrap (for pretty printing)
 # ----------------------------------------------------------------------
@@ -108,6 +107,29 @@ def custom_wrap(text, width=60, indent=&#34; &#34; * 22):
     subsequent_lines = textwrap.wrap(remaining, width=width)
     wrapped = [first] + [indent + line for line in subsequent_lines]
     return &#34;\n&#34;.join(wrapped)
+
+# ----------------------------------------------------------------------
+# Show warnings without repeating them
+# ----------------------------------------------------------------------
+def printWARN(message: str, tsilent: float = 10.0):
+    &#34;&#34;&#34;
+    Print a warning message only if:
+    - it&#39;s different from the last one, or
+    - more than `tsilent` seconds have passed since the last identical warning.
+
+    Parameters:
+    ----------
+    message : str
+        The warning message to display.
+    tsilent : float, optional
+        Minimum time (in seconds) between repeated identical warnings.
+    &#34;&#34;&#34;
+    global _LAST_WARN_, _T_LAST_WARN_
+    tnow = time.time()
+    if message != _LAST_WARN_ or (tnow - _T_LAST_WARN_ &gt; tsilent):
+        print(message)
+        _LAST_WARN_ = message
+        _T_LAST_WARN_ = tnow
 
 # ----------------------------------------------------------------------
 # *New helper function to remove HTML tags*
@@ -266,7 +288,7 @@ class fcnrecord_ext(fcnrecord):
                         cids.append(m.cid)
                     except Exception:
                         if verbosity:
-                            print(f&#34;Warning:: USFDAfcn.py: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                            printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
                         cids.append(DEFAULT_PUBCHEM)
                 self.cid = cids
             else:
@@ -276,7 +298,7 @@ class fcnrecord_ext(fcnrecord):
                     self.cid = m.cid
                 except Exception:
                     if verbosity:
-                        print(f&#34;Warning:: USFDAfcn.py: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                        printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
                     self.cid = DEFAULT_PUBCHEM
         else:
             self.cid = None
@@ -402,7 +424,7 @@ class USFDAfcn:
                         try:
                             cid_val = migrant(cas, annex1=False).cid
                         except Exception:
-                            print(f&#34;Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
+                            printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
                             cid_val = None
                             missing_pubchem[cas] = None
                     rec[&#34;cid&#34;] = cid_val
@@ -415,7 +437,7 @@ class USFDAfcn:
                             try:
                                 cid_val = migrant(cas, annex1=False).cid
                             except Exception:
-                                print(f&#34;Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
+                                printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
                                 cid_val = None
                                 missing_pubchem[cas] = None
                         cid_list.append(cid_val)
@@ -485,7 +507,7 @@ class USFDAfcn:
                     with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
                         json.dump(rec, jf, ensure_ascii=False, indent=2)
                 except Exception as e:
-                    print(f&#34;Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
+                    printWARN(f&#34;🇺🇸 Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
 
         with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f_index:
             json.dump(new_index, f_index, ensure_ascii=False, indent=2)
@@ -506,7 +528,7 @@ class USFDAfcn:
                 return self._records_cache[rec_id]
         json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.fcn.json&#34;)
         if not os.path.exists(json_filename):
-            print(f&#34;Warning: Record file for record {rec_id} not found.&#34;)
+            printWARN(f&#34;🇺🇸 Warning: Record file for record {rec_id} not found.&#34;)
             return None
         with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
             rec = json.load(jf)
@@ -567,7 +589,7 @@ class USFDAfcn:
                     rec_id = self.index[&#34;bycid&#34;][argkey]
                     results.append(self._load_record(rec_id))
                 else:
-                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    printWARN(f&#34;🇺🇸 Warning: Record for identifier {arg} not found.&#34;)
                     results.append(None)
             elif isinstance(arg, str):
                 result_item = self.__getitem__(arg)
@@ -616,7 +638,7 @@ class USFDAfcn:
             return self._load_record(rec_id, order=rec_id)
         else:
             if verbose:
-                print(f&#34;⚠️Warning: No 🇺🇸US FDA FCS record found for PubChem cid {cid}.&#34;)
+                printWARN(f&#34;⚠️ Warning: No 🇺🇸 US FDA FCS record found for PubChem cid {cid}.&#34;)
             return None
 
     def __iter__(self):
@@ -779,6 +801,43 @@ occurrence of "(CAS Reg. No." (after removing a trailing phrase such as " (produ
         return names, cas_list, True</code></pre>
 </details>
 </dd>
+<dt id="USFDAfcn.printWARN"><code class="name flex">
+<span>def <span class="ident">printWARN</span></span>(<span>message: str, tsilent: float = 10.0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print a warning message only if:
+- it's different from the last one, or
+- more than <code>tsilent</code> seconds have passed since the last identical warning.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>message : str
+The warning message to display.
+tsilent : float, optional
+Minimum time (in seconds) between repeated identical warnings.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def printWARN(message: str, tsilent: float = 10.0):
+    &#34;&#34;&#34;
+    Print a warning message only if:
+    - it&#39;s different from the last one, or
+    - more than `tsilent` seconds have passed since the last identical warning.
+
+    Parameters:
+    ----------
+    message : str
+        The warning message to display.
+    tsilent : float, optional
+        Minimum time (in seconds) between repeated identical warnings.
+    &#34;&#34;&#34;
+    global _LAST_WARN_, _T_LAST_WARN_
+    tnow = time.time()
+    if message != _LAST_WARN_ or (tnow - _T_LAST_WARN_ &gt; tsilent):
+        print(message)
+        _LAST_WARN_ = message
+        _T_LAST_WARN_ = tnow</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -920,7 +979,7 @@ PubChem lookups are assumed to be managed by a module-level variable in patankar
                         try:
                             cid_val = migrant(cas, annex1=False).cid
                         except Exception:
-                            print(f&#34;Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
+                            printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
                             cid_val = None
                             missing_pubchem[cas] = None
                     rec[&#34;cid&#34;] = cid_val
@@ -933,7 +992,7 @@ PubChem lookups are assumed to be managed by a module-level variable in patankar
                             try:
                                 cid_val = migrant(cas, annex1=False).cid
                             except Exception:
-                                print(f&#34;Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
+                                printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
                                 cid_val = None
                                 missing_pubchem[cas] = None
                         cid_list.append(cid_val)
@@ -1003,7 +1062,7 @@ PubChem lookups are assumed to be managed by a module-level variable in patankar
                     with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
                         json.dump(rec, jf, ensure_ascii=False, indent=2)
                 except Exception as e:
-                    print(f&#34;Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
+                    printWARN(f&#34;🇺🇸 Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
 
         with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f_index:
             json.dump(new_index, f_index, ensure_ascii=False, indent=2)
@@ -1024,7 +1083,7 @@ PubChem lookups are assumed to be managed by a module-level variable in patankar
                 return self._records_cache[rec_id]
         json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.fcn.json&#34;)
         if not os.path.exists(json_filename):
-            print(f&#34;Warning: Record file for record {rec_id} not found.&#34;)
+            printWARN(f&#34;🇺🇸 Warning: Record file for record {rec_id} not found.&#34;)
             return None
         with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
             rec = json.load(jf)
@@ -1085,7 +1144,7 @@ PubChem lookups are assumed to be managed by a module-level variable in patankar
                     rec_id = self.index[&#34;bycid&#34;][argkey]
                     results.append(self._load_record(rec_id))
                 else:
-                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    printWARN(f&#34;🇺🇸 Warning: Record for identifier {arg} not found.&#34;)
                     results.append(None)
             elif isinstance(arg, str):
                 result_item = self.__getitem__(arg)
@@ -1134,7 +1193,7 @@ PubChem lookups are assumed to be managed by a module-level variable in patankar
             return self._load_record(rec_id, order=rec_id)
         else:
             if verbose:
-                print(f&#34;⚠️Warning: No 🇺🇸US FDA FCS record found for PubChem cid {cid}.&#34;)
+                printWARN(f&#34;⚠️ Warning: No 🇺🇸 US FDA FCS record found for PubChem cid {cid}.&#34;)
             return None
 
     def __iter__(self):
@@ -1260,7 +1319,7 @@ def isindexinitialized(cls, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;
         return self._load_record(rec_id, order=rec_id)
     else:
         if verbose:
-            print(f&#34;⚠️Warning: No 🇺🇸US FDA FCS record found for PubChem cid {cid}.&#34;)
+            printWARN(f&#34;⚠️ Warning: No 🇺🇸 US FDA FCS record found for PubChem cid {cid}.&#34;)
         return None</code></pre>
 </details>
 </dd>
@@ -1364,7 +1423,7 @@ def isindexinitialized(cls, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;
                     try:
                         cid_val = migrant(cas, annex1=False).cid
                     except Exception:
-                        print(f&#34;Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
+                        printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for {rec[&#39;name&#39;]} (CAS {cas}).&#34;)
                         cid_val = None
                         missing_pubchem[cas] = None
                 rec[&#34;cid&#34;] = cid_val
@@ -1377,7 +1436,7 @@ def isindexinitialized(cls, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;
                         try:
                             cid_val = migrant(cas, annex1=False).cid
                         except Exception:
-                            print(f&#34;Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
+                            printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.&#34;)
                             cid_val = None
                             missing_pubchem[cas] = None
                     cid_list.append(cid_val)
@@ -1447,7 +1506,7 @@ def isindexinitialized(cls, cache_dir=&#34;cache.USFDAfcn&#34;, index_file=&#34;
                 with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
                     json.dump(rec, jf, ensure_ascii=False, indent=2)
             except Exception as e:
-                print(f&#34;Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
+                printWARN(f&#34;🇺🇸 Warning: Could not update FCSreplacedby_record in {json_filename}: {e}&#34;)
 
     with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f_index:
         json.dump(new_index, f_index, ensure_ascii=False, indent=2)
@@ -1611,7 +1670,7 @@ If a valid CAS is available, perform PubChem lookup via the 'migrant' function.<
                         cids.append(m.cid)
                     except Exception:
                         if verbosity:
-                            print(f&#34;Warning:: USFDAfcn.py: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                            printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
                         cids.append(DEFAULT_PUBCHEM)
                 self.cid = cids
             else:
@@ -1621,7 +1680,7 @@ If a valid CAS is available, perform PubChem lookup via the 'migrant' function.<
                     self.cid = m.cid
                 except Exception:
                     if verbosity:
-                        print(f&#34;Warning:: USFDAfcn.py: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
+                        printWARN(f&#34;🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get(&#39;record&#39;)}&#34;)
                     self.cid = DEFAULT_PUBCHEM
         else:
             self.cid = None</code></pre>
@@ -1646,6 +1705,7 @@ If a valid CAS is available, perform PubChem lookup via the 'migrant' function.<
 <li><code><a title="USFDAfcn.clean_html" href="#USFDAfcn.clean_html">clean_html</a></code></li>
 <li><code><a title="USFDAfcn.custom_wrap" href="#USFDAfcn.custom_wrap">custom_wrap</a></code></li>
 <li><code><a title="USFDAfcn.parse_food_contact_substance" href="#USFDAfcn.parse_food_contact_substance">parse_food_contact_substance</a></code></li>
+<li><code><a title="USFDAfcn.printWARN" href="#USFDAfcn.printWARN">printWARN</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

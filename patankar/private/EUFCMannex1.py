@@ -39,12 +39,7 @@ Usage Example:
 
 """
 
-import os
-import csv
-import json
-import datetime
-import re
-import textwrap
+import os,csv, json, datetime, time, re, textwrap
 
 __all__ = ['EuFCMannex1', 'annex1record', 'annex1record_ext', 'custom_wrap']
 
@@ -56,12 +51,16 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.37"
+__version__ = "1.41"
 
 # Default value for SML when field is empty.
 SMLdefault = 60.0
 
-# %% private function
+# Module-level variables to track last warning message and its timestamp
+_LAST_WARN_ = None
+_T_LAST_WARN_ = 0.0
+
+# %% private functions
 def custom_wrap(text, width=40, indent=" " * 22):
     # Wrap first line to first_width characters.
     first_line = textwrap.wrap(text, width=width)
@@ -75,6 +74,26 @@ def custom_wrap(text, width=40, indent=" " * 22):
     # Prepend the indent to subsequent lines.
     wrapped = [first] + [indent + line for line in subsequent_lines]
     return "\n".join(wrapped)
+
+def printWARN(message: str, tsilent: float = 10.0):
+    """
+    Print a warning message only if:
+    - it's different from the last one, or
+    - more than `tsilent` seconds have passed since the last identical warning.
+
+    Parameters:
+    ----------
+    message : str
+        The warning message to display.
+    tsilent : float, optional
+        Minimum time (in seconds) between repeated identical warnings.
+    """
+    global _LAST_WARN_, _T_LAST_WARN_
+    tnow = time.time()
+    if message != _LAST_WARN_ or (tnow - _T_LAST_WARN_ > tsilent):
+        print(message)
+        _LAST_WARN_ = message
+        _T_LAST_WARN_ = tnow
 
 # %% main classes
 # ----------------------------------------------------------------------
@@ -116,7 +135,7 @@ class annex1record(dict):
         lines = []
         order_str = f"{self._order}" if self._order is not None else "?"
         total_str = f"{self._total}" if self._total is not None else "?"
-        header = f" ---- [ 🇪🇺10/2011/EC record: {order_str} of {total_str} ] ----"
+        header = f" ---- [ 🇪🇺 10/2011/EC record: {order_str} of {total_str} ] ----"
         lines.append(header)
         # Define display order; note that we do not show SMLunit, SMLTunit, csvFile, or date.
         fields_order = [
@@ -412,7 +431,7 @@ class EuFCMannex1:
                         try:
                             cid_val = migrant(cas_val,annex1=False).cid
                         except ValueError:
-                            print(f"Warning: substance {rec['name']} (CAS {cas_val}) not found in PubChem.")
+                            printWARN(f"🇪🇺 Warning: substance {rec['name']} (CAS {cas_val}) not found in PubChem.")
                             cid_val = None
                             missing_pubchem[cas_val] = None
                 else:
@@ -487,7 +506,7 @@ class EuFCMannex1:
                 return self._records_cache[rec_id]
         json_filename = os.path.join(self.cache_dir, f"rec{rec_id:05d}.annex1.json")
         if not os.path.exists(json_filename):
-            print(f"Warning: Record file for record {rec_id} not found.")
+            printWARN(f"🇪🇺 Warning: Record file for record {rec_id} not found.")
             return None
         with open(json_filename, "r", encoding="utf-8") as jf:
             rec = json.load(jf)
@@ -567,7 +586,7 @@ class EuFCMannex1:
                     rec_id = self.index["bycid"][argkey]
                     results.append(self._load_record(rec_id))
                 else:
-                    print(f"Warning: Record for identifier {arg} not found.")
+                    printWARN(f"🇪🇺 Warning: Record for identifier {arg} not found.")
                     results.append(None)
             elif isinstance(arg, str):
                 result_item = self.__getitem__(arg)
@@ -624,7 +643,7 @@ class EuFCMannex1:
             return self._load_record(rec_id, order=rec_id,db=True)
         else:
             if verbose:
-                print(f"⚠️Warning: No 🇪🇺10/2011/EC record found for PubChem cid {cid}.")
+                printWARN(f"⚠️ Warning: No 🇪🇺 10/2011/EC record found for PubChem cid {cid}.")
             return None
 
     def bySML(self, min_val, max_val):
@@ -697,7 +716,7 @@ class EuFCMannex1:
                 self._SMLT_Groupsubstances = groups
                 return groups
             except Exception as e:
-                print(f"Warning: Failed to load group cache from {cache_file}: {e}")
+                printWARN(f"🇪🇺 Warning: Failed to load group cache from {cache_file}: {e}")
 
         # Compute the groups if not cached.
         groups = {}
@@ -716,7 +735,7 @@ class EuFCMannex1:
             with open(cache_file, "w", encoding="utf-8") as f:
                 json.dump(groups, f, indent=2, ensure_ascii=False)
         except Exception as e:
-            print(f"Warning: Failed to write group cache to {cache_file}: {e}")
+            printWARN(f"🇪🇺 Warning: Failed to write group cache to {cache_file}: {e}")
 
         return groups
 
@@ -725,7 +744,7 @@ class EuFCMannex1:
         csv_filename = os.path.basename(self.csv_file)
         index_date = self.index.get("index_date", "unknown")
         print(f"Annex 1 of 🇪🇺EU regulation 10/2011 EC ({len(self.order)} records)")
-        print(f"Imported from CSC {csv_filename} and indexed on {index_date}")
+        print(f"Imported from CSV {csv_filename} and indexed on {index_date}")
         return str(self)
 
     def __str__(self):

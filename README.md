@@ -215,26 +215,34 @@ substance = migrantToxtree("formaldehyde")
 
 ```
 <migrantToxtree object>
-         Compound: formaldehyde
-             Name: formaldehyde
-              cid: 712
-              CAS: 50-00-0
-          M (min): 30.026
-          M_array: [30.026]
-          formula: CH2O
-           smiles: C=O
-         InChiKey: WSFSSNUMVMOOMR-UHFFFAOYSA-N
-             logP: [1.2]
-        P' (calc): [3.91591487]
-   --- EC 10/2011: ---------------
-              SML: 15.0 [mg/kg]
-     part a group: of 3 substances
-       EC|FCM|REF: 200-001-8|98|1726054880
-      --- ToxTree: ---------------
-       Toxicology: Low (Class I)
-              TTC: 1.5 [µg/kg bw/day]
-           CF TTC: 0.09 [mg/kg food intake]
-          alert 1: Alert For Schiff Bas [...] Formation Identified
+               Compound: formaldehyde
+                   Name: formaldehyde
+                    cid: 712
+                    CAS: 50-00-0
+                M (min): 30.026
+                M_array: [30.026]
+                formula: CH2O
+                 smiles: C=O
+               InChiKey: WSFSSNUMVMOOMR-UHFFFAOYSA-N
+                   logP: [1.2]
+              P' (calc): [3.91591487]
+       ---🇪🇺 EC 10/2011: ---------------
+                    SML: 15.0 [mg/kg]
+           part a group: of 3 substances
+             EC|FCM|REF: 200-001-8|98|1726054880
+      ---🇺🇸 US FCN list: ---------------
+                 FCM No: 1380
+               Notifier: Troy Corporation
+           Manufacturer: Troy Corporation
+                N. Date: 05/15/2014
+   ---🇨🇳 CN GB9685-2016: ---------------
+                 FCA No: 0895
+          authorized in: ['coatings', 'adhesi [...] , 'paper and board']
+          ---𖣂︎ ToxTree: ---------------
+            𖣂Toxicology: Low (Class I)
+                   𖣂TTC: 1.5 [µg/kg bw/day]
+                𖣂CF TTC: 0.09 [mg/kg food intake]
+              ⚠️ Alert 1: Alert For Schiff Bas [...] Formation Identified
 Out: <migrantToxtree: UN2209 - M=30.026 g/mol>
 ```
 

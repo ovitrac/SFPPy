@@ -1,6 +1,6 @@
 # SFPPy Modules Documentation
 
-Generated on: **2025-04-02 10:42:15**
+Generated on: **2025-04-02 15:14:50**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -3110,31 +3110,32 @@ object --> EuFCMannex1
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `custom_wrap` |  | 13 | 1.37 |
-| `EuFCMannex1` | `__call__` | Callable access. For example: - dbannex1(cid) returns the record for a given PubChem cid (via bycid), - dbannex1(rec) returns the record for a given record number, - dbannex1(cid1, cid2, ...) or dbannex1([cid1, cid2, ...]) returns a list. Strings are interpreted as CAS numbers. | 33 | 1.37 |
-| `EuFCMannex1` | `__contains__` |  | 9 | 1.37 |
-| `EuFCMannex1` | `__getitem__` | __getitem__ supports: - integer keys: interpreted as record numbers. If the record number is not found, an error is raised showing the entered value and the valid range. - slices: returns a list of records whose record numbers fall within the slice. - list/tuple: returns a list of corresponding records. - string keys: interpreted as CAS numbers. If the CAS number is not found, an error is raised including the entered value and a sample of valid keys. | 40 | 1.37 |
-| `EuFCMannex1` | `__init__` | Initialize the database. | 33 | 1.37 |
-| `EuFCMannex1` | `__iter__` |  | 3 | 1.37 |
-| `EuFCMannex1` | `__len__` |  | 2 | 1.37 |
-| `EuFCMannex1` | `__repr__` | Return repr(self). | 6 | 1.37 |
-| `EuFCMannex1` | `__str__` | Return str(self). | 2 | 1.37 |
-| `EuFCMannex1` | `_load_record` | Load a record (as an annex1record) from its cached JSON file. If the file does not exist, return None with a warning. Extended records are managed via the global flag self._pubchem The local flag db sets whether the record will be informed or not from the full database | 34 | 1.37 |
-| `EuFCMannex1` | `byCAS` |  | 7 | 1.37 |
-| `EuFCMannex1` | `byEC` |  | 4 | 1.37 |
-| `EuFCMannex1` | `byFCM` |  | 5 | 1.37 |
-| `EuFCMannex1` | `byRef` |  | 4 | 1.37 |
-| `EuFCMannex1` | `bySML` |  | 9 | 1.37 |
-| `EuFCMannex1` | `bySMLT` |  | 9 | 1.37 |
-| `EuFCMannex1` | `bycid` | Search for a record by PubChem cid. | 13 | 1.37 |
-| `EuFCMannex1` | `byname` |  | 4 | 1.37 |
-| `EuFCMannex1` | `refresh_index` | Rebuild the global index by reading the CSV file and regenerating each record as recXXXXX.annex1.json (with record number as primary key). The index includes foreign key mappings for "name", "EC", "CAS", "FCM", "Ref" and a bycid index for PubChem cid. | 166 | 1.37 |
-| `annex1record` | `__init__` | Initialize an annex1record from dictionary d. order: the record number (from the CSV; if known) total: total number of records (if known) | 12 | 1.37 |
-| `annex1record` | `__repr__` | Return repr(self). | 42 | 1.37 |
-| `annex1record` | `__str__` | Return str(self). | 5 | 1.37 |
-| `annex1record_ext` | `__init__` | instantiate from a record with a consolidated databse: db | 51 | 1.37 |
-| `annex1record_ext` | `__repr__` | Return repr(self). | 42 | 1.37 |
-| `annex1record_ext` | `__str__` | Return str(self). | 5 | 1.37 |
+| (module-level) | `custom_wrap` |  | 13 | 1.41 |
+| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.41 |
+| `EuFCMannex1` | `__call__` | Callable access. For example: - dbannex1(cid) returns the record for a given PubChem cid (via bycid), - dbannex1(rec) returns the record for a given record number, - dbannex1(cid1, cid2, ...) or dbannex1([cid1, cid2, ...]) returns a list. Strings are interpreted as CAS numbers. | 33 | 1.41 |
+| `EuFCMannex1` | `__contains__` |  | 9 | 1.41 |
+| `EuFCMannex1` | `__getitem__` | __getitem__ supports: - integer keys: interpreted as record numbers. If the record number is not found, an error is raised showing the entered value and the valid range. - slices: returns a list of records whose record numbers fall within the slice. - list/tuple: returns a list of corresponding records. - string keys: interpreted as CAS numbers. If the CAS number is not found, an error is raised including the entered value and a sample of valid keys. | 40 | 1.41 |
+| `EuFCMannex1` | `__init__` | Initialize the database. | 33 | 1.41 |
+| `EuFCMannex1` | `__iter__` |  | 3 | 1.41 |
+| `EuFCMannex1` | `__len__` |  | 2 | 1.41 |
+| `EuFCMannex1` | `__repr__` | Return repr(self). | 6 | 1.41 |
+| `EuFCMannex1` | `__str__` | Return str(self). | 2 | 1.41 |
+| `EuFCMannex1` | `_load_record` | Load a record (as an annex1record) from its cached JSON file. If the file does not exist, return None with a warning. Extended records are managed via the global flag self._pubchem The local flag db sets whether the record will be informed or not from the full database | 34 | 1.41 |
+| `EuFCMannex1` | `byCAS` |  | 7 | 1.41 |
+| `EuFCMannex1` | `byEC` |  | 4 | 1.41 |
+| `EuFCMannex1` | `byFCM` |  | 5 | 1.41 |
+| `EuFCMannex1` | `byRef` |  | 4 | 1.41 |
+| `EuFCMannex1` | `bySML` |  | 9 | 1.41 |
+| `EuFCMannex1` | `bySMLT` |  | 9 | 1.41 |
+| `EuFCMannex1` | `bycid` | Search for a record by PubChem cid. | 13 | 1.41 |
+| `EuFCMannex1` | `byname` |  | 4 | 1.41 |
+| `EuFCMannex1` | `refresh_index` | Rebuild the global index by reading the CSV file and regenerating each record as recXXXXX.annex1.json (with record number as primary key). The index includes foreign key mappings for "name", "EC", "CAS", "FCM", "Ref" and a bycid index for PubChem cid. | 166 | 1.41 |
+| `annex1record` | `__init__` | Initialize an annex1record from dictionary d. order: the record number (from the CSV; if known) total: total number of records (if known) | 12 | 1.41 |
+| `annex1record` | `__repr__` | Return repr(self). | 42 | 1.41 |
+| `annex1record` | `__str__` | Return str(self). | 5 | 1.41 |
+| `annex1record_ext` | `__init__` | instantiate from a record with a consolidated databse: db | 51 | 1.41 |
+| `annex1record_ext` | `__repr__` | Return repr(self). | 42 | 1.41 |
+| `annex1record_ext` | `__str__` | Return str(self). | 5 | 1.41 |
 
 <a id="patankar_private_GBappendixA" name="patankar_private_GBappendixA"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_EUFCMannex1" title="Go to Previous Module: patankar.private.EUFCMannex1" style="text-decoration: none;">⬅️ Previous</a>
@@ -3164,6 +3165,7 @@ object --> GBappendixA
 | (module-level) | `custom_wrap` |  | 10 | 1.41 |
 | (module-level) | `extract_number_before_keyword` | Extract numbers that immediately precede a given keyword in the text, allowing for optional punctuation or other separators between the number and the keyword (e.g. '3.4 (SML)', '3.4: SML', etc.) | 18 | 1.41 |
 | (module-level) | `extract_number_before_keyword_in_parentheses` | Extract numbers that are immediately followed by parentheses containing a given keyword. | 19 | 1.41 |
+| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.41 |
 | (module-level) | `split_col5_content` | Pattern to match number followed by (...) or [...] that contains a target keyword | 19 | 1.41 |
 | (module-level) | `unwrap` | Unwrap a list-like value: - Return None if the value is empty or None - Return the sole item if it is a singleton list or tuple - Return the full list/tuple otherwise | 12 | 1.41 |
 | `GBappendixA` | `__call__` | Callable access. For example: - GBappendixA(cid) returns the record for a given PubChem cid. - GBappendixA(fca) returns the record for a given FCA number. - GBappendixA("CAS") returns the record(s) for a given CAS number. - Multiple arguments return a list. | 35 | 1.41 |
@@ -3214,6 +3216,7 @@ object --> USFDAfcn
 | (module-level) | `clean_html` |  | 2 | 1.41 |
 | (module-level) | `custom_wrap` |  | 10 | 1.41 |
 | (module-level) | `parse_food_contact_substance` | Parses the full FoodContactSubstance field to extract the chemical name(s) and CAS number(s). | 53 | 1.41 |
+| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.41 |
 | `USFDAfcn` | `__call__` | Call self as a function. | 24 | 1.41 |
 | `USFDAfcn` | `__contains__` |  | 8 | 1.41 |
 | `USFDAfcn` | `__getitem__` |  | 36 | 1.41 |

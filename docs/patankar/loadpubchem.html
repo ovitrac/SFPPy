@@ -2823,7 +2823,7 @@ class migrantToxtree(migrant):
                 alert_index += 1
                 # Convert key name to readable format (split at capital letters)
                 alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
-                attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+                attributes[f&#34;⚠️ Alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
         return attributes
 
 
@@ -6605,7 +6605,7 @@ has_alerts: Checks if any toxicological alerts were detected.</p>
                 alert_index += 1
                 # Convert key name to readable format (split at capital letters)
                 alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
-                attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+                attributes[f&#34;⚠️ Alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
         return attributes</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -6733,7 +6733,7 @@ def showalerts(self):
             alert_index += 1
             # Convert key name to readable format (split at capital letters)
             alert_text = &#39;&#39;.join([&#39; &#39; + char if char.isupper() and i &gt; 0 else char for i, char in enumerate(key)])
-            attributes[f&#34;alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
+            attributes[f&#34;⚠️ Alert {alert_index}&#34;] = alert_text.strip()  # Remove leading space
     return attributes</code></pre>
 </details>
 </dd>

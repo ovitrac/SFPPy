@@ -114,14 +114,9 @@ The main manager class, *GBappendixA*, builds an index for fast lookup by CAS, F
 
 &#34;&#34;&#34;
 
-import os
-import csv
-import json
-import datetime
-import re
-import textwrap
+import os, csv, json, datetime, time, re, textwrap
 
-__all__ = [&#39;GBappendixA&#39;, &#39;custom_wrap&#39;, &#39;extract_number_before_keyword&#39;, &#39;extract_number_before_keyword_in_parentheses&#39;, &#39;gbrecord&#39;, &#39;gbrecord_ext&#39;, &#39;split_col5_content&#39;, &#39;unwrap&#39;]
+__all__ = [&#39;GBappendixA&#39;, &#39;custom_wrap&#39;, &#39;extract_number_before_keyword&#39;, &#39;extract_number_before_keyword_in_parentheses&#39;, &#39;gbrecord&#39;, &#39;gbrecord_ext&#39;, &#39;printWARN&#39;, &#39;split_col5_content&#39;, &#39;unwrap&#39;]
 
 
 __project__ = &#34;SFPPy&#34;
@@ -133,6 +128,10 @@ __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
 __version__ = &#34;1.41&#34;
 
+
+# Module-level variables to track last warning message and its timestamp
+_LAST_WARN_ = None
+_T_LAST_WARN_ = 0.0
 
 # ----------------------------------------------------------------------
 # Custom text wrapping function (similar to EU module)
@@ -147,6 +146,27 @@ def custom_wrap(text, width=60, indent=&#34; &#34; * 22):
     wrapped = [first] + [indent + line for line in subsequent_lines]
     return &#34;\n&#34;.join(wrapped)
 
+# ----------------------------------------------------------------------
+# Show warnings without repeating them
+def printWARN(message: str, tsilent: float = 10.0):
+    &#34;&#34;&#34;
+    Print a warning message only if:
+    - it&#39;s different from the last one, or
+    - more than `tsilent` seconds have passed since the last identical warning.
+
+    Parameters:
+    ----------
+    message : str
+        The warning message to display.
+    tsilent : float, optional
+        Minimum time (in seconds) between repeated identical warnings.
+    &#34;&#34;&#34;
+    global _LAST_WARN_, _T_LAST_WARN_
+    tnow = time.time()
+    if message != _LAST_WARN_ or (tnow - _T_LAST_WARN_ &gt; tsilent):
+        print(message)
+        _LAST_WARN_ = message
+        _T_LAST_WARN_ = tnow
 
 # ----------------------------------------------------------------------
 # robust numeric extract for GB document
@@ -580,7 +600,7 @@ class GBappendixA:
                             try:
                                 cid_val = migrant(cas_lookup, annex1=False).cid
                             except ValueError:
-                                print(f&#34;Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                                printWARN(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
                                 cid_val = None
                                 missing_pubchem[cas_lookup] = None
                     else:
@@ -665,7 +685,7 @@ class GBappendixA:
                 return self._records_cache[fca]
         json_filename = os.path.join(self.cache_dir, f&#34;FCA{int(fca):04d}.json&#34;)
         if not os.path.exists(json_filename):
-            print(f&#34;Warning: Record file for FCA {fca} not found.&#34;)
+            print(f&#34;⚠️ Warning: Record file for 🇨🇳 FCA {fca} not found.&#34;)
             return None
         with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
             rec = json.load(jf)
@@ -728,7 +748,7 @@ class GBappendixA:
                     fca = self.index[&#34;bycid&#34;][arg_str]
                     results.append(self._load_record(fca))
                 else:
-                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    print(f&#34;🇨🇳 Warning: Record for identifier {arg} not found.&#34;)
                     results.append(None)
             elif isinstance(arg, str):
                 try:
@@ -758,7 +778,7 @@ class GBappendixA:
         if fca_str in self.order:
             return self._load_record(fca_str, order=fca_str)
         else:
-            raise KeyError(f&#34;FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
+            raise KeyError(f&#34;🇨🇳 FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
 
     def bycid(self, cid, verbose=True):
         cid_str = str(cid)
@@ -767,7 +787,7 @@ class GBappendixA:
             return self._load_record(fca, order=fca, db=True)
         else:
             if verbose:
-                print(f&#34;Warning: No GB 9685-2016 record found for PubChem cid {cid}.&#34;)
+                print(f&#34;⚠️ Warning: No 🇨🇳 GB 9685-2016 record found for PubChem cid {cid}.&#34;)
             return None
 
     def __iter__(self):
@@ -930,6 +950,43 @@ returns: [0.6, 0.5]</p>
     matches = re.findall(pattern, text, re.IGNORECASE)
     res = unwrap([float(num) for num, _ in matches])
     return extract_number_before_keyword(text, keyword) if res is None else res</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.printWARN"><code class="name flex">
+<span>def <span class="ident">printWARN</span></span>(<span>message: str, tsilent: float = 10.0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print a warning message only if:
+- it's different from the last one, or
+- more than <code>tsilent</code> seconds have passed since the last identical warning.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>message : str
+The warning message to display.
+tsilent : float, optional
+Minimum time (in seconds) between repeated identical warnings.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def printWARN(message: str, tsilent: float = 10.0):
+    &#34;&#34;&#34;
+    Print a warning message only if:
+    - it&#39;s different from the last one, or
+    - more than `tsilent` seconds have passed since the last identical warning.
+
+    Parameters:
+    ----------
+    message : str
+        The warning message to display.
+    tsilent : float, optional
+        Minimum time (in seconds) between repeated identical warnings.
+    &#34;&#34;&#34;
+    global _LAST_WARN_, _T_LAST_WARN_
+    tnow = time.time()
+    if message != _LAST_WARN_ or (tnow - _T_LAST_WARN_ &gt; tsilent):
+        print(message)
+        _LAST_WARN_ = message
+        _T_LAST_WARN_ = tnow</code></pre>
 </details>
 </dd>
 <dt id="GBappendixA.split_col5_content"><code class="name flex">
@@ -1210,7 +1267,7 @@ returns: [0.6, 0.5]</p>
                             try:
                                 cid_val = migrant(cas_lookup, annex1=False).cid
                             except ValueError:
-                                print(f&#34;Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                                printWARN(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
                                 cid_val = None
                                 missing_pubchem[cas_lookup] = None
                     else:
@@ -1295,7 +1352,7 @@ returns: [0.6, 0.5]</p>
                 return self._records_cache[fca]
         json_filename = os.path.join(self.cache_dir, f&#34;FCA{int(fca):04d}.json&#34;)
         if not os.path.exists(json_filename):
-            print(f&#34;Warning: Record file for FCA {fca} not found.&#34;)
+            print(f&#34;⚠️ Warning: Record file for 🇨🇳 FCA {fca} not found.&#34;)
             return None
         with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
             rec = json.load(jf)
@@ -1358,7 +1415,7 @@ returns: [0.6, 0.5]</p>
                     fca = self.index[&#34;bycid&#34;][arg_str]
                     results.append(self._load_record(fca))
                 else:
-                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    print(f&#34;🇨🇳 Warning: Record for identifier {arg} not found.&#34;)
                     results.append(None)
             elif isinstance(arg, str):
                 try:
@@ -1388,7 +1445,7 @@ returns: [0.6, 0.5]</p>
         if fca_str in self.order:
             return self._load_record(fca_str, order=fca_str)
         else:
-            raise KeyError(f&#34;FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
+            raise KeyError(f&#34;🇨🇳 FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
 
     def bycid(self, cid, verbose=True):
         cid_str = str(cid)
@@ -1397,7 +1454,7 @@ returns: [0.6, 0.5]</p>
             return self._load_record(fca, order=fca, db=True)
         else:
             if verbose:
-                print(f&#34;Warning: No GB 9685-2016 record found for PubChem cid {cid}.&#34;)
+                print(f&#34;⚠️ Warning: No 🇨🇳 GB 9685-2016 record found for PubChem cid {cid}.&#34;)
             return None
 
     def __iter__(self):
@@ -1478,7 +1535,7 @@ def isindexinitialized(cls, cache_dir=&#34;cache.GBappendixA&#34;, index_file=&#
     if fca_str in self.order:
         return self._load_record(fca_str, order=fca_str)
     else:
-        raise KeyError(f&#34;FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)</code></pre>
+        raise KeyError(f&#34;🇨🇳 FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)</code></pre>
 </details>
 </dd>
 <dt id="GBappendixA.GBappendixA.bycid"><code class="name flex">
@@ -1497,7 +1554,7 @@ def isindexinitialized(cls, cache_dir=&#34;cache.GBappendixA&#34;, index_file=&#
         return self._load_record(fca, order=fca, db=True)
     else:
         if verbose:
-            print(f&#34;Warning: No GB 9685-2016 record found for PubChem cid {cid}.&#34;)
+            print(f&#34;⚠️ Warning: No 🇨🇳 GB 9685-2016 record found for PubChem cid {cid}.&#34;)
         return None</code></pre>
 </details>
 </dd>
@@ -1694,7 +1751,7 @@ The index includes mappings for "CAS", "FCA", "bycid", and "ChineseName".</p></d
                         try:
                             cid_val = migrant(cas_lookup, annex1=False).cid
                         except ValueError:
-                            print(f&#34;Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                            printWARN(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
                             cid_val = None
                             missing_pubchem[cas_lookup] = None
                 else:
@@ -1919,6 +1976,7 @@ dict(one=1, two=2)</p></div>
 <li><code><a title="GBappendixA.custom_wrap" href="#GBappendixA.custom_wrap">custom_wrap</a></code></li>
 <li><code><a title="GBappendixA.extract_number_before_keyword" href="#GBappendixA.extract_number_before_keyword">extract_number_before_keyword</a></code></li>
 <li><code><a title="GBappendixA.extract_number_before_keyword_in_parentheses" href="#GBappendixA.extract_number_before_keyword_in_parentheses">extract_number_before_keyword_in_parentheses</a></code></li>
+<li><code><a title="GBappendixA.printWARN" href="#GBappendixA.printWARN">printWARN</a></code></li>
 <li><code><a title="GBappendixA.split_col5_content" href="#GBappendixA.split_col5_content">split_col5_content</a></code></li>
 <li><code><a title="GBappendixA.unwrap" href="#GBappendixA.unwrap">unwrap</a></code></li>
 </ul>
