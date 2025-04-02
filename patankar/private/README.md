@@ -8,9 +8,11 @@ This directory contains internal modules that are used internally by the SFPPy l
 - `pubchempy.py` 🔬: Interface for retrieving chemical data from **PubChem**.
 - `EUFCMannex1.py` 🇪🇺🗄️⚖️: Robust database manager for Annex I of EU Regulation 10/2011
 - `USFDAfcn.py` 🇺🇸🗄️⚖️: Robust database manager for the US 🦅FDA Inventory of  Food Contact Substance (FCS) Notifications
+- `GBappendixA.py` 🇨🇳🗄️⚖️: Robust database manager for the Chinese GB9685-2016 inventory lists (from A1 to A7)
+
 - `fcm-and-articles-regulation--annex-i---authorised-substances-export.csv` 📄: source file from 🌐 https://echa.europa.eu/plastic-material-food-contact
 - `FCN.csv`📄: source file from 🌐https://www.hfpappexternal.fda.gov/scripts/fdcc/index.cfm?set=FCN
-- 
+- `GB9685-2016.csv`📄: source file from 🌐http://down.foodmate.net/standard/sort/3/49855.html. The seven databases were merged into one single database after text conversion. Textile from table A7 are references A7bis in the first column. The fifth column has parsing issues they are fixed when the JSON database is refreshed.
 - `chemspipy/` ⚠️: Previously used for **ChemSpider** integration but now deprecated (requires API tokens).
 - `toxtree/` ☠️: Local installation folder of the private copy of Toxtree.
 
