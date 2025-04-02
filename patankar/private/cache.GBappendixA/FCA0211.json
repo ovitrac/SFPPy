@@ -1,0 +1,45 @@
+{
+  "FCA": "0211",
+  "cid": null,
+  "CAS": "25987-30-8",
+  "authorized in": [
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "2-丙烯酸与 2-丙烯酰胺聚合物的钠盐",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(丙烯酰胺 :SML,DL=0.01mg/kg)6",
+    "SML": 22.0,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": 22.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "0.1"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(丙烯酰胺 :SML,DL=0.01mg/kg)6",
+    "SML": 22.0,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": 22.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

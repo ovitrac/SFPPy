@@ -1,0 +1,64 @@
+{
+  "FCA": "0629",
+  "cid": null,
+  "CAS": "25916-29-4",
+  "authorized in": [
+    "plastics",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "丙烯酸丁酯与丙烯酸 -2-乙基己酯和丙烯酸甲酯的共聚物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PA",
+      "PC",
+      "PET"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(丙烯酸 -2-乙基己酯 :SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": 6.0,
+    "SMLTraw": "",
+    "SMLTcomment": "22",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(丙烯酸 -2-乙基己酯 :SML)6",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": 22.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(丙烯酸 -2-乙基己酯 :SML)6",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": 22.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

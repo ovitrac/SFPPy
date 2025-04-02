@@ -1,0 +1,106 @@
+{
+  "FCA": "0001",
+  "cid": 8456,
+  "CAS": "25013-16-5",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "(1,1-二甲基乙基 )-4-甲氧基苯酚 ;叔丁基羟基茴香醚 (BHA)",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": 1000.0,
+    "QMSMLraw": "30(SML)",
+    "SML": 30.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "30(SML)",
+    "SML": 30.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "0.1"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "30(SML)",
+    "SML": 30.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "0.1"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "30(SML)",
+    "SML": 30.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "30(SML)",
+    "SML": 30.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

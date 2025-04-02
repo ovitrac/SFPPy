@@ -1,0 +1,58 @@
+{
+  "FCA": "0112",
+  "cid": null,
+  "CAS": "26221-73-8",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "1-辛烯与乙烯的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PVDC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "UP",
+      "PPE",
+      "PEI",
+      "PBT"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "15(辛烯 :SML)",
+    "SML": 15.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "辛烯含量小于",
+    "SMLTcomment": "30%",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "15(辛烯 :SML)辛烯含量小于",
+    "SML": 15.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "30%",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

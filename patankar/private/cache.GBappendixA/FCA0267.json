@@ -1,0 +1,72 @@
+{
+  "FCA": "0267",
+  "cid": null,
+  "CAS": "28262-63-7",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "printing inks"
+  ],
+  "ChineseName": "2-甲基 -2-丙烯酸与 2-甲基 -2-丙烯酸丁酯和 2-甲基 -2-丙烯酸甲酯的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "ABS",
+      "AS",
+      "PA",
+      "PC",
+      "PE",
+      "PET",
+      "PP",
+      "PS",
+      "PVC",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6",
+    "SML": 23.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 23.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用  6 23"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用  6 23"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  }
+}

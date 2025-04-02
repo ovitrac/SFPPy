@@ -1,0 +1,40 @@
+{
+  "FCA": "0780",
+  "cid": 522606,
+  "CAS": [
+    "7601-89-0",
+    "7791-07-3"
+  ],
+  "authorized in": [
+    "plastics"
+  ],
+  "ChineseName": "高氯酸钠",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC"
+    ],
+    "CP0max": 12000.0,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  }
+}

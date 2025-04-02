@@ -1,0 +1,34 @@
+{
+  "FCA": "0856",
+  "cid": null,
+  "CAS": "70290-02-7",
+  "authorized in": [
+    "plastics"
+  ],
+  "ChineseName": "己二酸与氮杂环十三烷 -2-酮和 α-氢 -ω-羟基聚 (氧 -1,2-亚乙基 )的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PET",
+      "PC"
+    ],
+    "CP0max": 150000.0,
+    "QMSMLraw": "5(氮杂环十三烷 -2-酮 :SML);1(环氧乙烷 :QM)或",
+    "SML": 5.0,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "ND(环氧乙烷",
+    "SMLTcomment": ":SML,DL=0.01mg/kg)",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  }
+}

@@ -9512,7 +9512,10 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 alpha = 1/0.65 if self.count_rings[&#34;aromatic&#34;]&gt;0 else 1.3
                 self.vdWvolume2 = 1/alpha * self.molarvolumeMiller * 10.0/6.02214076 # in A3
 
-                # if dbannex1 is available
+                # Add 🇪🇺 regulation data
+                # if doSML, i.e. dbannex1 is available
+                # since migrant is called by databases managers (EUFCMannex1, USFDAfcn, GPappendixA)
+                # annex1==True is also required to prevent infinite loops
                 if doSML and annex1:
                     annex1record = None
                     if self.cid in dbannex1:
@@ -9528,7 +9531,33 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                     else:
                         self.SML = None # we validate that we looked for an SML but we did not find it
 
-                # if dbfcn is available (note that FCN include mixtures)
+                # Add 🇨🇳 regulation data
+                # if doFCA, i.e. dbappendixA is available (note that FCA contain several materials)
+                # since migrant is called by databases managers (EUFCMannex1, USFDAfcn, GPappendixA)
+                # annex1==True is also required to prevent infinite loops
+                if doFCA and annex1:
+                    appendixArecord = None
+                    if self.cid in dbfca:
+                        appendixArecord = dbfca.bycid(self.cid,verbose=self.verbose)
+                    elif self.CAS in dbfca:
+                        appendixArecord = dbfca.byCAS(self.CAS)
+                    if appendixArecord is not None:
+                        self.FCANo = appendixArecord[&#34;FCA&#34;]
+                        self.FCAgroups = appendixArecord[&#34;authorized in&#34;]
+                        if &#34;plastics&#34; in self.FCAgroups: # primary focus of SFPPy
+                            self.FCApolymers = appendixArecord[&#39;plastics&#39;][&#34;materials&#34;]
+                            self.FCACP0max = appendixArecord[&#39;plastics&#39;][&#34;CP0max&#34;]
+                            self.FCASML = appendixArecord[&#39;plastics&#39;][&#34;SML&#34;]
+                            self.FCAQM = appendixArecord[&#39;plastics&#39;][&#34;QM&#34;]
+                            self.FCADL = appendixArecord[&#39;plastics&#39;][&#34;DL&#34;]
+                        self.FCA = appendixArecord
+                    else:
+                        self.FCANo = None # fall back FCANo is None (we look for it, we did not find it)
+
+                # Add 🇺🇸 regulation data
+                # if doFCN, dbfcn is available (note that FCN include mixtures)
+                # since migrant is called by databases managers (EUFCMannex1, USFDAfcn, GPappendixA)
+                # annex1==True is also required to prevent infinite loops
                 if doFCN and annex1:
                     fcnrecord = None
                     if self.cid in dbfcn:
@@ -9818,6 +9847,11 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
     def hasFCN(self):
         &#34;&#34;&#34;Returns True if the substance is a registered in the US FDA FCN inventory list&#34;&#34;&#34;
         return hasattr(self, &#34;FCNNo&#34;) and self.FCNNo is not None
+    @property
+    def hasFCA(self):
+        &#34;&#34;&#34;Returns True if the substance is positively-listed in the Chinese GB 9685-2016 regulation&#34;&#34;&#34;
+        return hasattr(self, &#34;FCA&#34;) and self.FCA is not None
+
 
     def __repr__(self):
         &#34;&#34;&#34;Formatted string representation summarizing key attributes.&#34;&#34;&#34;
@@ -9850,9 +9884,9 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                 attributes[&#34;EC|FCM|REF&#34;] = f&#34;{self.annex1[&#39;EC&#39;]}|{self.annex1[&#39;FCM&#39;]}|{self.annex1[&#39;Ref&#39;]}&#34;
             else:
                 attributes[&#34;SML&#34;] = str(self.SML)
-                if hasattr(self,&#34;SMLunit&#34;):
-                    attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
+                if hasattr(self,&#34;SMLunit&#34;): attributes[&#34;SML&#34;]+=f&#34; [{self.SMLunit}]&#34;
 
+        # Add US FCN rules
         if self.hasFCN:
             attributes[&#34;---🇺🇸 US FCN list&#34;]=&#34;-&#34;*15
             attributes[&#34;FCM No&#34;] = str(self.FCNNo)
@@ -9862,14 +9896,26 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
             if self.FCNmixture:
                 attributes[&#34;Mixture&#34;] = f&#34;part of a mixture of {self.FCNnsubstances} substances&#34;
 
+        # Add CN FCA rules
+        if self.hasFCA:
+            attributes[&#34;---🇨🇳 CN GB9685-2016&#34;]=&#34;-&#34;*15
+            attributes[&#34;FCA No&#34;] = str(self.FCANo)
+            attributes[&#34;authorized in&#34;] = self.FCAgroups
+            if &#34;plastics&#34; in self.FCAgroups:
+                if self.FCApolymers: attributes[&#34;polymers&#34;] = self.FCApolymers
+                if self.FCACP0max is not None: attributes[&#34;🇨🇳CP0 max&#34;] = str(self.FCACP0max)+&#34; [mg/kg]&#34;
+                if self.FCASML is not None: attributes[&#34;🇨🇳SML&#34;] = str(self.FCASML)+&#34; [mg/kg]&#34;
+                if self.FCAQM is not None: attributes[&#34;🇨🇳QM&#34;] = str(self.FCAQM)+&#34; [mg/kg]&#34;
+                if self.FCADL is not None: attributes[&#34;🇨🇳DL&#34;] = str(self.FCADL)+&#34; [mg/kg]&#34;
+
         # Add Toxtree attributes
         if isinstance(self,migrantToxtree) and self.compound not in (None,&#34;&#34;,[]):
             attributes[&#34;---𖣂︎ ToxTree&#34;]=&#34;-&#34;*15
             attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
             attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
-            attributes[&#34;Toxicology&#34;] = self.CramerClass
-            attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
-            attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
+            attributes[&#34;𖣂Toxicology&#34;] = self.CramerClass
+            attributes[&#34;𖣂TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
+            attributes[&#34;𖣂CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
             attributes.update(self.showalerts) # Process alerts
 
         # Determine column width based on longest attribute name
@@ -10436,6 +10482,19 @@ def count_rings(self):
         &#39;non_aromatic&#39;: len(non_aromatic_rings),
         &#39;fusions&#39;: fusion_counts
     }</code></pre>
+</details>
+</dd>
+<dt id="food.migrant.hasFCA"><code class="name">var <span class="ident">hasFCA</span></code></dt>
+<dd>
+<div class="desc"><p>Returns True if the substance is positively-listed in the Chinese GB 9685-2016 regulation</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hasFCA(self):
+    &#34;&#34;&#34;Returns True if the substance is positively-listed in the Chinese GB 9685-2016 regulation&#34;&#34;&#34;
+    return hasattr(self, &#34;FCA&#34;) and self.FCA is not None</code></pre>
 </details>
 </dd>
 <dt id="food.migrant.hasFCN"><code class="name">var <span class="ident">hasFCN</span></code></dt>
@@ -13087,6 +13146,7 @@ def worstcaseSMLgroup(self):
 <li><code><a title="food.migrant.check_alt_propclass" href="#food.migrant.check_alt_propclass">check_alt_propclass</a></code></li>
 <li><code><a title="food.migrant.count_rings" href="#food.migrant.count_rings">count_rings</a></code></li>
 <li><code><a title="food.migrant.dispmax" href="#food.migrant.dispmax">dispmax</a></code></li>
+<li><code><a title="food.migrant.hasFCA" href="#food.migrant.hasFCA">hasFCA</a></code></li>
 <li><code><a title="food.migrant.hasFCN" href="#food.migrant.hasFCN">hasFCN</a></code></li>
 <li><code><a title="food.migrant.hasSML" href="#food.migrant.hasSML">hasSML</a></code></li>
 <li><code><a title="food.migrant.hasSMLgroup" href="#food.migrant.hasSMLgroup">hasSMLgroup</a></code></li>

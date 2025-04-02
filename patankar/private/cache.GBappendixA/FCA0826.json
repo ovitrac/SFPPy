@@ -1,0 +1,51 @@
+{
+  "FCA": "0826",
+  "cid": null,
+  "CAS": [
+    "9003-11-6",
+    "106392-12-5"
+  ],
+  "authorized in": [
+    "plastics",
+    "printing inks"
+  ],
+  "ChineseName": "环氧丙烷与环氧乙烷的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1(环氧丙烷 :QM)或",
+    "SML": null,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "ND(环氧丙烷",
+    "SMLTcomment": ":SML,DL=0.01mg/kg);1(环氧乙烷",
+    "comment1": "",
+    "comment2": ":QM)或 ND(环氧乙烷 :SML,DL=0.01mg/kg)",
+    "table_id": "plastics"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1(环氧丙烷 :QM)或ND(环氧丙烷 :SML,DL=0.01mg/kg);1(环氧乙烷 :QM)或",
+    "SML": null,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "ND(环氧乙烷",
+    "SMLTcomment": ":SML,DL=0.01mg/kg)",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  }
+}

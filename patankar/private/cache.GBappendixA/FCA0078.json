@@ -1,0 +1,60 @@
+{
+  "FCA": "0078",
+  "cid": null,
+  "CAS": "31831-53-5",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "1,4-丁二醇与 ε-己内酯的共聚物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "ABS",
+      "AS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC"
+    ],
+    "CP0max": 1000.0,
+    "QMSMLraw": "0.05(以 6-羟基己酸和己内酯计 );5(以 1,4-丁二醇计 )",
+    "SML": [
+      29.0,
+      30.0
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": [
+      29.0,
+      30.0
+    ],
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用  0.05(以 6-羟基己酸和己内酯计 );5(以 1",
+      "4-丁二醇计 ) 29;30"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

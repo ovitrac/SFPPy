@@ -1,0 +1,61 @@
+{
+  "FCA": "0262",
+  "cid": null,
+  "CAS": "25987-66-0",
+  "authorized in": [
+    "plastics",
+    "printing inks"
+  ],
+  "ChineseName": "2-甲基 -2-丙烯酸与 2-丙烯酸丁酯、苯乙烯和 2-甲基 -2-丙烯酸甲酯的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "ABS",
+      "AS",
+      "PA",
+      "PC",
+      "PE",
+      "PET",
+      "PP",
+      "PS",
+      "PVC",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(以丙烯酸计 );6(以甲基丙烯酸计 )",
+    "SML": [
+      22.0,
+      23.0
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": [
+      22.0,
+      23.0
+    ],
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用  6(以丙烯酸计 );6(以甲基丙烯酸计 ) 22;23"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  }
+}

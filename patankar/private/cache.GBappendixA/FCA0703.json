@@ -1,0 +1,45 @@
+{
+  "FCA": "0703",
+  "cid": null,
+  "CAS": "25053-09-2",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "丁二烯与甲基丙烯酸甲酯和苯乙烯的共聚物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PVC"
+    ],
+    "CP0max": 150000.0,
+    "QMSMLraw": "1(1,3-丁二烯 :QM)或",
+    "SML": null,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "ND(1,3-丁二烯",
+    "SMLTcomment": ":SML,DL=0.01mg/kg)",
+    "comment1": "",
+    "comment2": "6 23",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1(1,3-丁二烯 :QM)或ND(1,3-丁二烯 :SML,DL=0.01mg/kg)",
+    "SML": 6.0,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": 6.0,
+    "SMLTraw": "",
+    "SMLTcomment": "23",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

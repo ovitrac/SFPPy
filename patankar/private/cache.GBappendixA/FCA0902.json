@@ -1,0 +1,80 @@
+{
+  "FCA": "0902",
+  "cid": 8496,
+  "CAS": "121-91-5",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "间苯二甲酸",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PET",
+      "PA"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "5",
+    "SML": 27.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 27.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用  5 27"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用  5 27"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "1.5 5 27"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

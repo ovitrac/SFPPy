@@ -1,0 +1,66 @@
+{
+  "FCA": "0126",
+  "cid": 292429,
+  "CAS": "7128-64-5",
+  "authorized in": [
+    "plastics",
+    "printing inks",
+    "adhesives"
+  ],
+  "ChineseName": "2,2'-(2,5-二苯基硫代 )双 [5-(1,1-二甲基乙基 )苯并唑 ]",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PET",
+      "PE",
+      "PP",
+      "AS",
+      "ABS"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.6(SML)",
+    "SML": 0.6,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.6(SML)",
+    "SML": 0.6,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.6(SML)",
+    "SML": 0.6,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

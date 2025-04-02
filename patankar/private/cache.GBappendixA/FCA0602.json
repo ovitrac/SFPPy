@@ -1,0 +1,54 @@
+{
+  "FCA": "0602",
+  "cid": 5354357,
+  "CAS": "9004-97-1",
+  "authorized in": [
+    "plastics",
+    "paper and board"
+  ],
+  "ChineseName": "蓖麻油酸聚氧乙烯酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "42(SML)",
+    "SML": 42.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "42(SML)",
+    "SML": 42.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

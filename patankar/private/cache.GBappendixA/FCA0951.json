@@ -1,0 +1,45 @@
+{
+  "FCA": "0951",
+  "cid": null,
+  "CAS": "70879-50-4",
+  "authorized in": [
+    "coatings",
+    "adhesives"
+  ],
+  "ChineseName": "聚乙二醇与 1-癸醇封端的 1,1'-亚甲基双 [4-异氰酸根合环己烷 ]的聚合物 ;1-癸醇封端的聚乙二醇与 1,1'-亚甲基双 [4-异氰酸根合环己烷 ]的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "coatings": {
+    "materials": [
+      "PU涂料"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1(以异氰酸根计 ,QM);1(环氧乙烷 :QM)或",
+    "SML": null,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "ND(环氧乙烷",
+    "SMLTcomment": ":SML,DL=0.01mg/kg)",
+    "comment1": "",
+    "comment2": "30(以乙二醇计 );ND(以异氰酸根计 ,DL=0.01mg/kg) 2;17",
+    "table_id": "coatings"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1(以异氰酸根计 ,QM);1(环氧乙烷 :QM)或ND(环氧乙烷 :SML,DL=0.01mg/kg)",
+    "SML": null,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "30(以乙二醇计",
+    "SMLTcomment": ");ND(以异氰酸根计",
+    "comment1": "",
+    "comment2": ",DL=0.01mg/kg) 2;17",
+    "table_id": "adhesives"
+  }
+}

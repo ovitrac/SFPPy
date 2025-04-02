@@ -1,0 +1,79 @@
+{
+  "FCA": "1130",
+  "cid": null,
+  "CAS": "8012-95-1",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "石蜡油",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PVC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "平均分子量不低于",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "480。100℃时运动黏度不低于",
+    "SMLTcomment": "8.5-6m2/×10s。矿物碳氢化合物碳原子数少于",
+    "comment1": "",
+    "comment2": "25的物质不高于 5%(质量分数 )",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用 平均分子量不低于 480。100℃时运动黏度不低于 8.5-6m2/×10s。矿物碳氢化合物碳原子数少于 25的物质不高于 5%(质量分数 )"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "30 平均分子量不低于 480。100℃时运动黏度不低于 8.5-6m2/×10s。矿物碳氢化合物碳原子数少于 25的物质不高于 5%(质量分数 )"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用 平均分子量不低于 480。100℃时运动黏度不低于 8.5-6m2/×10s。矿物碳氢化合物碳原子数少于 25的物质不高于 5%(质量分数 )"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

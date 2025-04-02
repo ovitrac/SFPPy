@@ -1,0 +1,55 @@
+{
+  "FCA": "0404",
+  "cid": 170690,
+  "CAS": "42844-93-9",
+  "authorized in": [
+    "plastics",
+    "coatings"
+  ],
+  "ChineseName": "C.I.颜料橙 68;[1,3-二氢 -5,6-双 [[(2-羟基 -1-萘基 )亚甲基 ]氨基 ]-2H-苯并咪唑 -2-酮 (2-)-N5,N6,O5,O6]-,(SP-4-2)合镍",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PA",
+      "PBT",
+      "PM-MA",
+      "POM",
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PET",
+      "PC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.01(以镍计 ,SML)",
+    "SML": 0.01,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "应符合着色剂纯度要求",
+    "SMLTcomment": ",见注",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.01(以镍计 ,SML) 应符合着色剂纯度要求 ,见注",
+    "SML": 0.01,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  }
+}

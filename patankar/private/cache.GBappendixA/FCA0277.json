@@ -1,0 +1,62 @@
+{
+  "FCA": "0277",
+  "cid": 39800,
+  "CAS": "2682-20-4",
+  "authorized in": [
+    "coatings",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "2-甲基 -3(2H )-异噻唑啉酮",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "coatings": {
+    "materials": [
+      "0.0025"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.5(SML) 仅用于水性涂料",
+    "SML": 0.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.5(SML) 仅用于水性粘合剂",
+    "SML": 0.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "0.005"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.5(SML)",
+    "SML": 0.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

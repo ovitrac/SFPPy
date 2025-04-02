@@ -1,0 +1,102 @@
+{
+  "FCA": "0576",
+  "cid": 16386,
+  "CAS": "2082-79-3",
+  "authorized in": [
+    "plastics",
+    "rubber",
+    "printing inks",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "(二叔丁β-3,5-基 -4-羟基苯基 )丙酸十八醇酯 ;十八烷基 -3,5-双 (1,1-二甲基乙基 )-4-羟基苯丙酸酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PET",
+      "PC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "printing inks": {
+    "materials": [
+      "0.5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "0.5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

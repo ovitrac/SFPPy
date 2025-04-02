@@ -1,0 +1,89 @@
+{
+  "FCA": "1006",
+  "cid": 4101,
+  "CAS": "100-97-0",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "paper and board"
+  ],
+  "ChineseName": "六亚甲基四胺",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "ABS",
+      "AS",
+      "PA",
+      "PC",
+      "PE",
+      "PET",
+      "PP",
+      "PS",
+      "PVC",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "15",
+    "SML": 15.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 15.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用  15 15"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "按生产需要适量使用  15 15"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用  15 15"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

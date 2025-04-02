@@ -1,0 +1,55 @@
+{
+  "FCA": "1022",
+  "cid": 24479,
+  "CAS": "7772-99-8",
+  "authorized in": [
+    "plastics",
+    "coatings"
+  ],
+  "ChineseName": "氯化亚锡",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.18(SML,以锡计 )",
+    "SML": 0.18,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.18(SML,以锡计 )",
+    "SML": 0.18,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  }
+}

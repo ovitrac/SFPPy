@@ -1,0 +1,80 @@
+{
+  "FCA": "0762",
+  "cid": 29011,
+  "CAS": "18282-10-5",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "printing inks",
+    "paper and board"
+  ],
+  "ChineseName": "二氧化锡",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE"
+    ],
+    "CP0max": 330.0,
+    "QMSMLraw": "0.18(SML,以锡计 )",
+    "SML": 0.18,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "仅用于颜料",
+    "SMLTcomment": ",颜料中含量应小于",
+    "comment1": "",
+    "comment2": "1.1%;应符合着色剂纯度要求 ,见注",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "0.165"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.18(以锡计 ,SML) 仅用于颜料 ,颜料中含量应小于 1.1%;应符合着色剂纯度要求 ,见注",
+    "SML": 0.18,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "printing inks": {
+    "materials": [
+      "0.33"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.18(以锡计 ,SML) 仅用于颜料 ,颜料中含量应小于 1.1%;应符合着色剂纯度要求 ,见注",
+    "SML": 0.18,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "paper and board": {
+    "materials": [
+      "0.055"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.18(以锡计 ,SML) 仅用于颜料 ,颜料中含量应小于 1.1%;应符合着色剂纯度要求 ,见注",
+    "SML": 0.18,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

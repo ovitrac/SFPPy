@@ -1,0 +1,79 @@
+{
+  "FCA": "0961",
+  "cid": 8343,
+  "CAS": "117-81-7",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "邻苯二甲酸二 (α-乙基己酯 )",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PVC"
+    ],
+    "CP0max": 50000.0,
+    "QMSMLraw": "1.5(SML)",
+    "SML": 1.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": 60.0,
+    "SMLTraw": "",
+    "SMLTcomment": "32",
+    "comment1": "",
+    "comment2": "生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于 20%的食品和婴幼儿食品",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.5(SML) 60 32 生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于 20%的食品和婴幼儿食品",
+    "SML": 1.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.5(SML) 60 32 生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于 20%的食品和婴幼儿食品",
+    "SML": 1.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.5(SML) 60 32 生产的材料或制品仅用于接触非脂肪性食品及乙醇含量低于 20%的食品 ,不得用于接触婴幼儿食品",
+    "SML": 1.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

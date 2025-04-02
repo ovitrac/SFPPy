@@ -1,0 +1,45 @@
+{
+  "FCA": "0118",
+  "cid": 112412,
+  "CAS": "70321-86-7",
+  "authorized in": [
+    "plastics",
+    "rubber"
+  ],
+  "ChineseName": "2-(2H-苯并三唑 -2-基 )-4,6-二 (1-甲基 -1-苯乙基 )-苯酚",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "ABS"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.5(SML)",
+    "SML": 1.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.5(SML)",
+    "SML": 1.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  }
+}

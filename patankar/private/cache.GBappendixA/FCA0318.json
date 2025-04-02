@@ -1,0 +1,85 @@
+{
+  "FCA": "0318",
+  "cid": 31250,
+  "CAS": "123-28-4",
+  "authorized in": [
+    "plastics",
+    "rubber",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "3,3'-硫代二丙酸二月桂酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PET",
+      "PC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "5",
+    "SML": 14.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 14.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.5 5 14"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用  5 14"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用  5 14"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

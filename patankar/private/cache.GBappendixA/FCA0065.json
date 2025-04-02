@@ -1,0 +1,62 @@
+{
+  "FCA": "0065",
+  "cid": 11089,
+  "CAS": "552-30-7",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "paper and board"
+  ],
+  "ChineseName": "1,3-二氢 -1,3-二氧代 -5-异苯并呋喃羧酸 ;偏苯三甲酸酐",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PET"
+    ],
+    "CP0max": 20000.0,
+    "QMSMLraw": "5",
+    "SML": 21.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 21.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用  5 21"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用  5 21"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "FCA": "0565",
+  "cid": null,
+  "CAS": "51617-74-4",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "adhesives"
+  ],
+  "ChineseName": "α-磺基 -ω-(壬苯氧基 )聚 (氧 -1,2-乙二基 )与 2-氨基乙醇的化合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": ";PS,AS,ABS:2.5",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "ND(壬基酚",
+    "SMLTcomment": ":SML,DL=0.01mg/kg)",
+    "comment1": "",
+    "comment2": "30 2",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(壬基酚 :SML,DL=0.01mg/kg)30",
+    "SML": 2.0,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": 2.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(壬基酚 :SML,DL=0.01mg/kg)30",
+    "SML": 2.0,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": 2.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

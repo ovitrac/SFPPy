@@ -317,7 +317,7 @@
     </header>
     <div id='content'>
         <div id='nav'>
-            <p><strong>Version:</strong> SFPPY v.1.40</p>
+            <p><strong>Version:</strong> SFPPY v.1.41</p>
             <p><strong>Maintained by:</strong> INRAE\olivier.vitrac@agroparistech.fr</p>
             <hr>
 <ul class="folder-list">
@@ -348,6 +348,7 @@
 <div class="folder-title" onclick="toggleFolder(this)">patankar/private</div>
 <ul class="folder-content">
 <li class="file"><a href="patankar/private/EUFCMannex1.html" target="_blankpy">EUFCMannex1</a></li>
+<li class="file"><a href="patankar/private/GBappendixA.html" target="_blankpy">GBappendixA</a></li>
 <li class="file"><a href="patankar/private/USFDAfcn.html" target="_blankpy">USFDAfcn</a></li>
 <li class="file"><a href="patankar/private/mstruct.html" target="_blankpy">mstruct</a></li>
 <li class="file"><a href="patankar/private/pubchempy.html" target="_blankpy">pubchempy</a></li>
@@ -436,7 +437,7 @@
                 const markdownContent = `
 # SFPPy Modules Documentation
 
-Generated on: **2025-04-01 00:10:10**
+Generated on: **2025-04-02 10:42:15**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -570,28 +571,33 @@ python yourscript.py # or \`conda activate sfppy && python yourscript.py\`
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
+<a href="#patankar_private_GBappendixA" style="text-decoration: none; font-weight: bold;">
+8. patankar.private.GBappendixA
+</a>
+</div>
+<div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_private_USFDAfcn" style="text-decoration: none; font-weight: bold;">
-8. patankar.private.USFDAfcn
+9. patankar.private.USFDAfcn
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_private_mstruct" style="text-decoration: none; font-weight: bold;">
-9. patankar.private.mstruct
+10. patankar.private.mstruct
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_private_pubchempy" style="text-decoration: none; font-weight: bold;">
-10. patankar.private.pubchempy
+11. patankar.private.pubchempy
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_property" style="text-decoration: none; font-weight: bold;">
-11. patankar.property
+12. patankar.property
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_useroverride" style="text-decoration: none; font-weight: bold;">
-12. patankar.useroverride
+13. patankar.useroverride
 </a>
 </div>
 </div>
@@ -3349,49 +3355,49 @@ object --> migrant
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | \`create_substance_widget\` | Creates a two-step widget interface for selecting a substance via loadpubchem. | 300 | 1.37 |
-| (module-level) | \`<lambda>\` |  | 1 | 1.37 |
-| (module-level) | \`get_default_index\` |  | 5 | 1.37 |
-| (module-level) | \`parse_molblock\` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.37 |
-| (module-level) | \`parse_sdf\` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.37 |
-| (module-level) | \`polarity_index\` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.37 |
-| (module-level) | \`unique\` | Return unique elements from \`lst\`, with optional order preservation and scalar unwrapping. | 27 | 1.37 |
-| \`CompoundIndex\` | \`__init__\` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.37 |
-| \`CompoundIndex\` | \`_add_synonym_to_index\` | Helper to map a single synonym→cid in self.index. | 9 | 1.37 |
-| \`CompoundIndex\` | \`_atom_to_dict\` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.37 |
-| \`CompoundIndex\` | \`_bond_to_dict\` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.37 |
-| \`CompoundIndex\` | \`_extract_all_pubchem_properties\` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.37 |
-| \`CompoundIndex\` | \`_gather_synonyms\` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.37 |
-| \`CompoundIndex\` | \`_generate_simple_dict\` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.37 |
-| \`CompoundIndex\` | \`find\` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 91 | 1.37 |
-| \`CompoundIndex\` | \`refresh_index\` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.37 |
-| \`migrant\` | \`__init__\` | Create a new migrant instance. | 390 | 1.37 |
-| \`migrant\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 65 | 1.37 |
-| \`migrant\` | \`__str__\` | Formatted string representing the migrant | 4 | 1.37 |
-| \`migrant\` | \`_crop_image\` | Crops white background from the PNG image. | 30 | 1.37 |
-| \`migrant\` | \`_download_PNG\` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.37 |
-| \`migrant\` | \`_download_SDF\` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.37 |
-| \`migrant\` | \`_download_pubchem_structuredata\` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.37 |
-| \`migrant\` | \`_validate_and_set_model\` | Generic method for validating and setting a migration property model. | 31 | 1.37 |
-| \`migrant\` | \`check_alt_propclass\` | returns True if a class property exists in patankar.property | 12 | 1.37 |
-| \`migrant\` | \`dispmax\` | optimize display | 9 | 1.37 |
-| \`migrant\` | \`suggest_alt_Dclass\` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.37 |
-| \`migrant\` | \`suggest_alt_Dmodel\` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.37 |
-| \`migrantToxtree\` | \`__init__\` | migrantToxtree constructor | 41 | 1.37 |
-| \`migrantToxtree\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 65 | 1.37 |
-| \`migrantToxtree\` | \`__str__\` | Formatted string representing the migrant | 4 | 1.37 |
-| \`migrantToxtree\` | \`_clean_field_names\` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.37 |
-| \`migrantToxtree\` | \`_crop_image\` | Crops white background from the PNG image. | 30 | 1.37 |
-| \`migrantToxtree\` | \`_download_PNG\` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.37 |
-| \`migrantToxtree\` | \`_download_SDF\` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.37 |
-| \`migrantToxtree\` | \`_download_pubchem_structuredata\` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.37 |
-| \`migrantToxtree\` | \`_run_toxtree\` |  | 42 | 1.37 |
-| \`migrantToxtree\` | \`_validate_and_set_model\` | Generic method for validating and setting a migration property model. | 31 | 1.37 |
-| \`migrantToxtree\` | \`check_alt_propclass\` | returns True if a class property exists in patankar.property | 12 | 1.37 |
-| \`migrantToxtree\` | \`class_roman_to_int\` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.37 |
-| \`migrantToxtree\` | \`dispmax\` | optimize display | 9 | 1.37 |
-| \`migrantToxtree\` | \`suggest_alt_Dclass\` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.37 |
-| \`migrantToxtree\` | \`suggest_alt_Dmodel\` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.37 |
+| (module-level) | \`create_substance_widget\` | Creates a two-step widget interface for selecting a substance via loadpubchem. | 300 | 1.41 |
+| (module-level) | \`<lambda>\` |  | 1 | 1.41 |
+| (module-level) | \`get_default_index\` |  | 5 | 1.41 |
+| (module-level) | \`parse_molblock\` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.41 |
+| (module-level) | \`parse_sdf\` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.41 |
+| (module-level) | \`polarity_index\` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.41 |
+| (module-level) | \`unique\` | Return unique elements from \`lst\`, with optional order preservation and scalar unwrapping. | 27 | 1.41 |
+| \`CompoundIndex\` | \`__init__\` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.41 |
+| \`CompoundIndex\` | \`_add_synonym_to_index\` | Helper to map a single synonym→cid in self.index. | 9 | 1.41 |
+| \`CompoundIndex\` | \`_atom_to_dict\` | Optional: convert a pubchempy.Atom instance to a small dict with (aid, element, x, y, z, charge, ...). | 13 | 1.41 |
+| \`CompoundIndex\` | \`_bond_to_dict\` | Optional: convert a pubchempy.Bond instance to a small dict with (aid1, aid2, order, etc.). | 10 | 1.41 |
+| \`CompoundIndex\` | \`_extract_all_pubchem_properties\` | Uses your local pubchempy.Compound’s @property accessors to get all available fields. This replicates the entire set of property definitions you shared (cid, synonyms, iupac_name, xlogp, etc.), then returns them in one dict. | 69 | 1.41 |
+| \`CompoundIndex\` | \`_gather_synonyms\` | Gathers synonyms from the loaded full-data dictionary. We expect 'synonyms' to be a list, plus possible extra fields. Merge them into a single set for deduplication. | 24 | 1.41 |
+| \`CompoundIndex\` | \`_generate_simple_dict\` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.41 |
+| \`CompoundIndex\` | \`find\` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 91 | 1.41 |
+| \`CompoundIndex\` | \`refresh_index\` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.41 |
+| \`migrant\` | \`__init__\` | Create a new migrant instance. | 419 | 1.41 |
+| \`migrant\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 77 | 1.41 |
+| \`migrant\` | \`__str__\` | Formatted string representing the migrant | 4 | 1.41 |
+| \`migrant\` | \`_crop_image\` | Crops white background from the PNG image. | 30 | 1.41 |
+| \`migrant\` | \`_download_PNG\` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.41 |
+| \`migrant\` | \`_download_SDF\` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.41 |
+| \`migrant\` | \`_download_pubchem_structuredata\` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.41 |
+| \`migrant\` | \`_validate_and_set_model\` | Generic method for validating and setting a migration property model. | 31 | 1.41 |
+| \`migrant\` | \`check_alt_propclass\` | returns True if a class property exists in patankar.property | 12 | 1.41 |
+| \`migrant\` | \`dispmax\` | optimize display | 9 | 1.41 |
+| \`migrant\` | \`suggest_alt_Dclass\` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.41 |
+| \`migrant\` | \`suggest_alt_Dmodel\` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.41 |
+| \`migrantToxtree\` | \`__init__\` | migrantToxtree constructor | 41 | 1.41 |
+| \`migrantToxtree\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 77 | 1.41 |
+| \`migrantToxtree\` | \`__str__\` | Formatted string representing the migrant | 4 | 1.41 |
+| \`migrantToxtree\` | \`_clean_field_names\` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.41 |
+| \`migrantToxtree\` | \`_crop_image\` | Crops white background from the PNG image. | 30 | 1.41 |
+| \`migrantToxtree\` | \`_download_PNG\` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.41 |
+| \`migrantToxtree\` | \`_download_SDF\` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.41 |
+| \`migrantToxtree\` | \`_download_pubchem_structuredata\` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.41 |
+| \`migrantToxtree\` | \`_run_toxtree\` |  | 42 | 1.41 |
+| \`migrantToxtree\` | \`_validate_and_set_model\` | Generic method for validating and setting a migration property model. | 31 | 1.41 |
+| \`migrantToxtree\` | \`check_alt_propclass\` | returns True if a class property exists in patankar.property | 12 | 1.41 |
+| \`migrantToxtree\` | \`class_roman_to_int\` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.41 |
+| \`migrantToxtree\` | \`dispmax\` | optimize display | 9 | 1.41 |
+| \`migrantToxtree\` | \`suggest_alt_Dclass\` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.41 |
+| \`migrantToxtree\` | \`suggest_alt_Dmodel\` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.41 |
 
 <a id="patankar_migration" name="patankar_migration"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_loadpubchem" title="Go to Previous Module: patankar.loadpubchem" style="text-decoration: none;">⬅️ Previous</a>
@@ -3519,7 +3525,7 @@ restartfile --> restartfile_senspantakar
 <a id="patankar_private_EUFCMannex1" name="patankar_private_EUFCMannex1"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_migration" title="Go to Previous Module: patankar.migration" style="text-decoration: none;">⬅️ Previous</a>
 <a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
-<a href="#patankar_private_USFDAfcn" title="Go to Next Module: patankar.private.USFDAfcn" style="text-decoration: none;">➡️ Next</a>
+<a href="#patankar_private_GBappendixA" title="Go to Next Module: patankar.private.GBappendixA" style="text-decoration: none;">➡️ Next</a>
 </div>
 
 ## Module \`patankar.private.EUFCMannex1\`
@@ -3567,8 +3573,58 @@ object --> EuFCMannex1
 | \`annex1record_ext\` | \`__repr__\` | Return repr(self). | 42 | 1.37 |
 | \`annex1record_ext\` | \`__str__\` | Return str(self). | 5 | 1.37 |
 
-<a id="patankar_private_USFDAfcn" name="patankar_private_USFDAfcn"></a>
+<a id="patankar_private_GBappendixA" name="patankar_private_GBappendixA"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_EUFCMannex1" title="Go to Previous Module: patankar.private.EUFCMannex1" style="text-decoration: none;">⬅️ Previous</a>
+<a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
+<a href="#patankar_private_USFDAfcn" title="Go to Next Module: patankar.private.USFDAfcn" style="text-decoration: none;">➡️ Next</a>
+</div>
+
+## Module \`patankar.private.GBappendixA\`
+
+### Class Inheritance Diagram
+<div class="mermaid">
+graph TD;
+GBappendixA
+gbrecord
+gbrecord_ext
+dict --> gbrecord
+gbrecord --> gbrecord_ext
+object --> GBappendixA
+</div>
+
+**[Class Examples for \`patankar/private/GBappendixA.py\` (5)](class_examples.html#patankar_private_GBappendixA)**
+
+### Methods Table
+
+| Class | Method | Docstring First Paragraph | # Lines | __version__ |
+|-------|---------|---------------------------|---------|-------------|
+| (module-level) | \`custom_wrap\` |  | 10 | 1.41 |
+| (module-level) | \`extract_number_before_keyword\` | Extract numbers that immediately precede a given keyword in the text, allowing for optional punctuation or other separators between the number and the keyword (e.g. '3.4 (SML)', '3.4: SML', etc.) | 18 | 1.41 |
+| (module-level) | \`extract_number_before_keyword_in_parentheses\` | Extract numbers that are immediately followed by parentheses containing a given keyword. | 19 | 1.41 |
+| (module-level) | \`split_col5_content\` | Pattern to match number followed by (...) or [...] that contains a target keyword | 19 | 1.41 |
+| (module-level) | \`unwrap\` | Unwrap a list-like value: - Return None if the value is empty or None - Return the sole item if it is a singleton list or tuple - Return the full list/tuple otherwise | 12 | 1.41 |
+| \`GBappendixA\` | \`__call__\` | Callable access. For example: - GBappendixA(cid) returns the record for a given PubChem cid. - GBappendixA(fca) returns the record for a given FCA number. - GBappendixA("CAS") returns the record(s) for a given CAS number. - Multiple arguments return a list. | 35 | 1.41 |
+| \`GBappendixA\` | \`__contains__\` |  | 8 | 1.41 |
+| \`GBappendixA\` | \`__getitem__\` | Supports lookup by: - Slice: returns a list of records whose FCA numbers fall within the slice. - Integer or string: interpreted as an FCA number. - String: if not matching an FCA number then interpreted as a CAS number. - List/tuple: returns a list of corresponding records. | 31 | 1.41 |
+| \`GBappendixA\` | \`__init__\` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.41 |
+| \`GBappendixA\` | \`__iter__\` |  | 3 | 1.41 |
+| \`GBappendixA\` | \`__len__\` |  | 2 | 1.41 |
+| \`GBappendixA\` | \`__repr__\` | Return repr(self). | 6 | 1.41 |
+| \`GBappendixA\` | \`__str__\` | Return str(self). | 2 | 1.41 |
+| \`GBappendixA\` | \`_load_record\` | Load a record (as a gbrecord) from its cached JSON file. If PubChem extension is enabled, the record is returned as a gbrecord_ext. | 22 | 1.41 |
+| \`GBappendixA\` | \`byCAS\` |  | 8 | 1.41 |
+| \`GBappendixA\` | \`byFCA\` |  | 6 | 1.41 |
+| \`GBappendixA\` | \`bycid\` |  | 9 | 1.41 |
+| \`GBappendixA\` | \`refresh_index\` | Rebuild the global index by reading the CSV file and regenerating each record as FCAXXXX.json. The index includes mappings for "CAS", "FCA", "bycid", and "ChineseName". | 254 | 1.41 |
+| \`gbrecord\` | \`__init__\` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.41 |
+| \`gbrecord\` | \`__repr__\` | Return repr(self). | 46 | 1.41 |
+| \`gbrecord\` | \`__str__\` | Return str(self). | 5 | 1.41 |
+| \`gbrecord_ext\` | \`__init__\` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.41 |
+| \`gbrecord_ext\` | \`__repr__\` | Return repr(self). | 46 | 1.41 |
+| \`gbrecord_ext\` | \`__str__\` | Return str(self). | 5 | 1.41 |
+
+<a id="patankar_private_USFDAfcn" name="patankar_private_USFDAfcn"></a>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_GBappendixA" title="Go to Previous Module: patankar.private.GBappendixA" style="text-decoration: none;">⬅️ Previous</a>
 <a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
 <a href="#patankar_private_mstruct" title="Go to Next Module: patankar.private.mstruct" style="text-decoration: none;">➡️ Next</a>
 </div>
@@ -3613,7 +3669,7 @@ object --> USFDAfcn
 | \`fcnrecord\` | \`__init__\` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.41 |
 | \`fcnrecord\` | \`__repr__\` | Return repr(self). | 24 | 1.41 |
 | \`fcnrecord\` | \`__str__\` | Return str(self). | 5 | 1.41 |
-| \`fcnrecord_ext\` | \`__init__\` | Instantiate from a base fcnrecord. If a valid CAS is available, perform PubChem lookup via the 'migrant' function. | 30 | 1.41 |
+| \`fcnrecord_ext\` | \`__init__\` | Instantiate from a base fcnrecord. If a valid CAS is available, perform PubChem lookup via the 'migrant' function. | 32 | 1.41 |
 | \`fcnrecord_ext\` | \`__repr__\` | Return repr(self). | 24 | 1.41 |
 | \`fcnrecord_ext\` | \`__str__\` | Return str(self). | 5 | 1.41 |
 

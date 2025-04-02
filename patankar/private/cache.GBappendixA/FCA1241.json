@@ -1,0 +1,54 @@
+{
+  "FCA": "1241",
+  "cid": 971,
+  "CAS": "144-62-7",
+  "authorized in": [
+    "plastics",
+    "paper and board"
+  ],
+  "ChineseName": "乙二酸 ;草酸",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "paper and board": {
+    "materials": [
+      "1"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

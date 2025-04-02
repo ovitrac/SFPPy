@@ -1,0 +1,46 @@
+{
+  "FCA": "0153",
+  "cid": 86348,
+  "CAS": "118337-09-0",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "2,2-亚乙基 -双 (4,6-二叔丁基苯基 )氟化磷腈",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE"
+    ],
+    "CP0max": 3000.0,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6(SML)",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

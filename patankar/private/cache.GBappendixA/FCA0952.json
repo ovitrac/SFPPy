@@ -1,0 +1,89 @@
+{
+  "FCA": "0952",
+  "cid": null,
+  "CAS": "9003-20-7",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "聚乙酸乙烯酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(醋酸乙烯酯 :SML)",
+    "SML": 12.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(醋酸乙烯酯 :SML)",
+    "SML": 12.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(醋酸乙烯酯 :SML)",
+    "SML": 12.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(乙酸乙烯酯 :SML)",
+    "SML": 12.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "FCA": "0006",
+  "cid": null,
+  "CAS": "85600-91-5",
+  "authorized in": [
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "(2E)-2-丁烯二酸与 1,3-丁二烯、苯乙烯、2-甲基 -2-丙烯酸甲酯、2-丙烯腈和 2-丙烯酸的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(丁烯酸 :SML);ND(1,3-丁二烯:SML,DL=0.01mg/kg)或",
+    "SML": 0.05,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "1(1,3-丁二烯",
+    "SMLTcomment": ":QM);ND(丙烯腈",
+    "comment1": "",
+    "comment2": ":SML,DL=0. 6(以丙烯酸计 );6(以甲基丙烯酸计 ) 22;23 无相应的丁烯酸迁移量检测方法时可使用 0.05mg/6dm2(QM)作为其限量值",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(丁烯酸 :SML);ND(1,3-丁二烯:SML,DL=0.01mg/kg)或",
+    "SML": 0.05,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "1(1,3-丁二烯",
+    "SMLTcomment": ":QM);ND(丙烯腈",
+    "comment1": "",
+    "comment2": ":SML,DL=0.01mg/kg) 6(以丙烯酸计 );6(以甲基丙烯酸计 ) 22;23 无相应的丁烯酸迁移量检测方法时可使用 0.05mg/6dm2(QM)作为其限量值",
+    "table_id": "paper and board"
+  }
+}

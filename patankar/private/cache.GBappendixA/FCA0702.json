@@ -1,0 +1,49 @@
+{
+  "FCA": "0702",
+  "cid": null,
+  "CAS": [
+    "65447-77-0",
+    "70198-29-7"
+  ],
+  "authorized in": [
+    "plastics",
+    "rubber"
+  ],
+  "ChineseName": "丁二酸二甲酯和 4-羟基 -2,2,6,6-四甲基 -1-哌啶乙醇的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP"
+    ],
+    "CP0max": 3000.0,
+    "QMSMLraw": "30(SML)",
+    "SML": 30.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.5"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "30(SML)",
+    "SML": 30.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  }
+}

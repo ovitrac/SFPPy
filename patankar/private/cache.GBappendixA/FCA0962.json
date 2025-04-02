@@ -1,0 +1,62 @@
+{
+  "FCA": "0962",
+  "cid": 8560,
+  "CAS": "131-17-9",
+  "authorized in": [
+    "plastics",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "邻苯二甲酸二烯丙酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PVC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(SML,DL=0.01mg/kg)",
+    "SML": null,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于",
+    "SMLTcomment": "20%的食品和婴幼儿食品",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(SML,DL=0.01mg/kg) 生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于 20%的食品和婴幼儿食品",
+    "SML": null,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(SML,DL=0.01mg/kg) 生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于 20%的食品和婴幼儿食品",
+    "SML": null,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

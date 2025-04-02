@@ -1,6 +1,6 @@
 # **SFPPy** - Python Framework for Food Contact Compliance and Risk Assessment 🍏⏩🍎
 
-<div aligb="center">
+<div align="center">
 
 | ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it with AI. |
 | ---------------------------------------------- | ------------------------------------------------------------ | --------------------------------- |
@@ -35,24 +35,24 @@
 
 ## 🛠️ Overview
 
-**SFPPy** is a Python-based framework for **compliance testing of food contact materials** and **recycled plastic safety assessment** under:
+**SFPPy** is a Python-based framework with *ready-to-use* [Notebooks](https://en.wikipedia.org/wiki/Notebook_interface) for **compliance testing of food contact materials** and **recycled plastic safety assessment** under:
 
-- 🇺🇸 **US FDA regulations**
-- 🇪🇺 **European Union regulations** (EFSA, EU 10/2011, etc.)
-- 🇨🇳 **Chinese GB standards**
-- 🌍 **Other international guidelines**
+- 🇺🇸 **[US FDA regulations](https://www.fda.gov/food/food-ingredients-packaging/packaging-food-contact-substances-fcs)** | The last [FCN list](https://www.fda.gov/food/packaging-food-contact-substances-fcs/inventory-effective-food-contact-substance-fcs-notifications) <kbd>1698 records</kbd> is shipped with SFPPy.
+- 🇪🇺 **[European Union regulations](https://food.ec.europa.eu/food-safety/chemical-safety/food-contact-materials_en)** (EFSA, EU 10/2011, etc.) | The last [Annex I](https://echa.europa.eu/plastic-material-food-contact) <kbd>1194 records</kbd> is shipped with SFPPy .
+- 🇨🇳 **[Chinese GB standards](https://www.sdtdata.com/fx/fmoa/tsLibCard/163514.html)** | The [Positive lists A1-A7](http://down.foodmate.net/standard/sort/3/49855.html)  <kbd>1293 records</kbd> are shipped with SFPPy.
+- 🌍 **Other international guidelines** | SFPPy is already shipped with <kbd>2566 substances</kbd>.
 
-This project implements **first-principles chemical migration modeling** and introduces a symbolic language that **AI** models can easily parse and manipulate. All substances listed in [PubChem](https://pubchem.ncbi.nlm.nih.gov/) can be directly imported and composed into migration scenarios — manually or with **AI** assistance.
+This project implements **first-principles chemical migration modeling** and introduces a symbolic language and pipelines that **AI** models can easily parse and manipulate. All substances listed in [PubChem](https://pubchem.ncbi.nlm.nih.gov/) can be directly imported and composed into migration scenarios — manually or with **AI** assistance.
 
 > [!NOTE]
 >
 > ⋆.˚☁️⋆ You can use **SFPPy** entirely through **Google Colab**, with <u>no installation</u> and minimal code. **GUI**-based tools, complete templates, and progressively complex examples are all available through the **Colab badges** above ( [🎬 full video](https://ovitrac.github.io/SFPPy/wikipages/colab/colab_demo.html)).
 >
-> A sister project — [**SFPPyLite 🌐**](https://github.com/ovitrac/SFPPylite) — lets you run **SFPPy notebooks directly in your browser**, with no installation or server required.
+> A sister project — [**SFPPyLite 🌐**](https://github.com/ovitrac/SFPPylite) — lets you run **SFPPy notebooks directly in your browser**, with no installation or server required. 
 > 
 > ![SFPPy_GUI](docs/videos/SFPPy_GUI.gif)
 > 
-> 
+> 📥 **SFPPy** can be installed locally in any Python (>3.8) environment and work with any notebook manager ([see section Quick Start](#-quick-start)).
 
 
 
@@ -104,7 +104,7 @@ pip install -r requirements.txt
 >
 > 💻 Prefer local work? Use [**Jupyter**](https://jupyter.org/) on your machine.
 >
-> 💫 Need a lightweight web version? Try [**SFPPyLite🌐**](https://ovitrac.github.io/SFPPylite/l) in your browser — no setup required — for editing and from basic to advanced calculations.  ⚠️ Note: Available chemical databases are more limited (🚧).
+> 💫 Need a lightweight web version? Try [**SFPPyLite🌐**](https://ovitrac.github.io/SFPPylite/l) in your browser — no setup required — for editing and from basic to advanced calculations.  ⚠️ *Note: Toxicological assessment via ToxTree is not available and the connectivity to PubChem is more limited*.
 
 
 ***
@@ -382,7 +382,7 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 
 ### [Example <kbd>2</kbd>](https://ovitrac.github.io/SFPPy/wikipages/#examples/example2.html)|  **Mass Transfer in ♻️ Recycled <kbd>PP</kbd> Bottles**
 
-- 🍼 Investigates **<kbd>toluene</kbd>kbd< migration** from a **300 µm thick recycled <kbd>PP</kbd> bottle** into a **<kbd>fatty liquid</kbd> food**.
+- 🍼 Investigates **<kbd>toluene</kbd> migration** from a **300 µm thick recycled <kbd>PP</kbd> bottle** into a **<kbd>fatty liquid</kbd> food**.
 - 🛡️ Assesses the **effect of a <kbd>PET</kbd> functional barrier** (<kbd>FB</kbd>) of varying thickness on reducing migration.
 
 ***
@@ -421,11 +421,15 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 
 ✔️ **AI-Ready Design** — Symbolic, structured data and a clean Python API make it ideal for integration with AI assistants and LLMs.
 
+✔️ **Chemically-oriented** — `SFPPy` is designed to use chemical information and molecular models without requiring you to estimate diffusion and partitioning properties. The connection with PubChem server extends theoretically the possibilities to any single substance.
+
+✔️ **Chemical databases** — Parsed US (🇺🇸), EU (🇪🇺), and GB (🇨🇳) databases are included in `SFPPy` and open source.
+
 ✔️ **Flexible Unit Handling** — Supports any unit via `("unit", value)` or `(["val1", "val2"], "unit")` formats.
 
-✔️ **Chained Operators** — Use `>>` to model automatic **mass transfer and property propagation** across layers and conditions.
+✔️ **Chained Operators** — Use  `>>`  to model automatic **mass transfer and property propagation** across layers and conditions. A same calculation pipe can be instantiated with different substances using the operator `%`: `substance % food << geometry >> packaging >> step1 >> step2 >> step3...`  
 
-✔️ **Minimal Code, Maximum Expressiveness** — Concise syntax using `+` to combine materials, simulate stacks, or switch storage scenarios.
+✔️ **Minimal Code, Maximum Expressiveness** — Concise syntax using `+` to combine materials, simulate stacks, or switch storage scenarios. Combine also results with `+`: `allsteps = step1.lastsimulation+step2.lastsimulation+step3.lastsimulation`
 
 ✔️ **Powerful Abstractions** — Integrates with **PubChem**, **ToxTree**, built-in **polymer libraries**, and **3D packaging geometries**.
 
@@ -434,6 +438,7 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 ✔️ **Compliance Notebooks Included** — Templates and real-case notebooks guide you through regulatory testing and reporting.
 
 ✔️ **GUI-Ready Components** — Build your own graphical tools using included widgets and high-level interfaces.
+
 
 
 

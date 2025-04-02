@@ -1,0 +1,48 @@
+{
+  "FCA": "0107",
+  "cid": 117329,
+  "CAS": "26762-92-5",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "1-甲基 -4-(1-甲基乙基 )环己烷单氢过氧化物衍生物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PS",
+      "AS",
+      "ABS"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

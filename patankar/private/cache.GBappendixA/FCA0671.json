@@ -1,0 +1,51 @@
+{
+  "FCA": "0671",
+  "cid": null,
+  "CAS": "72383-70-1",
+  "authorized in": [
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "丙烯酸与乙烯、乙酸乙烯酯和丙烯酸 -2-乙基己基酯的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.5(QM);0.05(2-丙烯酸 -2-乙基己酯 :SML);12(乙酸乙烯酯:SML)",
+    "SML": [
+      0.05,
+      12.0
+    ],
+    "QM": 1.5,
+    "DL": null,
+    "SMLT": 6.0,
+    "SMLTraw": "",
+    "SMLTcomment": "22",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.5(QM);0.05(2-丙烯酸 -2-乙基己酯 :SML);12(乙酸乙烯酯:SML)",
+    "SML": [
+      0.05,
+      12.0
+    ],
+    "QM": 1.5,
+    "DL": null,
+    "SMLT": 6.0,
+    "SMLTraw": "",
+    "SMLTcomment": "22",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "FCA": "0322",
+  "cid": 2116,
+  "CAS": "10191-41-0",
+  "authorized in": [
+    "plastics",
+    "paper and board"
+  ],
+  "ChineseName": "3,4-二氢 -2,5,7,8-四甲基 -2-(4,8,12-三甲基癸基 )-2H-苯并吡喃 -6-醇 ;dl-α-维生素 E",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PET",
+      "PP",
+      "PA",
+      "PS",
+      "PC",
+      "AS",
+      "ABS",
+      "PVC",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

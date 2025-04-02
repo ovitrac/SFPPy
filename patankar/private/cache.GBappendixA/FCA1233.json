@@ -1,0 +1,79 @@
+{
+  "FCA": "1233",
+  "cid": 700,
+  "CAS": "141-43-5",
+  "authorized in": [
+    "coatings",
+    "printing inks",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "乙醇胺",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML) 生产的材料或制品仅用于接触非脂肪性食品",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML) 生产的材料或制品仅用于接触非脂肪性食品",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML) 生产的材料或制品仅用于接触非脂肪性食品",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "0.1"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML) 生产的材料或制品仅用于接触非脂肪性食品",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

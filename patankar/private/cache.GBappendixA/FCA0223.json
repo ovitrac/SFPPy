@@ -1,0 +1,54 @@
+{
+  "FCA": "0223",
+  "cid": 65360,
+  "CAS": "15214-89-8",
+  "authorized in": [
+    "plastics",
+    "paper and board"
+  ],
+  "ChineseName": "2-丙烯酰氨基 -2-甲基丙烷磺酸",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

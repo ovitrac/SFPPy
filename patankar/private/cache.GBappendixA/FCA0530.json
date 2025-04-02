@@ -1,0 +1,47 @@
+{
+  "FCA": "0530",
+  "cid": 90004,
+  "CAS": "23128-74-7",
+  "authorized in": [
+    "plastics",
+    "rubber"
+  ],
+  "ChineseName": "N ,N'-己基 -1,6-二 [3-(3,5-二叔丁基 -4-羟苯基 )丙酰胺 ]",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PS",
+      "PA"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "45(SML)",
+    "SML": 45.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.6"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "45(SML)",
+    "SML": 45.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  }
+}

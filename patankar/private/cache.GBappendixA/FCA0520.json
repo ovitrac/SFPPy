@@ -1,0 +1,51 @@
+{
+  "FCA": "0520",
+  "cid": 8112,
+  "CAS": "111-41-1",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "N-(2-氨基乙基 )乙醇胺",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "生产的材料或制品不得用于接触脂肪性食品",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML) 生产的材料或制品不得用于接触脂肪性食品",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

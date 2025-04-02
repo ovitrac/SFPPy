@@ -1,0 +1,45 @@
+{
+  "FCA": "1023",
+  "cid": null,
+  "CAS": "68188-18-1",
+  "authorized in": [
+    "plastics",
+    "coatings"
+  ],
+  "ChineseName": "氯磺化 -皂化石蜡油",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PS"
+    ],
+    "CP0max": null,
+    "QMSMLraw": ");PE,PP(薄膜",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "):0.1;PE,PP(非薄膜",
+    "SMLTcomment": "):按生产需要适量使用",
+    "comment1": "",
+    "comment2": "6(SML) C14~C16烷基含量不低于 50%",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "PVDC涂料"
+    ],
+    "CP0max": null,
+    "QMSMLraw": ")",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 6.0,
+    "SMLTraw": "",
+    "SMLTcomment": "C14~C16烷基含量不低于",
+    "comment1": "",
+    "comment2": "50%",
+    "table_id": "coatings"
+  }
+}

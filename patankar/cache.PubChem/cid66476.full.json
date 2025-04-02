@@ -1,0 +1,842 @@
+{
+  "cid": 66476,
+  "synonyms": [
+    "Solvent Red 52",
+    "81-39-0",
+    "3-Methyl-6-(p-toluidino)-3H-dibenz[f",
+    "3H-Dibenz[f,ij]isoquinoline-2,7-dione, 3-methyl-6-[(4-methylphenyl)amino]-",
+    "DTXSID1058842",
+    "3-Methyl-6-(p-toluidino)-3H-dibenz(f,ij)isoquinoline-2,7-dione",
+    "14-methyl-10-(4-methylanilino)-14-azatetracyclo[7.7.1.02,7.013,17]heptadeca-1(16),2,4,6,9,11,13(17)-heptaene-8,15-dione",
+    "3-Methyl-6-(p-toluidino)-3H-dibenz[F,IJ]isoquinoline-2,7-dione",
+    "3H-Dibenz(f,ij)isoquinoline-2,7-dione, 3-methyl-6-((4-methylphenyl)amino)-",
+    "3H-Naphtho(1,2,3-de)quinoline-2,7-dione, 3-methyl-6-((4-methylphenyl)amino)-",
+    "3H-Naphtho[1,2,3-de]quinoline-2,7-dione, 3-methyl-6-[(4-methylphenyl)amino]-",
+    "Solven Red 52",
+    "KP Plast Red 58",
+    "EINECS 201-346-7",
+    "C.I. 68210",
+    "ChemDiv1_022437",
+    "Oprea1_123265",
+    "SCHEMBL305199",
+    "DTXCID0048189",
+    "HMS650L19",
+    "VJUKWPOWHJITTP-UHFFFAOYSA-N",
+    "HY-D0287",
+    "MFCD00272416",
+    "STL558630",
+    "3-methyl-6-(p-tolylamino)-2H-naphtho[1,2,3-de]quinoline-2,7(3H)-dione",
+    "AKOS003632966",
+    "AS-17210",
+    "C.I.Solvent Red 52 (C.I.68210)",
+    "CS-0010199",
+    "EU-0039738",
+    "NS00020032",
+    "F0884-0023",
+    "3-methyl-6-(4-toluidino)-3H-naphtho[1,2,3-de]quinoline-2,7-dione",
+    "3-methyl-6-(p-tolylamino)-3H-naphtho[1,2,3-de]quinoline-2,7-dione",
+    "3H-Naphtho1,2,3-dequinoline-2,7-dione, 3-methyl-6-(4-methylphenyl)amino-",
+    "3-methyl-6-[(4-methylphenyl)amino]-3H-naphtho[1,2,3-de]quinoline-2,7-dione",
+    "14-METHYL-10-[(4-METHYLPHENYL)AMINO]-14-AZATETRACYCLO[7.7.1.0(2),?.0(1)(3),(1)?]HEPTADECA-1(16),2(7),3,5,9(17),10,12-HEPTAENE-8,15-DIONE",
+    "201-346-7"
+  ],
+  "sids": [
+    6160886,
+    8190486,
+    11210582,
+    24287361,
+    43123168,
+    47368566,
+    75434152,
+    88124170,
+    92214920,
+    104336588,
+    108180170,
+    126678197,
+    129485293,
+    135023525,
+    142130809,
+    164245478,
+    164914030,
+    166280580,
+    176255133,
+    223682147,
+    226645067,
+    254785327,
+    256109337,
+    274607042,
+    310171477,
+    315686962,
+    318038264,
+    319107003,
+    336150623,
+    341309287,
+    346751677,
+    349332824,
+    354270355,
+    373327865,
+    374373014,
+    376008715,
+    377719356,
+    387164796,
+    388351067,
+    402288526,
+    405425268,
+    415734056,
+    434699948,
+    438649720,
+    439461060,
+    441070276,
+    442940583,
+    443167867,
+    444112066,
+    445063605,
+    446197922,
+    446466171,
+    462081240,
+    463241486,
+    463760251,
+    464172722,
+    470725764,
+    472475887,
+    477520788,
+    481124167,
+    482626002,
+    482814477,
+    483132214,
+    485316054,
+    489030884,
+    489630137,
+    490737937,
+    491166828,
+    491642283,
+    496090538,
+    496090539,
+    496090540,
+    496167159,
+    496169278,
+    500978399,
+    503456077,
+    504167653,
+    505499764,
+    505910116,
+    506085282,
+    507699937
+  ],
+  "aids": [
+    422,
+    492967,
+    1224905,
+    1671202,
+    1794808
+  ],
+  "elements": [
+    "O",
+    "O",
+    "N",
+    "N",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "O",
+      "x": 4.666,
+      "y": -1.7734,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "O",
+      "x": 5.5442,
+      "y": 3.7959,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "N",
+      "x": 6.4501,
+      "y": 2.2751,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "N",
+      "x": 6.3829,
+      "y": -1.7703,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "C",
+      "x": 5.5321,
+      "y": 0.7266,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "C",
+      "x": 5.5321,
+      "y": -0.2734,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "C",
+      "x": 4.666,
+      "y": 1.2266,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "C",
+      "x": 6.4421,
+      "y": 1.2335,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 3.8,
+      "y": 0.7266,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 3.8,
+      "y": -0.2734,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 6.3903,
+      "y": -0.7703,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "C",
+      "x": 4.666,
+      "y": -0.7734,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "C",
+      "x": 4.65,
+      "y": 2.2681,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "C",
+      "x": 7.2814,
+      "y": 0.7052,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "C",
+      "x": 7.2558,
+      "y": -0.2861,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "C",
+      "x": 5.548,
+      "y": 2.7959,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "C",
+      "x": 2.9061,
+      "y": 1.2613,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "C",
+      "x": 2.9061,
+      "y": -0.808,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "C",
+      "x": 7.318,
+      "y": 2.7717,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "C",
+      "x": 2,
+      "y": 0.7474,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "C",
+      "x": 2,
+      "y": -0.2942,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 22,
+      "element": "C",
+      "x": 7.2452,
+      "y": -2.2767,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 23,
+      "element": "C",
+      "x": 8.1149,
+      "y": -1.7831,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 24,
+      "element": "C",
+      "x": 7.2378,
+      "y": -3.2767,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 25,
+      "element": "C",
+      "x": 8.9698,
+      "y": -3.2895,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 26,
+      "element": "C",
+      "x": 8.9772,
+      "y": -2.2895,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 27,
+      "element": "C",
+      "x": 8.1001,
+      "y": -3.783,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 28,
+      "element": "C",
+      "x": 9.8321,
+      "y": -3.7959,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 29,
+      "element": "H",
+      "x": 4.1095,
+      "y": 2.5719,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 30,
+      "element": "H",
+      "x": 7.828,
+      "y": 0.9979,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 31,
+      "element": "H",
+      "x": 7.7865,
+      "y": -0.6067,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 32,
+      "element": "H",
+      "x": 2.9132,
+      "y": 1.8812,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 33,
+      "element": "H",
+      "x": 2.9132,
+      "y": -1.428,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 34,
+      "element": "H",
+      "x": 5.8437,
+      "y": -2.0763,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 35,
+      "element": "H",
+      "x": 7.626,
+      "y": 2.2336,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 36,
+      "element": "H",
+      "x": 7.8562,
+      "y": 3.0796,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 37,
+      "element": "H",
+      "x": 7.0101,
+      "y": 3.3098,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 38,
+      "element": "H",
+      "x": 1.4643,
+      "y": 1.0595,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 39,
+      "element": "H",
+      "x": 1.4643,
+      "y": -0.6063,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 40,
+      "element": "H",
+      "x": 8.1195,
+      "y": -1.1631,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 41,
+      "element": "H",
+      "x": 6.6986,
+      "y": -3.5827,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 42,
+      "element": "H",
+      "x": 9.5164,
+      "y": -1.9835,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 43,
+      "element": "H",
+      "x": 8.0955,
+      "y": -4.403,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 44,
+      "element": "H",
+      "x": 9.5181,
+      "y": -4.3305,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 45,
+      "element": "H",
+      "x": 10.3667,
+      "y": -4.1098,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 46,
+      "element": "H",
+      "x": 10.146,
+      "y": -3.2612,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 12,
+      "order": 2
+    },
+    {
+      "aid1": 2,
+      "aid2": 16,
+      "order": 2
+    },
+    {
+      "aid1": 3,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 19,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 22,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 34,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 8,
+      "order": 2
+    },
+    {
+      "aid1": 6,
+      "aid2": 11,
+      "order": 2
+    },
+    {
+      "aid1": 6,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 13,
+      "order": 2
+    },
+    {
+      "aid1": 8,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 17,
+      "order": 2
+    },
+    {
+      "aid1": 10,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 18,
+      "order": 2
+    },
+    {
+      "aid1": 11,
+      "aid2": 15,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 29,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 15,
+      "order": 2
+    },
+    {
+      "aid1": 14,
+      "aid2": 30,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 31,
+      "order": 1
+    },
+    {
+      "aid1": 17,
+      "aid2": 20,
+      "order": 1
+    },
+    {
+      "aid1": 17,
+      "aid2": 32,
+      "order": 1
+    },
+    {
+      "aid1": 18,
+      "aid2": 21,
+      "order": 1
+    },
+    {
+      "aid1": 18,
+      "aid2": 33,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 35,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 36,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 37,
+      "order": 1
+    },
+    {
+      "aid1": 20,
+      "aid2": 21,
+      "order": 2
+    },
+    {
+      "aid1": 20,
+      "aid2": 38,
+      "order": 1
+    },
+    {
+      "aid1": 21,
+      "aid2": 39,
+      "order": 1
+    },
+    {
+      "aid1": 22,
+      "aid2": 23,
+      "order": 2
+    },
+    {
+      "aid1": 22,
+      "aid2": 24,
+      "order": 1
+    },
+    {
+      "aid1": 23,
+      "aid2": 26,
+      "order": 1
+    },
+    {
+      "aid1": 23,
+      "aid2": 40,
+      "order": 1
+    },
+    {
+      "aid1": 24,
+      "aid2": 27,
+      "order": 2
+    },
+    {
+      "aid1": 24,
+      "aid2": 41,
+      "order": 1
+    },
+    {
+      "aid1": 25,
+      "aid2": 26,
+      "order": 2
+    },
+    {
+      "aid1": 25,
+      "aid2": 27,
+      "order": 1
+    },
+    {
+      "aid1": 25,
+      "aid2": 28,
+      "order": 1
+    },
+    {
+      "aid1": 26,
+      "aid2": 42,
+      "order": 1
+    },
+    {
+      "aid1": 27,
+      "aid2": 43,
+      "order": 1
+    },
+    {
+      "aid1": 28,
+      "aid2": 44,
+      "order": 1
+    },
+    {
+      "aid1": 28,
+      "aid2": 45,
+      "order": 1
+    },
+    {
+      "aid1": 28,
+      "aid2": 46,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C24H18N2O2",
+  "molecular_weight": "366.4",
+  "canonical_smiles": "CC1=CC=C(C=C1)NC2=C3C4=C(C=C2)N(C(=O)C=C4C5=CC=CC=C5C3=O)C",
+  "isomeric_smiles": "CC1=CC=C(C=C1)NC2=C3C4=C(C=C2)N(C(=O)C=C4C5=CC=CC=C5C3=O)C",
+  "inchi": "InChI=1S/C24H18N2O2/c1-14-7-9-15(10-8-14)25-19-11-12-20-22-18(13-21(27)26(20)2)16-5-3-4-6-17(16)24(28)23(19)22/h3-13,25H,1-2H3",
+  "inchikey": "VJUKWPOWHJITTP-UHFFFAOYSA-N",
+  "iupac_name": "14-methyl-10-(4-methylanilino)-14-azatetracyclo[7.7.1.02,7.013,17]heptadeca-1(16),2,4,6,9,11,13(17)-heptaene-8,15-dione",
+  "xlogp": 4.7,
+  "exact_mass": "366.136827821",
+  "monoisotopic_mass": "366.136827821",
+  "tpsa": 49.4,
+  "complexity": 678,
+  "h_bond_donor_count": 1,
+  "h_bond_acceptor_count": 3,
+  "rotatable_bond_count": 2,
+  "fingerprint": "00000371E07B30000000000000000000000000000000000000003060C1820000000000C15000001E00100000000C0C81980432C083C000008802A55250008200002502000888010864C808207AC09591842188609600C8C9C71C88C08E88008040001200009001048000240000000000000000",
+  "cactvs_fingerprint": "11100000011110110011000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100000110000011000001100000100000000000000000000000000000000000000000110000010101000000000000000000000001111000000000000100000000000000000000000000000000110000001100100000011001100000000100001100101100000010000011110000000000000000000000100010000000001010100101010100100101000000000000100000100000000000000000001001010000001000000000000010001000100000000001000010000110010011001000000010000010000001111010110000001001010110010001100001000010000110001000011000001001011000000000110010001100100111000111000111001000100011000000100011101000100000000000100000000100000000000000000100100000000000000000100100000000000100000100100000000000000000100100000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 28,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

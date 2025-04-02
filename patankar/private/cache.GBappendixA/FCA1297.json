@@ -1,0 +1,58 @@
+{
+  "FCA": "1297",
+  "cid": 2724691,
+  "CAS": "822-16-2",
+  "authorized in": [
+    "plastics",
+    "rubber"
+  ],
+  "ChineseName": "硬脂酸钠",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "PVDC",
+      "UP",
+      "PBT",
+      "PEI",
+      "PPE"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  }
+}

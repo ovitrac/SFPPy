@@ -1,0 +1,45 @@
+{
+  "FCA": "0430",
+  "cid": 135854057,
+  "CAS": "43035-18-3",
+  "authorized in": [
+    "plastics",
+    "paper and board"
+  ],
+  "ChineseName": "C.I.颜料红 247;4-[[3-[[2-羟基 -3-[[(4-甲氧苯基 )]氨基 ]羰基 ]-1-萘偶氮 ]-4-甲基苯甲酰基 ]氨基 ]苯磺酸钙盐 (2∶1)",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PA",
+      "PBT",
+      "POM"
+    ],
+    "CP0max": null,
+    "QMSMLraw": ";PE,PP,PS,AS,ABS,PET,PC:1",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "应符合着色剂纯度要求",
+    "SMLTcomment": ",见注",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "paper and board": {
+    "materials": [],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

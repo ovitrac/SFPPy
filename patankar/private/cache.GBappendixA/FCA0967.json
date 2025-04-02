@@ -1,0 +1,68 @@
+{
+  "FCA": "0967",
+  "cid": null,
+  "CAS": "68515-48-0",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "paper and board"
+  ],
+  "ChineseName": "邻苯二羧酸 -二 -C8~C10支链烷基酯 (C9富集 )",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PVC"
+    ],
+    "CP0max": 430000.0,
+    "QMSMLraw": "9[以 SML(T)组号 26物质之和计 ];60[以 SML(T)组号 32物质之和计 ]",
+    "SML": [
+      26.0,
+      32.0
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": [
+      26.0,
+      32.0
+    ],
+    "SMLTraw": "",
+    "SMLTcomment": "生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于",
+    "comment1": "",
+    "comment2": "20%的食品和婴幼儿食品",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "43"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "9[以 SML(T)组号 26物质之和计 ];60[以 SML(T)组号 32物质之和计 ] 26;32 生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于 20%的食品和婴幼儿食品",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "paper and board": {
+    "materials": [
+      "43"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "9[以 SML(T)组号 26物质之和计 ];60[以 SML(T)组号 32物质之和计 ] 26;32 生产的材料或制品不得用于接触脂肪性食品、乙醇含量高于 20%的食品和婴幼儿食品",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

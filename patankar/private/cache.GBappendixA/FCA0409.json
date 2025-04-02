@@ -1,0 +1,115 @@
+{
+  "FCA": "0409",
+  "cid": 5462310,
+  "CAS": "1333-86-4",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "printing inks",
+    "paper and board"
+  ],
+  "ChineseName": "C.I.颜料黑 7;炭黑",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PMMA",
+      "PVC",
+      "PVDC",
+      "PU",
+      "UP",
+      "PF",
+      "PEI",
+      "PPE",
+      "PBT",
+      "PPS",
+      "POM",
+      "LCP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "甲苯萃取物小于",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "1%,苯并",
+    "SMLTcomment": "[a]芘含量小于",
+    "comment1": "",
+    "comment2": "0.25mg/kg;应符合着色剂纯度要求 ,见注",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用 甲苯萃取物小于 1%",
+      "苯并 [a]芘含量小于 0.25mg/kg;应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "50 甲苯萃取物小于 1%",
+      "苯并 [a]芘含量小于 0.25mg/kg;应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用 甲苯萃取物小于 1%",
+      "苯并 [a]芘含量小于 0.25mg/kg;应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用 甲苯萃取物小于 1%",
+      "苯并 [a]芘含量小于 0.25mg/kg;应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

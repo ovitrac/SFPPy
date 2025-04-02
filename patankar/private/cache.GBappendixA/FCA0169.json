@@ -1,0 +1,92 @@
+{
+  "FCA": "0169",
+  "cid": 3086034,
+  "CAS": "75641-02-0",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "paper and board"
+  ],
+  "ChineseName": "2-[(1,3-二氢 -1,3-二氧代 -2H-异吲哚基 )甲基 ]-5,12-二氢喹啉并 [2,3-b]吖啶 -7,14-二酮",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC",
+      "UP"
+    ],
+    "CP0max": 500.0,
+    "QMSMLraw": "应符合着色剂纯度要求",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": ",见注",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用 应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "按生产需要适量使用 应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用 应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

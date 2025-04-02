@@ -1,0 +1,73 @@
+{
+  "FCA": "0838",
+  "cid": 7641,
+  "CAS": [
+    "103-23-1",
+    "123-79-5"
+  ],
+  "authorized in": [
+    "plastics",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "己二酸二 (2-乙基己基 )酯 ;己二酸二辛酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC"
+    ],
+    "CP0max": 350000.0,
+    "QMSMLraw": "18(SML)",
+    "SML": 18.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 60.0,
+    "SMLTraw": "",
+    "SMLTcomment": "32",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "35"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "18(SML) 60 32",
+    "SML": 18.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "18(SML) 60 32",
+    "SML": 18.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

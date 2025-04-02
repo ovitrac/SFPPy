@@ -1,0 +1,82 @@
+{
+  "FCA": "0614",
+  "cid": null,
+  "CAS": "9003-56-9",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "丙烯腈和丁二烯与苯乙烯的三元共聚物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PS",
+      "AS",
+      "ABS",
+      "PC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(丙烯腈 :SML,DL=0.01mg/kg);ND(1,3-丁二烯 :SML,DL=0.01mg/kg)或",
+    "SML": null,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "1(1,3-丁二烯",
+    "SMLTcomment": ":QM)",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(丙烯腈 :SML,DL=0.01mg/kg);ND(1,3-丁二烯:SML,DL=0.01mg/kg)或",
+    "SML": null,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "1(1,3-丁二烯",
+    "SMLTcomment": ":QM)",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(丙烯腈 :SML,DL=0.01mg/kg);ND(1,3-丁二烯:SML,DL=0.01mg/kg)或",
+    "SML": null,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "1(1,3-丁二烯",
+    "SMLTcomment": ":QM)",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "ND(丙烯腈 :SML,DL=0.01mg/kg);ND(1,3-丁二烯:SML,DL=0.01mg/kg)或",
+    "SML": null,
+    "QM": null,
+    "DL": 0.01,
+    "SMLT": null,
+    "SMLTraw": "1(1,3-丁二烯",
+    "SMLTcomment": ":QM)",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

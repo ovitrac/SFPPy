@@ -1,0 +1,48 @@
+{
+  "FCA": "1099",
+  "cid": null,
+  "CAS": [
+    "119345-01-6",
+    "38613-77-3"
+  ],
+  "authorized in": [
+    "plastics",
+    "rubber"
+  ],
+  "ChineseName": "三氯化磷与联苯和 2,4-二叔丁基苯酚的反应产物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PC"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "18(SML)",
+    "SML": 18.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.1"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "18(SML)",
+    "SML": 18.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  }
+}

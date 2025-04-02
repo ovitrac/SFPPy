@@ -1,0 +1,46 @@
+{
+  "FCA": "0859",
+  "cid": null,
+  "CAS": "119657-58-8",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "己二酸与氧基双 [丙醇]、1,6-己二醇、1,1'-亚甲基双 (4-异氰酸根合苯 )和 2,2-二甲基 -1,3-丙二醇的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PA",
+      "PET"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1(以异氰酸根计 ,QM);0.05(1,6-己二醇 :SML)",
+    "SML": 0.05,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "ND(DL=0.01mg/kg)",
+    "SMLTcomment": "17",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1(以异氰酸根计 ,QM);0.05(1,6-己二醇 :SML)ND(DL=0.01mg/kg)",
+    "SML": 0.05,
+    "QM": 1.0,
+    "DL": null,
+    "SMLT": 17.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

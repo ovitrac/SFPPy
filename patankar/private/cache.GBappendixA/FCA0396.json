@@ -1,0 +1,92 @@
+{
+  "FCA": "0396",
+  "cid": 14806,
+  "CAS": "1314-13-2",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "paper and board"
+  ],
+  "ChineseName": "C.I.颜料白 4;氧化锌",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PEI",
+      "PPE",
+      "PBT"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "应符合着色剂纯度要求",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": ",见注",
+    "SMLTcomment": ";锌元素",
+    "comment1": "",
+    "comment2": "SML应符合附录 C规定",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用 应符合着色剂纯度要求",
+      "见注 ;锌元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "10 应符合着色剂纯度要求",
+      "见注 ;锌元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用 应符合着色剂纯度要求",
+      "见注 ;锌元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

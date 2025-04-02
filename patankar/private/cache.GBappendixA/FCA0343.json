@@ -1,0 +1,62 @@
+{
+  "FCA": "0343",
+  "cid": 7308,
+  "CAS": "96-69-5",
+  "authorized in": [
+    "plastics",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "4,4'-硫代双 (5-甲基 -2-叔丁基苯酚 )",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.48(SML)",
+    "SML": 0.48,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.48(SML)",
+    "SML": 0.48,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.48(SML)",
+    "SML": 0.48,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

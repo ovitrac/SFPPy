@@ -1,0 +1,54 @@
+{
+  "FCA": "0341",
+  "cid": 5702717,
+  "CAS": "1533-45-5",
+  "authorized in": [
+    "plastics",
+    "coatings"
+  ],
+  "ChineseName": "4,4'-双 (苯并唑 -2-基 )二苯乙烯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC"
+    ],
+    "CP0max": 250.0,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "应符合着色剂纯度要求",
+    "SMLTcomment": ",见注",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(SML) 应符合着色剂纯度要求 ,见注",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  }
+}

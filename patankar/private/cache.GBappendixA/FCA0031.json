@@ -1,0 +1,71 @@
+{
+  "FCA": "0031",
+  "cid": 92905,
+  "CAS": "1843-03-4",
+  "authorized in": [
+    "plastics",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "1,1,3-三 (2-甲基 -4-羟基 -5-叔丁苯基 )丁烷",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC"
+    ],
+    "CP0max": 2500.0,
+    "QMSMLraw": "5(SML)",
+    "SML": 5.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "用于生产接触脂肪类、醇类食品的材料或制品时",
+    "SMLTcomment": ",最大使用量为",
+    "comment1": "",
+    "comment2": "0.1%",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.25"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "5(SML) 用于生产接触脂肪类、醇类食品的材料或制品时 ,最大使用量为 0.1%",
+    "SML": 5.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "0.25"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "5(SML) 用于生产接触脂肪类、醇类食品的材料或制品时 ,最大使用量为 0.1%",
+    "SML": 5.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

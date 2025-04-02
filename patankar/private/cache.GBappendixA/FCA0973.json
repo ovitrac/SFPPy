@@ -1,0 +1,80 @@
+{
+  "FCA": "0973",
+  "cid": 14716,
+  "CAS": "1241-94-7",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "磷酸 -2-乙基己基二苯酯 ;磷酸二苯异辛酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PVC",
+      "PU"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "2.4(SML)",
+    "SML": 2.4,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "生产的材料或制品仅用于接触非脂肪性食品的材料",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "2.4(SML) 生产的材料或制品仅用于接触非脂肪性食品的材料",
+    "SML": 2.4,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "2.4(SML) 生产的材料或制品仅用于接触非脂肪性食品的材料",
+    "SML": 2.4,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "2.4(SML) 生产的材料或制品仅用于接触非脂肪性食品的材料",
+    "SML": 2.4,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

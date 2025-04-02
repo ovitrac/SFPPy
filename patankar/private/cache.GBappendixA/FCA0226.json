@@ -1,0 +1,71 @@
+{
+  "FCA": "0226",
+  "cid": null,
+  "CAS": "25609-89-6",
+  "authorized in": [
+    "coatings",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "2-丁烯酸与乙酸乙烯基酯的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(乙酸乙烯酯 :SML);0.05(丁烯酸:SML)",
+    "SML": [
+      12.0,
+      0.05
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "无相应的丁烯酸迁移量检测方法时可使用",
+    "SMLTcomment": "0.05mg/6dm2(QM)作为其限量值",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(乙酸乙烯酯 :SML);0.05(丁烯酸:SML)",
+    "SML": [
+      12.0,
+      0.05
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "无相应的丁烯酸迁移量检测方法时可使用",
+    "SMLTcomment": "0.05mg/6dm2(QM)作为其限量值",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(乙酸乙烯酯 :SML);0.05(丁烯酸:SML)",
+    "SML": [
+      12.0,
+      0.05
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "无相应的丁烯酸迁移量检测方法时可使用",
+    "SMLTcomment": "0.05mg/6dm2(QM)作为其限量值",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

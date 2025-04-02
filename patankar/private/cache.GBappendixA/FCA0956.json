@@ -1,0 +1,45 @@
+{
+  "FCA": "0956",
+  "cid": 6966,
+  "CAS": "89-32-7",
+  "authorized in": [
+    "plastics",
+    "coatings"
+  ],
+  "ChineseName": "均苯四甲酸二酐 ;1H ,3H-苯并 [1,2-c:4,5-c']二呋喃 -1,3,5,7-四酮",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PET"
+    ],
+    "CP0max": 1000.0,
+    "QMSMLraw": "0.05(以均苯四甲酸计 ,SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "生产的材料或制品仅用于接触水性、酸性和乙醇含量不超过",
+    "SMLTcomment": "20%食品",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(以均苯四甲酸计 ,SML) 生产的材料或制品仅用于接触水性、酸性和乙醇含量不超过 20%的食品",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  }
+}

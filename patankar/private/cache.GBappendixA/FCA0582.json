@@ -1,0 +1,97 @@
+{
+  "FCA": "0582",
+  "cid": null,
+  "CAS": "8042-47-5",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "白矿物油",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "LCP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "平均分子量不低于",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "480。100℃时运动黏度不低于",
+    "SMLTcomment": "8.5-6m2/×10s。矿物碳氢化合物碳原子数少于",
+    "comment1": "",
+    "comment2": "25的物质不高于 5%(质量分数 )",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用 平均分子量不低于 480。100℃时运动黏度不低于 8.5-6m2/×10s。矿物碳氢化合物碳原子数少于 25的物质不高于 5%(质量分数 )"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "45 平均分子量不低于 480。100℃时运动黏度不低于 8.5-6m2/×10s。矿物碳氢化合物碳原子数少于 25的物质不高于 5%(质量分数)。用于生产接触非脂肪性食品的材料或制品时",
+      "橡胶含量应大于 20%(质量分数 )"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用 平均分子量不低于 480。10"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用 平均分子量不低于 480。100℃时运动黏度不低于 8.5-6m2/×10s。矿物碳氢化合物碳原子数少于 25的物质不高于 5%(质量分数 )"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

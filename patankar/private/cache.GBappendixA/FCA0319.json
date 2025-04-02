@@ -1,0 +1,70 @@
+{
+  "FCA": "0319",
+  "cid": 12738,
+  "CAS": "693-36-7",
+  "authorized in": [
+    "plastics",
+    "rubber",
+    "paper and board"
+  ],
+  "ChineseName": "3,3'-硫代双丙酸二 (十八烷基 )酯",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC"
+    ],
+    "CP0max": 5000.0,
+    "QMSMLraw": "5",
+    "SML": 14.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 14.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "0.25 5 14"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用  5 14"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

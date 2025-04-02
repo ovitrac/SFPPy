@@ -1,0 +1,113 @@
+{
+  "FCA": "0469",
+  "cid": null,
+  "CAS": "12239-87-1",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "printing inks",
+    "paper and board"
+  ],
+  "ChineseName": "C.I.颜料蓝 15:1",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC",
+      "PVC",
+      "PVDC",
+      "UP",
+      "PEI",
+      "PPE",
+      "PBT"
+    ],
+    "CP0max": 10000.0,
+    "QMSMLraw": "应符合着色剂纯度要求",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": ",见注",
+    "SMLTcomment": ";铜元素",
+    "comment1": "",
+    "comment2": "SML应符合附录 C规定",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "0.25 应符合着色剂纯度要求",
+      "见注 ;铜元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "0.25 应符合着色剂纯度要求",
+      "见注 ;铜元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用 应符合着色剂纯度要求",
+      "见注 ;铜元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用 应符合着色剂纯度要求",
+      "见注 ;铜元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

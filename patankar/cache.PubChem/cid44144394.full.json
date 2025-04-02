@@ -1,0 +1,186 @@
+{
+  "cid": 44144394,
+  "synonyms": [
+    "Novasil",
+    "Novasil (aluminosilicate)",
+    "Silton AMT 08",
+    "1344-01-0",
+    "Silton JC 40",
+    "Silton JC 50",
+    "Silton JC 70",
+    "Silicic acid, aluminum calcium sodium salt",
+    "ALUMINUM CALCIUM SODIUM SILICATE",
+    "Calcium sodium aluminosilicate",
+    "Sodium calcium aluminosilicate",
+    "Sodium calcium silicoaluminate",
+    "HSDB 5824",
+    "EINECS 215-685-3",
+    "Sodium calcium silicoaluminate hydrate",
+    "NSC 746462",
+    "Aluminosilicic acid, calcium sodium salt",
+    "EC 215-685-3",
+    "HSCAS-1",
+    "HSCAS-3",
+    "DTXSID20890546",
+    "IDZYHGDLWGVHQM-UHFFFAOYSA-N",
+    "Sodium calcium aluminosilicate hydrate",
+    "Aluminosilicic acid calcium sodium salt",
+    "aluminium(3+) ion calcium sodium silicate",
+    "CALCIUM SODIUM ALUMINOSILICATE HYDRATE",
+    "ALUMINOSILICIC ACID, CALCIUM SODIUM SALT, HYDRATE",
+    "215-685-3"
+  ],
+  "sids": [
+    135341447,
+    176331243,
+    355181904,
+    449611625,
+    470316014,
+    485851428,
+    486449905,
+    488228547,
+    488412113,
+    489032294,
+    500755072,
+    504090922,
+    504206991
+  ],
+  "aids": [],
+  "elements": [
+    "Ca",
+    "Si",
+    "Al",
+    "Na",
+    "O",
+    "O",
+    "O",
+    "O"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Ca",
+      "x": 3.2071,
+      "y": 2.8284,
+      "z": null,
+      "charge": 2
+    },
+    {
+      "aid": 2,
+      "element": "Si",
+      "x": 3.2071,
+      "y": 1.4142,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "Al",
+      "x": 3.2071,
+      "y": 0,
+      "z": null,
+      "charge": 3
+    },
+    {
+      "aid": 4,
+      "element": "Na",
+      "x": 0,
+      "y": 1.1642,
+      "z": null,
+      "charge": 1
+    },
+    {
+      "aid": 5,
+      "element": "O",
+      "x": 3.9142,
+      "y": 2.1213,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 6,
+      "element": "O",
+      "x": 2.5,
+      "y": 2.1213,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 2.5,
+      "y": 0.7071,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 8,
+      "element": "O",
+      "x": 3.9142,
+      "y": 0.7071,
+      "z": null,
+      "charge": -1
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 2,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 8,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 2,
+  "molecular_formula": "AlCaNaO4Si+2",
+  "molecular_weight": "182.13",
+  "canonical_smiles": "[O-][Si]([O-])([O-])[O-].[Na+].[Al+3].[Ca+2]",
+  "isomeric_smiles": "[O-][Si]([O-])([O-])[O-].[Na+].[Al+3].[Ca+2]",
+  "inchi": "InChI=1S/Al.Ca.Na.O4Si/c;;;1-5(2,3)4/q+3;+2;+1;-4",
+  "inchikey": "IDZYHGDLWGVHQM-UHFFFAOYSA-N",
+  "iupac_name": "aluminum;calcium;sodium;silicate",
+  "xlogp": null,
+  "exact_mass": "181.8904836",
+  "monoisotopic_mass": "181.8904836",
+  "tpsa": 92.2,
+  "complexity": 19.1,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 4,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371000038280000180000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000000000000011100000101000000000000000000000011000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 8,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 4,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

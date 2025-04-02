@@ -1,0 +1,54 @@
+{
+  "FCA": "0147",
+  "cid": 3037,
+  "CAS": "97-23-4",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "2,2'-亚甲基双 (4-氯苯酚 )",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(SML)",
+    "SML": 12.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "12(SML)",
+    "SML": 12.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

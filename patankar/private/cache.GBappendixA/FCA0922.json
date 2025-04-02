@@ -1,0 +1,52 @@
+{
+  "FCA": "0922",
+  "cid": null,
+  "CAS": "1224447-95-3",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "聚对苯二甲酸丁二醇酯 -聚四氢呋喃醚的嵌段共聚物与马来酸酐的反应物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PET",
+      "PBT"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.6(四氢呋喃 :SML);5(1,4-丁二醇 :SML)",
+    "SML": [
+      0.6,
+      5.0
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": 30.0,
+    "SMLTraw": "",
+    "SMLTcomment": "3",
+    "comment1": "",
+    "comment2": "平均分子量不低于 100000;马来酸酐改性量小于 1%",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.6(四氢呋喃 :SML);5(1,4-丁二醇:SML)",
+    "SML": [
+      0.6,
+      5.0
+    ],
+    "QM": null,
+    "DL": null,
+    "SMLT": 30.0,
+    "SMLTraw": "",
+    "SMLTcomment": "3",
+    "comment1": "",
+    "comment2": "平均分子量不低于 100000;马来酸酐改性量小于 1%",
+    "table_id": "adhesives"
+  }
+}

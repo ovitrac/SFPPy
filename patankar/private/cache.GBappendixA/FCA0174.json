@@ -1,0 +1,46 @@
+{
+  "FCA": "0174",
+  "cid": 61916,
+  "CAS": "32687-78-8",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "2-[3-[3,5-双叔丁基 -4-羟基苯基 ]-丙酰基 ]肼 -3,5-双叔丁基 -4-羟基苯丙酸",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "15(SML)",
+    "SML": 15.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "0.2"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "15(SML)",
+    "SML": 15.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

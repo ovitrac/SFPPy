@@ -1,0 +1,163 @@
+{
+  "cid": 61548,
+  "synonyms": [
+    "Iron magnesium oxide (Fe2MgO4)",
+    "Magnesium ferrite",
+    "12068-86-9",
+    "Diiron magnesium tetraoxide",
+    "magnesium;oxido(oxo)iron",
+    "EINECS 235-107-3",
+    "Ferrate (feo21-), magnesium (2:1)",
+    "MgFe2O4",
+    "DTXCID0030166",
+    "235-107-3"
+  ],
+  "sids": [
+    8187582,
+    43118804,
+    74510170,
+    104323633,
+    135018464,
+    176261864,
+    319103146,
+    355161812,
+    439612305,
+    445699941,
+    453650240,
+    468714458,
+    472549460,
+    482340582,
+    488214512,
+    504092424,
+    505796251
+  ],
+  "aids": [],
+  "elements": [
+    "Fe",
+    "Fe",
+    "Mg",
+    "O",
+    "O",
+    "O",
+    "O"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Fe",
+      "x": 6.3301,
+      "y": -0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "Fe",
+      "x": 2.866,
+      "y": -0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "Mg",
+      "x": 4.5981,
+      "y": -0.25,
+      "z": null,
+      "charge": 2
+    },
+    {
+      "aid": 4,
+      "element": "O",
+      "x": 5.4641,
+      "y": 0.25,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 5,
+      "element": "O",
+      "x": 3.732,
+      "y": 0.25,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 6,
+      "element": "O",
+      "x": 7.1962,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 2,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 6,
+      "order": 2
+    },
+    {
+      "aid1": 2,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 7,
+      "order": 2
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "Fe2MgO4",
+  "molecular_weight": "199.99",
+  "canonical_smiles": "[O-][Fe]=O.[O-][Fe]=O.[Mg+2]",
+  "isomeric_smiles": "[O-][Fe]=O.[O-][Fe]=O.[Mg+2]",
+  "inchi": "InChI=1S/2Fe.Mg.4O/q;;+2;;;2*-1",
+  "inchikey": "WJUZJQANVVSKHX-UHFFFAOYSA-N",
+  "iupac_name": "magnesium;oxido(oxo)iron",
+  "xlogp": null,
+  "exact_mass": "199.834571",
+  "monoisotopic_mass": "199.834571",
+  "tpsa": 80.3,
+  "complexity": 7.5,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 4,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371000038000000202000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000000000000011100000000000000000000000000000100000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 7,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 3,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

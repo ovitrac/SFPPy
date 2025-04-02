@@ -1,0 +1,91 @@
+{
+  "FCA": "0744",
+  "cid": null,
+  "CAS": "1332-37-2",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "二价和三价氧化铁的混合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "UP"
+    ],
+    "CP0max": 30000.0,
+    "QMSMLraw": "应符合着色剂纯度要求",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": ",见注",
+    "SMLTcomment": ";铁元素",
+    "comment1": "",
+    "comment2": "SML应符合附录 C规定",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "3 应符合着色剂纯度要求",
+      "见注 ;铁元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "3 应符合着色剂纯度要求",
+      "见注 ;铁元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "3 应符合着色剂纯度要求",
+      "见注 ;铁元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

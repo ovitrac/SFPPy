@@ -1,0 +1,79 @@
+{
+  "FCA": "0131",
+  "cid": 23284,
+  "CAS": "6846-50-0",
+  "authorized in": [
+    "plastics",
+    "printing inks",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "2,2,4-三甲基 -1,3-戊二醇二异丁酸酯 ;TX-IB",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PVC"
+    ],
+    "CP0max": 100000.0,
+    "QMSMLraw": "5(SML)",
+    "SML": 5.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "仅可用于生产重复使用的",
+    "SMLTcomment": "PVC制品",
+    "comment1": "",
+    "comment2": "(包括用于食品加工的 PVC手套 ),生产的材料或制品使用温度不超过 100℃",
+    "table_id": "plastics"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "5(SML)",
+    "SML": 5.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "5(SML)",
+    "SML": 5.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "5(SML) 所生产出的材料或制品仅用于接触干性食品",
+    "SML": 5.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

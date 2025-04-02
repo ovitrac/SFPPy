@@ -1,0 +1,95 @@
+{
+  "FCA": "0827",
+  "cid": null,
+  "CAS": "8013-07-8",
+  "authorized in": [
+    "plastics",
+    "coatings",
+    "rubber",
+    "printing inks"
+  ],
+  "ChineseName": "环氧大豆油",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PET",
+      "PA",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PC",
+      "PVC",
+      "PVDC",
+      "UP",
+      "PBT",
+      "PEI",
+      "PPE"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "60",
+    "SML": 32.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 32.0,
+    "SMLTraw": "",
+    "SMLTcomment": "用于生产婴幼儿专用食品接触材料或制品时",
+    "comment1": "",
+    "comment2": ",SML应低于 30mg/kg",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用  60 32 用于生产婴幼儿专用食品接触材料或制品时",
+      "SML应低于 30mg/kg"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  },
+  "rubber": {
+    "materials": [
+      "按生产需要适量使用  60 32 用于生产婴幼儿专用食品接触材料或制品时",
+      "SML应低于 30mg/kg"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用  60 32 用于生产婴幼儿专用食品接触材料或制品时",
+      "SML应低于 30mg/kg"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  }
+}

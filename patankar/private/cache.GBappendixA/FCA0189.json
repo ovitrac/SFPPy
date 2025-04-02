@@ -1,0 +1,45 @@
+{
+  "FCA": "0189",
+  "cid": null,
+  "CAS": "25153-46-2",
+  "authorized in": [
+    "plastics",
+    "printing inks"
+  ],
+  "ChineseName": "2-丙烯酸 -2-乙基己酯与苯乙烯的聚合物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PMMA"
+    ],
+    "CP0max": 5000.0,
+    "QMSMLraw": "0.05(2-丙烯酸 -2-乙基己酯 :SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.05(2-丙烯酸 -2-乙基己酯 :SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  }
+}

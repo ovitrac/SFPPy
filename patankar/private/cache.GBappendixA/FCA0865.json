@@ -1,0 +1,49 @@
+{
+  "FCA": "0865",
+  "cid": null,
+  "CAS": "28516-43-0",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "甲基丙烯酸、乙烯的聚合物锌盐",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PA",
+      "POM",
+      "PBT",
+      "PET",
+      "TPC-ET"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6",
+    "SML": 23.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 23.0,
+    "SMLTraw": "",
+    "SMLTcomment": "锌元素",
+    "comment1": "",
+    "comment2": "SML应符合附录 C规定",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用  6 23 锌元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

@@ -219,7 +219,7 @@ class fcnrecord_ext(fcnrecord):
     For each CAS number (or each CAS in a mixture) the PubChem lookup is performed.
     The field "cid" is updated to be either a single PubChem CID or a list of CIDs.
     """
-    def __init__(self, rec, db=None):
+    def __init__(self, rec, db=None, verbosity=False):
         """
         Instantiate from a base fcnrecord.
         If a valid CAS is available, perform PubChem lookup via the 'migrant' function.
@@ -236,7 +236,8 @@ class fcnrecord_ext(fcnrecord):
                         m = migrant(cas, annex1=False)
                         cids.append(m.cid)
                     except Exception:
-                        print(f"Warning: PubChem lookup failed for CAS {cas} in record {self.get('record')}")
+                        if verbosity:
+                            print(f"Warning:: USFDAfcn.py: PubChem lookup failed for CAS {cas} in record {self.get('record')}")
                         cids.append(DEFAULT_PUBCHEM)
                 self.cid = cids
             else:
@@ -245,7 +246,8 @@ class fcnrecord_ext(fcnrecord):
                     m = migrant(cas, annex1=False)
                     self.cid = m.cid
                 except Exception:
-                    print(f"Warning: PubChem lookup failed for CAS {cas} in record {self.get('record')}")
+                    if verbosity:
+                        print(f"Warning:: USFDAfcn.py: PubChem lookup failed for CAS {cas} in record {self.get('record')}")
                     self.cid = DEFAULT_PUBCHEM
         else:
             self.cid = None

@@ -1,0 +1,52 @@
+{
+  "FCA": "0993",
+  "cid": null,
+  "CAS": "1314-98-3",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "硫化锌",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "PC",
+      "PET",
+      "PEI",
+      "PPE",
+      "PBT"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "锌元素",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "SML应符合附录",
+    "SMLTcomment": "C规定",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用 锌元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

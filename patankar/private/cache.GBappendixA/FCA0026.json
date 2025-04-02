@@ -1,0 +1,74 @@
+{
+  "FCA": "0026",
+  "cid": 6433396,
+  "CAS": [
+    "4080-31-3",
+    "51229-78-8"
+  ],
+  "authorized in": [
+    "plastics",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "1-(3-氯 -2-丙烯基 )-3,5,7-三氮杂 -1-氮鎓三环 [3.3.1.(3,7)-]癸烷氯化物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PP",
+      "PE",
+      "PS",
+      "PVC",
+      "PA",
+      "PC",
+      "ABS",
+      "AS",
+      "PET",
+      "UP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.3(SML)",
+    "SML": 0.3,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.3(SML)",
+    "SML": 0.3,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "0.3"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.3(SML)",
+    "SML": 0.3,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

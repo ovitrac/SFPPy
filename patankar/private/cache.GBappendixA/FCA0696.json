@@ -1,0 +1,50 @@
+{
+  "FCA": "0696",
+  "cid": null,
+  "CAS": [
+    "7681-65-4",
+    "1335-23-5"
+  ],
+  "authorized in": [
+    "plastics",
+    "coatings"
+  ],
+  "ChineseName": "碘化亚铜",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PA",
+      "PBT",
+      "POM"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1",
+    "SML": 6.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 6.0,
+    "SMLTraw": "",
+    "SMLTcomment": "铜元素",
+    "comment1": "",
+    "comment2": "SML应符合附录 C规定",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "按生产需要适量使用  1 6 铜元素 SML应符合附录 C规定"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  }
+}

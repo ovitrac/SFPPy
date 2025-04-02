@@ -1,0 +1,35 @@
+{
+  "FCA": "0125",
+  "cid": 3098422,
+  "CAS": "18600-59-4",
+  "authorized in": [
+    "plastics"
+  ],
+  "ChineseName": "2,2'-(1,4-亚苯基 )双 -4H-3,1-苯并嗪 -4-酮",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC"
+    ],
+    "CP0max": 10000.0,
+    "QMSMLraw": "0.05(SML)",
+    "SML": 0.05,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "FCA": "0146",
+  "cid": 8398,
+  "CAS": "119-47-1",
+  "authorized in": [
+    "plastics",
+    "rubber",
+    "adhesives"
+  ],
+  "ChineseName": "2,2'-亚甲基双 (4-甲基 -6-叔丁基苯酚 )",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP"
+    ],
+    "CP0max": null,
+    "QMSMLraw": ".",
+    "SML": 1.5,
+    "QM": null,
+    "DL": null,
+    "SMLT": 1.5,
+    "SMLTraw": "",
+    "SMLTcomment": "13",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "rubber": {
+    "materials": [
+      "按生产需要适量使用  1.5 13 用于奶嘴时",
+      "应符合相关标准的要求"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用  1.5 13"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

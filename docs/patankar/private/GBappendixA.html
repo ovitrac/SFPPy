@@ -1,0 +1,1953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>GBappendixA API documentation</title>
+<meta name="description" content="Module: GBappendixA …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>GBappendixA</code></h1>
+</header>
+<section id="section-intro">
+<p>Module: GBappendixA</p>
+<p>This module implements a robust database manager for the Chinese positive list under GB 9685-2016.
+It is modeled after the EUFCMannex1 module but with the following key differences:</p>
+<ol>
+<li>The CSV file (GB9685-2016.csv) merges 8 tables corresponding to different food contact materials.
+The table identifier is provided in the first column ("表格") and is mapped to descriptive names
+(e.g. "A1" becomes "plastics", "A2" becomes "coatings", etc.).</li>
+<li>The primary key is based on the second column ("FCA编号"). From an entry like FCAXXXX the digits
+XXXX are extracted and stored under the key "FCA". Cached files are named FCAXXXX.json.</li>
+<li>A substance may appear several times (once per material category) so that the positive list
+details (usage range, limits, restrictions, etc.) are stored in a sub-dictionary. The “authorized in”
+field is built as a list of the descriptive table names.</li>
+<li>The parsing rules for the remaining columns are as follows:</li>
+<li>Column 3 (“中文名称”): stored as "ChineseName".</li>
+<li>Column 4 (“CAS号”): stored as a string or a list if multiple CAS numbers (separated by “;”).</li>
+<li>Column 5 (“使用范围和最大使用量/%”): split into two fields within the positive list info:<ul>
+<li>"materials": a list obtained by splitting the text before “:” using commas.</li>
+<li>"CP0max": the numeric value after “:” converted from a percentage (w/w) to mg/kg via
+multiplication by $10^4$. If no “:” is present, this field is set to None.</li>
+</ul>
+</li>
+<li>Column 6 (“SML/QM/(mg/kg)”): the full raw string is stored in "QMSMLraw". It is parsed to extract:<ul>
+<li>"SML": a single or list of numeric values (ignoring “ND” entries) when the associated text contains “:SML”.</li>
+<li>"QM": a numeric value when the associated text contains “:QM”.</li>
+<li>"DL": a detection limit if a pattern like “DL=0.01mg/kg” is found.</li>
+</ul>
+</li>
+<li>Column 7 (“SML(T)/(mg/kg)”): if the field is numeric (or a semicolon‑separated list of numbers) the
+numeric value(s) are stored in "SMLT"; otherwise, the raw text is stored in "SMLTraw".</li>
+<li>Column 8 (“SML(T)”): stored as "SMLTcomment".</li>
+<li>Column 9 (“分组编号”): stored as "comment1".</li>
+<li>Column 10 (“其他要求”): stored as "comment2".</li>
+<li>Finally, the order of the fields in each record is maintained as: (1) FCA, (2) cid, (3) CAS, (4) "authorized in",
+(5) ChineseName, then the positive list details (under "table"), and finally the traceability fields "engine", "csfile" and "date".</li>
+</ol>
+<p>The extended record class, <em>gbrecord_ext</em>, automatically adds additional chemical information from PubChem.
+The main manager class, <em>GBappendixA</em>, builds an index for fast lookup by CAS, FCA (the primary key), or PubChem cid.</p>
+<p>@version: 1.41
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-01-10
+@rev: 2025-04-01</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Module: GBappendixA
+
+This module implements a robust database manager for the Chinese positive list under GB 9685-2016.
+It is modeled after the EUFCMannex1 module but with the following key differences:
+
+1. The CSV file (GB9685-2016.csv) merges 8 tables corresponding to different food contact materials.
+   The table identifier is provided in the first column (&#34;表格&#34;) and is mapped to descriptive names
+   (e.g. &#34;A1&#34; becomes &#34;plastics&#34;, &#34;A2&#34; becomes &#34;coatings&#34;, etc.).
+2. The primary key is based on the second column (&#34;FCA编号&#34;). From an entry like FCAXXXX the digits
+   XXXX are extracted and stored under the key &#34;FCA&#34;. Cached files are named FCAXXXX.json.
+3. A substance may appear several times (once per material category) so that the positive list
+   details (usage range, limits, restrictions, etc.) are stored in a sub-dictionary. The “authorized in”
+   field is built as a list of the descriptive table names.
+4. The parsing rules for the remaining columns are as follows:
+   - Column 3 (“中文名称”): stored as &#34;ChineseName&#34;.
+   - Column 4 (“CAS号”): stored as a string or a list if multiple CAS numbers (separated by “;”).
+   - Column 5 (“使用范围和最大使用量/%”): split into two fields within the positive list info:
+       - &#34;materials&#34;: a list obtained by splitting the text before “:” using commas.
+       - &#34;CP0max&#34;: the numeric value after “:” converted from a percentage (w/w) to mg/kg via
+         multiplication by $10^4$. If no “:” is present, this field is set to None.
+   - Column 6 (“SML/QM/(mg/kg)”): the full raw string is stored in &#34;QMSMLraw&#34;. It is parsed to extract:
+       - &#34;SML&#34;: a single or list of numeric values (ignoring “ND” entries) when the associated text contains “:SML”.
+       - &#34;QM&#34;: a numeric value when the associated text contains “:QM”.
+       - &#34;DL&#34;: a detection limit if a pattern like “DL=0.01mg/kg” is found.
+   - Column 7 (“SML(T)/(mg/kg)”): if the field is numeric (or a semicolon‑separated list of numbers) the
+         numeric value(s) are stored in &#34;SMLT&#34;; otherwise, the raw text is stored in &#34;SMLTraw&#34;.
+   - Column 8 (“SML(T)”): stored as &#34;SMLTcomment&#34;.
+   - Column 9 (“分组编号”): stored as &#34;comment1&#34;.
+   - Column 10 (“其他要求”): stored as &#34;comment2&#34;.
+5. Finally, the order of the fields in each record is maintained as: (1) FCA, (2) cid, (3) CAS, (4) &#34;authorized in&#34;,
+   (5) ChineseName, then the positive list details (under &#34;table&#34;), and finally the traceability fields &#34;engine&#34;, &#34;csfile&#34; and &#34;date&#34;.
+
+The extended record class, *gbrecord_ext*, automatically adds additional chemical information from PubChem.
+The main manager class, *GBappendixA*, builds an index for fast lookup by CAS, FCA (the primary key), or PubChem cid.
+
+@version: 1.41
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-01-10
+@rev: 2025-04-01
+
+&#34;&#34;&#34;
+
+import os
+import csv
+import json
+import datetime
+import re
+import textwrap
+
+__all__ = [&#39;GBappendixA&#39;, &#39;custom_wrap&#39;, &#39;extract_number_before_keyword&#39;, &#39;extract_number_before_keyword_in_parentheses&#39;, &#39;gbrecord&#39;, &#39;gbrecord_ext&#39;, &#39;split_col5_content&#39;, &#39;unwrap&#39;]
+
+
+__project__ = &#34;SFPPy&#34;
+__author__ = &#34;Olivier Vitrac&#34;
+__copyright__ = &#34;Copyright 2022&#34;
+__credits__ = [&#34;Olivier Vitrac&#34;]
+__license__ = &#34;MIT&#34;
+__maintainer__ = &#34;Olivier Vitrac&#34;
+__email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
+__version__ = &#34;1.41&#34;
+
+
+# ----------------------------------------------------------------------
+# Custom text wrapping function (similar to EU module)
+def custom_wrap(text, width=60, indent=&#34; &#34; * 22):
+    # Wrap the first line and indent subsequent lines.
+    first_line = textwrap.wrap(text, width=width)
+    if not first_line:
+        return &#34;&#34;
+    first = first_line[0]
+    remaining = text[len(first):].lstrip()
+    subsequent_lines = textwrap.wrap(remaining, width=width)
+    wrapped = [first] + [indent + line for line in subsequent_lines]
+    return &#34;\n&#34;.join(wrapped)
+
+
+# ----------------------------------------------------------------------
+# robust numeric extract for GB document
+def unwrap(value):
+    &#34;&#34;&#34;
+    Unwrap a list-like value:
+    - Return None if the value is empty or None
+    - Return the sole item if it is a singleton list or tuple
+    - Return the full list/tuple otherwise
+    &#34;&#34;&#34;
+    if not value:
+        return None
+    if isinstance(value, (list, tuple)) and len(value) == 1:
+        return value[0]
+    return value
+
+def extract_number_before_keyword_in_parentheses(text, keyword):
+    &#34;&#34;&#34;
+    Extract numbers that are immediately followed by parentheses containing a given keyword.
+
+    Example:
+        extract_number_before_keyword_in_parentheses(
+            &#39;this is 0.6 (SML) 0.5 (again SML)&#39;, &#39;SML&#39;
+        )
+        returns: [0.6, 0.5]
+
+    Behavior:
+        - If one match is found: return the number as float
+        - If no match is found: return None
+        - If multiple matches: return list of floats
+    &#34;&#34;&#34;
+    pattern = rf&#39;([+-]?\d*\.?\d+)\s*\(([^)]*{re.escape(keyword)}[^)]*)\)&#39;
+    matches = re.findall(pattern, text, re.IGNORECASE)
+    res = unwrap([float(num) for num, _ in matches])
+    return extract_number_before_keyword(text, keyword) if res is None else res
+
+
+def extract_number_before_keyword(text, keyword):
+    &#34;&#34;&#34;
+    Extract numbers that immediately precede a given keyword in the text, allowing for optional punctuation
+    or other separators between the number and the keyword (e.g. &#39;3.4 (SML)&#39;, &#39;3.4: SML&#39;, etc.)
+
+    Example:
+        extract_number_before_keyword(&#39;1.2 3.4 SML&#39;, &#39;SML&#39;)         → 3.4
+        extract_number_before_keyword(&#39;1 SML 2.0, SML again&#39;, &#39;SML&#39;) → [1, 2.0]
+        extract_number_before_keyword(&#39;4.5: SML and (5.5) SML&#39;, &#39;SML&#39;) → [4.5, 5.5]
+
+    Returns:
+        - A float or int if a single number is found
+        - A list of floats/ints if multiple matches are found
+        - None if no match
+    &#34;&#34;&#34;
+    pattern = rf&#39;([+-]?\d*\.?\d+)\s*[\W]*\s*{re.escape(keyword)}\b&#39;
+    matches = re.findall(pattern, text, re.IGNORECASE)
+    return unwrap([float(m) if &#39;.&#39; in m else int(m) for m in matches])
+
+
+def split_col5_content(text):
+    &#34;&#34;&#34;
+    Pattern to match number followed by (...) or [...] that contains a target keyword
+    &#34;&#34;&#34;
+    # True regulatory keywords
+    keywords = r&#39;(SML|DL|QM|SML\(T\))&#39;
+    # Match a value (ND or number) followed by (...) or [...] containing a keyword
+    # We will match starting FROM that value
+    pattern = re.compile(
+        r&#39;(ND|\d+(?:\.\d+)?)(\([^)]*&#39; + keywords + r&#39;[^)]*\)|\[[^\]]*&#39; + keywords + r&#39;[^\]]*\])&#39;
+    )
+    match = pattern.search(text)
+    if match:
+        idx = match.start()  # this is the correct split point: just before the match
+        main = text[:idx].strip()
+        rem = text[idx:].strip()
+        return main, rem
+    else:
+        return text.strip(), &#34;&#34;  # fallback
+
+
+# ----------------------------------------------------------------------
+# gbrecord: represents one substance record from GB 9685-2016.
+# The record stores the following keys in order:
+#   &#34;FCA&#34; (primary key extracted from FCA编号),
+#   &#34;cid&#34; (PubChem identifier),
+#   &#34;CAS&#34; (CAS number, string or list),
+#   &#34;authorized in&#34; (list of material names in which the substance is allowed),
+#   &#34;ChineseName&#34; (the substance name in Chinese),
+#   &#34;table&#34; (a list of dictionaries with the positive list details),
+#   and traceability keys &#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;.
+# ----------------------------------------------------------------------
+class gbrecord(dict):
+    def __init__(self, d, order=None, total=None):
+        if not isinstance(d, dict):
+            raise TypeError(f&#34;dict must be a dict not a {type(d).__name__}&#34;)
+        super().__init__(d)
+        self._order = d.get(&#34;FCA&#34;, order)
+        self._total = total
+
+    def __str__(self):
+        cid = self.get(&#34;cid&#34;, None)
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        return f&#34;&lt;{self.__class__.__name__} with cid:{cid} - FCA {order_str} of {total_str} (GB 9685-2016)&gt;&#34;
+
+    def __repr__(self):
+        lines = []
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        header = f&#34; ---- [ GB 9685-2016 record: {order_str} of {total_str} ] ----&#34;
+        lines.append(header)
+
+        # Define base keys to display first.
+        base_keys = {&#34;FCA&#34;, &#34;cid&#34;, &#34;CAS&#34;, &#34;authorized in&#34;, &#34;ChineseName&#34;, &#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;}
+        fields_order = [&#34;FCA&#34;, &#34;cid&#34;, &#34;CAS&#34;, &#34;authorized in&#34;, &#34;ChineseName&#34;]
+        for key in fields_order:
+            if key not in self:
+                continue
+            val = self[key]
+            if val is None or (isinstance(val, str) and not val.strip()):
+                continue
+            wrapped_val = custom_wrap(str(val), width=60, indent=&#34; &#34; * 22)
+            lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+
+        # Display branching positive list details:
+        branch_keys = [k for k in self.keys() if k not in base_keys]
+        if branch_keys:
+            lines.append(f&#34;\n{&#39;--- Positive Lists&#39;:&gt;20}:&#34;)
+            for branch in sorted(branch_keys):
+                value = self[branch]
+                lines.append(f&#34;  {branch}:&#34;)
+                # Normalize value to a list
+                entries = value if isinstance(value, list) else [value]
+                for idx, entry in enumerate(entries, start=1):
+                    lines.append(f&#34;    Entry {idx}:&#34;)
+                    if isinstance(entry, dict):
+                        for k, v in entry.items():
+                            if v is None or (isinstance(v, str) and not v.strip()):
+                                continue
+                            wrapped_v = custom_wrap(str(v), width=60, indent=&#34; &#34; * 25)
+                            lines.append(f&#34;      {k:&gt;15}: {wrapped_v}&#34;)
+                    else:
+                        wrapped_entry = custom_wrap(str(entry), width=60, indent=&#34; &#34; * 25)
+                        lines.append(f&#34;      {wrapped_entry}&#34;)
+
+        # Append traceability information.
+        for key in [&#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;]:
+            if key in self and self[key]:
+                wrapped_val = custom_wrap(str(self[key]), width=60, indent=&#34; &#34; * 22)
+                lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+        return &#34;\n&#34;.join(lines)
+
+
+# ----------------------------------------------------------------------
+# gbrecord_ext: extended record that adds chemical info from PubChem.
+# ----------------------------------------------------------------------
+class gbrecord_ext(gbrecord):
+    def __init__(self, rec, db=None):
+        if not isinstance(rec, gbrecord):
+            raise TypeError(f&#34;dict must be a gbrecord not a {type(rec).__name__}&#34;)
+        super().__init__(rec, order=rec._order, total=rec._total)
+        from patankar.loadpubchem import migrant
+        if rec.get(&#34;CAS&#34;) and (isinstance(rec.get(&#34;CAS&#34;), str) and rec.get(&#34;CAS&#34;).strip() or isinstance(rec.get(&#34;CAS&#34;), list)):
+            try:
+                m = migrant(rec.get(&#34;CAS&#34;), annex1=False)
+                M = m.M
+            except Exception:
+                print(f&#34;{rec.get(&#39;ChineseName&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
+                M = None
+        else:
+            M = None
+        self.cid = self.get(&#34;cid&#34;)
+        self.M = M
+        # Additional extended attributes (e.g. group information) can be added here.
+        # [XXX] Additional placeholders remain as needed.
+
+# ----------------------------------------------------------------------
+# GBappendixA: the main class to manage the GB 9685-2016 CSV file and cache.
+#
+# The parsing of each CSV row follows these rules:
+#
+# 1) Column 1: 表格
+#    - The code (e.g. &#34;A1&#34;) is mapped to a descriptive name (e.g. &#34;plastics&#34;) and stored in the record under &#34;authorized in&#34;.
+#
+# 2) Column 2: FCA编号
+#    - Expected in the format &#34;FCAXXXX&#34;; the digits XXXX are extracted and stored under &#34;FCA&#34;.
+#
+# 3) Column 3: 中文名称
+#    - Stored as a string under &#34;ChineseName&#34;.
+#
+# 4) Column 4: CAS号
+#    - Stored as a string or as a list (if multiple numbers are provided separated by &#34;;&#34;).
+#
+# 5) Column 5: 使用范围和最大使用量/%
+#    - Parsed to extract:
+#         * &#34;materials&#34;: a list (splitting by commas before the colon).
+#         * &#34;CP0max&#34;: the numeric value after the colon converted to mg/kg by multiplying by $10^4$.
+#       If no colon is present, &#34;CP0max&#34; is set to None.
+#
+# 6) Column 6: SML/QM/(mg/kg)
+#    - The full text is stored in &#34;QMSMLraw&#34;.
+#    - It is parsed by splitting on &#34;;&#34; to detect multiple entries.
+#      For each entry:
+#         * If the entry contains &#34;:SML&#34; and the value is not &#34;ND&#34;, the number is added to the SML list.
+#         * If the entry contains &#34;:QM&#34;, the numeric value is recorded as QM.
+#         * If a pattern like &#34;DL=0.01mg/kg&#34; is found, DL is extracted.
+#
+# 7) Column 7: SML(T)/(mg/kg)
+#    - If the field can be converted to a float (or is a semicolon‑separated list of floats), the value(s) are stored in &#34;SMLT&#34;;
+#      otherwise, the raw text is stored in &#34;SMLTraw&#34;.
+#
+# 8) Column 8: SML(T)
+#    - Stored as &#34;SMLTcomment&#34;.
+#
+# 9) Column 9: 分组编号
+#    - Stored as &#34;comment1&#34;.
+#
+# 10) Column 10: 其他要求
+#     - Stored as &#34;comment2&#34;.
+#
+# If a substance appears in several rows (i.e. in different tables), the record is merged:
+#    - The &#34;authorized in&#34; field becomes the list of all descriptive table names.
+#    - The positive list details (columns 5–10) are stored as a list under &#34;table&#34;.
+#
+# Traceability fields &#34;engine&#34;, &#34;csfile&#34; and &#34;date&#34; are appended to each record.
+#
+# A global index is built mapping keys for &#34;CAS&#34;, &#34;FCA&#34;, &#34;bycid&#34; (PubChem cid) and &#34;ChineseName&#34; to the corresponding record.
+# ----------------------------------------------------------------------
+class GBappendixA:
+    def __init__(self, cache_dir=&#34;cache.GBappendixA&#34;, index_file=&#34;gb_index.json&#34;, pubchem=True):
+        self.base_dir = os.path.dirname(__file__)
+        self.csv_file = os.path.join(self.base_dir, &#34;GB9685-2016.csv&#34;)
+        if not os.path.exists(self.csv_file):
+            raise FileNotFoundError(f&#34;CSV file {self.csv_file} not found.&#34;)
+        self.cache_dir = os.path.join(self.base_dir, cache_dir)
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+        self.index_file = os.path.join(self.cache_dir, index_file)
+        if os.path.exists(self.index_file):
+            with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                self.index = json.load(f)
+        else:
+            self.refresh_index()
+        self.order = self.index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+        self._pubchem = pubchem # we enforce pubchem, the database is initialized indeed
+        GBappendixA.isinitialized = True
+
+    @classmethod
+    def isindexinitialized(cls, cache_dir=&#34;cache.GBappendixA&#34;, index_file=&#34;gb_index.json&#34;):
+        return os.path.exists(os.path.join(os.path.dirname(__file__), cache_dir, index_file))
+
+    def refresh_index(self):
+        &#34;&#34;&#34;
+        Rebuild the global index by reading the CSV file and regenerating each record as FCAXXXX.json.
+        The index includes mappings for &#34;CAS&#34;, &#34;FCA&#34;, &#34;bycid&#34;, and &#34;ChineseName&#34;.
+        &#34;&#34;&#34;
+        # Load missing CAS numbers (only for substances with a CAS)
+        missing_file = os.path.join(self.cache_dir, &#34;missing.pubchem.gb.json&#34;)
+        if os.path.exists(missing_file):
+            with open(missing_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as mf:
+                missing_pubchem = json.load(mf)
+        else:
+            missing_pubchem = {}
+
+        new_index = {}
+        new_index[&#34;index_date&#34;] = datetime.datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+        new_index[&#34;csv_file&#34;] = os.path.basename(self.csv_file)
+        new_index[&#34;order&#34;] = []
+        new_index[&#34;CAS&#34;] = {}
+        new_index[&#34;bycid&#34;] = {}
+        new_index[&#34;FCA&#34;] = {}
+        new_index[&#34;ChineseName&#34;] = {}
+
+        # Temporary dictionary to merge records by FCA number.
+        records_dict = {}
+        # Mapping table codes to descriptive names.
+        table_mapping = {
+            &#34;A1&#34;: &#34;plastics&#34;,
+            &#34;A2&#34;: &#34;coatings&#34;,
+            &#34;A3&#34;: &#34;rubber&#34;,
+            &#34;A4&#34;: &#34;printing inks&#34;,
+            &#34;A5&#34;: &#34;adhesives&#34;,
+            &#34;A6&#34;: &#34;paper and board&#34;,
+            &#34;A7&#34;: &#34;silicon rubber&#34;,
+            &#34;A7bis&#34;: &#34;textile&#34;
+        }
+
+        from patankar.loadpubchem import migrant  # Import the PubChem lookup function
+
+        with open(self.csv_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+            reader = csv.reader(f, delimiter=&#34;,&#34;, quotechar=&#39;&#34;&#39;)
+            header = next(reader, None)
+            # Assume header row exists (starting with &#34;表格&#34;)
+            for row in reader:
+                if not row or len(row) &lt; 10:
+                    continue
+
+                # Column 1: 表格
+                table_code = row[0].strip()
+                table_desc = table_mapping.get(table_code, table_code)
+
+                # Column 2: FCA编号 (e.g. &#34;FCA0001&#34;)
+                fca_field = row[1].strip()
+                m_fca = re.search(r&#39;FCA(\d+)&#39;, fca_field)
+                if m_fca:
+                    fca_num = m_fca.group(1)
+                else:
+                    continue  # Skip row if FCA format is not recognized.
+
+                # Column 3: 中文名称
+                chinese_name = row[2].strip()
+
+                # Column 4: CAS号
+                cas_field = row[3].strip()
+                if &#34;;&#34; in cas_field:
+                    cas_value = [x.strip() for x in cas_field.split(&#34;;&#34;) if x.strip()]
+                else:
+                    cas_value = cas_field
+
+                # Column 5: 使用范围和最大使用量/%
+                range_field,remcol5 = split_col5_content(row[4].strip())
+                materials = []
+                CP0max = None
+                if &#34;:&#34; in range_field:
+                    parts = range_field.split(&#34;:&#34;)
+                    materials = [x.strip() for x in parts[0].split(&#34;,&#34;) if x.strip()]
+                    try:
+                        CP0max = float(parts[1].strip()) * 1e4
+                    except:
+                        CP0max = None
+                else:
+                    materials = [x.strip() for x in range_field.split(&#34;,&#34;) if x.strip()]
+
+                # Column 6: SML/QM/(mg/kg)
+                smlqm_field = remcol5 + row[5].strip()
+                QMSMLraw = smlqm_field
+                sml_values = []
+                qm_value = None
+                dl_value = None
+                entries = [entry.strip() for entry in smlqm_field.split(&#34;;&#34;) if entry.strip()]
+                for entry in entries:
+                    entry = entry.rstrip(&#34;或&#34;)
+                    m_entry = re.match(r&#39;(?P&lt;val&gt;\d*\.?\d+|ND)\s*\((?P&lt;info&gt;.+?)\)&#39;, entry)
+                    if m_entry:
+                        val_str = m_entry.group(&#34;val&#34;)
+                        info = m_entry.group(&#34;info&#34;)
+                        if val_str.upper() != &#34;ND&#34;:
+                            try:
+                                num_val = float(val_str)
+                            except:
+                                num_val = None
+                        else:
+                            num_val = None
+                        if &#34;:SML&#34; in info:
+                            if num_val is not None:
+                                sml_values.append(num_val)
+                        if &#34;:QM&#34; in info:
+                            if num_val is not None:
+                                qm_value = num_val
+                        dl_match = re.search(r&#39;DL=([\d\.]+)mg/kg&#39;, info)
+                        if dl_match:
+                            try:
+                                dl_value = float(dl_match.group(1))
+                            except:
+                                dl_value = None
+                SML = unwrap(sml_values)
+                QM = unwrap(qm_value)
+                DL = unwrap(dl_value)
+                # second pass for column 6
+                if SML is None and &#34;SML&#34; in smlqm_field:
+                    SML = extract_number_before_keyword_in_parentheses(smlqm_field,&#34;SML&#34;)
+                if QM is None and &#34;QM&#34; in smlqm_field:
+                    QM = extract_number_before_keyword_in_parentheses(smlqm_field, &#34;QM&#34;)
+                if DL is None and &#34;DL&#34; in smlqm_field:
+                    DL = extract_number_before_keyword_in_parentheses(smlqm_field, &#34;DL&#34;)
+
+                # Column 7: SML(T)/(mg/kg)
+                smlt_field = row[6].strip()
+                SMLT = None
+                SMLTraw = &#34;&#34;
+                if smlt_field:
+                    parts = [x.strip() for x in smlt_field.split(&#34;;&#34;) if x.strip()]
+                    parsed_parts = []
+                    for part in parts:
+                        try:
+                            parsed_parts.append(float(part))
+                        except:
+                            parsed_parts.append(part)
+                    if all(isinstance(x, float) for x in parsed_parts):
+                        SMLT = parsed_parts[0] if len(parsed_parts) == 1 else parsed_parts
+                    else:
+                        SMLT = extract_number_before_keyword_in_parentheses(smlt_field, &#34;SML&#34;)
+                        SMLTraw = smlt_field if SMLT is None else SMLTraw
+
+                # consistency rule
+                if SMLT is not None and SML is None:
+                    SML = SMLT
+
+                # Column 8: SML(T)
+                SMLTcomment = row[7].strip()
+                # Column 9: 分组编号
+                comment1 = row[8].strip()
+                # Column 10: 其他要求
+                comment2 = row[9].strip()
+
+                # Assemble the positive list info for this row.
+                pos_info = {
+                    &#34;materials&#34;: materials,
+                    &#34;CP0max&#34;: CP0max,
+                    &#34;QMSMLraw&#34;: QMSMLraw,
+                    &#34;SML&#34;: SML,
+                    &#34;QM&#34;: QM,
+                    &#34;DL&#34;: DL,
+                    &#34;SMLT&#34;: SMLT,
+                    &#34;SMLTraw&#34;: SMLTraw,
+                    &#34;SMLTcomment&#34;: SMLTcomment,
+                    &#34;comment1&#34;: comment1,
+                    &#34;comment2&#34;: comment2,
+                    &#34;table_id&#34;: table_desc
+                }
+
+                # --- Begin PubChem lookup for cid ---
+                if cas_value:
+                    if isinstance(cas_value, list):
+                        cas_lookup = cas_value[0]
+                    else:
+                        cas_lookup = cas_value
+                    if cas_lookup and cas_lookup.strip():
+                        if cas_lookup in missing_pubchem:
+                            cid_val = missing_pubchem[cas_lookup]
+                        else:
+                            try:
+                                cid_val = migrant(cas_lookup, annex1=False).cid
+                            except ValueError:
+                                print(f&#34;Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                                cid_val = None
+                                missing_pubchem[cas_lookup] = None
+                    else:
+                        cid_val = None
+                else:
+                    cid_val = None
+                # --- End PubChem lookup ---
+
+                # Prepare a temporary record for this row using columns 1-4 and traceability.
+                temp_rec = {
+                    &#34;FCA&#34;: fca_num,
+                    &#34;cid&#34;: cid_val,
+                    &#34;CAS&#34;: cas_value,
+                    &#34;authorized in&#34;: [table_desc],
+                    &#34;ChineseName&#34;: chinese_name,
+                    &#34;engine&#34;: &#34;SFPPy: GBappendixA module&#34;,
+                    &#34;csfile&#34;: os.path.basename(self.csv_file),
+                    &#34;date&#34;: new_index[&#34;index_date&#34;]
+                }
+                # The positive list details (columns 5-10) are stored in pos_info.
+                # Merge records by FCA number.
+                if fca_num in records_dict:
+                    record = records_dict[fca_num]
+                    # Update the &#34;authorized in&#34; list if the category is new.
+                    if table_desc not in record.get(&#34;authorized in&#34;, []):
+                        record[&#34;authorized in&#34;].append(table_desc)
+                    # Branch under the key corresponding to table_desc.
+                    if table_desc in record:
+                        # If an entry already exists for this category, append the new pos_info.
+                        existing = record[table_desc]
+                        if isinstance(existing, list):
+                            existing.append(pos_info)
+                        else:
+                            record[table_desc] = [existing, pos_info]
+                    else:
+                        record[table_desc] = pos_info
+                else:
+                    # For a new FCA, include the branch with key table_desc.
+                    temp_rec[table_desc] = pos_info
+                    records_dict[fca_num] = temp_rec
+
+                # Update index for CAS and ChineseName.
+                if cas_value:
+                    if isinstance(cas_value, list):
+                        for cas in cas_value:
+                            new_index[&#34;CAS&#34;].setdefault(cas, []).append(fca_num)
+                    else:
+                        new_index[&#34;CAS&#34;].setdefault(cas_value, []).append(fca_num)
+                new_index[&#34;FCA&#34;].setdefault(fca_num, []).append(fca_num)
+                new_index[&#34;ChineseName&#34;].setdefault(chinese_name, []).append(fca_num)
+
+        # Write individual record files and build the order list.
+        order_list = sorted(records_dict.keys(), key=lambda x: int(x))
+        for fca in order_list:
+            record = records_dict[fca]
+            record_filename = f&#34;FCA{int(fca):04d}.json&#34;
+            json_filename = os.path.join(self.cache_dir, record_filename)
+            with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                json.dump(record, jf, ensure_ascii=False, indent=2)
+            new_index[&#34;order&#34;].append(fca)
+            if record.get(&#34;cid&#34;) is not None:
+                new_index[&#34;bycid&#34;][str(record[&#34;cid&#34;])] = fca
+
+        with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+            json.dump(new_index, f, ensure_ascii=False, indent=2)
+        with open(missing_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as mf:
+            json.dump(missing_pubchem, mf, ensure_ascii=False, indent=2)
+        self.index = new_index
+        self.order = new_index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+
+
+    def _load_record(self, fca, order=None, db=False):
+        &#34;&#34;&#34;
+        Load a record (as a gbrecord) from its cached JSON file.
+        If PubChem extension is enabled, the record is returned as a gbrecord_ext.
+        &#34;&#34;&#34;
+        if fca in self._records_cache:
+            if self._pubchem:
+                return gbrecord_ext(self._records_cache[fca], self) if db else gbrecord_ext(self._records_cache[fca])
+            else:
+                return self._records_cache[fca]
+        json_filename = os.path.join(self.cache_dir, f&#34;FCA{int(fca):04d}.json&#34;)
+        if not os.path.exists(json_filename):
+            print(f&#34;Warning: Record file for FCA {fca} not found.&#34;)
+            return None
+        with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
+            rec = json.load(jf)
+        record_obj = gbrecord(rec, order=rec.get(&#34;FCA&#34;), total=len(self.order))
+        self._records_cache[fca] = record_obj
+        if self._pubchem:
+            return gbrecord_ext(record_obj, self) if db else gbrecord_ext(record_obj)
+        else:
+            return record_obj
+
+    def __getitem__(self, key):
+        &#34;&#34;&#34;
+        Supports lookup by:
+         - Slice: returns a list of records whose FCA numbers fall within the slice.
+         - Integer or string: interpreted as an FCA number.
+         - String: if not matching an FCA number then interpreted as a CAS number.
+         - List/tuple: returns a list of corresponding records.
+        &#34;&#34;&#34;
+        if isinstance(key, slice):
+            start = key.start if key.start is not None else min(self.order, key=lambda x: int(x))
+            stop = key.stop if key.stop is not None else max(self.order, key=lambda x: int(x)) + 1
+            rec_keys = [k for k in self.order if int(start) &lt;= int(k) &lt; int(stop)]
+            if not rec_keys:
+                raise KeyError(f&#34;No records found in range {start} to {stop - 1}. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
+            return [self._load_record(k, order=k) for k in rec_keys]
+        elif isinstance(key, (int, str)):
+            key_str = str(key)
+            if key_str in self.order:
+                return self._load_record(key_str, order=key_str)
+            elif key in self.index.get(&#34;CAS&#34;, {}):
+                rec_keys = self.index[&#34;CAS&#34;][key]
+                if len(rec_keys) == 1:
+                    return self._load_record(rec_keys[0], order=rec_keys[0])
+                else:
+                    return [self._load_record(k, order=k) for k in rec_keys]
+            else:
+                raise KeyError(f&#34;Key &#39;{key}&#39; not found. Valid keys include FCA numbers and CAS numbers.&#34;)
+        elif isinstance(key, (list, tuple)):
+            return [self.__getitem__(k) for k in key]
+        else:
+            raise KeyError(f&#34;Unsupported key type: {type(key)}&#34;)
+
+    def __call__(self, *args):
+        &#34;&#34;&#34;
+        Callable access. For example:
+         - GBappendixA(cid) returns the record for a given PubChem cid.
+         - GBappendixA(fca) returns the record for a given FCA number.
+         - GBappendixA(&#34;CAS&#34;) returns the record(s) for a given CAS number.
+         - Multiple arguments return a list.
+        &#34;&#34;&#34;
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
+            args = args[0]
+        results = []
+        for arg in args:
+            if isinstance(arg, int):
+                arg_str = str(arg)
+                if arg_str in self.order:
+                    results.append(self._load_record(arg_str))
+                elif arg_str in self.index.get(&#34;bycid&#34;, {}):
+                    fca = self.index[&#34;bycid&#34;][arg_str]
+                    results.append(self._load_record(fca))
+                else:
+                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    results.append(None)
+            elif isinstance(arg, str):
+                try:
+                    result_item = self.__getitem__(arg)
+                    if isinstance(result_item, list):
+                        results.extend(result_item)
+                    else:
+                        results.append(result_item)
+                except KeyError as e:
+                    print(e)
+                    results.append(None)
+            else:
+                raise KeyError(f&#34;Unsupported key type in call: {type(arg)}&#34;)
+        return results[0] if len(results) == 1 else results
+
+    def byCAS(self, cas):
+        if isinstance(cas, list):
+            cas = cas[0]
+        rec_keys = self.index.get(&#34;CAS&#34;, {}).get(cas, [])
+        if len(rec_keys) == 1:
+            return self._load_record(rec_keys[0], order=rec_keys[0], db=True)
+        else:
+            return [self._load_record(k, order=k, db=True) for k in rec_keys]
+
+    def byFCA(self, fca):
+        fca_str = str(fca)
+        if fca_str in self.order:
+            return self._load_record(fca_str, order=fca_str)
+        else:
+            raise KeyError(f&#34;FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
+
+    def bycid(self, cid, verbose=True):
+        cid_str = str(cid)
+        if cid_str in self.index.get(&#34;bycid&#34;, {}):
+            fca = self.index[&#34;bycid&#34;][cid_str]
+            return self._load_record(fca, order=fca, db=True)
+        else:
+            if verbose:
+                print(f&#34;Warning: No GB 9685-2016 record found for PubChem cid {cid}.&#34;)
+            return None
+
+    def __iter__(self):
+        for fca in self.order:
+            yield self._load_record(fca, order=fca)
+
+    def __len__(self):
+        return len(self.order)
+
+    def __contains__(self, item):
+        if isinstance(item, (list, tuple)):
+            item = item[0]
+        if isinstance(item, int):
+            return str(item) in self.order or str(item) in self.index.get(&#34;bycid&#34;, {})
+        if isinstance(item, str):
+            return item in self.index.get(&#34;CAS&#34;, {})
+        return False
+
+    def __repr__(self):
+        csv_filename = os.path.basename(self.csv_file)
+        index_date = self.index.get(&#34;index_date&#34;, &#34;unknown&#34;)
+        print(f&#34;GB 9685-2016 positive list ({len(self.order)} records)&#34;)
+        print(f&#34;Imported from CSV {csv_filename} and indexed on {index_date}&#34;)
+        return str(self)
+
+    def __str__(self):
+        return f&#34;&lt;{self.__class__.__name__}: {len(self.order)} records (GB 9685-2016)&gt;&#34;
+
+# -------------------------------------------------------------------
+# Example usage (for debugging / standalone tests)
+# -------------------------------------------------------------------
+if __name__ == &#34;__main__&#34;:
+    dbappendixA = GBappendixA(pubchem=True)
+    # Lookup by FCA number:
+    rec = dbappendixA.byFCA(&#34;0001&#34;)
+    print(repr(rec))
+    # Lookup by CAS:
+    try:
+        rec_by_cas = dbappendixA.byCAS(&#34;25013-16-5&#34;)
+        print(rec_by_cas)
+    except KeyError as e:
+        print(e)
+    # Lookup by PubChem cid:
+    rec_by_cid = dbappendixA.bycid(6581)
+    print(rec_by_cid)
+    # Callable access example:
+    rec_call = dbappendixA(&#34;25013-16-5&#34;)
+    print(rec_call)
+    # Iterate over records:
+    #for record in dbappendixA:
+    #    print(record.get(&#34;FCA&#34;), record.get(&#34;ChineseName&#34;))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="GBappendixA.custom_wrap"><code class="name flex">
+<span>def <span class="ident">custom_wrap</span></span>(<span>text, width=60, indent='
+')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def custom_wrap(text, width=60, indent=&#34; &#34; * 22):
+    # Wrap the first line and indent subsequent lines.
+    first_line = textwrap.wrap(text, width=width)
+    if not first_line:
+        return &#34;&#34;
+    first = first_line[0]
+    remaining = text[len(first):].lstrip()
+    subsequent_lines = textwrap.wrap(remaining, width=width)
+    wrapped = [first] + [indent + line for line in subsequent_lines]
+    return &#34;\n&#34;.join(wrapped)</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.extract_number_before_keyword"><code class="name flex">
+<span>def <span class="ident">extract_number_before_keyword</span></span>(<span>text, keyword)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract numbers that immediately precede a given keyword in the text, allowing for optional punctuation
+or other separators between the number and the keyword (e.g. '3.4 (SML)', '3.4: SML', etc.)</p>
+<h2 id="example">Example</h2>
+<p>extract_number_before_keyword('1.2 3.4 SML', 'SML')
+→ 3.4
+extract_number_before_keyword('1 SML 2.0, SML again', 'SML') → [1, 2.0]
+extract_number_before_keyword('4.5: SML and (5.5) SML', 'SML') → [4.5, 5.5]</p>
+<h2 id="returns">Returns</h2>
+<ul>
+<li>A float or int if a single number is found</li>
+<li>A list of floats/ints if multiple matches are found</li>
+<li>None if no match</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_number_before_keyword(text, keyword):
+    &#34;&#34;&#34;
+    Extract numbers that immediately precede a given keyword in the text, allowing for optional punctuation
+    or other separators between the number and the keyword (e.g. &#39;3.4 (SML)&#39;, &#39;3.4: SML&#39;, etc.)
+
+    Example:
+        extract_number_before_keyword(&#39;1.2 3.4 SML&#39;, &#39;SML&#39;)         → 3.4
+        extract_number_before_keyword(&#39;1 SML 2.0, SML again&#39;, &#39;SML&#39;) → [1, 2.0]
+        extract_number_before_keyword(&#39;4.5: SML and (5.5) SML&#39;, &#39;SML&#39;) → [4.5, 5.5]
+
+    Returns:
+        - A float or int if a single number is found
+        - A list of floats/ints if multiple matches are found
+        - None if no match
+    &#34;&#34;&#34;
+    pattern = rf&#39;([+-]?\d*\.?\d+)\s*[\W]*\s*{re.escape(keyword)}\b&#39;
+    matches = re.findall(pattern, text, re.IGNORECASE)
+    return unwrap([float(m) if &#39;.&#39; in m else int(m) for m in matches])</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.extract_number_before_keyword_in_parentheses"><code class="name flex">
+<span>def <span class="ident">extract_number_before_keyword_in_parentheses</span></span>(<span>text, keyword)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract numbers that are immediately followed by parentheses containing a given keyword.</p>
+<h2 id="example">Example</h2>
+<p>extract_number_before_keyword_in_parentheses(
+'this is 0.6 (SML) 0.5 (again SML)', 'SML'
+)
+returns: [0.6, 0.5]</p>
+<h2 id="behavior">Behavior</h2>
+<ul>
+<li>If one match is found: return the number as float</li>
+<li>If no match is found: return None</li>
+<li>If multiple matches: return list of floats</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_number_before_keyword_in_parentheses(text, keyword):
+    &#34;&#34;&#34;
+    Extract numbers that are immediately followed by parentheses containing a given keyword.
+
+    Example:
+        extract_number_before_keyword_in_parentheses(
+            &#39;this is 0.6 (SML) 0.5 (again SML)&#39;, &#39;SML&#39;
+        )
+        returns: [0.6, 0.5]
+
+    Behavior:
+        - If one match is found: return the number as float
+        - If no match is found: return None
+        - If multiple matches: return list of floats
+    &#34;&#34;&#34;
+    pattern = rf&#39;([+-]?\d*\.?\d+)\s*\(([^)]*{re.escape(keyword)}[^)]*)\)&#39;
+    matches = re.findall(pattern, text, re.IGNORECASE)
+    res = unwrap([float(num) for num, _ in matches])
+    return extract_number_before_keyword(text, keyword) if res is None else res</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.split_col5_content"><code class="name flex">
+<span>def <span class="ident">split_col5_content</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pattern to match number followed by (&hellip;) or [&hellip;] that contains a target keyword</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_col5_content(text):
+    &#34;&#34;&#34;
+    Pattern to match number followed by (...) or [...] that contains a target keyword
+    &#34;&#34;&#34;
+    # True regulatory keywords
+    keywords = r&#39;(SML|DL|QM|SML\(T\))&#39;
+    # Match a value (ND or number) followed by (...) or [...] containing a keyword
+    # We will match starting FROM that value
+    pattern = re.compile(
+        r&#39;(ND|\d+(?:\.\d+)?)(\([^)]*&#39; + keywords + r&#39;[^)]*\)|\[[^\]]*&#39; + keywords + r&#39;[^\]]*\])&#39;
+    )
+    match = pattern.search(text)
+    if match:
+        idx = match.start()  # this is the correct split point: just before the match
+        main = text[:idx].strip()
+        rem = text[idx:].strip()
+        return main, rem
+    else:
+        return text.strip(), &#34;&#34;  # fallback</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.unwrap"><code class="name flex">
+<span>def <span class="ident">unwrap</span></span>(<span>value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Unwrap a list-like value:
+- Return None if the value is empty or None
+- Return the sole item if it is a singleton list or tuple
+- Return the full list/tuple otherwise</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unwrap(value):
+    &#34;&#34;&#34;
+    Unwrap a list-like value:
+    - Return None if the value is empty or None
+    - Return the sole item if it is a singleton list or tuple
+    - Return the full list/tuple otherwise
+    &#34;&#34;&#34;
+    if not value:
+        return None
+    if isinstance(value, (list, tuple)) and len(value) == 1:
+        return value[0]
+    return value</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="GBappendixA.GBappendixA"><code class="flex name class">
+<span>class <span class="ident">GBappendixA</span></span>
+<span>(</span><span>cache_dir='cache.GBappendixA', index_file='gb_index.json', pubchem=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GBappendixA:
+    def __init__(self, cache_dir=&#34;cache.GBappendixA&#34;, index_file=&#34;gb_index.json&#34;, pubchem=True):
+        self.base_dir = os.path.dirname(__file__)
+        self.csv_file = os.path.join(self.base_dir, &#34;GB9685-2016.csv&#34;)
+        if not os.path.exists(self.csv_file):
+            raise FileNotFoundError(f&#34;CSV file {self.csv_file} not found.&#34;)
+        self.cache_dir = os.path.join(self.base_dir, cache_dir)
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+        self.index_file = os.path.join(self.cache_dir, index_file)
+        if os.path.exists(self.index_file):
+            with open(self.index_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+                self.index = json.load(f)
+        else:
+            self.refresh_index()
+        self.order = self.index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+        self._pubchem = pubchem # we enforce pubchem, the database is initialized indeed
+        GBappendixA.isinitialized = True
+
+    @classmethod
+    def isindexinitialized(cls, cache_dir=&#34;cache.GBappendixA&#34;, index_file=&#34;gb_index.json&#34;):
+        return os.path.exists(os.path.join(os.path.dirname(__file__), cache_dir, index_file))
+
+    def refresh_index(self):
+        &#34;&#34;&#34;
+        Rebuild the global index by reading the CSV file and regenerating each record as FCAXXXX.json.
+        The index includes mappings for &#34;CAS&#34;, &#34;FCA&#34;, &#34;bycid&#34;, and &#34;ChineseName&#34;.
+        &#34;&#34;&#34;
+        # Load missing CAS numbers (only for substances with a CAS)
+        missing_file = os.path.join(self.cache_dir, &#34;missing.pubchem.gb.json&#34;)
+        if os.path.exists(missing_file):
+            with open(missing_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as mf:
+                missing_pubchem = json.load(mf)
+        else:
+            missing_pubchem = {}
+
+        new_index = {}
+        new_index[&#34;index_date&#34;] = datetime.datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+        new_index[&#34;csv_file&#34;] = os.path.basename(self.csv_file)
+        new_index[&#34;order&#34;] = []
+        new_index[&#34;CAS&#34;] = {}
+        new_index[&#34;bycid&#34;] = {}
+        new_index[&#34;FCA&#34;] = {}
+        new_index[&#34;ChineseName&#34;] = {}
+
+        # Temporary dictionary to merge records by FCA number.
+        records_dict = {}
+        # Mapping table codes to descriptive names.
+        table_mapping = {
+            &#34;A1&#34;: &#34;plastics&#34;,
+            &#34;A2&#34;: &#34;coatings&#34;,
+            &#34;A3&#34;: &#34;rubber&#34;,
+            &#34;A4&#34;: &#34;printing inks&#34;,
+            &#34;A5&#34;: &#34;adhesives&#34;,
+            &#34;A6&#34;: &#34;paper and board&#34;,
+            &#34;A7&#34;: &#34;silicon rubber&#34;,
+            &#34;A7bis&#34;: &#34;textile&#34;
+        }
+
+        from patankar.loadpubchem import migrant  # Import the PubChem lookup function
+
+        with open(self.csv_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+            reader = csv.reader(f, delimiter=&#34;,&#34;, quotechar=&#39;&#34;&#39;)
+            header = next(reader, None)
+            # Assume header row exists (starting with &#34;表格&#34;)
+            for row in reader:
+                if not row or len(row) &lt; 10:
+                    continue
+
+                # Column 1: 表格
+                table_code = row[0].strip()
+                table_desc = table_mapping.get(table_code, table_code)
+
+                # Column 2: FCA编号 (e.g. &#34;FCA0001&#34;)
+                fca_field = row[1].strip()
+                m_fca = re.search(r&#39;FCA(\d+)&#39;, fca_field)
+                if m_fca:
+                    fca_num = m_fca.group(1)
+                else:
+                    continue  # Skip row if FCA format is not recognized.
+
+                # Column 3: 中文名称
+                chinese_name = row[2].strip()
+
+                # Column 4: CAS号
+                cas_field = row[3].strip()
+                if &#34;;&#34; in cas_field:
+                    cas_value = [x.strip() for x in cas_field.split(&#34;;&#34;) if x.strip()]
+                else:
+                    cas_value = cas_field
+
+                # Column 5: 使用范围和最大使用量/%
+                range_field,remcol5 = split_col5_content(row[4].strip())
+                materials = []
+                CP0max = None
+                if &#34;:&#34; in range_field:
+                    parts = range_field.split(&#34;:&#34;)
+                    materials = [x.strip() for x in parts[0].split(&#34;,&#34;) if x.strip()]
+                    try:
+                        CP0max = float(parts[1].strip()) * 1e4
+                    except:
+                        CP0max = None
+                else:
+                    materials = [x.strip() for x in range_field.split(&#34;,&#34;) if x.strip()]
+
+                # Column 6: SML/QM/(mg/kg)
+                smlqm_field = remcol5 + row[5].strip()
+                QMSMLraw = smlqm_field
+                sml_values = []
+                qm_value = None
+                dl_value = None
+                entries = [entry.strip() for entry in smlqm_field.split(&#34;;&#34;) if entry.strip()]
+                for entry in entries:
+                    entry = entry.rstrip(&#34;或&#34;)
+                    m_entry = re.match(r&#39;(?P&lt;val&gt;\d*\.?\d+|ND)\s*\((?P&lt;info&gt;.+?)\)&#39;, entry)
+                    if m_entry:
+                        val_str = m_entry.group(&#34;val&#34;)
+                        info = m_entry.group(&#34;info&#34;)
+                        if val_str.upper() != &#34;ND&#34;:
+                            try:
+                                num_val = float(val_str)
+                            except:
+                                num_val = None
+                        else:
+                            num_val = None
+                        if &#34;:SML&#34; in info:
+                            if num_val is not None:
+                                sml_values.append(num_val)
+                        if &#34;:QM&#34; in info:
+                            if num_val is not None:
+                                qm_value = num_val
+                        dl_match = re.search(r&#39;DL=([\d\.]+)mg/kg&#39;, info)
+                        if dl_match:
+                            try:
+                                dl_value = float(dl_match.group(1))
+                            except:
+                                dl_value = None
+                SML = unwrap(sml_values)
+                QM = unwrap(qm_value)
+                DL = unwrap(dl_value)
+                # second pass for column 6
+                if SML is None and &#34;SML&#34; in smlqm_field:
+                    SML = extract_number_before_keyword_in_parentheses(smlqm_field,&#34;SML&#34;)
+                if QM is None and &#34;QM&#34; in smlqm_field:
+                    QM = extract_number_before_keyword_in_parentheses(smlqm_field, &#34;QM&#34;)
+                if DL is None and &#34;DL&#34; in smlqm_field:
+                    DL = extract_number_before_keyword_in_parentheses(smlqm_field, &#34;DL&#34;)
+
+                # Column 7: SML(T)/(mg/kg)
+                smlt_field = row[6].strip()
+                SMLT = None
+                SMLTraw = &#34;&#34;
+                if smlt_field:
+                    parts = [x.strip() for x in smlt_field.split(&#34;;&#34;) if x.strip()]
+                    parsed_parts = []
+                    for part in parts:
+                        try:
+                            parsed_parts.append(float(part))
+                        except:
+                            parsed_parts.append(part)
+                    if all(isinstance(x, float) for x in parsed_parts):
+                        SMLT = parsed_parts[0] if len(parsed_parts) == 1 else parsed_parts
+                    else:
+                        SMLT = extract_number_before_keyword_in_parentheses(smlt_field, &#34;SML&#34;)
+                        SMLTraw = smlt_field if SMLT is None else SMLTraw
+
+                # consistency rule
+                if SMLT is not None and SML is None:
+                    SML = SMLT
+
+                # Column 8: SML(T)
+                SMLTcomment = row[7].strip()
+                # Column 9: 分组编号
+                comment1 = row[8].strip()
+                # Column 10: 其他要求
+                comment2 = row[9].strip()
+
+                # Assemble the positive list info for this row.
+                pos_info = {
+                    &#34;materials&#34;: materials,
+                    &#34;CP0max&#34;: CP0max,
+                    &#34;QMSMLraw&#34;: QMSMLraw,
+                    &#34;SML&#34;: SML,
+                    &#34;QM&#34;: QM,
+                    &#34;DL&#34;: DL,
+                    &#34;SMLT&#34;: SMLT,
+                    &#34;SMLTraw&#34;: SMLTraw,
+                    &#34;SMLTcomment&#34;: SMLTcomment,
+                    &#34;comment1&#34;: comment1,
+                    &#34;comment2&#34;: comment2,
+                    &#34;table_id&#34;: table_desc
+                }
+
+                # --- Begin PubChem lookup for cid ---
+                if cas_value:
+                    if isinstance(cas_value, list):
+                        cas_lookup = cas_value[0]
+                    else:
+                        cas_lookup = cas_value
+                    if cas_lookup and cas_lookup.strip():
+                        if cas_lookup in missing_pubchem:
+                            cid_val = missing_pubchem[cas_lookup]
+                        else:
+                            try:
+                                cid_val = migrant(cas_lookup, annex1=False).cid
+                            except ValueError:
+                                print(f&#34;Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                                cid_val = None
+                                missing_pubchem[cas_lookup] = None
+                    else:
+                        cid_val = None
+                else:
+                    cid_val = None
+                # --- End PubChem lookup ---
+
+                # Prepare a temporary record for this row using columns 1-4 and traceability.
+                temp_rec = {
+                    &#34;FCA&#34;: fca_num,
+                    &#34;cid&#34;: cid_val,
+                    &#34;CAS&#34;: cas_value,
+                    &#34;authorized in&#34;: [table_desc],
+                    &#34;ChineseName&#34;: chinese_name,
+                    &#34;engine&#34;: &#34;SFPPy: GBappendixA module&#34;,
+                    &#34;csfile&#34;: os.path.basename(self.csv_file),
+                    &#34;date&#34;: new_index[&#34;index_date&#34;]
+                }
+                # The positive list details (columns 5-10) are stored in pos_info.
+                # Merge records by FCA number.
+                if fca_num in records_dict:
+                    record = records_dict[fca_num]
+                    # Update the &#34;authorized in&#34; list if the category is new.
+                    if table_desc not in record.get(&#34;authorized in&#34;, []):
+                        record[&#34;authorized in&#34;].append(table_desc)
+                    # Branch under the key corresponding to table_desc.
+                    if table_desc in record:
+                        # If an entry already exists for this category, append the new pos_info.
+                        existing = record[table_desc]
+                        if isinstance(existing, list):
+                            existing.append(pos_info)
+                        else:
+                            record[table_desc] = [existing, pos_info]
+                    else:
+                        record[table_desc] = pos_info
+                else:
+                    # For a new FCA, include the branch with key table_desc.
+                    temp_rec[table_desc] = pos_info
+                    records_dict[fca_num] = temp_rec
+
+                # Update index for CAS and ChineseName.
+                if cas_value:
+                    if isinstance(cas_value, list):
+                        for cas in cas_value:
+                            new_index[&#34;CAS&#34;].setdefault(cas, []).append(fca_num)
+                    else:
+                        new_index[&#34;CAS&#34;].setdefault(cas_value, []).append(fca_num)
+                new_index[&#34;FCA&#34;].setdefault(fca_num, []).append(fca_num)
+                new_index[&#34;ChineseName&#34;].setdefault(chinese_name, []).append(fca_num)
+
+        # Write individual record files and build the order list.
+        order_list = sorted(records_dict.keys(), key=lambda x: int(x))
+        for fca in order_list:
+            record = records_dict[fca]
+            record_filename = f&#34;FCA{int(fca):04d}.json&#34;
+            json_filename = os.path.join(self.cache_dir, record_filename)
+            with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+                json.dump(record, jf, ensure_ascii=False, indent=2)
+            new_index[&#34;order&#34;].append(fca)
+            if record.get(&#34;cid&#34;) is not None:
+                new_index[&#34;bycid&#34;][str(record[&#34;cid&#34;])] = fca
+
+        with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+            json.dump(new_index, f, ensure_ascii=False, indent=2)
+        with open(missing_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as mf:
+            json.dump(missing_pubchem, mf, ensure_ascii=False, indent=2)
+        self.index = new_index
+        self.order = new_index.get(&#34;order&#34;, [])
+        self._records_cache = {}
+
+
+    def _load_record(self, fca, order=None, db=False):
+        &#34;&#34;&#34;
+        Load a record (as a gbrecord) from its cached JSON file.
+        If PubChem extension is enabled, the record is returned as a gbrecord_ext.
+        &#34;&#34;&#34;
+        if fca in self._records_cache:
+            if self._pubchem:
+                return gbrecord_ext(self._records_cache[fca], self) if db else gbrecord_ext(self._records_cache[fca])
+            else:
+                return self._records_cache[fca]
+        json_filename = os.path.join(self.cache_dir, f&#34;FCA{int(fca):04d}.json&#34;)
+        if not os.path.exists(json_filename):
+            print(f&#34;Warning: Record file for FCA {fca} not found.&#34;)
+            return None
+        with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
+            rec = json.load(jf)
+        record_obj = gbrecord(rec, order=rec.get(&#34;FCA&#34;), total=len(self.order))
+        self._records_cache[fca] = record_obj
+        if self._pubchem:
+            return gbrecord_ext(record_obj, self) if db else gbrecord_ext(record_obj)
+        else:
+            return record_obj
+
+    def __getitem__(self, key):
+        &#34;&#34;&#34;
+        Supports lookup by:
+         - Slice: returns a list of records whose FCA numbers fall within the slice.
+         - Integer or string: interpreted as an FCA number.
+         - String: if not matching an FCA number then interpreted as a CAS number.
+         - List/tuple: returns a list of corresponding records.
+        &#34;&#34;&#34;
+        if isinstance(key, slice):
+            start = key.start if key.start is not None else min(self.order, key=lambda x: int(x))
+            stop = key.stop if key.stop is not None else max(self.order, key=lambda x: int(x)) + 1
+            rec_keys = [k for k in self.order if int(start) &lt;= int(k) &lt; int(stop)]
+            if not rec_keys:
+                raise KeyError(f&#34;No records found in range {start} to {stop - 1}. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
+            return [self._load_record(k, order=k) for k in rec_keys]
+        elif isinstance(key, (int, str)):
+            key_str = str(key)
+            if key_str in self.order:
+                return self._load_record(key_str, order=key_str)
+            elif key in self.index.get(&#34;CAS&#34;, {}):
+                rec_keys = self.index[&#34;CAS&#34;][key]
+                if len(rec_keys) == 1:
+                    return self._load_record(rec_keys[0], order=rec_keys[0])
+                else:
+                    return [self._load_record(k, order=k) for k in rec_keys]
+            else:
+                raise KeyError(f&#34;Key &#39;{key}&#39; not found. Valid keys include FCA numbers and CAS numbers.&#34;)
+        elif isinstance(key, (list, tuple)):
+            return [self.__getitem__(k) for k in key]
+        else:
+            raise KeyError(f&#34;Unsupported key type: {type(key)}&#34;)
+
+    def __call__(self, *args):
+        &#34;&#34;&#34;
+        Callable access. For example:
+         - GBappendixA(cid) returns the record for a given PubChem cid.
+         - GBappendixA(fca) returns the record for a given FCA number.
+         - GBappendixA(&#34;CAS&#34;) returns the record(s) for a given CAS number.
+         - Multiple arguments return a list.
+        &#34;&#34;&#34;
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
+            args = args[0]
+        results = []
+        for arg in args:
+            if isinstance(arg, int):
+                arg_str = str(arg)
+                if arg_str in self.order:
+                    results.append(self._load_record(arg_str))
+                elif arg_str in self.index.get(&#34;bycid&#34;, {}):
+                    fca = self.index[&#34;bycid&#34;][arg_str]
+                    results.append(self._load_record(fca))
+                else:
+                    print(f&#34;Warning: Record for identifier {arg} not found.&#34;)
+                    results.append(None)
+            elif isinstance(arg, str):
+                try:
+                    result_item = self.__getitem__(arg)
+                    if isinstance(result_item, list):
+                        results.extend(result_item)
+                    else:
+                        results.append(result_item)
+                except KeyError as e:
+                    print(e)
+                    results.append(None)
+            else:
+                raise KeyError(f&#34;Unsupported key type in call: {type(arg)}&#34;)
+        return results[0] if len(results) == 1 else results
+
+    def byCAS(self, cas):
+        if isinstance(cas, list):
+            cas = cas[0]
+        rec_keys = self.index.get(&#34;CAS&#34;, {}).get(cas, [])
+        if len(rec_keys) == 1:
+            return self._load_record(rec_keys[0], order=rec_keys[0], db=True)
+        else:
+            return [self._load_record(k, order=k, db=True) for k in rec_keys]
+
+    def byFCA(self, fca):
+        fca_str = str(fca)
+        if fca_str in self.order:
+            return self._load_record(fca_str, order=fca_str)
+        else:
+            raise KeyError(f&#34;FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)
+
+    def bycid(self, cid, verbose=True):
+        cid_str = str(cid)
+        if cid_str in self.index.get(&#34;bycid&#34;, {}):
+            fca = self.index[&#34;bycid&#34;][cid_str]
+            return self._load_record(fca, order=fca, db=True)
+        else:
+            if verbose:
+                print(f&#34;Warning: No GB 9685-2016 record found for PubChem cid {cid}.&#34;)
+            return None
+
+    def __iter__(self):
+        for fca in self.order:
+            yield self._load_record(fca, order=fca)
+
+    def __len__(self):
+        return len(self.order)
+
+    def __contains__(self, item):
+        if isinstance(item, (list, tuple)):
+            item = item[0]
+        if isinstance(item, int):
+            return str(item) in self.order or str(item) in self.index.get(&#34;bycid&#34;, {})
+        if isinstance(item, str):
+            return item in self.index.get(&#34;CAS&#34;, {})
+        return False
+
+    def __repr__(self):
+        csv_filename = os.path.basename(self.csv_file)
+        index_date = self.index.get(&#34;index_date&#34;, &#34;unknown&#34;)
+        print(f&#34;GB 9685-2016 positive list ({len(self.order)} records)&#34;)
+        print(f&#34;Imported from CSV {csv_filename} and indexed on {index_date}&#34;)
+        return str(self)
+
+    def __str__(self):
+        return f&#34;&lt;{self.__class__.__name__}: {len(self.order)} records (GB 9685-2016)&gt;&#34;</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="GBappendixA.GBappendixA.isindexinitialized"><code class="name flex">
+<span>def <span class="ident">isindexinitialized</span></span>(<span>cache_dir='cache.GBappendixA', index_file='gb_index.json')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def isindexinitialized(cls, cache_dir=&#34;cache.GBappendixA&#34;, index_file=&#34;gb_index.json&#34;):
+    return os.path.exists(os.path.join(os.path.dirname(__file__), cache_dir, index_file))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="GBappendixA.GBappendixA.byCAS"><code class="name flex">
+<span>def <span class="ident">byCAS</span></span>(<span>self, cas)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def byCAS(self, cas):
+    if isinstance(cas, list):
+        cas = cas[0]
+    rec_keys = self.index.get(&#34;CAS&#34;, {}).get(cas, [])
+    if len(rec_keys) == 1:
+        return self._load_record(rec_keys[0], order=rec_keys[0], db=True)
+    else:
+        return [self._load_record(k, order=k, db=True) for k in rec_keys]</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.GBappendixA.byFCA"><code class="name flex">
+<span>def <span class="ident">byFCA</span></span>(<span>self, fca)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def byFCA(self, fca):
+    fca_str = str(fca)
+    if fca_str in self.order:
+        return self._load_record(fca_str, order=fca_str)
+    else:
+        raise KeyError(f&#34;FCA number {fca} not found. Valid FCA numbers range from {min(self.order)} to {max(self.order)}.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.GBappendixA.bycid"><code class="name flex">
+<span>def <span class="ident">bycid</span></span>(<span>self, cid, verbose=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bycid(self, cid, verbose=True):
+    cid_str = str(cid)
+    if cid_str in self.index.get(&#34;bycid&#34;, {}):
+        fca = self.index[&#34;bycid&#34;][cid_str]
+        return self._load_record(fca, order=fca, db=True)
+    else:
+        if verbose:
+            print(f&#34;Warning: No GB 9685-2016 record found for PubChem cid {cid}.&#34;)
+        return None</code></pre>
+</details>
+</dd>
+<dt id="GBappendixA.GBappendixA.refresh_index"><code class="name flex">
+<span>def <span class="ident">refresh_index</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rebuild the global index by reading the CSV file and regenerating each record as FCAXXXX.json.
+The index includes mappings for "CAS", "FCA", "bycid", and "ChineseName".</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def refresh_index(self):
+    &#34;&#34;&#34;
+    Rebuild the global index by reading the CSV file and regenerating each record as FCAXXXX.json.
+    The index includes mappings for &#34;CAS&#34;, &#34;FCA&#34;, &#34;bycid&#34;, and &#34;ChineseName&#34;.
+    &#34;&#34;&#34;
+    # Load missing CAS numbers (only for substances with a CAS)
+    missing_file = os.path.join(self.cache_dir, &#34;missing.pubchem.gb.json&#34;)
+    if os.path.exists(missing_file):
+        with open(missing_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as mf:
+            missing_pubchem = json.load(mf)
+    else:
+        missing_pubchem = {}
+
+    new_index = {}
+    new_index[&#34;index_date&#34;] = datetime.datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+    new_index[&#34;csv_file&#34;] = os.path.basename(self.csv_file)
+    new_index[&#34;order&#34;] = []
+    new_index[&#34;CAS&#34;] = {}
+    new_index[&#34;bycid&#34;] = {}
+    new_index[&#34;FCA&#34;] = {}
+    new_index[&#34;ChineseName&#34;] = {}
+
+    # Temporary dictionary to merge records by FCA number.
+    records_dict = {}
+    # Mapping table codes to descriptive names.
+    table_mapping = {
+        &#34;A1&#34;: &#34;plastics&#34;,
+        &#34;A2&#34;: &#34;coatings&#34;,
+        &#34;A3&#34;: &#34;rubber&#34;,
+        &#34;A4&#34;: &#34;printing inks&#34;,
+        &#34;A5&#34;: &#34;adhesives&#34;,
+        &#34;A6&#34;: &#34;paper and board&#34;,
+        &#34;A7&#34;: &#34;silicon rubber&#34;,
+        &#34;A7bis&#34;: &#34;textile&#34;
+    }
+
+    from patankar.loadpubchem import migrant  # Import the PubChem lookup function
+
+    with open(self.csv_file, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+        reader = csv.reader(f, delimiter=&#34;,&#34;, quotechar=&#39;&#34;&#39;)
+        header = next(reader, None)
+        # Assume header row exists (starting with &#34;表格&#34;)
+        for row in reader:
+            if not row or len(row) &lt; 10:
+                continue
+
+            # Column 1: 表格
+            table_code = row[0].strip()
+            table_desc = table_mapping.get(table_code, table_code)
+
+            # Column 2: FCA编号 (e.g. &#34;FCA0001&#34;)
+            fca_field = row[1].strip()
+            m_fca = re.search(r&#39;FCA(\d+)&#39;, fca_field)
+            if m_fca:
+                fca_num = m_fca.group(1)
+            else:
+                continue  # Skip row if FCA format is not recognized.
+
+            # Column 3: 中文名称
+            chinese_name = row[2].strip()
+
+            # Column 4: CAS号
+            cas_field = row[3].strip()
+            if &#34;;&#34; in cas_field:
+                cas_value = [x.strip() for x in cas_field.split(&#34;;&#34;) if x.strip()]
+            else:
+                cas_value = cas_field
+
+            # Column 5: 使用范围和最大使用量/%
+            range_field,remcol5 = split_col5_content(row[4].strip())
+            materials = []
+            CP0max = None
+            if &#34;:&#34; in range_field:
+                parts = range_field.split(&#34;:&#34;)
+                materials = [x.strip() for x in parts[0].split(&#34;,&#34;) if x.strip()]
+                try:
+                    CP0max = float(parts[1].strip()) * 1e4
+                except:
+                    CP0max = None
+            else:
+                materials = [x.strip() for x in range_field.split(&#34;,&#34;) if x.strip()]
+
+            # Column 6: SML/QM/(mg/kg)
+            smlqm_field = remcol5 + row[5].strip()
+            QMSMLraw = smlqm_field
+            sml_values = []
+            qm_value = None
+            dl_value = None
+            entries = [entry.strip() for entry in smlqm_field.split(&#34;;&#34;) if entry.strip()]
+            for entry in entries:
+                entry = entry.rstrip(&#34;或&#34;)
+                m_entry = re.match(r&#39;(?P&lt;val&gt;\d*\.?\d+|ND)\s*\((?P&lt;info&gt;.+?)\)&#39;, entry)
+                if m_entry:
+                    val_str = m_entry.group(&#34;val&#34;)
+                    info = m_entry.group(&#34;info&#34;)
+                    if val_str.upper() != &#34;ND&#34;:
+                        try:
+                            num_val = float(val_str)
+                        except:
+                            num_val = None
+                    else:
+                        num_val = None
+                    if &#34;:SML&#34; in info:
+                        if num_val is not None:
+                            sml_values.append(num_val)
+                    if &#34;:QM&#34; in info:
+                        if num_val is not None:
+                            qm_value = num_val
+                    dl_match = re.search(r&#39;DL=([\d\.]+)mg/kg&#39;, info)
+                    if dl_match:
+                        try:
+                            dl_value = float(dl_match.group(1))
+                        except:
+                            dl_value = None
+            SML = unwrap(sml_values)
+            QM = unwrap(qm_value)
+            DL = unwrap(dl_value)
+            # second pass for column 6
+            if SML is None and &#34;SML&#34; in smlqm_field:
+                SML = extract_number_before_keyword_in_parentheses(smlqm_field,&#34;SML&#34;)
+            if QM is None and &#34;QM&#34; in smlqm_field:
+                QM = extract_number_before_keyword_in_parentheses(smlqm_field, &#34;QM&#34;)
+            if DL is None and &#34;DL&#34; in smlqm_field:
+                DL = extract_number_before_keyword_in_parentheses(smlqm_field, &#34;DL&#34;)
+
+            # Column 7: SML(T)/(mg/kg)
+            smlt_field = row[6].strip()
+            SMLT = None
+            SMLTraw = &#34;&#34;
+            if smlt_field:
+                parts = [x.strip() for x in smlt_field.split(&#34;;&#34;) if x.strip()]
+                parsed_parts = []
+                for part in parts:
+                    try:
+                        parsed_parts.append(float(part))
+                    except:
+                        parsed_parts.append(part)
+                if all(isinstance(x, float) for x in parsed_parts):
+                    SMLT = parsed_parts[0] if len(parsed_parts) == 1 else parsed_parts
+                else:
+                    SMLT = extract_number_before_keyword_in_parentheses(smlt_field, &#34;SML&#34;)
+                    SMLTraw = smlt_field if SMLT is None else SMLTraw
+
+            # consistency rule
+            if SMLT is not None and SML is None:
+                SML = SMLT
+
+            # Column 8: SML(T)
+            SMLTcomment = row[7].strip()
+            # Column 9: 分组编号
+            comment1 = row[8].strip()
+            # Column 10: 其他要求
+            comment2 = row[9].strip()
+
+            # Assemble the positive list info for this row.
+            pos_info = {
+                &#34;materials&#34;: materials,
+                &#34;CP0max&#34;: CP0max,
+                &#34;QMSMLraw&#34;: QMSMLraw,
+                &#34;SML&#34;: SML,
+                &#34;QM&#34;: QM,
+                &#34;DL&#34;: DL,
+                &#34;SMLT&#34;: SMLT,
+                &#34;SMLTraw&#34;: SMLTraw,
+                &#34;SMLTcomment&#34;: SMLTcomment,
+                &#34;comment1&#34;: comment1,
+                &#34;comment2&#34;: comment2,
+                &#34;table_id&#34;: table_desc
+            }
+
+            # --- Begin PubChem lookup for cid ---
+            if cas_value:
+                if isinstance(cas_value, list):
+                    cas_lookup = cas_value[0]
+                else:
+                    cas_lookup = cas_value
+                if cas_lookup and cas_lookup.strip():
+                    if cas_lookup in missing_pubchem:
+                        cid_val = missing_pubchem[cas_lookup]
+                    else:
+                        try:
+                            cid_val = migrant(cas_lookup, annex1=False).cid
+                        except ValueError:
+                            print(f&#34;Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                            cid_val = None
+                            missing_pubchem[cas_lookup] = None
+                else:
+                    cid_val = None
+            else:
+                cid_val = None
+            # --- End PubChem lookup ---
+
+            # Prepare a temporary record for this row using columns 1-4 and traceability.
+            temp_rec = {
+                &#34;FCA&#34;: fca_num,
+                &#34;cid&#34;: cid_val,
+                &#34;CAS&#34;: cas_value,
+                &#34;authorized in&#34;: [table_desc],
+                &#34;ChineseName&#34;: chinese_name,
+                &#34;engine&#34;: &#34;SFPPy: GBappendixA module&#34;,
+                &#34;csfile&#34;: os.path.basename(self.csv_file),
+                &#34;date&#34;: new_index[&#34;index_date&#34;]
+            }
+            # The positive list details (columns 5-10) are stored in pos_info.
+            # Merge records by FCA number.
+            if fca_num in records_dict:
+                record = records_dict[fca_num]
+                # Update the &#34;authorized in&#34; list if the category is new.
+                if table_desc not in record.get(&#34;authorized in&#34;, []):
+                    record[&#34;authorized in&#34;].append(table_desc)
+                # Branch under the key corresponding to table_desc.
+                if table_desc in record:
+                    # If an entry already exists for this category, append the new pos_info.
+                    existing = record[table_desc]
+                    if isinstance(existing, list):
+                        existing.append(pos_info)
+                    else:
+                        record[table_desc] = [existing, pos_info]
+                else:
+                    record[table_desc] = pos_info
+            else:
+                # For a new FCA, include the branch with key table_desc.
+                temp_rec[table_desc] = pos_info
+                records_dict[fca_num] = temp_rec
+
+            # Update index for CAS and ChineseName.
+            if cas_value:
+                if isinstance(cas_value, list):
+                    for cas in cas_value:
+                        new_index[&#34;CAS&#34;].setdefault(cas, []).append(fca_num)
+                else:
+                    new_index[&#34;CAS&#34;].setdefault(cas_value, []).append(fca_num)
+            new_index[&#34;FCA&#34;].setdefault(fca_num, []).append(fca_num)
+            new_index[&#34;ChineseName&#34;].setdefault(chinese_name, []).append(fca_num)
+
+    # Write individual record files and build the order list.
+    order_list = sorted(records_dict.keys(), key=lambda x: int(x))
+    for fca in order_list:
+        record = records_dict[fca]
+        record_filename = f&#34;FCA{int(fca):04d}.json&#34;
+        json_filename = os.path.join(self.cache_dir, record_filename)
+        with open(json_filename, &#34;w&#34;, encoding=&#34;utf-8&#34;) as jf:
+            json.dump(record, jf, ensure_ascii=False, indent=2)
+        new_index[&#34;order&#34;].append(fca)
+        if record.get(&#34;cid&#34;) is not None:
+            new_index[&#34;bycid&#34;][str(record[&#34;cid&#34;])] = fca
+
+    with open(self.index_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+        json.dump(new_index, f, ensure_ascii=False, indent=2)
+    with open(missing_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as mf:
+        json.dump(missing_pubchem, mf, ensure_ascii=False, indent=2)
+    self.index = new_index
+    self.order = new_index.get(&#34;order&#34;, [])
+    self._records_cache = {}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="GBappendixA.gbrecord"><code class="flex name class">
+<span>class <span class="ident">gbrecord</span></span>
+<span>(</span><span>d, order=None, total=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class gbrecord(dict):
+    def __init__(self, d, order=None, total=None):
+        if not isinstance(d, dict):
+            raise TypeError(f&#34;dict must be a dict not a {type(d).__name__}&#34;)
+        super().__init__(d)
+        self._order = d.get(&#34;FCA&#34;, order)
+        self._total = total
+
+    def __str__(self):
+        cid = self.get(&#34;cid&#34;, None)
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        return f&#34;&lt;{self.__class__.__name__} with cid:{cid} - FCA {order_str} of {total_str} (GB 9685-2016)&gt;&#34;
+
+    def __repr__(self):
+        lines = []
+        order_str = f&#34;{self._order}&#34; if self._order is not None else &#34;?&#34;
+        total_str = f&#34;{self._total}&#34; if self._total is not None else &#34;?&#34;
+        header = f&#34; ---- [ GB 9685-2016 record: {order_str} of {total_str} ] ----&#34;
+        lines.append(header)
+
+        # Define base keys to display first.
+        base_keys = {&#34;FCA&#34;, &#34;cid&#34;, &#34;CAS&#34;, &#34;authorized in&#34;, &#34;ChineseName&#34;, &#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;}
+        fields_order = [&#34;FCA&#34;, &#34;cid&#34;, &#34;CAS&#34;, &#34;authorized in&#34;, &#34;ChineseName&#34;]
+        for key in fields_order:
+            if key not in self:
+                continue
+            val = self[key]
+            if val is None or (isinstance(val, str) and not val.strip()):
+                continue
+            wrapped_val = custom_wrap(str(val), width=60, indent=&#34; &#34; * 22)
+            lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+
+        # Display branching positive list details:
+        branch_keys = [k for k in self.keys() if k not in base_keys]
+        if branch_keys:
+            lines.append(f&#34;\n{&#39;--- Positive Lists&#39;:&gt;20}:&#34;)
+            for branch in sorted(branch_keys):
+                value = self[branch]
+                lines.append(f&#34;  {branch}:&#34;)
+                # Normalize value to a list
+                entries = value if isinstance(value, list) else [value]
+                for idx, entry in enumerate(entries, start=1):
+                    lines.append(f&#34;    Entry {idx}:&#34;)
+                    if isinstance(entry, dict):
+                        for k, v in entry.items():
+                            if v is None or (isinstance(v, str) and not v.strip()):
+                                continue
+                            wrapped_v = custom_wrap(str(v), width=60, indent=&#34; &#34; * 25)
+                            lines.append(f&#34;      {k:&gt;15}: {wrapped_v}&#34;)
+                    else:
+                        wrapped_entry = custom_wrap(str(entry), width=60, indent=&#34; &#34; * 25)
+                        lines.append(f&#34;      {wrapped_entry}&#34;)
+
+        # Append traceability information.
+        for key in [&#34;engine&#34;, &#34;csfile&#34;, &#34;date&#34;]:
+            if key in self and self[key]:
+                wrapped_val = custom_wrap(str(self[key]), width=60, indent=&#34; &#34; * 22)
+                lines.append(f&#34;{key:&gt;20}: {wrapped_val}&#34;)
+        return &#34;\n&#34;.join(lines)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="GBappendixA.gbrecord_ext" href="#GBappendixA.gbrecord_ext">gbrecord_ext</a></li>
+</ul>
+</dd>
+<dt id="GBappendixA.gbrecord_ext"><code class="flex name class">
+<span>class <span class="ident">gbrecord_ext</span></span>
+<span>(</span><span>rec, db=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class gbrecord_ext(gbrecord):
+    def __init__(self, rec, db=None):
+        if not isinstance(rec, gbrecord):
+            raise TypeError(f&#34;dict must be a gbrecord not a {type(rec).__name__}&#34;)
+        super().__init__(rec, order=rec._order, total=rec._total)
+        from patankar.loadpubchem import migrant
+        if rec.get(&#34;CAS&#34;) and (isinstance(rec.get(&#34;CAS&#34;), str) and rec.get(&#34;CAS&#34;).strip() or isinstance(rec.get(&#34;CAS&#34;), list)):
+            try:
+                m = migrant(rec.get(&#34;CAS&#34;), annex1=False)
+                M = m.M
+            except Exception:
+                print(f&#34;{rec.get(&#39;ChineseName&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
+                M = None
+        else:
+            M = None
+        self.cid = self.get(&#34;cid&#34;)
+        self.M = M
+        # Additional extended attributes (e.g. group information) can be added here.
+        # [XXX] Additional placeholders remain as needed.</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="GBappendixA.gbrecord" href="#GBappendixA.gbrecord">gbrecord</a></li>
+<li>builtins.dict</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="GBappendixA.custom_wrap" href="#GBappendixA.custom_wrap">custom_wrap</a></code></li>
+<li><code><a title="GBappendixA.extract_number_before_keyword" href="#GBappendixA.extract_number_before_keyword">extract_number_before_keyword</a></code></li>
+<li><code><a title="GBappendixA.extract_number_before_keyword_in_parentheses" href="#GBappendixA.extract_number_before_keyword_in_parentheses">extract_number_before_keyword_in_parentheses</a></code></li>
+<li><code><a title="GBappendixA.split_col5_content" href="#GBappendixA.split_col5_content">split_col5_content</a></code></li>
+<li><code><a title="GBappendixA.unwrap" href="#GBappendixA.unwrap">unwrap</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="GBappendixA.GBappendixA" href="#GBappendixA.GBappendixA">GBappendixA</a></code></h4>
+<ul class="">
+<li><code><a title="GBappendixA.GBappendixA.byCAS" href="#GBappendixA.GBappendixA.byCAS">byCAS</a></code></li>
+<li><code><a title="GBappendixA.GBappendixA.byFCA" href="#GBappendixA.GBappendixA.byFCA">byFCA</a></code></li>
+<li><code><a title="GBappendixA.GBappendixA.bycid" href="#GBappendixA.GBappendixA.bycid">bycid</a></code></li>
+<li><code><a title="GBappendixA.GBappendixA.isindexinitialized" href="#GBappendixA.GBappendixA.isindexinitialized">isindexinitialized</a></code></li>
+<li><code><a title="GBappendixA.GBappendixA.refresh_index" href="#GBappendixA.GBappendixA.refresh_index">refresh_index</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="GBappendixA.gbrecord" href="#GBappendixA.gbrecord">gbrecord</a></code></h4>
+</li>
+<li>
+<h4><code><a title="GBappendixA.gbrecord_ext" href="#GBappendixA.gbrecord_ext">gbrecord_ext</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

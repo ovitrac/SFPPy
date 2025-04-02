@@ -1,0 +1,64 @@
+{
+  "FCA": "0872",
+  "cid": null,
+  "CAS": "56793-67-0",
+  "authorized in": [
+    "plastics",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "甲基丙烯酸丁酯与甲基丙烯酸、甲基丙烯酸甲酯和苯乙烯的共聚物",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PA",
+      "PC",
+      "PET"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "6",
+    "SML": 23.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 23.0,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用  6 23"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "按生产需要适量使用  6 23"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}

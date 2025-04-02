@@ -1,0 +1,62 @@
+{
+  "FCA": "0724",
+  "cid": 91620,
+  "CAS": "36443-68-2",
+  "authorized in": [
+    "plastics",
+    "printing inks",
+    "adhesives"
+  ],
+  "ChineseName": "二 [3-(1,1-二甲基乙基 )-4-羟基 -5-甲基苯丙酸 ]三聚乙二醇",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "POM均聚物"
+    ],
+    "CP0max": null,
+    "QMSMLraw": ":0.75;PS,AS,ABS:0.3;PA,PET:0.5;PVC:0.2;PVDC:0.1",
+    "SML": 9.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": 9.0,
+    "SMLTraw": "",
+    "SMLTcomment": "生产的材料或制品不得用于接触乙醇含量高于",
+    "comment1": "",
+    "comment2": "15%的食品",
+    "table_id": "plastics"
+  },
+  "printing inks": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "9(SML)",
+    "SML": 9.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "9(SML)",
+    "SML": 9.0,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

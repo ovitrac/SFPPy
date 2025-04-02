@@ -1,0 +1,55 @@
+{
+  "FCA": "0478",
+  "cid": 517277,
+  "CAS": "1308-38-9",
+  "authorized in": [
+    "plastics",
+    "coatings"
+  ],
+  "ChineseName": "C.I.颜料绿 17;三氧化二铬",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PE",
+      "PP",
+      "PS",
+      "AS",
+      "ABS",
+      "PA",
+      "PET",
+      "PC"
+    ],
+    "CP0max": 30000.0,
+    "QMSMLraw": "ND(以铬 (Ⅵ)计 ,SML,DL=0.01mg/kg)",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "应符合着色剂纯度要求",
+    "SMLTcomment": ",见注",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "coatings": {
+    "materials": [
+      "5 ND(以铬 (Ⅵ)计",
+      "SML",
+      "DL=0.01mg/kg) 应符合着色剂纯度要求",
+      "见注"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "",
+    "SML": null,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "coatings"
+  }
+}

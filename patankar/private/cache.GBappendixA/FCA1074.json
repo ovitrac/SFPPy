@@ -1,0 +1,46 @@
+{
+  "FCA": "1074",
+  "cid": 785,
+  "CAS": "123-31-9",
+  "authorized in": [
+    "plastics",
+    "adhesives"
+  ],
+  "ChineseName": "氢醌",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "plastics": {
+    "materials": [
+      "PET",
+      "UP"
+    ],
+    "CP0max": 800.0,
+    "QMSMLraw": "0.6(SML)",
+    "SML": 0.6,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "plastics"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "0.6(SML)",
+    "SML": 0.6,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  }
+}

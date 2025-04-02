@@ -1,0 +1,79 @@
+{
+  "FCA": "0041",
+  "cid": 17520,
+  "CAS": "2634-33-5",
+  "authorized in": [
+    "rubber",
+    "printing inks",
+    "adhesives",
+    "paper and board"
+  ],
+  "ChineseName": "1,2-苯并异噻唑基 -3(2H )-酮",
+  "engine": "SFPPy: GBappendixA module",
+  "csfile": "GB9685-2016.csv",
+  "date": "2025-04-02 07:48:09",
+  "rubber": {
+    "materials": [
+      "0.02"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.2(SML)",
+    "SML": 1.2,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "rubber"
+  },
+  "printing inks": {
+    "materials": [
+      "0.02"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.2(SML)",
+    "SML": 1.2,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "printing inks"
+  },
+  "adhesives": {
+    "materials": [
+      "按生产需要适量使用"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.2(SML)",
+    "SML": 1.2,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "adhesives"
+  },
+  "paper and board": {
+    "materials": [
+      "0.16mg/dm2"
+    ],
+    "CP0max": null,
+    "QMSMLraw": "1.2(SML)",
+    "SML": 1.2,
+    "QM": null,
+    "DL": null,
+    "SMLT": null,
+    "SMLTraw": "",
+    "SMLTcomment": "",
+    "comment1": "",
+    "comment2": "",
+    "table_id": "paper and board"
+  }
+}
