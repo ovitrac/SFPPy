@@ -223,27 +223,28 @@ setup(
     print(f&#34;✔ setup.py created successfully in &#39;{sfppy_root}&#39;.&#34;)
 
 def generate_environment_yml(sfppy_root, dependencies, conda_channels):
-    &#34;&#34;&#34;Generate environment.yml for Conda users.&#34;&#34;&#34;
+    &#34;&#34;&#34;Generate environment.yml for Conda users, with pip-based deps.&#34;&#34;&#34;
     env_path = sfppy_root / &#34;environment.yml&#34;
 
     if env_path.exists() and not prompt_overwrite(env_path):
         print(&#34;Skipping environment.yml generation.&#34;)
         return
 
-    conda_deps = [dep.replace(&#34;&gt;=&#34;, &#34;=&#34;) for dep in dependencies]
-
     env_content = f&#34;&#34;&#34;name: sfppy
 channels:
 {chr(10).join(f&#34;  - {channel}&#34; for channel in conda_channels)}
 dependencies:
   - python=3.10
-{chr(10).join(f&#34;  - {dep}&#34; for dep in conda_deps)}
+  - pip
+  - pip:
+{chr(10).join(f&#34;    - {dep}&#34; for dep in dependencies)}
 &#34;&#34;&#34;
 
     with open(env_path, &#39;w&#39;) as f:
         f.write(env_content)
 
     print(f&#34;✔ environment.yml created successfully in &#39;{sfppy_root}&#39;.&#34;)
+
 
 def generate_requirements_txt(sfppy_root, dependencies):
     &#34;&#34;&#34;Generate requirements.txt for pip users.&#34;&#34;&#34;
@@ -337,27 +338,27 @@ if __name__ == &#39;__main__&#39;:
 <span>def <span class="ident">generate_environment_yml</span></span>(<span>sfppy_root, dependencies, conda_channels)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Generate environment.yml for Conda users.</p></div>
+<div class="desc"><p>Generate environment.yml for Conda users, with pip-based deps.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def generate_environment_yml(sfppy_root, dependencies, conda_channels):
-    &#34;&#34;&#34;Generate environment.yml for Conda users.&#34;&#34;&#34;
+    &#34;&#34;&#34;Generate environment.yml for Conda users, with pip-based deps.&#34;&#34;&#34;
     env_path = sfppy_root / &#34;environment.yml&#34;
 
     if env_path.exists() and not prompt_overwrite(env_path):
         print(&#34;Skipping environment.yml generation.&#34;)
         return
 
-    conda_deps = [dep.replace(&#34;&gt;=&#34;, &#34;=&#34;) for dep in dependencies]
-
     env_content = f&#34;&#34;&#34;name: sfppy
 channels:
 {chr(10).join(f&#34;  - {channel}&#34; for channel in conda_channels)}
 dependencies:
   - python=3.10
-{chr(10).join(f&#34;  - {dep}&#34; for dep in conda_deps)}
+  - pip
+  - pip:
+{chr(10).join(f&#34;    - {dep}&#34; for dep in dependencies)}
 &#34;&#34;&#34;
 
     with open(env_path, &#39;w&#39;) as f:
