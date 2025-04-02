@@ -54,7 +54,33 @@ This project implements **first-principles chemical migration modeling** and int
 > 
 > 📥 **SFPPy** can be installed locally in any Python (>3.8) environment and work with any notebook manager ([see section Quick Start](#-quick-start)).
 
+#### Why Notebooks?
 
+<details>
+    <summary>Click to expand</summary>
+
+📚Notebooks offer a literate and dynamic way to evaluate food safety. They unify **problem description**, **parameterization**, **simulation**, **evaluation**, and **reporting** into a single, shareable document. This workflow is ideal for traceability and regulatory validation.  
+🗣️**AI assistants** also understand notebooks surprisingly well and can help you interactively. Below is how Gemini (Google's LLM) described the `comply.ipynb` notebook directly from [this link](https://colab.research.google.com/github/ovitrac/SFPPy/blob/main/notebooks/comply.ipynb):
+
+>📖 **Notebook Description | case of `notebooks/comply.ipynb`**
+>
+> This notebook demonstrates how to evaluate substance migration from a polymeric sleeve into a packaged food simulant using SFPPy. The notebook automates key tasks, including retrieving chemical properties, defining package geometries, applying polymer parameters, and running mass transfer models. It also captures all results and underlying assumptions, providing a clear and traceable record of the simulation process for validation and regulatory assessment.
+>
+>📌  **Short Manual**
+>
+> To demonstrate compliance for a list of substances, a given packaging, and food application using this notebook, follow these steps:
+>
+> 1. **Define the migrants.** Create a list of `migrant` objects, one for each substance you want to evaluate. You can use the `migrant` class to retrieve chemical properties and regulatory data from internal databases.
+> 2. **Define the packaging.** Use the `Packaging3D` class to define the geometry of the packaging. You can specify the dimensions and material properties of the packaging.
+> 3. **Define the food simulant.** Use the `food` class to define the food simulant. You can specify the type of food, the contact time, and the contact temperature.
+> 4. **Run the simulations.** Use the `%`, `<<`, and `>>` operators to run the simulations. The `%` operator injects a substance into the simulation, the `<<` operator inherits properties from the packaging and food simulant, and the `>>` operator propagates the simulation.
+> 5. **Evaluate the results.** The results of the simulations are stored in the `CF` variable. You can use this variable to evaluate the concentration of each substance in the food simulant at the end of the contact time.
+>
+>📌  **Reasoning**
+>
+> These steps are necessary to demonstrate compliance because they ensure that all relevant factors are considered when evaluating the risk of substance migration. By following these steps, you can generate a clear and traceable record of the simulation process that can be used for validation and regulatory assessment
+
+</details>
 
 ## 📁 Main Modules (Located in `patankar/`)
 
