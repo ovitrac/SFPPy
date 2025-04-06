@@ -387,6 +387,7 @@
 <li class="file"><a href="utils/mermaid.html" target="_blankpy">mermaid</a></li>
 <li class="file"><a href="utils/nbutils.html" target="_blankpy">nbutils</a></li>
 <li class="file"><a href="utils/remove_comments.html" target="_blankpy">remove_comments</a></li>
+<li class="file"><a href="utils/update_toxtree_cache.html" target="_blankpy">update_toxtree_cache</a></li>
 </ul>
 </li>
 <li class="folder">
@@ -437,7 +438,7 @@
                 const markdownContent = `
 # SFPPy Modules Documentation
 
-Generated on: **2025-04-03 00:21:54**
+Generated on: **2025-04-06 20:26:55**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -3361,6 +3362,7 @@ object --> migrant
 | (module-level) | \`parse_molblock\` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.41 |
 | (module-level) | \`parse_sdf\` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.41 |
 | (module-level) | \`polarity_index\` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.41 |
+| (module-level) | \`safe_json_dump\` | Safely write a Python object to a JSON file, replacing all non-standard float values (NaN, Infinity, -Infinity) with \`None\` to ensure strict JSON compliance. | 51 | 1.41 |
 | (module-level) | \`unique\` | Return unique elements from \`lst\`, with optional order preservation and scalar unwrapping. | 27 | 1.41 |
 | \`CompoundIndex\` | \`__init__\` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.41 |
 | \`CompoundIndex\` | \`_add_synonym_to_index\` | Helper to map a single synonym→cid in self.index. | 9 | 1.41 |
@@ -3371,8 +3373,8 @@ object --> migrant
 | \`CompoundIndex\` | \`_generate_simple_dict\` | Builds a small "light" dictionary for quick searching: CID, name, synonyms, CAS, M, formula, SMILES, InChi, InChiKey, logP, date. | 35 | 1.41 |
 | \`CompoundIndex\` | \`find\` | Main method to find a compound from local index or from PubChem. Returns a pd.DataFrame with matching records. If multiple CIDs match that synonym, returns multiple rows. | 91 | 1.41 |
 | \`CompoundIndex\` | \`refresh_index\` | Rebuild the synonyms→[cids] index by scanning *.full.json files in the cache directory, and regenerating each *.simple.json if needed. | 39 | 1.41 |
-| \`migrant\` | \`__init__\` | Create a new migrant instance. | 419 | 1.41 |
-| \`migrant\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 77 | 1.41 |
+| \`migrant\` | \`__init__\` | Create a new migrant instance. | 423 | 1.41 |
+| \`migrant\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 80 | 1.41 |
 | \`migrant\` | \`__str__\` | Formatted string representing the migrant | 4 | 1.41 |
 | \`migrant\` | \`_crop_image\` | Crops white background from the PNG image. | 30 | 1.41 |
 | \`migrant\` | \`_download_PNG\` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.41 |
@@ -3381,21 +3383,26 @@ object --> migrant
 | \`migrant\` | \`_validate_and_set_model\` | Generic method for validating and setting a migration property model. | 31 | 1.41 |
 | \`migrant\` | \`check_alt_propclass\` | returns True if a class property exists in patankar.property | 12 | 1.41 |
 | \`migrant\` | \`dispmax\` | optimize display | 9 | 1.41 |
+| \`migrant\` | \`ispromovable\` | Parameters ---------- migrant_instance : migrant An instance of the \`migrant\` class to be promoted. cache_folder : str, optional Path (relative to \`_PATANKAR_FOLDER\`) to the folder containing cached ToxTree results. Default is \`'cache.ToxTree'\`. engine: str, optional Default engine = "default" | 22 | 1.41 |
+| \`migrant\` | \`promote\` | Promote this \`migrant\` instance to a \`migrantToxtree\` instance by reusing cached toxicological data. | 48 | 1.41 |
 | \`migrant\` | \`suggest_alt_Dclass\` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.41 |
 | \`migrant\` | \`suggest_alt_Dmodel\` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.41 |
-| \`migrantToxtree\` | \`__init__\` | migrantToxtree constructor | 41 | 1.41 |
-| \`migrantToxtree\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 77 | 1.41 |
+| \`migrantToxtree\` | \`__init__\` | Construct a \`migrantToxtree\` instance from a compound name or identifier. | 75 | 1.41 |
+| \`migrantToxtree\` | \`__repr__\` | Formatted string representation summarizing key attributes. | 80 | 1.41 |
 | \`migrantToxtree\` | \`__str__\` | Formatted string representing the migrant | 4 | 1.41 |
 | \`migrantToxtree\` | \`_clean_field_names\` | Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word. | 28 | 1.41 |
 | \`migrantToxtree\` | \`_crop_image\` | Crops white background from the PNG image. | 30 | 1.41 |
 | \`migrantToxtree\` | \`_download_PNG\` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.41 |
 | \`migrantToxtree\` | \`_download_SDF\` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.41 |
 | \`migrantToxtree\` | \`_download_pubchem_structuredata\` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.41 |
-| \`migrantToxtree\` | \`_run_toxtree\` |  | 42 | 1.41 |
+| \`migrantToxtree\` | \`_run_toxtree\` | run ToxTree engine, return cached data if they exist | 54 | 1.41 |
 | \`migrantToxtree\` | \`_validate_and_set_model\` | Generic method for validating and setting a migration property model. | 31 | 1.41 |
 | \`migrantToxtree\` | \`check_alt_propclass\` | returns True if a class property exists in patankar.property | 12 | 1.41 |
 | \`migrantToxtree\` | \`class_roman_to_int\` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.41 |
 | \`migrantToxtree\` | \`dispmax\` | optimize display | 9 | 1.41 |
+| \`migrantToxtree\` | \`iscached\` | Check whether the ToxTree toxicological data is available in the cache. | 18 | 1.41 |
+| \`migrantToxtree\` | \`ispromovable\` | Parameters ---------- migrant_instance : migrant An instance of the \`migrant\` class to be promoted. cache_folder : str, optional Path (relative to \`_PATANKAR_FOLDER\`) to the folder containing cached ToxTree results. Default is \`'cache.ToxTree'\`. engine: str, optional Default engine = "default" | 22 | 1.41 |
+| \`migrantToxtree\` | \`promote\` | Promote this \`migrant\` instance to a \`migrantToxtree\` instance by reusing cached toxicological data. | 48 | 1.41 |
 | \`migrantToxtree\` | \`suggest_alt_Dclass\` | returns an alternative Dclass based on Dmodel_extensions | 15 | 1.41 |
 | \`migrantToxtree\` | \`suggest_alt_Dmodel\` | suggest an alternative Dmodel based on Dmodel_extensions | 52 | 1.41 |
 

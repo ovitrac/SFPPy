@@ -45,7 +45,7 @@ The main manager class, *GBappendixA*, builds an index for fast lookup by CAS, F
 
 import os, csv, json, datetime, time, re, textwrap
 
-__all__ = ['GBappendixA', 'custom_wrap', 'extract_number_before_keyword', 'extract_number_before_keyword_in_parentheses', 'gbrecord', 'gbrecord_ext', 'split_col5_content', 'unwrap']
+__all__ = ['GBappendixA', 'custom_wrap', 'extract_number_before_keyword', 'extract_number_before_keyword_in_parentheses', 'gbrecord', 'gbrecord_ext', 'printWARN', 'split_col5_content', 'unwrap']
 
 
 __project__ = "SFPPy"

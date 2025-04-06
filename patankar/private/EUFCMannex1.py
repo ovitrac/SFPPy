@@ -41,7 +41,7 @@ Usage Example:
 
 import os,csv, json, datetime, time, re, textwrap
 
-__all__ = ['EuFCMannex1', 'annex1record', 'annex1record_ext', 'custom_wrap']
+__all__ = ['EuFCMannex1', 'annex1record', 'annex1record_ext', 'custom_wrap', 'printWARN']
 
 
 __project__ = "SFPPy"

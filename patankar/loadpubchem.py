@@ -137,7 +137,7 @@ Version History
 """
 
 
-import os,io
+import os,io, shutil
 import subprocess
 import requests
 import json
@@ -145,6 +145,7 @@ import re
 import glob
 import pandas as pd
 import numpy as np
+import math
 from datetime import datetime
 import time
 
@@ -166,7 +167,7 @@ import patankar.private.USFDAfcn as complyUS # US FCN inventory list (idem)
 import patankar.private.GBappendixA as complyCN # Chinese Appendix A (GB 9685-2016)
 
 
-__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'dbfca', 'dbfcn', 'floatNone', 'get_compounds', 'get_default_index', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index', 'unique']
+__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'dbfca', 'dbfcn', 'floatNone', 'get_compounds', 'get_default_index', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index', 'safe_json_dump', 'unique']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -204,6 +205,71 @@ _PATANKAR_FOLDER = os.path.dirname(__file__)
 # Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
 PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
 PubChem_lastQueryTime = 0 # global variable
+
+def is_java_available():
+    """Returns True if java is installed"""
+    return shutil.which("java") is not None
+
+def get_java_version():
+    """Returns the java version"""
+    try:
+        result = subprocess.run(["java", "-version"], capture_output=True, text=True)
+        return result.stderr.splitlines()[0]  # Java prints version to stderr
+    except FileNotFoundError:
+        return None
+
+# utility to generate JSON compliant files (required for Pyodide)
+def safe_json_dump(obj, path, indent=4, **kwargs):
+    """
+    Safely write a Python object to a JSON file, replacing all non-standard
+    float values (NaN, Infinity, -Infinity) with `None` to ensure strict
+    JSON compliance.
+
+    This is especially useful when preparing cache files to be used in
+    strict JSON environments such as JupyterLite (Pyodide), where non-standard
+    JSON values are not tolerated.
+
+    Parameters
+    ----------
+    obj : dict or list
+        The Python object to be serialized to JSON.
+    path : str
+        The file path where the JSON file should be saved.
+    indent : int, optional
+        Number of spaces for indentation in the output file. Default is 4.
+    **kwargs : dict
+        Additional keyword arguments passed to `json.dump`.
+
+    Notes
+    -----
+    This function recursively traverses the input object and replaces:
+      - float('nan') ➝ None
+      - float('inf') ➝ None
+      - float('-inf') ➝ None
+
+    These substitutions are necessary because such values are allowed
+    by `json.dump()` in standard Python, but are invalid in strict JSON parsers
+    (e.g. in web-based or embedded environments).
+
+    Examples
+    --------
+    >>> data = {"value": float('nan')}
+    >>> safe_json_dump(data, 'out.json')
+    # Output file will contain: {"value": null}
+    """
+
+    def sanitize(value):
+        if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
+            return None
+        elif isinstance(value, dict):
+            return {k: sanitize(v) for k, v in value.items()}
+        elif isinstance(value, list):
+            return [sanitize(x) for x in value]
+        else:
+            return value
+
+    with open(path, 'w') as f:
+        json.dump(sanitize(obj), f, indent=indent, **kwargs)
 
 # return unique list
 def unique(lst, stable=True, unwrap=True):
@@ -1344,6 +1410,8 @@ class migrant:
 
                  annex1 = True, # flag used by EUFCMannex1/USFDAfcn to avoid infinite loop
 
+                 toxtree = True, # flag to promote to toxtree if toxicological data are cached
+
                  ):
         """
         Create a new migrant instance.
@@ -1598,6 +1666,8 @@ class migrant:
                     elif self.CAS in dbfca:
                         appendixArecord = dbfca.byCAS(self.CAS)
                     if appendixArecord is not None:
+                        if isinstance(appendixArecord,list):
+                            appendixArecord = appendixArecord[0] # unwrap
                         self.FCANo = appendixArecord["FCA"]
                         self.FCAgroups = appendixArecord["authorized in"]
                         if "plastics" in self.FCAgroups: # primary focus of SFPPy
@@ -1909,8 +1979,85 @@ class migrant:
         return hasattr(self, "FCA") and self.FCA is not None
 
 
+    # return True if it can be promoted
+    def ispromovable(self, cache_folder='cache.ToxTree', engine="default"):
+        """
+        Parameters
+        ----------
+        migrant_instance : migrant
+            An instance of the `migrant` class to be promoted.
+        cache_folder : str, optional
+            Path (relative to `_PATANKAR_FOLDER`) to the folder containing cached ToxTree results. Default is `'cache.ToxTree'`.
+        engine: str, optional
+            Default engine = "default"
+
+        Returns
+        -------
+        True if it can be promoted to migrantToxtree using cached data.
+
+        """
+        if isinstance(self,migrantToxtree):
+            return False
+        if not hasattr(self, "cid") or self.cid is None or isinstance(self.cid, list):
+            return False
+        json_file = os.path.join(_PATANKAR_FOLDER,cache_folder, f'{self.cid}.{engine}.json')
+        return os.path.isfile(json_file)
+
+    # promote to migrantToxtree
+    def promote(self, cache_folder='cache.ToxTree', onlycache=True, engine="default"):
+        """
+        Promote this `migrant` instance to a `migrantToxtree` instance by reusing cached toxicological data.
+
+        This instance method enables bypassing JVM-based ToxTree evaluation by leveraging existing cache files.
+        If `onlycache` is True and the expected cached result is missing, the method returns `self`.
+
+        Parameters
+        ----------
+        cache_folder : str, optional
+            Path (relative to `_PATANKAR_FOLDER`) to the folder containing cached ToxTree results. Default is `'cache.ToxTree'`.
+        onlycache : bool, optional
+            If True, promotion is allowed only if the ToxTree data is already cached.
+            If False, the method will attempt to download and prepare required data. Default is True.
+        engine: str, optional
+            Default engine = "default"
+
+        Returns
+        -------
+        migrantToxtree or migrant
+            A `migrantToxtree` instance if promotion succeeds, otherwise returns `self`.
+        """
+        if not self.ispromovable(engine=engine): # migrant checks it is ispromovable
+            return self  # fallback: promotion not possible
+        obj = migrantToxtree.__new__(migrantToxtree)
+        obj.__dict__.update(self.__dict__)
+        obj.ispromoted = True
+        # Bypass any JVM-dependent code
+        obj.refresh = False
+        obj.no_cache = False
+        obj.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
+        obj.toxtree_root = os.path.join(_PATANKAR_FOLDER, 'private', 'toxtree')
+        obj.jar_path = os.path.join(obj.toxtree_root, 'Toxtree-3.1.0.1851.jar')
+        if onlycache:
+            if not obj.iscached(engine): # migrantToxtree checks the cache
+                obj.ispromoted = False
+                return self  # fallback, no cache, no promotion
+        else:
+            os.makedirs(obj.cache_folder, exist_ok=True)
+            obj._download_pubchem_structuredata()
+        tmp = obj._run_toxtree(engine)
+        tmp["CramerValue"] = obj.class_roman_to_int(tmp["CramerRules"])
+        obj.ToxTree = tmp
+        obj.CramerValue = tmp["CramerValue"]
+        obj.CramerClass = tmp["CramerRules"]
+        obj.TTC = obj.TTC[obj.CramerValue]
+        obj.CFTTC = obj.CFTTC[obj.CramerValue]
+        return obj
+
     def __repr__(self):
         """Formatted string representation summarizing key attributes."""
+        # Show promoted object if availabke
+        if self.ispromovable():
+            return self.promote().__repr__()
         # Define header
         info = [f"<{self.__class__.__name__} object>"]
         # Collect attributes
@@ -1966,12 +2113,12 @@ class migrant:
 
         # Add Toxtree attributes
         if isinstance(self,migrantToxtree) and self.compound not in (None,"",[]):
-            attributes["---𖣂︎ ToxTree"]="-"*15
+            attributes["---𖣂🧪︎ ToxTree"]="-"*15
             attributes["Compound"] = self.ToxTree["IUPACTraditionalName"]
             attributes["Name"] = self.ToxTree["IUPACName"]
-            attributes["𖣂Toxicology"] = self.CramerClass
-            attributes["𖣂TTC"] = f"{self.TTC} {self.TTCunits}"
-            attributes["𖣂CF TTC"] = f"{self.CFTTC} {self.CFTTCunits}"
+            attributes["Toxicology"] = self.CramerClass
+            attributes["TTC"] = f"{self.TTC} {self.TTCunits}"
+            attributes["CF TTC"] = f"{self.CFTTC} {self.CFTTCunits}"
             attributes.update(self.showalerts) # Process alerts
 
         # Determine column width based on longest attribute name
@@ -2492,10 +2639,47 @@ class migrantToxtree(migrant):
     CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
     CFTTCunits = "[mg/kg food intake]"
 
-    def __init__(self, compound_name, cache_folder='cache.ToxTree', refresh=False, no_cache=False,  raiseerror=True, verbose=True):
-        """migrantToxtree constructor"""
-        isempty = compound_name in (None,"",[])
+    def __init__(self, compound_name, cache_folder='cache.ToxTree',
+                 refresh=False, no_cache=False, raiseerror=True, verbose=True, checkalterts=True):
+        """
+        Construct a `migrantToxtree` instance from a compound name or identifier.
+
+        This constructor extends the `migrant` class by enriching the instance with toxicological data
+        retrieved via ToxTree. It is designed for direct construction from a compound name, not for promotion
+        from an existing `migrant` instance (use `migrantToxtree.promote()` for that purpose).
+
+        If a compound name resolves to multiple CIDs or SMILES, a `ValueError` is raised to enforce unambiguous identity.
+
+        Parameters
+        ----------
+        compound_name : str
+            A name, synonym, CAS number, or other identifier resolvable by PubChem.
+        cache_folder : str, optional
+            Subfolder (relative to `_PATANKAR_FOLDER`) where ToxTree outputs and JSON cache will be stored.
+            Default is `'cache.ToxTree'`.
+        refresh : bool, optional
+            Whether to force re-generation of ToxTree toxicological data even if a cache is found. Default is False.
+        no_cache : bool, optional
+            If True, disables caching entirely. Default is False.
+        raiseerror : bool, optional
+            If True, raises an exception on resolution or download failure. Default is True.
+        verbose : bool, optional
+            If True, prints information during compound resolution and toxicological analysis. Default is True.
+        checkalerts : bool, optional
+            If True, a message if alerts have been found.
+
+        Raises
+        ------
+        ValueError
+            If multiple CIDs or SMILES are associated with the input compound, or if toxicological data is ambiguous.
+        RuntimeError
+            If PubChem structure download or ToxTree execution fails (depending on `raiseerror`).
+        """
+        self.ispromoted = False  # Always set by default
+
+        isempty = compound_name in (None, "", [])
         super().__init__(compound_name, raiseerror=raiseerror, verbose=verbose)
+
         if isempty:
             return
 
@@ -2503,36 +2687,53 @@ class migrantToxtree(migrant):
             if len(self.cid) != 1:
                 raise ValueError(f"Multiple CIDs found for {compound_name}. Provide a unique compound.")
             self.cid = self.cid[0]
+
         if isinstance(self.smiles, list):
             if len(self.smiles) != 1:
                 raise ValueError(f"Multiple SMILES found for {compound_name}. Provide a unique SMILES.")
             self.smiles = self.smiles[0]
 
+        self.refresh = refresh
+        self.no_cache = no_cache
+        self.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
         self.toxtree_root = os.path.join(_PATANKAR_FOLDER, 'private', 'toxtree')
         self.jar_path = os.path.join(self.toxtree_root, 'Toxtree-3.1.0.1851.jar')
 
-        if not os.path.isfile(self.jar_path):
-            raise FileNotFoundError(
-                f"The Toxtree executable '{self.jar_path}' cannot be found.\n"
-                f"Please follow the instructions in the README.md file located at '{self.toxtree_root}'."
-            )
-
-        self.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
         os.makedirs(self.cache_folder, exist_ok=True)
-
-        self.refresh = refresh
-        self.no_cache = no_cache
-
-        # Refactory / migrant manage all PubChem dependencies
-        self._download_pubchem_structuredata() # loading trigger
+        self._download_pubchem_structuredata()
 
         tmp = self._run_toxtree("default")
-        tmp["CramerValue"]=self.class_roman_to_int(tmp["CramerRules"])
+        tmp["CramerValue"] = self.class_roman_to_int(tmp["CramerRules"])
         self.ToxTree = tmp
         self.CramerValue = tmp["CramerValue"]
         self.CramerClass = tmp["CramerRules"]
         self.TTC = self.TTC[self.CramerValue]
         self.CFTTC = self.CFTTC[self.CramerValue]
+
+        # informative mechanism use to cache also alerts
+        if checkalterts and self.has_alerts:
+            nalerts = self.nalerts
+            print(f"⚠️ CID={self.cid} has {nalerts} alert{'s' if nalerts>0 else ''}")
+
+
+    def iscached(self,engine="default"):
+        """
+        Check whether the ToxTree toxicological data is available in the cache.
+
+        This property verifies the existence of a cached JSON file corresponding to the compound's CID.
+
+        Parameters
+        ----------
+        engine : str, optional
+            The name of the ToxTree engine or rule set (default is "default").
+
+        Returns
+        -------
+        bool
+            True if the cache file exists, False otherwise.
+        """
+        json_file = os.path.join(self.cache_folder, f'{self.cid}.{engine}.json')
+        return os.path.isfile(json_file)
 
     def _clean_field_names(self, data):
         """Cleans field names by removing PUBCHEM_, splitting with multiple delimiters, and capitalizing each word."""
@@ -2564,6 +2765,7 @@ class migrantToxtree(migrant):
         return cleaned_data
 
     def _run_toxtree(self, engine):
+        """run ToxTree engine, return cached data if they exist"""
         if engine not in self.TOXTREE_ENGINES:
             raise ValueError(f"Unknown Toxtree engine: {engine}")
 
@@ -2571,11 +2773,24 @@ class migrantToxtree(migrant):
         csv_file = os.path.join(self.cache_folder, f'{self.cid}.{engine}.csv')
         json_file = os.path.join(self.cache_folder, f'{self.cid}.{engine}.json')
 
+        # use CACHED JSON if available
         if os.path.isfile(json_file) and not self.refresh:
             with open(json_file, 'r') as f:
                 return json.load(f)
 
+        # Raise error if self.ispromoted
+        if self.ispromoted:
+            raise ValueError(f'Call migrantToxtree for cid={self.cid}, do not use promoted without cache ToxTree data')
+
+        # use Toxtree otherwise (it needs to be installed)
         if not os.path.isfile(csv_file) or self.no_cache:
+            if not is_java_available():
+                raise RuntimeError("Java must be installed to run ToxTree")
+            if not os.path.isfile(self.jar_path):
+                raise FileNotFoundError(
+                    f"The Toxtree executable '{self.jar_path}' cannot be found.\n"
+                    f"Please follow the instructions in the README.md file located at '{self.toxtree_root}'."
+                )
             cmd = ['java', '-jar', self.jar_path, '-n', '-i', self.structure_file, '-o', csv_file]
             if engine_class:
                 cmd.extend(['-m', engine_class])
@@ -2600,10 +2815,10 @@ class migrantToxtree(migrant):
                     f"Error: {e.stderr}"
                 )
 
+        # refresh/generate CACHED JSON from CSV
         df = pd.read_csv(csv_file)
         cleaned_data = self._clean_field_names(df.to_dict(orient='records')[0]) if not df.empty else {}
-        with open(json_file, 'w') as f:
-            json.dump(cleaned_data, f, indent=4)
+        safe_json_dump(cleaned_data, json_file, indent=4)
         return cleaned_data
 
 
@@ -2652,14 +2867,18 @@ class migrantToxtree(migrant):
 
     @property
     def has_alerts(self):
-        return len(self.alerts) > 0
+        return self.nalerts > 0
+
+    @property
+    def nalerts(self):
+        return len(self.showalerts)
 
     @property
     def showalerts(self):
         """Returns alerts in dict: alert1, alert2, alert3"""
-        if not self.has_alerts:
-            return {}
         alerts = self.alerts
+        if len(alerts)==0:
+            return {}
         # Process alerts
         alert_index = 0
         attributes = {}
@@ -2670,6 +2889,75 @@ class migrantToxtree(migrant):
                 alert_text = ''.join([' ' + char if char.isupper() and i > 0 else char for i, char in enumerate(key)])
                 attributes[f"⚠️ Alert {alert_index}"] = alert_text.strip()  # Remove leading space
         return attributes
+
+    # global fix for non-compliant JSON files created by Pandas
+    @classmethod
+    def regenerateJSONfromCSV(cls, engine=["default", "skin"], cache_folder='cache.ToxTree'):
+        """
+        Regenerate compliant JSON cache files from existing Toxtree CSV outputs.
+
+        This method scans the specified cache folder for all files matching the
+        pattern '*.ENGINE.csv' (where ENGINE can be a string or list of strings),
+        parses them with pandas, and rewrites the corresponding JSON files using
+        `safe_json_dump()` to ensure JSON compliance (e.g. replacing NaNs).
+
+        Existing JSON files will be overwritten.
+
+        Parameters
+        ----------
+        engine : str or list of str, optional
+            The engine(s) to process. Defaults to ['default', 'skin'].
+        cache_folder : str, optional
+            Subdirectory (relative to `_PATANKAR_FOLDER`) containing Toxtree
+            cache files. Default is 'cache.ToxTree'.
+
+        Notes
+        -----
+        - Files that do not exist or are malformed are skipped.
+        - Conversion uses the same logic as `_run_toxtree()` but skips Toxtree execution.
+        - A summary of successes and failures is printed at the end.
+        """
+        if isinstance(engine, str):
+            engine = [engine]
+
+        total_converted = 0
+        failed_files = []
+        full_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
+
+        for eng in engine:
+            pattern = os.path.join(full_folder, f'*.{eng}.csv')
+            csv_files = glob.glob(pattern)
+
+            for csv_file in csv_files:
+                try:
+                    # Derive CID from filename
+                    cid = os.path.basename(csv_file).split(f".{eng}.csv")[0]
+                    json_file = os.path.join(full_folder, f'{cid}.{eng}.json')
+
+                    # Load and clean CSV
+                    df = pd.read_csv(csv_file)
+                    if df.empty:
+                        cleaned_data = {}
+                    else:
+                        data = df.to_dict(orient='records')[0]
+                        cleaned_data = cls._clean_field_names(cls, data)
+
+                    # Save as compliant JSON
+                    safe_json_dump(cleaned_data, json_file, indent=4)
+
+                    print(f"[✓] Converted: {os.path.basename(csv_file)} → {os.path.basename(json_file)}")
+                    total_converted += 1
+
+                except Exception as e:
+                    print(f"[✗] Skipped {os.path.basename(csv_file)}: {e}")
+                    failed_files.append((csv_file, str(e)))
+
+        print(f"\nTotal JSON files regenerated: {total_converted}")
+        if failed_files:
+            print(f"\nThe following {len(failed_files)} file(s) could not be processed:")
+            for path, reason in failed_files:
+                print(f" - {os.path.basename(path)}: {reason}")
+
 
 
 # %% debug

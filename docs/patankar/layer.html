@@ -15476,7 +15476,7 @@ The new property name.</p>
 </dd>
 <dt id="layer.migrant"><code class="flex name class">
 <span>class <span class="ident">migrant</span></span>
-<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=None, raiseerror=True, no_cache=False, verbose=True, annex1=True)</span>
+<span>(</span><span>name=None, M=None, logP=None, Dmodel='Piringer', Dtemplate={'polymer': 'LLDPE', 'M': 50.0, 'Vvdw': 100.0, 'T': 40.0, 'Tg': 76.0}, kmodel='FHP', ktemplate={'Pi': 1.41, 'Pk': 3.97, 'Vi': 124.1, 'Vk': 30.9, 'ispolymer': True, 'alpha': 0.14, 'lngmin': 0.0, 'Psat': 1.0, 'crystallinity': 0, 'porosity': 0}, db=None, raiseerror=True, no_cache=False, verbose=True, annex1=True, toxtree=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>A class representing a migrating chemical substance.</p>
@@ -15743,6 +15743,8 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
                  annex1 = True, # flag used by EUFCMannex1/USFDAfcn to avoid infinite loop
 
+                 toxtree = True, # flag to promote to toxtree if toxicological data are cached
+
                  ):
         &#34;&#34;&#34;
         Create a new migrant instance.
@@ -15997,6 +15999,8 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
                     elif self.CAS in dbfca:
                         appendixArecord = dbfca.byCAS(self.CAS)
                     if appendixArecord is not None:
+                        if isinstance(appendixArecord,list):
+                            appendixArecord = appendixArecord[0] # unwrap
                         self.FCANo = appendixArecord[&#34;FCA&#34;]
                         self.FCAgroups = appendixArecord[&#34;authorized in&#34;]
                         if &#34;plastics&#34; in self.FCAgroups: # primary focus of SFPPy
@@ -16308,8 +16312,85 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
         return hasattr(self, &#34;FCA&#34;) and self.FCA is not None
 
 
+    # return True if it can be promoted
+    def ispromovable(self, cache_folder=&#39;cache.ToxTree&#39;, engine=&#34;default&#34;):
+        &#34;&#34;&#34;
+        Parameters
+        ----------
+        migrant_instance : migrant
+            An instance of the `migrant` class to be promoted.
+        cache_folder : str, optional
+            Path (relative to `_PATANKAR_FOLDER`) to the folder containing cached ToxTree results. Default is `&#39;cache.ToxTree&#39;`.
+        engine: str, optional
+            Default engine = &#34;default&#34;
+
+        Returns
+        -------
+        True if it can be promoted to migrantToxtree using cached data.
+
+        &#34;&#34;&#34;
+        if isinstance(self,migrantToxtree):
+            return False
+        if not hasattr(self, &#34;cid&#34;) or self.cid is None or isinstance(self.cid, list):
+            return False
+        json_file = os.path.join(_PATANKAR_FOLDER,cache_folder, f&#39;{self.cid}.{engine}.json&#39;)
+        return os.path.isfile(json_file)
+
+    # promote to migrantToxtree
+    def promote(self, cache_folder=&#39;cache.ToxTree&#39;, onlycache=True, engine=&#34;default&#34;):
+        &#34;&#34;&#34;
+        Promote this `migrant` instance to a `migrantToxtree` instance by reusing cached toxicological data.
+
+        This instance method enables bypassing JVM-based ToxTree evaluation by leveraging existing cache files.
+        If `onlycache` is True and the expected cached result is missing, the method returns `self`.
+
+        Parameters
+        ----------
+        cache_folder : str, optional
+            Path (relative to `_PATANKAR_FOLDER`) to the folder containing cached ToxTree results. Default is `&#39;cache.ToxTree&#39;`.
+        onlycache : bool, optional
+            If True, promotion is allowed only if the ToxTree data is already cached.
+            If False, the method will attempt to download and prepare required data. Default is True.
+        engine: str, optional
+            Default engine = &#34;default&#34;
+
+        Returns
+        -------
+        migrantToxtree or migrant
+            A `migrantToxtree` instance if promotion succeeds, otherwise returns `self`.
+        &#34;&#34;&#34;
+        if not self.ispromovable(engine=engine): # migrant checks it is ispromovable
+            return self  # fallback: promotion not possible
+        obj = migrantToxtree.__new__(migrantToxtree)
+        obj.__dict__.update(self.__dict__)
+        obj.ispromoted = True
+        # Bypass any JVM-dependent code
+        obj.refresh = False
+        obj.no_cache = False
+        obj.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
+        obj.toxtree_root = os.path.join(_PATANKAR_FOLDER, &#39;private&#39;, &#39;toxtree&#39;)
+        obj.jar_path = os.path.join(obj.toxtree_root, &#39;Toxtree-3.1.0.1851.jar&#39;)
+        if onlycache:
+            if not obj.iscached(engine): # migrantToxtree checks the cache
+                obj.ispromoted = False
+                return self  # fallback, no cache, no promotion
+        else:
+            os.makedirs(obj.cache_folder, exist_ok=True)
+            obj._download_pubchem_structuredata()
+        tmp = obj._run_toxtree(engine)
+        tmp[&#34;CramerValue&#34;] = obj.class_roman_to_int(tmp[&#34;CramerRules&#34;])
+        obj.ToxTree = tmp
+        obj.CramerValue = tmp[&#34;CramerValue&#34;]
+        obj.CramerClass = tmp[&#34;CramerRules&#34;]
+        obj.TTC = obj.TTC[obj.CramerValue]
+        obj.CFTTC = obj.CFTTC[obj.CramerValue]
+        return obj
+
     def __repr__(self):
         &#34;&#34;&#34;Formatted string representation summarizing key attributes.&#34;&#34;&#34;
+        # Show promoted object if availabke
+        if self.ispromovable():
+            return self.promote().__repr__()
         # Define header
         info = [f&#34;&lt;{self.__class__.__name__} object&gt;&#34;]
         # Collect attributes
@@ -16365,12 +16446,12 @@ Dvalue = m.Deval(polymer="LDPE",T=60)</p>
 
         # Add Toxtree attributes
         if isinstance(self,migrantToxtree) and self.compound not in (None,&#34;&#34;,[]):
-            attributes[&#34;---𖣂︎ ToxTree&#34;]=&#34;-&#34;*15
+            attributes[&#34;---𖣂🧪︎ ToxTree&#34;]=&#34;-&#34;*15
             attributes[&#34;Compound&#34;] = self.ToxTree[&#34;IUPACTraditionalName&#34;]
             attributes[&#34;Name&#34;] = self.ToxTree[&#34;IUPACName&#34;]
-            attributes[&#34;𖣂Toxicology&#34;] = self.CramerClass
-            attributes[&#34;𖣂TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
-            attributes[&#34;𖣂CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
+            attributes[&#34;Toxicology&#34;] = self.CramerClass
+            attributes[&#34;TTC&#34;] = f&#34;{self.TTC} {self.TTCunits}&#34;
+            attributes[&#34;CF TTC&#34;] = f&#34;{self.CFTTC} {self.CFTTCunits}&#34;
             attributes.update(self.showalerts) # Process alerts
 
         # Determine column width based on longest attribute name
@@ -17518,6 +17599,125 @@ def worstcaseSMLgroup(self):
         return strcontent[:nchar]+&#34; [...] &#34;+strcontent[-nchar:]
     else:
         return content</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.ispromovable"><code class="name flex">
+<span>def <span class="ident">ispromovable</span></span>(<span>self, cache_folder='cache.ToxTree', engine='default')</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>migrant_instance</code></strong> :&ensp;<code><a title="layer.migrant" href="#layer.migrant">migrant</a></code></dt>
+<dd>An instance of the <code><a title="layer.migrant" href="#layer.migrant">migrant</a></code> class to be promoted.</dd>
+<dt><strong><code>cache_folder</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Path (relative to <code>_PATANKAR_FOLDER</code>) to the folder containing cached ToxTree results. Default is <code>'cache.ToxTree'</code>.</dd>
+<dt><strong><code>engine</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Default engine = "default"</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>True if it can be promoted to migrantToxtree using cached data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ispromovable(self, cache_folder=&#39;cache.ToxTree&#39;, engine=&#34;default&#34;):
+    &#34;&#34;&#34;
+    Parameters
+    ----------
+    migrant_instance : migrant
+        An instance of the `migrant` class to be promoted.
+    cache_folder : str, optional
+        Path (relative to `_PATANKAR_FOLDER`) to the folder containing cached ToxTree results. Default is `&#39;cache.ToxTree&#39;`.
+    engine: str, optional
+        Default engine = &#34;default&#34;
+
+    Returns
+    -------
+    True if it can be promoted to migrantToxtree using cached data.
+
+    &#34;&#34;&#34;
+    if isinstance(self,migrantToxtree):
+        return False
+    if not hasattr(self, &#34;cid&#34;) or self.cid is None or isinstance(self.cid, list):
+        return False
+    json_file = os.path.join(_PATANKAR_FOLDER,cache_folder, f&#39;{self.cid}.{engine}.json&#39;)
+    return os.path.isfile(json_file)</code></pre>
+</details>
+</dd>
+<dt id="layer.migrant.promote"><code class="name flex">
+<span>def <span class="ident">promote</span></span>(<span>self, cache_folder='cache.ToxTree', onlycache=True, engine='default')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Promote this <code><a title="layer.migrant" href="#layer.migrant">migrant</a></code> instance to a <code>migrantToxtree</code> instance by reusing cached toxicological data.</p>
+<p>This instance method enables bypassing JVM-based ToxTree evaluation by leveraging existing cache files.
+If <code>onlycache</code> is True and the expected cached result is missing, the method returns <code>self</code>.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>cache_folder</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Path (relative to <code>_PATANKAR_FOLDER</code>) to the folder containing cached ToxTree results. Default is <code>'cache.ToxTree'</code>.</dd>
+<dt><strong><code>onlycache</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>If True, promotion is allowed only if the ToxTree data is already cached.
+If False, the method will attempt to download and prepare required data. Default is True.</dd>
+<dt><strong><code>engine</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Default engine = "default"</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>migrantToxtree</code> or <code><a title="layer.migrant" href="#layer.migrant">migrant</a></code></dt>
+<dd>A <code>migrantToxtree</code> instance if promotion succeeds, otherwise returns <code>self</code>.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def promote(self, cache_folder=&#39;cache.ToxTree&#39;, onlycache=True, engine=&#34;default&#34;):
+    &#34;&#34;&#34;
+    Promote this `migrant` instance to a `migrantToxtree` instance by reusing cached toxicological data.
+
+    This instance method enables bypassing JVM-based ToxTree evaluation by leveraging existing cache files.
+    If `onlycache` is True and the expected cached result is missing, the method returns `self`.
+
+    Parameters
+    ----------
+    cache_folder : str, optional
+        Path (relative to `_PATANKAR_FOLDER`) to the folder containing cached ToxTree results. Default is `&#39;cache.ToxTree&#39;`.
+    onlycache : bool, optional
+        If True, promotion is allowed only if the ToxTree data is already cached.
+        If False, the method will attempt to download and prepare required data. Default is True.
+    engine: str, optional
+        Default engine = &#34;default&#34;
+
+    Returns
+    -------
+    migrantToxtree or migrant
+        A `migrantToxtree` instance if promotion succeeds, otherwise returns `self`.
+    &#34;&#34;&#34;
+    if not self.ispromovable(engine=engine): # migrant checks it is ispromovable
+        return self  # fallback: promotion not possible
+    obj = migrantToxtree.__new__(migrantToxtree)
+    obj.__dict__.update(self.__dict__)
+    obj.ispromoted = True
+    # Bypass any JVM-dependent code
+    obj.refresh = False
+    obj.no_cache = False
+    obj.cache_folder = os.path.join(_PATANKAR_FOLDER, cache_folder)
+    obj.toxtree_root = os.path.join(_PATANKAR_FOLDER, &#39;private&#39;, &#39;toxtree&#39;)
+    obj.jar_path = os.path.join(obj.toxtree_root, &#39;Toxtree-3.1.0.1851.jar&#39;)
+    if onlycache:
+        if not obj.iscached(engine): # migrantToxtree checks the cache
+            obj.ispromoted = False
+            return self  # fallback, no cache, no promotion
+    else:
+        os.makedirs(obj.cache_folder, exist_ok=True)
+        obj._download_pubchem_structuredata()
+    tmp = obj._run_toxtree(engine)
+    tmp[&#34;CramerValue&#34;] = obj.class_roman_to_int(tmp[&#34;CramerRules&#34;])
+    obj.ToxTree = tmp
+    obj.CramerValue = tmp[&#34;CramerValue&#34;]
+    obj.CramerClass = tmp[&#34;CramerRules&#34;]
+    obj.TTC = obj.TTC[obj.CramerValue]
+    obj.CFTTC = obj.CFTTC[obj.CramerValue]
+    return obj</code></pre>
 </details>
 </dd>
 <dt id="layer.migrant.suggest_alt_Dclass"><code class="name flex">
@@ -18947,12 +19147,14 @@ def porosity(self):
 <li><code><a title="layer.migrant.hasSMLgroup" href="#layer.migrant.hasSMLgroup">hasSMLgroup</a></code></li>
 <li><code><a title="layer.migrant.hasannex1" href="#layer.migrant.hasannex1">hasannex1</a></code></li>
 <li><code><a title="layer.migrant.image" href="#layer.migrant.image">image</a></code></li>
+<li><code><a title="layer.migrant.ispromovable" href="#layer.migrant.ispromovable">ispromovable</a></code></li>
 <li><code><a title="layer.migrant.keval" href="#layer.migrant.keval">keval</a></code></li>
 <li><code><a title="layer.migrant.molarvolumeLinear" href="#layer.migrant.molarvolumeLinear">molarvolumeLinear</a></code></li>
 <li><code><a title="layer.migrant.molarvolumeMiller" href="#layer.migrant.molarvolumeMiller">molarvolumeMiller</a></code></li>
 <li><code><a title="layer.migrant.nSMLgroup" href="#layer.migrant.nSMLgroup">nSMLgroup</a></code></li>
 <li><code><a title="layer.migrant.parse_formula" href="#layer.migrant.parse_formula">parse_formula</a></code></li>
 <li><code><a title="layer.migrant.polarityindex" href="#layer.migrant.polarityindex">polarityindex</a></code></li>
+<li><code><a title="layer.migrant.promote" href="#layer.migrant.promote">promote</a></code></li>
 <li><code><a title="layer.migrant.structure" href="#layer.migrant.structure">structure</a></code></li>
 <li><code><a title="layer.migrant.suggest_alt_Dclass" href="#layer.migrant.suggest_alt_Dclass">suggest_alt_Dclass</a></code></li>
 <li><code><a title="layer.migrant.suggest_alt_Dmodel" href="#layer.migrant.suggest_alt_Dmodel">suggest_alt_Dmodel</a></code></li>
