@@ -17,6 +17,7 @@ dbeu = EuFCMannex1()
 dbus = USFDAfcn()
 dbgb = GBappendixA()
 
+fullrefresh = False
 
 # %% General refresh function
 def refreshTox(CAS):
@@ -34,23 +35,23 @@ def refreshTox(CAS):
             print(f'no data for {CAS}')
 
 
-
-# %% 🇪🇺 10/2011/EC
-for i,r in enumerate(dbeu):
-    print(f"EU{i} cid={r.cid}")
-    if r.cid:
-        refreshTox(r["CAS"])
-
-
-# %% 🇺🇸 FCN list
-for i,r in enumerate(dbus):
-    print(f"US{i} cid={r.cid}")
-    if r.cid:
-        refreshTox(r["CAS"])
+if fullrefresh: # prevent execution by utils/pdocme.sh
+    # %% 🇪🇺 10/2011/EC
+    for i,r in enumerate(dbeu):
+        print(f"EU{i} cid={r.cid}")
+        if r.cid:
+            refreshTox(r["CAS"])
 
 
-# %%  🇨🇳 GB 9685-201
-for i,r in enumerate(dbus):
-    print(f"GB{i} cid={r.cid}")
-    if r.cid:
-        refreshTox(r["CAS"])
+    # %% 🇺🇸 FCN list
+    for i,r in enumerate(dbus):
+        print(f"US{i} cid={r.cid}")
+        if r.cid:
+            refreshTox(r["CAS"])
+
+
+    # %%  🇨🇳 GB 9685-201
+    for i,r in enumerate(dbus):
+        print(f"GB{i} cid={r.cid}")
+        if r.cid:
+            refreshTox(r["CAS"])
