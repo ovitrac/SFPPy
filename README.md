@@ -2,8 +2,8 @@
 
 <div align="center">
 
-| ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it with AI. |
-| ---------------------------------------------- | ------------------------------------------------------------ | --------------------------------- |
+| ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it with AI. | <img src="docs/assets/SFPPy.svg" alt="SFPPy GPT" style="zoom:15%;" /> |
+| :--------------------------------------------- | ------------------------------------------------------------ | --------------------------------- | -----------------------------------------------------------: |
 
 </div>
 
@@ -28,8 +28,17 @@
   <img src="https://img.shields.io/badge/%F0%9F%8C%90%20SFPPyLite-Runs%20in%20Browser-7b66b5?style=for-the-badge" alt="🌐 SFPPyLite – Browser Demo">
 </a>
 <a href="https://ovitrac.github.io/SFPPy/" target="_blank" title="SFPPy Documentation Website"><img src="https://img.shields.io/badge/%F0%9F%93%98%20SFPPy-Documentation-8a2be2?style=for-the-badge" alt="SFPPy Documentation"></a>
+</div>
+
+---
+
+<div align="center">
+
+| <img src="docs/assets/SFPPy_social.png" alt="SFPPy – Scientific Framework for Food Packaging" width="320"/> | [![ChatGPT SFPPy](https://img.shields.io/badge/ChatGPT-SFPPy-orange?logo=openai)](https://chatgpt.com/g/g-6780fa0b1180819198ea1d962dd4064c-sfppy) <br/> 🔥A custom AI assistant 🤖 extensively trained on **SFPPy** 🏋🏻. It helps you explore and use the framework: from the **principles of migration modeling** ⚙️ to **first simulations** 📈, **regulatory compliance** ✅, **interpretation** 📊, and reporting**📝. |
+| :----------------------------------------------------------: | :----------------------------------------------------------- |
 
 </div>
+
 
 ---
 
