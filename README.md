@@ -2,7 +2,7 @@
 
 <div align="center">
 
-| ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it with AI. | <img src="docs/assets/SFPPy.svg" alt="SFPPy GPT" style="zoom:15%;" /> |
+| ![Generative Simulation](docs/assets/logo.png) | This project is part of the <br />[Generative Simulation](https://github.com/ovitrac/generativeSimulation) demonstrators | Say it.<br />Simulate it with AI. | <img src="docs/assets/SFPPy.svg" alt="SFPPy GPT" width="90px" /> |
 | :--------------------------------------------- | ------------------------------------------------------------ | --------------------------------- | -----------------------------------------------------------: |
 
 </div>
