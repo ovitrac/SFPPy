@@ -463,6 +463,151 @@ def create_header_footer(what="head", title="SFPPy - Notebook Index 📑",height
         return (HTML(header),HTML(footer),HTML(separator))
     raise ValueError(f'{what} is not recognized, use "head", "foot" , both' or 'all')
 
+# %% additional elements
+separator2 = HTML('<hr style="border: none; height: 4px; width: 60%; margin: 2em auto; background-color: #4CAF50; border-radius: 2px;">');
+
+# %% Big Separator with hide/show buttons
+def bigseparator(tag="section"):
+    """ shows a big separator with hide/show buttons"""
+
+    element_id = "code-toggle-" + re.sub(r'[^a-zA-Z0-9_-]', '_', tag)
+
+
+    html = f"""
+    <style>
+    .jp-Cell-inputWrapper.toggle-hidden {{
+      max-height: 0 !important;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    .jp-Cell-inputWrapper.toggle-visible {{
+      max-height: 1000px;
+      opacity: 1;
+      overflow: visible;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    @keyframes flash-highlight {{
+      from {{ background-color: yellow; }}
+      to   {{ background-color: transparent; }}
+    }}
+    .jp-Cell-inputWrapper.flash-on-toggle {{
+      animation: flash-highlight 1s ease-out;
+    }}
+
+    .code-toggle-bar {{
+      text-align: center;
+      margin: 10px 0;
+      position: relative;
+    }}
+    .code-toggle-bar hr {{
+      height: 6px;
+      background-color: #4CAF50;
+      box-shadow: 2px 2px 4px gray;
+      border: none;
+      margin: 30px 0;
+      position: relative;
+    }}
+    .code-toggle-box {{
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 2px solid #4CAF50;
+      font-weight: bold;
+      color: #4CAF50;
+      font-family: monospace;
+      font-size: 12px;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      z-index: 2;
+    }}
+    .code-toggle-before,
+    .code-toggle-after,
+    .code-toggle-all {{
+      position: absolute;
+      z-index: 2;
+    }}
+    .code-toggle-before {{
+      top: -24px;
+      left: 0;
+    }}
+    .code-toggle-after {{
+      top: 9px;
+      left: 0;
+    }}
+    .code-toggle-all {{
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }}
+    .code-toggle-bar button {{
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid white;
+      padding: 3px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      cursor: pointer;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }}
+    .code-toggle-bar button:hover {{
+      background-color: #45A049;
+    }}
+    </style>
+
+    <div id="{element_id}" class="code-toggle-bar">
+      <hr>
+      <div class="code-toggle-box">{tag}</div>
+      <div class="code-toggle-before">
+        <button onclick="toggleCodeBlock(this, 'above')">↑ hide</button>
+      </div>
+      <div class="code-toggle-after">
+        <button onclick="toggleCodeBlock(this, 'below')">↓ hide</button>
+      </div>
+      <div class="code-toggle-all">
+        <button onclick="toggleCodeBlock(this, 'all')">↕ hide</button>
+      </div>
+    </div>
+
+    <script>
+    function toggleCodeBlock(button, mode) {{
+      const inputs = Array.from(document.querySelectorAll('.jp-CodeCell .jp-Cell-inputWrapper'));
+      const cells = inputs.map(input => {{
+        const cell = input.closest('.jp-Cell');
+        return {{ input: input, cell: cell }};
+      }});
+      const active = document.querySelector('.jp-Notebook .jp-mod-active');
+      if (!active) return;
+
+      const currentIndex = cells.findIndex(({{ cell }}) => cell === active);
+      if (currentIndex === -1) return;
+
+      const targetCells = cells.filter((_, i) =>
+        mode === 'all' ||
+        (mode === 'above' && i <= currentIndex) ||
+        (mode === 'below' && i > currentIndex)
+      );
+
+      const sample = targetCells[0];
+      const shouldShow = sample ? sample.input.classList.contains('toggle-hidden') : true;
+
+      const symbol = mode === 'all' ? '↕' : (mode === 'above' ? '↑' : '↓');
+      button.textContent = shouldShow ? `${{symbol}} hide` : `${{symbol}} show`;
+
+      targetCells.forEach(({{ input }}) => {{
+        input.classList.toggle('toggle-visible', shouldShow);
+        input.classList.toggle('toggle-hidden', !shouldShow);
+        input.classList.add('flash-on-toggle');
+        setTimeout(() => input.classList.remove('flash-on-toggle'), 1000);
+      }});
+    }}
+    </script>
+    """
+
+    display(HTML(html))
 
 
 # %% Widgets
