@@ -9,6 +9,14 @@
 
 ---
 
+<div align="center">
+<img src="docs/assets/SFPPy_latte02.jpg" alt="SFPPy: Science Behind Safety" height="150px" />
+<img src="docs/assets/SFPPy_latte01.jpg" alt="SFPPy Latte" height="150px" /><img src="docs/videos/BPA_dance.gif" alt="BPA Dance"  height="150px" />
+<img src="docs/assets/SFPPy_latte03.jpg" alt="SFPPy: AI can help demonstrate safety" height="150px" />
+</div>
+
+---
+
 
 <div align="right">
 <!-- Colab Badges -->
@@ -29,6 +37,7 @@
 </a>
 <a href="https://ovitrac.github.io/SFPPy/" target="_blank" title="SFPPy Documentation Website"><img src="https://img.shields.io/badge/%F0%9F%93%98%20SFPPy-Documentation-8a2be2?style=for-the-badge" alt="SFPPy Documentation"></a>
 </div>
+
 
 ---
 
@@ -517,8 +526,9 @@ $2025-02-12$
 🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️
 🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
 🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
-🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.41$<br/>
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.42$<br/>
 </pre>
+
 
 
 ---
