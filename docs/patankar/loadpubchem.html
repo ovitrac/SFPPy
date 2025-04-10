@@ -292,7 +292,7 @@ Version History
 &#34;&#34;&#34;
 
 
-import os,io
+import os,io, shutil
 import subprocess
 import requests
 import json
@@ -322,7 +322,7 @@ import patankar.private.USFDAfcn as complyUS # US FCN inventory list (idem)
 import patankar.private.GBappendixA as complyCN # Chinese Appendix A (GB 9685-2016)
 
 
-__all__ = [&#39;CompoundIndex&#39;, &#39;create_substance_widget&#39;, &#39;dbannex1&#39;, &#39;dbfca&#39;, &#39;dbfcn&#39;, &#39;floatNone&#39;, &#39;get_compounds&#39;, &#39;get_default_index&#39;, &#39;migrant&#39;, &#39;migrantToxtree&#39;, &#39;parse_molblock&#39;, &#39;parse_sdf&#39;, &#39;polarity_index&#39;, &#39;safe_json_dump&#39;, &#39;unique&#39;]
+__all__ = [&#39;CompoundIndex&#39;, &#39;create_substance_widget&#39;, &#39;dbannex1&#39;, &#39;dbfca&#39;, &#39;dbfcn&#39;, &#39;floatNone&#39;, &#39;get_compounds&#39;, &#39;get_default_index&#39;, &#39;get_java_version&#39;, &#39;is_java_available&#39;, &#39;migrant&#39;, &#39;migrantToxtree&#39;, &#39;parse_molblock&#39;, &#39;parse_sdf&#39;, &#39;polarity_index&#39;, &#39;safe_json_dump&#39;, &#39;unique&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -360,6 +360,18 @@ _PATANKAR_FOLDER = os.path.dirname(__file__)
 # Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
 PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
 PubChem_lastQueryTime = 0 # global variable
+
+def is_java_available():
+    &#34;&#34;&#34;Returns True if java is installed&#34;&#34;&#34;
+    return shutil.which(&#34;java&#34;) is not None
+
+def get_java_version():
+    &#34;&#34;&#34;Returns the java version&#34;&#34;&#34;
+    try:
+        result = subprocess.run([&#34;java&#34;, &#34;-version&#34;], capture_output=True, text=True)
+        return result.stderr.splitlines()[0]  # Java prints version to stderr
+    except FileNotFoundError:
+        return None
 
 # utility to generate JSON compliant files (required for Pyodide)
 def safe_json_dump(obj, path, indent=4, **kwargs):
@@ -2927,6 +2939,8 @@ class migrantToxtree(migrant):
 
         # use Toxtree otherwise (it needs to be installed)
         if not os.path.isfile(csv_file) or self.no_cache:
+            if not is_java_available():
+                raise RuntimeError(&#34;Java must be installed to run ToxTree&#34;)
             if not os.path.isfile(self.jar_path):
                 raise FileNotFoundError(
                     f&#34;The Toxtree executable &#39;{self.jar_path}&#39; cannot be found.\n&#34;
@@ -3567,6 +3581,38 @@ Later, access created substances via builtins.mysubstances.</p></div>
     if dbdefault is None:
         dbdefault = CompoundIndex(cache_dir=&#34;cache.PubChem&#34;, index_file=&#34;pubchem_index.json&#34;)
     return dbdefault</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.get_java_version"><code class="name flex">
+<span>def <span class="ident">get_java_version</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the java version</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_java_version():
+    &#34;&#34;&#34;Returns the java version&#34;&#34;&#34;
+    try:
+        result = subprocess.run([&#34;java&#34;, &#34;-version&#34;], capture_output=True, text=True)
+        return result.stderr.splitlines()[0]  # Java prints version to stderr
+    except FileNotFoundError:
+        return None</code></pre>
+</details>
+</dd>
+<dt id="loadpubchem.is_java_available"><code class="name flex">
+<span>def <span class="ident">is_java_available</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns True if java is installed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_java_available():
+    &#34;&#34;&#34;Returns True if java is installed&#34;&#34;&#34;
+    return shutil.which(&#34;java&#34;) is not None</code></pre>
 </details>
 </dd>
 <dt id="loadpubchem.parse_molblock"><code class="name flex">
@@ -7168,6 +7214,8 @@ Default is <code>'cache.ToxTree'</code>.</dd>
 
         # use Toxtree otherwise (it needs to be installed)
         if not os.path.isfile(csv_file) or self.no_cache:
+            if not is_java_available():
+                raise RuntimeError(&#34;Java must be installed to run ToxTree&#34;)
             if not os.path.isfile(self.jar_path):
                 raise FileNotFoundError(
                     f&#34;The Toxtree executable &#39;{self.jar_path}&#39; cannot be found.\n&#34;
@@ -7704,6 +7752,8 @@ def showalerts(self):
 <li><code><a title="loadpubchem.floatNone" href="#loadpubchem.floatNone">floatNone</a></code></li>
 <li><code><a title="loadpubchem.get_compounds" href="#loadpubchem.get_compounds">get_compounds</a></code></li>
 <li><code><a title="loadpubchem.get_default_index" href="#loadpubchem.get_default_index">get_default_index</a></code></li>
+<li><code><a title="loadpubchem.get_java_version" href="#loadpubchem.get_java_version">get_java_version</a></code></li>
+<li><code><a title="loadpubchem.is_java_available" href="#loadpubchem.is_java_available">is_java_available</a></code></li>
 <li><code><a title="loadpubchem.parse_molblock" href="#loadpubchem.parse_molblock">parse_molblock</a></code></li>
 <li><code><a title="loadpubchem.parse_sdf" href="#loadpubchem.parse_sdf">parse_sdf</a></code></li>
 <li><code><a title="loadpubchem.polarity_index" href="#loadpubchem.polarity_index">polarity_index</a></code></li>

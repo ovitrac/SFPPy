@@ -28,10 +28,15 @@ import json
 
 # Configuration Preambule
 ConfigurationPreambule = """
-## **Running SFPPy**
+## **Ask SFPPy ChatBot**
+<table><tr><td><img src="assets/SFPPy_social.png" alt="SFPPy – Chatbot" width="64"/></td>
+<td><strong>Our ChatBot can assist you across all stages of your workflow</strong> – <i>from setup and configuration to finalizing notebooks and reports</i>.<br/> It has been trained on the scientific concepts and internal structure of SFPPy. You can ask it to clarify migration modeling logic, regulatory workflows, or even request it to refactor or adapt example code to your specific needs.</td></tr></table>
 
-> **SFPPy** enables the **compliance assessment of food contact materials** and facilitates **risk assessments** through **migration modeling**.  
-> The term *"[Migration Modeling]("MigrationModeling/")"* refers to the **simulation of mass transfer** (primarily diffusive) from packaging materials into food.
+---
+
+## **Running SFPPy**
+<table><tr><td><img src="assets/SFPPy.svg" alt="SFPPy – Scientific Framework for Food Packaging" width="64"/></td>
+<td><strong>SFPPy</strong> enables the <strong>compliance assessment of food contact materials</strong> and facilitates <strong>risk assessments</strong> through <strong>migration modeling</strong>.<br/>The term <strong>"<a href="MigrationModeling/" title="Book on Migrantion Modeling & Risk Assessment" target="_book">Migration Modeling</a></strong> refers to the <strong>simulation of mass transfer</strong> (primarily diffusive) from packaging materials into food.</td></tr></table>
 
 #### **What this guide covers:**
 1. **Running SFPPy/example1.py** (or `example2.py`, `example3.py`) immediately after cloning the repository.

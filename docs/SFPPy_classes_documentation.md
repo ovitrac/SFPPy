@@ -1,14 +1,19 @@
 # SFPPy Modules Documentation
 
-Generated on: **2025-04-06 20:26:55**
+Generated on: **2025-04-10 17:03:28**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
 
-## **Running SFPPy**
+## **Ask SFPPy ChatBot**
+<table><tr><td><img src="assets/SFPPy_social.png" alt="SFPPy – Chatbot" width="64"/></td>
+<td><strong>Our ChatBot can assist you across all stages of your workflow</strong> – <i>from setup and configuration to finalizing notebooks and reports</i>.<br/> It has been trained on the scientific concepts and internal structure of SFPPy. You can ask it to clarify migration modeling logic, regulatory workflows, or even request it to refactor or adapt example code to your specific needs.</td></tr></table>
 
-> **SFPPy** enables the **compliance assessment of food contact materials** and facilitates **risk assessments** through **migration modeling**.  
-> The term *"[Migration Modeling]("MigrationModeling/")"* refers to the **simulation of mass transfer** (primarily diffusive) from packaging materials into food.
+---
+
+## **Running SFPPy**
+<table><tr><td><img src="assets/SFPPy.svg" alt="SFPPy – Scientific Framework for Food Packaging" width="64"/></td>
+<td><strong>SFPPy</strong> enables the <strong>compliance assessment of food contact materials</strong> and facilitates <strong>risk assessments</strong> through <strong>migration modeling</strong>.<br/>The term <strong>"<a href="MigrationModeling/" title="Book on Migrantion Modeling & Risk Assessment" target="_book">Migration Modeling</a></strong> refers to the <strong>simulation of mass transfer</strong> (primarily diffusive) from packaging materials into food.</td></tr></table>
 
 #### **What this guide covers:**
 1. **Running SFPPy/example1.py** (or `example2.py`, `example3.py`) immediately after cloning the repository.
@@ -2921,6 +2926,8 @@ object --> migrant
 | (module-level) | `create_substance_widget` | Creates a two-step widget interface for selecting a substance via loadpubchem. | 300 | 1.41 |
 | (module-level) | `<lambda>` |  | 1 | 1.41 |
 | (module-level) | `get_default_index` |  | 5 | 1.41 |
+| (module-level) | `get_java_version` | Returns the java version | 7 | 1.41 |
+| (module-level) | `is_java_available` | Returns True if java is installed | 3 | 1.41 |
 | (module-level) | `parse_molblock` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.41 |
 | (module-level) | `parse_sdf` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.41 |
 | (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.41 |
@@ -2957,7 +2964,7 @@ object --> migrant
 | `migrantToxtree` | `_download_PNG` | Downloads and caches the PNG thumb file from PubChem. | 10 | 1.41 |
 | `migrantToxtree` | `_download_SDF` | Downloads and caches the SDF structure file from PubChem. | 11 | 1.41 |
 | `migrantToxtree` | `_download_pubchem_structuredata` | Downloads and caches the SDF structure file and PNG thumbnail from PubChem. | 4 | 1.41 |
-| `migrantToxtree` | `_run_toxtree` | run ToxTree engine, return cached data if they exist | 54 | 1.41 |
+| `migrantToxtree` | `_run_toxtree` | run ToxTree engine, return cached data if they exist | 56 | 1.41 |
 | `migrantToxtree` | `_validate_and_set_model` | Generic method for validating and setting a migration property model. | 31 | 1.41 |
 | `migrantToxtree` | `check_alt_propclass` | returns True if a class property exists in patankar.property | 12 | 1.41 |
 | `migrantToxtree` | `class_roman_to_int` | Converts 'Class X' (where X is I, II, III, IV, V) into an integer (1-5), case insensitive. | 14 | 1.41 |

@@ -496,8 +496,309 @@ def create_header_footer(what=&#34;head&#34;, title=&#34;SFPPy - Notebook Index 
         return (HTML(header),HTML(footer),HTML(separator))
     raise ValueError(f&#39;{what} is not recognized, use &#34;head&#34;, &#34;foot&#34; , both&#39; or &#39;all&#39;)
 
+# %% additional elements
+separator2 = HTML(&#39;&lt;hr style=&#34;border: none; height: 4px; width: 60%; margin: 2em auto; background-color: #4CAF50; border-radius: 2px;&#34;&gt;&#39;);
+
+# %% Big Separator with hide/show buttons
+def bigseparator(tag=&#34;section&#34;):
+    &#34;&#34;&#34; shows a big separator with hide/show buttons&#34;&#34;&#34;
+
+    element_id = &#34;code-toggle-&#34; + re.sub(r&#39;[^a-zA-Z0-9_-]&#39;, &#39;_&#39;, tag)
 
 
+    html = f&#34;&#34;&#34;
+    &lt;style&gt;
+    .jp-Cell-inputWrapper.toggle-hidden {{
+      max-height: 0 !important;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    .jp-Cell-inputWrapper.toggle-visible {{
+      max-height: 1000px;
+      opacity: 1;
+      overflow: visible;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    @keyframes flash-highlight {{
+      from {{ background-color: yellow; }}
+      to   {{ background-color: transparent; }}
+    }}
+    .jp-Cell-inputWrapper.flash-on-toggle {{
+      animation: flash-highlight 1s ease-out;
+    }}
+
+    .code-toggle-bar {{
+      text-align: center;
+      margin: 10px 0;
+      position: relative;
+    }}
+    .code-toggle-bar hr {{
+      height: 6px;
+      background-color: #4CAF50;
+      box-shadow: 2px 2px 4px gray;
+      border: none;
+      margin: 30px 0;
+      position: relative;
+    }}
+    .code-toggle-box {{
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 2px solid #4CAF50;
+      font-weight: bold;
+      color: #4CAF50;
+      font-family: monospace;
+      font-size: 12px;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      z-index: 2;
+    }}
+    .code-toggle-before,
+    .code-toggle-after,
+    .code-toggle-all {{
+      position: absolute;
+      z-index: 2;
+    }}
+    .code-toggle-before {{
+      top: -24px;
+      left: 0;
+    }}
+    .code-toggle-after {{
+      top: 9px;
+      left: 0;
+    }}
+    .code-toggle-all {{
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }}
+    .code-toggle-bar button {{
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid white;
+      padding: 3px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      cursor: pointer;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }}
+    .code-toggle-bar button:hover {{
+      background-color: #45A049;
+    }}
+    &lt;/style&gt;
+
+    &lt;div id=&#34;{element_id}&#34; class=&#34;code-toggle-bar&#34;&gt;
+      &lt;hr&gt;
+      &lt;div class=&#34;code-toggle-box&#34;&gt;{tag}&lt;/div&gt;
+      &lt;div class=&#34;code-toggle-before&#34;&gt;
+        &lt;button onclick=&#34;toggleCodeBlock(this, &#39;above&#39;)&#34;&gt;↑ hide&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&#34;code-toggle-after&#34;&gt;
+        &lt;button onclick=&#34;toggleCodeBlock(this, &#39;below&#39;)&#34;&gt;↓ hide&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&#34;code-toggle-all&#34;&gt;
+        &lt;button onclick=&#34;toggleCodeBlock(this, &#39;all&#39;)&#34;&gt;↕ hide&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+    function toggleCodeBlock(button, mode) {{
+      const inputs = Array.from(document.querySelectorAll(&#39;.jp-CodeCell .jp-Cell-inputWrapper&#39;));
+      const cells = inputs.map(input =&gt; {{
+        const cell = input.closest(&#39;.jp-Cell&#39;);
+        return {{ input: input, cell: cell }};
+      }});
+      const active = document.querySelector(&#39;.jp-Notebook .jp-mod-active&#39;);
+      if (!active) return;
+
+      const currentIndex = cells.findIndex(({{ cell }}) =&gt; cell === active);
+      if (currentIndex === -1) return;
+
+      const targetCells = cells.filter((_, i) =&gt;
+        mode === &#39;all&#39; ||
+        (mode === &#39;above&#39; &amp;&amp; i &lt;= currentIndex) ||
+        (mode === &#39;below&#39; &amp;&amp; i &gt; currentIndex)
+      );
+
+      const sample = targetCells[0];
+      const shouldShow = sample ? sample.input.classList.contains(&#39;toggle-hidden&#39;) : true;
+
+      const symbol = mode === &#39;all&#39; ? &#39;↕&#39; : (mode === &#39;above&#39; ? &#39;↑&#39; : &#39;↓&#39;);
+      button.textContent = shouldShow ? `${{symbol}} hide` : `${{symbol}} show`;
+
+      targetCells.forEach(({{ input }}) =&gt; {{
+        input.classList.toggle(&#39;toggle-visible&#39;, shouldShow);
+        input.classList.toggle(&#39;toggle-hidden&#39;, !shouldShow);
+        input.classList.add(&#39;flash-on-toggle&#39;);
+        setTimeout(() =&gt; input.classList.remove(&#39;flash-on-toggle&#39;), 1000);
+      }});
+    }}
+    &lt;/script&gt;
+    &#34;&#34;&#34;
+
+    display(HTML(html))
+
+def bygseparator(tag=&#34;section&#34;):
+    &#34;&#34;&#34;Separator with toggle buttons – now fixed for Jupyter.&#34;&#34;&#34;
+    element_id = &#34;code-toggle-&#34; + re.sub(r&#39;[^a-zA-Z0-9_-]&#39;, &#39;_&#39;, tag)
+
+    html = f&#34;&#34;&#34;
+    &lt;style&gt;
+    .toggle-hidden {{
+        max-height: 0 !important;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    .toggle-visible {{
+        max-height: 1000px;
+        opacity: 1;
+        overflow: visible;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    @keyframes flash-highlight {{
+        from {{ background-color: yellow; }}
+        to   {{ background-color: transparent; }}
+    }}
+    .flash-on-toggle {{
+        animation: flash-highlight 1s ease-out;
+    }}
+    .code-toggle-bar {{
+        text-align: center;
+        margin: 10px 0;
+        position: relative;
+    }}
+    .code-toggle-bar hr {{
+        height: 6px;
+        background-color: #4CAF50;
+        box-shadow: 2px 2px 4px gray;
+        border: none;
+        margin: 30px 0;
+        position: relative;
+    }}
+    .code-toggle-box {{
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        border: 2px solid #4CAF50;
+        font-weight: bold;
+        color: #4CAF50;
+        font-family: monospace;
+        font-size: 12px;
+        box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        z-index: 2;
+    }}
+    .code-toggle-before,
+    .code-toggle-after,
+    .code-toggle-all {{
+        position: absolute;
+        z-index: 2;
+    }}
+    .code-toggle-before {{
+        top: -24px;
+        left: 0;
+    }}
+    .code-toggle-after {{
+        top: 9px;
+        left: 0;
+    }}
+    .code-toggle-all {{
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+    }}
+    .code-toggle-bar button {{
+        background-color: #4CAF50;
+        color: white;
+        border: 1px solid white;
+        padding: 3px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+        cursor: pointer;
+        box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }}
+    .code-toggle-bar button:hover {{
+        background-color: #45A049;
+    }}
+    &lt;/style&gt;
+
+    &lt;div id=&#34;{element_id}&#34; class=&#34;code-toggle-bar&#34;&gt;
+        &lt;hr&gt;
+        &lt;div class=&#34;code-toggle-box&#34;&gt;{tag}&lt;/div&gt;
+        &lt;div class=&#34;code-toggle-before&#34;&gt;
+            &lt;button onclick=&#34;toggleCodeBlock(this, &#39;above&#39;)&#34;&gt;↑ hide&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&#34;code-toggle-after&#34;&gt;
+            &lt;button onclick=&#34;toggleCodeBlock(this, &#39;below&#39;)&#34;&gt;↓ hide&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&#34;code-toggle-all&#34;&gt;
+            &lt;button onclick=&#34;toggleCodeBlock(this, &#39;all&#39;)&#34;&gt;↕ hide&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+    function toggleCodeBlock(button, mode) {{
+        const isColab = typeof google === &#39;object&#39; &amp;&amp; typeof google.colab === &#39;object&#39;;
+
+        const inputSelector = isColab
+            ? &#39;div.cell.code &gt; div.input&#39;
+            : &#39;.jp-Cell-inputWrapper&#39;;
+
+        const cellSelector = isColab
+            ? &#39;div.cell.code&#39;
+            : &#39;.jp-Cell&#39;;
+
+        const activeSelector = isColab
+            ? &#39;div.cell.code.focused&#39;
+            : &#39;.jp-Notebook .jp-mod-active&#39;;
+
+        const inputs = Array.from(document.querySelectorAll(inputSelector));
+        const cells = inputs.map(function(input) {{
+            const cell = input.closest(cellSelector);
+            return {{ input: input, cell: cell }};
+        }});
+
+        const active = document.querySelector(activeSelector);
+        if (!active) return;
+
+        const currentIndex = cells.findIndex(function(wrapper) {{
+            return wrapper.cell === active;
+        }});
+        if (currentIndex === -1) return;
+
+        const targetCells = cells.filter(function(_, i) {{
+            return mode === &#39;all&#39; ||
+                   (mode === &#39;above&#39; &amp;&amp; i &lt;= currentIndex) ||
+                   (mode === &#39;below&#39; &amp;&amp; i &gt; currentIndex);
+        }});
+
+        const sample = targetCells[0];
+        const shouldShow = sample ? sample.input.classList.contains(&#39;toggle-hidden&#39;) : true;
+
+        const symbol = mode === &#39;all&#39; ? &#39;↕&#39; : (mode === &#39;above&#39; ? &#39;↑&#39; : &#39;↓&#39;);
+        button.textContent = shouldShow ? symbol + &#34; hide&#34; : symbol + &#34; show&#34;;
+
+        targetCells.forEach(function(wrapper) {{
+            wrapper.input.classList.toggle(&#39;toggle-visible&#39;, shouldShow);
+            wrapper.input.classList.toggle(&#39;toggle-hidden&#39;, !shouldShow);
+            wrapper.input.classList.add(&#39;flash-on-toggle&#39;);
+            setTimeout(function() {{
+                wrapper.input.classList.remove(&#39;flash-on-toggle&#39;);
+            }}, 1000);
+        }});
+    }}
+    &lt;/script&gt;
+    &#34;&#34;&#34;
+
+    display(HTML(html))
 # %% Widgets
 # create a dropdown widget for files and their execution
 def create_files_widget(root=sfppy_folder,
@@ -940,6 +1241,326 @@ if __name__ == &#39;__main__&#39;:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="nbutils.bigseparator"><code class="name flex">
+<span>def <span class="ident">bigseparator</span></span>(<span>tag='section')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>shows a big separator with hide/show buttons</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bigseparator(tag=&#34;section&#34;):
+    &#34;&#34;&#34; shows a big separator with hide/show buttons&#34;&#34;&#34;
+
+    element_id = &#34;code-toggle-&#34; + re.sub(r&#39;[^a-zA-Z0-9_-]&#39;, &#39;_&#39;, tag)
+
+
+    html = f&#34;&#34;&#34;
+    &lt;style&gt;
+    .jp-Cell-inputWrapper.toggle-hidden {{
+      max-height: 0 !important;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    .jp-Cell-inputWrapper.toggle-visible {{
+      max-height: 1000px;
+      opacity: 1;
+      overflow: visible;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    @keyframes flash-highlight {{
+      from {{ background-color: yellow; }}
+      to   {{ background-color: transparent; }}
+    }}
+    .jp-Cell-inputWrapper.flash-on-toggle {{
+      animation: flash-highlight 1s ease-out;
+    }}
+
+    .code-toggle-bar {{
+      text-align: center;
+      margin: 10px 0;
+      position: relative;
+    }}
+    .code-toggle-bar hr {{
+      height: 6px;
+      background-color: #4CAF50;
+      box-shadow: 2px 2px 4px gray;
+      border: none;
+      margin: 30px 0;
+      position: relative;
+    }}
+    .code-toggle-box {{
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 2px solid #4CAF50;
+      font-weight: bold;
+      color: #4CAF50;
+      font-family: monospace;
+      font-size: 12px;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      z-index: 2;
+    }}
+    .code-toggle-before,
+    .code-toggle-after,
+    .code-toggle-all {{
+      position: absolute;
+      z-index: 2;
+    }}
+    .code-toggle-before {{
+      top: -24px;
+      left: 0;
+    }}
+    .code-toggle-after {{
+      top: 9px;
+      left: 0;
+    }}
+    .code-toggle-all {{
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }}
+    .code-toggle-bar button {{
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid white;
+      padding: 3px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      cursor: pointer;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }}
+    .code-toggle-bar button:hover {{
+      background-color: #45A049;
+    }}
+    &lt;/style&gt;
+
+    &lt;div id=&#34;{element_id}&#34; class=&#34;code-toggle-bar&#34;&gt;
+      &lt;hr&gt;
+      &lt;div class=&#34;code-toggle-box&#34;&gt;{tag}&lt;/div&gt;
+      &lt;div class=&#34;code-toggle-before&#34;&gt;
+        &lt;button onclick=&#34;toggleCodeBlock(this, &#39;above&#39;)&#34;&gt;↑ hide&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&#34;code-toggle-after&#34;&gt;
+        &lt;button onclick=&#34;toggleCodeBlock(this, &#39;below&#39;)&#34;&gt;↓ hide&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&#34;code-toggle-all&#34;&gt;
+        &lt;button onclick=&#34;toggleCodeBlock(this, &#39;all&#39;)&#34;&gt;↕ hide&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+    function toggleCodeBlock(button, mode) {{
+      const inputs = Array.from(document.querySelectorAll(&#39;.jp-CodeCell .jp-Cell-inputWrapper&#39;));
+      const cells = inputs.map(input =&gt; {{
+        const cell = input.closest(&#39;.jp-Cell&#39;);
+        return {{ input: input, cell: cell }};
+      }});
+      const active = document.querySelector(&#39;.jp-Notebook .jp-mod-active&#39;);
+      if (!active) return;
+
+      const currentIndex = cells.findIndex(({{ cell }}) =&gt; cell === active);
+      if (currentIndex === -1) return;
+
+      const targetCells = cells.filter((_, i) =&gt;
+        mode === &#39;all&#39; ||
+        (mode === &#39;above&#39; &amp;&amp; i &lt;= currentIndex) ||
+        (mode === &#39;below&#39; &amp;&amp; i &gt; currentIndex)
+      );
+
+      const sample = targetCells[0];
+      const shouldShow = sample ? sample.input.classList.contains(&#39;toggle-hidden&#39;) : true;
+
+      const symbol = mode === &#39;all&#39; ? &#39;↕&#39; : (mode === &#39;above&#39; ? &#39;↑&#39; : &#39;↓&#39;);
+      button.textContent = shouldShow ? `${{symbol}} hide` : `${{symbol}} show`;
+
+      targetCells.forEach(({{ input }}) =&gt; {{
+        input.classList.toggle(&#39;toggle-visible&#39;, shouldShow);
+        input.classList.toggle(&#39;toggle-hidden&#39;, !shouldShow);
+        input.classList.add(&#39;flash-on-toggle&#39;);
+        setTimeout(() =&gt; input.classList.remove(&#39;flash-on-toggle&#39;), 1000);
+      }});
+    }}
+    &lt;/script&gt;
+    &#34;&#34;&#34;
+
+    display(HTML(html))</code></pre>
+</details>
+</dd>
+<dt id="nbutils.bygseparator"><code class="name flex">
+<span>def <span class="ident">bygseparator</span></span>(<span>tag='section')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Separator with toggle buttons – now fixed for Jupyter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bygseparator(tag=&#34;section&#34;):
+    &#34;&#34;&#34;Separator with toggle buttons – now fixed for Jupyter.&#34;&#34;&#34;
+    element_id = &#34;code-toggle-&#34; + re.sub(r&#39;[^a-zA-Z0-9_-]&#39;, &#39;_&#39;, tag)
+
+    html = f&#34;&#34;&#34;
+    &lt;style&gt;
+    .toggle-hidden {{
+        max-height: 0 !important;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    .toggle-visible {{
+        max-height: 1000px;
+        opacity: 1;
+        overflow: visible;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+    }}
+    @keyframes flash-highlight {{
+        from {{ background-color: yellow; }}
+        to   {{ background-color: transparent; }}
+    }}
+    .flash-on-toggle {{
+        animation: flash-highlight 1s ease-out;
+    }}
+    .code-toggle-bar {{
+        text-align: center;
+        margin: 10px 0;
+        position: relative;
+    }}
+    .code-toggle-bar hr {{
+        height: 6px;
+        background-color: #4CAF50;
+        box-shadow: 2px 2px 4px gray;
+        border: none;
+        margin: 30px 0;
+        position: relative;
+    }}
+    .code-toggle-box {{
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        border: 2px solid #4CAF50;
+        font-weight: bold;
+        color: #4CAF50;
+        font-family: monospace;
+        font-size: 12px;
+        box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        z-index: 2;
+    }}
+    .code-toggle-before,
+    .code-toggle-after,
+    .code-toggle-all {{
+        position: absolute;
+        z-index: 2;
+    }}
+    .code-toggle-before {{
+        top: -24px;
+        left: 0;
+    }}
+    .code-toggle-after {{
+        top: 9px;
+        left: 0;
+    }}
+    .code-toggle-all {{
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+    }}
+    .code-toggle-bar button {{
+        background-color: #4CAF50;
+        color: white;
+        border: 1px solid white;
+        padding: 3px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+        cursor: pointer;
+        box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }}
+    .code-toggle-bar button:hover {{
+        background-color: #45A049;
+    }}
+    &lt;/style&gt;
+
+    &lt;div id=&#34;{element_id}&#34; class=&#34;code-toggle-bar&#34;&gt;
+        &lt;hr&gt;
+        &lt;div class=&#34;code-toggle-box&#34;&gt;{tag}&lt;/div&gt;
+        &lt;div class=&#34;code-toggle-before&#34;&gt;
+            &lt;button onclick=&#34;toggleCodeBlock(this, &#39;above&#39;)&#34;&gt;↑ hide&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&#34;code-toggle-after&#34;&gt;
+            &lt;button onclick=&#34;toggleCodeBlock(this, &#39;below&#39;)&#34;&gt;↓ hide&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&#34;code-toggle-all&#34;&gt;
+            &lt;button onclick=&#34;toggleCodeBlock(this, &#39;all&#39;)&#34;&gt;↕ hide&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+    function toggleCodeBlock(button, mode) {{
+        const isColab = typeof google === &#39;object&#39; &amp;&amp; typeof google.colab === &#39;object&#39;;
+
+        const inputSelector = isColab
+            ? &#39;div.cell.code &gt; div.input&#39;
+            : &#39;.jp-Cell-inputWrapper&#39;;
+
+        const cellSelector = isColab
+            ? &#39;div.cell.code&#39;
+            : &#39;.jp-Cell&#39;;
+
+        const activeSelector = isColab
+            ? &#39;div.cell.code.focused&#39;
+            : &#39;.jp-Notebook .jp-mod-active&#39;;
+
+        const inputs = Array.from(document.querySelectorAll(inputSelector));
+        const cells = inputs.map(function(input) {{
+            const cell = input.closest(cellSelector);
+            return {{ input: input, cell: cell }};
+        }});
+
+        const active = document.querySelector(activeSelector);
+        if (!active) return;
+
+        const currentIndex = cells.findIndex(function(wrapper) {{
+            return wrapper.cell === active;
+        }});
+        if (currentIndex === -1) return;
+
+        const targetCells = cells.filter(function(_, i) {{
+            return mode === &#39;all&#39; ||
+                   (mode === &#39;above&#39; &amp;&amp; i &lt;= currentIndex) ||
+                   (mode === &#39;below&#39; &amp;&amp; i &gt; currentIndex);
+        }});
+
+        const sample = targetCells[0];
+        const shouldShow = sample ? sample.input.classList.contains(&#39;toggle-hidden&#39;) : true;
+
+        const symbol = mode === &#39;all&#39; ? &#39;↕&#39; : (mode === &#39;above&#39; ? &#39;↑&#39; : &#39;↓&#39;);
+        button.textContent = shouldShow ? symbol + &#34; hide&#34; : symbol + &#34; show&#34;;
+
+        targetCells.forEach(function(wrapper) {{
+            wrapper.input.classList.toggle(&#39;toggle-visible&#39;, shouldShow);
+            wrapper.input.classList.toggle(&#39;toggle-hidden&#39;, !shouldShow);
+            wrapper.input.classList.add(&#39;flash-on-toggle&#39;);
+            setTimeout(function() {{
+                wrapper.input.classList.remove(&#39;flash-on-toggle&#39;);
+            }}, 1000);
+        }});
+    }}
+    &lt;/script&gt;
+    &#34;&#34;&#34;
+
+    display(HTML(html))</code></pre>
+</details>
+</dd>
 <dt id="nbutils.clean_markdown"><code class="name flex">
 <span>def <span class="ident">clean_markdown</span></span>(<span>text)</span>
 </code></dt>
@@ -2143,6 +2764,8 @@ Maximum depth for recursive search.</p>
 <ul id="index">
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="nbutils.bigseparator" href="#nbutils.bigseparator">bigseparator</a></code></li>
+<li><code><a title="nbutils.bygseparator" href="#nbutils.bygseparator">bygseparator</a></code></li>
 <li><code><a title="nbutils.clean_markdown" href="#nbutils.clean_markdown">clean_markdown</a></code></li>
 <li><code><a title="nbutils.copy_to_clipboard" href="#nbutils.copy_to_clipboard">copy_to_clipboard</a></code></li>
 <li><code><a title="nbutils.create_alert" href="#nbutils.create_alert">create_alert</a></code></li>

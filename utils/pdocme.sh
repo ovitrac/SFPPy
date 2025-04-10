@@ -697,7 +697,44 @@ cat > "$index_file" <<EOF
     .svg-pan-zoom_viewport:active {
         cursor: grabbing;
     }
+    /* Customized Badges */
+    .badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1em;
+        margin-top: 1em;
+        justify-content: flex-start; /* or center */
+    }
+
+    .badge-card {
+        flex: 1 1 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sfppy-custom-badge {
+        display: inline-block;
+        padding: 10px 18px;
+        font-size: 1em;
+        font-weight: bold;
+        color: white;
+        background-color: #4CAF50;
+        border: 2px solid white;
+        border-radius: 32px;
+        text-decoration: none;
+        transition: all 0.25s ease-in-out;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .sfppy-custom-badge:hover {
+        background-color: white;
+        color: #4CAF50;
+        border: 2px solid #4CAF50;
+    }
     </style>
+
     <!-- Include Marked.js from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
     <!-- Include Mermaid.js from CDN -->
@@ -724,12 +761,17 @@ cat > "$index_file" <<EOF
     }
     </script>
 </head>
+
 <body>
+
     <!-- Notification Banner -->
     <div id="notification-banner" class="notification-banner">
         <span>
-            If you are looking for the concepts of migration modeling and risk assessment, please follow this 
-            <a href="MigrationModeling/" target="_book">link</a>.
+            💡 <strong>Ask any question to </strong> 
+            <a href="https://chatgpt.com/g/g-6780fa0b1180819198ea1d962dd4064c-sfppy" target="_chatbot" title="Launch SFPPy ChatBot"><img src="https://img.shields.io/badge/SFPPy-ChatBot-forestgreen?logo=openai" alt="SFPPy CHatBot" height="24" style="vertical-align: middle;"/></a> ┃ 
+            📒 <strong>Learn the concepts of migration modeling and risk assessment</strong> with this 
+            <a href="MigrationModeling/" target="_book" title="Read the book online"><img src="https://img.shields.io/badge/Book-4CAF50?logo=readthedocs&logoColor=white" alt="Migration Modeling Book" height="24" style="vertical-align: middle;"/></a> ┃ 
+            🔎 <strong>Find a discussion</strong> on <a href="wikipages/" target="_wiki" title="Go to Wiki Pages"><img src="https://img.shields.io/badge/Wiki_Pages-4CAF50?logo=wikipedia&logoColor=white"  alt="SFPPy Wiki Pages" height="24" style="vertical-align: middle;" /></a>.
         </span>
         <button class="close-button" onclick="closeBanner()">&times;</button>
     </div>
@@ -755,25 +797,52 @@ cat "$nav_file" >> "$index_file"
 cat >> "$index_file" <<'EOF'
         </div>
         <div id='main'>
+
             <h2>Welcome to SFPPy Documentation</h2>
-                <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-family: sans-serif;">
-                <h1 style="font-size: 1.8em; margin-bottom: 12px;">
-                    🍏⏩🍎<br><strong>SFPPy for Food Contact Compliance 𓌉◯𓇋 <br> and Risk Assessment 🎢</strong>
-                </h1>
-                <hr style="border: none; border-top: 1px solid #fff; width: 80%; margin: 15px auto;">
-                <p style="font-size: 1.1em; margin: 12px 0;">
+            <p style="font-size: 1.1em; margin: 12px 0;">
+              <strong>SFPPy</strong> is a Python framework to evaluate the safety of food contact and related materials.
+              You’ve reached the technical documentation pages of the core modules shared across 
+              <a href="https://github.com/ovitrac/SFPPy" target="_blank" title="SFPPy – Python Framework for Food Contact Compliance">
+                <img src="https://img.shields.io/badge/SFPPy-GitHub%20Repo-4CAF50?style=for-the-badge&logo=github" alt="SFPPy 🍏⏩🍎" style="vertical-align: middle;">
+              </a>
+              <a href="https://github.com/ovitrac/SFPPylite" target="_blank" title="SFPPyLite GitHub Repository">
+                <img src="https://img.shields.io/badge/SFPPyLite-GitHub%20Repo-orange?style=for-the-badge&logo=github" alt="SFPPyLite GitHub Repository" style="vertical-align: middle;">
+              </a>
+              <a href="https://github.com/ovitrac/SFPPyst" target="_blank" title="SFPPySt GitHub Repository">
+                <img src="https://img.shields.io/badge/SFPPySt-GitHub%20Repo-FF4D4D?style=for-the-badge&logo=github" alt="SFPPySt GitHub Repository" style="vertical-align: middle;">
+              </a>.
+            </p>
+          
+            <p style="font-size: 1.1em; margin: 12px 0;">
+              ⚠️ If you're looking for more general guidance ℹ️ on <b>regulations</b> ⚖️ (🇪🇺 🇺🇸 🇨🇳), <b>migration modeling</b> 📐, chemical properties ⌬, <b>recycled materials</b> ♻️, or <b>curve fitting</b> 📈, then use these 🔗 quick access links:
+                <div class="badge-container">
+                  <div class="badge-card">
+                    <a href="wikipages/" class="sfppy-custom-badge" title="Browse SFPPy Wiki Pages" target="_wiki">🧭 Wiki Pages / Leaning Center</a>
+                  </div>
+                  <div class="badge-card">
+                    <a href="MigrationModeling/" class="sfppy-custom-badge" title="Read the book on Migration Modeling" target="_book">📘 Book on Midegration Modeling & Risk Assessment</a>
+                  </div>
+                  <div class="badge-card">
+                    <a href="https://chatgpt.com/g/g-6780fa0b1180819198ea1d962dd4064c-sfppy" class="sfppy-custom-badge" title="Ask the SFPPy Chatbot" target="_chatbot">🤖 SFPPy Chatbot</a>
+                  </div>
+                </div>                
+            </p>
+          
+            <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 10px; background: linear-gradient(to right, #4CAF50, #FF4D4D); color: white; text-align: center; font-family: sans-serif;">
+              <h1 style="font-size: 1.8em; margin-bottom: 12px;">
+                🍏⏩🍎<br><strong>SFPPy for Food Contact Compliance 🍽️ <br> and Risk Assessment 🎢</strong>
+              </h1>
+              <hr style="border: none; border-top: 1px solid #fff; width: 80%; margin: 15px auto;">
+              <p style="font-size: 1.1em; margin: 12px 0;">
                 👈 Choose a <b>Python module</b> 🐍 from the left panel ☰ to view its documentation 📚
-                </p>
-                <p style="font-size: 1.1em; margin: 12px 0; margin-bottom: 16px;">
-                    👇<i>Jump to the list of <b>classes</b> 📑 with this 
-                    <a href="#table_of_contents" title="list of classes" style="color: #fff; text-decoration: underline; font-weight: bold;">link</a>
-                    </i>
-                </p>
-                <p style="font-size: 1.2em; margin: 12px 0;margin-bottom: 16px;">🧭
-                    <a href="wikipages/" title="SFPPy Wiki Pages" target="_blank" style="color: #fff; text-decoration: underline; font-weight: bold;">LEARNING CENTER</a> for specific guidance ℹ️ on <b>migration modeling</b> 📐, substances and their properties ⌬, <b>recycled materials</b> ♻️, <b>curve fitting</b> 📈.
-                </p>
-                </div>
+              </p>
+              <p style="font-size: 1.1em; margin: 12px 0; margin-bottom: 16px;">
+                👇Jump to the list of <b>classes</b> 📑 with this 
+                <a href="#table_of_contents" title="list of classes" style="color: #fff; text-decoration: underline; font-weight: bold;">link</a>
+              </p>
+            </div>
             <hr>
+
             <!-- Embed the raw Markdown in a script block -->
             <div id="markdown-content"></div>
             <script>
