@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SFPPyLite 🍏⏩🍎 – Landing Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --green: #4CAF50;
+      --red: #FF4D4D;
+      --orange: #FF9802;
+      --light: #f9f9f9;
+      --text: #111;
+      --radius: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: var(--light);
+      color: var(--text);
+    }
+
+    header, footer {
+      background: linear-gradient(to right, var(--green), var(--red));
+      color: white;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    header .badge {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+    }
+
+    main {
+      padding: 24px;
+      max-width: 960px;
+      margin: auto;
+      font-size: 16px;
+    }
+
+    h2 {
+      color: var(--green);
+      margin-top: 1.5em;
+    }
+
+    a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    table.notebook-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 0.8em;
+    }
+
+    table.notebook-table td {
+      background-color: #fff;
+      border-radius: var(--radius);
+      border: 2px solid var(--green);
+      padding: 1em;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.05);
+      transition: background-color 0.3s ease;
+      text-align: left;
+    }
+
+    table.notebook-table td:hover {
+      background-color: #f0fdf4;
+    }
+
+    ul {
+      line-height: 1.6;
+    }
+
+    footer {
+      border-top: 4px solid var(--green);
+      font-size: 16px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: underline;
+      margin: 0 0.5em;
+    }
+
+    .highlight {
+      background-color: #fff3e0;
+      padding: 0.5em 1em;
+      border-left: 4px solid var(--orange);
+      border-radius: var(--radius);
+      margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍏⏩🍎 SFPPyLite — Food Contact Compliance in Your Browser</h1>
+  <a class="badge" href="https://github.com/ovitrac/SFPPy" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub-SFPPy-4CAF50?style=for-the-badge&logo=github"
+         alt="GitHub SFPPy" style="border-radius: 8px;">
+  </a>
+</header>
+
+<main>
+  <p><strong>SFPPy</strong> is a modeling and simulation framework for evaluating the compliance and risk of <em>food contact materials</em>, from monolayer to complex multilayer structures, with parameter estimation, regulatory filters, and more.</p>
+
+  <p><strong>SFPPyLite</strong> is a self-contained, browser-based version powered by <a href="https://jupyterlite.readthedocs.io/en/latest/" target="_blank">JupyterLite</a>. It runs a full Python environment (via <code>pyodide</code>), a file browser, a live editor, and persists your work entirely in-browser — no installation, no server, just your browser.</p>
+
+  <h2>⚙️ How It Works</h2>
+  <ul>
+    <li>💾 Data is saved using a <strong>persistent web worker session</strong>.</li>
+    <li>📂 Use <strong>drag & drop</strong> to upload files.</li>
+    <li>📥 Use <strong>right-click → Download</strong> to export one or multiple files.</li>
+    <li>🧠 <strong>No AI assistance</strong> is included in this Lite version.</li>
+  </ul>
+
+  <div class="highlight">
+    <strong>Tip:</strong> Your session data remains available between visits. To reset or recover from sync issues, use <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=utils/reset.html" target="_blank">reset.html</a>.
+  </div>
+
+  <h2>🚀 Start Here</h2>
+  <table class="notebook-table">
+    <tr><td>📘 <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=demo.ipynb" target="_blank">demo.ipynb</a><br>Overview of SFPPy capabilities, how to interact with the environment, and what to explore next.</td></tr>
+  </table>
+
+  <h2>📂 Available Notebooks</h2>
+  <table class="notebook-table">
+    <tr><td>✅ <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=notebooks/comply.ipynb" target="_blank">comply.ipynb</a><br>Comprehensive compliance notebook aligned with regulatory workflows.</td></tr>
+    <tr><td>🔬 <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=notebooks/example1.ipynb" target="_blank">example1.ipynb</a><br>Migration simulation for monolayer materials.</td></tr>
+    <tr><td>📦 <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=notebooks/example2.ipynb" target="_blank">example2.ipynb</a><br>Multilayer structures with internal barriers and coatings.</td></tr>
+    <tr><td>⛓ <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=notebooks/example3.ipynb" target="_blank">example3.ipynb</a><br>Chained simulations for evolving exposure scenarios.</td></tr>
+    <tr><td>🔧 <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=notebooks/example4.ipynb" target="_blank">example4.ipynb</a><br>Identify parameters from experimental migration data.</td></tr>
+    <tr><td>🖼 <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=notebooks/gui.ipynb" target="_blank">gui.ipynb</a><br>Interactive GUI to run models and visualize results.</td></tr>
+    <tr><td>🧭 <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=notebooks/index.ipynb" target="_blank">index.ipynb</a><br>Notebook index navigator (useful in Colab, less here).</td></tr>
+  </table>
+
+  <h2>🧰 Utilities</h2>
+  <table class="notebook-table">
+    <tr><td>♻️ <a href="https://ovitrac.github.io/SFPPylite/lab/index.html?path=utils/reset.html" target="_blank">reset.html</a><br>Reset the browser storage to reload SFPPyLite fresh.</td></tr>
+  </table>
+
+  <h2>📚 Additional Resources</h2>
+  <ul>
+    <li><a href="https://jupyterlab.readthedocs.io/en/stable/" target="_blank">JupyterLab Documentation</a></li>
+    <li><a href="https://try.jupyter.org/" target="_blank">try.jupyter.org</a></li>
+    <li><a href="https://ovitrac.github.io/SFPPylite/lab/index.html" target="_blank">Launch JupyterLite Interface</a></li>
+  </ul>
+</main>
+
+<footer>
+  🍏⏩🍎 <strong>SFPPyLite</strong> — Scientific Framework for Food Packaging Safety · 
+  <a href="mailto:olivier.vitrac@gmail.com" target="_blank">Contact</a> |
+  <a href="https://github.com/ovitrac/SFPPy" target="_blank">GitHub</a> |
+  <a href="https://ovitrac.github.io/SFPPy/" target="_blank">Documentation</a>
+</footer>
+
+</body>
+</html>
