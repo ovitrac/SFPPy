@@ -420,6 +420,46 @@ medium1.lastsimulation.rerun()
 
 ***
 
+### Snippet 6️⃣ | Ask Scientific Questions using RAG 🧠📚
+
+<details>
+ <summary>📦 Click to expand</summary>
+
+```python
+# Ask scientific or regulatory questions to a local LLM using your own knowledge base
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.llms.ollama import Ollama
+
+# Load your documentation folder (e.g. Markdown files from docs/KB)
+documents = SimpleDirectoryReader(input_dir="./docs/KB", recursive=True).load_data()
+
+# Embed and index documents (no API key needed)
+embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
+
+# Query with a local open-source LLM (e.g. mistral, phi3, llama3)
+llm = Ollama(model="mistral")
+query_engine = index.as_query_engine(llm=llm)
+
+# Ask your question
+response = query_engine.query("What is the definition of a functional barrier in EU Regulation 10/2011?")
+print(response.response)
+```
+
+> 💡 This example illustrates how to implement a **Retrieval-Augmented Generation (RAG)** strategy with:
+>
+> ✅ Plain Markdown files or exported documentation
+>  ✅ A local LLM such as Mistral via Ollama
+>  ✅ Embeddings from HuggingFace models (no API keys)
+>
+> 🔐 Your KB remains local and auditable. A prebuilt ZIP file of a sample KB is included in `docs/KB.zip`.
+
+
+
+</details>
+
+***
 
 ## 📖 Case Studies
 
@@ -454,7 +494,20 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 - ✅ Utilize **dynamic parameter linking** 🔗🧲 with `layerLink`.
 - ✅ Integrate simulation results directly with experiments for sensitivity analysis and optimization
 
+***
 
+### [Example <kbd>5</kbd>](https://ovitrac.github.io/SFPPy/wikipages/#examples/example5.html) |  **Regulatory QA using Local RAG 🧠📘**
+
+- 🔍 Ask **domain-specific questions** for your organization (e.g., *What is the migration of substance XXX?* or *Do we use this substance?*) using a local LLM over your own **knowledge base**.
+- 🧰 Uses **Ollama** to serve a compact and efficient open-source LLM (**Mistral**), with **HuggingFace embeddings** for semantic grounding.
+- 💾 The KB resides in `docs/KB/` (an example is provided as `docs/KB.zip`) and is indexed using **ChromaDB** for reuse, versioning, and auditability.
+- 🧠 Demonstrates how a **Retrieval-Augmented Generation (RAG)** pipeline can enhance regulatory and scientific reasoning using your curated Markdown corpus.
+
+✅ **Why it matters:**
+
+- A **local model** (under 8 GB VRAM) can answer **nontrivial, regulation-specific questions** when grounded in a structured KB.
+- **No internet, no tokens, no vendor lock-in** – SFPPy becomes entirely **self-hosted, private, and auditable**.
+- Your KB can include **confidential reports, regulatory texts, or internal documentation**, queried naturally and locally.
 
 ***
 
@@ -471,7 +524,7 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 
 ✔️ **Free & Open Source** — No licensing, no lock-in. Use it, adapt it, share it.
 
-✔️ **AI-Ready Design** — Symbolic, structured data and a clean Python API make it ideal for integration with AI assistants and LLMs.
+✔️ **AI-Ready Design** — Symbolic, structured data and a clean Python API make `SFPPy` naturally suited for integration with AI assistants and LLMs. As part of the *Generative Simulation Initiative* 🌱, it supports **agentic SAG** (*Simulation-Augmented Generation*), combining scientific simulation with LLM reasoning to address complex **risk assessment** and **risk management** challenges.
 
 ✔️ **Chemically-oriented** — `SFPPy` is designed to use chemical information and molecular models without requiring you to estimate diffusion and partitioning properties. The connection with PubChem server extends theoretically the possibilities to any single substance.
 
