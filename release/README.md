@@ -1,4 +1,4 @@
-# SFPPy <small>v1.3</small> Releases  🍏⏩🍎  
+# SFPPy <small>v1.5</small> Releases  🍏⏩🍎  
 
 ***
 
@@ -42,7 +42,7 @@
 | [`example1.py` ](https://ovitrac.github.io/SFPPy/wikipages/#examples/example1.html) | monolayer materials                                          |
 | [`example2.py`](https://ovitrac.github.io/SFPPy/wikipages/#examples/example2.html) | recycled bottles with functional barrier                     |
 | [`example3.py`](https://ovitrac.github.io/SFPPy/wikipages/#examples/example3.html) | chained simulations with variants                            |
-| [`example4.py` ](https://ovitrac.github.io/SFPPy/wikipages/#examples/example4.html) | fitting experimental curves to extract diffusion and partition coefficiens |
+| [`example4.py` ](https://ovitrac.github.io/SFPPy/wikipages/#examples/example4.html) | fitting experimental curves to extract diffusion and partition coefficients |
 
 
 

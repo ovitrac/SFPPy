@@ -45,6 +45,7 @@
 
 | <img src="docs/assets/SFPPy_social.png" alt="SFPPy – Scientific Framework for Food Packaging" width="320"/> | [![ChatGPT SFPPy](https://img.shields.io/badge/ChatGPT-SFPPy-orange?logo=openai)](https://chatgpt.com/g/g-6780fa0b1180819198ea1d962dd4064c-sfppy) <br/> 🔥A custom AI assistant 🤖 extensively trained on **SFPPy** 🏋🏻. It helps you explore and use the framework: from the **principles of migration modeling** ⚙️ to **first simulations** 📈, **regulatory compliance** ✅, **interpretation** 📊, and **reporting**📝. |
 | :----------------------------------------------------------: | :----------------------------------------------------------- |
+| <img src="docs/assets/SFPPy_social_v15.png" alt="SFPPy – version 1.50" width="320"/> | 🧠🛡️ **SFPPy 1.5** brings **design-for-compliance** to packaging: **M0–M3**, explicit indicators, open data, AI-assisted reasoning.<br /><small>**Read our 📄 technical paper [here](https://ovitrac.github.io/SFPPy/wikipages/SafeByDesign/sfppydesign.html)**.</small> |
 
 </div>
 
@@ -559,10 +560,10 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 
 ## 🤝 Contributors
 
-**INRAE** - [Olivier Vitrac](mailto:olivier.vitrac@agroparistech.fr)  
+**INRAE** | **Generative Simulation Initiative** 🌱🌿🌳🍃🍂- [Olivier Vitrac](mailto:olivier.vitrac@agroparistech.fr)  
 *This project is part of the SFPPy initiative, aiming to bring the SafeFoodPackaging Portal version 3 ([SFPP3](https://sfpp3-simulation.contactalimentaire.fr/cgi-bin/login.cgi)) to the general public.*
 
-$2025-02-12$
+$2025-09-12$
 
 
 
@@ -579,8 +580,9 @@ $2025-02-12$
 🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️
 🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
 🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
-🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.42$<br/>
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.50$<br/>
 </pre>
+
 
 
 
