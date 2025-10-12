@@ -63,7 +63,7 @@ print("PubChem cid 113194 exists.")</p>
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-01-10
-@rev: 2025-03-27</p>
+@rev: 2025-08-31</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -105,11 +105,13 @@ Usage Example:
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-01-10
-@rev: 2025-03-27
+@rev: 2025-08-31
 
 &#34;&#34;&#34;
 
 import os,csv, json, datetime, time, re, textwrap
+import patankar.private.message as message
+
 
 __all__ = [&#39;EuFCMannex1&#39;, &#39;annex1record&#39;, &#39;annex1record_ext&#39;, &#39;custom_wrap&#39;, &#39;printWARN&#39;]
 
@@ -121,7 +123,7 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.41&#34;
+__version__ = &#34;1.50&#34;
 
 # Default value for SML when field is empty.
 SMLdefault = 60.0
@@ -129,6 +131,12 @@ SMLdefault = 60.0
 # Module-level variables to track last warning message and its timestamp
 _LAST_WARN_ = None
 _T_LAST_WARN_ = 0.0
+
+# printWARN() messaging is replaced by message.print() starting from v&gt;1.42
+_MAX_MESSAGES = 1
+_SILENCE_DURATION = 60
+message.set_limit(_MAX_MESSAGES, caller=&#34;EUFCMannex1.py&#34;)  # only affects this module
+message.set_silence_for(&#34;EUFCMannex1.py&#34;, _SILENCE_DURATION)
 
 # %% private functions
 def custom_wrap(text, width=40, indent=&#34; &#34; * 22):
@@ -270,7 +278,7 @@ class annex1record_ext(annex1record):
                 m = migrant(rec.get(&#34;CAS&#34;),annex1=False)
                 M = m.M
             except Exception:
-                print(f&#34;{rec.get(&#39;name&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
+                message.print(f&#34;{rec.get(&#39;name&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
                 M = None
         else:
             M = None
@@ -501,7 +509,7 @@ class EuFCMannex1:
                         try:
                             cid_val = migrant(cas_val,annex1=False).cid
                         except ValueError:
-                            printWARN(f&#34;🇪🇺 Warning: substance {rec[&#39;name&#39;]} (CAS {cas_val}) not found in PubChem.&#34;)
+                            message.print(f&#34;🇪🇺 Warning: substance {rec[&#39;name&#39;]} (CAS {cas_val}) not found in PubChem.&#34;)
                             cid_val = None
                             missing_pubchem[cas_val] = None
                 else:
@@ -576,7 +584,7 @@ class EuFCMannex1:
                 return self._records_cache[rec_id]
         json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.annex1.json&#34;)
         if not os.path.exists(json_filename):
-            printWARN(f&#34;🇪🇺 Warning: Record file for record {rec_id} not found.&#34;)
+            message.print(f&#34;🇪🇺 Warning: Record file for record {rec_id} not found.&#34;) # printWARN
             return None
         with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
             rec = json.load(jf)
@@ -656,7 +664,7 @@ class EuFCMannex1:
                     rec_id = self.index[&#34;bycid&#34;][argkey]
                     results.append(self._load_record(rec_id))
                 else:
-                    printWARN(f&#34;🇪🇺 Warning: Record for identifier {arg} not found.&#34;)
+                    message.print(f&#34;🇪🇺 Warning: Record for identifier {arg} not found.&#34;) # printWARN
                     results.append(None)
             elif isinstance(arg, str):
                 result_item = self.__getitem__(arg)
@@ -713,7 +721,7 @@ class EuFCMannex1:
             return self._load_record(rec_id, order=rec_id,db=True)
         else:
             if verbose:
-                printWARN(f&#34;⚠️ Warning: No 🇪🇺 10/2011/EC record found for PubChem cid {cid}.&#34;)
+                message.print(f&#34;⚠️ Warning: No 🇪🇺 10/2011/EC record found for PubChem cid {cid}.&#34;) # printWARN
             return None
 
     def bySML(self, min_val, max_val):
@@ -786,7 +794,7 @@ class EuFCMannex1:
                 self._SMLT_Groupsubstances = groups
                 return groups
             except Exception as e:
-                printWARN(f&#34;🇪🇺 Warning: Failed to load group cache from {cache_file}: {e}&#34;)
+                message.print(f&#34;🇪🇺 Warning: Failed to load group cache from {cache_file}: {e}&#34;) # printWARN
 
         # Compute the groups if not cached.
         groups = {}
@@ -805,7 +813,7 @@ class EuFCMannex1:
             with open(cache_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
                 json.dump(groups, f, indent=2, ensure_ascii=False)
         except Exception as e:
-            printWARN(f&#34;🇪🇺 Warning: Failed to write group cache to {cache_file}: {e}&#34;)
+            message.print(f&#34;🇪🇺 Warning: Failed to write group cache to {cache_file}: {e}&#34;) # printWARN
 
         return groups
 
@@ -1171,7 +1179,7 @@ print("PubChem cid 113194 exists.")</p>
                         try:
                             cid_val = migrant(cas_val,annex1=False).cid
                         except ValueError:
-                            printWARN(f&#34;🇪🇺 Warning: substance {rec[&#39;name&#39;]} (CAS {cas_val}) not found in PubChem.&#34;)
+                            message.print(f&#34;🇪🇺 Warning: substance {rec[&#39;name&#39;]} (CAS {cas_val}) not found in PubChem.&#34;)
                             cid_val = None
                             missing_pubchem[cas_val] = None
                 else:
@@ -1246,7 +1254,7 @@ print("PubChem cid 113194 exists.")</p>
                 return self._records_cache[rec_id]
         json_filename = os.path.join(self.cache_dir, f&#34;rec{rec_id:05d}.annex1.json&#34;)
         if not os.path.exists(json_filename):
-            printWARN(f&#34;🇪🇺 Warning: Record file for record {rec_id} not found.&#34;)
+            message.print(f&#34;🇪🇺 Warning: Record file for record {rec_id} not found.&#34;) # printWARN
             return None
         with open(json_filename, &#34;r&#34;, encoding=&#34;utf-8&#34;) as jf:
             rec = json.load(jf)
@@ -1326,7 +1334,7 @@ print("PubChem cid 113194 exists.")</p>
                     rec_id = self.index[&#34;bycid&#34;][argkey]
                     results.append(self._load_record(rec_id))
                 else:
-                    printWARN(f&#34;🇪🇺 Warning: Record for identifier {arg} not found.&#34;)
+                    message.print(f&#34;🇪🇺 Warning: Record for identifier {arg} not found.&#34;) # printWARN
                     results.append(None)
             elif isinstance(arg, str):
                 result_item = self.__getitem__(arg)
@@ -1383,7 +1391,7 @@ print("PubChem cid 113194 exists.")</p>
             return self._load_record(rec_id, order=rec_id,db=True)
         else:
             if verbose:
-                printWARN(f&#34;⚠️ Warning: No 🇪🇺 10/2011/EC record found for PubChem cid {cid}.&#34;)
+                message.print(f&#34;⚠️ Warning: No 🇪🇺 10/2011/EC record found for PubChem cid {cid}.&#34;) # printWARN
             return None
 
     def bySML(self, min_val, max_val):
@@ -1456,7 +1464,7 @@ print("PubChem cid 113194 exists.")</p>
                 self._SMLT_Groupsubstances = groups
                 return groups
             except Exception as e:
-                printWARN(f&#34;🇪🇺 Warning: Failed to load group cache from {cache_file}: {e}&#34;)
+                message.print(f&#34;🇪🇺 Warning: Failed to load group cache from {cache_file}: {e}&#34;) # printWARN
 
         # Compute the groups if not cached.
         groups = {}
@@ -1475,7 +1483,7 @@ print("PubChem cid 113194 exists.")</p>
             with open(cache_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
                 json.dump(groups, f, indent=2, ensure_ascii=False)
         except Exception as e:
-            printWARN(f&#34;🇪🇺 Warning: Failed to write group cache to {cache_file}: {e}&#34;)
+            message.print(f&#34;🇪🇺 Warning: Failed to write group cache to {cache_file}: {e}&#34;) # printWARN
 
         return groups
 
@@ -1573,7 +1581,7 @@ def SMLT_Groupsubstances(self):
             self._SMLT_Groupsubstances = groups
             return groups
         except Exception as e:
-            printWARN(f&#34;🇪🇺 Warning: Failed to load group cache from {cache_file}: {e}&#34;)
+            message.print(f&#34;🇪🇺 Warning: Failed to load group cache from {cache_file}: {e}&#34;) # printWARN
 
     # Compute the groups if not cached.
     groups = {}
@@ -1592,7 +1600,7 @@ def SMLT_Groupsubstances(self):
         with open(cache_file, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
             json.dump(groups, f, indent=2, ensure_ascii=False)
     except Exception as e:
-        printWARN(f&#34;🇪🇺 Warning: Failed to write group cache to {cache_file}: {e}&#34;)
+        message.print(f&#34;🇪🇺 Warning: Failed to write group cache to {cache_file}: {e}&#34;) # printWARN
 
     return groups</code></pre>
 </details>
@@ -1724,7 +1732,7 @@ def SMLT_Groupsubstances(self):
         return self._load_record(rec_id, order=rec_id,db=True)
     else:
         if verbose:
-            printWARN(f&#34;⚠️ Warning: No 🇪🇺 10/2011/EC record found for PubChem cid {cid}.&#34;)
+            message.print(f&#34;⚠️ Warning: No 🇪🇺 10/2011/EC record found for PubChem cid {cid}.&#34;) # printWARN
         return None</code></pre>
 </details>
 </dd>
@@ -1867,7 +1875,7 @@ in a missing file ("missing.pubchem.annex1.json") so that future refreshes do no
                     try:
                         cid_val = migrant(cas_val,annex1=False).cid
                     except ValueError:
-                        printWARN(f&#34;🇪🇺 Warning: substance {rec[&#39;name&#39;]} (CAS {cas_val}) not found in PubChem.&#34;)
+                        message.print(f&#34;🇪🇺 Warning: substance {rec[&#39;name&#39;]} (CAS {cas_val}) not found in PubChem.&#34;)
                         cid_val = None
                         missing_pubchem[cas_val] = None
             else:
@@ -2077,7 +2085,7 @@ def ispubchemok(self):
                 m = migrant(rec.get(&#34;CAS&#34;),annex1=False)
                 M = m.M
             except Exception:
-                print(f&#34;{rec.get(&#39;name&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
+                message.print(f&#34;{rec.get(&#39;name&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
                 M = None
         else:
             M = None

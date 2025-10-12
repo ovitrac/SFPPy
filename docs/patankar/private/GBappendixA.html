@@ -64,7 +64,7 @@ The main manager class, <em>GBappendixA</em>, builds an index for fast lookup by
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-01-10
-@rev: 2025-04-01</p>
+@rev: 2025-08-31</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -110,11 +110,12 @@ The main manager class, *GBappendixA*, builds an index for fast lookup by CAS, F
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-01-10
-@rev: 2025-04-01
+@rev: 2025-08-31
 
 &#34;&#34;&#34;
 
 import os, csv, json, datetime, time, re, textwrap
+import patankar.private.message as message
 
 __all__ = [&#39;GBappendixA&#39;, &#39;custom_wrap&#39;, &#39;extract_number_before_keyword&#39;, &#39;extract_number_before_keyword_in_parentheses&#39;, &#39;gbrecord&#39;, &#39;gbrecord_ext&#39;, &#39;printWARN&#39;, &#39;split_col5_content&#39;, &#39;unwrap&#39;]
 
@@ -126,12 +127,18 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.41&#34;
+__version__ = &#34;1.50&#34;
 
 
 # Module-level variables to track last warning message and its timestamp
 _LAST_WARN_ = None
 _T_LAST_WARN_ = 0.0
+
+# printWARN() messaging is replaced by message.print() starting from v&gt;1.42
+_MAX_MESSAGES = 1
+_SILENCE_DURATION = 60
+message.set_limit(_MAX_MESSAGES, caller=&#34;GBappendixA.py&#34;)  # only affects this module
+message.set_silence_for(&#34;GBappendixA.py&#34;, _SILENCE_DURATION)
 
 # ----------------------------------------------------------------------
 # Custom text wrapping function (similar to EU module)
@@ -332,7 +339,7 @@ class gbrecord_ext(gbrecord):
                 m = migrant(rec.get(&#34;CAS&#34;), annex1=False)
                 M = m.M
             except Exception:
-                print(f&#34;{rec.get(&#39;ChineseName&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
+                message.print(f&#34;{rec.get(&#39;ChineseName&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
                 M = None
         else:
             M = None
@@ -600,7 +607,7 @@ class GBappendixA:
                             try:
                                 cid_val = migrant(cas_lookup, annex1=False).cid
                             except ValueError:
-                                printWARN(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                                message.print(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;) # printWARN
                                 cid_val = None
                                 missing_pubchem[cas_lookup] = None
                     else:
@@ -1267,7 +1274,7 @@ Minimum time (in seconds) between repeated identical warnings.</p></div>
                             try:
                                 cid_val = migrant(cas_lookup, annex1=False).cid
                             except ValueError:
-                                printWARN(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                                message.print(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;) # printWARN
                                 cid_val = None
                                 missing_pubchem[cas_lookup] = None
                     else:
@@ -1751,7 +1758,7 @@ The index includes mappings for "CAS", "FCA", "bycid", and "ChineseName".</p></d
                         try:
                             cid_val = migrant(cas_lookup, annex1=False).cid
                         except ValueError:
-                            printWARN(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;)
+                            message.print(f&#34;🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.&#34;) # printWARN
                             cid_val = None
                             missing_pubchem[cas_lookup] = None
                 else:
@@ -1947,7 +1954,7 @@ dict(one=1, two=2)</p></div>
                 m = migrant(rec.get(&#34;CAS&#34;), annex1=False)
                 M = m.M
             except Exception:
-                print(f&#34;{rec.get(&#39;ChineseName&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
+                message.print(f&#34;{rec.get(&#39;ChineseName&#39;)} could not be extended from its CAS {rec.get(&#39;CAS&#39;)}: not found&#34;)
                 M = None
         else:
             M = None

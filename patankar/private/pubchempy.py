@@ -835,12 +835,16 @@ class Compound(object):
     @property
     def canonical_smiles(self):
         """Canonical SMILES, with no stereochemistry information."""
-        return _parse_prop({'label': 'SMILES', 'name': 'Canonical'}, self.record['props'])
+        # before July 2025
+        #return _parse_prop({'label': 'SMILES', 'name': 'Canonical'}, self.record['props'])
+        return _parse_prop({'label': 'SMILES', 'name': 'Absolute'}, self.record['props'])
 
     @property
     def isomeric_smiles(self):
         """Isomeric SMILES."""
-        return _parse_prop({'label': 'SMILES', 'name': 'Isomeric'}, self.record['props'])
+        # before July 2025
+        #return _parse_prop({'label': 'SMILES', 'name': 'Isomeric'}, self.record['props'])
+        return _parse_prop({'label': 'SMILES', 'name': 'Connectivity'}, self.record['props'])
 
     @property
     def inchi(self):

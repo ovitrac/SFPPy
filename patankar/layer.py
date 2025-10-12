@@ -83,25 +83,25 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.40
+@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-26
+@rev. 2025-09-03
 
 """
 
 # ---- History ----
 # Created on Tue Jan 18 09:14:34 2022
-# 2025-01-19 RC
 # 2022-01-20 full indexing and simplification
 # 2022-01-21 add split()
 # 2022-01-22 add child classes for common polymers
 # 2022-01-23 full implementation of units
 # 2022-01-26 mesh() method generating mesh objects
 # 2022-02-21 add compatibility with migration
-
+# 2025-01-19 RC
+# 2025-09-03 version 1.50
 
 oneline = "Build multilayer objects"
 
@@ -1922,7 +1922,7 @@ class layer:
     # Class method returning help() for the end user
     # --------------------------------------------------------------------
     @classmethod
-    def help(cls):
+    def upd(cls):
         """
         Prints a dynamically formatted summary of all input parameters,
         adjusting column widths based on content and wrapping long descriptions.
@@ -2261,6 +2261,8 @@ class layer:
     def layerclass(self): return type(self).__name__
     @property
     def name(self): return self._name
+    @property
+    def fullname(self): return str(self._name)
     @property
     def type(self): return self._type
     @property
@@ -2974,6 +2976,7 @@ class layer:
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f"medium must be a foodphysics object not a {type(medium).__name__}")
+        medium.substance = self.substance # debug 2025-09-01
         return self.contact(medium)
 
     # overloading in
@@ -3167,7 +3170,7 @@ We consider that polymers are solid solvents.
 # <-- LDPE polymer ---------------------------------->
 class LDPE(layer):
     """  extended pantankar.layer for low-density polyethylene LDPE  """
-    _chemicalsubstance = "ethylene" # monomer for polymers
+    _chemicalsubstance = "n-butane" #"ethylene" # monomer for polymers
     _polarityindex = 1.0  # Very non-polar (typical for polyolefins)
     def __init__(self,l=100e-6,D=1e-12,T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
@@ -3210,7 +3213,7 @@ class LDPE(layer):
 # <-- HDPE polymer ---------------------------------->
 class HDPE(layer):
     """  extended pantankar.layer for high-density polyethylene HDPE  """
-    _chemicalsubstance = "ethylene" # monomer for polymers
+    _chemicalsubstance = "n-butane" #"ethylene" # monomer for polymers
     _polarityindex = 2.0 # Non-polar, slightly higher density, similar overall polarity to LDPE
     def __init__(self,l=500e-6,D=1e-13, T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
@@ -3254,7 +3257,7 @@ class HDPE(layer):
 # <-- LLDPE polymer ---------------------------------->
 class LLDPE(layer):
     """ extended pantankar.layer for linear low-density polyethylene LLDPE """
-    _chemicalsubstance = "ethylene" # monomer for polymers
+    _chemicalsubstance = "n-butane" #"ethylene" # monomer for polymers
     _polarityindex = 1.5 # Similar to LDPE, can be slightly more polar if co-monomer is present
     def __init__(self, l=80e-6, D=1e-12, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3305,7 +3308,7 @@ class LLDPE(layer):
 
 # <-- PP polymer ---------------------------------->
 class PP(layer):
-    _chemicalsubstance = "propylene" # monomer for polymers
+    _chemicalsubstance = "2-methylbutane" #"propylene" # monomer for polymers
     _polarityindex = 1.0  # Among the least polar, similar to PE
     """  extended pantankar.layer for isotactic polypropylene PP  """
     def __init__(self,l=300e-6,D=1e-14, T=None,
@@ -3347,7 +3350,7 @@ class PP(layer):
 
 # -- PPrubber (atactic polypropylene) ---------------------------------
 class PPrubber(layer):
-    _chemicalsubstance = "propylene" # monomer for polymers
+    _chemicalsubstance = "2-methylbutane" #"propylene" # monomer for polymers
     _polarityindex = 1.0  # Also very non-polar
     """ extended pantankar.layer for atactic (rubbery) polypropylene PP """
     def __init__(self, l=100e-6, D=1e-14, T=None,
@@ -3391,7 +3394,7 @@ class PPrubber(layer):
 # -- oPP (bioriented polypropylene) ------------------------------------
 class oPP(layer):
     """ extended pantankar.layer for bioriented polypropylene oPP """
-    _chemicalsubstance = "propylene" # monomer for polymers
+    _chemicalsubstance = "2-methylbutane" #"propylene" # monomer for polymers
     _polarityindex = 1.0   # Non-polar, but oriented film might have slight morphological differences
     def __init__(self, l=40e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3438,7 +3441,7 @@ class oPP(layer):
 # -- PMMA (polymethyl acrylate) -----------------------------------------------
 class PMMA(layer):
     """ extended pantankar.layer for polystyrene (PS) """
-    _chemicalsubstance = "methyl methacrylate" # monomer for polymers
+    _chemicalsubstance = "Isobutyl acetate" #"methyl methacrylate" # monomer for polymers
     _polarityindex = 5.5  #  more polar than polyolefins
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3480,7 +3483,7 @@ class PMMA(layer):
 # -- PS (polystyrene) -----------------------------------------------
 class PS(layer):
     """ extended pantankar.layer for polystyrene (general purpose PS) """
-    _chemicalsubstance = "styrene" # monomer for polymers
+    _chemicalsubstance = "Ethylbenzene" #"styrene" # monomer for polymers
     _polarityindex = 3.0  # Slightly more polar than polyolefins, but still considered relatively non-polar
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3537,7 +3540,7 @@ class rPS(PS):
 # -- HIPS (high-impact polystyrene) -----------------------------------
 class HIPS(layer):
     """ extended pantankar.layer for high-impact polystyrene (HIPS) """
-    _chemicalsubstance = "styrene" # monomer for polymers
+    _chemicalsubstance = "ethylbenzene" #"styrene" # monomer for polymers
     _polarityindex = 3.0  # Similar or very close to PS in polarity
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3594,7 +3597,7 @@ class rHIPS(HIPS):
 
 # -- PBS (assuming a styrene-based polymer) ---------------------------
 class SBS(layer):
-    _chemicalsubstance = "styrene" # Styrene + butadiene
+    _chemicalsubstance = "ethylbenzene" #"styrene" # Styrene + butadiene
     _polarityindex = 3.5  # Non-polar but somewhat more interactive than pure PE/PP due to styrene units
     """
     extended pantankar.layer for a styrene-based SBS
@@ -3638,7 +3641,7 @@ class SBS(layer):
 # -- rigidPVC ---------------------------------------------------------
 class rigidPVC(layer):
     """ extended pantankar.layer for rigid PVC """
-    _chemicalsubstance = "vinyl chloride" # monomer for polymers
+    _chemicalsubstance = "1-chlorobutane" #"vinyl chloride" # monomer for polymers
     _polarityindex = 4.0  # Chlorine substituents give moderate polarity.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3679,7 +3682,7 @@ class rigidPVC(layer):
 # -- plasticizedPVC ---------------------------------------------------
 class plasticizedPVC(layer):
     """ extended pantankar.layer for plasticized PVC """
-    _chemicalsubstance = "vinyl chloride" # monomer for polymers
+    _chemicalsubstance = "1-chlorobutane"#"vinyl chloride" # monomer for polymers
     _polarityindex = 4.5  # Plasticizers can slightly change overall polarity/solubility.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3719,7 +3722,7 @@ class plasticizedPVC(layer):
 # -- plasticizedPVC ---------------------------------------------------
 class PVAc(layer):
     """ extended pantankar.layer for PVAc """
-    _chemicalsubstance = "vinyl acetate" # monomer for polymers
+    _chemicalsubstance = "ethyl acetate" #"vinyl acetate" # monomer for polymers
     _polarityindex = 7  # polar but it depends on the acetylation rate.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3762,7 +3765,7 @@ class PVAc(layer):
 # -- gPET (glassy PET, T < 76°C) --------------------------------------
 class gPET(layer):
     """ extended pantankar.layer for PET in its glassy state (below ~76°C) """
-    _chemicalsubstance = "ethylene terephthalate" # monomer for polymers
+    _chemicalsubstance = "dimethyl terephthalate" #"ethylene terephthalate" # monomer for polymers
     _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3827,7 +3830,7 @@ class wPET(gPET):
 # -- rPET (rubbery PET, T > 76°C) --------------------------------------
 class rPET(layer):
     """ extended pantankar.layer for PET in its rubbery state (above ~76°C) """
-    _chemicalsubstance = "ethylene terephthalate" # monomer for polymers
+    _chemicalsubstance = "dimethyl téréphtalate" #"ethylene terephthalate" # monomer for polymers
     _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3872,7 +3875,7 @@ class rPET(layer):
 # -- PBT --------------------------------------------------------------
 class PBT(layer):
     """ extended pantankar.layer for polybutylene terephthalate (PBT) """
-    _chemicalsubstance = "Buthylene terephthalate" # monomer for polymers
+    _chemicalsubstance = "butyl terephthalate" #"Butylene terephthalate" # monomer for polymers
     _polarityindex = 5.5  # Similar to PET, slight structural differences
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3915,7 +3918,7 @@ class PBT(layer):
 
 # -- PEN --------------------------------------------------------------
 class PEN(layer):
-    _chemicalsubstance = "Buthylene terephthalate" # monomer for polymers
+    _chemicalsubstance = "dimethyl 2,6-naphthalenedicarboxylate" #"ethylene naphthalate" # monomer for polymers
     _polarityindex = 6  # More aromatic than PET, often better barrier properties
     """ extended pantankar.layer for polyethylene naphthalate (PEN) """
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -3962,7 +3965,7 @@ class PEN(layer):
 
 # -- PA6 --------------------------------------------------------------
 class PA6(layer):
-    _chemicalsubstance = "caprolactam" # monomer for polymers
+    _chemicalsubstance = "n-hexanamide" #"caprolactam" # monomer for polymers
     _polarityindex = 7.5  # Strong hydrogen-bonding, thus quite polar.
     """ extended pantankar.layer for polyamide 6 (PA6) """
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -4007,7 +4010,7 @@ class PA6(layer):
 
 # -- PA66 -------------------------------------------------------------
 class PA66(layer):
-    _chemicalsubstance = "hexamethylenediamine" # monomer for polymers
+    _chemicalsubstance = "adipamide" #"hexamethylenediamine" # monomer for polymers
     _polarityindex = 7.5  # Similar to PA6, strongly polar with hydrogen bonds.
     """ extended pantankar.layer for polyamide 66 (PA66) """
     def __init__(self, l=200e-6, D=1e-14, T=None,

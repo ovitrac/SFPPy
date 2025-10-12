@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>figprint API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>figprint</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+
+__all__ = [&#39;PrintableFigure&#39;, &#39;custom_plt_figure&#39;, &#39;custom_plt_subplots&#39;, &#39;is_valid_figure&#39;, &#39;print_figure&#39;, &#39;print_pdf&#39;, &#39;print_png&#39;, &#39;print_svg&#39;]
+&#34;&#34;&#34;
+📁 figprint.py — Utilities for saving and displaying Matplotlib figures with printing options.
+
+This module extends Matplotlib&#39;s `Figure` class by adding convenient methods to export
+figures in PDF, PNG, and SVG formats. It also overrides `plt.figure` and `plt.subplots`
+to return enhanced `PrintableFigure` objects by default.
+
+Typical usage:
+--------------
+    import matplotlib.pyplot as plt
+    from figprint import print_figure
+
+    # Automatically uses PrintableFigure
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1])
+    fig.print()  # Saves to PNG and PDF
+
+    # Advanced control
+    fig.print_png(&#34;myplot&#34;, overwrite=True)
+    fig.print_svg(&#34;myplot&#34;, overwrite=True)
+
+Example:
+--------
+# myplotmodule.py
+from matplotlib import pyplot as plt
+import figprint  # Automatically patches pyplot
+
+def example_plot():
+    fig, ax = plt.subplots()
+    ax.plot([1, 2, 3], [4, 5, 6])
+    ax.set_title(&#34;Example Plot&#34;)
+    fig.print(&#34;example&#34;, overwrite=True)
+
+
+Author: Generative Simulation Initiative/Olivier Vitrac, PhD
+Created: 2025-05-12
+&#34;&#34;&#34;
+
+import os
+from datetime import datetime
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+
+_fig_metadata_atrr_ = &#34;filename&#34;
+
+
+def is_valid_figure(fig):
+    &#34;&#34;&#34;
+    Check if `fig` is a valid and open Matplotlib figure.
+    Parameters:
+        fig (object): Any object to check.
+
+    Returns:
+        bool: True if the object is an open Matplotlib Figure.
+    &#34;&#34;&#34;
+    return isinstance(fig, Figure) and hasattr(fig, &#39;canvas&#39;) and fig.canvas is not None
+
+
+def _generate_figname(fig, extension):
+    &#34;&#34;&#34;
+    Generate a cleaned filename using figure metadata or the current datetime.
+
+    Parameters:
+        fig (Figure): Matplotlib figure object.
+        extension (str): File extension (e.g. &#39;.pdf&#39;).
+
+    Returns:
+        str: Cleaned filename with correct extension.
+    &#34;&#34;&#34;
+    if hasattr(fig, _fig_metadata_atrr_):
+        filename = getattr(fig, _fig_metadata_atrr_)
+    else:
+        filename = &#34;fig&#34; + datetime.now().strftime(&#34;%Y%m%d_%H%M%S&#34;)
+    filename = filename.strip().replace(&#34; &#34;, &#34;_&#34;)
+    if not filename.lower().endswith(extension):
+        filename += extension
+    return filename
+
+
+def _print_generic(fig, extension, filename, destinationfolder, overwrite, dpi):
+    &#34;&#34;&#34;
+    Generic saving logic for figure files.
+
+    Parameters:
+        fig (Figure): The figure to save.
+        extension (str): File extension (e.g. &#39;.pdf&#39;).
+        filename (str): Optional filename.
+        destinationfolder (str): Folder path.
+        overwrite (bool): Overwrite existing file?
+        dpi (int): Resolution (ignored for SVG).
+    &#34;&#34;&#34;
+    if not is_valid_figure(fig):
+        print(&#34;no valid figure&#34;)
+        return
+
+    filename = filename or _generate_figname(fig, extension)
+    if not filename.endswith(extension):
+        filename += extension
+    filepath = os.path.join(destinationfolder, filename)
+
+    if not overwrite and os.path.exists(filepath):
+        print(f&#34;File {filepath} already exists. Use overwrite=True to replace it.&#34;)
+        return
+
+    fig.savefig(filepath, format=extension.lstrip(&#34;.&#34;), dpi=None if extension == &#34;.svg&#34; else dpi, bbox_inches=&#34;tight&#34;)
+    print(f&#34;Saved {extension.upper()[1:]}: {filepath}&#34;)
+
+
+def print_pdf(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    &#34;&#34;&#34;
+    Save a figure as a PDF.
+    Example:
+    --------
+    &gt;&gt;&gt; fig, ax = plt.subplots()
+    &gt;&gt;&gt; ax.plot([0, 1], [0, 1])
+    &gt;&gt;&gt; print_pdf(fig, &#34;myplot&#34;, overwrite=True)
+    &#34;&#34;&#34;
+    _print_generic(fig, &#34;.pdf&#34;, filename, destinationfolder, overwrite, dpi)
+
+
+def print_png(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    &#34;&#34;&#34;
+    Save a figure as a PNG.
+
+    Example:
+    --------
+    &gt;&gt;&gt; print_png(fig, &#34;myplot&#34;, overwrite=True)
+    &#34;&#34;&#34;
+    _print_generic(fig, &#34;.png&#34;, filename, destinationfolder, overwrite, dpi)
+
+
+def print_svg(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False):
+    &#34;&#34;&#34;
+    Save a figure as an SVG (vector format, dpi-independent).
+
+    Example:
+    --------
+    &gt;&gt;&gt; print_svg(fig, &#34;myplot&#34;, overwrite=True)
+    &#34;&#34;&#34;
+    _print_generic(fig, &#34;.svg&#34;, filename, destinationfolder, overwrite, dpi=None)
+
+
+def print_figure(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False,
+ dpi={&#34;png&#34;: 150, &#34;pdf&#34;: 300, &#34;svg&#34;: None}, what = [&#34;pdf&#34;,&#34;png&#34;,&#34;svg&#34;]):
+    &#34;&#34;&#34;
+    Save a figure as PDF, PNG, and SVG.
+
+    Example:
+    --------
+    &gt;&gt;&gt; print_figure(fig, &#34;full_output&#34;, overwrite=True)
+
+    Parameters:
+        fig (Figure): Figure to save.
+        filename (str): Optional base filename.
+        destinationfolder (str): Folder path.
+        overwrite (bool): Whether to overwrite existing files.
+        dpi (dict): Dictionary of resolution per format.
+        what (list): list what to print, default = [&#34;pdf&#34;,&#34;png&#34;,&#34;svg&#34;]
+    &#34;&#34;&#34;
+    if not isinstance(what,(list,tuple)):
+        what = [what]
+    if is_valid_figure(fig):
+        if &#34;pdf&#34; in what: print_pdf(fig, filename, destinationfolder, overwrite, dpi[&#34;pdf&#34;])
+        if &#34;png&#34; in what: print_png(fig, filename, destinationfolder, overwrite, dpi[&#34;png&#34;])
+        if &#34;svg&#34; in what: print_svg(fig, filename, destinationfolder, overwrite)
+    else:
+        print(&#34;no valid figure&#34;)
+
+
+class PrintableFigure(Figure):
+    &#34;&#34;&#34;
+    Enhanced Matplotlib Figure with custom show and export methods.
+
+    Example:
+    --------
+    &gt;&gt;&gt; fig, ax = plt.subplots()
+    &gt;&gt;&gt; ax.plot([0, 1], [1, 0])
+    &gt;&gt;&gt; fig.print(&#34;diag1&#34;)  # Saves PDF, PNG, SVG
+    &#34;&#34;&#34;
+
+    def show(self, display_mode=None):
+        &#34;&#34;&#34;
+        Display figure intelligently based on context (Jupyter/script).
+
+        Parameters:
+            display_mode (str): &#39;auto&#39; or &#39;classic&#39; (default is &#39;auto&#39;).
+        &#34;&#34;&#34;
+        try:
+            get_ipython
+            if display_mode is None or display_mode == &#34;auto&#34;:
+                display(self)
+            else:
+                super().show()
+        except NameError:
+            super().show()
+
+    def print(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=True,
+            dpi={&#34;png&#34;: 150, &#34;pdf&#34;: 300, &#34;svg&#34;: None}):
+        &#34;&#34;&#34;
+        Save figure in PDF, PNG, and SVG formats.
+
+        Example:
+        --------
+        &gt;&gt;&gt; fig.print(&#34;summary_figure&#34;)
+        &#34;&#34;&#34;
+        print_figure(self, filename, destinationfolder, overwrite, dpi)
+
+    def print_pdf(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+        print_pdf(self, filename, destinationfolder, overwrite, dpi)
+
+    def print_png(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+        print_png(self, filename, destinationfolder, overwrite, dpi)
+
+    def print_svg(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False):
+        print_svg(self, filename, destinationfolder, overwrite)
+
+
+# Save original constructor references
+original_plt_figure = plt.figure
+original_plt_subplots = plt.subplots
+
+def custom_plt_figure(*args, **kwargs):
+    &#34;&#34;&#34;
+    Override `plt.figure()` to return PrintableFigure by default.
+
+    Returns:
+        PrintableFigure
+    &#34;&#34;&#34;
+    kwargs.setdefault(&#34;FigureClass&#34;, PrintableFigure)
+    return original_plt_figure(*args, **kwargs)
+
+def custom_plt_subplots(*args, **kwargs):
+    &#34;&#34;&#34;
+    Override `plt.subplots()` to return PrintableFigure.
+
+    Returns:
+        (PrintableFigure, Axes)
+    &#34;&#34;&#34;
+    fig, ax = original_plt_subplots(*args, **kwargs)
+    fig.__class__ = PrintableFigure
+    return fig, ax
+
+# Apply overrides globally
+plt.figure = custom_plt_figure
+plt.subplots = custom_plt_subplots
+plt.FigureClass = PrintableFigure
+plt.rcParams[&#39;figure.figsize&#39;] = (8, 6)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="figprint.custom_plt_figure"><code class="name flex">
+<span>def <span class="ident">custom_plt_figure</span></span>(<span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Override <code>plt.figure()</code> to return PrintableFigure by default.</p>
+<h2 id="returns">Returns</h2>
+<p>PrintableFigure</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def custom_plt_figure(*args, **kwargs):
+    &#34;&#34;&#34;
+    Override `plt.figure()` to return PrintableFigure by default.
+
+    Returns:
+        PrintableFigure
+    &#34;&#34;&#34;
+    kwargs.setdefault(&#34;FigureClass&#34;, PrintableFigure)
+    return original_plt_figure(*args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="figprint.custom_plt_subplots"><code class="name flex">
+<span>def <span class="ident">custom_plt_subplots</span></span>(<span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Override <code>plt.subplots()</code> to return PrintableFigure.</p>
+<h2 id="returns">Returns</h2>
+<p>(PrintableFigure, Axes)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def custom_plt_subplots(*args, **kwargs):
+    &#34;&#34;&#34;
+    Override `plt.subplots()` to return PrintableFigure.
+
+    Returns:
+        (PrintableFigure, Axes)
+    &#34;&#34;&#34;
+    fig, ax = original_plt_subplots(*args, **kwargs)
+    fig.__class__ = PrintableFigure
+    return fig, ax</code></pre>
+</details>
+</dd>
+<dt id="figprint.is_valid_figure"><code class="name flex">
+<span>def <span class="ident">is_valid_figure</span></span>(<span>fig)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if <code>fig</code> is a valid and open Matplotlib figure.</p>
+<h2 id="parameters">Parameters</h2>
+<p>fig (object): Any object to check.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if the object is an open Matplotlib Figure.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_valid_figure(fig):
+    &#34;&#34;&#34;
+    Check if `fig` is a valid and open Matplotlib figure.
+    Parameters:
+        fig (object): Any object to check.
+
+    Returns:
+        bool: True if the object is an open Matplotlib Figure.
+    &#34;&#34;&#34;
+    return isinstance(fig, Figure) and hasattr(fig, &#39;canvas&#39;) and fig.canvas is not None</code></pre>
+</details>
+</dd>
+<dt id="figprint.print_figure"><code class="name flex">
+<span>def <span class="ident">print_figure</span></span>(<span>fig, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False, dpi={'png': 150, 'pdf': 300, 'svg': None}, what=['pdf', 'png', 'svg'])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save a figure as PDF, PNG, and SVG.</p>
+<h2 id="example">Example:</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; print_figure(fig, &quot;full_output&quot;, overwrite=True)
+</code></pre>
+<h2 id="parameters">Parameters</h2>
+<p>fig (Figure): Figure to save.
+filename (str): Optional base filename.
+destinationfolder (str): Folder path.
+overwrite (bool): Whether to overwrite existing files.
+dpi (dict): Dictionary of resolution per format.
+what (list): list what to print, default = ["pdf","png","svg"]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_figure(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False,
+ dpi={&#34;png&#34;: 150, &#34;pdf&#34;: 300, &#34;svg&#34;: None}, what = [&#34;pdf&#34;,&#34;png&#34;,&#34;svg&#34;]):
+    &#34;&#34;&#34;
+    Save a figure as PDF, PNG, and SVG.
+
+    Example:
+    --------
+    &gt;&gt;&gt; print_figure(fig, &#34;full_output&#34;, overwrite=True)
+
+    Parameters:
+        fig (Figure): Figure to save.
+        filename (str): Optional base filename.
+        destinationfolder (str): Folder path.
+        overwrite (bool): Whether to overwrite existing files.
+        dpi (dict): Dictionary of resolution per format.
+        what (list): list what to print, default = [&#34;pdf&#34;,&#34;png&#34;,&#34;svg&#34;]
+    &#34;&#34;&#34;
+    if not isinstance(what,(list,tuple)):
+        what = [what]
+    if is_valid_figure(fig):
+        if &#34;pdf&#34; in what: print_pdf(fig, filename, destinationfolder, overwrite, dpi[&#34;pdf&#34;])
+        if &#34;png&#34; in what: print_png(fig, filename, destinationfolder, overwrite, dpi[&#34;png&#34;])
+        if &#34;svg&#34; in what: print_svg(fig, filename, destinationfolder, overwrite)
+    else:
+        print(&#34;no valid figure&#34;)</code></pre>
+</details>
+</dd>
+<dt id="figprint.print_pdf"><code class="name flex">
+<span>def <span class="ident">print_pdf</span></span>(<span>fig, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False, dpi=300)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save a figure as a PDF.
+Example:</p>
+<hr>
+<pre><code class="language-python-repl">&gt;&gt;&gt; fig, ax = plt.subplots()
+&gt;&gt;&gt; ax.plot([0, 1], [0, 1])
+&gt;&gt;&gt; print_pdf(fig, &quot;myplot&quot;, overwrite=True)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_pdf(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    &#34;&#34;&#34;
+    Save a figure as a PDF.
+    Example:
+    --------
+    &gt;&gt;&gt; fig, ax = plt.subplots()
+    &gt;&gt;&gt; ax.plot([0, 1], [0, 1])
+    &gt;&gt;&gt; print_pdf(fig, &#34;myplot&#34;, overwrite=True)
+    &#34;&#34;&#34;
+    _print_generic(fig, &#34;.pdf&#34;, filename, destinationfolder, overwrite, dpi)</code></pre>
+</details>
+</dd>
+<dt id="figprint.print_png"><code class="name flex">
+<span>def <span class="ident">print_png</span></span>(<span>fig, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False, dpi=300)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save a figure as a PNG.</p>
+<h2 id="example">Example:</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; print_png(fig, &quot;myplot&quot;, overwrite=True)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_png(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    &#34;&#34;&#34;
+    Save a figure as a PNG.
+
+    Example:
+    --------
+    &gt;&gt;&gt; print_png(fig, &#34;myplot&#34;, overwrite=True)
+    &#34;&#34;&#34;
+    _print_generic(fig, &#34;.png&#34;, filename, destinationfolder, overwrite, dpi)</code></pre>
+</details>
+</dd>
+<dt id="figprint.print_svg"><code class="name flex">
+<span>def <span class="ident">print_svg</span></span>(<span>fig, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save a figure as an SVG (vector format, dpi-independent).</p>
+<h2 id="example">Example:</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; print_svg(fig, &quot;myplot&quot;, overwrite=True)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_svg(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False):
+    &#34;&#34;&#34;
+    Save a figure as an SVG (vector format, dpi-independent).
+
+    Example:
+    --------
+    &gt;&gt;&gt; print_svg(fig, &#34;myplot&#34;, overwrite=True)
+    &#34;&#34;&#34;
+    _print_generic(fig, &#34;.svg&#34;, filename, destinationfolder, overwrite, dpi=None)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="figprint.PrintableFigure"><code class="flex name class">
+<span>class <span class="ident">PrintableFigure</span></span>
+<span>(</span><span>figsize=None, dpi=None, *, facecolor=None, edgecolor=None, linewidth=0.0, frameon=None, subplotpars=None, tight_layout=None, constrained_layout=None, layout=None, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enhanced Matplotlib Figure with custom show and export methods.</p>
+<h2 id="example">Example:</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; fig, ax = plt.subplots()
+&gt;&gt;&gt; ax.plot([0, 1], [1, 0])
+&gt;&gt;&gt; fig.print(&quot;diag1&quot;)  # Saves PDF, PNG, SVG
+</code></pre>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>figsize</code></strong> :&ensp;<code>2-tuple</code> of <code>floats</code>, default<code>: :rc:</code>figure.figsize``</dt>
+<dd>Figure dimension <code>(width, height)</code> in inches.</dd>
+<dt><strong><code>dpi</code></strong> :&ensp;<code>float</code>, default<code>: :rc:</code>figure.dpi``</dt>
+<dd>Dots per inch.</dd>
+<dt><strong><code>facecolor</code></strong> :&ensp;<code>default: :rc:</code>figure.facecolor``</dt>
+<dd>The figure patch facecolor.</dd>
+<dt><strong><code>edgecolor</code></strong> :&ensp;<code>default: :rc:</code>figure.edgecolor``</dt>
+<dd>The figure patch edge color.</dd>
+<dt><strong><code>linewidth</code></strong> :&ensp;<code>float</code></dt>
+<dd>The linewidth of the frame (i.e. the edge linewidth of the figure
+patch).</dd>
+<dt><strong><code>frameon</code></strong> :&ensp;<code>bool</code>, default<code>: :rc:</code>figure.frameon``</dt>
+<dd>If <code>False</code>, suppress drawing the figure background patch.</dd>
+<dt><strong><code>subplotpars</code></strong> :&ensp;<code>~matplotlib.gridspec.SubplotParams</code></dt>
+<dd>Subplot parameters. If not given, the default subplot
+parameters :rc:<code>figure.subplot.*</code> are used.</dd>
+<dt><strong><code>tight_layout</code></strong> :&ensp;<code>bool</code> or <code>dict</code>, default<code>: :rc:</code>figure.autolayout``</dt>
+<dd>
+<p>Whether to use the tight layout mechanism. See <code>.set_tight_layout</code>.</p>
+<div class="admonition admonition">
+<p class="admonition-title">Discouraged</p>
+<p>The use of this parameter is discouraged. Please use
+<code>layout='tight'</code> instead for the common case of
+<code>tight_layout=True</code> and use <code>.set_tight_layout</code> otherwise.</p>
+</div>
+</dd>
+<dt><strong><code>constrained_layout</code></strong> :&ensp;<code>bool</code>, default<code>: :rc:</code>figure.constrained_layout.use``</dt>
+<dd>
+<p>This is equal to <code>layout='constrained'</code>.</p>
+<div class="admonition admonition">
+<p class="admonition-title">Discouraged</p>
+<p>The use of this parameter is discouraged. Please use
+<code>layout='constrained'</code> instead.</p>
+</div>
+</dd>
+<dt><strong><code>layout</code></strong> :&ensp;<code>{'constrained', 'compressed', 'tight', 'none',</code>.LayoutEngine<code>, None}</code>, default<code>: None</code></dt>
+<dd>
+<p>The layout mechanism for positioning of plot elements to avoid
+overlapping Axes decorations (labels, ticks, etc). Note that
+layout managers can have significant performance penalties.</p>
+<ul>
+<li>'constrained': The constrained layout solver adjusts Axes sizes
+to avoid overlapping Axes decorations.
+Can handle complex plot
+layouts and colorbars, and is thus recommended.</li>
+</ul>
+<p>See :ref:<code>constrainedlayout_guide</code> for examples.</p>
+<ul>
+<li>
+<p>'compressed': uses the same algorithm as 'constrained', but
+removes extra space between fixed-aspect-ratio Axes.
+Best for
+simple grids of Axes.</p>
+</li>
+<li>
+<p>'tight': Use the tight layout mechanism. This is a relatively
+simple algorithm that adjusts the subplot parameters so that
+decorations do not overlap.</p>
+</li>
+</ul>
+<p>See :ref:<code>tight_layout_guide</code> for examples.</p>
+<ul>
+<li>
+<p>'none': Do not use a layout engine.</p>
+</li>
+<li>
+<p>A <code>.LayoutEngine</code> instance. Builtin layout classes are
+<code>.ConstrainedLayoutEngine</code> and <code>.TightLayoutEngine</code>, more easily
+accessible by 'constrained' and 'tight'.
+Passing an instance
+allows third parties to provide their own layout engine.</p>
+</li>
+</ul>
+<p>If not given, fall back to using the parameters <em>tight_layout</em> and
+<em>constrained_layout</em>, including their config defaults
+:rc:<code>figure.autolayout</code> and :rc:<code>figure.constrained_layout.use</code>.</p>
+</dd>
+</dl>
+<h2 id="other-parameters">Other Parameters</h2>
+<dl>
+<dt><strong><code>**kwargs</code></strong> :&ensp;<code><code>.Figure&lt;/code&gt; properties</code>, optional</dt>
+<dd>Properties:
+agg_filter: a filter function, which takes a (m, n, 3) float array and a dpi value, and returns a (m, n, 3) array and two offsets from the bottom left corner of the image
+alpha: scalar or None
+animated: bool
+canvas: FigureCanvas
+clip_box: <code>~matplotlib.transforms.BboxBase</code> or None
+clip_on: bool
+clip_path: Patch or (Path, Transform) or None
+constrained_layout: unknown
+constrained_layout_pads: unknown
+dpi: float
+edgecolor: :mpltype:<code>color</code>
+facecolor: :mpltype:<code>color</code>
+figheight: float
+figure: unknown
+figwidth: float
+frameon: bool
+gid: str
+in_layout: bool
+label: object
+layout_engine: {'constrained', 'compressed', 'tight', 'none', <code>.LayoutEngine</code>, None}
+linewidth: number
+mouseover: bool
+path_effects: list of <code>.AbstractPathEffect</code>
+picker: None or bool or float or callable
+rasterized: bool
+size_inches: (float, float) or float
+sketch_params: (scale: float, length: float, randomness: float)
+snap: bool or None
+tight_layout: unknown
+transform: <code>~matplotlib.transforms.Transform</code>
+url: str
+visible: bool
+zorder: float</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PrintableFigure(Figure):
+    &#34;&#34;&#34;
+    Enhanced Matplotlib Figure with custom show and export methods.
+
+    Example:
+    --------
+    &gt;&gt;&gt; fig, ax = plt.subplots()
+    &gt;&gt;&gt; ax.plot([0, 1], [1, 0])
+    &gt;&gt;&gt; fig.print(&#34;diag1&#34;)  # Saves PDF, PNG, SVG
+    &#34;&#34;&#34;
+
+    def show(self, display_mode=None):
+        &#34;&#34;&#34;
+        Display figure intelligently based on context (Jupyter/script).
+
+        Parameters:
+            display_mode (str): &#39;auto&#39; or &#39;classic&#39; (default is &#39;auto&#39;).
+        &#34;&#34;&#34;
+        try:
+            get_ipython
+            if display_mode is None or display_mode == &#34;auto&#34;:
+                display(self)
+            else:
+                super().show()
+        except NameError:
+            super().show()
+
+    def print(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=True,
+            dpi={&#34;png&#34;: 150, &#34;pdf&#34;: 300, &#34;svg&#34;: None}):
+        &#34;&#34;&#34;
+        Save figure in PDF, PNG, and SVG formats.
+
+        Example:
+        --------
+        &gt;&gt;&gt; fig.print(&#34;summary_figure&#34;)
+        &#34;&#34;&#34;
+        print_figure(self, filename, destinationfolder, overwrite, dpi)
+
+    def print_pdf(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+        print_pdf(self, filename, destinationfolder, overwrite, dpi)
+
+    def print_png(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+        print_png(self, filename, destinationfolder, overwrite, dpi)
+
+    def print_svg(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False):
+        print_svg(self, filename, destinationfolder, overwrite)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>matplotlib.figure.Figure</li>
+<li>matplotlib.figure.FigureBase</li>
+<li>matplotlib.artist.Artist</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="figprint.PrintableFigure.print"><code class="name flex">
+<span>def <span class="ident">print</span></span>(<span>self, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=True, dpi={'png': 150, 'pdf': 300, 'svg': None})</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save figure in PDF, PNG, and SVG formats.</p>
+<h2 id="example">Example:</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; fig.print(&quot;summary_figure&quot;)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=True,
+        dpi={&#34;png&#34;: 150, &#34;pdf&#34;: 300, &#34;svg&#34;: None}):
+    &#34;&#34;&#34;
+    Save figure in PDF, PNG, and SVG formats.
+
+    Example:
+    --------
+    &gt;&gt;&gt; fig.print(&#34;summary_figure&#34;)
+    &#34;&#34;&#34;
+    print_figure(self, filename, destinationfolder, overwrite, dpi)</code></pre>
+</details>
+</dd>
+<dt id="figprint.PrintableFigure.print_pdf"><code class="name flex">
+<span>def <span class="ident">print_pdf</span></span>(<span>self, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False, dpi=300)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_pdf(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    print_pdf(self, filename, destinationfolder, overwrite, dpi)</code></pre>
+</details>
+</dd>
+<dt id="figprint.PrintableFigure.print_png"><code class="name flex">
+<span>def <span class="ident">print_png</span></span>(<span>self, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False, dpi=300)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_png(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    print_png(self, filename, destinationfolder, overwrite, dpi)</code></pre>
+</details>
+</dd>
+<dt id="figprint.PrintableFigure.print_svg"><code class="name flex">
+<span>def <span class="ident">print_svg</span></span>(<span>self, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_svg(self, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False):
+    print_svg(self, filename, destinationfolder, overwrite)</code></pre>
+</details>
+</dd>
+<dt id="figprint.PrintableFigure.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>self, *, agg_filter=&lt;UNSET&gt;, alpha=&lt;UNSET&gt;, animated=&lt;UNSET&gt;, canvas=&lt;UNSET&gt;, clip_box=&lt;UNSET&gt;, clip_on=&lt;UNSET&gt;, clip_path=&lt;UNSET&gt;, constrained_layout=&lt;UNSET&gt;, constrained_layout_pads=&lt;UNSET&gt;, dpi=&lt;UNSET&gt;, edgecolor=&lt;UNSET&gt;, facecolor=&lt;UNSET&gt;, figheight=&lt;UNSET&gt;, figwidth=&lt;UNSET&gt;, frameon=&lt;UNSET&gt;, gid=&lt;UNSET&gt;, in_layout=&lt;UNSET&gt;, label=&lt;UNSET&gt;, layout_engine=&lt;UNSET&gt;, linewidth=&lt;UNSET&gt;, mouseover=&lt;UNSET&gt;, path_effects=&lt;UNSET&gt;, picker=&lt;UNSET&gt;, rasterized=&lt;UNSET&gt;, size_inches=&lt;UNSET&gt;, sketch_params=&lt;UNSET&gt;, snap=&lt;UNSET&gt;, tight_layout=&lt;UNSET&gt;, transform=&lt;UNSET&gt;, url=&lt;UNSET&gt;, visible=&lt;UNSET&gt;, zorder=&lt;UNSET&gt;)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set multiple properties at once.</p>
+<p>Supported properties are</p>
+<h2 id="properties">Properties</h2>
+<p>agg_filter: a filter function, which takes a (m, n, 3) float array and a dpi value, and returns a (m, n, 3) array and two offsets from the bottom left corner of the image
+alpha: scalar or None
+animated: bool
+canvas: FigureCanvas
+clip_box: <code>~matplotlib.transforms.BboxBase</code> or None
+clip_on: bool
+clip_path: Patch or (Path, Transform) or None
+constrained_layout: unknown
+constrained_layout_pads: unknown
+dpi: float
+edgecolor: :mpltype:<code>color</code>
+facecolor: :mpltype:<code>color</code>
+figheight: float
+figure: unknown
+figwidth: float
+frameon: bool
+gid: str
+in_layout: bool
+label: object
+layout_engine: {'constrained', 'compressed', 'tight', 'none', <code>.LayoutEngine</code>, None}
+linewidth: number
+mouseover: bool
+path_effects: list of <code>.AbstractPathEffect</code>
+picker: None or bool or float or callable
+rasterized: bool
+size_inches: (float, float) or float
+sketch_params: (scale: float, length: float, randomness: float)
+snap: bool or None
+tight_layout: unknown
+transform: <code>~matplotlib.transforms.Transform</code>
+url: str
+visible: bool
+zorder: float</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">cls.set = lambda self, **kwargs: Artist.set(self, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="figprint.PrintableFigure.show"><code class="name flex">
+<span>def <span class="ident">show</span></span>(<span>self, display_mode=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Display figure intelligently based on context (Jupyter/script).</p>
+<h2 id="parameters">Parameters</h2>
+<p>display_mode (str): 'auto' or 'classic' (default is 'auto').</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show(self, display_mode=None):
+    &#34;&#34;&#34;
+    Display figure intelligently based on context (Jupyter/script).
+
+    Parameters:
+        display_mode (str): &#39;auto&#39; or &#39;classic&#39; (default is &#39;auto&#39;).
+    &#34;&#34;&#34;
+    try:
+        get_ipython
+        if display_mode is None or display_mode == &#34;auto&#34;:
+            display(self)
+        else:
+            super().show()
+    except NameError:
+        super().show()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="figprint.custom_plt_figure" href="#figprint.custom_plt_figure">custom_plt_figure</a></code></li>
+<li><code><a title="figprint.custom_plt_subplots" href="#figprint.custom_plt_subplots">custom_plt_subplots</a></code></li>
+<li><code><a title="figprint.is_valid_figure" href="#figprint.is_valid_figure">is_valid_figure</a></code></li>
+<li><code><a title="figprint.print_figure" href="#figprint.print_figure">print_figure</a></code></li>
+<li><code><a title="figprint.print_pdf" href="#figprint.print_pdf">print_pdf</a></code></li>
+<li><code><a title="figprint.print_png" href="#figprint.print_png">print_png</a></code></li>
+<li><code><a title="figprint.print_svg" href="#figprint.print_svg">print_svg</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="figprint.PrintableFigure" href="#figprint.PrintableFigure">PrintableFigure</a></code></h4>
+<ul class="two-column">
+<li><code><a title="figprint.PrintableFigure.print" href="#figprint.PrintableFigure.print">print</a></code></li>
+<li><code><a title="figprint.PrintableFigure.print_pdf" href="#figprint.PrintableFigure.print_pdf">print_pdf</a></code></li>
+<li><code><a title="figprint.PrintableFigure.print_png" href="#figprint.PrintableFigure.print_png">print_png</a></code></li>
+<li><code><a title="figprint.PrintableFigure.print_svg" href="#figprint.PrintableFigure.print_svg">print_svg</a></code></li>
+<li><code><a title="figprint.PrintableFigure.set" href="#figprint.PrintableFigure.set">set</a></code></li>
+<li><code><a title="figprint.PrintableFigure.show" href="#figprint.PrintableFigure.show">show</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

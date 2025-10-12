@@ -1,0 +1,1460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>message API documentation</title>
+<meta name="description" content="Repetition-limited, shared, print-compatible messaging with history and stats …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>message</code></h1>
+</header>
+<section id="section-intro">
+<p>Repetition-limited, shared, print-compatible messaging with history and stats.</p>
+<p>This module provides a drop-in, <code><a title="message.print" href="#message.print">print()</a></code>-compatible function that prevents
+log flooding by limiting how many times identical messages are emitted while
+still recording <em>all attempts</em> (printed or suppressed) in a shared history.
+It is designed for multi-module scientific/engineering codebases.</p>
+<p>All modules <code>import</code>-ing this file share the same global logger instance
+(singleton). You can:
+• Set a global repetition limit and override it <em>per-caller</em> (module).
+• Maintain a rolling history with timestamps, caller, file:line, tags, etc.
+• Keep counters that increment even when messages are suppressed.
+• Compute stats grouped by message <em>key</em> or by <em>caller</em>.
+• Export the full history as a TSV file.
+• Temporarily mute output while still tracking (suppress/disable).
+• Reset counters after a configurable “silent” time window (global,
+per-caller, or per-call), so recurring messages can re-print after cooling.</p>
+<h2 id="quick-start">Quick Start</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; import patankar.private.message as message
+&gt;&gt;&gt; message.initialize(maxrepetitions=2)
+&gt;&gt;&gt; message.print(&quot;Substance not found&quot;)      # prints
+&gt;&gt;&gt; message.print(&quot;Substance not found&quot;)      # prints
+&gt;&gt;&gt; message.print(&quot;Substance not found&quot;)      # suppressed (still counted &amp; recorded)
+&gt;&gt;&gt; message.history(3)
+2025-08-31 21:50:01 mymod.py:42 | Substance not found
+2025-08-31 21:50:01 mymod.py:43 | Substance not found
+2025-08-31 21:50:02 mymod.py:44 | Substance not found (su
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; message.stats(by=&quot;key&quot;)
+[('Substance not found', 2, 1, 3)]
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; message.stats(by=&quot;caller&quot;)
+[('mymodule.py', 2, 1, 3)]
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; message.save(&quot;messages.tsv&quot;)  # write history to disk
+</code></pre>
+<h2 id="per-caller-limits">Per-caller limits</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; message.set_limit(1)                        # global default
+&gt;&gt;&gt; message.set_limit(5, caller=&quot;toxicheck.py&quot;) # only for that module file
+</code></pre>
+<h2 id="silent-delay-reset-cooldown">Silent delay reset (cooldown)</h2>
+<p>If <code>tsilent</code> is set (globally, per-caller, or per-call), and more than
+<code>tsilent</code> seconds have elapsed since a key was <em>last printed</em>, the per-key
+counters are reset <em>before</em> the next attempt, allowing it to print again.</p>
+<h1 id="prints-twice-suppresses-after-10s-of-no-prints-for-this-key-the-counter-resets">prints twice, suppresses; after 10s of no prints for this <em>key</em>, the counter resets</h1>
+<pre><code class="language-python-repl">&gt;&gt;&gt; message.set_silence(10.0)               # global cooldown of 10s
+&gt;&gt;&gt; message.print(&quot;inventory miss X&quot;)       # prints
+&gt;&gt;&gt; message.print(&quot;inventory miss X&quot;)       # suppressed
+# ... wait 10s without printing this key ...
+&gt;&gt;&gt; message.print(&quot;inventory miss X&quot;)       # prints again (counters reset for this key)
+</code></pre>
+<h2 id="silencing-machinery-advanced">Silencing machinery (advanced)</h2>
+<h1 id="per-caller-silent-reset-module-specific">Per-caller silent reset (module-specific):</h1>
+<blockquote>
+<blockquote>
+<p>message.set_silence_for("toxpredict.py", 5.0)
+# only in toxpredict.py</p>
+</blockquote>
+</blockquote>
+<h1 id="per-call-silent-reset-strongest-precedence">Per-call silent reset (strongest precedence):</h1>
+<blockquote>
+<blockquote>
+<p>message.print("inventory miss for CAS 123-45-6", tsilent=3.0)
+Manually reset one key (e.g., after handling a burst):
+message.reset_key("inventory miss for CAS 123-45-6")</p>
+</blockquote>
+</blockquote>
+<h1 id="optionally-purge-stale-timestamps-keeps-dict-small-in-long-runs">Optionally purge stale timestamps (keeps dict small in long runs):</h1>
+<blockquote>
+<blockquote>
+<p>message.purge_idle_keys(3600)
+# forget keys idle for &gt; 1 hour</p>
+</blockquote>
+</blockquote>
+<h2 id="public-api">Public Api</h2>
+<ul>
+<li>initialize, print, clear, history, get_history</li>
+<li>stats, stats_for_caller, callers</li>
+<li>set_limit, reset_counts, set_history_size</li>
+<li>enable, disable, suppress, unsuppress</li>
+<li>save</li>
+<li>set_silence, set_silence_for, get_silence, reset_key, purge_idle_keys</li>
+<li>limit (context manager for temporary per-caller/global limits)</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>“Caller” is the file name of the immediate caller (e.g., <code>module.py</code>).</li>
+<li>History size is bounded with a deque (default 2000).</li>
+<li>Thread-safe via a re-entrant lock.</li>
+</ul>
+<h2 id="typical-use-in-sfppy">Typical Use In Sfppy</h2>
+<h1 id="in-module-a">in module A</h1>
+<p>import patankar.private.message as message
+message.set_limit(2, caller="moduleA.py")
+# only affects module A
+message.print("tox alert: X missed threshold")</p>
+<h1 id="in-module-b">in module B</h1>
+<p>import patankar.private.message as message
+message.set_limit(10, caller="moduleB.py")
+message.print("tox alert: X missed threshold")</p>
+<h2 id="key-inspection-helpers">Key Inspection Helpers</h2>
+<p>message.stats(by="key")
+# messages sorted by total (printed+suppressed)
+message.stats(by="caller")
+# callers sorted by total
+message.stats_for_caller("moduleA.py", top=20)
+message.callers()
+# [(caller, printed, suppressed, total), &hellip;]
+message.history(20)
+# last 20, all callers
+message.history(filter_caller="moduleA.py")</p>
+<hr>
+<p>@version: 1.50
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-02-10
+@rev: 2025-08-31</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ── patankar.private.message.py ─────────────────────────────────────────────────
+&#34;&#34;&#34;
+Repetition-limited, shared, print-compatible messaging with history and stats.
+
+This module provides a drop-in, `print`-compatible function that prevents
+log flooding by limiting how many times identical messages are emitted while
+still recording *all attempts* (printed or suppressed) in a shared history.
+It is designed for multi-module scientific/engineering codebases.
+
+All modules `import`-ing this file share the same global logger instance
+(singleton). You can:
+  • Set a global repetition limit and override it *per-caller* (module).
+  • Maintain a rolling history with timestamps, caller, file:line, tags, etc.
+  • Keep counters that increment even when messages are suppressed.
+  • Compute stats grouped by message *key* or by *caller*.
+  • Export the full history as a TSV file.
+  • Temporarily mute output while still tracking (suppress/disable).
+  • Reset counters after a configurable “silent” time window (global,
+    per-caller, or per-call), so recurring messages can re-print after cooling.
+
+Quick start
+-----------
+&gt;&gt;&gt; import patankar.private.message as message
+&gt;&gt;&gt; message.initialize(maxrepetitions=2)
+&gt;&gt;&gt; message.print(&#34;Substance not found&#34;)      # prints
+&gt;&gt;&gt; message.print(&#34;Substance not found&#34;)      # prints
+&gt;&gt;&gt; message.print(&#34;Substance not found&#34;)      # suppressed (still counted &amp; recorded)
+&gt;&gt;&gt; message.history(3)
+2025-08-31 21:50:01 mymod.py:42 | Substance not found
+2025-08-31 21:50:01 mymod.py:43 | Substance not found
+2025-08-31 21:50:02 mymod.py:44 | Substance not found (su
+
+&gt;&gt;&gt; message.stats(by=&#34;key&#34;)
+[(&#39;Substance not found&#39;, 2, 1, 3)]
+
+&gt;&gt;&gt; message.stats(by=&#34;caller&#34;)
+[(&#39;mymodule.py&#39;, 2, 1, 3)]
+
+&gt;&gt;&gt; message.save(&#34;messages.tsv&#34;)  # write history to disk
+
+Per-caller limits
+-----------------
+&gt;&gt;&gt; message.set_limit(1)                        # global default
+&gt;&gt;&gt; message.set_limit(5, caller=&#34;toxicheck.py&#34;) # only for that module file
+
+Silent delay reset (cooldown)
+-----------------------------
+If `tsilent` is set (globally, per-caller, or per-call), and more than
+`tsilent` seconds have elapsed since a key was *last printed*, the per-key
+counters are reset *before* the next attempt, allowing it to print again.
+
+# prints twice, suppresses; after 10s of no prints for this *key*, the counter resets
+&gt;&gt;&gt; message.set_silence(10.0)               # global cooldown of 10s
+&gt;&gt;&gt; message.print(&#34;inventory miss X&#34;)       # prints
+&gt;&gt;&gt; message.print(&#34;inventory miss X&#34;)       # suppressed
+# ... wait 10s without printing this key ...
+&gt;&gt;&gt; message.print(&#34;inventory miss X&#34;)       # prints again (counters reset for this key)
+
+Silencing machinery (advanced)
+-------------------
+# Per-caller silent reset (module-specific):
+&gt;&gt; message.set_silence_for(&#34;toxpredict.py&#34;, 5.0)   # only in toxpredict.py
+# Per-call silent reset (strongest precedence):
+&gt;&gt; message.print(&#34;inventory miss for CAS 123-45-6&#34;, tsilent=3.0)
+Manually reset one key (e.g., after handling a burst):
+&gt;&gt; message.reset_key(&#34;inventory miss for CAS 123-45-6&#34;)
+# Optionally purge stale timestamps (keeps dict small in long runs):
+&gt;&gt; message.purge_idle_keys(3600)  # forget keys idle for &gt; 1 hour
+
+Public API
+----------
+- initialize, print, clear, history, get_history
+- stats, stats_for_caller, callers
+- set_limit, reset_counts, set_history_size
+- enable, disable, suppress, unsuppress
+- save
+- set_silence, set_silence_for, get_silence, reset_key, purge_idle_keys
+- limit (context manager for temporary per-caller/global limits)
+
+Notes
+-----
+- “Caller” is the file name of the immediate caller (e.g., `module.py`).
+- History size is bounded with a deque (default 2000).
+- Thread-safe via a re-entrant lock.
+
+Typical use in SFPPy
+---------------------
+# in module A
+import patankar.private.message as message
+message.set_limit(2, caller=&#34;moduleA.py&#34;)  # only affects module A
+message.print(&#34;tox alert: X missed threshold&#34;)
+
+# in module B
+import patankar.private.message as message
+message.set_limit(10, caller=&#34;moduleB.py&#34;)
+message.print(&#34;tox alert: X missed threshold&#34;)
+
+
+Key inspection helpers
+-----------------------
+message.stats(by=&#34;key&#34;)         # messages sorted by total (printed+suppressed)
+message.stats(by=&#34;caller&#34;)      # callers sorted by total
+message.stats_for_caller(&#34;moduleA.py&#34;, top=20)
+message.callers()               # [(caller, printed, suppressed, total), ...]
+message.history(20)             # last 20, all callers
+message.history(filter_caller=&#34;moduleA.py&#34;)
+
+
+---
+@version: 1.50
+@project: SFPPy - SafeFoodPackaging Portal in Python initiative
+@author: INRAE\\olivier.vitrac@agroparistech.fr
+@licence: MIT
+@Date: 2024-02-10
+@rev: 2025-08-31
+&#34;&#34;&#34;
+
+from __future__ import annotations
+import sys
+import time
+import threading
+import traceback
+import builtins
+from collections import defaultdict, deque
+
+__all__ = [&#39;callers&#39;, &#39;clear&#39;, &#39;disable&#39;, &#39;enable&#39;, &#39;get_history&#39;, &#39;get_silence&#39;, &#39;history&#39;, &#39;initialize&#39;, &#39;limit&#39;, &#39;print&#39;, &#39;purge_idle_keys&#39;, &#39;reset_counts&#39;, &#39;reset_key&#39;, &#39;save&#39;, &#39;set_history_size&#39;, &#39;set_limit&#39;, &#39;set_silence&#39;, &#39;set_silence_for&#39;, &#39;stats&#39;, &#39;stats_for_caller&#39;, &#39;suppress&#39;, &#39;unsuppress&#39;]
+
+__project__ = &#34;SFPPy&#34;
+__author__ = &#34;Olivier Vitrac&#34;
+__copyright__ = &#34;Copyright 2022&#34;
+__credits__ = [&#34;Olivier Vitrac&#34;]
+__license__ = &#34;MIT&#34;
+__maintainer__ = &#34;Olivier Vitrac&#34;
+__email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
+__version__ = &#34;1.50&#34;
+
+
+class _MessageLogger:
+    &#34;&#34;&#34;
+    Core singleton implementing repetition-limited printing, history, and stats.
+
+    This class is used through the module-level façade functions (e.g.,
+    `message.print`, `message.stats`) that delegate to a single global instance.
+
+    Data recorded per attempt (history record dict):
+        &#34;ts&#34;            float UNIX timestamp of the attempt
+        &#34;text&#34;          message text (tagged if tag provided)
+        &#34;key&#34;           canonical message key (possibly transformed by `key=`)
+        &#34;src&#34;           &#34;filename:lineno&#34; of the call site
+        &#34;caller&#34;        caller identifier (filename only)
+        &#34;tag&#34;           optional short category string
+        &#34;suppressed&#34;    bool, True if not emitted to stream
+        &#34;count_at_emit&#34; int, count of this key *after* increment at this attempt
+        &#34;stream&#34;        &#34;stdout&#34;, &#34;stderr&#34;, or &#34;file&#34;
+
+    Counters:
+        • Per-key totals (attempted) and suppressed counts.
+        • Per-caller totals (attempted) and suppressed counts.
+      Counters increment even when messages are suppressed.
+
+    Limits:
+        • Global repetition limit for all keys.
+        • Per-caller limit (overrides global for that caller).
+        • Per-call `once=True` forces a limit of 1 for that specific call.
+
+    Silent-delay reset (cooldown):
+        • Global `tsilent` seconds, optional per-caller override, and a
+          per-call `tsilent=...` that takes precedence.
+        • If more than `tsilent` seconds have elapsed since a key was last
+          *printed*, the counters for that key are reset just before counting
+          the new attempt. This allows it to print again after a quiet period.
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        &#34;&#34;&#34;Initialize all shared state with sensible defaults.&#34;&#34;&#34;
+        self._lock = threading.RLock()
+        self._counts = defaultdict(int)               # key -&gt; total attempts
+        self._suppressed_counts = defaultdict(int)    # key -&gt; suppressed attempts
+        self._counts_by_caller = defaultdict(int)     # caller -&gt; total attempts
+        self._suppressed_by_caller = defaultdict(int) # caller -&gt; suppressed attempts
+
+        self._hist = deque(maxlen=2000)               # history of records (dict)
+        self._hist_size = 2000
+
+        self._maxrepetitions = 1                      # global per-key limit
+        self._per_caller_limit = {}                   # caller -&gt; limit
+
+        self._enabled = True                          # if False, track but never emit
+        self._globally_suppressed = False             # temporary mute (track anyway)
+
+        # Silent-delay (cooldown) machinery:
+        self._tsilent_default = None                  # None =&gt; disabled
+        self._tsilent_by_caller = {}                  # caller -&gt; seconds
+        self._last_print_ts = {}                      # key -&gt; last *printed* timestamp
+
+    # ── configuration ────────────────────────────────────────────────────────
+    def initialize(self, maxrepetitions=1, history_size=2000, enabled=True):
+        &#34;&#34;&#34;
+        Initialize or reconfigure the logger.
+
+        Parameters
+        ----------
+        maxrepetitions : int
+            Default maximum emitted times per unique key. Attempts beyond
+            this limit are suppressed but still tracked.
+        history_size : int
+            Bounded history length (oldest entries drop when exceeded).
+        enabled : bool
+            If False, suppress actual emissions (history and counters still recorded).
+        &#34;&#34;&#34;
+        with self._lock:
+            self._maxrepetitions = max(0, int(maxrepetitions))
+            self._hist_size = max(0, int(history_size))
+            self._enabled = bool(enabled)
+            # keep existing content but resize deque
+            self._hist = deque(self._hist, maxlen=self._hist_size)
+
+    def set_limit(self, n, caller=None):
+        &#34;&#34;&#34;
+        Set repetition limit.
+
+        Parameters
+        ----------
+        n : int
+            Maximum emitted times per key.
+        caller : str or None
+            If None, set global default. If a string (e.g., &#34;module.py&#34;),
+            set/override the limit for that caller only.
+        &#34;&#34;&#34;
+        with self._lock:
+            n = max(0, int(n))
+            if caller is None:
+                self._maxrepetitions = n
+            else:
+                self._per_caller_limit[caller] = n
+
+    def set_history_size(self, n):
+        &#34;&#34;&#34;
+        Change the maximum number of records retained in history.
+
+        Parameters
+        ----------
+        n : int
+            New bound for the history deque.
+        &#34;&#34;&#34;
+        with self._lock:
+            n = max(0, int(n))
+            old = list(self._hist)
+            self._hist_size = n
+            self._hist = deque(old[-n:], maxlen=n)
+
+    def enable(self):
+        &#34;&#34;&#34;
+        Enable actual emissions to the chosen stream (default stdout).
+
+        Tracking and history are *always* on; this only controls emission.
+        &#34;&#34;&#34;
+        with self._lock:
+            self._enabled = True
+
+    def disable(self):
+        &#34;&#34;&#34;
+        Disable actual emissions (no printing), but keep tracking and history.
+        &#34;&#34;&#34;
+        with self._lock:
+            self._enabled = False
+
+    def suppress(self):
+        &#34;&#34;&#34;
+        Temporarily mute emissions (like a global &#39;quiet&#39; mode).
+        Tracking and history continue.
+        &#34;&#34;&#34;
+        with self._lock:
+            self._globally_suppressed = True
+
+    def unsuppress(self):
+        &#34;&#34;&#34;Re-enable emissions after `suppress()`.&#34;&#34;&#34;
+        with self._lock:
+            self._globally_suppressed = False
+
+    # ── silent delay (cooldown) configuration ────────────────────────────────
+    def set_silence(self, seconds):
+        &#34;&#34;&#34;
+        Set a global silent delay (cooldown) in seconds.
+
+        If not None, and if a key was last *printed* more than `seconds` ago,
+        its per-key counters are reset just before the next attempt, allowing
+        it to print again.
+
+        Parameters
+        ----------
+        seconds : float or None
+            Global cooldown. Use None to disable globally.
+        &#34;&#34;&#34;
+        with self._lock:
+            self._tsilent_default = None if seconds is None else float(seconds)
+
+    def set_silence_for(self, caller, seconds):
+        &#34;&#34;&#34;
+        Set a per-caller silent delay (cooldown), overriding the global value.
+
+        Parameters
+        ----------
+        caller : str
+            Caller identifier (usually a filename, e.g., &#34;module.py&#34;).
+        seconds : float or None
+            Cooldown for this caller. Use None to remove the override.
+        &#34;&#34;&#34;
+        with self._lock:
+            if seconds is None:
+                self._tsilent_by_caller.pop(caller, None)
+            else:
+                self._tsilent_by_caller[caller] = float(seconds)
+
+    def get_silence(self, caller=None):
+        &#34;&#34;&#34;
+        Get the effective silent delay for a caller (or the global default).
+
+        Parameters
+        ----------
+        caller : str or None
+            If provided and present in per-caller overrides, return it;
+            otherwise return the global default.
+
+        Returns
+        -------
+        float or None
+            Cooldown in seconds, or None if disabled.
+        &#34;&#34;&#34;
+        with self._lock:
+            if caller is not None and caller in self._tsilent_by_caller:
+                return self._tsilent_by_caller[caller]
+            return self._tsilent_default
+
+    def reset_key(self, key):
+        &#34;&#34;&#34;
+        Reset counters and last-printed timestamp for a specific message key.
+
+        Parameters
+        ----------
+        key : str
+            The canonical key used for counting (after optional key-normalization).
+        &#34;&#34;&#34;
+        with self._lock:
+            self._counts.pop(key, None)
+            self._suppressed_counts.pop(key, None)
+            self._last_print_ts.pop(key, None)
+
+    def purge_idle_keys(self, idle_seconds):
+        &#34;&#34;&#34;
+        Remove last-printed timestamps for keys idle longer than `idle_seconds`.
+
+        Does not affect history; only forgets _last_print_ts entries to keep
+        memory small in very long runs.
+
+        Parameters
+        ----------
+        idle_seconds : float
+            Entries older than now - idle_seconds are purged.
+        &#34;&#34;&#34;
+        with self._lock:
+            tnow = time.time()
+            stale = [k for k, ts in self._last_print_ts.items()
+                     if (tnow - ts) &gt; float(idle_seconds)]
+            for k in stale:
+                self._last_print_ts.pop(k, None)
+
+    # ── utils ────────────────────────────────────────────────────────────────
+    def _caller_id(self, explicit=None):
+        &#34;&#34;&#34;
+        Determine the caller identifier (module filename).
+
+        Parameters
+        ----------
+        explicit : str or None
+            If provided, use as caller; else infer from stack.
+
+        Returns
+        -------
+        str
+            Caller identifier (filename).
+        &#34;&#34;&#34;
+        if explicit:
+            return explicit
+        # stack: [ ... this fn, print(), external caller ]
+        frm = traceback.extract_stack(limit=4)[0]
+        filename = frm.filename.rsplit(&#34;/&#34;, 1)[-1]
+        return filename
+
+    # ── core print ───────────────────────────────────────────────────────────
+    def print(self, *args, **kwargs):
+        &#34;&#34;&#34;
+        Print with repetition limiting, history, and optional cooldown.
+
+        Signature-compatible with built-in print:
+            print(*args, sep=&#39; &#39;, end=&#39;\\n&#39;, file=None, flush=False)
+
+        Extra keyword-only arguments:
+        --------------------------------
+        key : callable or None
+            A function str -&gt; str to normalize the message for de-duplication
+            (e.g., strip numbers or IDs). If None, the exact text is used.
+        tag : str or None
+            Optional short category prefix (visible in history).
+        once : bool
+            If True, enforces a one-time emission limit for this call.
+        caller : str or None
+            Override/force the caller identifier for this emission.
+        tsilent : float or None
+            Per-call cooldown (seconds). If set, it takes precedence over any
+            per-caller or global cooldown for this call only.
+        &#34;&#34;&#34;
+        sep = kwargs.pop(&#34;sep&#34;, &#34; &#34;)
+        end = kwargs.pop(&#34;end&#34;, &#34;\n&#34;)
+        file = kwargs.pop(&#34;file&#34;, None)
+        flush = kwargs.pop(&#34;flush&#34;, False)
+        key_fn = kwargs.pop(&#34;key&#34;, None)
+        tag = kwargs.pop(&#34;tag&#34;, None)
+        once = kwargs.pop(&#34;once&#34;, False)
+        caller_override = kwargs.pop(&#34;caller&#34;, None)
+        tsilent_call = kwargs.pop(&#34;tsilent&#34;, None)
+        if kwargs:
+            raise TypeError(&#34;Unexpected kwargs: %r&#34; % list(kwargs.keys()))
+
+        text = sep.join(map(str, args))
+        k = key_fn(text) if key_fn else text
+
+        # source with line number for history; per-caller limit uses filename only
+        frm = traceback.extract_stack(limit=3)[0]
+        src = &#34;%s:%d&#34; % (frm.filename.rsplit(&#34;/&#34;, 1)[-1], frm.lineno)
+        caller = self._caller_id(caller_override)
+
+        with self._lock:
+            # Resolve effective cooldown (per-call &gt; per-caller &gt; global)
+            if tsilent_call is not None:
+                eff_tsilent = float(tsilent_call)
+            else:
+                eff_tsilent = self._tsilent_by_caller.get(caller, self._tsilent_default)
+
+            tnow = time.time()
+
+            # If cooldown elapsed since last *printed* emission of this key, reset counts
+            if eff_tsilent is not None:
+                last_ts = self._last_print_ts.get(k)
+                if (last_ts is not None) and ((tnow - last_ts) &gt; eff_tsilent):
+                    self._counts.pop(k, None)
+                    self._suppressed_counts.pop(k, None)
+
+            limit_n = 1 if once else self._per_caller_limit.get(caller, self._maxrepetitions)
+
+            # Increment counters (attempts always counted)
+            self._counts[k] += 1
+            self._counts_by_caller[caller] += 1
+            n_seen = self._counts[k]
+
+            suppressed = (n_seen &gt; limit_n) or self._globally_suppressed or (not self._enabled)
+
+            rec = {
+                &#34;ts&#34;: tnow,
+                &#34;text&#34;: text if tag is None else &#34;[%s] %s&#34; % (tag, text),
+                &#34;key&#34;: k,
+                &#34;src&#34;: src,
+                &#34;caller&#34;: caller,
+                &#34;tag&#34;: tag,
+                &#34;suppressed&#34;: suppressed,
+                &#34;count_at_emit&#34;: n_seen,
+                &#34;stream&#34;: &#34;stderr&#34; if (file is sys.stderr) else (
+                    &#34;stdout&#34; if (file in (None, sys.stdout)) else &#34;file&#34;)
+            }
+            self._hist.append(rec)
+
+            if suppressed:
+                self._suppressed_counts[k] += 1
+                self._suppressed_by_caller[caller] += 1
+            else:
+                target = sys.stdout if file is None else file
+                builtins.print(text, sep=&#34;&#34;, end=end, file=target, flush=flush)
+                # record last printed time for cooldown checks
+                self._last_print_ts[k] = tnow
+
+    # ── history &amp; stats ──────────────────────────────────────────────────────
+    def clear(self):
+        &#34;&#34;&#34;
+        Clear all internal state:
+          - history, all counters, per-caller limits, and last-printed times.
+        &#34;&#34;&#34;
+        with self._lock:
+            self._counts.clear()
+            self._suppressed_counts.clear()
+            self._counts_by_caller.clear()
+            self._suppressed_by_caller.clear()
+            self._hist.clear()
+            self._per_caller_limit.clear()
+            self._last_print_ts.clear()
+
+    def reset_counts(self):
+        &#34;&#34;&#34;
+        Reset all counters (printed/suppressed by key and by caller).
+
+        History is preserved; only counts are cleared.
+        &#34;&#34;&#34;
+        with self._lock:
+            self._counts.clear()
+            self._suppressed_counts.clear()
+            self._counts_by_caller.clear()
+            self._suppressed_by_caller.clear()
+
+    def get_history(self, n=None, include_suppressed=True, filter_caller=None):
+        &#34;&#34;&#34;
+        Return recorded history as a list of dict records.
+
+        Parameters
+        ----------
+        n : int or None
+            If None, return full history; else return only the last n records.
+        include_suppressed : bool
+            If False, filter out suppressed entries.
+        filter_caller : str or None
+            If provided, return only records for this caller.
+
+        Returns
+        -------
+        list of dict
+            Each dict contains the fields described in the class docstring.
+        &#34;&#34;&#34;
+        with self._lock:
+            data = list(self._hist) if n is None else list(self._hist)[-int(n):]
+            if not include_suppressed:
+                data = [r for r in data if not r[&#34;suppressed&#34;]]
+            if filter_caller:
+                data = [r for r in data if r[&#34;caller&#34;] == filter_caller]
+            return data
+
+    def history(self, n=None, include_suppressed=True, timestamps=True, filter_caller=None):
+        &#34;&#34;&#34;
+        Pretty-print history to stdout.
+
+        Parameters
+        ----------
+        n : int or None
+            If None, print full history; else last n entries.
+        include_suppressed : bool
+            If False, skip suppressed entries.
+        timestamps : bool
+            If True, prefix each line with a human-readable timestamp.
+        filter_caller : str or None
+            If provided, only show entries for this caller.
+        &#34;&#34;&#34;
+        recs = self.get_history(n=n, include_suppressed=include_suppressed,
+                                filter_caller=filter_caller)
+        for r in recs:
+            ts = time.strftime(&#34;%Y-%m-%d %H:%M:%S&#34;, time.localtime(r[&#34;ts&#34;])) if timestamps else &#34;&#34;
+            prefix = (&#34;%s &#34; % ts) if timestamps else &#34;&#34;
+            sup = &#34; (suppressed)&#34; if r[&#34;suppressed&#34;] else &#34;&#34;
+            sys.stdout.write(&#34;%s%s | %s%s\n&#34; % (prefix, r[&#34;src&#34;], r[&#34;text&#34;], sup))
+
+    def callers(self):
+        &#34;&#34;&#34;
+        Return aggregated counts per caller.
+
+        Returns
+        -------
+        list of tuples
+            (caller, printed, suppressed, total), sorted by total desc.
+        &#34;&#34;&#34;
+        with self._lock:
+            out = []
+            for c, tot in self._counts_by_caller.items():
+                sup = self._suppressed_by_caller.get(c, 0)
+                printed = tot - sup
+                out.append((c, printed, sup, tot))
+            out.sort(key=lambda t: t[3], reverse=True)
+            return out
+
+    def stats(self, top=None, min_count=1, by=&#34;key&#34;):
+        &#34;&#34;&#34;
+        Return aggregated counts sorted by total.
+
+        Parameters
+        ----------
+        top : int or None
+            If provided, return only the first `top` entries.
+        min_count : int
+            Minimum total (printed+suppressed) required to appear.
+        by : {&#34;key&#34;, &#34;caller&#34;}
+            Group by message key or by caller.
+
+        Returns
+        -------
+        list of tuples
+            If by=&#34;key&#34;:    (key, printed, suppressed, total)
+            If by=&#34;caller&#34;: (caller, printed, suppressed, total)
+        &#34;&#34;&#34;
+        with self._lock:
+            out = []
+            if by == &#34;key&#34;:
+                for k, tot in self._counts.items():
+                    sup = self._suppressed_counts.get(k, 0)
+                    printed = tot - sup
+                    if (tot &gt;= min_count) or (sup &gt;= min_count):
+                        out.append((k, printed, sup, tot))
+            elif by == &#34;caller&#34;:
+                for c, tot in self._counts_by_caller.items():
+                    sup = self._suppressed_by_caller.get(c, 0)
+                    printed = tot - sup
+                    if (tot &gt;= min_count) or (sup &gt;= min_count):
+                        out.append((c, printed, sup, tot))
+            else:
+                raise ValueError(&#39;by must be &#34;key&#34; or &#34;caller&#34;&#39;)
+            out.sort(key=lambda t: t[3], reverse=True)
+            return out[:top] if top else out
+
+    def stats_for_caller(self, caller, top=None, min_count=1):
+        &#34;&#34;&#34;
+        Return per-key stats restricted to a given caller.
+
+        Parameters
+        ----------
+        caller : str
+            Caller identifier (filename).
+        top : int or None
+            If provided, only the first `top` entries are returned.
+        min_count : int
+            Minimum total attempts to include.
+
+        Returns
+        -------
+        list of tuples
+            (key, printed, suppressed, total), sorted by total desc.
+        &#34;&#34;&#34;
+        with self._lock:
+            agg = defaultdict(lambda: [0, 0])  # key -&gt; [tot, sup]
+            for r in self._hist:
+                if r[&#34;caller&#34;] != caller:
+                    continue
+                agg[r[&#34;key&#34;]][0] += 1
+                if r[&#34;suppressed&#34;]:
+                    agg[r[&#34;key&#34;]][1] += 1
+            out = []
+            for k, pair in agg.items():
+                tot, sup = pair
+                printed = tot - sup
+                if (tot &gt;= min_count) or (sup &gt;= min_count):
+                    out.append((k, printed, sup, tot))
+            out.sort(key=lambda t: t[3], reverse=True)
+            return out[:top] if top else out
+
+    def save(self, path, include_suppressed=True, filter_caller=None):
+        &#34;&#34;&#34;
+        Save history to a TSV file on disk.
+
+        Parameters
+        ----------
+        path : str
+            Output file path.
+        include_suppressed : bool
+            If False, skip suppressed entries.
+        filter_caller : str or None
+            If provided, export only records for this caller.
+        &#34;&#34;&#34;
+        recs = self.get_history(include_suppressed=include_suppressed,
+                                filter_caller=filter_caller)
+        with open(path, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
+            f.write(&#34;ts\tstream\tsrc\tcaller\ttag\tcount\tSuppressed\ttext\n&#34;)
+            for r in recs:
+                f.write(&#34;%d\t%s\t%s\t%s\t%s\t%d\t%d\t%s\n&#34; % (
+                    int(r[&#34;ts&#34;]), r[&#34;stream&#34;], r[&#34;src&#34;], r[&#34;caller&#34;], r[&#34;tag&#34;] or &#34;&#34;,
+                    r[&#34;count_at_emit&#34;], 1 if r[&#34;suppressed&#34;] else 0, r[&#34;text&#34;]))
+
+    # ── context manager for temporary limits ─────────────────────────────────
+    def limit(self, n, caller=None):
+        &#34;&#34;&#34;
+        Context manager to temporarily override repetition limits.
+
+        Parameters
+        ----------
+        n : int
+            Temporary maximum emitted times per key.
+        caller : str or None
+            If None, override the global default; else override only for
+            the specified caller (filename). Previous values are restored
+            on exit.
+
+        Examples
+        --------
+        &gt;&gt;&gt; with message.limit(0):             # globally mute emissions (still tracked)
+        ...     message.print(&#34;no output now&#34;)
+        &gt;&gt;&gt; with message.limit(10, caller=&#34;tox.py&#34;):
+        ...     message.print(&#34;verbose for tox only&#34;)
+        &#34;&#34;&#34;
+        logger = self
+        class _LimitCtx:
+            def __enter__(self_):
+                logger._lock.acquire()
+                self_.caller = caller or None
+                if self_.caller is None:
+                    self_.prev = logger._maxrepetitions
+                    logger._maxrepetitions = max(0, int(n))
+                else:
+                    self_.prev = logger._per_caller_limit.get(self_.caller, None)
+                    logger._per_caller_limit[self_.caller] = max(0, int(n))
+                return logger
+            def __exit__(self_, exc_type, exc, tb):
+                if self_.caller is None:
+                    logger._maxrepetitions = self_.prev
+                else:
+                    if self_.prev is None:
+                        logger._per_caller_limit.pop(self_.caller, None)
+                    else:
+                        logger._per_caller_limit[self_.caller] = self_.prev
+                logger._lock.release()
+        return _LimitCtx()
+
+
+# ── module-level façade (singleton) ──────────────────────────────────────────
+_LOGGER = _MessageLogger()
+
+
+def initialize(maxrepetitions=1, history_size=2000, enabled=True):
+    &#34;&#34;&#34;
+    Initialize/reconfigure the shared logger. See `_MessageLogger.initialize`.
+    &#34;&#34;&#34;
+    _LOGGER.initialize(maxrepetitions=maxrepetitions,
+                       history_size=history_size,
+                       enabled=enabled)
+
+
+def print(*args, **kwargs):
+    &#34;&#34;&#34;
+    Print with repetition limiting, history, and optional cooldown.
+
+    Same signature as built-in `print` + extras: key, tag, once, caller, tsilent.
+    See `_MessageLogger.print` for details.
+    &#34;&#34;&#34;
+    _LOGGER.print(*args, **kwargs)
+
+
+def clear():
+    &#34;&#34;&#34;
+    Clear all state: history, counters, per-caller limits, last-printed times.
+    &#34;&#34;&#34;
+    _LOGGER.clear()
+
+
+def reset_counts():
+    &#34;&#34;&#34;
+    Reset per-key and per-caller counters (history preserved).
+    &#34;&#34;&#34;
+    _LOGGER.reset_counts()
+
+
+def set_limit(n, caller=None):
+    &#34;&#34;&#34;
+    Set repetition limit globally or for a specific caller.
+    &#34;&#34;&#34;
+    _LOGGER.set_limit(n, caller=caller)
+
+
+def set_history_size(n):
+    &#34;&#34;&#34;
+    Change the maximum number of records retained in history.
+    &#34;&#34;&#34;
+    _LOGGER.set_history_size(n)
+
+
+def enable():
+    &#34;&#34;&#34;
+    Enable actual emissions (tracking is always on).
+    &#34;&#34;&#34;
+    _LOGGER.enable()
+
+
+def disable():
+    &#34;&#34;&#34;
+    Disable actual emissions (tracking continues).
+    &#34;&#34;&#34;
+    _LOGGER.disable()
+
+
+def suppress():
+    &#34;&#34;&#34;
+    Temporarily mute emissions (tracking continues).
+    &#34;&#34;&#34;
+    _LOGGER.suppress()
+
+
+def unsuppress():
+    &#34;&#34;&#34;
+    Re-enable emissions after `suppress()`.
+    &#34;&#34;&#34;
+    _LOGGER.unsuppress()
+
+
+def history(n=None, include_suppressed=True, timestamps=True, filter_caller=None):
+    &#34;&#34;&#34;
+    Pretty-print history. See `_MessageLogger.history` for parameters.
+    &#34;&#34;&#34;
+    _LOGGER.history(n=n, include_suppressed=include_suppressed,
+                    timestamps=timestamps, filter_caller=filter_caller)
+
+
+def get_history(n=None, include_suppressed=True, filter_caller=None):
+    &#34;&#34;&#34;
+    Return history records as a list of dicts. See `_MessageLogger.get_history`.
+    &#34;&#34;&#34;
+    return _LOGGER.get_history(n=n, include_suppressed=include_suppressed,
+                               filter_caller=filter_caller)
+
+
+def stats(top=None, min_count=1, by=&#34;key&#34;):
+    &#34;&#34;&#34;
+    Aggregated counts sorted by total. See `_MessageLogger.stats`.
+    &#34;&#34;&#34;
+    return _LOGGER.stats(top=top, min_count=min_count, by=by)
+
+
+def stats_for_caller(caller, top=None, min_count=1):
+    &#34;&#34;&#34;
+    Per-key stats restricted to a given caller. See `_MessageLogger.stats_for_caller`.
+    &#34;&#34;&#34;
+    return _LOGGER.stats_for_caller(caller, top=top, min_count=min_count)
+
+
+def callers():
+    &#34;&#34;&#34;
+    Aggregated counts per caller. See `_MessageLogger.callers`.
+    &#34;&#34;&#34;
+    return _LOGGER.callers()
+
+
+def save(path, include_suppressed=True, filter_caller=None):
+    &#34;&#34;&#34;
+    Save history to a TSV file on disk. See `_MessageLogger.save`.
+    &#34;&#34;&#34;
+    _LOGGER.save(path=path, include_suppressed=include_suppressed,
+                 filter_caller=filter_caller)
+
+
+def set_silence(seconds):
+    &#34;&#34;&#34;
+    Set global silent delay (cooldown) in seconds, or None to disable.
+    &#34;&#34;&#34;
+    _LOGGER.set_silence(seconds)
+
+
+def set_silence_for(caller, seconds):
+    &#34;&#34;&#34;
+    Set per-caller silent delay (cooldown), or None to remove override.
+    &#34;&#34;&#34;
+    _LOGGER.set_silence_for(caller, seconds)
+
+
+def get_silence(caller=None):
+    &#34;&#34;&#34;
+    Get the effective cooldown for a caller or the global default.
+    &#34;&#34;&#34;
+    return _LOGGER.get_silence(caller=caller)
+
+
+def reset_key(key):
+    &#34;&#34;&#34;
+    Reset counters and last-printed timestamp for a specific message key.
+    &#34;&#34;&#34;
+    _LOGGER.reset_key(key)
+
+
+def purge_idle_keys(idle_seconds):
+    &#34;&#34;&#34;
+    Forget last-printed timestamps for keys idle longer than `idle_seconds`.
+    &#34;&#34;&#34;
+    _LOGGER.purge_idle_keys(idle_seconds)
+
+
+def limit(n, caller=None):
+    &#34;&#34;&#34;
+    Context manager to temporarily override repetition limits (global or per-caller).
+    &#34;&#34;&#34;
+    return _LOGGER.limit(n, caller=caller)
+# ─────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="message.callers"><code class="name flex">
+<span>def <span class="ident">callers</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Aggregated counts per caller. See <code>_MessageLogger.callers</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def callers():
+    &#34;&#34;&#34;
+    Aggregated counts per caller. See `_MessageLogger.callers`.
+    &#34;&#34;&#34;
+    return _LOGGER.callers()</code></pre>
+</details>
+</dd>
+<dt id="message.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Clear all state: history, counters, per-caller limits, last-printed times.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear():
+    &#34;&#34;&#34;
+    Clear all state: history, counters, per-caller limits, last-printed times.
+    &#34;&#34;&#34;
+    _LOGGER.clear()</code></pre>
+</details>
+</dd>
+<dt id="message.disable"><code class="name flex">
+<span>def <span class="ident">disable</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Disable actual emissions (tracking continues).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def disable():
+    &#34;&#34;&#34;
+    Disable actual emissions (tracking continues).
+    &#34;&#34;&#34;
+    _LOGGER.disable()</code></pre>
+</details>
+</dd>
+<dt id="message.enable"><code class="name flex">
+<span>def <span class="ident">enable</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enable actual emissions (tracking is always on).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable():
+    &#34;&#34;&#34;
+    Enable actual emissions (tracking is always on).
+    &#34;&#34;&#34;
+    _LOGGER.enable()</code></pre>
+</details>
+</dd>
+<dt id="message.get_history"><code class="name flex">
+<span>def <span class="ident">get_history</span></span>(<span>n=None, include_suppressed=True, filter_caller=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return history records as a list of dicts. See <code>_MessageLogger.get_history</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_history(n=None, include_suppressed=True, filter_caller=None):
+    &#34;&#34;&#34;
+    Return history records as a list of dicts. See `_MessageLogger.get_history`.
+    &#34;&#34;&#34;
+    return _LOGGER.get_history(n=n, include_suppressed=include_suppressed,
+                               filter_caller=filter_caller)</code></pre>
+</details>
+</dd>
+<dt id="message.get_silence"><code class="name flex">
+<span>def <span class="ident">get_silence</span></span>(<span>caller=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the effective cooldown for a caller or the global default.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_silence(caller=None):
+    &#34;&#34;&#34;
+    Get the effective cooldown for a caller or the global default.
+    &#34;&#34;&#34;
+    return _LOGGER.get_silence(caller=caller)</code></pre>
+</details>
+</dd>
+<dt id="message.history"><code class="name flex">
+<span>def <span class="ident">history</span></span>(<span>n=None, include_suppressed=True, timestamps=True, filter_caller=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pretty-print history. See <code>_MessageLogger.history</code> for parameters.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def history(n=None, include_suppressed=True, timestamps=True, filter_caller=None):
+    &#34;&#34;&#34;
+    Pretty-print history. See `_MessageLogger.history` for parameters.
+    &#34;&#34;&#34;
+    _LOGGER.history(n=n, include_suppressed=include_suppressed,
+                    timestamps=timestamps, filter_caller=filter_caller)</code></pre>
+</details>
+</dd>
+<dt id="message.initialize"><code class="name flex">
+<span>def <span class="ident">initialize</span></span>(<span>maxrepetitions=1, history_size=2000, enabled=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initialize/reconfigure the shared logger. See <code>_MessageLogger.initialize</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def initialize(maxrepetitions=1, history_size=2000, enabled=True):
+    &#34;&#34;&#34;
+    Initialize/reconfigure the shared logger. See `_MessageLogger.initialize`.
+    &#34;&#34;&#34;
+    _LOGGER.initialize(maxrepetitions=maxrepetitions,
+                       history_size=history_size,
+                       enabled=enabled)</code></pre>
+</details>
+</dd>
+<dt id="message.limit"><code class="name flex">
+<span>def <span class="ident">limit</span></span>(<span>n, caller=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Context manager to temporarily override repetition limits (global or per-caller).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def limit(n, caller=None):
+    &#34;&#34;&#34;
+    Context manager to temporarily override repetition limits (global or per-caller).
+    &#34;&#34;&#34;
+    return _LOGGER.limit(n, caller=caller)</code></pre>
+</details>
+</dd>
+<dt id="message.print"><code class="name flex">
+<span>def <span class="ident">print</span></span>(<span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print with repetition limiting, history, and optional cooldown.</p>
+<p>Same signature as built-in <code><a title="message.print" href="#message.print">print()</a></code> + extras: key, tag, once, caller, tsilent.
+See <code>_MessageLogger.print</code> for details.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print(*args, **kwargs):
+    &#34;&#34;&#34;
+    Print with repetition limiting, history, and optional cooldown.
+
+    Same signature as built-in `print` + extras: key, tag, once, caller, tsilent.
+    See `_MessageLogger.print` for details.
+    &#34;&#34;&#34;
+    _LOGGER.print(*args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="message.purge_idle_keys"><code class="name flex">
+<span>def <span class="ident">purge_idle_keys</span></span>(<span>idle_seconds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Forget last-printed timestamps for keys idle longer than <code>idle_seconds</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def purge_idle_keys(idle_seconds):
+    &#34;&#34;&#34;
+    Forget last-printed timestamps for keys idle longer than `idle_seconds`.
+    &#34;&#34;&#34;
+    _LOGGER.purge_idle_keys(idle_seconds)</code></pre>
+</details>
+</dd>
+<dt id="message.reset_counts"><code class="name flex">
+<span>def <span class="ident">reset_counts</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reset per-key and per-caller counters (history preserved).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_counts():
+    &#34;&#34;&#34;
+    Reset per-key and per-caller counters (history preserved).
+    &#34;&#34;&#34;
+    _LOGGER.reset_counts()</code></pre>
+</details>
+</dd>
+<dt id="message.reset_key"><code class="name flex">
+<span>def <span class="ident">reset_key</span></span>(<span>key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reset counters and last-printed timestamp for a specific message key.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_key(key):
+    &#34;&#34;&#34;
+    Reset counters and last-printed timestamp for a specific message key.
+    &#34;&#34;&#34;
+    _LOGGER.reset_key(key)</code></pre>
+</details>
+</dd>
+<dt id="message.save"><code class="name flex">
+<span>def <span class="ident">save</span></span>(<span>path, include_suppressed=True, filter_caller=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save history to a TSV file on disk. See <code>_MessageLogger.save</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save(path, include_suppressed=True, filter_caller=None):
+    &#34;&#34;&#34;
+    Save history to a TSV file on disk. See `_MessageLogger.save`.
+    &#34;&#34;&#34;
+    _LOGGER.save(path=path, include_suppressed=include_suppressed,
+                 filter_caller=filter_caller)</code></pre>
+</details>
+</dd>
+<dt id="message.set_history_size"><code class="name flex">
+<span>def <span class="ident">set_history_size</span></span>(<span>n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Change the maximum number of records retained in history.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_history_size(n):
+    &#34;&#34;&#34;
+    Change the maximum number of records retained in history.
+    &#34;&#34;&#34;
+    _LOGGER.set_history_size(n)</code></pre>
+</details>
+</dd>
+<dt id="message.set_limit"><code class="name flex">
+<span>def <span class="ident">set_limit</span></span>(<span>n, caller=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set repetition limit globally or for a specific caller.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_limit(n, caller=None):
+    &#34;&#34;&#34;
+    Set repetition limit globally or for a specific caller.
+    &#34;&#34;&#34;
+    _LOGGER.set_limit(n, caller=caller)</code></pre>
+</details>
+</dd>
+<dt id="message.set_silence"><code class="name flex">
+<span>def <span class="ident">set_silence</span></span>(<span>seconds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set global silent delay (cooldown) in seconds, or None to disable.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_silence(seconds):
+    &#34;&#34;&#34;
+    Set global silent delay (cooldown) in seconds, or None to disable.
+    &#34;&#34;&#34;
+    _LOGGER.set_silence(seconds)</code></pre>
+</details>
+</dd>
+<dt id="message.set_silence_for"><code class="name flex">
+<span>def <span class="ident">set_silence_for</span></span>(<span>caller, seconds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set per-caller silent delay (cooldown), or None to remove override.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_silence_for(caller, seconds):
+    &#34;&#34;&#34;
+    Set per-caller silent delay (cooldown), or None to remove override.
+    &#34;&#34;&#34;
+    _LOGGER.set_silence_for(caller, seconds)</code></pre>
+</details>
+</dd>
+<dt id="message.stats"><code class="name flex">
+<span>def <span class="ident">stats</span></span>(<span>top=None, min_count=1, by='key')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Aggregated counts sorted by total. See <code>_MessageLogger.stats</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stats(top=None, min_count=1, by=&#34;key&#34;):
+    &#34;&#34;&#34;
+    Aggregated counts sorted by total. See `_MessageLogger.stats`.
+    &#34;&#34;&#34;
+    return _LOGGER.stats(top=top, min_count=min_count, by=by)</code></pre>
+</details>
+</dd>
+<dt id="message.stats_for_caller"><code class="name flex">
+<span>def <span class="ident">stats_for_caller</span></span>(<span>caller, top=None, min_count=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Per-key stats restricted to a given caller. See <code>_MessageLogger.stats_for_caller</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stats_for_caller(caller, top=None, min_count=1):
+    &#34;&#34;&#34;
+    Per-key stats restricted to a given caller. See `_MessageLogger.stats_for_caller`.
+    &#34;&#34;&#34;
+    return _LOGGER.stats_for_caller(caller, top=top, min_count=min_count)</code></pre>
+</details>
+</dd>
+<dt id="message.suppress"><code class="name flex">
+<span>def <span class="ident">suppress</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Temporarily mute emissions (tracking continues).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def suppress():
+    &#34;&#34;&#34;
+    Temporarily mute emissions (tracking continues).
+    &#34;&#34;&#34;
+    _LOGGER.suppress()</code></pre>
+</details>
+</dd>
+<dt id="message.unsuppress"><code class="name flex">
+<span>def <span class="ident">unsuppress</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Re-enable emissions after <code><a title="message.suppress" href="#message.suppress">suppress()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unsuppress():
+    &#34;&#34;&#34;
+    Re-enable emissions after `suppress()`.
+    &#34;&#34;&#34;
+    _LOGGER.unsuppress()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#quick-start">Quick start</a></li>
+<li><a href="#per-caller-limits">Per-caller limits</a></li>
+<li><a href="#silent-delay-reset-cooldown">Silent delay reset (cooldown)</a></li>
+<li><a href="#prints-twice-suppresses-after-10s-of-no-prints-for-this-key-the-counter-resets">prints twice, suppresses; after 10s of no prints for this key, the counter resets</a><ul>
+<li><a href="#silencing-machinery-advanced">Silencing machinery (advanced)</a></li>
+</ul>
+</li>
+<li><a href="#per-caller-silent-reset-module-specific">Per-caller silent reset (module-specific):</a></li>
+<li><a href="#per-call-silent-reset-strongest-precedence">Per-call silent reset (strongest precedence):</a></li>
+<li><a href="#optionally-purge-stale-timestamps-keeps-dict-small-in-long-runs">Optionally purge stale timestamps (keeps dict small in long runs):</a><ul>
+<li><a href="#public-api">Public API</a></li>
+<li><a href="#notes">Notes</a></li>
+<li><a href="#typical-use-in-sfppy">Typical use in SFPPy</a></li>
+</ul>
+</li>
+<li><a href="#in-module-a">in module A</a></li>
+<li><a href="#in-module-b">in module B</a><ul>
+<li><a href="#key-inspection-helpers">Key inspection helpers</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="message.callers" href="#message.callers">callers</a></code></li>
+<li><code><a title="message.clear" href="#message.clear">clear</a></code></li>
+<li><code><a title="message.disable" href="#message.disable">disable</a></code></li>
+<li><code><a title="message.enable" href="#message.enable">enable</a></code></li>
+<li><code><a title="message.get_history" href="#message.get_history">get_history</a></code></li>
+<li><code><a title="message.get_silence" href="#message.get_silence">get_silence</a></code></li>
+<li><code><a title="message.history" href="#message.history">history</a></code></li>
+<li><code><a title="message.initialize" href="#message.initialize">initialize</a></code></li>
+<li><code><a title="message.limit" href="#message.limit">limit</a></code></li>
+<li><code><a title="message.print" href="#message.print">print</a></code></li>
+<li><code><a title="message.purge_idle_keys" href="#message.purge_idle_keys">purge_idle_keys</a></code></li>
+<li><code><a title="message.reset_counts" href="#message.reset_counts">reset_counts</a></code></li>
+<li><code><a title="message.reset_key" href="#message.reset_key">reset_key</a></code></li>
+<li><code><a title="message.save" href="#message.save">save</a></code></li>
+<li><code><a title="message.set_history_size" href="#message.set_history_size">set_history_size</a></code></li>
+<li><code><a title="message.set_limit" href="#message.set_limit">set_limit</a></code></li>
+<li><code><a title="message.set_silence" href="#message.set_silence">set_silence</a></code></li>
+<li><code><a title="message.set_silence_for" href="#message.set_silence_for">set_silence_for</a></code></li>
+<li><code><a title="message.stats" href="#message.stats">stats</a></code></li>
+<li><code><a title="message.stats_for_caller" href="#message.stats_for_caller">stats_for_caller</a></code></li>
+<li><code><a title="message.suppress" href="#message.suppress">suppress</a></code></li>
+<li><code><a title="message.unsuppress" href="#message.unsuppress">unsuppress</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

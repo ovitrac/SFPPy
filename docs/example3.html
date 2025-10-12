@@ -200,13 +200,19 @@ Pythonic syntax enable complex simulations with minimal effort.
 @licence: MIT
 &#34;&#34;&#34;
 
-# %% Output folder
-# -----------------
+# %% Output Folder &amp; layout
+# -------------------------
 # Define the output directory to store results.
 import os
 outputfolder = os.path.join(os.getcwd(), &#34;tmp&#34;)  # Full path
 os.makedirs(outputfolder, exist_ok=True)  # Create folder if missing
-
+# 👤 User Overrides to set units for plotting
+from patankar.useroverride import useroverride # type useroverride &lt;enter&gt;
+useroverride.update(
+    tunit = &#34;days&#34;,    # time units (can be any value s,min,days,weeks,months,years)
+    lunit = &#34;µm&#34;,      # length units (can be any value, nm, µm or um, mm,cm or even in)
+    Cunit = &#34;mg/kg&#34;,  # set concentration units instead of a.u.
+    )
 # %% Build the geometry
 # ---------------------
 &#34;&#34;&#34;
@@ -349,10 +355,15 @@ medium1.lastsimulation.plotCx()
 # -----------------------------------------------
 &#34;&#34;&#34;
 Continue simulation by chaining:
-    medium1 &gt;&gt; ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+    medium1 &gt;&gt; ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3 &lt;--- recommended syntax
+    medium1 @ ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+    m % medium1 &gt;&gt; ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+    m % medium1 @ ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
 
 All results are stored inside:
     medium1.lastsimulation, medium2.lastsimulation, medium3.lastsimulation
+
+note: @ and &gt;&gt; work similarly except that @ does not force the propagation of the substance id
 &#34;&#34;&#34;
 medium1 &gt;&gt; ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
 
@@ -377,7 +388,10 @@ Repeat all steps using toluene instead of limonene.
 m2 = migrant(&#34;toluene&#34;)  # Retrieve new migrant
 
 # Restart the simulation pipeline with updated migrant
-medium1 @ ABA.update(solute=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+# Different methdologies exist to update susbtance, note that substances always update from the most left position.
+# It is recommended to start the update at the begining (strategy A)
+# or to clear (with []) any substance first (strategy B).
+m2 % medium1 @ ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
 
 # Store results
 sol123_variant1 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
@@ -389,11 +403,11 @@ sol123_variant1.plotCF()
 Halve the thickness of the first and last layers (A) while keeping PP constant.
 &#34;&#34;&#34;
 refthickness = ABA.l.copy()
-newthickness = refthickness
+newthickness = refthickness.copy()
 newthickness[[0, -1]] /= 2  # Reduce thickness of A layers (index 0=first layer in contact with food, index -1= last layer)
 
-# Restart simulation with modified structure
-medium1 &gt;&gt; ABA.copy(l=newthickness, migrant=m) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+# Restart simulation with modified structure (strategy B)
+medium1.update(solute=[]) &gt;&gt; ABA.copy(l=newthickness, migrant=m) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
 sol123_variant2 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
 
 # %% Variant 3: Combine Variant 1 and Variant 2
@@ -405,7 +419,8 @@ Use both modifications:
 
 Here @ replaces the first &gt;&gt;, they are equivalent
 &#34;&#34;&#34;
-medium1 @ ABA.copy(l=newthickness, migrant=m2) &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+ABA_with_toluene = ABA.copy(l=newthickness, migrant=m2)
+m2 % medium1 @ ABA_with_toluene &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
 sol123_variant3 = medium1.lastsimulation + medium2.lastsimulation + medium3.lastsimulation
 
 # %% Compare Reference and Variants
@@ -440,7 +455,148 @@ collection.save_as_csv(filename=&#34;example3.csv&#34;, destinationfolder=output
 
 # saving to Excel requires: openpyxl &gt;= 3.0.10
 # (install it with `conda install openpyl` if you encounter an error message)
-collection.save_as_excel(filename=&#34;example3.xlsx&#34;, destinationfolder=outputfolder, overwrite=True)</code></pre>
+collection.save_as_excel(filename=&#34;example3.xlsx&#34;, destinationfolder=outputfolder, overwrite=True)
+
+# %% Script Extension (1) - Potential Release (PR)
+# -------------------------------------------------
+&#34;&#34;&#34;
+Analysis at the scale of the full packaging (the initial distribution of contaminants is preserved)
+    PR = PRE * PRT
+
+PR : ndarray of shape (n_steps,)
+    Array of **intrinsic potential release values** for each step in the
+    current sequence of transfer (e.g. storage, hot fill, long-term storage).
+
+    Definition
+    ----------
+    For step k, PR[k] is the *partial* potential release reconstructed from
+    the total potential release of the full sequence (PRN) and the potential
+    release of the sequence with step k omitted (PR^{(N\setminus k)}):
+        PR[k] = 1 - (1 - PRN) / (1 - PR^{(N\setminus k)})
+
+    Interpretation
+    --------------
+    - 0 ≤ PR[k] ≤ 1 by construction, though very small negatives can appear
+      due to numerical noise.
+    - PR[k] measures the **incremental contribution** of step k to the overall
+      potential release, taking into account the state inherited from upstream
+      steps.
+    - Values are *contextual*: PR[k] cannot be obtained from the step alone
+      (mass balance with initial contaminant distribution), but only via
+      comparison of the full sequence and variants where step k is omitted.
+
+    Usage
+    -----
+    - The full-chain potential release PRN should satisfy, in the ideal
+      independence case:
+          PRN ≈ 1 - ∏_k (1 - PR[k])
+    - Deviations from this identity (closure error) quantify the degree of
+      **non-independence/path dependence** (e.g. set-off, back-diffusion).
+    - Ratios such as PR/PRN provide a ranking of steps by their relative
+      contribution to the total potential release.
+
+    Notes
+    -----
+    The array PR is scalar (per step). For spatial attribution within layers,
+    see `PR_layers`, which provides signed layer-resolved diagnostics that
+    complement the stepwise PR[k].
+
+&#34;&#34;&#34;
+import numpy as np
+# analysis based on variant 1
+# effective potential release of steps 1+2+3, 2+3, 1+2
+m2 % medium1 @ ABA &gt;&gt; medium1 &gt;&gt; medium2 &gt;&gt; medium3
+PRall123 = np.array([medium.lastsimulation.PR.PRtarget_effective for medium in [medium1,medium2,medium3]])
+medium2 @ ABA &gt;&gt; medium2 &gt;&gt; medium3 # step 1 omitted
+PRall23 = np.array([medium.lastsimulation.PR.PRtarget_effective for medium in [medium2,medium3]])
+medium1 @ ABA &gt;&gt; medium1 &gt;&gt; medium3 # step 2 omitted
+PRall13 = np.array([medium.lastsimulation.PR.PRtarget_effective for medium in [medium1,medium3]])
+
+# intrinsic potential release for steps, 1=1+2+3\2+3,2=1+2+3\1+3,3=1+2+3\1+2
+PR = np.zeros((len(PRall123),),dtype=float)
+PRN = PRall123[-1,0] # potential release with all steps
+PR[0] = 1.0 - (1.0-PRN)/(1.0-PRall23[1,0])
+PR[1] = 1.0 - (1.0-PRN)/(1.0-PRall13[1,0])
+PR[2] = 1.0 - (1.0-PRN)/(1.0-PRall123[1,0])
+print(&#34;PR =&#34;, PR)
+print(&#34;PRT =&#34;, PR/medium3.lastsimulation.PR.PRE_effective)
+print(&#34;score = PR/PRN =&#34;, PR/PRN)
+# compute the error on intrinsic PR
+PRN_control = 1-np.prod(1-PR)
+print(f&#34;PR deviation ~ {(PRN_control/PRN - 1).item()*100:0.3f} %&#34;)
+
+
+# %% Script Extension (2) - Potential Release (PR)
+# -------------------------------------------------
+&#34;&#34;&#34;
+Analysis at the scale of each layer (j=1,2,3).
+
+PR_layers : ndarray of shape (n_steps, n_layers)
+    Array of **intrinsic potential release values per step and per layer**
+    in a multilayer system, reconstructed by comparison of full and
+    step-omitted sequences.
+
+    Definition
+    ----------
+    For each step k (row) and layer j (column), PR_layers[k,j] is defined by:
+        PR_layers[k,j] = 1 - (1 - PRN_layers[j]) / (1 - PR^{(N\setminus k)}[j])
+    where:
+        - PRN_layers[j] is the potential release at the food side contributed
+          by layer j after the full sequence of steps,
+        - PR^{(N\setminus k)}[j] is the potential release obtained by omitting
+          step k, with all other steps applied.
+
+    Implementation
+    --------------
+    - In practice, PR_layers is built from chained simulations:
+        R123 = F1.potentialRelease(ABA) &gt;&gt; F2 &gt;&gt; F3   # full chain
+        R23  = F2.potentialRelease(ABA) &gt;&gt; F3         # omit step 1
+        R13  = F3.potentialRelease(ABA) &gt;&gt; F3         # omit step 2
+      Each `potentialRelease` call initializes one layer with a concentration
+      and propagates mass transfer through all steps.
+    - Row k corresponds to step k (e.g. storage, hot fill, long storage).
+    - Column j corresponds to a specific layer (e.g. A–B–A).
+
+    Interpretation
+    --------------
+    - 0 ≤ PR_layers[k,j] ≤ 1 in principle; small negatives may appear due to
+      back-diffusion or numerical artifacts.
+    - Positive values indicate **net forward (food-ward) contribution** of
+      layer j during step k.
+    - Negative values indicate **reverse flux / reflux** from layer j
+      (e.g. set-off during non-contact storage).
+    - These values are *diagnostic*: they show where in the structure the
+      release is mobilized or suppressed during each step.
+
+    Usage
+    -----
+    - Compare rows to identify which step is dominant for each layer.
+    - Compare columns to locate protective or source layers in the multilayer.
+    - Closure check:
+          PRN_layers_control = 1 - ∏_k (1 - PR_layers[k,:])
+      should approximate PRN_layers (within path-dependence limits).
+    - Do not sum across layers: PR_layers is not a mass partition but a
+      **layer-resolved potential release diagnostic**.
+
+    Notes
+    -----
+    - `PR_layers` complements the stepwise scalar `PR` array by providing
+      **spatial attribution** of each step’s effect.
+    - Because `potentialRelease` assigns concentrations independently to each
+      layer, PR_layers must be read as a **signed relative contribution**,
+      not as directly additive quantities.
+&#34;&#34;&#34;
+R123 = medium1.potentialRelease(ABA,C0test=200) &gt;&gt; medium2 &gt;&gt; medium3
+R23 = medium2.potentialRelease(ABA) &gt;&gt; medium3
+R13 = medium1.potentialRelease(ABA) &gt;&gt; medium3
+
+# intrinsic layer-based potential release
+PR_layers = np.zeros((len(R123),len(ABA)),dtype=float) #nsteps x nlayers
+PRN_layers = R123.PR[2,:]
+PR_layers[0,:] = 1.0 - (1.0-PRN_layers)/(1.0-R23.PR[1,:])
+PR_layers[1,:] = 1.0 - (1.0-PRN_layers)/(1.0-R13.PR[1,:])
+PR_layers[2,:] = 1.0 - (1.0-PRN_layers)/(1.0-R123.PR[1,:])
+PRN_layers_control = 1 - np.prod(1-PR_layers,axis=0)</code></pre>
 </details>
 </section>
 <section>

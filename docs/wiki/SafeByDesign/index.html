@@ -1,0 +1,1834 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>index API documentation</title>
+<meta name="description" content="index.py — Build-time file manifest and a friendly static index.html for Surge (or any static host) …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>index</code></h1>
+</header>
+<section id="section-intro">
+<p>index.py — Build-time file manifest and a friendly static index.html for Surge (or any static host)</p>
+<p>Features
+- Scans a root directory with an exclusion glob list
+- Writes a single shared files.json
+- Writes a per-folder HTML page (root + every subfolder)
+* Each folder page opens with #folder=/that/folder by default
+- Mobile-friendly: hamburger toggles the sidebar (overlay on phones)
+- Density toggle (Comfortable/Compact); row height via CSS vars
+- Manifest uses href to point to code-viewer HTML (e.g., mycode.py.html)
+- Code→HTML via Pygments (default on), mtime-aware; &ndash;overwrite to force rebuilds
+- Safer defaults (scripts only), never re-wraps .html/.json/.md/etc.
+- Embedded JSON (default on) so pages work over file:// (no server)
+- Resizable table columns with drag handles; widths persist in localStorage
+- Optionally hide generated artifacts (manifest file and per-folder page) from the listing (default on)</p>
+<h2 id="usage">Usage</h2>
+<p>python index.py &ndash;root . [&ndash;json files.json] [&ndash;html-out files.html]
+[&ndash;exclude PATTERN &hellip;] [&ndash;title "My Files"]
+[&ndash;pretty | &ndash;no-pretty]
+[&ndash;code-html | &ndash;no-code-html] [&ndash;code-ext .py .sh &hellip;]
+[&ndash;code-max-bytes 2621440]
+[&ndash;code-html-out "{relpath}.html"]
+[&ndash;overwrite]
+[&ndash;embed-json | &ndash;no-embed-json]
+[&ndash;hide-generated | &ndash;no-hide-generated]
+[&ndash;no-hide-code-html | hide_code_html]</p>
+<p>Standard options
+&ndash;root (default=".")
+Root directory to scan.
+&ndash;json (default="files.json")
+Output JSON path (relative to root).
+&ndash;html-out (default="files.html")
+Filename for per-folder index pages (root + every folder).
+&ndash;exclude (default=DEFAULT_EXCLUDES)
+Glob patterns to exclude.
+&ndash;title (default="Directory Index")
+Title shown in the UI (also in code viewers).
+&ndash;pretty / &ndash;no-pretty (default=&ndash;pretty)
+Pretty-print JSON or compact it.</p>
+<p>Code→HTML options
+&ndash;code-html (default on) / &ndash;no-code-html
+Enable/disable code-to-HTML rendering with Pygments.
+&ndash;code-ext &hellip; (default: scripts only; see DEFAULT_CODE_EXT below)
+Extensions treated as code (case-insensitive).
+&ndash;code-max-bytes N (default=2621440 bytes)
+Max source size to render to HTML (skips larger files).
+&ndash;code-html-out PATTERN (default="{relpath}.html")
+Pattern for code HTML outputs. Placeholders: {relpath}, {dir}, {name}, {stem}, {ext}</p>
+<p>Overwrite + embed + listing options
+&ndash;overwrite
+Force overwrite of generated HTML files (per-folder pages + code viewers).
+&ndash;embed-json (default) / &ndash;no-embed-json
+Embed the manifest JSON into each HTML so pages work via file://.
+&ndash;hide-generated (default) / &ndash;no-hide-generated
+Hide the manifest file and per-folder page itself from the listing.
+&ndash;no-hide-code-html (default) / &ndash;hide_code_html
+Hide generated code-viewer HTML files from the listing (default).</p>
+<h2 id="zip-options">Zip Options</h2>
+<p>&ndash;zip / &ndash;no-zip
+Enable or disable creation of a single ZIP archive containing all discovered files.
+Default: &ndash;zip (enabled).</p>
+<p>&ndash;zip-name NAME
+Name of the output ZIP archive (written at root). If set to "auto", the ZIP is
+named after the scanned root folder (e.g. "./project" → "project.zip").
+Default: "auto".</p>
+<p>&ndash;zip-max-bytes N
+Skip files larger than N bytes when creating the ZIP. Use 0 for no limit.
+Default: 0 (no limit).</p>
+<p>&ndash;zip-include-generated / &ndash;no-zip-include-generated
+Control whether generated control files (the manifest JSON and per-folder HTML pages)
+are included in the ZIP.
+Default: &ndash;zip-include-generated (include them).</p>
+<p>&ndash;zip-include-code-html / &ndash;no-zip-include-code-html
+Control whether generated code-viewer HTML files (e.g. "script.py.html") are included
+in the ZIP.
+Default: &ndash;zip-include-code-html (include them).</p>
+<p>&ndash;zip-method {deflate,lzma,bzip2}
+Compression algorithm to use inside the ZIP:
+deflate
+→ Standard DEFLATE (widely supported, good balance of speed/size).
+lzma
+→ LZMA/XZ compression (smaller files, slower, less universal).
+bzip2
+→ BZIP2 compression (midpoint between deflate and lzma).
+Default: deflate.</p>
+<p>&ndash;zip-level N
+Compression level to use (range 0–9). Applies only to deflate and bzip2.
+Higher values give smaller files but slower compression.
+Ignored when &ndash;zip-method=lzma.
+Default: 9 (maximum compression).</p>
+<p>Quick examples:
+# Rename per-folder index pages to files.html and force overwrite</p>
+<blockquote>
+<blockquote>
+<p>python index.py &ndash;html-out files.html &ndash;overwrite</p>
+</blockquote>
+</blockquote>
+<p># Change code→HTML naming to src/foo.py → src/foo.source.html</p>
+<blockquote>
+<blockquote>
+<p>python index.py &ndash;code-html-out "{dir}/{stem}.source.html"</p>
+</blockquote>
+</blockquote>
+<p># No embedding (keep fetch behavior; needs a server)</p>
+<blockquote>
+<blockquote>
+<p>python index.py &ndash;no-embed-json</p>
+</blockquote>
+</blockquote>
+<p># Zip management</p>
+<blockquote>
+<blockquote>
+<p>./index.py &ndash;html-out files.html &ndash;overwrite
+&ndash;title "FSPB paper - version 3 - files content"
+&ndash;zip &ndash;zip-name all-files.zip</p>
+</blockquote>
+</blockquote>
+<p>Typical example:
+python index.py &ndash;html-out files.html &ndash;overwrite &ndash;title "FSPB paper - version 3 - files content"</p>
+<p>Other examples:
+python index.py &ndash;root . &ndash;pretty &ndash;title "Directory Index"
+python index.py &ndash;root . &ndash;exclude ".<em>" ".git</em>" "node_modules" "<strong>pycache</strong>" "*.map"</p>
+<p>Generative Simulation Initiative 🌱 — Dr Olivier Vitrac — contact: olivier.vitrac@gmail.com
+Revision: 2025-09-24</p>
+<p>TIP (for backup):
+zip -r -9 "$(whoami)@$(hostname)<em>$(basename "$PWD")</em>$(date +'%Y-%m-%d_%H-%M-%S').zip" .</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+index.py — Build-time file manifest and a friendly static index.html for Surge (or any static host)
+
+Features
+- Scans a root directory with an exclusion glob list
+- Writes a single shared files.json
+- Writes a per-folder HTML page (root + every subfolder)
+  * Each folder page opens with #folder=/that/folder by default
+- Mobile-friendly: hamburger toggles the sidebar (overlay on phones)
+- Density toggle (Comfortable/Compact); row height via CSS vars
+- Manifest uses href to point to code-viewer HTML (e.g., mycode.py.html)
+- Code→HTML via Pygments (default on), mtime-aware; --overwrite to force rebuilds
+- Safer defaults (scripts only), never re-wraps .html/.json/.md/etc.
+- Embedded JSON (default on) so pages work over file:// (no server)
+- Resizable table columns with drag handles; widths persist in localStorage
+- Optionally hide generated artifacts (manifest file and per-folder page) from the listing (default on)
+
+Usage:
+  python index.py --root . [--json files.json] [--html-out files.html]
+                  [--exclude PATTERN ...] [--title &#34;My Files&#34;]
+                  [--pretty | --no-pretty]
+                  [--code-html | --no-code-html] [--code-ext .py .sh ...]
+                  [--code-max-bytes 2621440]
+                  [--code-html-out &#34;{relpath}.html&#34;]
+                  [--overwrite]
+                  [--embed-json | --no-embed-json]
+                  [--hide-generated | --no-hide-generated]
+                  [--no-hide-code-html | hide_code_html]
+
+Standard options
+  --root (default=&#34;.&#34;)
+        Root directory to scan.
+  --json (default=&#34;files.json&#34;)
+        Output JSON path (relative to root).
+  --html-out (default=&#34;files.html&#34;)
+        Filename for per-folder index pages (root + every folder).
+  --exclude (default=DEFAULT_EXCLUDES)
+        Glob patterns to exclude.
+  --title (default=&#34;Directory Index&#34;)
+        Title shown in the UI (also in code viewers).
+  --pretty / --no-pretty (default=--pretty)
+        Pretty-print JSON or compact it.
+
+Code→HTML options
+  --code-html (default on) / --no-code-html
+        Enable/disable code-to-HTML rendering with Pygments.
+  --code-ext ... (default: scripts only; see DEFAULT_CODE_EXT below)
+        Extensions treated as code (case-insensitive).
+  --code-max-bytes N (default=2621440 bytes)
+        Max source size to render to HTML (skips larger files).
+  --code-html-out PATTERN (default=&#34;{relpath}.html&#34;)
+        Pattern for code HTML outputs. Placeholders: {relpath}, {dir}, {name}, {stem}, {ext}
+
+Overwrite + embed + listing options
+  --overwrite
+        Force overwrite of generated HTML files (per-folder pages + code viewers).
+  --embed-json (default) / --no-embed-json
+        Embed the manifest JSON into each HTML so pages work via file://.
+  --hide-generated (default) / --no-hide-generated
+        Hide the manifest file and per-folder page itself from the listing.
+  --no-hide-code-html (default) / --hide_code_html
+        Hide generated code-viewer HTML files from the listing (default).
+
+Zip options
+-----------
+--zip / --no-zip
+    Enable or disable creation of a single ZIP archive containing all discovered files.
+    Default: --zip (enabled).
+
+--zip-name NAME
+    Name of the output ZIP archive (written at root). If set to &#34;auto&#34;, the ZIP is
+    named after the scanned root folder (e.g. &#34;./project&#34; → &#34;project.zip&#34;).
+    Default: &#34;auto&#34;.
+
+--zip-max-bytes N
+    Skip files larger than N bytes when creating the ZIP. Use 0 for no limit.
+    Default: 0 (no limit).
+
+--zip-include-generated / --no-zip-include-generated
+    Control whether generated control files (the manifest JSON and per-folder HTML pages)
+    are included in the ZIP.
+    Default: --zip-include-generated (include them).
+
+--zip-include-code-html / --no-zip-include-code-html
+    Control whether generated code-viewer HTML files (e.g. &#34;script.py.html&#34;) are included
+    in the ZIP.
+    Default: --zip-include-code-html (include them).
+
+--zip-method {deflate,lzma,bzip2}
+    Compression algorithm to use inside the ZIP:
+      deflate  → Standard DEFLATE (widely supported, good balance of speed/size).
+      lzma     → LZMA/XZ compression (smaller files, slower, less universal).
+      bzip2    → BZIP2 compression (midpoint between deflate and lzma).
+    Default: deflate.
+
+--zip-level N
+    Compression level to use (range 0–9). Applies only to deflate and bzip2.
+    Higher values give smaller files but slower compression.
+    Ignored when --zip-method=lzma.
+    Default: 9 (maximum compression).
+
+Quick examples:
+  # Rename per-folder index pages to files.html and force overwrite
+  &gt;&gt; python index.py --html-out files.html --overwrite
+
+  # Change code→HTML naming to src/foo.py → src/foo.source.html
+  &gt;&gt; python index.py --code-html-out &#34;{dir}/{stem}.source.html&#34;
+
+  # No embedding (keep fetch behavior; needs a server)
+  &gt;&gt; python index.py --no-embed-json
+
+  # Zip management
+  &gt;&gt; ./index.py --html-out files.html --overwrite \
+    --title &#34;FSPB paper - version 3 - files content&#34; \
+    --zip --zip-name all-files.zip
+
+Typical example:
+  python index.py --html-out files.html --overwrite --title &#34;FSPB paper - version 3 - files content&#34;
+
+Other examples:
+  python index.py --root . --pretty --title &#34;Directory Index&#34;
+  python index.py --root . --exclude &#34;.*&#34; &#34;.git*&#34; &#34;node_modules&#34; &#34;__pycache__&#34; &#34;*.map&#34;
+
+Generative Simulation Initiative 🌱 — Dr Olivier Vitrac — contact: olivier.vitrac@gmail.com
+Revision: 2025-09-24
+
+TIP (for backup):
+zip -r -9 &#34;$(whoami)@$(hostname)_$(basename &#34;$PWD&#34;)_$(date +&#39;%Y-%m-%d_%H-%M-%S&#39;).zip&#34; .
+
+&#34;&#34;&#34;
+
+from __future__ import annotations
+import argparse
+import fnmatch
+import json
+import mimetypes
+import os, sys, zipfile
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Iterable, Dict, Any, List, Tuple, Set, Optional
+
+# ---------- Defaults ----------
+DEFAULT_EXCLUDES = [
+    &#34;.*&#34;, &#34;.git*&#34;, &#34;node_modules&#34;, &#34;__pycache__&#34;, &#34;*.pyc&#34;, &#34;*.pyo&#34;,
+    &#34;*.map&#34;, &#34;dist&#34;, &#34;build&#34;, &#34;.DS_Store&#34;,
+]
+
+# SAFE scripts-only default (override with --code-ext if desired)
+DEFAULT_CODE_EXT = [
+    &#34;.py&#34;,&#34;.sh&#34;,&#34;.m&#34;,
+    &#34;.js&#34;,&#34;.ts&#34;,&#34;.jsx&#34;,&#34;.tsx&#34;,
+    &#34;.c&#34;,&#34;.cpp&#34;,&#34;.h&#34;,&#34;.hpp&#34;,&#34;.java&#34;,&#34;.rs&#34;,&#34;.go&#34;,
+    &#34;.rb&#34;,&#34;.php&#34;,&#34;.pl&#34;,&#34;.lua&#34;,&#34;.r&#34;,&#34;.sql&#34;,
+    &#34;.bat&#34;,&#34;.ps1&#34;,
+]
+
+DEFAULT_CODE_MAX_BYTES = 2_621_440  # ~2.5 MB
+
+try:
+    from pygments import highlight
+    from pygments.formatters import HtmlFormatter
+    from pygments.lexers import get_lexer_for_filename, TextLexer
+    HAVE_PYGMENTS = True
+except Exception:
+    HAVE_PYGMENTS = False
+
+# ---------- UI HTML Template ----------
+HTML_TEMPLATE = r&#34;&#34;&#34;&lt;!doctype html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+&lt;meta charset=&#34;utf-8&#34;&gt;
+&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width,initial-scale=1&#34;&gt;
+&lt;title&gt;{{TITLE}}&lt;/title&gt;
+&lt;meta name=&#34;description&#34; content=&#34;Static manifest index&#34;&gt;
+&lt;style&gt;
+  :root{
+    --bg:#0b0f14; --fg:#e7edf4; --muted:#a8b3c0; --accent:#59d98a; --accent-dim:#2e7d5b;
+    --band:#0f141b; --card:#0d1218; --border:#17202a; --link:#9bd3ff; --row-hover:#111923;
+    --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    --sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif;
+    --font-size: 14px; --pad-y: 8px; --pad-x: 10px; --header-pad-y: 8px; --header-pad-x: 10px; --sidebar-w: 280px;
+  }
+  body.compact{ --font-size: 12px; --pad-y: 2px; --pad-x: 3px; --header-pad-y: 2px; --header-pad-x: 3px; }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0; background:var(--bg); color:var(--fg); font-family:var(--sans); display:flex; min-height:100vh; font-size:var(--font-size)}
+  a{color:var(--link); text-decoration:none} a:hover{text-decoration:underline}
+  .app{display:grid; grid-template-columns: var(--sidebar-w) 1fr; grid-template-rows:auto 1fr auto; width:100%}
+  header{grid-column:1/-1; padding:12px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--card)}
+  .hamburger{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--border); background:var(--band); color:var(--fg); border-radius:8px; cursor:pointer}
+  .hamburger:hover{background:#131c25}
+  .brand{font-weight:700; letter-spacing:.2px; display:flex; align-items:center; gap:10px}
+  .brand .seed{font-size:20px}
+  .muted{color:var(--muted)}
+  .spacer{flex:1 1 auto}
+  .stats{display:flex; gap:10px; flex-wrap:wrap}
+  .chip{background:var(--band); border:1px solid var(--border); padding:4px 8px; border-radius:999px; font-size:12px}
+  .sidebar{grid-row:2/span 1; border-right:1px solid var(--border); padding:12px; overflow:auto; background:linear-gradient(180deg, #0c1218, #0a0f14)}
+  .content{grid-row:2/span 1; display:flex; flex-direction:column; min-width:0}
+  .toolbar{padding:8px 12px; border-bottom:1px solid var(--border); display:flex; gap:10px; flex-wrap:wrap; align-items:center; background:var(--card)}
+  .search{flex:1 1 280px; display:flex; gap:8px; align-items:center; background:var(--band); border:1px solid var(--border); border-radius:10px; padding:6px 8px}
+  .search input{flex:1; background:transparent; border:0; outline:0; color:var(--fg); font-family:var(--sans)}
+  .crumbs{display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:14px}
+  .crumbs .seg{padding:2px 6px; background:var(--band); border:1px solid var(--border); border-radius:8px}
+  .btn{display:inline-flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid var(--border); background:var(--band); color:var(--fg); border-radius:10px; cursor:pointer; text-decoration:none; font-size:13px}
+  .btn:hover{background:#131c25}
+  .table-wrap{overflow:auto; flex:1}
+  table{width:100%; border-collapse:separate; border-spacing:0}
+  /* Column widths */
+  #grid th[data-sort=&#34;name&#34;]  { width: 40%; }
+  #grid th[data-sort=&#34;ext&#34;]   { min-width: 60px; }
+  #grid th[data-sort=&#34;mime&#34;]  { min-width: 120px; }
+  #grid th[data-sort=&#34;size&#34;]  { min-width: 80px; text-align:right; }
+  #grid th[data-sort=&#34;mtime_epoch&#34;] { min-width: 160px; }
+  #grid th:last-child         { width: 5%; }
+  thead th{position:sticky; top:0; background:var(--card); z-index:1; text-align:left; padding:var(--header-pad-y) var(--header-pad-x); border-bottom:1px solid var(--border); white-space:nowrap; cursor:pointer; user-select:none}
+  tbody td{padding:var(--pad-y) var(--pad-x); border-bottom:1px solid var(--border); vertical-align:middle}
+  tbody tr:nth-child(even){background:var(--band)} tbody tr:hover{background:var(--row-hover)}
+  .name{display:flex; align-items:center; gap:8px}
+  .icon{width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:16px}
+  .mono{font-family:var(--mono)} .sort-caret{opacity:.6; margin-left:6px} .copy-btn{opacity:.8} .copy-btn:hover{opacity:1}
+  /* Right-align numeric/date cells */
+  #grid td:nth-child(4), #grid td:nth-child(5) { text-align:right; }
+  /* Truncate long names */
+  #grid td .name a { display:inline-block; max-width: clamp(220px, 40vw, 900px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .footer{grid-column:1/-1; border-top:1px solid var(--border); padding:10px 12px; display:flex; gap:10px; align-items:center; justify-content:space-between; background:var(--card); font-size:13px}
+  .tree{list-style:none; margin:0; padding:0} .tree li{margin:2px 0} .tree .folder &gt; a{font-weight:600}
+  .tree a{display:inline-block; padding:3px 6px; border-radius:6px} .tree a.active{background:var(--accent-dim); color:#fff}
+  /* Column resizer handle */
+  th { position: relative; }
+  .resizer { position:absolute; right:0; top:0; width:6px; height:100%; cursor:col-resize; user-select:none; }
+  .resizer:hover { background: rgba(255,255,255,.06); }
+  /* Preview lightbox */
+  .preview-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.7);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000;
+  }
+  .preview-backdrop.open { display: flex; }
+  .preview-modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    max-width: min(92vw, 1100px);
+    max-height: 88vh;
+    width: min(92vw, 1100px);
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,.45);
+    display: flex; flex-direction: column;
+  }
+  .preview-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+  }
+  .preview-body {
+    background: var(--bg);
+    padding: 10px; overflow: auto; display: flex; align-items: center; justify-content: center;
+  }
+  .preview-foot { padding: 8px 12px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+  .preview-body img, .preview-body video, .preview-body audio, .preview-body iframe { max-width: 100%; max-height: 76vh; background: #000; }
+  /* PDF mode: use (almost) the full viewport */
+  .preview-backdrop.pdf .preview-modal {
+    max-width: 98vw;
+    max-height: 98vh;
+    width: 98vw;               /* edge-to-edge on desktop */
+  }
+  /* give the PDF iframe most of the vertical space */
+  .preview-backdrop.pdf .preview-body iframe {
+    width: 100%;
+    height: calc(98vh - 112px); /* header( ~48px ) + footer( ~48px ) + paddings ≈ 112px */
+    border: 0;
+  }
+  @media (max-width: 900px){
+    .app{grid-template-columns: 1fr}
+    .sidebar{position: fixed; inset: 0 auto 0 0; width: min(84vw, 320px); transform: translateX(-100%); 
+   .preview-backdrop.pdf .preview-modal {
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100vw;
+    border-radius: 0; /* edge-to-edge on mobile */
+  }
+  .preview-backdrop.pdf .preview-body iframe {
+    height: calc(100vh - 112px);
+  }
+    transition: transform .2s ease; z-index: 20; box-shadow: 8px 0 24px rgba(0,0,0,.35)}
+    body.menu-open .sidebar{ transform: translateX(0) }
+    body.menu-open::before{content:&#34;&#34;; position: fixed; inset:0; background: rgba(0,0,0,.45); z-index: 15}
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&#34;app&#34;&gt;
+  &lt;header&gt;
+    &lt;button class=&#34;hamburger&#34; id=&#34;hamburger&#34; aria-label=&#34;Toggle menu&#34; title=&#34;Toggle menu&#34;&gt;
+      &lt;svg width=&#34;20&#34; height=&#34;20&#34; viewBox=&#34;0 0 24 24&#34; aria-hidden=&#34;true&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z&#34;/&gt;&lt;/svg&gt;
+    &lt;/button&gt;
+    &lt;div class=&#34;brand&#34;&gt;
+      &lt;span class=&#34;seed&#34;&gt;🌱&lt;/span&gt;
+      &lt;span&gt;{{TITLE}}&lt;/span&gt;
+      &lt;span class=&#34;muted&#34;&gt;· Generative Simulation Initiative — Dr&amp;nbsp;Olivier&amp;nbsp;Vitrac — &lt;a href=&#34;mailto:olivier.vitrac@gmail.com&#34;&gt;olivier.vitrac@gmail.com&lt;/a&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&#34;spacer&#34;&gt;&lt;/div&gt;
+    &lt;div class=&#34;stats&#34;&gt;
+      &lt;span class=&#34;chip&#34; id=&#34;stat-files&#34;&gt;0 files&lt;/span&gt;
+      &lt;span class=&#34;chip&#34; id=&#34;stat-folders&#34;&gt;0 folders&lt;/span&gt;
+      &lt;span class=&#34;chip&#34; id=&#34;stat-size&#34;&gt;0&lt;/span&gt;
+      &lt;span class=&#34;chip&#34; id=&#34;stat-generated&#34;&gt;generated —&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;button class=&#34;btn&#34; id=&#34;density&#34;&gt;Density: Comfortable&lt;/button&gt;
+  &lt;/header&gt;
+
+  &lt;nav class=&#34;sidebar&#34; aria-label=&#34;Folders&#34;&gt;
+    &lt;div class=&#34;muted&#34; style=&#34;margin:4px 6px 10px&#34;&gt;Folders&lt;/div&gt;
+    &lt;ul class=&#34;tree&#34; id=&#34;tree&#34;&gt;&lt;/ul&gt;
+  &lt;/nav&gt;
+
+  &lt;main class=&#34;content&#34;&gt;
+    &lt;div class=&#34;toolbar&#34;&gt;
+      &lt;div class=&#34;crumbs&#34; id=&#34;crumbs&#34;&gt;&lt;/div&gt;
+      &lt;div class=&#34;search&#34;&gt;
+        &lt;svg width=&#34;16&#34; height=&#34;16&#34; viewBox=&#34;0 0 24 24&#34; aria-hidden=&#34;true&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M10 2a8 8 0 105.293 14.293l4.207 4.207l1.414-1.414l-4.207-4.207A8 8 0 0010 2m0 2a6 6 0 110 12A6 6 0 0110 4z&#34;/&gt;&lt;/svg&gt;
+        &lt;input id=&#34;q&#34; placeholder=&#34;Search names, extensions, mime…&#34; autocomplete=&#34;off&#34;&gt;
+        &lt;button class=&#34;btn&#34; id=&#34;clear&#34;&gt;Clear&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;a class=&#34;btn&#34; id=&#34;toggle-folders&#34;&gt;Show files in subfolders&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div class=&#34;table-wrap&#34;&gt;
+      &lt;table id=&#34;grid&#34;&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th data-sort=&#34;name&#34;&gt;Name &lt;span class=&#34;sort-caret&#34;&gt;↕&lt;/span&gt;&lt;/th&gt;
+            &lt;th data-sort=&#34;ext&#34;&gt;Ext &lt;span class=&#34;sort-caret&#34;&gt;↕&lt;/span&gt;&lt;/th&gt;
+            &lt;th data-sort=&#34;mime&#34;&gt;Type &lt;span class=&#34;sort-caret&#34;&gt;↕&lt;/span&gt;&lt;/th&gt;
+            &lt;th data-sort=&#34;size&#34;&gt;Size &lt;span class=&#34;sort-caret&#34;&gt;↕&lt;/span&gt;&lt;/th&gt;
+            &lt;th data-sort=&#34;mtime_epoch&#34;&gt;Modified &lt;span class=&#34;sort-caret&#34;&gt;↕&lt;/span&gt;&lt;/th&gt;
+            &lt;th&gt;Link&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody id=&#34;rows&#34;&gt;&lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+
+  &lt;footer class=&#34;footer&#34;&gt;
+    &lt;div&gt;&lt;span class=&#34;muted&#34;&gt;Index powered by a static manifest.&lt;/span&gt;&lt;/div&gt;
+    &lt;div&gt;
+      &lt;a class=&#34;btn&#34; href=&#34;files.json&#34;&gt;View manifest&lt;/a&gt;
+      &lt;a class=&#34;btn&#34; href=&#34;#&#34; id=&#34;download-all&#34; style=&#34;display:none&#34;&gt;Download all (zip)&lt;/a&gt;
+      &lt;a class=&#34;btn&#34; href=&#34;#&#34; id=&#34;copy-current&#34;&gt;Copy folder URL&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/footer&gt;
+&lt;/div&gt;
+
+&lt;!-- Preview lightbox --&gt;
+&lt;div class=&#34;preview-backdrop&#34; id=&#34;preview&#34;&gt;
+  &lt;div class=&#34;preview-modal&#34;&gt;
+    &lt;div class=&#34;preview-head&#34;&gt;
+      &lt;div class=&#34;mono&#34; id=&#34;preview-title&#34;&gt;Preview&lt;/div&gt;
+      &lt;div&gt;
+        &lt;button class=&#34;btn&#34; id=&#34;preview-open&#34;&gt;Open&lt;/button&gt;
+        &lt;button class=&#34;btn&#34; id=&#34;preview-close&#34;&gt;Close&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&#34;preview-body&#34; id=&#34;preview-body&#34;&gt;&lt;/div&gt;
+    &lt;div class=&#34;preview-foot&#34;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- If --embed-json is used, the manifest will be injected right here --&gt;
+{{EMBED_MANIFEST}}
+
+&lt;script&gt;
+const EMBED = document.getElementById(&#34;manifest&#34;);
+const MANIFEST_URL = &#34;files.json&#34;;
+const rowsEl = document.getElementById(&#34;rows&#34;);
+const treeEl = document.getElementById(&#34;tree&#34;);
+const crumbsEl = document.getElementById(&#34;crumbs&#34;);
+const qEl = document.getElementById(&#34;q&#34;);
+const clearEl = document.getElementById(&#34;clear&#34;);
+const toggleEl = document.getElementById(&#34;toggle-folders&#34;);
+const statFiles = document.getElementById(&#34;stat-files&#34;);
+const statFolders = document.getElementById(&#34;stat-folders&#34;);
+const statSize = document.getElementById(&#34;stat-size&#34;);
+const statGen = document.getElementById(&#34;stat-generated&#34;);
+const copyCur = document.getElementById(&#34;copy-current&#34;);
+const hamburger = document.getElementById(&#34;hamburger&#34;);
+const densityBtn = document.getElementById(&#34;density&#34;);
+const downloadAll = document.getElementById(&#34;download-all&#34;);
+
+let manifest = null;
+let currentFolder = &#34;/&#34;;
+let showDeep = true;
+let sortKey = &#34;name&#34;;
+let sortDir = 1;
+let q = &#34;&#34;;
+let density = &#34;comfortable&#34;;
+
+/* utils */
+function humanSize(n){const u=[&#34;B&#34;,&#34;KB&#34;,&#34;MB&#34;,&#34;GB&#34;,&#34;TB&#34;];let i=0,x=n;while(x&gt;=1024&amp;&amp;i&lt;u.length-1){x/=1024;i++;}return(i===0?x:x.toFixed(1))+&#34; &#34;+u[i]}
+function fmtDate(e){const d=new Date(e*1000);return d.toISOString().replace(&#34;T&#34;,&#34; &#34;).replace(&#34;.000Z&#34;,&#34; UTC&#34;)}
+function iconFor(ext,mime){
+  ext=(ext||&#34;&#34;).toLowerCase();
+  if (ext === &#34;.py&#34;) return &#34;🐍&#34;;
+  if (ext === &#34;.m&#34;) return &#34;Ⓜ️&#34;;
+  if (ext === &#34;.md&#34;) return &#34;📑&#34;;
+  if (ext === &#34;.sh&#34;) return &#34;🐚&#34;;
+  if (ext === &#34;.svg&#34;) return &#34;📈&#34;;
+  if (ext === &#34;.tex&#34;) return &#34;🔤&#34;;
+  if (ext === &#34;.bib&#34;) return &#34;🍼&#34;;
+  if (ext === &#34;.pdf&#34;) return &#34;📕&#34;;
+  if (ext === &#34;.csv&#34;) return &#34;📊&#34;;
+  if (ext === &#34;.png&#34;) return &#34;👁️&#34;;
+  if (ext === &#34;.gif&#34;) return &#34;🎥&#34;;
+  if([&#34;.htm&#34;,&#34;.html&#34;].includes(ext)) return &#34;🌐&#34;;
+  if([&#34;.jpg&#34;,&#34;.jpeg&#34;].includes(ext)) return &#34;📷&#34;;
+  if(mime&amp;&amp;mime.startsWith(&#34;image/&#34;)) return &#34;🖼️&#34;;
+  if(mime&amp;&amp;mime.startsWith(&#34;audio/&#34;)) return &#34;🎵&#34;;
+  if(mime&amp;&amp;mime.startsWith(&#34;video/&#34;)) return &#34;🎬&#34;;
+  if([&#34;.doc&#34;,&#34;.docx&#34;,&#34;.odt&#34;,&#34;.rtf&#34;].includes(ext)) return &#34;📘&#34;;
+  if([&#34;.xls&#34;,&#34;.xlsx&#34;,&#34;.ods&#34;,&#34;.csv&#34;,&#34;/excel&#34;].some(x=&gt;ext===x||(mime||&#34;&#34;).includes(x))) return &#34;📗&#34;;
+  if([&#34;.ppt&#34;,&#34;.pptx&#34;,&#34;.odp&#34;].includes(ext)) return &#34;🖥️&#34;;
+  if([&#34;.zip&#34;,&#34;.tar&#34;,&#34;.gz&#34;,&#34;.bz2&#34;,&#34;.7z&#34;,&#34;.rar&#34;].includes(ext)) return &#34;🗜️&#34;;
+  if([&#34;.py&#34;,&#34;.ipynb&#34;,&#34;.js&#34;,&#34;.ts&#34;,&#34;.jsx&#34;,&#34;.tsx&#34;,&#34;.html&#34;,&#34;.css&#34;,&#34;.json&#34;,&#34;.yml&#34;,&#34;.yaml&#34;,&#34;.toml&#34;,&#34;.ini&#34;,
+      &#34;.sh&#34;,&#34;.bat&#34;,&#34;.ps1&#34;,&#34;.m&#34;,&#34;.cpp&#34;,&#34;.c&#34;,&#34;.h&#34;,&#34;.hpp&#34;,&#34;.rs&#34;,&#34;.go&#34;,&#34;.java&#34;].includes(ext)) return &#34;🧩&#34;;
+  return &#34;📄&#34;;
+}
+
+/* sidebar tree */
+function updateTree(){
+  treeEl.innerHTML=&#34;&#34;; const folders=new Set([&#34;/&#34;]);
+  for(const f of manifest.files){const parts=f.path.split(&#34;/&#34;).filter(Boolean);let acc=&#34;&#34;;for(let i=0;i&lt;parts.length-1;i++){acc+=&#34;/&#34;+parts[i];folders.add(acc||&#34;/&#34;);}}
+  const tree={}; for(const fol of folders){if(fol===&#34;/&#34;)continue; const parts=fol.split(&#34;/&#34;).filter(Boolean); let cur=tree; for(const seg of parts){cur[seg]=cur[seg]||{}; cur=cur[seg];}}
+  treeEl.appendChild(walkTree(tree,&#34;&#34;));
+}
+function walkTree(node,base=&#34;&#34;){const keys=Object.keys(node).sort((a,b)=&gt;a.localeCompare(b)); const ul=document.createElement(&#34;ul&#34;); ul.className=&#34;tree&#34;;
+  for(const k of keys){const li=document.createElement(&#34;li&#34;); li.className=&#34;folder&#34;; const a=document.createElement(&#34;a&#34;); const full=(base+&#34;/&#34;+k).replace(/\/+/g,&#34;/&#34;); a.href=&#34;#folder=&#34;+encodeURIComponent(full); a.textContent=&#34;📁 &#34;+k; if(full===currentFolder)a.classList.add(&#34;active&#34;); li.appendChild(a); li.appendChild(walkTree(node[k],full)); ul.appendChild(li);} return ul;}
+
+/* crumbs/filter/sort */
+function renderCrumbs(){crumbsEl.innerHTML=&#34;&#34;; const base=document.createElement(&#34;a&#34;); base.href=&#34;#folder=&#34;+encodeURIComponent(&#34;/&#34;); base.textContent=&#34;root&#34;; base.className=&#34;seg&#34;; crumbsEl.appendChild(base); const parts=currentFolder.split(&#34;/&#34;).filter(Boolean); let acc=&#34;&#34;; for(const seg of parts){acc+=&#34;/&#34;+seg; const a=document.createElement(&#34;a&#34;); a.href=&#34;#folder=&#34;+encodeURIComponent(acc); a.textContent=seg; a.className=&#34;seg&#34;; crumbsEl.appendChild(a);}}
+function applyFilter(){const qx=q.trim().toLowerCase(); return manifest.files.filter(f=&gt;{if(currentFolder!==&#34;/&#34;){if(showDeep){if(!f.path.startsWith(currentFolder.slice(1)+&#34;/&#34;)&amp;&amp;!f.path.startsWith(currentFolder.slice(1)+&#34;\\&#34;))return false;}else{const dir=f.path.split(&#34;/&#34;).slice(0,-1).join(&#34;/&#34;); if((currentFolder.slice(1)||&#34;&#34;)!==dir)return false;}} if(!qx)return true; const hay=(f.name+&#34; &#34;+(f.ext||&#34;&#34;)+&#34; &#34;+(f.mime||&#34;&#34;)).toLowerCase(); return hay.includes(qx);});}
+function sortFiles(list){const key=sortKey,dir=sortDir,coll=new Intl.Collator(undefined,{numeric:true,sensitivity:&#34;base&#34;}); list.sort((a,b)=&gt;{let va=a[key],vb=b[key]; if(key===&#34;size&#34;||key===&#34;mtime_epoch&#34;){va=+va;vb=+vb;return(va-vb)*dir;} return coll.compare(String(va||&#34;&#34;),String(vb||&#34;&#34;))*dir;}); return list;}
+
+/* preview helpers */
+function canPreview(mime, ext){
+  mime=(mime||&#34;&#34;).toLowerCase(); ext=(ext||&#34;&#34;).toLowerCase();
+  if(mime.startsWith(&#34;image/&#34;)) return &#34;image&#34;;
+  if(mime.startsWith(&#34;video/&#34;)) return &#34;video&#34;;
+  if(mime.startsWith(&#34;audio/&#34;)) return &#34;audio&#34;;
+  if(mime===&#34;application/pdf&#34; || ext===&#34;.pdf&#34;) return &#34;pdf&#34;;
+  return null;
+}
+function openPreview(file){
+  const kind = canPreview(file.mime, file.ext);
+  if(!kind) return false;
+  const bg   = document.getElementById(&#34;preview&#34;);
+  const body = document.getElementById(&#34;preview-body&#34;);
+  const title= document.getElementById(&#34;preview-title&#34;);
+  const openBtn = document.getElementById(&#34;preview-open&#34;);
+  body.innerHTML = &#34;&#34;;
+  title.textContent = file.name;
+  // set/unset PDF mode
+  if (kind === &#34;pdf&#34;) bg.classList.add(&#34;pdf&#34;); else bg.classList.remove(&#34;pdf&#34;);
+  const url = new URL(file.href||file.path, window.location.href).href;
+  openBtn.onclick = ()=&gt;{ window.location.href = url; };
+  let el = null;
+  if (kind === &#34;image&#34;){
+    el = document.createElement(&#34;img&#34;); el.src = url; el.alt = file.name;
+  } else if (kind === &#34;video&#34;){
+    el = document.createElement(&#34;video&#34;); el.src = url; el.controls = true;
+  } else if (kind === &#34;audio&#34;){
+    el = document.createElement(&#34;audio&#34;); el.src = url; el.controls = true; el.style.width = &#34;100%&#34;;
+  } else if (kind === &#34;pdf&#34;){
+    el = document.createElement(&#34;iframe&#34;); el.src = url; el.setAttribute(&#34;title&#34;, file.name);
+  }
+  if (el){ body.appendChild(el); bg.classList.add(&#34;open&#34;); }
+  return true;
+}
+function attachPreviewHandlers(){
+  rowsEl.querySelectorAll(&#34;tr&#34;).forEach((tr)=&gt;{
+    const a = tr.querySelector(&#34;td.name a&#34;); if(!a) return;
+    const f = a._fileMeta; if(!f) return;
+    if(!canPreview(f.mime, f.ext)) return;
+    a.addEventListener(&#34;click&#34;,(e)=&gt;{ e.preventDefault(); openPreview(f); });
+  });
+  const bg=document.getElementById(&#34;preview&#34;);
+  const closeBtn=document.getElementById(&#34;preview-close&#34;);
+  const onClose = ()=&gt; { bg.classList.remove(&#34;open&#34;); bg.classList.remove(&#34;pdf&#34;); };
+  bg.addEventListener(&#34;click&#34;,(e)=&gt;{ if(e.target===bg) onClose(); });
+  closeBtn.addEventListener(&#34;click&#34;, onClose);
+  document.addEventListener(&#34;keydown&#34;,(e)=&gt;{ if(e.key===&#34;Escape&#34;) onClose(); });
+}
+
+/* table */
+function renderTable(){
+  const filtered = sortFiles(applyFilter());
+  rowsEl.innerHTML = &#34;&#34;;
+  for(const f of filtered){
+    const tr = document.createElement(&#34;tr&#34;);
+
+    const tdName = document.createElement(&#34;td&#34;); tdName.className=&#34;name&#34;;
+    const icon = document.createElement(&#34;span&#34;); icon.className=&#34;icon&#34;; icon.textContent = iconFor(f.ext, f.mime);
+    const link = document.createElement(&#34;a&#34;); link.href = encodeURI(f.href || f.path); link.textContent = f.name; link.className=&#34;mono&#34;;
+    link._fileMeta = f; // for preview
+    tdName.appendChild(icon); tdName.appendChild(link);
+
+    const tdExt = document.createElement(&#34;td&#34;); tdExt.textContent = f.ext||&#34;&#34;; tdExt.className=&#34;mono&#34;;
+    const tdMime = document.createElement(&#34;td&#34;); tdMime.textContent = f.mime||&#34;&#34;; tdMime.className=&#34;mono&#34;;
+    const tdSize = document.createElement(&#34;td&#34;); tdSize.textContent = humanSize(f.size); tdSize.className=&#34;mono&#34;;
+    const tdMtime = document.createElement(&#34;td&#34;); tdMtime.textContent = fmtDate(f.mtime_epoch); tdMtime.className=&#34;mono&#34;;
+
+    const tdLink = document.createElement(&#34;td&#34;);
+    const btn = document.createElement(&#34;a&#34;); btn.href=&#34;#&#34;; btn.className=&#34;btn copy-btn&#34;; btn.textContent=&#34;Copy&#34;;
+    btn.addEventListener(&#34;click&#34;,(e)=&gt;{
+      e.preventDefault();
+      const url = new URL(f.href || f.path, window.location.href).href;
+      navigator.clipboard.writeText(url).then(()=&gt;{ btn.textContent=&#34;Copied!&#34;; setTimeout(()=&gt;btn.textContent=&#34;Copy&#34;, 1200); });
+    });
+    tdLink.appendChild(btn);
+
+    tr.appendChild(tdName); tr.appendChild(tdExt); tr.appendChild(tdMime); tr.appendChild(tdSize); tr.appendChild(tdMtime); tr.appendChild(tdLink);
+    rowsEl.appendChild(tr);
+  }
+  attachPreviewHandlers();
+}
+
+/* sort handlers */
+function attachSortHandlers(){document.querySelectorAll(&#34;thead th[data-sort]&#34;).forEach(th=&gt;{th.addEventListener(&#34;click&#34;,()=&gt;{const k=th.getAttribute(&#34;data-sort&#34;); if(sortKey===k){sortDir*=-1;}else{sortKey=k;sortDir=1;} renderTable();});});}
+
+/* stats */
+function updateStats(){statFiles.textContent=`${manifest.summary.files} files`; statFolders.textContent=`${manifest.summary.folders} folders`; statSize.textContent=humanSize(manifest.summary.total_size); statGen.textContent=`generated — ${manifest.generated_at}`}
+
+/* zip button */
+function updateZipButton(){
+  if (!downloadAll || !manifest || !manifest.summary) return;
+  const s = manifest.summary;
+  if (s.zip_exists &amp;&amp; s.zip_name){
+    downloadAll.href = s.zip_name;
+    const txt = &#34;Download all (&#34; + humanSize(s.zip_compressed) + &#34; / &#34; +
+                humanSize(s.zip_uncompressed) + &#34;)&#34;;
+    downloadAll.textContent = txt;
+    downloadAll.title = &#34;Compressed: &#34; + humanSize(s.zip_compressed) +
+                        &#34; — Uncompressed: &#34; + humanSize(s.zip_uncompressed);
+    downloadAll.style.display = &#34;inline-flex&#34;;
+  } else {
+    downloadAll.style.display = &#34;none&#34;;
+  }
+}
+
+
+/* URL state */
+function readHash(){const h=new URLSearchParams(location.hash.slice(1)); return {folder:decodeURIComponent(h.get(&#34;folder&#34;)||&#34;/&#34;), q:h.get(&#34;q&#34;)||&#34;&#34;, deep:h.get(&#34;deep&#34;)!==&#34;0&#34;, density:(h.get(&#34;density&#34;)||&#34;comfortable&#34;)};}
+function writeHash(){const p=new URLSearchParams(); p.set(&#34;folder&#34;,currentFolder); if(q)p.set(&#34;q&#34;,q); p.set(&#34;deep&#34;,showDeep?&#34;1&#34;:&#34;0&#34;); p.set(&#34;density&#34;,density); location.hash=p.toString();}
+
+/* density */
+function applyDensity(){ if(density===&#34;compact&#34;){document.body.classList.add(&#34;compact&#34;); densityBtn.textContent=&#34;Density: Compact&#34;;} else {document.body.classList.remove(&#34;compact&#34;); densityBtn.textContent=&#34;Density: Comfortable&#34;;}}
+
+/* manifest loader (embedded first, then fetch) */
+async function loadManifest(){
+  if(EMBED){ try{ return JSON.parse(EMBED.textContent); }catch(e){ console.error(&#34;Embedded manifest parse error&#34;, e); } }
+  const res = await fetch(MANIFEST_URL); return await res.json();
+}
+
+/* column resize (with per-folder persistence) */
+function getColWidthKey(){
+  const st = readHash();
+  return &#34;colwidths:&#34; + location.pathname + &#34;::&#34; + (st.folder || &#34;/&#34;);
+}
+function applySavedColumnWidths(){
+  const table = document.getElementById(&#34;grid&#34;);
+  const headers = table.querySelectorAll(&#34;th&#34;);
+  const key = getColWidthKey();
+  try{
+    const saved = JSON.parse(localStorage.getItem(key) || &#34;null&#34;);
+    if(saved &amp;&amp; Array.isArray(saved)){
+      saved.forEach((w,i)=&gt;{ if(w){ headers[i].style.width = w; }});
+    }
+  }catch(_){}
+}
+function initResizableColumns(){
+  const table = document.getElementById(&#34;grid&#34;);
+  const headers = table.querySelectorAll(&#34;th&#34;);
+  applySavedColumnWidths();
+  headers.forEach((th)=&gt;{
+    if (th.querySelector(&#34;.resizer&#34;)) return;
+    const resizer = document.createElement(&#34;div&#34;);
+    resizer.className = &#34;resizer&#34;;
+    th.appendChild(resizer);
+    let startX=0, startW=0;
+    const onMove = (e)=&gt;{
+      const dx = e.clientX - startX;
+      const newW = Math.max(40, startW + dx);
+      th.style.width = newW + &#34;px&#34;;
+    };
+    const onUp = ()=&gt;{
+      document.removeEventListener(&#34;mousemove&#34;, onMove);
+      document.removeEventListener(&#34;mouseup&#34;, onUp);
+      const key = getColWidthKey();
+      const widths = [...headers].map(h=&gt;h.style.width || null);
+      try{ localStorage.setItem(key, JSON.stringify(widths)); }catch(_){}
+    };
+    resizer.addEventListener(&#34;mousedown&#34;, (e)=&gt;{
+      startX = e.clientX; startW = th.getBoundingClientRect().width;
+      document.addEventListener(&#34;mousemove&#34;, onMove);
+      document.addEventListener(&#34;mouseup&#34;, onUp);
+    });
+  });
+  window.addEventListener(&#34;hashchange&#34;, applySavedColumnWidths);
+}
+
+/* main */
+async function main(){
+  manifest = await loadManifest();
+  updateStats(); updateZipButton(); attachSortHandlers();
+
+  window.addEventListener(&#34;hashchange&#34;, ()=&gt;{
+    const st=readHash(); currentFolder=st.folder; q=st.q; showDeep=st.deep; density=st.density; qEl.value=q; applyDensity(); renderCrumbs(); updateTree(); renderTable(); applySavedColumnWidths(); updateZipButton();
+  });
+
+  const st0=readHash(); currentFolder=st0.folder; q=st0.q; showDeep=st0.deep; density=st0.density; qEl.value=q; applyDensity(); renderCrumbs(); updateTree(); renderTable();
+
+  qEl.addEventListener(&#34;input&#34;, ()=&gt;{ q=qEl.value; writeHash(); });
+  clearEl.addEventListener(&#34;click&#34;, ()=&gt;{ q=&#34;&#34;; qEl.value=&#34;&#34;; writeHash(); });
+  toggleEl.addEventListener(&#34;click&#34;,(e)=&gt;{ e.preventDefault(); showDeep=!showDeep; writeHash(); });
+  copyCur.addEventListener(&#34;click&#34;,(e)=&gt;{ e.preventDefault(); const url=new URL(location.href); url.hash=`folder=${encodeURIComponent(currentFolder)}&amp;q=${encodeURIComponent(q)}&amp;deep=${showDeep?1:0}&amp;density=${density}`; navigator.clipboard.writeText(url.href); });
+  hamburger.addEventListener(&#34;click&#34;, ()=&gt;{ document.body.classList.toggle(&#34;menu-open&#34;); });
+  document.addEventListener(&#34;click&#34;,(e)=&gt;{ if(document.body.classList.contains(&#34;menu-open&#34;)){ const sb=document.querySelector(&#34;.sidebar&#34;); if(!sb.contains(e.target) &amp;&amp; e.target!==hamburger &amp;&amp; !hamburger.contains(e.target)){ document.body.classList.remove(&#34;menu-open&#34;); } }});
+  densityBtn.addEventListener(&#34;click&#34;, ()=&gt;{ density = (density===&#34;comfortable&#34; ? &#34;compact&#34; : &#34;comfortable&#34;); writeHash(); });
+
+  initResizableColumns();
+}
+main();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&#34;&#34;&#34;
+
+# ---------- Helpers ----------
+def match_any(patterns: Iterable[str], name: str) -&gt; bool:
+    for p in patterns:
+        if fnmatch.fnmatch(name, p):
+            return True
+    return False
+
+def should_skip(path: Path, excludes: List[str], root: Path) -&gt; bool:
+    rel = path.relative_to(root).as_posix()
+    parts = rel.split(&#34;/&#34;)
+    if match_any(excludes, rel): return True
+    if match_any(excludes, path.name): return True
+    for seg in parts:
+        if match_any(excludes, seg): return True
+    return False
+
+def html_escape(s: str) -&gt; str:
+    return s.replace(&#34;&amp;&#34;,&#34;&amp;amp;&#34;).replace(&#34;&lt;&#34;,&#34;&amp;lt;&#34;).replace(&#34;&gt;&#34;,&#34;&amp;gt;&#34;)
+
+def highlight_code_to_html(src_text: str, filename: str, title: str) -&gt; str:
+    &#34;&#34;&#34;Render code to standalone dark-themed HTML with inline CSS (works on file://).&#34;&#34;&#34;
+    def esc(x: str) -&gt; str:
+        return x.replace(&#34;&amp;&#34;,&#34;&amp;amp;&#34;).replace(&#34;&lt;&#34;,&#34;&amp;lt;&#34;).replace(&#34;&gt;&#34;,&#34;&amp;gt;&#34;)
+    header = (
+        &#34;&lt;div style=&#39;padding:8px 10px;&#34;
+        &#34;background:#0d1218;border-bottom:1px solid #17202a;color:#e7edf4;&#34;
+        &#34;font-family:system-ui,Arial,sans-serif;font-size:14px;&#39;&gt;&#34;
+        f&#34;&lt;strong&gt;🌱 {esc(title)}&lt;/strong&gt; — viewing &lt;code&gt;{esc(filename)}&lt;/code&gt;&lt;/div&gt;&#34;
+    )
+    base_css = &#34;&#34;&#34;
+      body{margin:0;background:#0b0f14;color:#e7edf4}
+      .highlight{background:#0b0f14 !important; color:#e7edf4 !important;}
+      pre{margin:0}
+      .highlighttable{border-collapse:separate;border-spacing:0;width:100%}
+      .highlighttable td{vertical-align:top}
+      .linenos{background:#0b0f14;color:#8aa1b4 !important; padding:0 .5em; user-select:none}
+      .linenos pre{background:transparent !important; color:inherit !important}
+      .code{background:#0b0f14}
+    &#34;&#34;&#34;
+    if not HAVE_PYGMENTS:
+        body = f&#34;&lt;pre class=&#39;highlight&#39; style=&#39;padding:12px;overflow:auto&#39;&gt;{esc(src_text)}&lt;/pre&gt;&#34;
+        return f&#34;&lt;!doctype html&gt;&lt;meta charset=&#39;utf-8&#39;&gt;&lt;title&gt;{esc(title)} · {esc(filename)}&lt;/title&gt;&lt;style&gt;{base_css}&lt;/style&gt;{header}{body}&#34;
+    try:
+        try:
+            lexer = get_lexer_for_filename(filename, stripall=False)
+        except Exception:
+            lexer = TextLexer(stripall=False)
+        formatter = HtmlFormatter(full=False, noclasses=False, linenos=True)
+        pyg_css = formatter.get_style_defs(&#39;.highlight&#39;)
+        highlighted = highlight(src_text, lexer, formatter)
+        style = f&#34;&lt;style&gt;{base_css}\n{pyg_css}&lt;/style&gt;&#34;
+        return f&#34;&lt;!doctype html&gt;&lt;meta charset=&#39;utf-8&#39;&gt;&lt;title&gt;{esc(title)} · {esc(filename)}&lt;/title&gt;{style}{header}&lt;div style=&#39;padding:0 8px 8px&#39;&gt;{highlighted}&lt;/div&gt;&#34;
+    except Exception:
+        body = f&#34;&lt;pre class=&#39;highlight&#39; style=&#39;padding:12px;overflow:auto&#39;&gt;{esc(src_text)}&lt;/pre&gt;&#34;
+        return f&#34;&lt;!doctype html&gt;&lt;meta charset=&#39;utf-8&#39;&gt;&lt;title&gt;{esc(title)} · {esc(filename)}&lt;/title&gt;&lt;style&gt;{base_css}&lt;/style&gt;{header}{body}&#34;
+
+def format_code_out(relpath: str, pattern: str) -&gt; str:
+    p = Path(relpath)
+    mapping = {
+        &#34;relpath&#34;: relpath,
+        &#34;dir&#34;: p.parent.as_posix(),
+        &#34;name&#34;: p.name,
+        &#34;stem&#34;: p.stem,
+        &#34;ext&#34;: p.suffix,
+    }
+    return pattern.format(**mapping).lstrip(&#34;./&#34;)
+
+def ensure_code_html(src_path: Path, html_path: Path, title: str, max_bytes: int, overwrite: bool) -&gt; bool:
+    try:
+        if src_path.stat().st_size &gt; max_bytes:
+            return False
+        dst_exists = html_path.exists()
+        src_m = src_path.stat().st_mtime
+        dst_m = html_path.stat().st_mtime if dst_exists else -1
+        need = overwrite or (not dst_exists) or (dst_m &lt;= src_m)   # &lt;= fixes same-second ties
+        if need:
+            text = src_path.read_text(encoding=&#34;utf-8&#34;, errors=&#34;replace&#34;)
+            html = highlight_code_to_html(text, src_path.name, title)
+            html_path.parent.mkdir(parents=True, exist_ok=True)
+            html_path.write_text(html, encoding=&#34;utf-8&#34;)
+            return True
+        return False
+    except Exception:
+        return False
+    
+def _resolve_zip_options(method_str: str, level: int):
+    &#34;&#34;&#34;
+    Map CLI method string to zipfile constants and normalize level.
+    Returns (compression_const, compresslevel_or_None).
+    compresslevel is used only for DEFLATE/BZIP2; LZMA ignores it.
+    &#34;&#34;&#34;
+    m = (method_str or &#34;deflate&#34;).lower()
+    if m == &#34;deflate&#34;:
+        # zlib levels 0–9 (0 = store, 9 = max)
+        lvl = max(0, min(int(level), 9))
+        return zipfile.ZIP_DEFLATED, lvl
+    if m == &#34;bzip2&#34;:
+        # bz2 levels 1–9 (python accepts 1–9; clamp)
+        lvl = max(1, min(int(level), 9))
+        return zipfile.ZIP_BZIP2, lvl
+    if m == &#34;lzma&#34;:
+        # Python’s ZipFile ignores compresslevel for ZIP_LZMA
+        return zipfile.ZIP_LZMA, None
+    raise ValueError(f&#34;Unknown --zip-method: {method_str!r}&#34;)
+
+# ---------- Scanner ----------
+def scan(root: Path,
+         excludes: List[str],
+         code_html: bool,
+         code_exts: Set[str],
+         max_code_bytes: int,
+         site_title: str,
+         code_out_pattern: str,
+         overwrite: bool,
+         json_name: str,
+         html_out_name: str,
+         hide_generated: bool,
+         hide_code_html: bool
+         ) -&gt; Tuple[List[Dict[str,Any]], Set[str], int, Set[str], Set[str]]:
+    &#34;&#34;&#34;
+    Scan files, optionally emit code HTML, return (files, folders, n_code_html_written).
+    Returns: files (for manifest table), folders, n_code_html_written,
+          code_targets (all viewer paths), found_paths (all discovered files)
+    &#34;&#34;&#34;
+    files: List[Dict[str,Any]] = []
+    folders: Set[str] = set([&#34;/&#34;])
+    made = 0
+    code_targets: Set[str] = set()
+    found_paths: Set[str] = set()
+
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if not should_skip(Path(dirpath)/d, excludes, root)]
+
+        rel_dir = Path(dirpath).relative_to(root).as_posix()
+        if rel_dir != &#34;.&#34;:
+            acc = &#34;&#34;
+            for seg in rel_dir.split(&#34;/&#34;):
+                acc += &#34;/&#34; + seg
+                folders.add(acc)
+
+        for fn in filenames:
+            p = Path(dirpath) / fn
+            if should_skip(p, excludes, root):
+                continue
+
+            try:
+                st = p.stat()
+            except OSError:
+                continue
+
+            size = int(st.st_size)
+            mtime_epoch = int(st.st_mtime)
+            rel_path = p.relative_to(root).as_posix()
+            name = Path(rel_path).name
+            ext = Path(fn).suffix
+            mime = mimetypes.guess_type(fn, strict=False)[0] or &#34;&#34;
+
+            # record each file (for zip)
+            found_paths.add(rel_path)
+
+            # Never convert HTML-like or our own generated control files
+            is_htmlish = rel_path.lower().endswith(&#34;.html&#34;)
+            is_manifest = (name == json_name)
+            is_index_like = (name == html_out_name)
+
+            # Optionally hide generated artifacts from the listing
+            if hide_generated and (is_manifest or is_index_like):
+                pass_hidden = True
+            else:
+                pass_hidden = False
+
+            href: Optional[str] = None
+
+            # Conversion decision
+            if code_html:
+                if (ext.lower() in code_exts) and (not is_htmlish) and (not is_manifest) and (not is_index_like):
+                    out_rel = format_code_out(rel_path, code_out_pattern)
+                    # Avoid self-mapping and infinite chains
+                    if out_rel != rel_path and not out_rel.lower().endswith(&#34;.html.html&#34;):
+                        code_targets.add(out_rel)
+                        out_abs = (root / out_rel)
+                        if ensure_code_html(p, out_abs, site_title, max_code_bytes, overwrite):
+                            made += 1
+                        href = out_rel
+
+            file_entry = {
+                &#34;path&#34;: rel_path,               # original path
+                &#34;href&#34;: href or rel_path,       # target to open
+                &#34;name&#34;: fn,
+                &#34;ext&#34;: ext if ext else &#34;&#34;,
+                &#34;size&#34;: size,
+                &#34;mtime_iso&#34;: datetime.fromtimestamp(mtime_epoch, tz=timezone.utc).isoformat(),
+                &#34;mtime_epoch&#34;: mtime_epoch,
+                &#34;mime&#34;: mime,
+            }
+
+            if not pass_hidden:
+                files.append(file_entry)
+
+    if hide_code_html and code_targets:
+      files = [f for f in files if f[&#34;path&#34;] not in code_targets]
+    return files, folders, made, code_targets, found_paths
+
+# ---------- Writers ----------
+def write_json(path: Path, payload: Dict[str,Any], pretty: bool):
+    if pretty:
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding=&#34;utf-8&#34;)
+    else:
+        path.write_text(json.dumps(payload, separators=(&#34;,&#34;,&#34;:&#34;), ensure_ascii=False), encoding=&#34;utf-8&#34;)
+
+def build_html(title: str, default_folder: str = &#34;/&#34;, embed_json: bool = True, manifest: Optional[Dict[str,Any]] = None) -&gt; str:
+    &#34;&#34;&#34;Build the HTML; optionally embed the manifest JSON.&#34;&#34;&#34;
+    html = HTML_TEMPLATE.replace(&#34;{{TITLE}}&#34;, title)
+    if embed_json and manifest is not None:
+        embed = &#34;&lt;script id=\&#34;manifest\&#34; type=\&#34;application/json\&#34;&gt;&#34; + json.dumps(manifest, ensure_ascii=False) + &#34;&lt;/script&gt;&#34;
+    else:
+        embed = &#34;&#34;
+    html = html.replace(&#34;{{EMBED_MANIFEST}}&#34;, embed)
+    injection = f&#34;&#34;&#34;
+&lt;script&gt;
+  if (!location.hash) {{
+      location.hash = &#34;#folder={default_folder}&#34;;
+  }}
+&lt;/script&gt;
+&#34;&#34;&#34;
+    return html.replace(&#34;&lt;/body&gt;&#34;, injection + &#34;\n&lt;/body&gt;&#34;)
+
+# ---------- Zip engine ----------
+def build_zip(root: Path,
+              found_paths: Set[str],
+              zip_name: str,
+              include_generated: bool,
+              include_code_html: bool,
+              code_targets: Set[str],
+              control_names: Set[str],
+              max_bytes: int,
+              zip_method: str,  # &#34;deflate&#34; | &#34;lzma&#34; | &#34;bzip2&#34;
+              zip_level: int,   # e.g. 9 (DEFLATE/BZIP2 only)
+              ) -&gt; Tuple[bool, int, int]:
+    &#34;&#34;&#34;
+    Create a zip at root/zip_name containing files from found_paths.
+    - Skips the zip itself if already present.
+    - If include_generated is False: skip manifest/per-folder page names.
+    - If include_code_html is False: skip any path in code_targets.
+    - If max_bytes &gt; 0: skip files larger than that threshold.
+    Returns (exists, total_bytes_written).
+    &#34;&#34;&#34;
+    comp_const, comp_level = _resolve_zip_options(zip_method, zip_level)
+    zpath = root / zip_name
+    # Avoid zipping the previous zip
+    if zpath.exists():
+        try: zpath.unlink()
+        except OSError: pass
+    comp_const, comp_level = _resolve_zip_options(zip_method, zip_level)
+    total_uncompressed = 0
+    # Only pass compresslevel if the method supports it
+    if comp_level is None:
+        zf_ctx = zipfile.ZipFile(zpath, &#34;w&#34;, compression=comp_const)
+    else:
+        zf_ctx = zipfile.ZipFile(zpath, &#34;w&#34;, compression=comp_const, compresslevel=comp_level)
+
+    with zf_ctx as zf:
+        for rel in sorted(found_paths):
+            if rel.replace(&#34;\\&#34;,&#34;/&#34;) == zip_name.replace(&#34;\\&#34;,&#34;/&#34;):
+                continue
+            name = Path(rel).name
+            if not include_generated and name in control_names:
+                continue
+            if not include_code_html and rel in code_targets:
+                continue
+            ap = root / rel
+            try:
+                st = ap.stat()
+            except OSError:
+                continue
+            if max_bytes and st.st_size &gt; max_bytes:
+                continue
+            zf.write(ap, arcname=rel)
+            total_uncompressed += int(st.st_size)
+
+    compressed_size = 0
+    if zpath.exists():
+        with zipfile.ZipFile(zpath, &#34;r&#34;) as zf:
+            compressed_size = sum(zinfo.compress_size for zinfo in zf.infolist())
+
+    return zpath.exists(), total_uncompressed, compressed_size
+
+
+# ---------- Main ----------
+def main():
+    parser = argparse.ArgumentParser(description=&#34;Generate files.json and per-folder index pages.&#34;)
+    parser.add_argument(&#34;--root&#34;, type=str, default=&#34;.&#34;, help=&#34;Root directory to scan&#34;)
+    parser.add_argument(&#34;--json&#34;, type=str, default=&#34;files.json&#34;, help=&#34;Output JSON path (relative to root)&#34;)
+    parser.add_argument(&#34;--html-out&#34;, type=str, default=&#34;files.html&#34;, help=&#34;Filename for per-folder index pages&#34;)
+    parser.add_argument(&#34;--exclude&#34;, type=str, nargs=&#34;*&#34;, default=DEFAULT_EXCLUDES, help=&#34;Glob patterns to exclude&#34;)
+    parser.add_argument(&#34;--title&#34;, type=str, default=&#34;Directory Index&#34;, help=&#34;Title shown in the UI&#34;)
+    parser.add_argument(&#34;--pretty&#34;, dest=&#34;pretty&#34;, action=&#34;store_true&#34;, default=False, help=&#34;Pretty-print JSON&#34;)
+    parser.add_argument(&#34;--no-pretty&#34;, dest=&#34;pretty&#34;, action=&#34;store_false&#34;, help=&#34;Do not pretty-print JSON (default)&#34;)
+
+    # Code-&gt;HTML options
+    parser.add_argument(&#34;--code-html&#34;, dest=&#34;code_html&#34;, action=&#34;store_true&#34;, default=True, help=&#34;Enable code-to-HTML rendering (default)&#34;)
+    parser.add_argument(&#34;--no-code-html&#34;, dest=&#34;code_html&#34;, action=&#34;store_false&#34;, help=&#34;Disable code-to-HTML rendering&#34;)
+    parser.add_argument(&#34;--code-ext&#34;, type=str, nargs=&#34;*&#34;, default=DEFAULT_CODE_EXT, help=&#34;Extensions treated as code&#34;)
+    parser.add_argument(&#34;--code-max-bytes&#34;, type=int, default=DEFAULT_CODE_MAX_BYTES, help=&#34;Max source size to render to HTML&#34;)
+    parser.add_argument(&#34;--code-html-out&#34;, type=str, default=&#34;{relpath}.html&#34;, help=&#34;Pattern for code HTML outputs (use {relpath},{dir},{name},{stem},{ext})&#34;)
+    parser.add_argument(&#34;--hide-code-html&#34;, dest=&#34;hide_code_html&#34;, action=&#34;store_true&#34;, default=True,
+                    help=&#34;Hide generated code-viewer HTML files from the listing (default)&#34;)
+    parser.add_argument(&#34;--no-hide-code-html&#34;, dest=&#34;hide_code_html&#34;, action=&#34;store_false&#34;,
+                    help=&#34;Show generated code-viewer HTML files in the listing&#34;)
+
+    # Overwrite + embed + listing options
+    parser.add_argument(&#34;--overwrite&#34;, action=&#34;store_true&#34;, help=&#34;Force overwrite of generated HTML files&#34;)
+    parser.add_argument(&#34;--embed-json&#34;, dest=&#34;embed_json&#34;, action=&#34;store_true&#34;, default=True, help=&#34;Embed manifest JSON into each HTML (default)&#34;)
+    parser.add_argument(&#34;--no-embed-json&#34;, dest=&#34;embed_json&#34;, action=&#34;store_false&#34;, help=&#34;Do not embed JSON (fetch files.json at runtime)&#34;)
+    parser.add_argument(&#34;--hide-generated&#34;, dest=&#34;hide_generated&#34;, action=&#34;store_true&#34;, default=True, help=&#34;Hide manifest and per-folder page from the listing (default)&#34;)
+    parser.add_argument(&#34;--no-hide-generated&#34;, dest=&#34;hide_generated&#34;, action=&#34;store_false&#34;, help=&#34;Do not hide generated artifacts&#34;)
+
+    # Zip options
+    parser.add_argument(&#34;--zip&#34;, dest=&#34;make_zip&#34;, action=&#34;store_true&#34;, default=True,
+                        help=&#34;Create a single zip archive of all discovered files&#34;)
+    parser.add_argument(&#34;--zip-name&#34;, type=str, default=&#34;auto&#34;,
+                        help=&#34;Name of the output zip archive (written at root)&#34;)
+    parser.add_argument(&#34;--zip-max-bytes&#34;, type=int, default=0,
+                        help=&#34;Skip files larger than this many bytes (0 = no limit)&#34;)
+    parser.add_argument(&#34;--zip-include-generated&#34;, dest=&#34;zip_include_generated&#34;, action=&#34;store_true&#34;, default=True,
+                        help=&#34;Include generated control files (manifest and per-folder page) in the zip (default)&#34;)
+    parser.add_argument(&#34;--no-zip-include-generated&#34;, dest=&#34;zip_include_generated&#34;, action=&#34;store_false&#34;,
+                        help=&#34;Exclude manifest/per-folder page from the zip&#34;)
+    parser.add_argument(&#34;--zip-include-code-html&#34;, dest=&#34;zip_include_code_html&#34;, action=&#34;store_true&#34;, default=True,
+                        help=&#34;Include generated code-viewer HTML files in the zip (default)&#34;)
+    parser.add_argument(&#34;--no-zip-include-code-html&#34;, dest=&#34;zip_include_code_html&#34;, action=&#34;store_false&#34;,
+                        help=&#34;Exclude code-viewer HTML files from the zip&#34;)
+    parser.add_argument(&#34;--zip-method&#34;, choices=[&#34;deflate&#34;,&#34;lzma&#34;,&#34;bzip2&#34;], default=&#34;deflate&#34;)
+    parser.add_argument(&#34;--zip-level&#34;, type=int, default=9)  # only for deflate/bzip2
+
+    args = parser.parse_args()
+
+    root = Path(args.root).resolve()
+    if not root.exists() or not root.is_dir():
+        print(f&#34;[!] Root does not exist or is a file: {root}&#34;, file=sys.stderr)
+        sys.exit(2)
+
+    folder_name = Path(args.root).resolve().name or &#34;root&#34;
+    zip_name = args.zip_name if args.zip_name.upper() != &#34;AUTO&#34; else f&#34;{folder_name}.zip&#34;
+
+    code_exts = set((e if e.startswith(&#34;.&#34;) else &#34;.&#34;+e).lower() for e in args.code_ext)
+
+    if args.code_html and not HAVE_PYGMENTS:
+        print(&#34;[!] Pygments not installed. Plain &lt;pre&gt; will be used. Install: pip install pygments&#34;, file=sys.stderr)
+
+    excludes = list(args.exclude) if args.exclude else []
+    files, folders, n_code, code_targets, found_paths = scan(
+        root=root,
+        excludes=excludes,
+        code_html=args.code_html,
+        code_exts=code_exts,
+        max_code_bytes=args.code_max_bytes,
+        site_title=args.title,
+        code_out_pattern=args.code_html_out,
+        overwrite=args.overwrite,
+        json_name=Path(args.json).name,
+        html_out_name=Path(args.html_out).name,
+        hide_generated=args.hide_generated,
+        hide_code_html=args.hide_code_html,
+    )
+
+    zip_exists = False
+    zip_size = 0
+    if args.make_zip:
+      control_names = { Path(args.json).name, Path(args.html_out).name }
+      zip_exists, zip_size_uncomp, zip_size_comp = build_zip(
+          root=root,
+          found_paths=found_paths,
+          zip_name=zip_name,
+          include_generated=args.zip_include_generated,
+          include_code_html=args.zip_include_code_html,
+          code_targets=code_targets,
+          control_names=control_names,
+          max_bytes=args.zip_max_bytes,
+          zip_method=args.zip_method,
+          zip_level=args.zip_level,
+)
+      files = [f for f in files if f[&#34;path&#34;] != zip_name] # hide zip on purpose
+
+    total_size = sum(f[&#34;size&#34;] for f in files)
+    manifest = {
+        &#34;version&#34;: 0.6,
+        &#34;author&#34;: &#34;olivier.vitrac@gmail.com&#34;,
+        &#34;platform&#34;: &#34;Generative Simulation Initiative&#34;,
+        &#34;title&#34;: args.title,
+        &#34;root&#34;: &#34;.&#34;,
+        &#34;generated_at&#34;: datetime.now(timezone.utc).strftime(&#34;%Y-%m-%d %H:%M:%S UTC&#34;),
+        &#34;summary&#34;: {
+            &#34;files&#34;: len(files),
+            &#34;folders&#34;: len(folders),
+            &#34;total_size&#34;: total_size,
+            &#34;excludes&#34;: excludes,
+            &#34;code_html_enabled&#34;: bool(args.code_html),
+            &#34;code_html_rendered&#34;: int(n_code),
+            &#34;zip_enabled&#34;: bool(args.make_zip),
+            &#34;zip_name&#34;: zip_name if args.make_zip else &#34;&#34;,
+            &#34;zip_exists&#34;: bool(zip_exists),
+            &#34;zip_uncompressed&#34;: int(zip_size_uncomp),
+            &#34;zip_compressed&#34;: int(zip_size_comp),
+        },
+        &#34;files&#34;: sorted(files, key=lambda f: f[&#34;path&#34;].lower()),
+    }
+
+
+    # Write files.json (even if embedding, keep it for online fetchers)
+    json_path = (root / args.json)
+    write_json(json_path, manifest, args.pretty)
+
+    # Root + per-folder HTML (named by --html-out)
+    created = 0
+    root_html = root / args.html_out
+    if args.overwrite or not root_html.exists():
+        root_html.write_text(build_html(args.title, &#34;/&#34;, args.embed_json, manifest if args.embed_json else None), encoding=&#34;utf-8&#34;)
+        created += 1
+
+    for fol in folders:
+        if fol == &#34;/&#34;:
+            continue
+        fol_path = root / fol.strip(&#34;/&#34;)
+        out_html = fol_path / args.html_out
+        if args.overwrite or not out_html.exists():
+            out_html.write_text(build_html(args.title, fol, args.embed_json, manifest if args.embed_json else None), encoding=&#34;utf-8&#34;)
+            created += 1
+
+    # Console summary
+    def human(n):
+        u = [&#34;B&#34;,&#34;KB&#34;,&#34;MB&#34;,&#34;GB&#34;,&#34;TB&#34;]; i=0; x=float(n)
+        while x&gt;=1024 and i&lt;len(u)-1: x/=1024; i+=1
+        return (f&#34;{x:.1f}&#34; if i&gt;0 else f&#34;{int(x)}&#34;) + &#34; &#34; + u[i]
+
+    print(f&#34;[OK] Wrote {json_path.relative_to(root)} ({len(files)} files, {len(folders)} folders, {human(total_size)} total)&#34;)
+    print(f&#34;[OK] Generated HTML pages: {created} (using &#39;{args.html_out}&#39;) {&#39;[overwrite]&#39; if args.overwrite else &#39;&#39;}&#34;)
+    if args.code_html:
+        print(f&#34;[OK] Code HTML generated/updated: {n_code} file(s); max size {args.code_max_bytes}; ext set: {&#39;, &#39;.join(sorted(code_exts))}&#34;)
+    print(f&#34;[i ] Excludes: {&#39;, &#39;.join(excludes) if excludes else &#39;(none)&#39;}&#34;)
+    print(f&#34;[i ] Embed JSON in HTML: {args.embed_json}&#34;)
+    print(f&#34;[i ] Hide generated artifacts in listing: {args.hide_generated}&#34;)
+    print(f&#34;[i ] Hide code-viewer HTML in listing: {args.hide_code_html}&#34;)
+    if args.make_zip:
+      human_zip = (lambda n: (f&#34;{n/1024/1024:.1f} MB&#34; if n &gt;= 1024*1024 else f&#34;{n/1024:.1f} KB&#34; if n&gt;=1024 else f&#34;{n} B&#34;))(zip_size)
+      print(f&#34;[OK] Zip: {args.zip_name} ({&#39;exists&#39; if zip_exists else &#39;missing&#39;}; {human_zip}; include_generated={args.zip_include_generated}; include_code_html={args.zip_include_code_html})&#34;)
+    print(f&#34;[→ ] Deploy with surge (e.g., surge ./)&#34;)
+    if not args.embed_json:
+        print(f&#34;[!] Local file:// viewing will need a server or --embed-json&#34;)
+
+if __name__ == &#34;__main__&#34;:
+    # helpful MIME hints
+    mimetypes.add_type(&#34;application/pdf&#34;, &#34;.pdf&#34;)
+    mimetypes.add_type(&#34;text/markdown&#34;, &#34;.md&#34;)
+    mimetypes.add_type(&#34;text/jsx&#34;, &#34;.jsx&#34;)
+    mimetypes.add_type(&#34;text/tsx&#34;, &#34;.tsx&#34;)
+    mimetypes.add_type(&#34;application/wasm&#34;, &#34;.wasm&#34;)
+    main()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="index.build_html"><code class="name flex">
+<span>def <span class="ident">build_html</span></span>(<span>title: str, default_folder: str = '/', embed_json: bool = True, manifest: Optional[Dict[str, Any]] = None) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build the HTML; optionally embed the manifest JSON.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_html(title: str, default_folder: str = &#34;/&#34;, embed_json: bool = True, manifest: Optional[Dict[str,Any]] = None) -&gt; str:
+    &#34;&#34;&#34;Build the HTML; optionally embed the manifest JSON.&#34;&#34;&#34;
+    html = HTML_TEMPLATE.replace(&#34;{{TITLE}}&#34;, title)
+    if embed_json and manifest is not None:
+        embed = &#34;&lt;script id=\&#34;manifest\&#34; type=\&#34;application/json\&#34;&gt;&#34; + json.dumps(manifest, ensure_ascii=False) + &#34;&lt;/script&gt;&#34;
+    else:
+        embed = &#34;&#34;
+    html = html.replace(&#34;{{EMBED_MANIFEST}}&#34;, embed)
+    injection = f&#34;&#34;&#34;
+&lt;script&gt;
+  if (!location.hash) {{
+      location.hash = &#34;#folder={default_folder}&#34;;
+  }}
+&lt;/script&gt;
+&#34;&#34;&#34;
+    return html.replace(&#34;&lt;/body&gt;&#34;, injection + &#34;\n&lt;/body&gt;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="index.build_zip"><code class="name flex">
+<span>def <span class="ident">build_zip</span></span>(<span>root: Path, found_paths: Set[str], zip_name: str, include_generated: bool, include_code_html: bool, code_targets: Set[str], control_names: Set[str], max_bytes: int, zip_method: str, zip_level: int) ‑> Tuple[bool, int, int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a zip at root/zip_name containing files from found_paths.
+- Skips the zip itself if already present.
+- If include_generated is False: skip manifest/per-folder page names.
+- If include_code_html is False: skip any path in code_targets.
+- If max_bytes &gt; 0: skip files larger than that threshold.
+Returns (exists, total_bytes_written).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_zip(root: Path,
+              found_paths: Set[str],
+              zip_name: str,
+              include_generated: bool,
+              include_code_html: bool,
+              code_targets: Set[str],
+              control_names: Set[str],
+              max_bytes: int,
+              zip_method: str,  # &#34;deflate&#34; | &#34;lzma&#34; | &#34;bzip2&#34;
+              zip_level: int,   # e.g. 9 (DEFLATE/BZIP2 only)
+              ) -&gt; Tuple[bool, int, int]:
+    &#34;&#34;&#34;
+    Create a zip at root/zip_name containing files from found_paths.
+    - Skips the zip itself if already present.
+    - If include_generated is False: skip manifest/per-folder page names.
+    - If include_code_html is False: skip any path in code_targets.
+    - If max_bytes &gt; 0: skip files larger than that threshold.
+    Returns (exists, total_bytes_written).
+    &#34;&#34;&#34;
+    comp_const, comp_level = _resolve_zip_options(zip_method, zip_level)
+    zpath = root / zip_name
+    # Avoid zipping the previous zip
+    if zpath.exists():
+        try: zpath.unlink()
+        except OSError: pass
+    comp_const, comp_level = _resolve_zip_options(zip_method, zip_level)
+    total_uncompressed = 0
+    # Only pass compresslevel if the method supports it
+    if comp_level is None:
+        zf_ctx = zipfile.ZipFile(zpath, &#34;w&#34;, compression=comp_const)
+    else:
+        zf_ctx = zipfile.ZipFile(zpath, &#34;w&#34;, compression=comp_const, compresslevel=comp_level)
+
+    with zf_ctx as zf:
+        for rel in sorted(found_paths):
+            if rel.replace(&#34;\\&#34;,&#34;/&#34;) == zip_name.replace(&#34;\\&#34;,&#34;/&#34;):
+                continue
+            name = Path(rel).name
+            if not include_generated and name in control_names:
+                continue
+            if not include_code_html and rel in code_targets:
+                continue
+            ap = root / rel
+            try:
+                st = ap.stat()
+            except OSError:
+                continue
+            if max_bytes and st.st_size &gt; max_bytes:
+                continue
+            zf.write(ap, arcname=rel)
+            total_uncompressed += int(st.st_size)
+
+    compressed_size = 0
+    if zpath.exists():
+        with zipfile.ZipFile(zpath, &#34;r&#34;) as zf:
+            compressed_size = sum(zinfo.compress_size for zinfo in zf.infolist())
+
+    return zpath.exists(), total_uncompressed, compressed_size</code></pre>
+</details>
+</dd>
+<dt id="index.ensure_code_html"><code class="name flex">
+<span>def <span class="ident">ensure_code_html</span></span>(<span>src_path: Path, html_path: Path, title: str, max_bytes: int, overwrite: bool) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_code_html(src_path: Path, html_path: Path, title: str, max_bytes: int, overwrite: bool) -&gt; bool:
+    try:
+        if src_path.stat().st_size &gt; max_bytes:
+            return False
+        dst_exists = html_path.exists()
+        src_m = src_path.stat().st_mtime
+        dst_m = html_path.stat().st_mtime if dst_exists else -1
+        need = overwrite or (not dst_exists) or (dst_m &lt;= src_m)   # &lt;= fixes same-second ties
+        if need:
+            text = src_path.read_text(encoding=&#34;utf-8&#34;, errors=&#34;replace&#34;)
+            html = highlight_code_to_html(text, src_path.name, title)
+            html_path.parent.mkdir(parents=True, exist_ok=True)
+            html_path.write_text(html, encoding=&#34;utf-8&#34;)
+            return True
+        return False
+    except Exception:
+        return False</code></pre>
+</details>
+</dd>
+<dt id="index.format_code_out"><code class="name flex">
+<span>def <span class="ident">format_code_out</span></span>(<span>relpath: str, pattern: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def format_code_out(relpath: str, pattern: str) -&gt; str:
+    p = Path(relpath)
+    mapping = {
+        &#34;relpath&#34;: relpath,
+        &#34;dir&#34;: p.parent.as_posix(),
+        &#34;name&#34;: p.name,
+        &#34;stem&#34;: p.stem,
+        &#34;ext&#34;: p.suffix,
+    }
+    return pattern.format(**mapping).lstrip(&#34;./&#34;)</code></pre>
+</details>
+</dd>
+<dt id="index.highlight_code_to_html"><code class="name flex">
+<span>def <span class="ident">highlight_code_to_html</span></span>(<span>src_text: str, filename: str, title: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Render code to standalone dark-themed HTML with inline CSS (works on file://).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def highlight_code_to_html(src_text: str, filename: str, title: str) -&gt; str:
+    &#34;&#34;&#34;Render code to standalone dark-themed HTML with inline CSS (works on file://).&#34;&#34;&#34;
+    def esc(x: str) -&gt; str:
+        return x.replace(&#34;&amp;&#34;,&#34;&amp;amp;&#34;).replace(&#34;&lt;&#34;,&#34;&amp;lt;&#34;).replace(&#34;&gt;&#34;,&#34;&amp;gt;&#34;)
+    header = (
+        &#34;&lt;div style=&#39;padding:8px 10px;&#34;
+        &#34;background:#0d1218;border-bottom:1px solid #17202a;color:#e7edf4;&#34;
+        &#34;font-family:system-ui,Arial,sans-serif;font-size:14px;&#39;&gt;&#34;
+        f&#34;&lt;strong&gt;🌱 {esc(title)}&lt;/strong&gt; — viewing &lt;code&gt;{esc(filename)}&lt;/code&gt;&lt;/div&gt;&#34;
+    )
+    base_css = &#34;&#34;&#34;
+      body{margin:0;background:#0b0f14;color:#e7edf4}
+      .highlight{background:#0b0f14 !important; color:#e7edf4 !important;}
+      pre{margin:0}
+      .highlighttable{border-collapse:separate;border-spacing:0;width:100%}
+      .highlighttable td{vertical-align:top}
+      .linenos{background:#0b0f14;color:#8aa1b4 !important; padding:0 .5em; user-select:none}
+      .linenos pre{background:transparent !important; color:inherit !important}
+      .code{background:#0b0f14}
+    &#34;&#34;&#34;
+    if not HAVE_PYGMENTS:
+        body = f&#34;&lt;pre class=&#39;highlight&#39; style=&#39;padding:12px;overflow:auto&#39;&gt;{esc(src_text)}&lt;/pre&gt;&#34;
+        return f&#34;&lt;!doctype html&gt;&lt;meta charset=&#39;utf-8&#39;&gt;&lt;title&gt;{esc(title)} · {esc(filename)}&lt;/title&gt;&lt;style&gt;{base_css}&lt;/style&gt;{header}{body}&#34;
+    try:
+        try:
+            lexer = get_lexer_for_filename(filename, stripall=False)
+        except Exception:
+            lexer = TextLexer(stripall=False)
+        formatter = HtmlFormatter(full=False, noclasses=False, linenos=True)
+        pyg_css = formatter.get_style_defs(&#39;.highlight&#39;)
+        highlighted = highlight(src_text, lexer, formatter)
+        style = f&#34;&lt;style&gt;{base_css}\n{pyg_css}&lt;/style&gt;&#34;
+        return f&#34;&lt;!doctype html&gt;&lt;meta charset=&#39;utf-8&#39;&gt;&lt;title&gt;{esc(title)} · {esc(filename)}&lt;/title&gt;{style}{header}&lt;div style=&#39;padding:0 8px 8px&#39;&gt;{highlighted}&lt;/div&gt;&#34;
+    except Exception:
+        body = f&#34;&lt;pre class=&#39;highlight&#39; style=&#39;padding:12px;overflow:auto&#39;&gt;{esc(src_text)}&lt;/pre&gt;&#34;
+        return f&#34;&lt;!doctype html&gt;&lt;meta charset=&#39;utf-8&#39;&gt;&lt;title&gt;{esc(title)} · {esc(filename)}&lt;/title&gt;&lt;style&gt;{base_css}&lt;/style&gt;{header}{body}&#34;</code></pre>
+</details>
+</dd>
+<dt id="index.html_escape"><code class="name flex">
+<span>def <span class="ident">html_escape</span></span>(<span>s: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def html_escape(s: str) -&gt; str:
+    return s.replace(&#34;&amp;&#34;,&#34;&amp;amp;&#34;).replace(&#34;&lt;&#34;,&#34;&amp;lt;&#34;).replace(&#34;&gt;&#34;,&#34;&amp;gt;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="index.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    parser = argparse.ArgumentParser(description=&#34;Generate files.json and per-folder index pages.&#34;)
+    parser.add_argument(&#34;--root&#34;, type=str, default=&#34;.&#34;, help=&#34;Root directory to scan&#34;)
+    parser.add_argument(&#34;--json&#34;, type=str, default=&#34;files.json&#34;, help=&#34;Output JSON path (relative to root)&#34;)
+    parser.add_argument(&#34;--html-out&#34;, type=str, default=&#34;files.html&#34;, help=&#34;Filename for per-folder index pages&#34;)
+    parser.add_argument(&#34;--exclude&#34;, type=str, nargs=&#34;*&#34;, default=DEFAULT_EXCLUDES, help=&#34;Glob patterns to exclude&#34;)
+    parser.add_argument(&#34;--title&#34;, type=str, default=&#34;Directory Index&#34;, help=&#34;Title shown in the UI&#34;)
+    parser.add_argument(&#34;--pretty&#34;, dest=&#34;pretty&#34;, action=&#34;store_true&#34;, default=False, help=&#34;Pretty-print JSON&#34;)
+    parser.add_argument(&#34;--no-pretty&#34;, dest=&#34;pretty&#34;, action=&#34;store_false&#34;, help=&#34;Do not pretty-print JSON (default)&#34;)
+
+    # Code-&gt;HTML options
+    parser.add_argument(&#34;--code-html&#34;, dest=&#34;code_html&#34;, action=&#34;store_true&#34;, default=True, help=&#34;Enable code-to-HTML rendering (default)&#34;)
+    parser.add_argument(&#34;--no-code-html&#34;, dest=&#34;code_html&#34;, action=&#34;store_false&#34;, help=&#34;Disable code-to-HTML rendering&#34;)
+    parser.add_argument(&#34;--code-ext&#34;, type=str, nargs=&#34;*&#34;, default=DEFAULT_CODE_EXT, help=&#34;Extensions treated as code&#34;)
+    parser.add_argument(&#34;--code-max-bytes&#34;, type=int, default=DEFAULT_CODE_MAX_BYTES, help=&#34;Max source size to render to HTML&#34;)
+    parser.add_argument(&#34;--code-html-out&#34;, type=str, default=&#34;{relpath}.html&#34;, help=&#34;Pattern for code HTML outputs (use {relpath},{dir},{name},{stem},{ext})&#34;)
+    parser.add_argument(&#34;--hide-code-html&#34;, dest=&#34;hide_code_html&#34;, action=&#34;store_true&#34;, default=True,
+                    help=&#34;Hide generated code-viewer HTML files from the listing (default)&#34;)
+    parser.add_argument(&#34;--no-hide-code-html&#34;, dest=&#34;hide_code_html&#34;, action=&#34;store_false&#34;,
+                    help=&#34;Show generated code-viewer HTML files in the listing&#34;)
+
+    # Overwrite + embed + listing options
+    parser.add_argument(&#34;--overwrite&#34;, action=&#34;store_true&#34;, help=&#34;Force overwrite of generated HTML files&#34;)
+    parser.add_argument(&#34;--embed-json&#34;, dest=&#34;embed_json&#34;, action=&#34;store_true&#34;, default=True, help=&#34;Embed manifest JSON into each HTML (default)&#34;)
+    parser.add_argument(&#34;--no-embed-json&#34;, dest=&#34;embed_json&#34;, action=&#34;store_false&#34;, help=&#34;Do not embed JSON (fetch files.json at runtime)&#34;)
+    parser.add_argument(&#34;--hide-generated&#34;, dest=&#34;hide_generated&#34;, action=&#34;store_true&#34;, default=True, help=&#34;Hide manifest and per-folder page from the listing (default)&#34;)
+    parser.add_argument(&#34;--no-hide-generated&#34;, dest=&#34;hide_generated&#34;, action=&#34;store_false&#34;, help=&#34;Do not hide generated artifacts&#34;)
+
+    # Zip options
+    parser.add_argument(&#34;--zip&#34;, dest=&#34;make_zip&#34;, action=&#34;store_true&#34;, default=True,
+                        help=&#34;Create a single zip archive of all discovered files&#34;)
+    parser.add_argument(&#34;--zip-name&#34;, type=str, default=&#34;auto&#34;,
+                        help=&#34;Name of the output zip archive (written at root)&#34;)
+    parser.add_argument(&#34;--zip-max-bytes&#34;, type=int, default=0,
+                        help=&#34;Skip files larger than this many bytes (0 = no limit)&#34;)
+    parser.add_argument(&#34;--zip-include-generated&#34;, dest=&#34;zip_include_generated&#34;, action=&#34;store_true&#34;, default=True,
+                        help=&#34;Include generated control files (manifest and per-folder page) in the zip (default)&#34;)
+    parser.add_argument(&#34;--no-zip-include-generated&#34;, dest=&#34;zip_include_generated&#34;, action=&#34;store_false&#34;,
+                        help=&#34;Exclude manifest/per-folder page from the zip&#34;)
+    parser.add_argument(&#34;--zip-include-code-html&#34;, dest=&#34;zip_include_code_html&#34;, action=&#34;store_true&#34;, default=True,
+                        help=&#34;Include generated code-viewer HTML files in the zip (default)&#34;)
+    parser.add_argument(&#34;--no-zip-include-code-html&#34;, dest=&#34;zip_include_code_html&#34;, action=&#34;store_false&#34;,
+                        help=&#34;Exclude code-viewer HTML files from the zip&#34;)
+    parser.add_argument(&#34;--zip-method&#34;, choices=[&#34;deflate&#34;,&#34;lzma&#34;,&#34;bzip2&#34;], default=&#34;deflate&#34;)
+    parser.add_argument(&#34;--zip-level&#34;, type=int, default=9)  # only for deflate/bzip2
+
+    args = parser.parse_args()
+
+    root = Path(args.root).resolve()
+    if not root.exists() or not root.is_dir():
+        print(f&#34;[!] Root does not exist or is a file: {root}&#34;, file=sys.stderr)
+        sys.exit(2)
+
+    folder_name = Path(args.root).resolve().name or &#34;root&#34;
+    zip_name = args.zip_name if args.zip_name.upper() != &#34;AUTO&#34; else f&#34;{folder_name}.zip&#34;
+
+    code_exts = set((e if e.startswith(&#34;.&#34;) else &#34;.&#34;+e).lower() for e in args.code_ext)
+
+    if args.code_html and not HAVE_PYGMENTS:
+        print(&#34;[!] Pygments not installed. Plain &lt;pre&gt; will be used. Install: pip install pygments&#34;, file=sys.stderr)
+
+    excludes = list(args.exclude) if args.exclude else []
+    files, folders, n_code, code_targets, found_paths = scan(
+        root=root,
+        excludes=excludes,
+        code_html=args.code_html,
+        code_exts=code_exts,
+        max_code_bytes=args.code_max_bytes,
+        site_title=args.title,
+        code_out_pattern=args.code_html_out,
+        overwrite=args.overwrite,
+        json_name=Path(args.json).name,
+        html_out_name=Path(args.html_out).name,
+        hide_generated=args.hide_generated,
+        hide_code_html=args.hide_code_html,
+    )
+
+    zip_exists = False
+    zip_size = 0
+    if args.make_zip:
+      control_names = { Path(args.json).name, Path(args.html_out).name }
+      zip_exists, zip_size_uncomp, zip_size_comp = build_zip(
+          root=root,
+          found_paths=found_paths,
+          zip_name=zip_name,
+          include_generated=args.zip_include_generated,
+          include_code_html=args.zip_include_code_html,
+          code_targets=code_targets,
+          control_names=control_names,
+          max_bytes=args.zip_max_bytes,
+          zip_method=args.zip_method,
+          zip_level=args.zip_level,
+)
+      files = [f for f in files if f[&#34;path&#34;] != zip_name] # hide zip on purpose
+
+    total_size = sum(f[&#34;size&#34;] for f in files)
+    manifest = {
+        &#34;version&#34;: 0.6,
+        &#34;author&#34;: &#34;olivier.vitrac@gmail.com&#34;,
+        &#34;platform&#34;: &#34;Generative Simulation Initiative&#34;,
+        &#34;title&#34;: args.title,
+        &#34;root&#34;: &#34;.&#34;,
+        &#34;generated_at&#34;: datetime.now(timezone.utc).strftime(&#34;%Y-%m-%d %H:%M:%S UTC&#34;),
+        &#34;summary&#34;: {
+            &#34;files&#34;: len(files),
+            &#34;folders&#34;: len(folders),
+            &#34;total_size&#34;: total_size,
+            &#34;excludes&#34;: excludes,
+            &#34;code_html_enabled&#34;: bool(args.code_html),
+            &#34;code_html_rendered&#34;: int(n_code),
+            &#34;zip_enabled&#34;: bool(args.make_zip),
+            &#34;zip_name&#34;: zip_name if args.make_zip else &#34;&#34;,
+            &#34;zip_exists&#34;: bool(zip_exists),
+            &#34;zip_uncompressed&#34;: int(zip_size_uncomp),
+            &#34;zip_compressed&#34;: int(zip_size_comp),
+        },
+        &#34;files&#34;: sorted(files, key=lambda f: f[&#34;path&#34;].lower()),
+    }
+
+
+    # Write files.json (even if embedding, keep it for online fetchers)
+    json_path = (root / args.json)
+    write_json(json_path, manifest, args.pretty)
+
+    # Root + per-folder HTML (named by --html-out)
+    created = 0
+    root_html = root / args.html_out
+    if args.overwrite or not root_html.exists():
+        root_html.write_text(build_html(args.title, &#34;/&#34;, args.embed_json, manifest if args.embed_json else None), encoding=&#34;utf-8&#34;)
+        created += 1
+
+    for fol in folders:
+        if fol == &#34;/&#34;:
+            continue
+        fol_path = root / fol.strip(&#34;/&#34;)
+        out_html = fol_path / args.html_out
+        if args.overwrite or not out_html.exists():
+            out_html.write_text(build_html(args.title, fol, args.embed_json, manifest if args.embed_json else None), encoding=&#34;utf-8&#34;)
+            created += 1
+
+    # Console summary
+    def human(n):
+        u = [&#34;B&#34;,&#34;KB&#34;,&#34;MB&#34;,&#34;GB&#34;,&#34;TB&#34;]; i=0; x=float(n)
+        while x&gt;=1024 and i&lt;len(u)-1: x/=1024; i+=1
+        return (f&#34;{x:.1f}&#34; if i&gt;0 else f&#34;{int(x)}&#34;) + &#34; &#34; + u[i]
+
+    print(f&#34;[OK] Wrote {json_path.relative_to(root)} ({len(files)} files, {len(folders)} folders, {human(total_size)} total)&#34;)
+    print(f&#34;[OK] Generated HTML pages: {created} (using &#39;{args.html_out}&#39;) {&#39;[overwrite]&#39; if args.overwrite else &#39;&#39;}&#34;)
+    if args.code_html:
+        print(f&#34;[OK] Code HTML generated/updated: {n_code} file(s); max size {args.code_max_bytes}; ext set: {&#39;, &#39;.join(sorted(code_exts))}&#34;)
+    print(f&#34;[i ] Excludes: {&#39;, &#39;.join(excludes) if excludes else &#39;(none)&#39;}&#34;)
+    print(f&#34;[i ] Embed JSON in HTML: {args.embed_json}&#34;)
+    print(f&#34;[i ] Hide generated artifacts in listing: {args.hide_generated}&#34;)
+    print(f&#34;[i ] Hide code-viewer HTML in listing: {args.hide_code_html}&#34;)
+    if args.make_zip:
+      human_zip = (lambda n: (f&#34;{n/1024/1024:.1f} MB&#34; if n &gt;= 1024*1024 else f&#34;{n/1024:.1f} KB&#34; if n&gt;=1024 else f&#34;{n} B&#34;))(zip_size)
+      print(f&#34;[OK] Zip: {args.zip_name} ({&#39;exists&#39; if zip_exists else &#39;missing&#39;}; {human_zip}; include_generated={args.zip_include_generated}; include_code_html={args.zip_include_code_html})&#34;)
+    print(f&#34;[→ ] Deploy with surge (e.g., surge ./)&#34;)
+    if not args.embed_json:
+        print(f&#34;[!] Local file:// viewing will need a server or --embed-json&#34;)</code></pre>
+</details>
+</dd>
+<dt id="index.match_any"><code class="name flex">
+<span>def <span class="ident">match_any</span></span>(<span>patterns: Iterable[str], name: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_any(patterns: Iterable[str], name: str) -&gt; bool:
+    for p in patterns:
+        if fnmatch.fnmatch(name, p):
+            return True
+    return False</code></pre>
+</details>
+</dd>
+<dt id="index.scan"><code class="name flex">
+<span>def <span class="ident">scan</span></span>(<span>root: Path, excludes: List[str], code_html: bool, code_exts: Set[str], max_code_bytes: int, site_title: str, code_out_pattern: str, overwrite: bool, json_name: str, html_out_name: str, hide_generated: bool, hide_code_html: bool) ‑> Tuple[List[Dict[str, Any]], Set[str], int, Set[str], Set[str]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Scan files, optionally emit code HTML, return (files, folders, n_code_html_written).
+Returns: files (for manifest table), folders, n_code_html_written,
+code_targets (all viewer paths), found_paths (all discovered files)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scan(root: Path,
+         excludes: List[str],
+         code_html: bool,
+         code_exts: Set[str],
+         max_code_bytes: int,
+         site_title: str,
+         code_out_pattern: str,
+         overwrite: bool,
+         json_name: str,
+         html_out_name: str,
+         hide_generated: bool,
+         hide_code_html: bool
+         ) -&gt; Tuple[List[Dict[str,Any]], Set[str], int, Set[str], Set[str]]:
+    &#34;&#34;&#34;
+    Scan files, optionally emit code HTML, return (files, folders, n_code_html_written).
+    Returns: files (for manifest table), folders, n_code_html_written,
+          code_targets (all viewer paths), found_paths (all discovered files)
+    &#34;&#34;&#34;
+    files: List[Dict[str,Any]] = []
+    folders: Set[str] = set([&#34;/&#34;])
+    made = 0
+    code_targets: Set[str] = set()
+    found_paths: Set[str] = set()
+
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if not should_skip(Path(dirpath)/d, excludes, root)]
+
+        rel_dir = Path(dirpath).relative_to(root).as_posix()
+        if rel_dir != &#34;.&#34;:
+            acc = &#34;&#34;
+            for seg in rel_dir.split(&#34;/&#34;):
+                acc += &#34;/&#34; + seg
+                folders.add(acc)
+
+        for fn in filenames:
+            p = Path(dirpath) / fn
+            if should_skip(p, excludes, root):
+                continue
+
+            try:
+                st = p.stat()
+            except OSError:
+                continue
+
+            size = int(st.st_size)
+            mtime_epoch = int(st.st_mtime)
+            rel_path = p.relative_to(root).as_posix()
+            name = Path(rel_path).name
+            ext = Path(fn).suffix
+            mime = mimetypes.guess_type(fn, strict=False)[0] or &#34;&#34;
+
+            # record each file (for zip)
+            found_paths.add(rel_path)
+
+            # Never convert HTML-like or our own generated control files
+            is_htmlish = rel_path.lower().endswith(&#34;.html&#34;)
+            is_manifest = (name == json_name)
+            is_index_like = (name == html_out_name)
+
+            # Optionally hide generated artifacts from the listing
+            if hide_generated and (is_manifest or is_index_like):
+                pass_hidden = True
+            else:
+                pass_hidden = False
+
+            href: Optional[str] = None
+
+            # Conversion decision
+            if code_html:
+                if (ext.lower() in code_exts) and (not is_htmlish) and (not is_manifest) and (not is_index_like):
+                    out_rel = format_code_out(rel_path, code_out_pattern)
+                    # Avoid self-mapping and infinite chains
+                    if out_rel != rel_path and not out_rel.lower().endswith(&#34;.html.html&#34;):
+                        code_targets.add(out_rel)
+                        out_abs = (root / out_rel)
+                        if ensure_code_html(p, out_abs, site_title, max_code_bytes, overwrite):
+                            made += 1
+                        href = out_rel
+
+            file_entry = {
+                &#34;path&#34;: rel_path,               # original path
+                &#34;href&#34;: href or rel_path,       # target to open
+                &#34;name&#34;: fn,
+                &#34;ext&#34;: ext if ext else &#34;&#34;,
+                &#34;size&#34;: size,
+                &#34;mtime_iso&#34;: datetime.fromtimestamp(mtime_epoch, tz=timezone.utc).isoformat(),
+                &#34;mtime_epoch&#34;: mtime_epoch,
+                &#34;mime&#34;: mime,
+            }
+
+            if not pass_hidden:
+                files.append(file_entry)
+
+    if hide_code_html and code_targets:
+      files = [f for f in files if f[&#34;path&#34;] not in code_targets]
+    return files, folders, made, code_targets, found_paths</code></pre>
+</details>
+</dd>
+<dt id="index.should_skip"><code class="name flex">
+<span>def <span class="ident">should_skip</span></span>(<span>path: Path, excludes: List[str], root: Path) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def should_skip(path: Path, excludes: List[str], root: Path) -&gt; bool:
+    rel = path.relative_to(root).as_posix()
+    parts = rel.split(&#34;/&#34;)
+    if match_any(excludes, rel): return True
+    if match_any(excludes, path.name): return True
+    for seg in parts:
+        if match_any(excludes, seg): return True
+    return False</code></pre>
+</details>
+</dd>
+<dt id="index.write_json"><code class="name flex">
+<span>def <span class="ident">write_json</span></span>(<span>path: Path, payload: Dict[str, Any], pretty: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_json(path: Path, payload: Dict[str,Any], pretty: bool):
+    if pretty:
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding=&#34;utf-8&#34;)
+    else:
+        path.write_text(json.dumps(payload, separators=(&#34;,&#34;,&#34;:&#34;), ensure_ascii=False), encoding=&#34;utf-8&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#zip-options">Zip options</a></li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="index.build_html" href="#index.build_html">build_html</a></code></li>
+<li><code><a title="index.build_zip" href="#index.build_zip">build_zip</a></code></li>
+<li><code><a title="index.ensure_code_html" href="#index.ensure_code_html">ensure_code_html</a></code></li>
+<li><code><a title="index.format_code_out" href="#index.format_code_out">format_code_out</a></code></li>
+<li><code><a title="index.highlight_code_to_html" href="#index.highlight_code_to_html">highlight_code_to_html</a></code></li>
+<li><code><a title="index.html_escape" href="#index.html_escape">html_escape</a></code></li>
+<li><code><a title="index.main" href="#index.main">main</a></code></li>
+<li><code><a title="index.match_any" href="#index.match_any">match_any</a></code></li>
+<li><code><a title="index.scan" href="#index.scan">scan</a></code></li>
+<li><code><a title="index.should_skip" href="#index.should_skip">should_skip</a></code></li>
+<li><code><a title="index.write_json" href="#index.write_json">write_json</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

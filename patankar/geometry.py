@@ -120,7 +120,7 @@ Dependencies:
   - `check_units` function from the `layer` module
 
 
-@version: 1.0
+@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT

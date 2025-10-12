@@ -297,7 +297,7 @@ class gFHP(ActivityCoefficients):
 
     @classmethod
     def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
-                 alpha=0.14,lngmin=0.0,gscale=1.0):
+                 alpha=0.162331,lngmin=0.0,gscale=1.0): # alpha = 0.14 (ancient value)
         &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
         if ispolymer:
             rik = 0.0
@@ -305,7 +305,8 @@ class gFHP(ActivityCoefficients):
             chimin = 0.25
         else:
             rik = Vi/Vk
-            nik = (rik - 5)/5
+            #nik = (rik - 5)/5 if rik&gt;=1 else 0
+            nik = (rik - 3)/3 if rik&gt;=3 else 0
             chimin = 0
         if Pi is None or Pk is None:
             raise RuntimeError(&#34;✋🏻🛑⛔️ At least, one of the elements (migrant/medium/polymer) lacks ⌬ chemical information.&#34;)
@@ -3756,7 +3757,7 @@ gscale: activity coefficient (default=1.0)</p>
 
     @classmethod
     def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
-                 alpha=0.14,lngmin=0.0,gscale=1.0):
+                 alpha=0.162331,lngmin=0.0,gscale=1.0): # alpha = 0.14 (ancient value)
         &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
         if ispolymer:
             rik = 0.0
@@ -3764,7 +3765,8 @@ gscale: activity coefficient (default=1.0)</p>
             chimin = 0.25
         else:
             rik = Vi/Vk
-            nik = (rik - 5)/5
+            #nik = (rik - 5)/5 if rik&gt;=1 else 0
+            nik = (rik - 3)/3 if rik&gt;=3 else 0
             chimin = 0
         if Pi is None or Pk is None:
             raise RuntimeError(&#34;✋🏻🛑⛔️ At least, one of the elements (migrant/medium/polymer) lacks ⌬ chemical information.&#34;)
@@ -3803,7 +3805,7 @@ gscale: activity coefficient (default=1.0)</p>
 <h3>Static methods</h3>
 <dl>
 <dt id="property.gFHP.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer=False, alpha=0.14, lngmin=0.0, gscale=1.0)</span>
+<span>def <span class="ident">evaluate</span></span>(<span>Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer=False, alpha=0.162331, lngmin=0.0, gscale=1.0)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)</p></div>
@@ -3813,7 +3815,7 @@ gscale: activity coefficient (default=1.0)</p>
 </summary>
 <pre><code class="python">@classmethod
 def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
-             alpha=0.14,lngmin=0.0,gscale=1.0):
+             alpha=0.162331,lngmin=0.0,gscale=1.0): # alpha = 0.14 (ancient value)
     &#34;&#34;&#34;evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)&#34;&#34;&#34;
     if ispolymer:
         rik = 0.0
@@ -3821,7 +3823,8 @@ def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False,
         chimin = 0.25
     else:
         rik = Vi/Vk
-        nik = (rik - 5)/5
+        #nik = (rik - 5)/5 if rik&gt;=1 else 0
+        nik = (rik - 3)/3 if rik&gt;=3 else 0
         chimin = 0
     if Pi is None or Pk is None:
         raise RuntimeError(&#34;✋🏻🛑⛔️ At least, one of the elements (migrant/medium/polymer) lacks ⌬ chemical information.&#34;)

@@ -91,12 +91,12 @@ AIChE J., 59: 1183-1212. <a href="https://doi.org/10.1002/aic.14056">https://doi
     sol.plotCF()
     sol.plotC()
 </code></pre>
-<p>@version: 1.40
+<p>@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-01-17
-@rev: 2025-03-26</p>
+@rev: 2025-09-03</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -186,22 +186,22 @@ Example
     sol.plotC()
 ```
 
-@version: 1.40
+@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-01-17
-@rev: 2025-03-26
+@rev: 2025-09-03
 
 &#34;&#34;&#34;
 # Dependencies
-import os
-import shutil
-import random
-import re
+import os, shutil, types, time, re
 from datetime import datetime
 from copy import deepcopy as duplicate
+from types import SimpleNamespace # for PR
+import collections.abc as cabc # for extras
 # math libraries
+import random
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.sparse import diags, coo_matrix
@@ -221,7 +221,7 @@ from patankar.layer import layer, check_units, layerLink
 from patankar.food import foodphysics,foodlayer
 from patankar.useroverride import useroverride # useroverride is already an instance (not a class)
 
-__all__ = [&#39;CFSimulationContainer&#39;, &#39;Cprofile&#39;, &#39;PrintableFigure&#39;, &#39;SensPatankarResult&#39;, &#39;autoname&#39;, &#39;check_units&#39;, &#39;cleantex&#39;, &#39;colormap&#39;, &#39;compute_fc_profile_PBC&#39;, &#39;compute_fv_profile&#39;, &#39;create_plotmigration_widget&#39;, &#39;create_simulation_widget&#39;, &#39;custom_plt_figure&#39;, &#39;custom_plt_subplots&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;is_latex_available&#39;, &#39;is_valid_figure&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;print_figure&#39;, &#39;print_pdf&#39;, &#39;print_png&#39;, &#39;restartfile&#39;, &#39;restartfile_senspantakar&#39;, &#39;rgb&#39;, &#39;senspatankar&#39;, &#39;tooclear&#39;, &#39;useroverride&#39;]
+__all__ = [&#39;CFSimulationContainer&#39;, &#39;Cprofile&#39;, &#39;FrozenDict&#39;, &#39;FrozenNamespace&#39;, &#39;PrintableFigure&#39;, &#39;SensPatankarResult&#39;, &#39;SensPatankarResultCollection&#39;, &#39;autoname&#39;, &#39;check_units&#39;, &#39;cleantex&#39;, &#39;colormap&#39;, &#39;compute_fc_profile_PBC&#39;, &#39;compute_fv_profile&#39;, &#39;create_plotmigration_widget&#39;, &#39;create_simulation_widget&#39;, &#39;custom_plt_figure&#39;, &#39;custom_plt_subplots&#39;, &#39;ensure_2d&#39;, &#39;foodlayer&#39;, &#39;foodphysics&#39;, &#39;is_latex_available&#39;, &#39;is_valid_figure&#39;, &#39;layer&#39;, &#39;layerLink&#39;, &#39;print_figure&#39;, &#39;print_pdf&#39;, &#39;print_png&#39;, &#39;print_svg&#39;, &#39;restartfile&#39;, &#39;restartfile_senspantakar&#39;, &#39;rgb&#39;, &#39;senspatankar&#39;, &#39;tooclear&#39;, &#39;useroverride&#39;]
 
 __project__ = &#34;SFPPy&#34;
 __author__ = &#34;Olivier Vitrac&#34;
@@ -230,7 +230,7 @@ __credits__ = [&#34;Olivier Vitrac&#34;]
 __license__ = &#34;MIT&#34;
 __maintainer__ = &#34;Olivier Vitrac&#34;
 __email__ = &#34;olivier.vitrac@agroparistech.fr&#34;
-__version__ = &#34;1.40&#34;
+__version__ = &#34;1.50&#34;
 
 # Plot configuration (preferred units)
 plotconfig_default = {
@@ -242,7 +242,166 @@ plotconfig_default = {
     &#34;Cunit&#34;: &#34;a.u.&#34;
     }
 _fig_metadata_atrr_ = &#34;__filename__&#34;
+
 # %% Private functions and classes
+
+# --- genereic functions to manage safely _extras data without corruption risk ---
+class FrozenDict(cabc.Mapping):
+    &#34;&#34;&#34;Immutable, picklable mapping.&#34;&#34;&#34;
+    __slots__ = (&#34;_data&#34;,)
+    def __init__(self, data=None, /, **kw):
+        d = {}
+        if data:
+            d.update(dict(data))
+        if kw:
+            d.update(kw)
+        self._data = d
+    def __getitem__(self, k): return self._data[k]
+    def __iter__(self): return iter(self._data)
+    def __len__(self): return len(self._data)
+    def __repr__(self): return f&#34;FrozenDict({self._data!r})&#34;
+    def __reduce__(self):  # makes it picklable
+        return (FrozenDict, (self._data,))
+
+class FrozenNamespace(SimpleNamespace):
+    &#34;&#34;&#34;Immutable, picklable namespace.&#34;&#34;&#34;
+    def __init__(self, mapping=None, **kwargs):
+        if mapping is None: mapping = {}
+        super().__init__(**{**mapping, **kwargs})
+        object.__setattr__(self, &#34;_frozen&#34;, True)
+    def __setattr__(self, name, value):
+        if getattr(self, &#34;_frozen&#34;, False):
+            raise AttributeError(&#34;FrozenNamespace is immutable&#34;)
+        return super().__setattr__(name, value)
+    def __delattr__(self, name):
+        if getattr(self, &#34;_frozen&#34;, False):
+            raise AttributeError(&#34;FrozenNamespace is immutable&#34;)
+        return super().__delattr__(name)
+    def __reduce__(self):
+        # reconstruct from its dict content
+        return (FrozenNamespace, (vars(self),))
+
+def _freeze_ndarray(arr):
+    &#34;&#34;&#34;Return a read-only numpy array copy.&#34;&#34;&#34;
+    try:
+        out = arr.copy()
+        out.setflags(write=False)
+        return out
+    except Exception:
+        return arr
+
+def _freeze_recursively(obj):
+    &#34;&#34;&#34;
+    Pickle-safe, immutable sealing:
+      - dict -&gt; FrozenDict
+      - SimpleNamespace -&gt; FrozenNamespace
+      - list/tuple -&gt; tuple
+      - set -&gt; frozenset
+      - np.ndarray -&gt; read-only copy
+      - everything else -&gt; as-is (assumed already defensively copied)
+    &#34;&#34;&#34;
+    if isinstance(obj, np.ndarray):
+        return _freeze_ndarray(obj)
+    if isinstance(obj, SimpleNamespace):
+        return FrozenNamespace({k: _freeze_recursively(v) for k, v in vars(obj).items()})
+
+    if isinstance(obj, cabc.Mapping):
+        return FrozenDict({k: _freeze_recursively(v) for k, v in obj.items()})
+
+    # Note: strings/bytes are immutable; treat generically
+    if isinstance(obj, cabc.Sequence) and not isinstance(obj, (str, bytes, bytearray)):
+        return tuple(_freeze_recursively(v) for v in obj)
+
+    if isinstance(obj, cabc.Set) and not isinstance(obj, frozenset):
+        return frozenset(_freeze_recursively(v) for v in obj)
+    return obj
+
+# --- thawers to make legacy mappingproxy payloads cloneable/picklable for _extras_history ---
+def _thaw_for_clone(obj):
+    &#34;&#34;&#34;Recursively convert non-cloneable containers (e.g., MappingProxyType) into cloneable ones.&#34;&#34;&#34;
+#    if isinstance(obj, MappingProxyType): # not considered anymore
+#        return {k: _thaw_for_clone(v) for k, v in obj.items()}
+    if isinstance(obj, SimpleNamespace):
+        return SimpleNamespace(**{k: _thaw_for_clone(v) for k, v in vars(obj).items()})
+    if isinstance(obj, dict):
+        return {k: _thaw_for_clone(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return type(obj)(_thaw_for_clone(v) for v in obj)
+    if isinstance(obj, frozenset):
+        return frozenset(_thaw_for_clone(v) for v in obj)
+    # numpy arrays/immutables returned as-is; arrays will be copied on read elsewhere if needed
+    return obj
+
+def _clone_value_for_store(v, freeze_arrays=True):
+    &#34;&#34;&#34;Deep clone a value; ndarrays copied (and optionally frozen).&#34;&#34;&#34;
+    if isinstance(v, np.ndarray):
+        return _freeze_ndarray(v) if freeze_arrays else v.copy()
+    if isinstance(v, (bytes, bytearray, memoryview)):
+        return bytes(v)
+    if isinstance(v, SimpleNamespace):
+        return SimpleNamespace(**{k: _clone_value_for_store(x, freeze_arrays) for k, x in vars(v).items()})
+    if isinstance(v, dict):
+        return {k: _clone_value_for_store(x, freeze_arrays) for k, x in v.items()}
+    if isinstance(v, (list, tuple)):
+        ctor = list if isinstance(v, list) else tuple
+        return ctor(_clone_value_for_store(x, freeze_arrays) for x in v)
+    if isinstance(v, (set, frozenset)):
+        ctor = frozenset if isinstance(v, frozenset) else set
+        return ctor(_clone_value_for_store(x, freeze_arrays) for x in v)
+    # fall back to deepcopy for other mutables/objects
+    return duplicate(v)
+
+def _clone_snapshot_for_store(snapshot, freeze_arrays=True):
+    &#34;&#34;&#34;
+    Clone one snapshot dict {&#39;meta&#39;:..., &#39;extras&#39;: ...} in a pickle-safe way.
+    Thaws MappingProxyType first, then deep-copies, freezing arrays.
+    &#34;&#34;&#34;
+    s = _thaw_for_clone(snapshot)
+    meta = _clone_value_for_store(s.get(&#39;meta&#39;, {}), freeze_arrays=False)
+    extras = _clone_value_for_store(s.get(&#39;extras&#39;, {}), freeze_arrays=freeze_arrays)
+    return {&#39;meta&#39;: meta, &#39;extras&#39;: extras}
+
+def _clone_history_list(src_hist):
+    &#34;&#34;&#34;Clone a list of snapshots safely (no aliasing, arrays re-frozen).&#34;&#34;&#34;
+    if not src_hist:
+        return []
+    return [_clone_snapshot_for_store(snap, freeze_arrays=True) for snap in src_hist]
+
+
+def ensure_2d(x):
+    &#34;&#34;&#34;
+    Ensure that input x is a 2D numpy.ndarray with shape (1, n) or (n, m).
+    Parameters
+    ----------
+    x : list or np.ndarray
+        Input data.
+    Returns
+    -------
+    arr : np.ndarray
+        2D numpy array with shape (1, n) or (n, m).
+    Raises
+    ------
+    TypeError
+        If input cannot be converted to a numpy.ndarray.
+    ValueError
+        If array shape is not compatible.
+    &#34;&#34;&#34;
+    # i) Convert list -&gt; ndarray
+    if isinstance(x, list):
+        x = np.array(x)
+    # ii) Check ndarray
+    if not isinstance(x, np.ndarray):
+        raise TypeError(f&#34;Expected list or np.ndarray, got {type(x)}&#34;)
+    # iii) Check shape
+    if x.ndim == 1:
+        # iv) Convert (n,) -&gt; (1,n)
+        return x[None, :]
+    elif x.ndim == 2:
+        return x
+    else:
+        raise ValueError(f&#34;Array must be 1D or 2D, got shape {x.shape}&#34;)
+
+# --- project name generator ---
 def autoname(nchars=6, charset=&#34;a-zA-Z0-9&#34;):
     &#34;&#34;&#34;
     Generates a random simulation name.
@@ -269,6 +428,7 @@ def autoname(nchars=6, charset=&#34;a-zA-Z0-9&#34;):
     # Generate random name
     return &#39;&#39;.join(random.choices(char_pool, k=nchars))
 
+# ---- figure and plot helpers ---
 def is_valid_figure(fig):
     &#34;&#34;&#34;
     Checks if `fig` is a valid and open Matplotlib figure.
@@ -400,6 +560,35 @@ def print_png(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite
     fig.savefig(filename, format=&#34;png&#34;, dpi=dpi, bbox_inches=&#34;tight&#34;)
     print(f&#34;Saved PNG: {filename}&#34;)
 
+def print_svg(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    &#34;&#34;&#34;
+    Save a given figure as a SVG.
+
+    Parameters:
+    - fig: Matplotlib figure object to be saved.
+    - filename: str, SVG filename (auto-generated if empty).
+    - destinationfolder: str, folder to save the file.
+    - overwrite: bool, overwrite existing file.
+    - dpi: int, resolution (default=300).
+    &#34;&#34;&#34;
+    if not is_valid_figure(fig):
+        print(&#34;no valid figure&#34;)
+        return
+    # Generate filename if not provided
+    if not filename:
+        filename = _generate_figname(fig, &#34;.svg&#34;)
+    # add extension if missing
+    if not filename.endswith(&#34;.svg&#34;):
+        filename = filename+&#34;.svg&#34;
+    # Ensure full path
+    filename = os.path.join(destinationfolder, filename)
+    # Prevent overwriting unless specified
+    if not overwrite and os.path.exists(filename):
+        print(f&#34;File {filename} already exists. Use overwrite=True to replace it.&#34;)
+        return
+    # Save figure as PNG
+    fig.savefig(filename, format=&#34;svg&#34;, dpi=dpi, bbox_inches=&#34;tight&#34;)
+    print(f&#34;Saved SVG: {filename}&#34;)
 
 def print_figure(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
     &#34;&#34;&#34;
@@ -415,6 +604,7 @@ def print_figure(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwr
     if is_valid_figure(fig):
         print_pdf(fig, filename, destinationfolder, overwrite, dpi)
         print_png(fig, filename, destinationfolder, overwrite, dpi)
+        print_svg(fig, filename, destinationfolder, overwrite, dpi)
     else:
         print(&#34;no valid figure&#34;)
 
@@ -540,6 +730,7 @@ def colormap(name=&#34;viridis&#34;, ncolors=16, tooclearflag=True, reverse=Fals
     colors = [cmap(i / (ncolors - 1)) for i in range(ncolors)]  # Normalize colors
     return [tooclear(c) if tooclearflag else c[:3] for c in colors]  # Apply tooclear if enabled
 
+# ---- LaTeX helpers ----
 # Latex fixer on systems without LaTeX
 def is_latex_available():
     &#34;&#34;&#34;
@@ -603,7 +794,7 @@ def cleantex(text,islatexavailable=_LaTeXavailable):
     text = text.replace(&#39;}&#39;, &#39;&#39;)
     return text
 
-
+# ---- Printable figure class ---
 # Define PrintableFigure class
 class PrintableFigure(Figure):
     &#34;&#34;&#34;Custom Figure class with show and print methods.&#34;&#34;&#34;
@@ -655,7 +846,7 @@ plt.subplots = custom_plt_subplots
 plt.FigureClass = PrintableFigure  # Ensure all figures default to PrintableFigure globally
 plt.rcParams[&#39;figure.figsize&#39;] = (8, 6)  # Optional: Default size
 
-# %% Widget
+# %% Widgets for SFPPy and SFPPylite
 def create_simulation_widget():
     &#34;&#34;&#34;
     Creates a widget interface for launching a migration simulation.
@@ -1375,6 +1566,9 @@ class SensPatankarResult:
         1D array of the cumulative flux into the food. Shape: (ntimes,).
     f : ndarray with shape (ntimes,)
         1D array of the instantaneous flux into the food. Shape: (ntimes,).
+    PR : potential release results (addition version&gt;1.42)
+        dictionary with keys peq,m0,m0P,m0F,mPeq,mFeq,PRE,PRE_effective,PR,PR_effective,PRT,PRT_effective,
+        PRtarget,PRtarget_effective,PRTtarget,PRTtarget_effective
     x : ndarray with shape (npoints,)
         1D array of the position coordinates of all packaging nodes (including sub-nodes).
         npoints = 3 * number of original FV elements (interfaces e and w are included).
@@ -1408,7 +1602,7 @@ class SensPatankarResult:
 
     &#34;&#34;&#34;
 
-    def __init__(self, name, description, ttarget, t, C, CF, fc, f, x, Cx, tC, C0eq, timebase,
+    def __init__(self, name, description, ttarget, t, C, CF, fc, f, PR, x, Cx, tC, C0eq, timebase,
                  restart,restart_unsecure,xi,Cxi,
                  SML = None, SMLunit=None, plotSML=True,
                  plotconfig=None, createcontainer=True, container=None, discrete=False):
@@ -1434,6 +1628,14 @@ class SensPatankarResult:
         self.interp_Cx = interp1d(t, Cx.T, kind=&#34;linear&#34;, axis=1, fill_value=&#34;extrapolate&#34;)
         self.Cxtarget = self.interp_Cx(ttarget)
 
+        # Potential Release (add target values)
+        self.PR = PR
+        if PR is not None:
+            self.PR.PRtarget = PR.PR(self.CFtarget)
+            self.PR.PRtarget_effective = PR.PR_effective(self.CFtarget)
+            self.PR.PRTtarget = PR.PRT(self.CFtarget)
+            self.PR.PRTtarget_effective = PR.PRT_effective(self.CFtarget)
+
         # Restart handling
         if xi is not None and Cxi is not None:
             Cxi_interp = interp1d(t, Cxi.T, kind=&#34;linear&#34;, axis=1, fill_value=&#34;extrapolate&#34;)
@@ -1443,8 +1645,13 @@ class SensPatankarResult:
         self.restart = restart # secure restart file (cannot be modified from outside)
         self.restart_unsecure = restart_unsecure # unsecure one (can be modified from outside)
 
+        # Container for extras (for traceability not used internally)
+        self._extras_copy_policy = &#39;auto&#39; # TIP: can be &#39;auto&#39;,&#39;deep&#39;,&#39;none&#39;
+        self._extras = SimpleNamespace()
+        self._extras_history = None # for chained simulations
+
         # Store state for simulation chaining
-        self.savestate(self.restart.inputs[&#34;multilayer&#34;], self.restart.inputs[&#34;medium&#34;])
+        self.savestate(self.restart.inputs[&#34;multilayer&#34;],self.restart.inputs[&#34;medium&#34;])
 
         # Plot configuration
         if plotconfig is not None:
@@ -1548,6 +1755,7 @@ class SensPatankarResult:
             CF=CF_discrete_noisy,
             fc=np.zeros_like(t_discrete),
             f=np.zeros_like(t_discrete),
+            PR = None,
             x=self.x,
             Cx=np.zeros((len(t_discrete), len(self.x))),
             tC=self.tC,
@@ -1687,12 +1895,25 @@ class SensPatankarResult:
         Dlink.values, klink.values = np.exp(-result.x[maskD]), np.exp(result.x[maskk])
         return result
 
-
-    def savestate(self,multilayer,medium):
+    def savestate(self,multilayer,medium, /, **extras):
         &#34;&#34;&#34;Saves senspantankar inputs for simulation chaining&#34;&#34;&#34;
         self._lastmedium = medium
         self._lastmultilayer = multilayer
         self._isstatesaved = True
+        # save important properties
+        self.update_extras(
+            contacttime = getattr(medium,&#34;contacttime&#34;,None),
+            contacttemperature = getattr(medium,&#34;contacttemperature&#34;,None),
+            surfacearea = getattr(medium,&#34;surfacearea&#34;,None),
+            volume = getattr(medium,&#34;volume&#34;,None),
+            CF0 = getattr(medium,&#39;CF0&#39;,None),
+            C0 = multilayer.C0,
+            l = multilayer.l,
+            k = multilayer.k,
+            D = multilayer.D,
+            T = multilayer.T,
+            **extras
+            )
 
     def update(self, **kwargs):
         &#34;&#34;&#34;
@@ -1809,7 +2030,7 @@ class SensPatankarResult:
         # retrieve previous results
         previousCF = self.restart.CF # CF at at target
         previousCx = self.restart.Cprofile # corresponding profile
-        previousmedium = self.restart.inputs[&#34;medium&#34;].copy()
+        previousmedium = self.restart.inputs[&#34;medium&#34;].copy() # FIXME (use memory)
         previousmedium.CF0 = previousCF # we apply the concentration
         # CF override with CF=new value
         isCF0forced = &#34;CF0&#34; in kwargs
@@ -1828,7 +2049,7 @@ class SensPatankarResult:
         # extend the existing solution
         inputs = self.restart.inputs # all previous inputs
         newsol = senspatankar(
-                multilayer=inputs[&#34;multilayer&#34;],
+                multilayer=kwargs.get(&#34;multilayer&#34;,inputs[&#34;multilayer&#34;]), #inputs[&#34;multilayer&#34;],
                 medium=newmedium,
                 name=kwargs.get(&#34;name&#34;,inputs[&#34;name&#34;]),
                 description=kwargs.get(&#34;description&#34;,inputs[&#34;description&#34;]),
@@ -1861,6 +2082,7 @@ class SensPatankarResult:
             CF=self.CF.copy(),
             fc=self.fc.copy(),
             f=self.f.copy(),
+            PR=self.PR.copy(),
             x=self.x.copy(),
             Cx=self.Cx.copy(),
             tC=self.tC.copy(),
@@ -1882,6 +2104,7 @@ class SensPatankarResult:
         medium.lastsimulation = sim # store the last simulation result in medium
         medium.lastinput = multilayer # store the last input (in medium)
         sim.savestate(multilayer,medium) # store store the inputs in sim for chaining
+        sim.append_extras_snapshot_from(self)
         return sim
 
     # overloading operation
@@ -1892,6 +2115,7 @@ class SensPatankarResult:
         if not self._isstatesaved:
             raise RuntimeError(&#34;The previous inputs were not saved within the instance.&#34;)
         # we update the contact temperature (see example3)
+        medium.substance = self._lastmultilayer.substance # debug 2025-09-01
         return self.chaining(medium&gt;&gt;self._lastmultilayer,medium,CF0=self.restart.CF)
 
     def __add__(self, other):
@@ -1936,6 +2160,56 @@ class SensPatankarResult:
         else:
             merged_description = &#34;&#34;
 
+        # Merged PR
+        # initial taken from self, eq from other
+        V = self.PR.V
+        VF = self.PR.VF
+        m0F = self.PR.m0F
+        m0 = self.PR.m0
+        m0P = self.PR.m0P
+        meq = other.PR.meq
+        peq = other.PR.peq
+        mPeq = other.PR.mPeq
+        mFeq = other.PR.mFeq
+        mask_m0  = m0  &gt; 0
+        # PRE[i]: potential release at equilibrium for each layer i
+        #PRE_ = np.where(m0&gt;0, mFeq / m0, np.nan)
+        PRE_ = np.full_like(m0, np.nan, dtype=float)
+        np.divide(mFeq, m0, out=PRE_, where=mask_m0)
+        PRE_effective_ = mFeq / m0P # effective PRE at equilibrium for P (all layers)
+        # PR(CF)[i]: (CF * VF) / m0[i], only where m0 &gt; 0
+        #PR_ = lambda CF: np.where(m0 &gt; 0, (CF * VF) / m0, np.nan)
+        PR_ = lambda CF: (
+            (lambda num:
+                np.divide(num, m0, out=np.full_like(m0, np.nan, dtype=float),where=mask_m0)
+            )(np.asarray(CF, dtype=float) * VF)
+           )
+        PR_effective_ = lambda CF: (CF * VF) / m0P # effective PR (all layers)
+        PR_merged = SimpleNamespace(
+            # volumes
+            V = V,
+            VF = VF,
+            # equilibrium partial pressure
+            peq = peq,
+            # distribution of initial amounts
+            m0  = m0,    # layer basis
+            m0P =  m0P,   # whole assembly
+            m0F = m0F,    # F
+            # distribution of amounts at equilibrium
+            meq  = meq,
+            mPeq = mPeq,
+            mFeq = mFeq,
+            # PRE (scalar) : potential release at equilibrium
+            PRE = PRE_,
+            PRE_effective = PRE_effective_,
+            # total PR(CF) = PRT(CF) * PRE : total potential release in function of CF
+            PR = PR_,
+            PR_effective = PR_effective_,
+            # PRT(CF): dynamic potential release in function of CF
+            PRT = lambda CF: PR_(CF)/PRE_,
+            PRT_effective = lambda CF: PR_effective_(CF) / PRE_effective_
+            )
+
         # Create new instance with merged data
         merged_result = SensPatankarResult(
             name=f&#34;{self.name} + {other.name}&#34; if self.name!=other.name else self.name,
@@ -1946,6 +2220,7 @@ class SensPatankarResult:
             CF=CF_merged,
             fc=fc_merged,
             f=f_merged,
+            PR=PR_merged,
             x=self.x,  # Keep self.x as reference
             Cx=Cx_merged,
             tC=tC_merged,
@@ -2500,6 +2775,634 @@ class SensPatankarResult:
         df.to_csv(fullpath, index=not long_format)
         print(f&#34;Profile data (Cx) saved to CSV: {fullpath}&#34;)
 
+    # ---------- internal helpers ----------
+    # Extras with copy-on-write + defensive read
+    # Policy can be &#39;auto&#39; | &#39;deep&#39; | &#39;none&#39;
+    # - &#39;auto&#39;: np.ndarray -&gt; .copy(); other mutables -&gt; deepcopy; immutables -&gt; as-is
+    # - &#39;deep&#39;: deepcopy everything
+    # - &#39;none&#39;: store raw references (legacy behavior)
+    def _copy_for_store(self, obj):
+        policy = getattr(self, &#34;_extras_copy_policy&#34;, &#34;auto&#34;)
+        if policy == &#39;none&#39;:
+            return obj
+        if policy == &#39;deep&#39;:
+            return duplicate(obj)
+        # &#39;auto&#39; policy
+        try:
+            if isinstance(obj, np.ndarray):
+                # Ensures a new data buffer (breaks views/refs)
+                return obj.copy()
+            if isinstance(obj, (bytearray, memoryview)):
+                return bytes(obj)  # immutable bytes copy
+            if isinstance(obj, (cabc.MutableMapping, cabc.MutableSequence, cabc.MutableSet)):
+                return duplicate(obj)
+            if isinstance(obj, tuple):
+                # Tuples are immutable but may contain mutables
+                return tuple(duplicate(x) for x in obj)
+            # For everything else, attempt duplicate; fall back to as-is
+            return duplicate(obj)
+        except Exception:
+            return obj
+
+    def _copy_for_read(self, obj):
+        policy = getattr(self, &#34;_extras_copy_policy&#34;, &#34;auto&#34;)
+        if policy == &#39;none&#39;:
+            return obj
+        if policy == &#39;deep&#39;:
+            return duplicate(obj)
+        # &#39;auto&#39; defensive read
+        try:
+            if isinstance(obj, np.ndarray):
+                return obj.copy()
+            if isinstance(obj, (bytearray, memoryview)):
+                return bytes(obj)
+            if isinstance(obj, (cabc.MutableMapping, cabc.MutableSequence, cabc.MutableSet)):
+                return duplicate(obj)
+            if isinstance(obj, tuple):
+                return tuple(duplicate(x) for x in obj)
+            return duplicate(obj)
+        except Exception:
+            return obj
+
+    # ---------------------- Extras helpers ----------------------
+    #   to be used to store parameters for inspection, debugging
+    # ------------------------------------------------------------
+    def has_extra(self, key):
+        &#34;&#34;&#34;Return True if an extra parameter named `key` exists.&#34;&#34;&#34;
+        return hasattr(self._extras, key)
+
+    def get_extra(self, key: str, default=None):
+        &#34;&#34;&#34;
+        Retrieve the extra parameter `key`.
+        If `default` is provided, return it when the key is missing.
+        Otherwise, raise KeyError.
+        Returns a defensive copy to prevent external mutation.
+        &#34;&#34;&#34;
+        if hasattr(self._extras, key):
+            value = getattr(self._extras, key)
+            return self._copy_for_read(value)
+        if default is None:
+            raise KeyError(f&#34;extra parameter &#39;{key}&#39; not found&#34;)
+        # Also defensively copy the default before returning
+        return self._copy_for_read(default)
+
+    def get_extra_readonly(self, key, default=None):
+        &#34;&#34;&#34;
+        Retrieve the extra parameter `key`. (READONLY)
+        If `default` is provided, return it when the key is missing.
+        Otherwise, raise KeyError.
+        &#34;&#34;&#34;
+        arr = self.get_extra(key, default)
+        if isinstance(arr, np.ndarray):
+            arr.setflags(write=False)
+        return arr
+
+    def set_extra(self, key, value):
+        &#34;&#34;&#34;
+        Set or overwrite the extra parameter `key`
+        to a stored copy of `value`.
+        &#34;&#34;&#34;
+        setattr(self._extras, key, self._copy_for_store(value))
+
+    def update_extras(self, mapping=None,**kwargs):
+        &#34;&#34;&#34;
+        Update multiple extras at once.
+        Usage
+        -----
+        self.update_extras({&#39;k1&#39;: v1, &#39;k2&#39;: v2})
+        self.update_extras(k3=v3, k4=v4)
+        self.update_extras({&#39;k1&#39;: v1}, k2=v2)
+        &#34;&#34;&#34;
+        if mapping:
+            for k, v in mapping.items():
+                self.set_extra(k,v)
+        if kwargs:
+            for k, v in kwargs.items():
+                self.set_extra(k,v)
+
+    def del_extra(self, key):
+        &#34;&#34;&#34;Delete an extra parameter. Raises KeyError if it does not exist.&#34;&#34;&#34;
+        if not hasattr(self._extras, key):
+            raise KeyError(f&#34;extra parameter &#39;{key}&#39; not found&#34;)
+        delattr(self._extras, key)
+
+    def extras_as_dict(self, *, copy=&#39;auto&#39;):
+        &#34;&#34;&#34;
+        Return a dict view of extras.
+        copy: &#39;auto&#39;|&#39;deep&#39;|&#39;none&#39;
+          - &#39;auto&#39; matches the mixin&#39;s auto read policy (arrays copied, mutables deepcopied)
+          - &#39;deep&#39; deepcopies all values
+          - &#39;none&#39; returns raw references (use with care)
+        &#34;&#34;&#34;
+        out = {}
+        for k, v in vars(self._extras).items():
+            if copy == &#39;none&#39;:
+                out[k] = v
+            elif copy == &#39;deep&#39;:
+                out[k] = duplicate(v)
+            else:
+                out[k] = self._copy_for_read(v)
+        return out
+
+    # ---------- Extras_history helpers ---------------------
+    #   to be used to store _extras from a previous instance
+    # Notes &amp; rationale
+    # - policy=&#39;deep&#39; by default for history snapshots to guarantee no aliasing with live objects.
+    #   Switch to &#39;auto&#39; to mirror _copy_for_read’s nuanced behavior.
+    # - freeze=True sets ndarray.writeable=False in the snapshot, eliminating accidental downstream writes.
+    # - seal=True wraps the whole payload into immutable containers (MappingProxyType, tuple, frozenset) so
+    #   the snapshot itself can’t be mutated after appending.
+    #   This gives “no external corruption” guarantee even if a reference leaks.
+    # - as_namespace=True preserves SimpleNamespace ergonomics; for dicts, set False.
+    # - append_extras_snapshot(...) is a convenience that both creates and appends the snapshot to _extras_history.
+    # - get_extras_history(...) gives a consistent, defensive accessor to materialize a working (mutable) copy
+    #   for inspection or re-runs.
+    # -------------------------------------------------------
+
+
+    def export_extras_snapshot(self, *, tag=None, policy=&#39;deep&#39;, freeze=True, seal=True,
+                               as_namespace=True, include_meta=True):
+        &#34;&#34;&#34;
+        Build a corruption-safe snapshot of THIS instance&#39;s `_extras` so it can be
+        appended to another instance&#39;s `_extras_history`.
+
+        Parameters
+        ----------
+        policy : {&#39;deep&#39;,&#39;auto&#39;,&#39;none&#39;}, default &#39;deep&#39;
+            &#39;deep&#39;  -&gt; duplicate everything (recommended for history)
+            &#39;auto&#39;  -&gt; use _copy_for_read (arrays copied, mutables deepcopied)
+            &#39;none&#39;  -&gt; raw references (NOT recommended)
+        freeze : bool, default True
+            Make numpy arrays read-only in the snapshot.
+        seal : bool, default True
+            Wrap mappings/containers into immutable views (tuple/frozenset).
+            MappingProxyType is not used anymore since it is not pickable by deepcopy()
+        as_namespace : bool, default True
+            Payload as SimpleNamespace (True) or dict (False).
+        include_meta : bool, default True
+            If True returns {&#39;meta&#39;: {...}, &#39;extras&#39;: &lt;payload&gt;}, else returns &lt;payload&gt; only.
+
+        Returns
+        -------
+        snapshot : dict or payload
+        &#34;&#34;&#34;
+        src = vars(self._extras)
+        # clone with requested policy
+        if policy == &#39;none&#39;:
+            payload = {k: v for k, v in src.items()}
+        else:
+            def _clone(x):
+                return duplicate(x) if policy == &#39;deep&#39; else self._copy_for_read(x)
+            payload = {k: _clone(v) for k, v in src.items()}
+
+        # optionally freeze arrays
+        if freeze:
+            for k, v in payload.items():
+                if isinstance(v, np.ndarray):
+                    payload[k] = _freeze_ndarray(v)
+
+        payload_obj = SimpleNamespace(**payload) if as_namespace else payload
+
+        # optionally seal
+        if seal:
+            payload_obj = _freeze_recursively(payload_obj)
+
+        if not include_meta:
+            return payload_obj
+
+        meta = {
+            &#39;timestamp&#39;: time.time(),
+            &#39;tag&#39;: tag,
+            &#39;policy&#39;: policy,
+            &#39;freeze&#39;: freeze,
+            &#39;seal&#39;: seal,
+            &#39;as_namespace&#39;: as_namespace,
+            &#39;source_id&#39;: getattr(self, &#39;uid&#39;, None),
+            &#39;source_class&#39;: type(self).__name__,
+        }
+        return {&#39;meta&#39;: meta, &#39;extras&#39;: payload_obj}
+
+    def inherit_extras_history_from(self, other, *, include_current=True, tag=None,
+                                    policy=&#39;deep&#39;, freeze=True, seal=False,
+                                    as_namespace=True, overwrite=True):
+        &#34;&#34;&#34;
+        Initialize THIS instance&#39;s `_extras_history` from BOTH:
+          1) `other._extras_history` (deep, alias-free clone), and
+          2) a fresh snapshot of `other._extras` appended at the end (if include_current=True).
+
+        Parameters
+        ----------
+        include_current : bool, default True
+            Append a fresh snapshot of `other._extras` after cloning its history.
+        tag : str|None
+            Tag for the appended current snapshot; defaults to `other.name` if available.
+        policy : {&#39;deep&#39;,&#39;auto&#39;,&#39;none&#39;}, default &#39;deep&#39;
+            Copy policy passed to `export_extras_snapshot` for the *current* snapshot.
+        freeze : bool, default True
+            Make ndarrays read-only in the appended snapshot (history arrays already frozen on clone).
+        seal : bool, default False
+            If True and your export uses sealing, ensure sealing is pickle-safe (avoid MappingProxyType).
+            Default False to avoid mappingproxy pickling issues.
+        as_namespace : bool, default True
+            Payload as SimpleNamespace or dict in the appended snapshot.
+        overwrite : bool, default True
+            If True, replace `self._extras_history`. If False, extend it.
+
+        Returns
+        -------
+        list
+            The initialized/updated `self._extras_history`.
+        &#34;&#34;&#34;
+        if not isinstance(other,SensPatankarResult):
+            raise ValueError(f&#34;`other` must be a valid source instance, not a {type(other).__name__}&#34;)
+        if not hasattr(other, &#34;_extras&#34;):
+            raise TypeError(&#34;`other` must expose an `_extras` namespace&#34;)
+        if not hasattr(other, &#34;_extras_history&#34;):
+            raise TypeError(&#34;`other` must expose an `_extras_history` list (can be None/empty)&#34;)
+
+        # 1) clone other&#39;s history
+        base = _clone_history_list(getattr(other, &#39;_extras_history&#39;, None))
+
+        # 2) optionally append current extras snapshot from other
+        if include_current:
+            if tag is None and hasattr(other, &#34;name&#34;):
+                tag = other.name
+            # Rely on your existing exporter on `other` (uses your copy policies)
+            snap = other.export_extras_snapshot(
+                tag=tag, policy=policy, freeze=freeze, seal=seal,
+                as_namespace=as_namespace, include_meta=True
+            )
+            # annotate lineage for the appended snapshot
+            if isinstance(snap, dict):
+                meta = snap.setdefault(&#39;meta&#39;, {})
+                meta.setdefault(&#39;source_id&#39;, getattr(other, &#39;uid&#39;, None))
+                meta.setdefault(&#39;source_class&#39;, type(other).__name__)
+                meta[&#39;target_id&#39;] = getattr(self, &#39;uid&#39;, None)
+                meta[&#39;target_class&#39;] = type(self).__name__
+                meta[&#39;target_chain_index&#39;] = len(base)  # position it will take
+                meta.setdefault(&#39;timestamp&#39;, time.time())
+            base.append(_clone_snapshot_for_store(snap, freeze_arrays=True))
+
+        # 3) materialize into self
+        if overwrite or getattr(self, &#39;_extras_history&#39;, None) is None:
+            self._extras_history = base
+        else:
+            self._extras_history.extend(base)
+
+        return self._extras_history
+
+    def append_extras_snapshot_from(self, other, *, tag=None, policy=&#39;deep&#39;, freeze=True,
+                                    seal=False, as_namespace=True, inherit_if_needed=True):
+        &#34;&#34;&#34;
+        Append a safe snapshot of `other._extras` into THIS instance&#39;s `_extras_history`,
+        while also inheriting the full lineage from `other._extras_history` if needed.
+
+        This method is intended for **chaining simulation results**: when a new
+        `SensPatankarResult` (``self``) is created from a previous one (``other``),
+        the new result should inherit the entire history of the previous result,
+        then append a fresh snapshot of the previous result&#39;s current `_extras`.
+        This guarantees traceability without aliasing or corruption.
+
+        Parameters
+        ----------
+        other : SensPatankarResult
+            The source simulation result from which to inherit history and
+            capture the current `_extras` snapshot.
+            Must provide `_extras`, `_extras_history`, and
+            `export_extras_snapshot(...)`.
+
+        tag : str or None, optional
+            Optional label for the appended snapshot.
+            Defaults to `other.name` if available.
+
+        policy : {&#39;deep&#39;, &#39;auto&#39;, &#39;none&#39;}, default &#39;deep&#39;
+            Copy policy used by `other.export_extras_snapshot`:
+            - &#39;deep&#39;: deepcopy all values (safe for history, recommended).
+            - &#39;auto&#39;: use `_copy_for_read` semantics (arrays copied, mutables deepcopied).
+            - &#39;none&#39;: keep raw references (NOT recommended for history).
+
+        freeze : bool, default True
+            If True, numpy arrays in the snapshot are returned as read-only
+            (``arr.flags.writeable = False``). Prevents accidental mutation.
+
+        seal : bool, default False
+            If True, attempt to seal containers (dicts, namespaces, sets)
+            into immutable views. Only enable if your sealing strategy is
+            pickle-safe (e.g. `FrozenDict`, `FrozenNamespace`). Defaults to
+            False to avoid `MappingProxyType` pickling errors.
+
+        as_namespace : bool, default True
+            If True, extras payload is returned as a `SimpleNamespace`.
+            If False, a plain dict is used.
+
+        inherit_if_needed : bool, default True
+            If True and ``self._extras_history`` is not yet initialized,
+            copy `other._extras_history` first (deep, alias-free), then
+            append the current snapshot of `other._extras`. If False,
+            only append the snapshot.
+
+        Returns
+        -------
+        dict
+            The appended snapshot object, with at least keys:
+            - ``&#39;meta&#39;``: dictionary of metadata (source/target ids,
+              chain index, timestamp, tag, policy, etc.)
+            - ``&#39;extras&#39;``: the sealed/copy-on-write payload of extras.
+
+        Side Effects
+        ------------
+        - Initializes or extends ``self._extras_history``.
+        - Copies arrays and mutables defensively; no aliasing with `other`.
+        - Appends one new snapshot corresponding to `other._extras`.
+
+        Notes
+        -----
+        - If `other._extras_history` already contains a final snapshot of
+          `other._extras`, you may want to set ``inherit_if_needed=False``
+          to avoid duplication.
+        - All snapshots stored in history are corruption-safe and can be
+          serialized (pickle/deepcopy) provided sealing is pickle-safe.
+
+        Examples
+        --------
+        &gt;&gt;&gt; old = SensPatankarResult(...)
+        &gt;&gt;&gt; new = SensPatankarResult(...)
+        &gt;&gt;&gt; snap = new.append_extras_snapshot_from(old, tag=&#34;after_stepA&#34;)
+        &gt;&gt;&gt; len(new._extras_history)
+        1 + len(old._extras_history)
+        &gt;&gt;&gt; snap[&#39;meta&#39;][&#39;source_class&#39;]
+        &#39;SensPatankarResult&#39;
+        &gt;&gt;&gt; snap[&#39;meta&#39;][&#39;target_chain_index&#39;]
+        len(new._extras_history) - 1
+        &#34;&#34;&#34;
+        if other is None:
+            raise ValueError(&#34;`other` must be a valid source instance&#34;)
+        if not hasattr(other, &#34;_extras&#34;) or not hasattr(other, &#34;export_extras_snapshot&#34;):
+            raise TypeError(&#34;`other` must expose `_extras` and `export_extras_snapshot(...)`&#34;)
+
+        # First time: inherit full lineage from `other` and include its current state.
+        if inherit_if_needed and getattr(self, &#39;_extras_history&#39;, None) is None:
+            # This should deep-clone other&#39;s history and append a fresh snapshot of other&#39;s _extras.
+            # It must also be pickle-safe (no MappingProxyType left behind).
+            self.inherit_extras_history_from(
+                other,
+                include_current=True,
+                tag=(other.name if tag is None and hasattr(other, &#34;name&#34;) else tag),
+                policy=policy,
+                freeze=freeze,
+                seal=seal,             # keep False unless using pickle-safe sealing
+                as_namespace=as_namespace,
+                overwrite=True
+            )
+            return self._extras_history[-1]
+
+        # Otherwise: just append a new snapshot of `other._extras`.
+        if getattr(self, &#39;_extras_history&#39;, None) is None:
+            self._extras_history = []
+
+        if tag is None and hasattr(other, &#34;name&#34;):
+            tag = other.name
+
+        snap = other.export_extras_snapshot(
+            tag=tag,
+            policy=policy,
+            freeze=freeze,
+            seal=seal,                # keep False unless using pickle-safe sealing
+            as_namespace=as_namespace,
+            include_meta=True
+        )
+
+        # Enrich lineage metadata for this link
+        if isinstance(snap, dict):
+            meta = snap.setdefault(&#39;meta&#39;, {})
+            meta.setdefault(&#39;source_id&#39;, getattr(other, &#39;uid&#39;, None))
+            meta.setdefault(&#39;source_class&#39;, type(other).__name__)
+            meta[&#39;target_id&#39;] = getattr(self, &#39;uid&#39;, None)
+            meta[&#39;target_class&#39;] = type(self).__name__
+            meta[&#39;target_chain_index&#39;] = len(self._extras_history)  # index before append
+
+        # Store an alias-free, pickle-safe clone
+        self._extras_history.append(_clone_snapshot_for_store(snap, freeze_arrays=True))
+        return self._extras_history[-1]
+
+
+# -----------------------------------------------------
+# Special container for sensitivity analyis
+# -----------------------------------------------------
+class SensPatankarResultCollection(list):
+    &#34;&#34;&#34;
+    List-derived container restricted to SensPatankarResult objects.
+
+    - Only SensPatankarResult instances can be added or assigned.
+    - Slicing returns a new SensPatankarResultCollection.
+    - __repr__ lists simulations with right-aligned names and left-aligned values.
+    - __str__ is a compact one-liner.
+
+    Operator + and +=: supported with either another collection or a plain iterable of SensPatankarResult.
+    Helper accessors: .names, .by_name(name), .map(fn), and .CF_at_target_dict() for quick extractions.
+    Type safety: all mutating list operations (append, extend, insert, __setitem__) validate elements.
+    &#34;&#34;&#34;
+
+    def __init__(self, name, simulations=None, type=&#34;&#34;, PR=None, PRE=None, PRT=None, description=&#34;&#34;):
+        &#34;&#34;&#34;
+            SensPatankarResultCollection(name=&#34;collection name&#34;)
+            SensPatankarResultCollection(...,simulations=one or list od simulations)
+            SensPatankarResultCollection(...,description=&#34;...&#34;)
+        &#34;&#34;&#34;
+        super().__init__()
+        self.name = name
+        self.description = description
+        self.type = type
+        self.PR = ensure_2d(PR)
+        self.PRE = ensure_2d(PRE)
+        self.PRT = ensure_2d(PRT)
+        if simulations is not None:
+            self.extend(simulations)
+
+    # ---------- internals ----------
+    @staticmethod
+    def _resolve_cls():
+        # Try to resolve SensPatankarResult even in modular layouts
+        cls = None
+        try:
+            from patankar.migration import SensPatankarResult as _SPR  # local import to avoid cycles
+            cls = _SPR
+        except Exception:
+            cls = globals().get(&#34;SensPatankarResult&#34;, None)
+        if cls is None:
+            raise RuntimeError(&#34;Cannot resolve SensPatankarResult class for type checking.&#34;)
+        return cls
+
+    @classmethod
+    def _ensure_result(cls, x):
+        SPR = cls._resolve_cls()
+        if not isinstance(x, SPR):
+            raise TypeError(f&#34;Element must be SensPatankarResult, not {type(x).__name__}&#34;)
+
+    def _label_for(self, idx, sim):
+        nm = getattr(sim, &#34;name&#34;, None)
+        if isinstance(nm, str) and nm.strip():
+            return nm
+        return f&#34;simulation {idx+1}&#34;
+
+    # ---------- list API with checks ----------
+    def append(self, x):  # type: ignore[override]
+        self._ensure_result(x)
+        super().append(x)
+
+    def add(self, x):
+        self.append(x)
+        return self
+
+    def extend(self, xs):  # type: ignore[override]
+        for x in xs:
+            self._ensure_result(x)
+        super().extend(xs)
+
+    def insert(self, i, x):  # type: ignore[override]
+        self._ensure_result(x)
+        super().insert(i, x)
+
+    def __setitem__(self, i, x):  # supports index or slice
+        if isinstance(i, slice):
+            if not hasattr(x, &#34;__iter__&#34;):
+                raise TypeError(&#34;Slice assignment requires an iterable of SensPatankarResult.&#34;)
+            xl = list(x)
+            for e in xl:
+                self._ensure_result(e)
+            super().__setitem__(i, xl)
+        else:
+            self._ensure_result(x)
+            super().__setitem__(i, x)
+
+    def __getitem__(self, i):
+        out = super().__getitem__(i)
+        if isinstance(i, slice):
+            return SensPatankarResultCollection(
+                name=f&#34;{self.name}[{i.start or &#39;&#39;}:{i.stop or &#39;&#39;}:{i.step or &#39;&#39;}]&#34;,
+                sims=out,
+                description=self.description
+            )
+        return out
+
+    # ---------- operators ----------
+    def __add__(self, other):
+        if isinstance(other, SensPatankarResultCollection):
+            sims = list(self) + list(other)
+            newname = f&#34;{self.name} + {other.name}&#34;
+        else:
+            tmp = list(other)
+            for e in tmp:
+                self._ensure_result(e)
+            sims = list(self) + tmp
+            newname = f&#34;{self.name} + &lt;iter&gt;&#34;
+        return SensPatankarResultCollection(name=newname, sims=sims, description=self.description)
+
+    def __iadd__(self, other):
+        if isinstance(other, SensPatankarResultCollection):
+            self.extend(list(other))
+        else:
+            self.extend(other)
+        return self
+
+    def __rshift__(self, medium):
+        &#34;&#34;&#34;Overloads &gt;&gt; to propagate PR&#34;&#34;&#34;
+        if not isinstance(medium,foodphysics):
+            raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
+        if self.type!=&#34;PR&#34;:
+            raise RuntimeError(f&#39;chaining applies for now only to PR-types and not to &#34;{self.type}&#34;&#39;)
+        sim_collection, PR, PRE, PRT = [],[],[],[]
+        for i,s in enumerate(self):
+            # save CF0 and C0 values for restoring their states
+            CF0copy = getattr(s._lastmedium,&#34;CF0&#34;,np.array([0])).copy()
+            C0copy = s._lastmultilayer.C0.copy()
+            # apply the state to be used for sentivitiy analysis
+            s._lastmedium.CF0 = s.get_extra(&#34;CF0&#34;)
+            s._lastmultilayer.C0 = s.get_extra(&#34;C0&#34;)
+            # chain without any copy
+            sim = s &gt;&gt; medium
+            sim_collection.append(sim)
+            # restore CF0 and C0 values
+            s._lastmedium.CF0 = CF0copy
+            s._lastmultilayer.C0 = C0copy
+            # save PR, PRE, PRT
+            PR.append(sim.PR.PRtarget[i])
+            PRE.append(sim.PR.PRE[i])
+            PRT.append(sim.PR.PRTtarget[i])
+        PR = ensure_2d(PR)
+        PRE = ensure_2d(PRE)
+        PRT = ensure_2d(PRT)
+        return SensPatankarResultCollection(
+                    name = f&#34;{self.name} &gt;&gt; {medium.name}&#34;,
+                    simulations = sim_collection,
+                    type=&#34;PR&#34;,
+                    PR =  np.concatenate((self.PR ,PR),axis=0),
+                    PRE = np.concatenate((self.PRE,PRE),axis=0),
+                    PRT = np.concatenate((self.PRT,PRT),axis=0)
+                    )
+
+    # ---------- convenience ----------
+    @property
+    def names(self):
+        return [self._label_for(i, s) for i, s in enumerate(self)]
+
+    def by_name(self, name):
+        for i, s in enumerate(self):
+            if self._label_for(i, s) == name:
+                return s
+        raise KeyError(f&#34;No simulation named &#39;{name}&#39; in collection &#39;{self.name}&#39;.&#34;)
+
+    def map(self, fn):
+        return [fn(s) for s in self]
+
+    def CF_at_target_dict(self):
+        d = {}
+        for i, s in enumerate(self):
+            label = self._label_for(i, s)
+            pc = getattr(s, &#34;_plotconfig&#34;, {})
+            tscale = pc.get(&#34;tscale&#34;, 1.0)
+            Cscale = pc.get(&#34;Cscale&#34;, 1.0)
+            tunit = pc.get(&#34;tunit&#34;, &#34;s&#34;)
+            Cunit = pc.get(&#34;Cunit&#34;, &#34;&#34;)
+            tval = (s.ttarget / tscale).item() if hasattr(s.ttarget, &#34;item&#34;) else (s.ttarget / tscale)
+            cval = (s.CFtarget / Cscale).item() if hasattr(s.CFtarget, &#34;item&#34;) else (s.CFtarget / Cscale)
+            d[label] = {&#34;t&#34;: tval, &#34;tunit&#34;: tunit, &#34;CF&#34;: cval, &#34;Cunit&#34;: Cunit}
+        return d
+
+    # ---------- pretty printing ----------
+    def __repr__(self):
+        if len(self) == 0:
+            header = f&#34;SensPatankarResultCollection: {self.name}\n    &lt;empty&gt;\n&#34;
+            footer = f&#34;\nTotal number of simulations: 0&#34;
+            return header + footer
+
+        rows = []
+        labels = []
+        for i, s in enumerate(self):
+            label = self._label_for(i, s)
+            labels.append(label)
+            pc = getattr(s, &#34;_plotconfig&#34;, {})
+            tscale = pc.get(&#34;tscale&#34;, 1.0)
+            Cscale = pc.get(&#34;Cscale&#34;, 1.0)
+            tunit = pc.get(&#34;tunit&#34;, &#34;s&#34;)
+            Cunit = pc.get(&#34;Cunit&#34;, &#34;&#34;)
+            t_disp = (s.ttarget / tscale).item() if hasattr(s.ttarget, &#34;item&#34;) else (s.ttarget / tscale)
+            c_disp = (s.CFtarget / Cscale).item() if hasattr(s.CFtarget, &#34;item&#34;) else (s.CFtarget / Cscale)
+            value_str = f&#34;CF({t_disp:.4g} [{tunit}]) = {c_disp:.4g} [{Cunit}]&#34;
+            rows.append((label, value_str))
+
+        w = max(len(lb) for lb in labels)
+        header = f&#34;SensPatankarResultCollection: {self.name}&#34;
+        lines = [header]
+        for lb, val in rows:
+            lines.append(f&#34;    {lb:&gt;{w}}: {val}&#34;)
+        lines.append(f&#34;\nTotal number of simulations: {len(self)}&#34;)
+        print(&#34;\n&#34;.join(lines))
+        return str(self)
+
+    def __str__(self):
+        return f&#34;&lt;SensPatankarResultCollection:{self.name} — {len(self)} simulations&gt;&#34;
+
 
 
 # -----------------------------------------------------
@@ -2851,7 +3754,9 @@ class CFSimulationContainer:
         for data in self.curves.values():
             if data[&#34;discrete&#34;]:
                 # Discrete data plotting
-                ax.scatter(data[&#34;times&#34;], data[&#34;values&#34;], label=data[&#34;label&#34;],
+                ax.scatter(data[&#34;times&#34;]/plotconfig[&#34;tscale&#34;],
+                           data[&#34;values&#34;]/plotconfig[&#34;Cscale&#34;],
+                           label=data[&#34;label&#34;],
                            color=data[&#34;color&#34;], marker=data[&#34;marker&#34;],
                            facecolor=data[&#34;markerfacecolor&#34;], edgecolor=data[&#34;markeredgecolor&#34;],
                            s=data[&#34;markersize&#34;]**2)
@@ -2860,10 +3765,11 @@ class CFSimulationContainer:
                 t_min, t_max = data[&#34;tmin&#34;], data[&#34;tmax&#34;]
                 if t_range:
                     t_min, t_max = max(t_min, t_range[0]), min(t_max, t_range[1])
-
                 t_plot = np.linspace(t_min, t_max, 500)
                 CF_plot = data[&#34;interpolant&#34;](t_plot)
-                ax.plot(t_plot, CF_plot, label=cleantex(data[&#34;label&#34;]),
+                ax.plot(t_plot/ plotconfig[&#34;tscale&#34;],
+                        CF_plot/ plotconfig[&#34;Cscale&#34;],
+                        label=cleantex(data[&#34;label&#34;]),
                         color=data[&#34;color&#34;], linestyle=data[&#34;linestyle&#34;], linewidth=data[&#34;linewidth&#34;])
 
         # add SML values (we assume that the units of SML are already final, no need to use plotconfig[&#34;Cscale&#34;])
@@ -2875,7 +3781,7 @@ class CFSimulationContainer:
                 SMLunit = plotconfig[&#34;Cunit&#34;] if SMLunit is None else SMLunit
                 ax.axhline(SML, color=&#34;ForestGreen&#34;, linestyle=(0, (3, 5, 1, 5)),
                            linewidth=2, label=f&#34;SML={SML:.4g} {SMLunit}&#34;)
-                ax.text(tmiddle / plotconfig[&#34;tscale&#34;], SML, &#34;specific migration limit&#34;, fontsize=8, color=&#39;ForestGreen&#39;, ha=&#39;center&#39;, va=&#39;bottom&#39;)
+                ax.text(tmiddle/plotconfig[&#34;tscale&#34;], SML, &#34;specific migration limit&#34;, fontsize=8, color=&#39;ForestGreen&#39;, ha=&#39;center&#39;, va=&#39;bottom&#39;)
 
         # Configure the plot
         ax.set_xlabel(f&#39;Time [{plotconfig[&#34;tunit&#34;]}]&#39; if plotconfig else &#34;Time&#34;)
@@ -3200,6 +4106,7 @@ def senspatankar(multilayer=None, medium=None,
     SensPatankarResult
         An object containing the time vector, concentration histories, fluxes, and
         spatial concentration profiles suitable for plotting and analysis.
+        PR holds potential release details
 
     Notes
     -----
@@ -3313,6 +4220,19 @@ def senspatankar(multilayer=None, medium=None,
 
     # Bi: dimensionless mass transfer coefficient
     Bi = h * l_ref / D_ref
+
+    # Compute initial amounts to be used for potential release (addition v&gt;1.42)
+    # important note PR are exact if only one C0 is non-zero (if not only effective)
+    m0F = CF0 * VF      # m0 in F (at the beginning of this step, included in m0F)
+    V = l * A;          # V[i] volume of layer i=1,2,...
+    m0 = V*C0           # m0[i] in layer i=1,2,...
+    m0P = sum(m0)       # whole m0 in P (all layers) at the beginning of the chain
+    # TIP: m0P must not be accounted in the calculation of peq, since m0P is taken from the beginning of the chain
+    # peq = k0 * (m0F+m0P)/(VF+sum((k0/k)*V)) # equilibrium partial pressure
+    peq = k0 * m0P/(VF+sum((k0/k)*V)) # equilibrium partial pressure
+    meq = (peq/k) * V  # m0eq[i] in layer i=1,2,...
+    mPeq = sum(meq)   # whole m0eq in P
+    mFeq = (peq/k0) * VF # m0eq in F
 
     # Compute equilibrium concentration factor
     sum_lL_C0 = np.sum(l_normalized * L * C0)
@@ -3476,6 +4396,46 @@ def senspatankar(multilayer=None, medium=None,
     CF = CF_dimless * C0eq
     Cx = Cfull_dimless * C0eq
 
+    # potential release container
+    mask_m0  = m0  &gt; 0
+    # PRE[i]: potential release at equilibrium for each layer i
+    #PRE_ = np.where(m0&gt;0, mFeq / m0, np.nan)
+    PRE_ = np.full_like(m0, np.nan, dtype=float)
+    np.divide(mFeq, m0, out=PRE_, where=mask_m0)
+    PRE_effective_ = mFeq / m0P # effective potential release at equilibrium for P (all layers)
+    # PR(CF)[i]: (CF * VF) / m0[i], only where m0 &gt; 0
+    #PR_ = lambda CF: np.where(m0 &gt; 0, (CF * VF) / m0, np.nan)
+    PR_ = lambda CF: (
+        (lambda num:
+            np.divide(num, m0,out=np.full_like(m0, np.nan, dtype=float),where=mask_m0)
+        )(np.asarray(CF, dtype=float) * VF)
+    )
+    PR_effective_ = lambda CF: (CF*VF) / m0P # effective potential release for P (all layers)
+    PR = SimpleNamespace(
+        # volumes
+        V = V,
+        VF = VF,
+        # equilibrium partial pressure
+        peq = peq,
+        # distribution of initial amounts
+        m0 = m0,       # layer basis
+        m0P =  m0P,    # whole assembly
+        m0F =  m0F,    # F
+        # distribution of amounts at equilibrium
+        meq = meq,
+        mPeq =  mPeq,
+        mFeq = mFeq,
+        # PRE (scalar) : potential release at equilibrium
+        PRE = PRE_,
+        PRE_effective = PRE_effective_,
+        # total PR(CF) = PRT(CF) * PRE : total potential release in function of CF
+        PR = PR_,
+        PR_effective = PR_effective_,
+        # PRT(CF): dynamic potential release in function of CF
+        PRT = lambda CF: PR_(CF)/PRE_,
+        PRT_effective = lambda CF: PR_effective_(CF) / PRE_effective_
+        )
+
     return SensPatankarResult(
         name=name,
         description=description,
@@ -3489,6 +4449,7 @@ def senspatankar(multilayer=None, medium=None,
         Cx=Cx,
         tC=sol.t,
         C0eq=C0eq,
+        PR = PR,
         timebase=timebase,
         restart=restart, # &lt;--- restart info (inputs only)
         restart_unsecure=restart_unsecure,
@@ -4875,6 +5836,67 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
     return fig, ax</code></pre>
 </details>
 </dd>
+<dt id="migration.ensure_2d"><code class="name flex">
+<span>def <span class="ident">ensure_2d</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Ensure that input x is a 2D numpy.ndarray with shape (1, n) or (n, m).
+Parameters</p>
+<hr>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>list</code> or <code>np.ndarray</code></dt>
+<dd>Input data.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>arr</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>2D numpy array with shape (1, n) or (n, m).</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>TypeError</code></dt>
+<dd>If input cannot be converted to a numpy.ndarray.</dd>
+<dt><code>ValueError</code></dt>
+<dd>If array shape is not compatible.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_2d(x):
+    &#34;&#34;&#34;
+    Ensure that input x is a 2D numpy.ndarray with shape (1, n) or (n, m).
+    Parameters
+    ----------
+    x : list or np.ndarray
+        Input data.
+    Returns
+    -------
+    arr : np.ndarray
+        2D numpy array with shape (1, n) or (n, m).
+    Raises
+    ------
+    TypeError
+        If input cannot be converted to a numpy.ndarray.
+    ValueError
+        If array shape is not compatible.
+    &#34;&#34;&#34;
+    # i) Convert list -&gt; ndarray
+    if isinstance(x, list):
+        x = np.array(x)
+    # ii) Check ndarray
+    if not isinstance(x, np.ndarray):
+        raise TypeError(f&#34;Expected list or np.ndarray, got {type(x)}&#34;)
+    # iii) Check shape
+    if x.ndim == 1:
+        # iv) Convert (n,) -&gt; (1,n)
+        return x[None, :]
+    elif x.ndim == 2:
+        return x
+    else:
+        raise ValueError(f&#34;Array must be 1D or 2D, got shape {x.shape}&#34;)</code></pre>
+</details>
+</dd>
 <dt id="migration.is_latex_available"><code class="name flex">
 <span>def <span class="ident">is_latex_available</span></span>(<span>)</span>
 </code></dt>
@@ -4955,6 +5977,7 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
     if is_valid_figure(fig):
         print_pdf(fig, filename, destinationfolder, overwrite, dpi)
         print_png(fig, filename, destinationfolder, overwrite, dpi)
+        print_svg(fig, filename, destinationfolder, overwrite, dpi)
     else:
         print(&#34;no valid figure&#34;)</code></pre>
 </details>
@@ -5051,6 +6074,52 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
     print(f&#34;Saved PNG: {filename}&#34;)</code></pre>
 </details>
 </dd>
+<dt id="migration.print_svg"><code class="name flex">
+<span>def <span class="ident">print_svg</span></span>(<span>fig, filename='', destinationfolder='/home/olivi/natacha/python/utils', overwrite=False, dpi=300)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save a given figure as a SVG.</p>
+<p>Parameters:
+- fig: Matplotlib figure object to be saved.
+- filename: str, SVG filename (auto-generated if empty).
+- destinationfolder: str, folder to save the file.
+- overwrite: bool, overwrite existing file.
+- dpi: int, resolution (default=300).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_svg(fig, filename=&#34;&#34;, destinationfolder=os.getcwd(), overwrite=False, dpi=300):
+    &#34;&#34;&#34;
+    Save a given figure as a SVG.
+
+    Parameters:
+    - fig: Matplotlib figure object to be saved.
+    - filename: str, SVG filename (auto-generated if empty).
+    - destinationfolder: str, folder to save the file.
+    - overwrite: bool, overwrite existing file.
+    - dpi: int, resolution (default=300).
+    &#34;&#34;&#34;
+    if not is_valid_figure(fig):
+        print(&#34;no valid figure&#34;)
+        return
+    # Generate filename if not provided
+    if not filename:
+        filename = _generate_figname(fig, &#34;.svg&#34;)
+    # add extension if missing
+    if not filename.endswith(&#34;.svg&#34;):
+        filename = filename+&#34;.svg&#34;
+    # Ensure full path
+    filename = os.path.join(destinationfolder, filename)
+    # Prevent overwriting unless specified
+    if not overwrite and os.path.exists(filename):
+        print(f&#34;File {filename} already exists. Use overwrite=True to replace it.&#34;)
+        return
+    # Save figure as PNG
+    fig.savefig(filename, format=&#34;svg&#34;, dpi=dpi, bbox_inches=&#34;tight&#34;)
+    print(f&#34;Saved SVG: {filename}&#34;)</code></pre>
+</details>
+</dd>
 <dt id="migration.rgb"><code class="name flex">
 <span>def <span class="ident">rgb</span></span>(<span>)</span>
 </code></dt>
@@ -5096,7 +6165,7 @@ and a "Launch Simulation" button triggers the simulation, which computes:</p>
 </details>
 </dd>
 <dt id="migration.senspatankar"><code class="name flex">
-<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:MCD2Ez', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
+<span>def <span class="ident">senspatankar</span></span>(<span>multilayer=None, medium=None, name='senspatantkar:8kEh8Z', description='', t=None, autotime=True, timescale='sqrt', Cxprevious=None, ntimes=1000, RelTol=1e-06, AbsTol=1e-06, container=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -5157,7 +6226,8 @@ or if <code>timescale</code> is not a string.</dd>
 <dl>
 <dt><code><a title="migration.SensPatankarResult" href="#migration.SensPatankarResult">SensPatankarResult</a></code></dt>
 <dd>An object containing the time vector, concentration histories, fluxes, and
-spatial concentration profiles suitable for plotting and analysis.</dd>
+spatial concentration profiles suitable for plotting and analysis.
+PR holds potential release details</dd>
 </dl>
 <h2 id="notes">Notes</h2>
 <ul>
@@ -5257,6 +6327,7 @@ sol.plotC()
     SensPatankarResult
         An object containing the time vector, concentration histories, fluxes, and
         spatial concentration profiles suitable for plotting and analysis.
+        PR holds potential release details
 
     Notes
     -----
@@ -5370,6 +6441,19 @@ sol.plotC()
 
     # Bi: dimensionless mass transfer coefficient
     Bi = h * l_ref / D_ref
+
+    # Compute initial amounts to be used for potential release (addition v&gt;1.42)
+    # important note PR are exact if only one C0 is non-zero (if not only effective)
+    m0F = CF0 * VF      # m0 in F (at the beginning of this step, included in m0F)
+    V = l * A;          # V[i] volume of layer i=1,2,...
+    m0 = V*C0           # m0[i] in layer i=1,2,...
+    m0P = sum(m0)       # whole m0 in P (all layers) at the beginning of the chain
+    # TIP: m0P must not be accounted in the calculation of peq, since m0P is taken from the beginning of the chain
+    # peq = k0 * (m0F+m0P)/(VF+sum((k0/k)*V)) # equilibrium partial pressure
+    peq = k0 * m0P/(VF+sum((k0/k)*V)) # equilibrium partial pressure
+    meq = (peq/k) * V  # m0eq[i] in layer i=1,2,...
+    mPeq = sum(meq)   # whole m0eq in P
+    mFeq = (peq/k0) * VF # m0eq in F
 
     # Compute equilibrium concentration factor
     sum_lL_C0 = np.sum(l_normalized * L * C0)
@@ -5533,6 +6617,46 @@ sol.plotC()
     CF = CF_dimless * C0eq
     Cx = Cfull_dimless * C0eq
 
+    # potential release container
+    mask_m0  = m0  &gt; 0
+    # PRE[i]: potential release at equilibrium for each layer i
+    #PRE_ = np.where(m0&gt;0, mFeq / m0, np.nan)
+    PRE_ = np.full_like(m0, np.nan, dtype=float)
+    np.divide(mFeq, m0, out=PRE_, where=mask_m0)
+    PRE_effective_ = mFeq / m0P # effective potential release at equilibrium for P (all layers)
+    # PR(CF)[i]: (CF * VF) / m0[i], only where m0 &gt; 0
+    #PR_ = lambda CF: np.where(m0 &gt; 0, (CF * VF) / m0, np.nan)
+    PR_ = lambda CF: (
+        (lambda num:
+            np.divide(num, m0,out=np.full_like(m0, np.nan, dtype=float),where=mask_m0)
+        )(np.asarray(CF, dtype=float) * VF)
+    )
+    PR_effective_ = lambda CF: (CF*VF) / m0P # effective potential release for P (all layers)
+    PR = SimpleNamespace(
+        # volumes
+        V = V,
+        VF = VF,
+        # equilibrium partial pressure
+        peq = peq,
+        # distribution of initial amounts
+        m0 = m0,       # layer basis
+        m0P =  m0P,    # whole assembly
+        m0F =  m0F,    # F
+        # distribution of amounts at equilibrium
+        meq = meq,
+        mPeq =  mPeq,
+        mFeq = mFeq,
+        # PRE (scalar) : potential release at equilibrium
+        PRE = PRE_,
+        PRE_effective = PRE_effective_,
+        # total PR(CF) = PRT(CF) * PRE : total potential release in function of CF
+        PR = PR_,
+        PR_effective = PR_effective_,
+        # PRT(CF): dynamic potential release in function of CF
+        PRT = lambda CF: PR_(CF)/PRE_,
+        PRT_effective = lambda CF: PR_effective_(CF) / PRE_effective_
+        )
+
     return SensPatankarResult(
         name=name,
         description=description,
@@ -5546,6 +6670,7 @@ sol.plotC()
         Cx=Cx,
         tC=sol.t,
         C0eq=C0eq,
+        PR = PR,
         timebase=timebase,
         restart=restart, # &lt;--- restart info (inputs only)
         restart_unsecure=restart_unsecure,
@@ -6004,7 +7129,9 @@ Adjusted RGB(A) color tuple with too bright colors darkened.</p>
         for data in self.curves.values():
             if data[&#34;discrete&#34;]:
                 # Discrete data plotting
-                ax.scatter(data[&#34;times&#34;], data[&#34;values&#34;], label=data[&#34;label&#34;],
+                ax.scatter(data[&#34;times&#34;]/plotconfig[&#34;tscale&#34;],
+                           data[&#34;values&#34;]/plotconfig[&#34;Cscale&#34;],
+                           label=data[&#34;label&#34;],
                            color=data[&#34;color&#34;], marker=data[&#34;marker&#34;],
                            facecolor=data[&#34;markerfacecolor&#34;], edgecolor=data[&#34;markeredgecolor&#34;],
                            s=data[&#34;markersize&#34;]**2)
@@ -6013,10 +7140,11 @@ Adjusted RGB(A) color tuple with too bright colors darkened.</p>
                 t_min, t_max = data[&#34;tmin&#34;], data[&#34;tmax&#34;]
                 if t_range:
                     t_min, t_max = max(t_min, t_range[0]), min(t_max, t_range[1])
-
                 t_plot = np.linspace(t_min, t_max, 500)
                 CF_plot = data[&#34;interpolant&#34;](t_plot)
-                ax.plot(t_plot, CF_plot, label=cleantex(data[&#34;label&#34;]),
+                ax.plot(t_plot/ plotconfig[&#34;tscale&#34;],
+                        CF_plot/ plotconfig[&#34;Cscale&#34;],
+                        label=cleantex(data[&#34;label&#34;]),
                         color=data[&#34;color&#34;], linestyle=data[&#34;linestyle&#34;], linewidth=data[&#34;linewidth&#34;])
 
         # add SML values (we assume that the units of SML are already final, no need to use plotconfig[&#34;Cscale&#34;])
@@ -6028,7 +7156,7 @@ Adjusted RGB(A) color tuple with too bright colors darkened.</p>
                 SMLunit = plotconfig[&#34;Cunit&#34;] if SMLunit is None else SMLunit
                 ax.axhline(SML, color=&#34;ForestGreen&#34;, linestyle=(0, (3, 5, 1, 5)),
                            linewidth=2, label=f&#34;SML={SML:.4g} {SMLunit}&#34;)
-                ax.text(tmiddle / plotconfig[&#34;tscale&#34;], SML, &#34;specific migration limit&#34;, fontsize=8, color=&#39;ForestGreen&#39;, ha=&#39;center&#39;, va=&#39;bottom&#39;)
+                ax.text(tmiddle/plotconfig[&#34;tscale&#34;], SML, &#34;specific migration limit&#34;, fontsize=8, color=&#39;ForestGreen&#39;, ha=&#39;center&#39;, va=&#39;bottom&#39;)
 
         # Configure the plot
         ax.set_xlabel(f&#39;Time [{plotconfig[&#34;tunit&#34;]}]&#39; if plotconfig else &#34;Time&#34;)
@@ -6532,7 +7660,9 @@ If the colormap name is not recognized.</p></div>
     for data in self.curves.values():
         if data[&#34;discrete&#34;]:
             # Discrete data plotting
-            ax.scatter(data[&#34;times&#34;], data[&#34;values&#34;], label=data[&#34;label&#34;],
+            ax.scatter(data[&#34;times&#34;]/plotconfig[&#34;tscale&#34;],
+                       data[&#34;values&#34;]/plotconfig[&#34;Cscale&#34;],
+                       label=data[&#34;label&#34;],
                        color=data[&#34;color&#34;], marker=data[&#34;marker&#34;],
                        facecolor=data[&#34;markerfacecolor&#34;], edgecolor=data[&#34;markeredgecolor&#34;],
                        s=data[&#34;markersize&#34;]**2)
@@ -6541,10 +7671,11 @@ If the colormap name is not recognized.</p></div>
             t_min, t_max = data[&#34;tmin&#34;], data[&#34;tmax&#34;]
             if t_range:
                 t_min, t_max = max(t_min, t_range[0]), min(t_max, t_range[1])
-
             t_plot = np.linspace(t_min, t_max, 500)
             CF_plot = data[&#34;interpolant&#34;](t_plot)
-            ax.plot(t_plot, CF_plot, label=cleantex(data[&#34;label&#34;]),
+            ax.plot(t_plot/ plotconfig[&#34;tscale&#34;],
+                    CF_plot/ plotconfig[&#34;Cscale&#34;],
+                    label=cleantex(data[&#34;label&#34;]),
                     color=data[&#34;color&#34;], linestyle=data[&#34;linestyle&#34;], linewidth=data[&#34;linewidth&#34;])
 
     # add SML values (we assume that the units of SML are already final, no need to use plotconfig[&#34;Cscale&#34;])
@@ -6556,7 +7687,7 @@ If the colormap name is not recognized.</p></div>
             SMLunit = plotconfig[&#34;Cunit&#34;] if SMLunit is None else SMLunit
             ax.axhline(SML, color=&#34;ForestGreen&#34;, linestyle=(0, (3, 5, 1, 5)),
                        linewidth=2, label=f&#34;SML={SML:.4g} {SMLunit}&#34;)
-            ax.text(tmiddle / plotconfig[&#34;tscale&#34;], SML, &#34;specific migration limit&#34;, fontsize=8, color=&#39;ForestGreen&#39;, ha=&#39;center&#39;, va=&#39;bottom&#39;)
+            ax.text(tmiddle/plotconfig[&#34;tscale&#34;], SML, &#34;specific migration limit&#34;, fontsize=8, color=&#39;ForestGreen&#39;, ha=&#39;center&#39;, va=&#39;bottom&#39;)
 
     # Configure the plot
     ax.set_xlabel(f&#39;Time [{plotconfig[&#34;tunit&#34;]}]&#39; if plotconfig else &#34;Time&#34;)
@@ -7214,6 +8345,75 @@ values (float or array-like): New values to assign.</p>
 </dd>
 </dl>
 </dd>
+<dt id="migration.FrozenDict"><code class="flex name class">
+<span>class <span class="ident">FrozenDict</span></span>
+<span>(</span><span>data=None, /, **kw)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Immutable, picklable mapping.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FrozenDict(cabc.Mapping):
+    &#34;&#34;&#34;Immutable, picklable mapping.&#34;&#34;&#34;
+    __slots__ = (&#34;_data&#34;,)
+    def __init__(self, data=None, /, **kw):
+        d = {}
+        if data:
+            d.update(dict(data))
+        if kw:
+            d.update(kw)
+        self._data = d
+    def __getitem__(self, k): return self._data[k]
+    def __iter__(self): return iter(self._data)
+    def __len__(self): return len(self._data)
+    def __repr__(self): return f&#34;FrozenDict({self._data!r})&#34;
+    def __reduce__(self):  # makes it picklable
+        return (FrozenDict, (self._data,))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>collections.abc.Mapping</li>
+<li>collections.abc.Collection</li>
+<li>collections.abc.Sized</li>
+<li>collections.abc.Iterable</li>
+<li>collections.abc.Container</li>
+</ul>
+</dd>
+<dt id="migration.FrozenNamespace"><code class="flex name class">
+<span>class <span class="ident">FrozenNamespace</span></span>
+<span>(</span><span>mapping=None, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Immutable, picklable namespace.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FrozenNamespace(SimpleNamespace):
+    &#34;&#34;&#34;Immutable, picklable namespace.&#34;&#34;&#34;
+    def __init__(self, mapping=None, **kwargs):
+        if mapping is None: mapping = {}
+        super().__init__(**{**mapping, **kwargs})
+        object.__setattr__(self, &#34;_frozen&#34;, True)
+    def __setattr__(self, name, value):
+        if getattr(self, &#34;_frozen&#34;, False):
+            raise AttributeError(&#34;FrozenNamespace is immutable&#34;)
+        return super().__setattr__(name, value)
+    def __delattr__(self, name):
+        if getattr(self, &#34;_frozen&#34;, False):
+            raise AttributeError(&#34;FrozenNamespace is immutable&#34;)
+        return super().__delattr__(name)
+    def __reduce__(self):
+        # reconstruct from its dict content
+        return (FrozenNamespace, (vars(self),))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>types.SimpleNamespace</li>
+</ul>
+</dd>
 <dt id="migration.PrintableFigure"><code class="flex name class">
 <span>class <span class="ident">PrintableFigure</span></span>
 <span>(</span><span>figsize=None, dpi=None, *, facecolor=None, edgecolor=None, linewidth=0.0, frameon=None, subplotpars=None, tight_layout=None, constrained_layout=None, layout=None, **kwargs)</span>
@@ -7494,7 +8694,7 @@ zorder: float</p></div>
 </dd>
 <dt id="migration.SensPatankarResult"><code class="flex name class">
 <span>class <span class="ident">SensPatankarResult</span></span>
-<span>(</span><span>name, description, ttarget, t, C, CF, fc, f, x, Cx, tC, C0eq, timebase, restart, restart_unsecure, xi, Cxi, SML=None, SMLunit=None, plotSML=True, plotconfig=None, createcontainer=True, container=None, discrete=False)</span>
+<span>(</span><span>name, description, ttarget, t, C, CF, fc, f, PR, x, Cx, tC, C0eq, timebase, restart, restart_unsecure, xi, Cxi, SML=None, SMLunit=None, plotSML=True, plotconfig=None, createcontainer=True, container=None, discrete=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Container for the results of the 1D mass transfer simulation performed by <code><a title="migration.senspatankar" href="#migration.senspatankar">senspatankar()</a></code>.</p>
@@ -7519,6 +8719,9 @@ at each time step. Shape: (ntimes,).</dd>
 <dd>1D array of the cumulative flux into the food. Shape: (ntimes,).</dd>
 <dt><strong><code>f</code></strong> :&ensp;<code>ndarray with shape (ntimes,)</code></dt>
 <dd>1D array of the instantaneous flux into the food. Shape: (ntimes,).</dd>
+<dt><strong><code>PR</code></strong> :&ensp;<code>potential release results (addition version&gt;1.42)</code></dt>
+<dd>dictionary with keys peq,m0,m0P,m0F,mPeq,mFeq,PRE,PRE_effective,PR,PR_effective,PRT,PRT_effective,
+PRtarget,PRtarget_effective,PRTtarget,PRTtarget_effective</dd>
 <dt><strong><code>x</code></strong> :&ensp;<code>ndarray with shape (npoints,)</code></dt>
 <dd>1D array of the position coordinates of all packaging nodes (including sub-nodes).
 npoints = 3 * number of original FV elements (interfaces e and w are included).</dd>
@@ -7579,6 +8782,9 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         1D array of the cumulative flux into the food. Shape: (ntimes,).
     f : ndarray with shape (ntimes,)
         1D array of the instantaneous flux into the food. Shape: (ntimes,).
+    PR : potential release results (addition version&gt;1.42)
+        dictionary with keys peq,m0,m0P,m0F,mPeq,mFeq,PRE,PRE_effective,PR,PR_effective,PRT,PRT_effective,
+        PRtarget,PRtarget_effective,PRTtarget,PRTtarget_effective
     x : ndarray with shape (npoints,)
         1D array of the position coordinates of all packaging nodes (including sub-nodes).
         npoints = 3 * number of original FV elements (interfaces e and w are included).
@@ -7612,7 +8818,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
 
     &#34;&#34;&#34;
 
-    def __init__(self, name, description, ttarget, t, C, CF, fc, f, x, Cx, tC, C0eq, timebase,
+    def __init__(self, name, description, ttarget, t, C, CF, fc, f, PR, x, Cx, tC, C0eq, timebase,
                  restart,restart_unsecure,xi,Cxi,
                  SML = None, SMLunit=None, plotSML=True,
                  plotconfig=None, createcontainer=True, container=None, discrete=False):
@@ -7638,6 +8844,14 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         self.interp_Cx = interp1d(t, Cx.T, kind=&#34;linear&#34;, axis=1, fill_value=&#34;extrapolate&#34;)
         self.Cxtarget = self.interp_Cx(ttarget)
 
+        # Potential Release (add target values)
+        self.PR = PR
+        if PR is not None:
+            self.PR.PRtarget = PR.PR(self.CFtarget)
+            self.PR.PRtarget_effective = PR.PR_effective(self.CFtarget)
+            self.PR.PRTtarget = PR.PRT(self.CFtarget)
+            self.PR.PRTtarget_effective = PR.PRT_effective(self.CFtarget)
+
         # Restart handling
         if xi is not None and Cxi is not None:
             Cxi_interp = interp1d(t, Cxi.T, kind=&#34;linear&#34;, axis=1, fill_value=&#34;extrapolate&#34;)
@@ -7647,8 +8861,13 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         self.restart = restart # secure restart file (cannot be modified from outside)
         self.restart_unsecure = restart_unsecure # unsecure one (can be modified from outside)
 
+        # Container for extras (for traceability not used internally)
+        self._extras_copy_policy = &#39;auto&#39; # TIP: can be &#39;auto&#39;,&#39;deep&#39;,&#39;none&#39;
+        self._extras = SimpleNamespace()
+        self._extras_history = None # for chained simulations
+
         # Store state for simulation chaining
-        self.savestate(self.restart.inputs[&#34;multilayer&#34;], self.restart.inputs[&#34;medium&#34;])
+        self.savestate(self.restart.inputs[&#34;multilayer&#34;],self.restart.inputs[&#34;medium&#34;])
 
         # Plot configuration
         if plotconfig is not None:
@@ -7752,6 +8971,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
             CF=CF_discrete_noisy,
             fc=np.zeros_like(t_discrete),
             f=np.zeros_like(t_discrete),
+            PR = None,
             x=self.x,
             Cx=np.zeros((len(t_discrete), len(self.x))),
             tC=self.tC,
@@ -7891,12 +9111,25 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         Dlink.values, klink.values = np.exp(-result.x[maskD]), np.exp(result.x[maskk])
         return result
 
-
-    def savestate(self,multilayer,medium):
+    def savestate(self,multilayer,medium, /, **extras):
         &#34;&#34;&#34;Saves senspantankar inputs for simulation chaining&#34;&#34;&#34;
         self._lastmedium = medium
         self._lastmultilayer = multilayer
         self._isstatesaved = True
+        # save important properties
+        self.update_extras(
+            contacttime = getattr(medium,&#34;contacttime&#34;,None),
+            contacttemperature = getattr(medium,&#34;contacttemperature&#34;,None),
+            surfacearea = getattr(medium,&#34;surfacearea&#34;,None),
+            volume = getattr(medium,&#34;volume&#34;,None),
+            CF0 = getattr(medium,&#39;CF0&#39;,None),
+            C0 = multilayer.C0,
+            l = multilayer.l,
+            k = multilayer.k,
+            D = multilayer.D,
+            T = multilayer.T,
+            **extras
+            )
 
     def update(self, **kwargs):
         &#34;&#34;&#34;
@@ -8013,7 +9246,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         # retrieve previous results
         previousCF = self.restart.CF # CF at at target
         previousCx = self.restart.Cprofile # corresponding profile
-        previousmedium = self.restart.inputs[&#34;medium&#34;].copy()
+        previousmedium = self.restart.inputs[&#34;medium&#34;].copy() # FIXME (use memory)
         previousmedium.CF0 = previousCF # we apply the concentration
         # CF override with CF=new value
         isCF0forced = &#34;CF0&#34; in kwargs
@@ -8032,7 +9265,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         # extend the existing solution
         inputs = self.restart.inputs # all previous inputs
         newsol = senspatankar(
-                multilayer=inputs[&#34;multilayer&#34;],
+                multilayer=kwargs.get(&#34;multilayer&#34;,inputs[&#34;multilayer&#34;]), #inputs[&#34;multilayer&#34;],
                 medium=newmedium,
                 name=kwargs.get(&#34;name&#34;,inputs[&#34;name&#34;]),
                 description=kwargs.get(&#34;description&#34;,inputs[&#34;description&#34;]),
@@ -8065,6 +9298,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
             CF=self.CF.copy(),
             fc=self.fc.copy(),
             f=self.f.copy(),
+            PR=self.PR.copy(),
             x=self.x.copy(),
             Cx=self.Cx.copy(),
             tC=self.tC.copy(),
@@ -8086,6 +9320,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         medium.lastsimulation = sim # store the last simulation result in medium
         medium.lastinput = multilayer # store the last input (in medium)
         sim.savestate(multilayer,medium) # store store the inputs in sim for chaining
+        sim.append_extras_snapshot_from(self)
         return sim
 
     # overloading operation
@@ -8096,6 +9331,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         if not self._isstatesaved:
             raise RuntimeError(&#34;The previous inputs were not saved within the instance.&#34;)
         # we update the contact temperature (see example3)
+        medium.substance = self._lastmultilayer.substance # debug 2025-09-01
         return self.chaining(medium&gt;&gt;self._lastmultilayer,medium,CF0=self.restart.CF)
 
     def __add__(self, other):
@@ -8140,6 +9376,56 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
         else:
             merged_description = &#34;&#34;
 
+        # Merged PR
+        # initial taken from self, eq from other
+        V = self.PR.V
+        VF = self.PR.VF
+        m0F = self.PR.m0F
+        m0 = self.PR.m0
+        m0P = self.PR.m0P
+        meq = other.PR.meq
+        peq = other.PR.peq
+        mPeq = other.PR.mPeq
+        mFeq = other.PR.mFeq
+        mask_m0  = m0  &gt; 0
+        # PRE[i]: potential release at equilibrium for each layer i
+        #PRE_ = np.where(m0&gt;0, mFeq / m0, np.nan)
+        PRE_ = np.full_like(m0, np.nan, dtype=float)
+        np.divide(mFeq, m0, out=PRE_, where=mask_m0)
+        PRE_effective_ = mFeq / m0P # effective PRE at equilibrium for P (all layers)
+        # PR(CF)[i]: (CF * VF) / m0[i], only where m0 &gt; 0
+        #PR_ = lambda CF: np.where(m0 &gt; 0, (CF * VF) / m0, np.nan)
+        PR_ = lambda CF: (
+            (lambda num:
+                np.divide(num, m0, out=np.full_like(m0, np.nan, dtype=float),where=mask_m0)
+            )(np.asarray(CF, dtype=float) * VF)
+           )
+        PR_effective_ = lambda CF: (CF * VF) / m0P # effective PR (all layers)
+        PR_merged = SimpleNamespace(
+            # volumes
+            V = V,
+            VF = VF,
+            # equilibrium partial pressure
+            peq = peq,
+            # distribution of initial amounts
+            m0  = m0,    # layer basis
+            m0P =  m0P,   # whole assembly
+            m0F = m0F,    # F
+            # distribution of amounts at equilibrium
+            meq  = meq,
+            mPeq = mPeq,
+            mFeq = mFeq,
+            # PRE (scalar) : potential release at equilibrium
+            PRE = PRE_,
+            PRE_effective = PRE_effective_,
+            # total PR(CF) = PRT(CF) * PRE : total potential release in function of CF
+            PR = PR_,
+            PR_effective = PR_effective_,
+            # PRT(CF): dynamic potential release in function of CF
+            PRT = lambda CF: PR_(CF)/PRE_,
+            PRT_effective = lambda CF: PR_effective_(CF) / PRE_effective_
+            )
+
         # Create new instance with merged data
         merged_result = SensPatankarResult(
             name=f&#34;{self.name} + {other.name}&#34; if self.name!=other.name else self.name,
@@ -8150,6 +9436,7 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
             CF=CF_merged,
             fc=fc_merged,
             f=f_merged,
+            PR=PR_merged,
             x=self.x,  # Keep self.x as reference
             Cx=Cx_merged,
             tC=tC_merged,
@@ -8702,7 +9989,417 @@ Shape: (ntimes, 3 * number_of_nodes). Each row corresponds to one time step.</dd
             raise FileExistsError(f&#34;File &#39;{fullpath}&#39; already exists. Use overwrite=True to replace it.&#34;)
 
         df.to_csv(fullpath, index=not long_format)
-        print(f&#34;Profile data (Cx) saved to CSV: {fullpath}&#34;)</code></pre>
+        print(f&#34;Profile data (Cx) saved to CSV: {fullpath}&#34;)
+
+    # ---------- internal helpers ----------
+    # Extras with copy-on-write + defensive read
+    # Policy can be &#39;auto&#39; | &#39;deep&#39; | &#39;none&#39;
+    # - &#39;auto&#39;: np.ndarray -&gt; .copy(); other mutables -&gt; deepcopy; immutables -&gt; as-is
+    # - &#39;deep&#39;: deepcopy everything
+    # - &#39;none&#39;: store raw references (legacy behavior)
+    def _copy_for_store(self, obj):
+        policy = getattr(self, &#34;_extras_copy_policy&#34;, &#34;auto&#34;)
+        if policy == &#39;none&#39;:
+            return obj
+        if policy == &#39;deep&#39;:
+            return duplicate(obj)
+        # &#39;auto&#39; policy
+        try:
+            if isinstance(obj, np.ndarray):
+                # Ensures a new data buffer (breaks views/refs)
+                return obj.copy()
+            if isinstance(obj, (bytearray, memoryview)):
+                return bytes(obj)  # immutable bytes copy
+            if isinstance(obj, (cabc.MutableMapping, cabc.MutableSequence, cabc.MutableSet)):
+                return duplicate(obj)
+            if isinstance(obj, tuple):
+                # Tuples are immutable but may contain mutables
+                return tuple(duplicate(x) for x in obj)
+            # For everything else, attempt duplicate; fall back to as-is
+            return duplicate(obj)
+        except Exception:
+            return obj
+
+    def _copy_for_read(self, obj):
+        policy = getattr(self, &#34;_extras_copy_policy&#34;, &#34;auto&#34;)
+        if policy == &#39;none&#39;:
+            return obj
+        if policy == &#39;deep&#39;:
+            return duplicate(obj)
+        # &#39;auto&#39; defensive read
+        try:
+            if isinstance(obj, np.ndarray):
+                return obj.copy()
+            if isinstance(obj, (bytearray, memoryview)):
+                return bytes(obj)
+            if isinstance(obj, (cabc.MutableMapping, cabc.MutableSequence, cabc.MutableSet)):
+                return duplicate(obj)
+            if isinstance(obj, tuple):
+                return tuple(duplicate(x) for x in obj)
+            return duplicate(obj)
+        except Exception:
+            return obj
+
+    # ---------------------- Extras helpers ----------------------
+    #   to be used to store parameters for inspection, debugging
+    # ------------------------------------------------------------
+    def has_extra(self, key):
+        &#34;&#34;&#34;Return True if an extra parameter named `key` exists.&#34;&#34;&#34;
+        return hasattr(self._extras, key)
+
+    def get_extra(self, key: str, default=None):
+        &#34;&#34;&#34;
+        Retrieve the extra parameter `key`.
+        If `default` is provided, return it when the key is missing.
+        Otherwise, raise KeyError.
+        Returns a defensive copy to prevent external mutation.
+        &#34;&#34;&#34;
+        if hasattr(self._extras, key):
+            value = getattr(self._extras, key)
+            return self._copy_for_read(value)
+        if default is None:
+            raise KeyError(f&#34;extra parameter &#39;{key}&#39; not found&#34;)
+        # Also defensively copy the default before returning
+        return self._copy_for_read(default)
+
+    def get_extra_readonly(self, key, default=None):
+        &#34;&#34;&#34;
+        Retrieve the extra parameter `key`. (READONLY)
+        If `default` is provided, return it when the key is missing.
+        Otherwise, raise KeyError.
+        &#34;&#34;&#34;
+        arr = self.get_extra(key, default)
+        if isinstance(arr, np.ndarray):
+            arr.setflags(write=False)
+        return arr
+
+    def set_extra(self, key, value):
+        &#34;&#34;&#34;
+        Set or overwrite the extra parameter `key`
+        to a stored copy of `value`.
+        &#34;&#34;&#34;
+        setattr(self._extras, key, self._copy_for_store(value))
+
+    def update_extras(self, mapping=None,**kwargs):
+        &#34;&#34;&#34;
+        Update multiple extras at once.
+        Usage
+        -----
+        self.update_extras({&#39;k1&#39;: v1, &#39;k2&#39;: v2})
+        self.update_extras(k3=v3, k4=v4)
+        self.update_extras({&#39;k1&#39;: v1}, k2=v2)
+        &#34;&#34;&#34;
+        if mapping:
+            for k, v in mapping.items():
+                self.set_extra(k,v)
+        if kwargs:
+            for k, v in kwargs.items():
+                self.set_extra(k,v)
+
+    def del_extra(self, key):
+        &#34;&#34;&#34;Delete an extra parameter. Raises KeyError if it does not exist.&#34;&#34;&#34;
+        if not hasattr(self._extras, key):
+            raise KeyError(f&#34;extra parameter &#39;{key}&#39; not found&#34;)
+        delattr(self._extras, key)
+
+    def extras_as_dict(self, *, copy=&#39;auto&#39;):
+        &#34;&#34;&#34;
+        Return a dict view of extras.
+        copy: &#39;auto&#39;|&#39;deep&#39;|&#39;none&#39;
+          - &#39;auto&#39; matches the mixin&#39;s auto read policy (arrays copied, mutables deepcopied)
+          - &#39;deep&#39; deepcopies all values
+          - &#39;none&#39; returns raw references (use with care)
+        &#34;&#34;&#34;
+        out = {}
+        for k, v in vars(self._extras).items():
+            if copy == &#39;none&#39;:
+                out[k] = v
+            elif copy == &#39;deep&#39;:
+                out[k] = duplicate(v)
+            else:
+                out[k] = self._copy_for_read(v)
+        return out
+
+    # ---------- Extras_history helpers ---------------------
+    #   to be used to store _extras from a previous instance
+    # Notes &amp; rationale
+    # - policy=&#39;deep&#39; by default for history snapshots to guarantee no aliasing with live objects.
+    #   Switch to &#39;auto&#39; to mirror _copy_for_read’s nuanced behavior.
+    # - freeze=True sets ndarray.writeable=False in the snapshot, eliminating accidental downstream writes.
+    # - seal=True wraps the whole payload into immutable containers (MappingProxyType, tuple, frozenset) so
+    #   the snapshot itself can’t be mutated after appending.
+    #   This gives “no external corruption” guarantee even if a reference leaks.
+    # - as_namespace=True preserves SimpleNamespace ergonomics; for dicts, set False.
+    # - append_extras_snapshot(...) is a convenience that both creates and appends the snapshot to _extras_history.
+    # - get_extras_history(...) gives a consistent, defensive accessor to materialize a working (mutable) copy
+    #   for inspection or re-runs.
+    # -------------------------------------------------------
+
+
+    def export_extras_snapshot(self, *, tag=None, policy=&#39;deep&#39;, freeze=True, seal=True,
+                               as_namespace=True, include_meta=True):
+        &#34;&#34;&#34;
+        Build a corruption-safe snapshot of THIS instance&#39;s `_extras` so it can be
+        appended to another instance&#39;s `_extras_history`.
+
+        Parameters
+        ----------
+        policy : {&#39;deep&#39;,&#39;auto&#39;,&#39;none&#39;}, default &#39;deep&#39;
+            &#39;deep&#39;  -&gt; duplicate everything (recommended for history)
+            &#39;auto&#39;  -&gt; use _copy_for_read (arrays copied, mutables deepcopied)
+            &#39;none&#39;  -&gt; raw references (NOT recommended)
+        freeze : bool, default True
+            Make numpy arrays read-only in the snapshot.
+        seal : bool, default True
+            Wrap mappings/containers into immutable views (tuple/frozenset).
+            MappingProxyType is not used anymore since it is not pickable by deepcopy()
+        as_namespace : bool, default True
+            Payload as SimpleNamespace (True) or dict (False).
+        include_meta : bool, default True
+            If True returns {&#39;meta&#39;: {...}, &#39;extras&#39;: &lt;payload&gt;}, else returns &lt;payload&gt; only.
+
+        Returns
+        -------
+        snapshot : dict or payload
+        &#34;&#34;&#34;
+        src = vars(self._extras)
+        # clone with requested policy
+        if policy == &#39;none&#39;:
+            payload = {k: v for k, v in src.items()}
+        else:
+            def _clone(x):
+                return duplicate(x) if policy == &#39;deep&#39; else self._copy_for_read(x)
+            payload = {k: _clone(v) for k, v in src.items()}
+
+        # optionally freeze arrays
+        if freeze:
+            for k, v in payload.items():
+                if isinstance(v, np.ndarray):
+                    payload[k] = _freeze_ndarray(v)
+
+        payload_obj = SimpleNamespace(**payload) if as_namespace else payload
+
+        # optionally seal
+        if seal:
+            payload_obj = _freeze_recursively(payload_obj)
+
+        if not include_meta:
+            return payload_obj
+
+        meta = {
+            &#39;timestamp&#39;: time.time(),
+            &#39;tag&#39;: tag,
+            &#39;policy&#39;: policy,
+            &#39;freeze&#39;: freeze,
+            &#39;seal&#39;: seal,
+            &#39;as_namespace&#39;: as_namespace,
+            &#39;source_id&#39;: getattr(self, &#39;uid&#39;, None),
+            &#39;source_class&#39;: type(self).__name__,
+        }
+        return {&#39;meta&#39;: meta, &#39;extras&#39;: payload_obj}
+
+    def inherit_extras_history_from(self, other, *, include_current=True, tag=None,
+                                    policy=&#39;deep&#39;, freeze=True, seal=False,
+                                    as_namespace=True, overwrite=True):
+        &#34;&#34;&#34;
+        Initialize THIS instance&#39;s `_extras_history` from BOTH:
+          1) `other._extras_history` (deep, alias-free clone), and
+          2) a fresh snapshot of `other._extras` appended at the end (if include_current=True).
+
+        Parameters
+        ----------
+        include_current : bool, default True
+            Append a fresh snapshot of `other._extras` after cloning its history.
+        tag : str|None
+            Tag for the appended current snapshot; defaults to `other.name` if available.
+        policy : {&#39;deep&#39;,&#39;auto&#39;,&#39;none&#39;}, default &#39;deep&#39;
+            Copy policy passed to `export_extras_snapshot` for the *current* snapshot.
+        freeze : bool, default True
+            Make ndarrays read-only in the appended snapshot (history arrays already frozen on clone).
+        seal : bool, default False
+            If True and your export uses sealing, ensure sealing is pickle-safe (avoid MappingProxyType).
+            Default False to avoid mappingproxy pickling issues.
+        as_namespace : bool, default True
+            Payload as SimpleNamespace or dict in the appended snapshot.
+        overwrite : bool, default True
+            If True, replace `self._extras_history`. If False, extend it.
+
+        Returns
+        -------
+        list
+            The initialized/updated `self._extras_history`.
+        &#34;&#34;&#34;
+        if not isinstance(other,SensPatankarResult):
+            raise ValueError(f&#34;`other` must be a valid source instance, not a {type(other).__name__}&#34;)
+        if not hasattr(other, &#34;_extras&#34;):
+            raise TypeError(&#34;`other` must expose an `_extras` namespace&#34;)
+        if not hasattr(other, &#34;_extras_history&#34;):
+            raise TypeError(&#34;`other` must expose an `_extras_history` list (can be None/empty)&#34;)
+
+        # 1) clone other&#39;s history
+        base = _clone_history_list(getattr(other, &#39;_extras_history&#39;, None))
+
+        # 2) optionally append current extras snapshot from other
+        if include_current:
+            if tag is None and hasattr(other, &#34;name&#34;):
+                tag = other.name
+            # Rely on your existing exporter on `other` (uses your copy policies)
+            snap = other.export_extras_snapshot(
+                tag=tag, policy=policy, freeze=freeze, seal=seal,
+                as_namespace=as_namespace, include_meta=True
+            )
+            # annotate lineage for the appended snapshot
+            if isinstance(snap, dict):
+                meta = snap.setdefault(&#39;meta&#39;, {})
+                meta.setdefault(&#39;source_id&#39;, getattr(other, &#39;uid&#39;, None))
+                meta.setdefault(&#39;source_class&#39;, type(other).__name__)
+                meta[&#39;target_id&#39;] = getattr(self, &#39;uid&#39;, None)
+                meta[&#39;target_class&#39;] = type(self).__name__
+                meta[&#39;target_chain_index&#39;] = len(base)  # position it will take
+                meta.setdefault(&#39;timestamp&#39;, time.time())
+            base.append(_clone_snapshot_for_store(snap, freeze_arrays=True))
+
+        # 3) materialize into self
+        if overwrite or getattr(self, &#39;_extras_history&#39;, None) is None:
+            self._extras_history = base
+        else:
+            self._extras_history.extend(base)
+
+        return self._extras_history
+
+    def append_extras_snapshot_from(self, other, *, tag=None, policy=&#39;deep&#39;, freeze=True,
+                                    seal=False, as_namespace=True, inherit_if_needed=True):
+        &#34;&#34;&#34;
+        Append a safe snapshot of `other._extras` into THIS instance&#39;s `_extras_history`,
+        while also inheriting the full lineage from `other._extras_history` if needed.
+
+        This method is intended for **chaining simulation results**: when a new
+        `SensPatankarResult` (``self``) is created from a previous one (``other``),
+        the new result should inherit the entire history of the previous result,
+        then append a fresh snapshot of the previous result&#39;s current `_extras`.
+        This guarantees traceability without aliasing or corruption.
+
+        Parameters
+        ----------
+        other : SensPatankarResult
+            The source simulation result from which to inherit history and
+            capture the current `_extras` snapshot.
+            Must provide `_extras`, `_extras_history`, and
+            `export_extras_snapshot(...)`.
+
+        tag : str or None, optional
+            Optional label for the appended snapshot.
+            Defaults to `other.name` if available.
+
+        policy : {&#39;deep&#39;, &#39;auto&#39;, &#39;none&#39;}, default &#39;deep&#39;
+            Copy policy used by `other.export_extras_snapshot`:
+            - &#39;deep&#39;: deepcopy all values (safe for history, recommended).
+            - &#39;auto&#39;: use `_copy_for_read` semantics (arrays copied, mutables deepcopied).
+            - &#39;none&#39;: keep raw references (NOT recommended for history).
+
+        freeze : bool, default True
+            If True, numpy arrays in the snapshot are returned as read-only
+            (``arr.flags.writeable = False``). Prevents accidental mutation.
+
+        seal : bool, default False
+            If True, attempt to seal containers (dicts, namespaces, sets)
+            into immutable views. Only enable if your sealing strategy is
+            pickle-safe (e.g. `FrozenDict`, `FrozenNamespace`). Defaults to
+            False to avoid `MappingProxyType` pickling errors.
+
+        as_namespace : bool, default True
+            If True, extras payload is returned as a `SimpleNamespace`.
+            If False, a plain dict is used.
+
+        inherit_if_needed : bool, default True
+            If True and ``self._extras_history`` is not yet initialized,
+            copy `other._extras_history` first (deep, alias-free), then
+            append the current snapshot of `other._extras`. If False,
+            only append the snapshot.
+
+        Returns
+        -------
+        dict
+            The appended snapshot object, with at least keys:
+            - ``&#39;meta&#39;``: dictionary of metadata (source/target ids,
+              chain index, timestamp, tag, policy, etc.)
+            - ``&#39;extras&#39;``: the sealed/copy-on-write payload of extras.
+
+        Side Effects
+        ------------
+        - Initializes or extends ``self._extras_history``.
+        - Copies arrays and mutables defensively; no aliasing with `other`.
+        - Appends one new snapshot corresponding to `other._extras`.
+
+        Notes
+        -----
+        - If `other._extras_history` already contains a final snapshot of
+          `other._extras`, you may want to set ``inherit_if_needed=False``
+          to avoid duplication.
+        - All snapshots stored in history are corruption-safe and can be
+          serialized (pickle/deepcopy) provided sealing is pickle-safe.
+
+        Examples
+        --------
+        &gt;&gt;&gt; old = SensPatankarResult(...)
+        &gt;&gt;&gt; new = SensPatankarResult(...)
+        &gt;&gt;&gt; snap = new.append_extras_snapshot_from(old, tag=&#34;after_stepA&#34;)
+        &gt;&gt;&gt; len(new._extras_history)
+        1 + len(old._extras_history)
+        &gt;&gt;&gt; snap[&#39;meta&#39;][&#39;source_class&#39;]
+        &#39;SensPatankarResult&#39;
+        &gt;&gt;&gt; snap[&#39;meta&#39;][&#39;target_chain_index&#39;]
+        len(new._extras_history) - 1
+        &#34;&#34;&#34;
+        if other is None:
+            raise ValueError(&#34;`other` must be a valid source instance&#34;)
+        if not hasattr(other, &#34;_extras&#34;) or not hasattr(other, &#34;export_extras_snapshot&#34;):
+            raise TypeError(&#34;`other` must expose `_extras` and `export_extras_snapshot(...)`&#34;)
+
+        # First time: inherit full lineage from `other` and include its current state.
+        if inherit_if_needed and getattr(self, &#39;_extras_history&#39;, None) is None:
+            # This should deep-clone other&#39;s history and append a fresh snapshot of other&#39;s _extras.
+            # It must also be pickle-safe (no MappingProxyType left behind).
+            self.inherit_extras_history_from(
+                other,
+                include_current=True,
+                tag=(other.name if tag is None and hasattr(other, &#34;name&#34;) else tag),
+                policy=policy,
+                freeze=freeze,
+                seal=seal,             # keep False unless using pickle-safe sealing
+                as_namespace=as_namespace,
+                overwrite=True
+            )
+            return self._extras_history[-1]
+
+        # Otherwise: just append a new snapshot of `other._extras`.
+        if getattr(self, &#39;_extras_history&#39;, None) is None:
+            self._extras_history = []
+
+        if tag is None and hasattr(other, &#34;name&#34;):
+            tag = other.name
+
+        snap = other.export_extras_snapshot(
+            tag=tag,
+            policy=policy,
+            freeze=freeze,
+            seal=seal,                # keep False unless using pickle-safe sealing
+            as_namespace=as_namespace,
+            include_meta=True
+        )
+
+        # Enrich lineage metadata for this link
+        if isinstance(snap, dict):
+            meta = snap.setdefault(&#39;meta&#39;, {})
+            meta.setdefault(&#39;source_id&#39;, getattr(other, &#39;uid&#39;, None))
+            meta.setdefault(&#39;source_class&#39;, type(other).__name__)
+            meta[&#39;target_id&#39;] = getattr(self, &#39;uid&#39;, None)
+            meta[&#39;target_class&#39;] = type(self).__name__
+            meta[&#39;target_chain_index&#39;] = len(self._extras_history)  # index before append
+
+        # Store an alias-free, pickle-safe clone
+        self._extras_history.append(_clone_snapshot_for_store(snap, freeze_arrays=True))
+        return self._extras_history[-1]</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -8722,6 +10419,221 @@ def currrentdistance(self):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="migration.SensPatankarResult.append_extras_snapshot_from"><code class="name flex">
+<span>def <span class="ident">append_extras_snapshot_from</span></span>(<span>self, other, *, tag=None, policy='deep', freeze=True, seal=False, as_namespace=True, inherit_if_needed=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Append a safe snapshot of <code>other._extras</code> into THIS instance's <code>_extras_history</code>,
+while also inheriting the full lineage from <code>other._extras_history</code> if needed.</p>
+<p>This method is intended for <strong>chaining simulation results</strong>: when a new
+<code><a title="migration.SensPatankarResult" href="#migration.SensPatankarResult">SensPatankarResult</a></code> (<code>self</code>) is created from a previous one (<code>other</code>),
+the new result should inherit the entire history of the previous result,
+then append a fresh snapshot of the previous result's current <code>_extras</code>.
+This guarantees traceability without aliasing or corruption.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>other</code></strong> :&ensp;<code><a title="migration.SensPatankarResult" href="#migration.SensPatankarResult">SensPatankarResult</a></code></dt>
+<dd>The source simulation result from which to inherit history and
+capture the current <code>_extras</code> snapshot.
+Must provide <code>_extras</code>, <code>_extras_history</code>, and
+<code>export_extras_snapshot(&hellip;)</code>.</dd>
+<dt><strong><code>tag</code></strong> :&ensp;<code>str</code> or <code>None</code>, optional</dt>
+<dd>Optional label for the appended snapshot.
+Defaults to <code>other.name</code> if available.</dd>
+<dt><strong><code>policy</code></strong> :&ensp;<code>{'deep', 'auto', 'none'}</code>, default <code>'deep'</code></dt>
+<dd>Copy policy used by <code>other.export_extras_snapshot</code>:
+- 'deep': deepcopy all values (safe for history, recommended).
+- 'auto': use <code>_copy_for_read</code> semantics (arrays copied, mutables deepcopied).
+- 'none': keep raw references (NOT recommended for history).</dd>
+<dt><strong><code>freeze</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>If True, numpy arrays in the snapshot are returned as read-only
+(<code>arr.flags.writeable = False</code>). Prevents accidental mutation.</dd>
+<dt><strong><code>seal</code></strong> :&ensp;<code>bool</code>, default <code>False</code></dt>
+<dd>If True, attempt to seal containers (dicts, namespaces, sets)
+into immutable views. Only enable if your sealing strategy is
+pickle-safe (e.g. <code><a title="migration.FrozenDict" href="#migration.FrozenDict">FrozenDict</a></code>, <code><a title="migration.FrozenNamespace" href="#migration.FrozenNamespace">FrozenNamespace</a></code>). Defaults to
+False to avoid <code>MappingProxyType</code> pickling errors.</dd>
+<dt><strong><code>as_namespace</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>If True, extras payload is returned as a <code>SimpleNamespace</code>.
+If False, a plain dict is used.</dd>
+<dt><strong><code>inherit_if_needed</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>If True and <code>self._extras_history</code> is not yet initialized,
+copy <code>other._extras_history</code> first (deep, alias-free), then
+append the current snapshot of <code>other._extras</code>. If False,
+only append the snapshot.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>The appended snapshot object, with at least keys:
+- <code>'meta'</code>: dictionary of metadata (source/target ids,
+chain index, timestamp, tag, policy, etc.)
+- <code>'extras'</code>: the sealed/copy-on-write payload of extras.</dd>
+</dl>
+<h2 id="side-effects">Side Effects</h2>
+<ul>
+<li>Initializes or extends <code>self._extras_history</code>.</li>
+<li>Copies arrays and mutables defensively; no aliasing with <code>other</code>.</li>
+<li>Appends one new snapshot corresponding to <code>other._extras</code>.</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>If <code>other._extras_history</code> already contains a final snapshot of
+<code>other._extras</code>, you may want to set <code>inherit_if_needed=False</code>
+to avoid duplication.</li>
+<li>All snapshots stored in history are corruption-safe and can be
+serialized (pickle/deepcopy) provided sealing is pickle-safe.</li>
+</ul>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; old = SensPatankarResult(...)
+&gt;&gt;&gt; new = SensPatankarResult(...)
+&gt;&gt;&gt; snap = new.append_extras_snapshot_from(old, tag=&quot;after_stepA&quot;)
+&gt;&gt;&gt; len(new._extras_history)
+1 + len(old._extras_history)
+&gt;&gt;&gt; snap['meta']['source_class']
+'SensPatankarResult'
+&gt;&gt;&gt; snap['meta']['target_chain_index']
+len(new._extras_history) - 1
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append_extras_snapshot_from(self, other, *, tag=None, policy=&#39;deep&#39;, freeze=True,
+                                seal=False, as_namespace=True, inherit_if_needed=True):
+    &#34;&#34;&#34;
+    Append a safe snapshot of `other._extras` into THIS instance&#39;s `_extras_history`,
+    while also inheriting the full lineage from `other._extras_history` if needed.
+
+    This method is intended for **chaining simulation results**: when a new
+    `SensPatankarResult` (``self``) is created from a previous one (``other``),
+    the new result should inherit the entire history of the previous result,
+    then append a fresh snapshot of the previous result&#39;s current `_extras`.
+    This guarantees traceability without aliasing or corruption.
+
+    Parameters
+    ----------
+    other : SensPatankarResult
+        The source simulation result from which to inherit history and
+        capture the current `_extras` snapshot.
+        Must provide `_extras`, `_extras_history`, and
+        `export_extras_snapshot(...)`.
+
+    tag : str or None, optional
+        Optional label for the appended snapshot.
+        Defaults to `other.name` if available.
+
+    policy : {&#39;deep&#39;, &#39;auto&#39;, &#39;none&#39;}, default &#39;deep&#39;
+        Copy policy used by `other.export_extras_snapshot`:
+        - &#39;deep&#39;: deepcopy all values (safe for history, recommended).
+        - &#39;auto&#39;: use `_copy_for_read` semantics (arrays copied, mutables deepcopied).
+        - &#39;none&#39;: keep raw references (NOT recommended for history).
+
+    freeze : bool, default True
+        If True, numpy arrays in the snapshot are returned as read-only
+        (``arr.flags.writeable = False``). Prevents accidental mutation.
+
+    seal : bool, default False
+        If True, attempt to seal containers (dicts, namespaces, sets)
+        into immutable views. Only enable if your sealing strategy is
+        pickle-safe (e.g. `FrozenDict`, `FrozenNamespace`). Defaults to
+        False to avoid `MappingProxyType` pickling errors.
+
+    as_namespace : bool, default True
+        If True, extras payload is returned as a `SimpleNamespace`.
+        If False, a plain dict is used.
+
+    inherit_if_needed : bool, default True
+        If True and ``self._extras_history`` is not yet initialized,
+        copy `other._extras_history` first (deep, alias-free), then
+        append the current snapshot of `other._extras`. If False,
+        only append the snapshot.
+
+    Returns
+    -------
+    dict
+        The appended snapshot object, with at least keys:
+        - ``&#39;meta&#39;``: dictionary of metadata (source/target ids,
+          chain index, timestamp, tag, policy, etc.)
+        - ``&#39;extras&#39;``: the sealed/copy-on-write payload of extras.
+
+    Side Effects
+    ------------
+    - Initializes or extends ``self._extras_history``.
+    - Copies arrays and mutables defensively; no aliasing with `other`.
+    - Appends one new snapshot corresponding to `other._extras`.
+
+    Notes
+    -----
+    - If `other._extras_history` already contains a final snapshot of
+      `other._extras`, you may want to set ``inherit_if_needed=False``
+      to avoid duplication.
+    - All snapshots stored in history are corruption-safe and can be
+      serialized (pickle/deepcopy) provided sealing is pickle-safe.
+
+    Examples
+    --------
+    &gt;&gt;&gt; old = SensPatankarResult(...)
+    &gt;&gt;&gt; new = SensPatankarResult(...)
+    &gt;&gt;&gt; snap = new.append_extras_snapshot_from(old, tag=&#34;after_stepA&#34;)
+    &gt;&gt;&gt; len(new._extras_history)
+    1 + len(old._extras_history)
+    &gt;&gt;&gt; snap[&#39;meta&#39;][&#39;source_class&#39;]
+    &#39;SensPatankarResult&#39;
+    &gt;&gt;&gt; snap[&#39;meta&#39;][&#39;target_chain_index&#39;]
+    len(new._extras_history) - 1
+    &#34;&#34;&#34;
+    if other is None:
+        raise ValueError(&#34;`other` must be a valid source instance&#34;)
+    if not hasattr(other, &#34;_extras&#34;) or not hasattr(other, &#34;export_extras_snapshot&#34;):
+        raise TypeError(&#34;`other` must expose `_extras` and `export_extras_snapshot(...)`&#34;)
+
+    # First time: inherit full lineage from `other` and include its current state.
+    if inherit_if_needed and getattr(self, &#39;_extras_history&#39;, None) is None:
+        # This should deep-clone other&#39;s history and append a fresh snapshot of other&#39;s _extras.
+        # It must also be pickle-safe (no MappingProxyType left behind).
+        self.inherit_extras_history_from(
+            other,
+            include_current=True,
+            tag=(other.name if tag is None and hasattr(other, &#34;name&#34;) else tag),
+            policy=policy,
+            freeze=freeze,
+            seal=seal,             # keep False unless using pickle-safe sealing
+            as_namespace=as_namespace,
+            overwrite=True
+        )
+        return self._extras_history[-1]
+
+    # Otherwise: just append a new snapshot of `other._extras`.
+    if getattr(self, &#39;_extras_history&#39;, None) is None:
+        self._extras_history = []
+
+    if tag is None and hasattr(other, &#34;name&#34;):
+        tag = other.name
+
+    snap = other.export_extras_snapshot(
+        tag=tag,
+        policy=policy,
+        freeze=freeze,
+        seal=seal,                # keep False unless using pickle-safe sealing
+        as_namespace=as_namespace,
+        include_meta=True
+    )
+
+    # Enrich lineage metadata for this link
+    if isinstance(snap, dict):
+        meta = snap.setdefault(&#39;meta&#39;, {})
+        meta.setdefault(&#39;source_id&#39;, getattr(other, &#39;uid&#39;, None))
+        meta.setdefault(&#39;source_class&#39;, type(other).__name__)
+        meta[&#39;target_id&#39;] = getattr(self, &#39;uid&#39;, None)
+        meta[&#39;target_class&#39;] = type(self).__name__
+        meta[&#39;target_chain_index&#39;] = len(self._extras_history)  # index before append
+
+    # Store an alias-free, pickle-safe clone
+    self._extras_history.append(_clone_snapshot_for_store(snap, freeze_arrays=True))
+    return self._extras_history[-1]</code></pre>
+</details>
+</dd>
 <dt id="migration.SensPatankarResult.chaining"><code class="name flex">
 <span>def <span class="ident">chaining</span></span>(<span>self, multilayer, medium, **kwargs)</span>
 </code></dt>
@@ -8736,6 +10648,7 @@ def currrentdistance(self):
     medium.lastsimulation = sim # store the last simulation result in medium
     medium.lastinput = multilayer # store the last input (in medium)
     sim.savestate(multilayer,medium) # store store the inputs in sim for chaining
+    sim.append_extras_snapshot_from(self)
     return sim</code></pre>
 </details>
 </dd>
@@ -8771,6 +10684,7 @@ def currrentdistance(self):
         CF=self.CF.copy(),
         fc=self.fc.copy(),
         f=self.f.copy(),
+        PR=self.PR.copy(),
         x=self.x.copy(),
         Cx=self.Cx.copy(),
         tC=self.tC.copy(),
@@ -8786,6 +10700,22 @@ def currrentdistance(self):
         plotconfig=self._plotconfig,
         discrete=self.discrete
     )</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.del_extra"><code class="name flex">
+<span>def <span class="ident">del_extra</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Delete an extra parameter. Raises KeyError if it does not exist.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def del_extra(self, key):
+    &#34;&#34;&#34;Delete an extra parameter. Raises KeyError if it does not exist.&#34;&#34;&#34;
+    if not hasattr(self._extras, key):
+        raise KeyError(f&#34;extra parameter &#39;{key}&#39; not found&#34;)
+    delattr(self._extras, key)</code></pre>
 </details>
 </dd>
 <dt id="migration.SensPatankarResult.distanceSq"><code class="name flex">
@@ -8885,6 +10815,135 @@ def currrentdistance(self):
     return np.sum(e2) if cum else e2</code></pre>
 </details>
 </dd>
+<dt id="migration.SensPatankarResult.export_extras_snapshot"><code class="name flex">
+<span>def <span class="ident">export_extras_snapshot</span></span>(<span>self, *, tag=None, policy='deep', freeze=True, seal=True, as_namespace=True, include_meta=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build a corruption-safe snapshot of THIS instance's <code>_extras</code> so it can be
+appended to another instance's <code>_extras_history</code>.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>policy</code></strong> :&ensp;<code>{'deep','auto','none'}</code>, default <code>'deep'</code></dt>
+<dd>'deep'
+-&gt; duplicate everything (recommended for history)
+'auto'
+-&gt; use _copy_for_read (arrays copied, mutables deepcopied)
+'none'
+-&gt; raw references (NOT recommended)</dd>
+<dt><strong><code>freeze</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>Make numpy arrays read-only in the snapshot.</dd>
+<dt><strong><code>seal</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>Wrap mappings/containers into immutable views (tuple/frozenset).
+MappingProxyType is not used anymore since it is not pickable by deepcopy()</dd>
+<dt><strong><code>as_namespace</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>Payload as SimpleNamespace (True) or dict (False).</dd>
+<dt><strong><code>include_meta</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>If True returns {'meta': {&hellip;}, 'extras': <payload>}, else returns <payload> only.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>snapshot</code></strong> :&ensp;<code>dict</code> or <code>payload</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export_extras_snapshot(self, *, tag=None, policy=&#39;deep&#39;, freeze=True, seal=True,
+                           as_namespace=True, include_meta=True):
+    &#34;&#34;&#34;
+    Build a corruption-safe snapshot of THIS instance&#39;s `_extras` so it can be
+    appended to another instance&#39;s `_extras_history`.
+
+    Parameters
+    ----------
+    policy : {&#39;deep&#39;,&#39;auto&#39;,&#39;none&#39;}, default &#39;deep&#39;
+        &#39;deep&#39;  -&gt; duplicate everything (recommended for history)
+        &#39;auto&#39;  -&gt; use _copy_for_read (arrays copied, mutables deepcopied)
+        &#39;none&#39;  -&gt; raw references (NOT recommended)
+    freeze : bool, default True
+        Make numpy arrays read-only in the snapshot.
+    seal : bool, default True
+        Wrap mappings/containers into immutable views (tuple/frozenset).
+        MappingProxyType is not used anymore since it is not pickable by deepcopy()
+    as_namespace : bool, default True
+        Payload as SimpleNamespace (True) or dict (False).
+    include_meta : bool, default True
+        If True returns {&#39;meta&#39;: {...}, &#39;extras&#39;: &lt;payload&gt;}, else returns &lt;payload&gt; only.
+
+    Returns
+    -------
+    snapshot : dict or payload
+    &#34;&#34;&#34;
+    src = vars(self._extras)
+    # clone with requested policy
+    if policy == &#39;none&#39;:
+        payload = {k: v for k, v in src.items()}
+    else:
+        def _clone(x):
+            return duplicate(x) if policy == &#39;deep&#39; else self._copy_for_read(x)
+        payload = {k: _clone(v) for k, v in src.items()}
+
+    # optionally freeze arrays
+    if freeze:
+        for k, v in payload.items():
+            if isinstance(v, np.ndarray):
+                payload[k] = _freeze_ndarray(v)
+
+    payload_obj = SimpleNamespace(**payload) if as_namespace else payload
+
+    # optionally seal
+    if seal:
+        payload_obj = _freeze_recursively(payload_obj)
+
+    if not include_meta:
+        return payload_obj
+
+    meta = {
+        &#39;timestamp&#39;: time.time(),
+        &#39;tag&#39;: tag,
+        &#39;policy&#39;: policy,
+        &#39;freeze&#39;: freeze,
+        &#39;seal&#39;: seal,
+        &#39;as_namespace&#39;: as_namespace,
+        &#39;source_id&#39;: getattr(self, &#39;uid&#39;, None),
+        &#39;source_class&#39;: type(self).__name__,
+    }
+    return {&#39;meta&#39;: meta, &#39;extras&#39;: payload_obj}</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.extras_as_dict"><code class="name flex">
+<span>def <span class="ident">extras_as_dict</span></span>(<span>self, *, copy='auto')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a dict view of extras.
+copy: 'auto'|'deep'|'none'
+- 'auto' matches the mixin's auto read policy (arrays copied, mutables deepcopied)
+- 'deep' deepcopies all values
+- 'none' returns raw references (use with care)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extras_as_dict(self, *, copy=&#39;auto&#39;):
+    &#34;&#34;&#34;
+    Return a dict view of extras.
+    copy: &#39;auto&#39;|&#39;deep&#39;|&#39;none&#39;
+      - &#39;auto&#39; matches the mixin&#39;s auto read policy (arrays copied, mutables deepcopied)
+      - &#39;deep&#39; deepcopies all values
+      - &#39;none&#39; returns raw references (use with care)
+    &#34;&#34;&#34;
+    out = {}
+    for k, v in vars(self._extras).items():
+        if copy == &#39;none&#39;:
+            out[k] = v
+        elif copy == &#39;deep&#39;:
+            out[k] = duplicate(v)
+        else:
+            out[k] = self._copy_for_read(v)
+    return out</code></pre>
+</details>
+</dd>
 <dt id="migration.SensPatankarResult.fit"><code class="name flex">
 <span>def <span class="ident">fit</span></span>(<span>self, other, disp=True, std_relative=0.05, maxiter=100, xatol=0.001, fatol=0.001)</span>
 </code></dt>
@@ -8940,6 +10999,175 @@ def currrentdistance(self):
     # extract the solution, be sure it is updated
     Dlink.values, klink.values = np.exp(-result.x[maskD]), np.exp(result.x[maskk])
     return result</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.get_extra"><code class="name flex">
+<span>def <span class="ident">get_extra</span></span>(<span>self, key: str, default=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve the extra parameter <code>key</code>.
+If <code>default</code> is provided, return it when the key is missing.
+Otherwise, raise KeyError.
+Returns a defensive copy to prevent external mutation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_extra(self, key: str, default=None):
+    &#34;&#34;&#34;
+    Retrieve the extra parameter `key`.
+    If `default` is provided, return it when the key is missing.
+    Otherwise, raise KeyError.
+    Returns a defensive copy to prevent external mutation.
+    &#34;&#34;&#34;
+    if hasattr(self._extras, key):
+        value = getattr(self._extras, key)
+        return self._copy_for_read(value)
+    if default is None:
+        raise KeyError(f&#34;extra parameter &#39;{key}&#39; not found&#34;)
+    # Also defensively copy the default before returning
+    return self._copy_for_read(default)</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.get_extra_readonly"><code class="name flex">
+<span>def <span class="ident">get_extra_readonly</span></span>(<span>self, key, default=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve the extra parameter <code>key</code>. (READONLY)
+If <code>default</code> is provided, return it when the key is missing.
+Otherwise, raise KeyError.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_extra_readonly(self, key, default=None):
+    &#34;&#34;&#34;
+    Retrieve the extra parameter `key`. (READONLY)
+    If `default` is provided, return it when the key is missing.
+    Otherwise, raise KeyError.
+    &#34;&#34;&#34;
+    arr = self.get_extra(key, default)
+    if isinstance(arr, np.ndarray):
+        arr.setflags(write=False)
+    return arr</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.has_extra"><code class="name flex">
+<span>def <span class="ident">has_extra</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if an extra parameter named <code>key</code> exists.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_extra(self, key):
+    &#34;&#34;&#34;Return True if an extra parameter named `key` exists.&#34;&#34;&#34;
+    return hasattr(self._extras, key)</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.inherit_extras_history_from"><code class="name flex">
+<span>def <span class="ident">inherit_extras_history_from</span></span>(<span>self, other, *, include_current=True, tag=None, policy='deep', freeze=True, seal=False, as_namespace=True, overwrite=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initialize THIS instance's <code>_extras_history</code> from BOTH:
+1) <code>other._extras_history</code> (deep, alias-free clone), and
+2) a fresh snapshot of <code>other._extras</code> appended at the end (if include_current=True).</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>include_current</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>Append a fresh snapshot of <code>other._extras</code> after cloning its history.</dd>
+<dt><strong><code>tag</code></strong> :&ensp;<code>str|None</code></dt>
+<dd>Tag for the appended current snapshot; defaults to <code>other.name</code> if available.</dd>
+<dt><strong><code>policy</code></strong> :&ensp;<code>{'deep','auto','none'}</code>, default <code>'deep'</code></dt>
+<dd>Copy policy passed to <code>export_extras_snapshot</code> for the <em>current</em> snapshot.</dd>
+<dt><strong><code>freeze</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>Make ndarrays read-only in the appended snapshot (history arrays already frozen on clone).</dd>
+<dt><strong><code>seal</code></strong> :&ensp;<code>bool</code>, default <code>False</code></dt>
+<dd>If True and your export uses sealing, ensure sealing is pickle-safe (avoid MappingProxyType).
+Default False to avoid mappingproxy pickling issues.</dd>
+<dt><strong><code>as_namespace</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>Payload as SimpleNamespace or dict in the appended snapshot.</dd>
+<dt><strong><code>overwrite</code></strong> :&ensp;<code>bool</code>, default <code>True</code></dt>
+<dd>If True, replace <code>self._extras_history</code>. If False, extend it.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>The initialized/updated <code>self._extras_history</code>.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inherit_extras_history_from(self, other, *, include_current=True, tag=None,
+                                policy=&#39;deep&#39;, freeze=True, seal=False,
+                                as_namespace=True, overwrite=True):
+    &#34;&#34;&#34;
+    Initialize THIS instance&#39;s `_extras_history` from BOTH:
+      1) `other._extras_history` (deep, alias-free clone), and
+      2) a fresh snapshot of `other._extras` appended at the end (if include_current=True).
+
+    Parameters
+    ----------
+    include_current : bool, default True
+        Append a fresh snapshot of `other._extras` after cloning its history.
+    tag : str|None
+        Tag for the appended current snapshot; defaults to `other.name` if available.
+    policy : {&#39;deep&#39;,&#39;auto&#39;,&#39;none&#39;}, default &#39;deep&#39;
+        Copy policy passed to `export_extras_snapshot` for the *current* snapshot.
+    freeze : bool, default True
+        Make ndarrays read-only in the appended snapshot (history arrays already frozen on clone).
+    seal : bool, default False
+        If True and your export uses sealing, ensure sealing is pickle-safe (avoid MappingProxyType).
+        Default False to avoid mappingproxy pickling issues.
+    as_namespace : bool, default True
+        Payload as SimpleNamespace or dict in the appended snapshot.
+    overwrite : bool, default True
+        If True, replace `self._extras_history`. If False, extend it.
+
+    Returns
+    -------
+    list
+        The initialized/updated `self._extras_history`.
+    &#34;&#34;&#34;
+    if not isinstance(other,SensPatankarResult):
+        raise ValueError(f&#34;`other` must be a valid source instance, not a {type(other).__name__}&#34;)
+    if not hasattr(other, &#34;_extras&#34;):
+        raise TypeError(&#34;`other` must expose an `_extras` namespace&#34;)
+    if not hasattr(other, &#34;_extras_history&#34;):
+        raise TypeError(&#34;`other` must expose an `_extras_history` list (can be None/empty)&#34;)
+
+    # 1) clone other&#39;s history
+    base = _clone_history_list(getattr(other, &#39;_extras_history&#39;, None))
+
+    # 2) optionally append current extras snapshot from other
+    if include_current:
+        if tag is None and hasattr(other, &#34;name&#34;):
+            tag = other.name
+        # Rely on your existing exporter on `other` (uses your copy policies)
+        snap = other.export_extras_snapshot(
+            tag=tag, policy=policy, freeze=freeze, seal=seal,
+            as_namespace=as_namespace, include_meta=True
+        )
+        # annotate lineage for the appended snapshot
+        if isinstance(snap, dict):
+            meta = snap.setdefault(&#39;meta&#39;, {})
+            meta.setdefault(&#39;source_id&#39;, getattr(other, &#39;uid&#39;, None))
+            meta.setdefault(&#39;source_class&#39;, type(other).__name__)
+            meta[&#39;target_id&#39;] = getattr(self, &#39;uid&#39;, None)
+            meta[&#39;target_class&#39;] = type(self).__name__
+            meta[&#39;target_chain_index&#39;] = len(base)  # position it will take
+            meta.setdefault(&#39;timestamp&#39;, time.time())
+        base.append(_clone_snapshot_for_store(snap, freeze_arrays=True))
+
+    # 3) materialize into self
+    if overwrite or getattr(self, &#39;_extras_history&#39;, None) is None:
+        self._extras_history = base
+    else:
+        self._extras_history.extend(base)
+
+    return self._extras_history</code></pre>
 </details>
 </dd>
 <dt id="migration.SensPatankarResult.interpolate_CF"><code class="name flex">
@@ -9440,6 +11668,7 @@ if True, the figure is not shown (used for printing along with plt.ioff() and pl
         CF=CF_discrete_noisy,
         fc=np.zeros_like(t_discrete),
         f=np.zeros_like(t_discrete),
+        PR = None,
         x=self.x,
         Cx=np.zeros((len(t_discrete), len(self.x))),
         tC=self.tC,
@@ -9560,7 +11789,7 @@ medium to set a different medium (food) in contact</p></div>
     # retrieve previous results
     previousCF = self.restart.CF # CF at at target
     previousCx = self.restart.Cprofile # corresponding profile
-    previousmedium = self.restart.inputs[&#34;medium&#34;].copy()
+    previousmedium = self.restart.inputs[&#34;medium&#34;].copy() # FIXME (use memory)
     previousmedium.CF0 = previousCF # we apply the concentration
     # CF override with CF=new value
     isCF0forced = &#34;CF0&#34; in kwargs
@@ -9579,7 +11808,7 @@ medium to set a different medium (food) in contact</p></div>
     # extend the existing solution
     inputs = self.restart.inputs # all previous inputs
     newsol = senspatankar(
-            multilayer=inputs[&#34;multilayer&#34;],
+            multilayer=kwargs.get(&#34;multilayer&#34;,inputs[&#34;multilayer&#34;]), #inputs[&#34;multilayer&#34;],
             medium=newmedium,
             name=kwargs.get(&#34;name&#34;,inputs[&#34;name&#34;]),
             description=kwargs.get(&#34;description&#34;,inputs[&#34;description&#34;]),
@@ -9813,7 +12042,7 @@ medium to set a different medium (food) in contact</p></div>
 </details>
 </dd>
 <dt id="migration.SensPatankarResult.savestate"><code class="name flex">
-<span>def <span class="ident">savestate</span></span>(<span>self, multilayer, medium)</span>
+<span>def <span class="ident">savestate</span></span>(<span>self, multilayer, medium, /, **extras)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Saves senspantankar inputs for simulation chaining</p></div>
@@ -9821,11 +12050,43 @@ medium to set a different medium (food) in contact</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def savestate(self,multilayer,medium):
+<pre><code class="python">def savestate(self,multilayer,medium, /, **extras):
     &#34;&#34;&#34;Saves senspantankar inputs for simulation chaining&#34;&#34;&#34;
     self._lastmedium = medium
     self._lastmultilayer = multilayer
-    self._isstatesaved = True</code></pre>
+    self._isstatesaved = True
+    # save important properties
+    self.update_extras(
+        contacttime = getattr(medium,&#34;contacttime&#34;,None),
+        contacttemperature = getattr(medium,&#34;contacttemperature&#34;,None),
+        surfacearea = getattr(medium,&#34;surfacearea&#34;,None),
+        volume = getattr(medium,&#34;volume&#34;,None),
+        CF0 = getattr(medium,&#39;CF0&#39;,None),
+        C0 = multilayer.C0,
+        l = multilayer.l,
+        k = multilayer.k,
+        D = multilayer.D,
+        T = multilayer.T,
+        **extras
+        )</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.set_extra"><code class="name flex">
+<span>def <span class="ident">set_extra</span></span>(<span>self, key, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set or overwrite the extra parameter <code>key</code>
+to a stored copy of <code>value</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_extra(self, key, value):
+    &#34;&#34;&#34;
+    Set or overwrite the extra parameter `key`
+    to a stored copy of `value`.
+    &#34;&#34;&#34;
+    setattr(self._extras, key, self._copy_for_store(value))</code></pre>
 </details>
 </dd>
 <dt id="migration.SensPatankarResult.to_CF_dataframe"><code class="name flex">
@@ -10028,6 +12289,406 @@ at user-specified or automatically sampled times.</p>
             else:
                 self._plotconfig[key] = str(value)  # Convert unit strings directly
     return self  # Return self for method chaining if needed</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResult.update_extras"><code class="name flex">
+<span>def <span class="ident">update_extras</span></span>(<span>self, mapping=None, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update multiple extras at once.
+Usage</p>
+<hr>
+<p>self.update_extras({'k1': v1, 'k2': v2})
+self.update_extras(k3=v3, k4=v4)
+self.update_extras({'k1': v1}, k2=v2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_extras(self, mapping=None,**kwargs):
+    &#34;&#34;&#34;
+    Update multiple extras at once.
+    Usage
+    -----
+    self.update_extras({&#39;k1&#39;: v1, &#39;k2&#39;: v2})
+    self.update_extras(k3=v3, k4=v4)
+    self.update_extras({&#39;k1&#39;: v1}, k2=v2)
+    &#34;&#34;&#34;
+    if mapping:
+        for k, v in mapping.items():
+            self.set_extra(k,v)
+    if kwargs:
+        for k, v in kwargs.items():
+            self.set_extra(k,v)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="migration.SensPatankarResultCollection"><code class="flex name class">
+<span>class <span class="ident">SensPatankarResultCollection</span></span>
+<span>(</span><span>name, simulations=None, type='', PR=None, PRE=None, PRT=None, description='')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>List-derived container restricted to SensPatankarResult objects.</p>
+<ul>
+<li>Only SensPatankarResult instances can be added or assigned.</li>
+<li>Slicing returns a new SensPatankarResultCollection.</li>
+<li><strong>repr</strong> lists simulations with right-aligned names and left-aligned values.</li>
+<li><strong>str</strong> is a compact one-liner.</li>
+</ul>
+<p>Operator + and +=: supported with either another collection or a plain iterable of SensPatankarResult.
+Helper accessors: .names, .by_name(name), .map(fn), and .CF_at_target_dict() for quick extractions.
+Type safety: all mutating list operations (append, extend, insert, <strong>setitem</strong>) validate elements.</p>
+<p>SensPatankarResultCollection(name="collection name")
+SensPatankarResultCollection(&hellip;,simulations=one or list od simulations)
+SensPatankarResultCollection(&hellip;,description="&hellip;")</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SensPatankarResultCollection(list):
+    &#34;&#34;&#34;
+    List-derived container restricted to SensPatankarResult objects.
+
+    - Only SensPatankarResult instances can be added or assigned.
+    - Slicing returns a new SensPatankarResultCollection.
+    - __repr__ lists simulations with right-aligned names and left-aligned values.
+    - __str__ is a compact one-liner.
+
+    Operator + and +=: supported with either another collection or a plain iterable of SensPatankarResult.
+    Helper accessors: .names, .by_name(name), .map(fn), and .CF_at_target_dict() for quick extractions.
+    Type safety: all mutating list operations (append, extend, insert, __setitem__) validate elements.
+    &#34;&#34;&#34;
+
+    def __init__(self, name, simulations=None, type=&#34;&#34;, PR=None, PRE=None, PRT=None, description=&#34;&#34;):
+        &#34;&#34;&#34;
+            SensPatankarResultCollection(name=&#34;collection name&#34;)
+            SensPatankarResultCollection(...,simulations=one or list od simulations)
+            SensPatankarResultCollection(...,description=&#34;...&#34;)
+        &#34;&#34;&#34;
+        super().__init__()
+        self.name = name
+        self.description = description
+        self.type = type
+        self.PR = ensure_2d(PR)
+        self.PRE = ensure_2d(PRE)
+        self.PRT = ensure_2d(PRT)
+        if simulations is not None:
+            self.extend(simulations)
+
+    # ---------- internals ----------
+    @staticmethod
+    def _resolve_cls():
+        # Try to resolve SensPatankarResult even in modular layouts
+        cls = None
+        try:
+            from patankar.migration import SensPatankarResult as _SPR  # local import to avoid cycles
+            cls = _SPR
+        except Exception:
+            cls = globals().get(&#34;SensPatankarResult&#34;, None)
+        if cls is None:
+            raise RuntimeError(&#34;Cannot resolve SensPatankarResult class for type checking.&#34;)
+        return cls
+
+    @classmethod
+    def _ensure_result(cls, x):
+        SPR = cls._resolve_cls()
+        if not isinstance(x, SPR):
+            raise TypeError(f&#34;Element must be SensPatankarResult, not {type(x).__name__}&#34;)
+
+    def _label_for(self, idx, sim):
+        nm = getattr(sim, &#34;name&#34;, None)
+        if isinstance(nm, str) and nm.strip():
+            return nm
+        return f&#34;simulation {idx+1}&#34;
+
+    # ---------- list API with checks ----------
+    def append(self, x):  # type: ignore[override]
+        self._ensure_result(x)
+        super().append(x)
+
+    def add(self, x):
+        self.append(x)
+        return self
+
+    def extend(self, xs):  # type: ignore[override]
+        for x in xs:
+            self._ensure_result(x)
+        super().extend(xs)
+
+    def insert(self, i, x):  # type: ignore[override]
+        self._ensure_result(x)
+        super().insert(i, x)
+
+    def __setitem__(self, i, x):  # supports index or slice
+        if isinstance(i, slice):
+            if not hasattr(x, &#34;__iter__&#34;):
+                raise TypeError(&#34;Slice assignment requires an iterable of SensPatankarResult.&#34;)
+            xl = list(x)
+            for e in xl:
+                self._ensure_result(e)
+            super().__setitem__(i, xl)
+        else:
+            self._ensure_result(x)
+            super().__setitem__(i, x)
+
+    def __getitem__(self, i):
+        out = super().__getitem__(i)
+        if isinstance(i, slice):
+            return SensPatankarResultCollection(
+                name=f&#34;{self.name}[{i.start or &#39;&#39;}:{i.stop or &#39;&#39;}:{i.step or &#39;&#39;}]&#34;,
+                sims=out,
+                description=self.description
+            )
+        return out
+
+    # ---------- operators ----------
+    def __add__(self, other):
+        if isinstance(other, SensPatankarResultCollection):
+            sims = list(self) + list(other)
+            newname = f&#34;{self.name} + {other.name}&#34;
+        else:
+            tmp = list(other)
+            for e in tmp:
+                self._ensure_result(e)
+            sims = list(self) + tmp
+            newname = f&#34;{self.name} + &lt;iter&gt;&#34;
+        return SensPatankarResultCollection(name=newname, sims=sims, description=self.description)
+
+    def __iadd__(self, other):
+        if isinstance(other, SensPatankarResultCollection):
+            self.extend(list(other))
+        else:
+            self.extend(other)
+        return self
+
+    def __rshift__(self, medium):
+        &#34;&#34;&#34;Overloads &gt;&gt; to propagate PR&#34;&#34;&#34;
+        if not isinstance(medium,foodphysics):
+            raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
+        if self.type!=&#34;PR&#34;:
+            raise RuntimeError(f&#39;chaining applies for now only to PR-types and not to &#34;{self.type}&#34;&#39;)
+        sim_collection, PR, PRE, PRT = [],[],[],[]
+        for i,s in enumerate(self):
+            # save CF0 and C0 values for restoring their states
+            CF0copy = getattr(s._lastmedium,&#34;CF0&#34;,np.array([0])).copy()
+            C0copy = s._lastmultilayer.C0.copy()
+            # apply the state to be used for sentivitiy analysis
+            s._lastmedium.CF0 = s.get_extra(&#34;CF0&#34;)
+            s._lastmultilayer.C0 = s.get_extra(&#34;C0&#34;)
+            # chain without any copy
+            sim = s &gt;&gt; medium
+            sim_collection.append(sim)
+            # restore CF0 and C0 values
+            s._lastmedium.CF0 = CF0copy
+            s._lastmultilayer.C0 = C0copy
+            # save PR, PRE, PRT
+            PR.append(sim.PR.PRtarget[i])
+            PRE.append(sim.PR.PRE[i])
+            PRT.append(sim.PR.PRTtarget[i])
+        PR = ensure_2d(PR)
+        PRE = ensure_2d(PRE)
+        PRT = ensure_2d(PRT)
+        return SensPatankarResultCollection(
+                    name = f&#34;{self.name} &gt;&gt; {medium.name}&#34;,
+                    simulations = sim_collection,
+                    type=&#34;PR&#34;,
+                    PR =  np.concatenate((self.PR ,PR),axis=0),
+                    PRE = np.concatenate((self.PRE,PRE),axis=0),
+                    PRT = np.concatenate((self.PRT,PRT),axis=0)
+                    )
+
+    # ---------- convenience ----------
+    @property
+    def names(self):
+        return [self._label_for(i, s) for i, s in enumerate(self)]
+
+    def by_name(self, name):
+        for i, s in enumerate(self):
+            if self._label_for(i, s) == name:
+                return s
+        raise KeyError(f&#34;No simulation named &#39;{name}&#39; in collection &#39;{self.name}&#39;.&#34;)
+
+    def map(self, fn):
+        return [fn(s) for s in self]
+
+    def CF_at_target_dict(self):
+        d = {}
+        for i, s in enumerate(self):
+            label = self._label_for(i, s)
+            pc = getattr(s, &#34;_plotconfig&#34;, {})
+            tscale = pc.get(&#34;tscale&#34;, 1.0)
+            Cscale = pc.get(&#34;Cscale&#34;, 1.0)
+            tunit = pc.get(&#34;tunit&#34;, &#34;s&#34;)
+            Cunit = pc.get(&#34;Cunit&#34;, &#34;&#34;)
+            tval = (s.ttarget / tscale).item() if hasattr(s.ttarget, &#34;item&#34;) else (s.ttarget / tscale)
+            cval = (s.CFtarget / Cscale).item() if hasattr(s.CFtarget, &#34;item&#34;) else (s.CFtarget / Cscale)
+            d[label] = {&#34;t&#34;: tval, &#34;tunit&#34;: tunit, &#34;CF&#34;: cval, &#34;Cunit&#34;: Cunit}
+        return d
+
+    # ---------- pretty printing ----------
+    def __repr__(self):
+        if len(self) == 0:
+            header = f&#34;SensPatankarResultCollection: {self.name}\n    &lt;empty&gt;\n&#34;
+            footer = f&#34;\nTotal number of simulations: 0&#34;
+            return header + footer
+
+        rows = []
+        labels = []
+        for i, s in enumerate(self):
+            label = self._label_for(i, s)
+            labels.append(label)
+            pc = getattr(s, &#34;_plotconfig&#34;, {})
+            tscale = pc.get(&#34;tscale&#34;, 1.0)
+            Cscale = pc.get(&#34;Cscale&#34;, 1.0)
+            tunit = pc.get(&#34;tunit&#34;, &#34;s&#34;)
+            Cunit = pc.get(&#34;Cunit&#34;, &#34;&#34;)
+            t_disp = (s.ttarget / tscale).item() if hasattr(s.ttarget, &#34;item&#34;) else (s.ttarget / tscale)
+            c_disp = (s.CFtarget / Cscale).item() if hasattr(s.CFtarget, &#34;item&#34;) else (s.CFtarget / Cscale)
+            value_str = f&#34;CF({t_disp:.4g} [{tunit}]) = {c_disp:.4g} [{Cunit}]&#34;
+            rows.append((label, value_str))
+
+        w = max(len(lb) for lb in labels)
+        header = f&#34;SensPatankarResultCollection: {self.name}&#34;
+        lines = [header]
+        for lb, val in rows:
+            lines.append(f&#34;    {lb:&gt;{w}}: {val}&#34;)
+        lines.append(f&#34;\nTotal number of simulations: {len(self)}&#34;)
+        print(&#34;\n&#34;.join(lines))
+        return str(self)
+
+    def __str__(self):
+        return f&#34;&lt;SensPatankarResultCollection:{self.name} — {len(self)} simulations&gt;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.list</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="migration.SensPatankarResultCollection.names"><code class="name">var <span class="ident">names</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def names(self):
+    return [self._label_for(i, s) for i, s in enumerate(self)]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="migration.SensPatankarResultCollection.CF_at_target_dict"><code class="name flex">
+<span>def <span class="ident">CF_at_target_dict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CF_at_target_dict(self):
+    d = {}
+    for i, s in enumerate(self):
+        label = self._label_for(i, s)
+        pc = getattr(s, &#34;_plotconfig&#34;, {})
+        tscale = pc.get(&#34;tscale&#34;, 1.0)
+        Cscale = pc.get(&#34;Cscale&#34;, 1.0)
+        tunit = pc.get(&#34;tunit&#34;, &#34;s&#34;)
+        Cunit = pc.get(&#34;Cunit&#34;, &#34;&#34;)
+        tval = (s.ttarget / tscale).item() if hasattr(s.ttarget, &#34;item&#34;) else (s.ttarget / tscale)
+        cval = (s.CFtarget / Cscale).item() if hasattr(s.CFtarget, &#34;item&#34;) else (s.CFtarget / Cscale)
+        d[label] = {&#34;t&#34;: tval, &#34;tunit&#34;: tunit, &#34;CF&#34;: cval, &#34;Cunit&#34;: Cunit}
+    return d</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResultCollection.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, x):
+    self.append(x)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResultCollection.append"><code class="name flex">
+<span>def <span class="ident">append</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Append object to the end of the list.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append(self, x):  # type: ignore[override]
+    self._ensure_result(x)
+    super().append(x)</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResultCollection.by_name"><code class="name flex">
+<span>def <span class="ident">by_name</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def by_name(self, name):
+    for i, s in enumerate(self):
+        if self._label_for(i, s) == name:
+            return s
+    raise KeyError(f&#34;No simulation named &#39;{name}&#39; in collection &#39;{self.name}&#39;.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResultCollection.extend"><code class="name flex">
+<span>def <span class="ident">extend</span></span>(<span>self, xs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extend list by appending elements from the iterable.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extend(self, xs):  # type: ignore[override]
+    for x in xs:
+        self._ensure_result(x)
+    super().extend(xs)</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResultCollection.insert"><code class="name flex">
+<span>def <span class="ident">insert</span></span>(<span>self, i, x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Insert object before index.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert(self, i, x):  # type: ignore[override]
+    self._ensure_result(x)
+    super().insert(i, x)</code></pre>
+</details>
+</dd>
+<dt id="migration.SensPatankarResultCollection.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, fn)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map(self, fn):
+    return [fn(s) for s in self]</code></pre>
 </details>
 </dd>
 </dl>
@@ -11000,7 +13661,6 @@ solution.plotCF()
         &#34;&#34;&#34;Returns True if a simulation exists&#34;&#34;&#34;
         return self.lastsimulation is not None
 
-
     # ------- [inheritance registration mechanism] --------
     def acknowledge(self, what=None, category=None):
         &#34;&#34;&#34;
@@ -11109,6 +13769,7 @@ solution.plotCF()
         new_substance = get_value(&#34;substance&#34;)
         new_medium = get_value(&#34;medium&#34;)
         if new_substance is not None: self.substance = new_substance
+        if new_substance == []: self.substance = None
         if new_medium is not None:self.medium = new_medium
         # return
         return self  # Return self for method chaining if needed
@@ -11178,7 +13839,6 @@ solution.plotCF()
                 repr_str += f&#34;{&#39; &#39; * (max_key_length)}= {extra_info}\n&#34;
         print(repr_str.strip())  # Print formatted output
         return str(self)  # Simplified representation for repr()
-
 
 
     def __str__(self):
@@ -11317,12 +13977,15 @@ solution.plotCF()
         &#34;&#34;&#34;
         # inherit substance/migrant from other if self.migrant is None
         if isinstance(other,(layer,foodlayer)):
-            if isinstance(self,foodlayer):
-                if self.substance is None and other.substance is not None:
-                    self.substance = other.substance
+            if isinstance(self,foodlayer) or isinstance(self,foodphysics):
+                if (not hasattr(self,&#34;substance&#34;) or self.substance is None) and other.substance is not None:
+                    self.substance = other.substance # a substance is assiged
+                if hasattr(self,&#34;substance&#34;) and self.substance is not None:
+                    other.substance = self.substance # debug 2025-09-01
         return self._to(other) # propagates other
 
         # The operators @ and | are depreciated and should not be used anymore
+        # they do not behave as rshift since they not force the transfer of substance id to other
     def __matmul__(self, other): # depreciated @
         &#34;&#34;&#34;
             Overload @: equivalent to &gt;&gt; if other is a layer.
@@ -11355,6 +14018,39 @@ solution.plotCF()
     def contact(self,material,**kwargs):
         &#34;&#34;&#34;alias to migration method&#34;&#34;&#34;
         return self.migration(self,material,**kwargs)
+
+    # sensitivity method: potentialRelease
+    def potentialRelease(self,material,C0test=1000.0,CF0test=0.0,**kwargs):
+        &#34;&#34;&#34;generalization of migration method to calculate potential release&#34;&#34;&#34;
+        from patankar.migration import senspatankar, SensPatankarResultCollection
+        # initialization
+        CF0test = np.array([CF0test])
+        sim_collection, PR, PRE, PRT = [],[],[],[]
+        # backup current CF0 and C0 states
+        CF0copy = getattr(self,&#34;CF0&#34;,CF0test).copy()
+        C0copy = material.C0.copy()
+        # perform PR determination for each layer
+        for i in range(0,material.n):
+            C0 = np.zeros_like(C0copy)
+            C0[i] = C0test
+            material.C0 = C0
+            self.CF0 = CF0test
+            # self &gt;&gt; material thermalize
+            sim = senspatankar(self &gt;&gt; material,self,**kwargs)
+            sim.savestate(material,self) # store store the inputs in sim for chaining
+            sim_collection.append(sim)
+            PR.append(sim.PR.PRtarget[i])
+            PRE.append(sim.PR.PRE[i])
+            PRT.append(sim.PR.PRTtarget[i])
+        # restore CF0 and C0 states
+        self.CF0, material.C0 = CF0copy, C0copy
+        # assemble the result
+        res = SensPatankarResultCollection(
+                name = f&#34;PR: {material.fullname} &gt;&gt; {self.name}&#34;,
+                simulations=sim_collection,
+                type=&#34;PR&#34;, PR = PR, PRE = PRE, PRT = PRT
+            )
+        return res
 
     @property
     def haskmodel(self):
@@ -11648,6 +14344,48 @@ The category under which the properties are grouped.</p>
     return sim</code></pre>
 </details>
 </dd>
+<dt id="migration.foodphysics.potentialRelease"><code class="name flex">
+<span>def <span class="ident">potentialRelease</span></span>(<span>self, material, C0test=1000.0, CF0test=0.0, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>generalization of migration method to calculate potential release</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def potentialRelease(self,material,C0test=1000.0,CF0test=0.0,**kwargs):
+    &#34;&#34;&#34;generalization of migration method to calculate potential release&#34;&#34;&#34;
+    from patankar.migration import senspatankar, SensPatankarResultCollection
+    # initialization
+    CF0test = np.array([CF0test])
+    sim_collection, PR, PRE, PRT = [],[],[],[]
+    # backup current CF0 and C0 states
+    CF0copy = getattr(self,&#34;CF0&#34;,CF0test).copy()
+    C0copy = material.C0.copy()
+    # perform PR determination for each layer
+    for i in range(0,material.n):
+        C0 = np.zeros_like(C0copy)
+        C0[i] = C0test
+        material.C0 = C0
+        self.CF0 = CF0test
+        # self &gt;&gt; material thermalize
+        sim = senspatankar(self &gt;&gt; material,self,**kwargs)
+        sim.savestate(material,self) # store store the inputs in sim for chaining
+        sim_collection.append(sim)
+        PR.append(sim.PR.PRtarget[i])
+        PRE.append(sim.PR.PRE[i])
+        PRT.append(sim.PR.PRTtarget[i])
+    # restore CF0 and C0 states
+    self.CF0, material.C0 = CF0copy, C0copy
+    # assemble the result
+    res = SensPatankarResultCollection(
+            name = f&#34;PR: {material.fullname} &gt;&gt; {self.name}&#34;,
+            simulations=sim_collection,
+            type=&#34;PR&#34;, PR = PR, PRE = PRE, PRT = PRT
+        )
+    return res</code></pre>
+</details>
+</dd>
 <dt id="migration.foodphysics.refresh"><code class="name flex">
 <span>def <span class="ident">refresh</span></span>(<span>self)</span>
 </code></dt>
@@ -11753,6 +14491,7 @@ The category under which the properties are grouped.</p>
     new_substance = get_value(&#34;substance&#34;)
     new_medium = get_value(&#34;medium&#34;)
     if new_substance is not None: self.substance = new_substance
+    if new_substance == []: self.substance = None
     if new_medium is not None:self.medium = new_medium
     # return
     return self  # Return self for method chaining if needed</code></pre>
@@ -12247,7 +14986,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     # Class method returning help() for the end user
     # --------------------------------------------------------------------
     @classmethod
-    def help(cls):
+    def upd(cls):
         &#34;&#34;&#34;
         Prints a dynamically formatted summary of all input parameters,
         adjusting column widths based on content and wrapping long descriptions.
@@ -12586,6 +15325,8 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     def layerclass(self): return type(self).__name__
     @property
     def name(self): return self._name
+    @property
+    def fullname(self): return str(self._name)
     @property
     def type(self): return self._type
     @property
@@ -13299,6 +16040,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
+        medium.substance = self.substance # debug 2025-09-01
         return self.contact(medium)
 
     # overloading in
@@ -13462,75 +16204,6 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 </ul>
 <h3>Static methods</h3>
 <dl>
-<dt id="migration.layer.help"><code class="name flex">
-<span>def <span class="ident">help</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Prints a dynamically formatted summary of all input parameters,
-adjusting column widths based on content and wrapping long descriptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def help(cls):
-    &#34;&#34;&#34;
-    Prints a dynamically formatted summary of all input parameters,
-    adjusting column widths based on content and wrapping long descriptions.
-    &#34;&#34;&#34;
-
-    # Column Headers
-    headers = [&#34;Parameter&#34;, &#34;Default Value&#34;, &#34;Has Synonyms?&#34;, &#34;Description&#34;]
-    col_widths = [len(h) for h in headers]  # Start with header widths
-
-    # Collect Data Rows
-    rows = []
-    for param, default in cls._defaults.items():
-        has_synonyms = &#34;✅ Yes&#34; if param in cls._synonyms else &#34;❌ No&#34;
-        description = cls._descriptionInputs.get(param, &#34;No description available&#34;)
-
-        # Update column widths dynamically
-        col_widths[0] = max(col_widths[0], len(param))
-        col_widths[1] = max(col_widths[1], len(str(default)))
-        col_widths[2] = max(col_widths[2], len(has_synonyms))
-        col_widths[3] = max(col_widths[3], len(description))
-
-        rows.append([param, str(default), has_synonyms, description])
-
-    # Function to wrap text for a given column width
-    def wrap_text(text, width):
-        return textwrap.fill(text, width)
-
-    # Print Table with Adjusted Column Widths
-    separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in col_widths) + &#34;-+&#34;
-    print(&#34;\n### **Accepted Parameters and Defaults**\n&#34;)
-    print(separator)
-    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(col_widths[i]) for i, h in enumerate(headers)) + &#34; |&#34;)
-    print(separator)
-    for row in rows:
-        # Wrap text in the description column
-        row[3] = wrap_text(row[3], col_widths[3])
-
-        # Print row
-        print(&#34;| &#34; + &#34; | &#34;.join(row[i].ljust(col_widths[i]) for i in range(3)) + &#34; | &#34; + row[3])
-    print(separator)
-
-    # Synonyms Table
-    print(&#34;\n### **Parameter Synonyms**\n&#34;)
-    syn_headers = [&#34;Parameter&#34;, &#34;Synonyms&#34;]
-    syn_col_widths = [
-        max(len(&#34;Parameter&#34;), max(len(k) for k in cls._synonyms.keys())),  # Ensure it fits &#34;Parameter&#34;
-        max(len(&#34;Synonyms&#34;), max(len(&#34;, &#34;.join(v)) for v in cls._synonyms.values()))  # Ensure it fits &#34;Synonyms&#34;
-    ]
-    syn_separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in syn_col_widths) + &#34;-+&#34;
-    print(syn_separator)
-    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(syn_col_widths[i]) for i, h in enumerate(syn_headers)) + &#34; |&#34;)
-    print(syn_separator)
-    for param, synonyms in cls._synonyms.items():
-        print(f&#34;| {param.ljust(syn_col_widths[0])} | {&#39;, &#39;.join(synonyms).ljust(syn_col_widths[1])} |&#34;)
-    print(syn_separator)</code></pre>
-</details>
-</dd>
 <dt id="migration.layer.resolvename"><code class="name flex">
 <span>def <span class="ident">resolvename</span></span>(<span>param_value, param_key, **unresolved)</span>
 </code></dt>
@@ -13639,6 +16312,75 @@ def sum(cls, layers):
         else:
             total = total + L  # This uses the overloaded __add__ operator of the layer class.
     return total</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.upd"><code class="name flex">
+<span>def <span class="ident">upd</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints a dynamically formatted summary of all input parameters,
+adjusting column widths based on content and wrapping long descriptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def upd(cls):
+    &#34;&#34;&#34;
+    Prints a dynamically formatted summary of all input parameters,
+    adjusting column widths based on content and wrapping long descriptions.
+    &#34;&#34;&#34;
+
+    # Column Headers
+    headers = [&#34;Parameter&#34;, &#34;Default Value&#34;, &#34;Has Synonyms?&#34;, &#34;Description&#34;]
+    col_widths = [len(h) for h in headers]  # Start with header widths
+
+    # Collect Data Rows
+    rows = []
+    for param, default in cls._defaults.items():
+        has_synonyms = &#34;✅ Yes&#34; if param in cls._synonyms else &#34;❌ No&#34;
+        description = cls._descriptionInputs.get(param, &#34;No description available&#34;)
+
+        # Update column widths dynamically
+        col_widths[0] = max(col_widths[0], len(param))
+        col_widths[1] = max(col_widths[1], len(str(default)))
+        col_widths[2] = max(col_widths[2], len(has_synonyms))
+        col_widths[3] = max(col_widths[3], len(description))
+
+        rows.append([param, str(default), has_synonyms, description])
+
+    # Function to wrap text for a given column width
+    def wrap_text(text, width):
+        return textwrap.fill(text, width)
+
+    # Print Table with Adjusted Column Widths
+    separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in col_widths) + &#34;-+&#34;
+    print(&#34;\n### **Accepted Parameters and Defaults**\n&#34;)
+    print(separator)
+    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(col_widths[i]) for i, h in enumerate(headers)) + &#34; |&#34;)
+    print(separator)
+    for row in rows:
+        # Wrap text in the description column
+        row[3] = wrap_text(row[3], col_widths[3])
+
+        # Print row
+        print(&#34;| &#34; + &#34; | &#34;.join(row[i].ljust(col_widths[i]) for i in range(3)) + &#34; | &#34; + row[3])
+    print(separator)
+
+    # Synonyms Table
+    print(&#34;\n### **Parameter Synonyms**\n&#34;)
+    syn_headers = [&#34;Parameter&#34;, &#34;Synonyms&#34;]
+    syn_col_widths = [
+        max(len(&#34;Parameter&#34;), max(len(k) for k in cls._synonyms.keys())),  # Ensure it fits &#34;Parameter&#34;
+        max(len(&#34;Synonyms&#34;), max(len(&#34;, &#34;.join(v)) for v in cls._synonyms.values()))  # Ensure it fits &#34;Synonyms&#34;
+    ]
+    syn_separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in syn_col_widths) + &#34;-+&#34;
+    print(syn_separator)
+    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(syn_col_widths[i]) for i, h in enumerate(syn_headers)) + &#34; |&#34;)
+    print(syn_separator)
+    for param, synonyms in cls._synonyms.items():
+        print(f&#34;| {param.ljust(syn_col_widths[0])} | {&#39;, &#39;.join(synonyms).ljust(syn_col_widths[1])} |&#34;)
+    print(syn_separator)</code></pre>
 </details>
 </dd>
 </dl>
@@ -13895,6 +16637,17 @@ def concentration(self): return sum(self.l*self.C0)/self.thickness</code></pre>
 <pre><code class="python">@property
 def crystallinity_history(self):
     return self._crystallinity_history if self._crystallinity_history != [] else [self._currentcrystallinity]</code></pre>
+</details>
+</dd>
+<dt id="migration.layer.fullname"><code class="name">var <span class="ident">fullname</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fullname(self): return str(self._name)</code></pre>
 </details>
 </dd>
 <dt id="migration.layer.hasC0link"><code class="name">var <span class="ident">hasC0link</span></code></dt>
@@ -16440,11 +19193,13 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.create_simulation_widget" href="#migration.create_simulation_widget">create_simulation_widget</a></code></li>
 <li><code><a title="migration.custom_plt_figure" href="#migration.custom_plt_figure">custom_plt_figure</a></code></li>
 <li><code><a title="migration.custom_plt_subplots" href="#migration.custom_plt_subplots">custom_plt_subplots</a></code></li>
+<li><code><a title="migration.ensure_2d" href="#migration.ensure_2d">ensure_2d</a></code></li>
 <li><code><a title="migration.is_latex_available" href="#migration.is_latex_available">is_latex_available</a></code></li>
 <li><code><a title="migration.is_valid_figure" href="#migration.is_valid_figure">is_valid_figure</a></code></li>
 <li><code><a title="migration.print_figure" href="#migration.print_figure">print_figure</a></code></li>
 <li><code><a title="migration.print_pdf" href="#migration.print_pdf">print_pdf</a></code></li>
 <li><code><a title="migration.print_png" href="#migration.print_png">print_png</a></code></li>
+<li><code><a title="migration.print_svg" href="#migration.print_svg">print_svg</a></code></li>
 <li><code><a title="migration.rgb" href="#migration.rgb">rgb</a></code></li>
 <li><code><a title="migration.senspatankar" href="#migration.senspatankar">senspatankar</a></code></li>
 <li><code><a title="migration.tooclear" href="#migration.tooclear">tooclear</a></code></li>
@@ -16490,6 +19245,12 @@ restart.freezeCF(t=1000, CF=0.05)
 </ul>
 </li>
 <li>
+<h4><code><a title="migration.FrozenDict" href="#migration.FrozenDict">FrozenDict</a></code></h4>
+</li>
+<li>
+<h4><code><a title="migration.FrozenNamespace" href="#migration.FrozenNamespace">FrozenNamespace</a></code></h4>
+</li>
+<li>
 <h4><code><a title="migration.PrintableFigure" href="#migration.PrintableFigure">PrintableFigure</a></code></h4>
 <ul class="">
 <li><code><a title="migration.PrintableFigure.print" href="#migration.PrintableFigure.print">print</a></code></li>
@@ -16501,12 +19262,20 @@ restart.freezeCF(t=1000, CF=0.05)
 </li>
 <li>
 <h4><code><a title="migration.SensPatankarResult" href="#migration.SensPatankarResult">SensPatankarResult</a></code></h4>
-<ul class="two-column">
+<ul class="">
+<li><code><a title="migration.SensPatankarResult.append_extras_snapshot_from" href="#migration.SensPatankarResult.append_extras_snapshot_from">append_extras_snapshot_from</a></code></li>
 <li><code><a title="migration.SensPatankarResult.chaining" href="#migration.SensPatankarResult.chaining">chaining</a></code></li>
 <li><code><a title="migration.SensPatankarResult.copy" href="#migration.SensPatankarResult.copy">copy</a></code></li>
 <li><code><a title="migration.SensPatankarResult.currrentdistance" href="#migration.SensPatankarResult.currrentdistance">currrentdistance</a></code></li>
+<li><code><a title="migration.SensPatankarResult.del_extra" href="#migration.SensPatankarResult.del_extra">del_extra</a></code></li>
 <li><code><a title="migration.SensPatankarResult.distanceSq" href="#migration.SensPatankarResult.distanceSq">distanceSq</a></code></li>
+<li><code><a title="migration.SensPatankarResult.export_extras_snapshot" href="#migration.SensPatankarResult.export_extras_snapshot">export_extras_snapshot</a></code></li>
+<li><code><a title="migration.SensPatankarResult.extras_as_dict" href="#migration.SensPatankarResult.extras_as_dict">extras_as_dict</a></code></li>
 <li><code><a title="migration.SensPatankarResult.fit" href="#migration.SensPatankarResult.fit">fit</a></code></li>
+<li><code><a title="migration.SensPatankarResult.get_extra" href="#migration.SensPatankarResult.get_extra">get_extra</a></code></li>
+<li><code><a title="migration.SensPatankarResult.get_extra_readonly" href="#migration.SensPatankarResult.get_extra_readonly">get_extra_readonly</a></code></li>
+<li><code><a title="migration.SensPatankarResult.has_extra" href="#migration.SensPatankarResult.has_extra">has_extra</a></code></li>
+<li><code><a title="migration.SensPatankarResult.inherit_extras_history_from" href="#migration.SensPatankarResult.inherit_extras_history_from">inherit_extras_history_from</a></code></li>
 <li><code><a title="migration.SensPatankarResult.interpolate_CF" href="#migration.SensPatankarResult.interpolate_CF">interpolate_CF</a></code></li>
 <li><code><a title="migration.SensPatankarResult.plotCF" href="#migration.SensPatankarResult.plotCF">plotCF</a></code></li>
 <li><code><a title="migration.SensPatankarResult.plotCx" href="#migration.SensPatankarResult.plotCx">plotCx</a></code></li>
@@ -16518,9 +19287,24 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.SensPatankarResult.save_as_excel_CF" href="#migration.SensPatankarResult.save_as_excel_CF">save_as_excel_CF</a></code></li>
 <li><code><a title="migration.SensPatankarResult.save_as_excel_Cx" href="#migration.SensPatankarResult.save_as_excel_Cx">save_as_excel_Cx</a></code></li>
 <li><code><a title="migration.SensPatankarResult.savestate" href="#migration.SensPatankarResult.savestate">savestate</a></code></li>
+<li><code><a title="migration.SensPatankarResult.set_extra" href="#migration.SensPatankarResult.set_extra">set_extra</a></code></li>
 <li><code><a title="migration.SensPatankarResult.to_CF_dataframe" href="#migration.SensPatankarResult.to_CF_dataframe">to_CF_dataframe</a></code></li>
 <li><code><a title="migration.SensPatankarResult.to_Cx_dataframe" href="#migration.SensPatankarResult.to_Cx_dataframe">to_Cx_dataframe</a></code></li>
 <li><code><a title="migration.SensPatankarResult.update" href="#migration.SensPatankarResult.update">update</a></code></li>
+<li><code><a title="migration.SensPatankarResult.update_extras" href="#migration.SensPatankarResult.update_extras">update_extras</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="migration.SensPatankarResultCollection" href="#migration.SensPatankarResultCollection">SensPatankarResultCollection</a></code></h4>
+<ul class="two-column">
+<li><code><a title="migration.SensPatankarResultCollection.CF_at_target_dict" href="#migration.SensPatankarResultCollection.CF_at_target_dict">CF_at_target_dict</a></code></li>
+<li><code><a title="migration.SensPatankarResultCollection.add" href="#migration.SensPatankarResultCollection.add">add</a></code></li>
+<li><code><a title="migration.SensPatankarResultCollection.append" href="#migration.SensPatankarResultCollection.append">append</a></code></li>
+<li><code><a title="migration.SensPatankarResultCollection.by_name" href="#migration.SensPatankarResultCollection.by_name">by_name</a></code></li>
+<li><code><a title="migration.SensPatankarResultCollection.extend" href="#migration.SensPatankarResultCollection.extend">extend</a></code></li>
+<li><code><a title="migration.SensPatankarResultCollection.insert" href="#migration.SensPatankarResultCollection.insert">insert</a></code></li>
+<li><code><a title="migration.SensPatankarResultCollection.map" href="#migration.SensPatankarResultCollection.map">map</a></code></li>
+<li><code><a title="migration.SensPatankarResultCollection.names" href="#migration.SensPatankarResultCollection.names">names</a></code></li>
 </ul>
 </li>
 <li>
@@ -16575,6 +19359,7 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.foodphysics.level" href="#migration.foodphysics.level">level</a></code></li>
 <li><code><a title="migration.foodphysics.migration" href="#migration.foodphysics.migration">migration</a></code></li>
 <li><code><a title="migration.foodphysics.name" href="#migration.foodphysics.name">name</a></code></li>
+<li><code><a title="migration.foodphysics.potentialRelease" href="#migration.foodphysics.potentialRelease">potentialRelease</a></code></li>
 <li><code><a title="migration.foodphysics.refresh" href="#migration.foodphysics.refresh">refresh</a></code></li>
 <li><code><a title="migration.foodphysics.update" href="#migration.foodphysics.update">update</a></code></li>
 </ul>
@@ -16610,6 +19395,7 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.layer.contact" href="#migration.layer.contact">contact</a></code></li>
 <li><code><a title="migration.layer.copy" href="#migration.layer.copy">copy</a></code></li>
 <li><code><a title="migration.layer.crystallinity_history" href="#migration.layer.crystallinity_history">crystallinity_history</a></code></li>
+<li><code><a title="migration.layer.fullname" href="#migration.layer.fullname">fullname</a></code></li>
 <li><code><a title="migration.layer.hasC0link" href="#migration.layer.hasC0link">hasC0link</a></code></li>
 <li><code><a title="migration.layer.hasDlink" href="#migration.layer.hasDlink">hasDlink</a></code></li>
 <li><code><a title="migration.layer.hasDmodel" href="#migration.layer.hasDmodel">hasDmodel</a></code></li>
@@ -16618,7 +19404,6 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.layer.hasklink" href="#migration.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="migration.layer.haskmodel" href="#migration.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="migration.layer.hasllink" href="#migration.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="migration.layer.help" href="#migration.layer.help">help</a></code></li>
 <li><code><a title="migration.layer.ispolymer" href="#migration.layer.ispolymer">ispolymer</a></code></li>
 <li><code><a title="migration.layer.ispolymer_history" href="#migration.layer.ispolymer_history">ispolymer_history</a></code></li>
 <li><code><a title="migration.layer.issolid" href="#migration.layer.issolid">issolid</a></code></li>
@@ -16665,6 +19450,7 @@ restart.freezeCF(t=1000, CF=0.05)
 <li><code><a title="migration.layer.sum" href="#migration.layer.sum">sum</a></code></li>
 <li><code><a title="migration.layer.thickness" href="#migration.layer.thickness">thickness</a></code></li>
 <li><code><a title="migration.layer.type" href="#migration.layer.type">type</a></code></li>
+<li><code><a title="migration.layer.upd" href="#migration.layer.upd">upd</a></code></li>
 <li><code><a title="migration.layer.update" href="#migration.layer.update">update</a></code></li>
 </ul>
 </li>

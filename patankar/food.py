@@ -35,12 +35,12 @@ medium = foodlayer(name="ethanol", contacttemperature=(40, "degC"))
 [substance] in [food] in [packaging] | [layer] >> [condition1] >> [condition2]
 
 
-@version: 1.22
+@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2023-01-25
-@rev: 2025-03-13
+@rev: 2025-09-01
 
 """
 
@@ -880,7 +880,6 @@ class foodphysics:
         """Returns True if a simulation exists"""
         return self.lastsimulation is not None
 
-
     # ------- [inheritance registration mechanism] --------
     def acknowledge(self, what=None, category=None):
         """
@@ -989,6 +988,7 @@ class foodphysics:
         new_substance = get_value("substance")
         new_medium = get_value("medium")
         if new_substance is not None: self.substance = new_substance
+        if new_substance == []: self.substance = None
         if new_medium is not None:self.medium = new_medium
         # return
         return self  # Return self for method chaining if needed
@@ -1058,7 +1058,6 @@ class foodphysics:
                 repr_str += f"{' ' * (max_key_length)}= {extra_info}\n"
         print(repr_str.strip())  # Print formatted output
         return str(self)  # Simplified representation for repr()
-
 
 
     def __str__(self):
@@ -1197,12 +1196,15 @@ class foodphysics:
         """
         # inherit substance/migrant from other if self.migrant is None
         if isinstance(other,(layer,foodlayer)):
-            if isinstance(self,foodlayer):
-                if self.substance is None and other.substance is not None:
-                    self.substance = other.substance
+            if isinstance(self,foodlayer) or isinstance(self,foodphysics):
+                if (not hasattr(self,"substance") or self.substance is None) and other.substance is not None:
+                    self.substance = other.substance # a substance is assiged
+                if hasattr(self,"substance") and self.substance is not None:
+                    other.substance = self.substance # debug 2025-09-01
         return self._to(other) # propagates other
 
         # The operators @ and | are depreciated and should not be used anymore
+        # they do not behave as rshift since they not force the transfer of substance id to other
     def __matmul__(self, other): # depreciated @
         """
             Overload @: equivalent to >> if other is a layer.
@@ -1235,6 +1237,39 @@ class foodphysics:
     def contact(self,material,**kwargs):
         """alias to migration method"""
         return self.migration(self,material,**kwargs)
+
+    # sensitivity method: potentialRelease
+    def potentialRelease(self,material,C0test=1000.0,CF0test=0.0,**kwargs):
+        """generalization of migration method to calculate potential release"""
+        from patankar.migration import senspatankar, SensPatankarResultCollection
+        # initialization
+        CF0test = np.array([CF0test])
+        sim_collection, PR, PRE, PRT = [],[],[],[]
+        # backup current CF0 and C0 states
+        CF0copy = getattr(self,"CF0",CF0test).copy()
+        C0copy = material.C0.copy()
+        # perform PR determination for each layer
+        for i in range(0,material.n):
+            C0 = np.zeros_like(C0copy)
+            C0[i] = C0test
+            material.C0 = C0
+            self.CF0 = CF0test
+            # self >> material thermalize
+            sim = senspatankar(self >> material,self,**kwargs)
+            sim.savestate(material,self) # store store the inputs in sim for chaining
+            sim_collection.append(sim)
+            PR.append(sim.PR.PRtarget[i])
+            PRE.append(sim.PR.PRE[i])
+            PRT.append(sim.PR.PRTtarget[i])
+        # restore CF0 and C0 states
+        self.CF0, material.C0 = CF0copy, C0copy
+        # assemble the result
+        res = SensPatankarResultCollection(
+                name = f"PR: {material.fullname} >> {self.name}",
+                simulations=sim_collection,
+                type="PR", PR = PR, PRE = PRE, PRT = PRT
+            )
+        return res
 
     @property
     def haskmodel(self):

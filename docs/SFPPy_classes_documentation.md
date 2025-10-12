@@ -1,6 +1,6 @@
 # SFPPy Modules Documentation
 
-Generated on: **2025-07-27 17:30:39**
+Generated on: **2025-10-11 23:26:45**
 
 <hr style="border: none; height: 1px; background-color: #e0e0e0;" />
 
@@ -144,23 +144,28 @@ python yourscript.py # or `conda activate sfppy && python yourscript.py`
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
+<a href="#patankar_private_message" style="text-decoration: none; font-weight: bold;">
+9. patankar.private.message
+</a>
+</div>
+<div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_private_mstruct" style="text-decoration: none; font-weight: bold;">
-9. patankar.private.mstruct
+10. patankar.private.mstruct
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_private_pubchempy" style="text-decoration: none; font-weight: bold;">
-10. patankar.private.pubchempy
+11. patankar.private.pubchempy
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_property" style="text-decoration: none; font-weight: bold;">
-11. patankar.property
+12. patankar.property
 </a>
 </div>
 <div style="flex: 1 1 calc(33.33% - 20px); min-width: 200px;">
 <a href="#patankar_useroverride" style="text-decoration: none; font-weight: bold;">
-12. patankar.useroverride
+13. patankar.useroverride
 </a>
 </div>
 </div>
@@ -313,7 +318,7 @@ texture --> semisolid
 | `acetonitrile` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `acetonitrile` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `acetonitrile` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `acetonitrile` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `acetonitrile` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `acetonitrile` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `acetonitrile` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `acetonitrile` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -322,15 +327,16 @@ texture --> semisolid
 | `acetonitrile` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `acetonitrile` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `acetonitrile` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `acetonitrile` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `acetonitrile` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `acetonitrile` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `acetonitrile` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `ambient` | `__init__` | general constructor | 57 | 1.32 |
 | `ambient` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `ambient` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `ambient` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `ambient` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `ambient` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `ambient` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `ambient` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `ambient` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `ambient` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `ambient` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -339,15 +345,16 @@ texture --> semisolid
 | `ambient` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `ambient` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `ambient` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `ambient` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `ambient` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `ambient` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `ambient` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `aqueous` | `__init__` | general constructor | 57 | 1.32 |
 | `aqueous` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `aqueous` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `aqueous` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `aqueous` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `aqueous` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `aqueous` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `aqueous` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `aqueous` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `aqueous` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `aqueous` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -356,15 +363,16 @@ texture --> semisolid
 | `aqueous` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `aqueous` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `aqueous` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `aqueous` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `aqueous` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `aqueous` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `aqueous` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `boiling` | `__init__` | general constructor | 57 | 1.32 |
 | `boiling` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `boiling` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `boiling` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `boiling` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `boiling` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `boiling` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `boiling` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `boiling` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `boiling` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `boiling` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -373,15 +381,16 @@ texture --> semisolid
 | `boiling` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `boiling` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `boiling` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `boiling` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `boiling` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `boiling` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `boiling` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `chemicalaffinity` | `__init__` | general constructor | 57 | 1.32 |
 | `chemicalaffinity` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `chemicalaffinity` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `chemicalaffinity` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `chemicalaffinity` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `chemicalaffinity` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `chemicalaffinity` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `chemicalaffinity` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `chemicalaffinity` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `chemicalaffinity` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `chemicalaffinity` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -390,15 +399,16 @@ texture --> semisolid
 | `chemicalaffinity` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `chemicalaffinity` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `chemicalaffinity` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `chemicalaffinity` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `chemicalaffinity` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `chemicalaffinity` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `chemicalaffinity` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `chilled` | `__init__` | general constructor | 57 | 1.32 |
 | `chilled` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `chilled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `chilled` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `chilled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `chilled` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `chilled` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `chilled` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `chilled` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `chilled` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `chilled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -407,15 +417,16 @@ texture --> semisolid
 | `chilled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `chilled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `chilled` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `chilled` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `chilled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `chilled` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `chilled` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `ethanol` | `__init__` | general constructor | 57 | 1.32 |
 | `ethanol` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `ethanol` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `ethanol` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `ethanol` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `ethanol` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `ethanol` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `ethanol` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `ethanol` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `ethanol` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `ethanol` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -424,15 +435,16 @@ texture --> semisolid
 | `ethanol` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `ethanol` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `ethanol` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `ethanol` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `ethanol` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `ethanol` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `ethanol` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `ethanol50` | `__init__` | general constructor | 57 | 1.32 |
 | `ethanol50` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `ethanol50` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `ethanol50` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `ethanol50` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `ethanol50` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `ethanol50` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `ethanol50` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `ethanol50` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `ethanol50` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `ethanol50` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -441,15 +453,16 @@ texture --> semisolid
 | `ethanol50` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `ethanol50` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `ethanol50` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `ethanol50` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `ethanol50` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `ethanol50` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `ethanol50` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `ethanol95` | `__init__` | general constructor | 57 | 1.32 |
 | `ethanol95` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `ethanol95` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `ethanol95` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `ethanol95` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `ethanol95` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `ethanol95` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `ethanol95` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `ethanol95` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `ethanol95` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `ethanol95` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -458,15 +471,16 @@ texture --> semisolid
 | `ethanol95` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `ethanol95` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `ethanol95` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `ethanol95` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `ethanol95` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `ethanol95` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `ethanol95` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `fat` | `__init__` | general constructor | 57 | 1.32 |
 | `fat` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `fat` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `fat` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `fat` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `fat` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `fat` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `fat` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `fat` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `fat` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `fat` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -475,15 +489,16 @@ texture --> semisolid
 | `fat` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `fat` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `fat` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `fat` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `fat` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `fat` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `fat` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `foodlayer` | `__init__` | general constructor | 57 | 1.32 |
 | `foodlayer` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `foodlayer` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `foodlayer` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `foodlayer` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `foodlayer` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `foodlayer` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `foodlayer` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `foodlayer` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `foodlayer` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `foodlayer` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -492,15 +507,16 @@ texture --> semisolid
 | `foodlayer` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `foodlayer` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `foodlayer` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `foodlayer` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `foodlayer` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `foodlayer` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `foodlayer` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `foodphysics` | `__init__` | general constructor | 57 | 1.32 |
 | `foodphysics` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `foodphysics` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `foodphysics` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `foodphysics` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `foodphysics` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `foodphysics` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `foodphysics` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `foodphysics` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `foodphysics` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `foodphysics` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -509,15 +525,16 @@ texture --> semisolid
 | `foodphysics` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `foodphysics` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `foodphysics` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `foodphysics` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `foodphysics` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `foodphysics` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `foodphysics` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `foodproperty` | `__init__` | general constructor | 57 | 1.32 |
 | `foodproperty` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `foodproperty` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `foodproperty` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `foodproperty` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `foodproperty` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `foodproperty` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `foodproperty` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `foodproperty` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `foodproperty` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `foodproperty` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -526,15 +543,16 @@ texture --> semisolid
 | `foodproperty` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `foodproperty` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `foodproperty` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `foodproperty` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `foodproperty` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `foodproperty` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `foodproperty` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `frozen` | `__init__` | general constructor | 57 | 1.32 |
 | `frozen` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `frozen` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `frozen` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `frozen` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `frozen` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `frozen` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `frozen` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `frozen` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `frozen` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `frozen` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -543,15 +561,16 @@ texture --> semisolid
 | `frozen` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `frozen` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `frozen` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `frozen` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `frozen` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `frozen` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `frozen` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `frying` | `__init__` | general constructor | 57 | 1.32 |
 | `frying` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `frying` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `frying` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `frying` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `frying` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `frying` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `frying` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `frying` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `frying` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `frying` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -560,15 +579,16 @@ texture --> semisolid
 | `frying` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `frying` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `frying` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `frying` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `frying` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `frying` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `frying` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `hotambient` | `__init__` | general constructor | 57 | 1.32 |
 | `hotambient` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `hotambient` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `hotambient` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `hotambient` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `hotambient` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `hotambient` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `hotambient` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `hotambient` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `hotambient` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `hotambient` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -577,15 +597,16 @@ texture --> semisolid
 | `hotambient` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `hotambient` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `hotambient` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `hotambient` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `hotambient` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `hotambient` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `hotambient` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `hotfilled` | `__init__` | general constructor | 57 | 1.32 |
 | `hotfilled` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `hotfilled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `hotfilled` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `hotfilled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `hotfilled` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `hotfilled` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `hotfilled` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `hotfilled` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `hotfilled` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `hotfilled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -594,15 +615,16 @@ texture --> semisolid
 | `hotfilled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `hotfilled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `hotfilled` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `hotfilled` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `hotfilled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `hotfilled` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `hotfilled` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `hotoven` | `__init__` | general constructor | 57 | 1.32 |
 | `hotoven` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `hotoven` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `hotoven` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `hotoven` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `hotoven` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `hotoven` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `hotoven` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `hotoven` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `hotoven` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `hotoven` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -611,15 +633,16 @@ texture --> semisolid
 | `hotoven` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `hotoven` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `hotoven` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `hotoven` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `hotoven` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `hotoven` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `hotoven` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `intermediate` | `__init__` | general constructor | 57 | 1.32 |
 | `intermediate` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `intermediate` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `intermediate` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `intermediate` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `intermediate` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `intermediate` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `intermediate` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `intermediate` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `intermediate` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `intermediate` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -628,15 +651,16 @@ texture --> semisolid
 | `intermediate` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `intermediate` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `intermediate` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `intermediate` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `intermediate` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `intermediate` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `intermediate` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `isooctane` | `__init__` | general constructor | 57 | 1.32 |
 | `isooctane` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `isooctane` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `isooctane` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `isooctane` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `isooctane` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `isooctane` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `isooctane` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `isooctane` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `isooctane` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `isooctane` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -645,15 +669,16 @@ texture --> semisolid
 | `isooctane` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `isooctane` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `isooctane` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `isooctane` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `isooctane` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `isooctane` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `isooctane` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `liquid` | `__init__` | general constructor | 57 | 1.32 |
 | `liquid` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `liquid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `liquid` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `liquid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `liquid` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `liquid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `liquid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `liquid` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `liquid` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `liquid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -662,15 +687,16 @@ texture --> semisolid
 | `liquid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `liquid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `liquid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `liquid` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `liquid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `liquid` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `liquid` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `methanol` | `__init__` | general constructor | 57 | 1.32 |
 | `methanol` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `methanol` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `methanol` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `methanol` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `methanol` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `methanol` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `methanol` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `methanol` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `methanol` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `methanol` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -679,15 +705,16 @@ texture --> semisolid
 | `methanol` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `methanol` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `methanol` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `methanol` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `methanol` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `methanol` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `methanol` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `microwave` | `__init__` | general constructor | 57 | 1.32 |
 | `microwave` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `microwave` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `microwave` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `microwave` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `microwave` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `microwave` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `microwave` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `microwave` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `microwave` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `microwave` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -696,15 +723,16 @@ texture --> semisolid
 | `microwave` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `microwave` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `microwave` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `microwave` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `microwave` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `microwave` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `microwave` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `nofood` | `__init__` | general constructor | 57 | 1.32 |
 | `nofood` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `nofood` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `nofood` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `nofood` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `nofood` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `nofood` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `nofood` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `nofood` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `nofood` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `nofood` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -713,15 +741,16 @@ texture --> semisolid
 | `nofood` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `nofood` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `nofood` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `nofood` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `nofood` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `nofood` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `nofood` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `oil` | `__init__` | general constructor | 57 | 1.32 |
 | `oil` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `oil` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `oil` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `oil` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `oil` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `oil` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `oil` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `oil` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `oil` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `oil` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -730,15 +759,16 @@ texture --> semisolid
 | `oil` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `oil` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `oil` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `oil` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `oil` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `oil` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `oil` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `oliveoil` | `__init__` | general constructor | 57 | 1.32 |
 | `oliveoil` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `oliveoil` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `oliveoil` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `oliveoil` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `oliveoil` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `oliveoil` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `oliveoil` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `oliveoil` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `oliveoil` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `oliveoil` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -747,15 +777,16 @@ texture --> semisolid
 | `oliveoil` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `oliveoil` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `oliveoil` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `oliveoil` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `oliveoil` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `oliveoil` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `oliveoil` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `oven` | `__init__` | general constructor | 57 | 1.32 |
 | `oven` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `oven` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `oven` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `oven` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `oven` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `oven` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `oven` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `oven` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `oven` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `oven` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -764,15 +795,16 @@ texture --> semisolid
 | `oven` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `oven` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `oven` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `oven` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `oven` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `oven` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `oven` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `panfrying` | `__init__` | general constructor | 57 | 1.32 |
 | `panfrying` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `panfrying` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `panfrying` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `panfrying` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `panfrying` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `panfrying` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `panfrying` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `panfrying` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `panfrying` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `panfrying` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -781,15 +813,16 @@ texture --> semisolid
 | `panfrying` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `panfrying` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `panfrying` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `panfrying` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `panfrying` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `panfrying` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `panfrying` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `pasteurization` | `__init__` | general constructor | 57 | 1.32 |
 | `pasteurization` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `pasteurization` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `pasteurization` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `pasteurization` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `pasteurization` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `pasteurization` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `pasteurization` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `pasteurization` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `pasteurization` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `pasteurization` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -798,15 +831,16 @@ texture --> semisolid
 | `pasteurization` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `pasteurization` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `pasteurization` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `pasteurization` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `pasteurization` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `pasteurization` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `pasteurization` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `perfectlymixed` | `__init__` | general constructor | 57 | 1.32 |
 | `perfectlymixed` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `perfectlymixed` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `perfectlymixed` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `perfectlymixed` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `perfectlymixed` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `perfectlymixed` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `perfectlymixed` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `perfectlymixed` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `perfectlymixed` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `perfectlymixed` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -815,15 +849,16 @@ texture --> semisolid
 | `perfectlymixed` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `perfectlymixed` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `perfectlymixed` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `perfectlymixed` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `perfectlymixed` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `perfectlymixed` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `perfectlymixed` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `realcontact` | `__init__` | general constructor | 57 | 1.32 |
 | `realcontact` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `realcontact` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `realcontact` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `realcontact` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `realcontact` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `realcontact` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `realcontact` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `realcontact` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `realcontact` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `realcontact` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -832,15 +867,16 @@ texture --> semisolid
 | `realcontact` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `realcontact` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `realcontact` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `realcontact` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `realcontact` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `realcontact` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `realcontact` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `realfood` | `__init__` | general constructor | 57 | 1.32 |
 | `realfood` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `realfood` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `realfood` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `realfood` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `realfood` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `realfood` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `realfood` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `realfood` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `realfood` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `realfood` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -849,15 +885,16 @@ texture --> semisolid
 | `realfood` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `realfood` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `realfood` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `realfood` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `realfood` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `realfood` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `realfood` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `rolled` | `__init__` | general constructor | 57 | 1.32 |
 | `rolled` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `rolled` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `rolled` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `rolled` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `rolled` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `rolled` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `rolled` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `rolled` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `rolled` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `rolled` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -866,15 +903,16 @@ texture --> semisolid
 | `rolled` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `rolled` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `rolled` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `rolled` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `rolled` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `rolled` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `rolled` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `semisolid` | `__init__` | general constructor | 57 | 1.32 |
 | `semisolid` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `semisolid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `semisolid` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `semisolid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `semisolid` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `semisolid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `semisolid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `semisolid` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `semisolid` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `semisolid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -883,15 +921,16 @@ texture --> semisolid
 | `semisolid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `semisolid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `semisolid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `semisolid` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `semisolid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `semisolid` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `semisolid` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `setoff` | `__init__` | general constructor | 57 | 1.32 |
 | `setoff` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `setoff` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `setoff` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `setoff` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `setoff` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `setoff` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `setoff` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `setoff` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `setoff` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `setoff` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -900,15 +939,16 @@ texture --> semisolid
 | `setoff` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `setoff` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `setoff` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `setoff` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `setoff` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `setoff` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `setoff` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `simulant` | `__init__` | general constructor | 57 | 1.32 |
 | `simulant` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `simulant` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `simulant` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `simulant` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `simulant` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `simulant` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `simulant` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `simulant` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `simulant` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `simulant` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -917,15 +957,16 @@ texture --> semisolid
 | `simulant` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `simulant` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `simulant` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `simulant` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `simulant` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `simulant` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `simulant` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `solid` | `__init__` | general constructor | 57 | 1.32 |
 | `solid` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `solid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `solid` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `solid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `solid` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `solid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `solid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `solid` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `solid` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `solid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -934,15 +975,16 @@ texture --> semisolid
 | `solid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `solid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `solid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `solid` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `solid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `solid` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `solid` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `stacked` | `__init__` | general constructor | 57 | 1.32 |
 | `stacked` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `stacked` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `stacked` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `stacked` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `stacked` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `stacked` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `stacked` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `stacked` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `stacked` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `stacked` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -951,15 +993,16 @@ texture --> semisolid
 | `stacked` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `stacked` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `stacked` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `stacked` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `stacked` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `stacked` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `stacked` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `sterilization` | `__init__` | general constructor | 57 | 1.32 |
 | `sterilization` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `sterilization` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `sterilization` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `sterilization` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `sterilization` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `sterilization` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `sterilization` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `sterilization` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `sterilization` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `sterilization` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -968,15 +1011,16 @@ texture --> semisolid
 | `sterilization` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `sterilization` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `sterilization` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `sterilization` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `sterilization` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `sterilization` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `sterilization` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `tenax` | `__init__` | general constructor | 57 | 1.32 |
 | `tenax` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `tenax` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `tenax` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `tenax` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `tenax` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `tenax` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `tenax` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `tenax` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `tenax` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `tenax` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -985,15 +1029,16 @@ texture --> semisolid
 | `tenax` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `tenax` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `tenax` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `tenax` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `tenax` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `tenax` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `tenax` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `testcontact` | `__init__` | general constructor | 57 | 1.32 |
 | `testcontact` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `testcontact` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `testcontact` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `testcontact` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `testcontact` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `testcontact` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `testcontact` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `testcontact` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `testcontact` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `testcontact` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -1002,15 +1047,16 @@ texture --> semisolid
 | `testcontact` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `testcontact` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `testcontact` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `testcontact` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `testcontact` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `testcontact` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `testcontact` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `texture` | `__init__` | general constructor | 57 | 1.32 |
 | `texture` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `texture` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `texture` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `texture` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `texture` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `texture` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `texture` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `texture` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `texture` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `texture` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -1019,15 +1065,16 @@ texture --> semisolid
 | `texture` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `texture` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `texture` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `texture` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `texture` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `texture` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `texture` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `transportation` | `__init__` | general constructor | 57 | 1.32 |
 | `transportation` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `transportation` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `transportation` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `transportation` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `transportation` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `transportation` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `transportation` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `transportation` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `transportation` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `transportation` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -1036,15 +1083,16 @@ texture --> semisolid
 | `transportation` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `transportation` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `transportation` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `transportation` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `transportation` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `transportation` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `transportation` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `water` | `__init__` | general constructor | 57 | 1.32 |
 | `water` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `water` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `water` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `water` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `water` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `water` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `water` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `water` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `water` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `water` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -1053,15 +1101,16 @@ texture --> semisolid
 | `water` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `water` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `water` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `water` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `water` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `water` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `water` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `water3aceticacid` | `__init__` | general constructor | 57 | 1.32 |
 | `water3aceticacid` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `water3aceticacid` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `water3aceticacid` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `water3aceticacid` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `water3aceticacid` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `water3aceticacid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `water3aceticacid` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `water3aceticacid` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `water3aceticacid` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `water3aceticacid` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -1070,15 +1119,16 @@ texture --> semisolid
 | `water3aceticacid` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `water3aceticacid` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `water3aceticacid` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `water3aceticacid` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `water3aceticacid` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `water3aceticacid` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `water3aceticacid` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 | `yogurt` | `__init__` | general constructor | 57 | 1.32 |
 | `yogurt` | `__lshift__` | overload << food << packaging --> food full example: substance in food << packaging >> layer --> layer | 7 | 1.32 |
 | `yogurt` | `__matmul__` | Overload @: equivalent to >> if other is a layer. e.g. food@layer --> layer (depreciated) | 8 | 1.32 |
 | `yogurt` | `__or__` | Overload @: equivalent to >> if other is a layer. e.g. food|layer --> layer (depreciated) | 8 | 1.32 |
 | `yogurt` | `__repr__` | Formatted string representation of the FOODlayer object. | 37 | 1.32 |
 | `yogurt` | `__rmod__` | overload % as: migrant % food --> food full example: migrant in food in packaging | layer >> condition >> condition | 10 | 1.32 |
-| `yogurt` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 13 | 1.32 |
+| `yogurt` | `__rshift__` | Overloads >> to propagate to other. e.g. food>>layer --> layer | 16 | 1.32 |
 | `yogurt` | `__str__` | Formatted string representation of the property | 4 | 1.32 |
 | `yogurt` | `_from` | Inherit packaging properties | 6 | 1.32 |
 | `yogurt` | `_to` | Transfers inherited properties to another object based on predefined rules. | 58 | 1.32 |
@@ -1087,8 +1137,9 @@ texture --> semisolid
 | `yogurt` | `copy` | Creates a deep copy of the current food instance. | 3 | 1.32 |
 | `yogurt` | `get_param` | Retrieve instance attribute with a default fallback if enabled. | 27 | 1.32 |
 | `yogurt` | `migration` | interface to simulation engine: senspantankar | 9 | 1.32 |
+| `yogurt` | `potentialRelease` | generalization of migration method to calculate potential release | 31 | 1.32 |
 | `yogurt` | `refresh` | refresh all physcal paramaters after instantiation | 10 | 1.32 |
-| `yogurt` | `update` | Update modifiable parameters of the foodphysics object. | 67 | 1.32 |
+| `yogurt` | `update` | Update modifiable parameters of the foodphysics object. | 68 | 1.32 |
 
 <a id="patankar_geometry" name="patankar_geometry"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_food" title="Go to Previous Module: patankar.food" style="text-decoration: none;">⬅️ Previous</a>
@@ -1567,7 +1618,7 @@ object --> migrant
 | `AdhesiveAcrylate` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `AdhesiveAcrylate` | `__repr__` | disp method | 49 | 1.40 |
 | `AdhesiveAcrylate` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `AdhesiveAcrylate` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `AdhesiveAcrylate` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `AdhesiveAcrylate` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `AdhesiveAcrylate` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `AdhesiveAcrylate` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1607,7 +1658,7 @@ object --> migrant
 | `AdhesiveEVA` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `AdhesiveEVA` | `__repr__` | disp method | 49 | 1.40 |
 | `AdhesiveEVA` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `AdhesiveEVA` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `AdhesiveEVA` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `AdhesiveEVA` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `AdhesiveEVA` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `AdhesiveEVA` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1647,7 +1698,7 @@ object --> migrant
 | `AdhesiveNaturalRubber` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `AdhesiveNaturalRubber` | `__repr__` | disp method | 49 | 1.40 |
 | `AdhesiveNaturalRubber` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `AdhesiveNaturalRubber` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `AdhesiveNaturalRubber` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `AdhesiveNaturalRubber` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `AdhesiveNaturalRubber` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `AdhesiveNaturalRubber` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1687,7 +1738,7 @@ object --> migrant
 | `AdhesivePU` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `AdhesivePU` | `__repr__` | disp method | 49 | 1.40 |
 | `AdhesivePU` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `AdhesivePU` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `AdhesivePU` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `AdhesivePU` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `AdhesivePU` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `AdhesivePU` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1727,7 +1778,7 @@ object --> migrant
 | `AdhesivePVAC` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `AdhesivePVAC` | `__repr__` | disp method | 49 | 1.40 |
 | `AdhesivePVAC` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `AdhesivePVAC` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `AdhesivePVAC` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `AdhesivePVAC` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `AdhesivePVAC` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `AdhesivePVAC` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1767,7 +1818,7 @@ object --> migrant
 | `AdhesiveSyntheticRubber` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `AdhesiveSyntheticRubber` | `__repr__` | disp method | 49 | 1.40 |
 | `AdhesiveSyntheticRubber` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `AdhesiveSyntheticRubber` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `AdhesiveSyntheticRubber` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `AdhesiveSyntheticRubber` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `AdhesiveSyntheticRubber` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `AdhesiveSyntheticRubber` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1807,7 +1858,7 @@ object --> migrant
 | `AdhesiveVAE` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `AdhesiveVAE` | `__repr__` | disp method | 49 | 1.40 |
 | `AdhesiveVAE` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `AdhesiveVAE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `AdhesiveVAE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `AdhesiveVAE` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `AdhesiveVAE` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `AdhesiveVAE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1847,7 +1898,7 @@ object --> migrant
 | `Cardboard` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `Cardboard` | `__repr__` | disp method | 49 | 1.40 |
 | `Cardboard` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `Cardboard` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `Cardboard` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `Cardboard` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `Cardboard` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `Cardboard` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1887,7 +1938,7 @@ object --> migrant
 | `HDPE` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `HDPE` | `__repr__` | disp method | 49 | 1.40 |
 | `HDPE` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `HDPE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `HDPE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `HDPE` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `HDPE` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `HDPE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1927,7 +1978,7 @@ object --> migrant
 | `HIPS` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `HIPS` | `__repr__` | disp method | 49 | 1.40 |
 | `HIPS` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `HIPS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `HIPS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `HIPS` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `HIPS` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `HIPS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -1967,7 +2018,7 @@ object --> migrant
 | `LDPE` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `LDPE` | `__repr__` | disp method | 49 | 1.40 |
 | `LDPE` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `LDPE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `LDPE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `LDPE` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `LDPE` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `LDPE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2007,7 +2058,7 @@ object --> migrant
 | `LLDPE` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `LLDPE` | `__repr__` | disp method | 49 | 1.40 |
 | `LLDPE` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `LLDPE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `LLDPE` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `LLDPE` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `LLDPE` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `LLDPE` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2047,7 +2098,7 @@ object --> migrant
 | `PA6` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PA6` | `__repr__` | disp method | 49 | 1.40 |
 | `PA6` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PA6` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PA6` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PA6` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PA6` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PA6` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2087,7 +2138,7 @@ object --> migrant
 | `PA66` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PA66` | `__repr__` | disp method | 49 | 1.40 |
 | `PA66` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PA66` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PA66` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PA66` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PA66` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PA66` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2127,7 +2178,7 @@ object --> migrant
 | `PBT` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PBT` | `__repr__` | disp method | 49 | 1.40 |
 | `PBT` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PBT` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PBT` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PBT` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PBT` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PBT` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2167,7 +2218,7 @@ object --> migrant
 | `PEN` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PEN` | `__repr__` | disp method | 49 | 1.40 |
 | `PEN` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PEN` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PEN` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PEN` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PEN` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PEN` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2207,7 +2258,7 @@ object --> migrant
 | `PMMA` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PMMA` | `__repr__` | disp method | 49 | 1.40 |
 | `PMMA` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PMMA` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PMMA` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PMMA` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PMMA` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PMMA` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2247,7 +2298,7 @@ object --> migrant
 | `PP` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PP` | `__repr__` | disp method | 49 | 1.40 |
 | `PP` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PP` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PP` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PP` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PP` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PP` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2287,7 +2338,7 @@ object --> migrant
 | `PPrubber` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PPrubber` | `__repr__` | disp method | 49 | 1.40 |
 | `PPrubber` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PPrubber` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PPrubber` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PPrubber` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PPrubber` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PPrubber` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2327,7 +2378,7 @@ object --> migrant
 | `PS` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PS` | `__repr__` | disp method | 49 | 1.40 |
 | `PS` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PS` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PS` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2367,7 +2418,7 @@ object --> migrant
 | `PVAc` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `PVAc` | `__repr__` | disp method | 49 | 1.40 |
 | `PVAc` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `PVAc` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `PVAc` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `PVAc` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `PVAc` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `PVAc` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2407,7 +2458,7 @@ object --> migrant
 | `Paper` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `Paper` | `__repr__` | disp method | 49 | 1.40 |
 | `Paper` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `Paper` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `Paper` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `Paper` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `Paper` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `Paper` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2447,7 +2498,7 @@ object --> migrant
 | `SBS` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `SBS` | `__repr__` | disp method | 49 | 1.40 |
 | `SBS` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `SBS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `SBS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `SBS` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `SBS` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `SBS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2487,7 +2538,7 @@ object --> migrant
 | `air` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `air` | `__repr__` | disp method | 49 | 1.40 |
 | `air` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `air` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `air` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `air` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `air` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `air` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2527,7 +2578,7 @@ object --> migrant
 | `gPET` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `gPET` | `__repr__` | disp method | 49 | 1.40 |
 | `gPET` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `gPET` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `gPET` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `gPET` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `gPET` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `gPET` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2567,7 +2618,7 @@ object --> migrant
 | `layer` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `layer` | `__repr__` | disp method | 49 | 1.40 |
 | `layer` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `layer` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `layer` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `layer` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `layer` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `layer` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2626,7 +2677,7 @@ object --> migrant
 | `oPP` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `oPP` | `__repr__` | disp method | 49 | 1.40 |
 | `oPP` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `oPP` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `oPP` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `oPP` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `oPP` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `oPP` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2666,7 +2717,7 @@ object --> migrant
 | `plasticizedPVC` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `plasticizedPVC` | `__repr__` | disp method | 49 | 1.40 |
 | `plasticizedPVC` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `plasticizedPVC` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `plasticizedPVC` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `plasticizedPVC` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `plasticizedPVC` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `plasticizedPVC` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2706,7 +2757,7 @@ object --> migrant
 | `rHIPS` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `rHIPS` | `__repr__` | disp method | 49 | 1.40 |
 | `rHIPS` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `rHIPS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `rHIPS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `rHIPS` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `rHIPS` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `rHIPS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2746,7 +2797,7 @@ object --> migrant
 | `rPET` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `rPET` | `__repr__` | disp method | 49 | 1.40 |
 | `rPET` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `rPET` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `rPET` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `rPET` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `rPET` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `rPET` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2786,7 +2837,7 @@ object --> migrant
 | `rPS` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `rPS` | `__repr__` | disp method | 49 | 1.40 |
 | `rPS` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `rPS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `rPS` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `rPS` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `rPS` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `rPS` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2826,7 +2877,7 @@ object --> migrant
 | `rigidPVC` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `rigidPVC` | `__repr__` | disp method | 49 | 1.40 |
 | `rigidPVC` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `rigidPVC` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `rigidPVC` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `rigidPVC` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `rigidPVC` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `rigidPVC` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2866,7 +2917,7 @@ object --> migrant
 | `wPET` | `__ne__` | Return self!=value. | 7 | 1.40 |
 | `wPET` | `__repr__` | disp method | 49 | 1.40 |
 | `wPET` | `__rmod__` | Overload in to enable: susbtance % layer --> layer | 9 | 1.40 |
-| `wPET` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 10 | 1.40 |
+| `wPET` | `__rshift__` | Overloads >> to propagate migration to food. layer >> food --> simulation --> food (use food.lastsimulation to see it) layer >> condition --> simulation --> condition | 11 | 1.40 |
 | `wPET` | `__setitem__` | set indexing method | 45 | 1.40 |
 | `wPET` | `__str__` | Formatted string representation of layer | 5 | 1.40 |
 | `wPET` | `_currentDmodel` | Returns the name of Dmodel used in the ith layer | 9 | 1.40 |
@@ -2921,7 +2972,7 @@ object --> migrant
 | (module-level) | `is_java_available` | Returns True if java is installed | 3 | 1.41 |
 | (module-level) | `parse_molblock` | Parse a single molecule record (molblock) from an SDF file. Retains header info, atoms, bonds, and metadata. parse_molblock(molblock: List[str], useDataFrame: bool) -> Dict: | 89 | 1.41 |
 | (module-level) | `parse_sdf` | Parse an SDF file (filename) containing one or more molecule records. Each record is separated by "$$$$". parse_sdf(filename: str, useDataFrame: bool) -> List[Dict]: | 20 | 1.41 |
-| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 103 | 1.41 |
+| (module-level) | `polarity_index` | Computes the polarity index (P') from a given logP value and molar volume V. This is done using a quadratic model fitted to experimental data: | 116 | 1.41 |
 | (module-level) | `safe_json_dump` | Safely write a Python object to a JSON file, replacing all non-standard float values (NaN, Infinity, -Infinity) with `None` to ensure strict JSON compliance. | 51 | 1.41 |
 | (module-level) | `unique` | Return unique elements from `lst`, with optional order preservation and scalar unwrapping. | 27 | 1.41 |
 | `CompoundIndex` | `__init__` | Constructor: ensures cache directory and index file exist/are loaded. | 29 | 1.41 |
@@ -2979,8 +3030,11 @@ object --> migrant
 graph TD;
 CFSimulationContainer
 Cprofile
+FrozenDict
+FrozenNamespace
 PrintableFigure
 SensPatankarResult
+SensPatankarResultCollection
 foodlayer
 foodphysics
 layer
@@ -2988,7 +3042,10 @@ layerLink
 restartfile
 restartfile_senspantakar
 Figure --> PrintableFigure
+Mapping --> FrozenDict
+SimpleNamespace --> FrozenNamespace
 foodphysics --> foodlayer
+list --> SensPatankarResultCollection
 object --> CFSimulationContainer
 object --> Cprofile
 object --> SensPatankarResult
@@ -3005,89 +3062,136 @@ restartfile --> restartfile_senspantakar
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `_generate_figname` | Generate a clean filename based on metadata or current date/time. | 23 | 1.40 |
-| (module-level) | `autoname` | Generates a random simulation name. | 25 | 1.40 |
-| (module-level) | `cleantex` | Process a LaTeX string to guess the plain text by performing substitutions and removing formatting characters, while preserving inner content as much as possible. | 48 | 1.40 |
-| (module-level) | `colormap` | Generates a list of `ncolors` colors from the specified colormap. | 51 | 1.40 |
-| (module-level) | `compute_fc_profile_PBC` | Computes the full concentration profile, including interface concentrations, for a system with periodic boundary conditions (PBC). | 89 | 1.40 |
-| (module-level) | `compute_fv_profile` | Compute the full finite-volume concentration profile, including node values and interface values. (this function is not nested inside senspantar for better readability) | 71 | 1.40 |
-| (module-level) | `create_plotmigration_widget` | Creates a widget interface for managing simulation plots, point evaluations, tabulated values, and for saving simulation data. It uses the global dictionary mymigration (keys such as "mig1") to select a simulation instance. | 379 | 1.40 |
-| (module-level) | `create_simulation_widget` | Creates a widget interface for launching a migration simulation. | 141 | 1.40 |
-| (module-level) | `custom_plt_figure` | Ensure all figures use PrintableFigure. | 4 | 1.40 |
-| (module-level) | `custom_plt_subplots` | Ensure plt.subplots() returns a PrintableFigure. | 5 | 1.40 |
-| (module-level) | `is_latex_available` | Check whether LaTeX is available in the system PATH. | 9 | 1.40 |
-| (module-level) | `is_valid_figure` | Checks if `fig` is a valid and open Matplotlib figure. | 11 | 1.40 |
-| (module-level) | `print_figure` | Save the figure in both PDF and PNG formats. | 16 | 1.40 |
-| (module-level) | `print_pdf` | Save a given figure as a PDF. | 29 | 1.40 |
-| (module-level) | `print_png` | Save a given figure as a PNG. | 29 | 1.40 |
-| (module-level) | `rgb` | Displays a categorized color chart with properly aligned headers. | 33 | 1.40 |
-| (module-level) | `senspatankar` | Simulates in 1D the mass transfer of a substance initially distributed in a multilayer packaging structure into a food medium (or liquid medium). This solver uses a finite-volume method adapted from Patankar to handle partition coefficients between all layers, and between the food and the contact layer. | 369 | 1.40 |
-| (module-level) | `tooclear` | Darkens a too-bright RGB(A) color tuple. | 31 | 1.40 |
-| `CFSimulationContainer` | `__init__` | Initialize an empty container for CF results. name: str, default ="" Name of the container used to save results and shown in title description: str, default ="" description of the container, shown in subtitle SML : None or float, optional SML value in final units (usually mg/kg, adapt the value accordingly) SMLunit : str, optional SML units plotSML = True (default), bool, optional if True and SML is not None, plot SML limit as an horizontal line plotconfig : dict, optional Dictionary with plotting configuration, containing: - "tunit": Time unit label (e.g., 's'). - "Cunit": Concentration unit label (e.g., 'mg/L'). - "tscale": Time scaling factor. - "Cscale": Concentration scaling factor. | 36 | 1.40 |
-| `CFSimulationContainer` | `__repr__` | Return a summary of stored CF curves including index numbers. | 13 | 1.40 |
-| `CFSimulationContainer` | `_get_keys_by_indices` | Helper function to retrieve keys based on indices. | 20 | 1.40 |
-| `CFSimulationContainer` | `_validate_indices` | Helper function to check if indices are valid. | 7 | 1.40 |
-| `CFSimulationContainer` | `add` | Add a CF result to the container. | 48 | 1.40 |
-| `CFSimulationContainer` | `color` | Change the color of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `colormap` | Generates a list of `ncolors` colors from the specified colormap. | 26 | 1.40 |
-| `CFSimulationContainer` | `delete` | Remove a stored curve by its index (int) or label (str). | 19 | 1.40 |
-| `CFSimulationContainer` | `jet` | Generates colors from the Jet colormap. | 3 | 1.40 |
-| `CFSimulationContainer` | `label` | Change the label of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `linestyle` | Change the linestyle of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `linewidth` | Change the linewidth of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `marker` | Change the marker style of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `markeredgecolor` | Change the marker edge color of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `markerfacecolor` | Change the marker face color of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `markersize` | Change the marker size of one or multiple curves. | 3 | 1.40 |
-| `CFSimulationContainer` | `plotCF` | Plot all stored CF curves in a single figure. | 90 | 1.40 |
-| `CFSimulationContainer` | `rgb` | Displays a categorized color chart with properly aligned headers. | 4 | 1.40 |
-| `CFSimulationContainer` | `save_as_csv` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 25 | 1.40 |
-| `CFSimulationContainer` | `save_as_excel` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 26 | 1.40 |
-| `CFSimulationContainer` | `to_dataframe` | Export interpolated CF data as a pandas DataFrame. Parameters: - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). Returns: - pd.DataFrame A DataFrame with time as index and CF values as columns (one per simulation). | 35 | 1.40 |
-| `CFSimulationContainer` | `update` | Update properties of one or multiple curves. | 45 | 1.40 |
-| `CFSimulationContainer` | `viridis` | Generates colors from the Viridis colormap. | 3 | 1.40 |
-| `Cprofile` | `__init__` | Initialize the concentration profile Cx(x). | 13 | 1.40 |
-| `Cprofile` | `__repr__` | Representation of the profile. | 25 | 1.40 |
-| `Cprofile` | `__str__` | Returns a formatted string representation of the profile. | 3 | 1.40 |
-| `Cprofile` | `assign_values` | Assign new values to Cx at specified indices. | 19 | 1.40 |
-| `Cprofile` | `find_indices_Cxrange` | Find indices where Cx is within a specified range. | 12 | 1.40 |
-| `Cprofile` | `find_indices_xrange` | Find indices where x is within a specified range. | 12 | 1.40 |
-| `Cprofile` | `integrate` | Compute the integral of Cx over x using Simpson's rule. | 8 | 1.40 |
-| `Cprofile` | `interp` | Interpolate concentration values at new x positions. | 12 | 1.40 |
-| `Cprofile` | `mean_concentration` | Compute the mean concentration using the integral. | 8 | 1.40 |
-| `PrintableFigure` | `print` |  | 2 | 1.40 |
-| `PrintableFigure` | `print_pdf` |  | 2 | 1.40 |
-| `PrintableFigure` | `print_png` |  | 2 | 1.40 |
-| `PrintableFigure` | `show` | Show figure based on the environment: - In Jupyter: Uses display(fig) - In scripts or GUI mode: Uses plt.show() | 14 | 1.40 |
-| `SensPatankarResult` | `__add__` | Concatenate two solutions | 69 | 1.40 |
-| `SensPatankarResult` | `__init__` | Constructor for simulation results. | 71 | 1.40 |
-| `SensPatankarResult` | `__repr__` | Return repr(self). | 14 | 1.40 |
-| `SensPatankarResult` | `__rshift__` | Overloads >> to propagate migration to food. | 8 | 1.40 |
-| `SensPatankarResult` | `__str__` | Return str(self). | 4 | 1.40 |
-| `SensPatankarResult` | `__sub__` | Overloads the operator - for returning a square distance function | 3 | 1.40 |
-| `SensPatankarResult` | `chaining` |  | 6 | 1.40 |
-| `SensPatankarResult` | `copy` | Creates a deep copy of the current SensPatankarResult instance. | 33 | 1.40 |
-| `SensPatankarResult` | `distanceSq` | Compute the squared distance between two SensPatankarResult instances. | 63 | 1.40 |
-| `SensPatankarResult` | `fit` | Fits simulation parameters D and k to fit a discrete CF data | 46 | 1.40 |
-| `SensPatankarResult` | `interpolate_CF` | Interpolates the concentration in the food (CF) at given time(s). | 39 | 1.40 |
-| `SensPatankarResult` | `plotCF` | Plot the concentration in the food (CF) as a function of time. | 142 | 1.40 |
-| `SensPatankarResult` | `plotCx` | Plot the concentration profiles (Cx) in the packaging vs. position (x) for different times, using a color gradient similar to Parula, based on time values (not index order). Additionally, highlight the concentration profile at `ttarget` with a thick black line. | 106 | 1.40 |
-| `SensPatankarResult` | `pseudoexperiment` | Generates discrete pseudo-experimental data from high-resolution simulated results. | 85 | 1.40 |
-| `SensPatankarResult` | `rerun` | Rerun the simulation (while keeping everything unchanged) This function is intended to be used with layerLinks for updating internally the parameters. R.rerun() stores the updated simulation results in R Rupdate = R.rerun() returns a copy of R while updating R | 53 | 1.40 |
-| `SensPatankarResult` | `resume` | Resume simulation for a new duration (with all parameters are unchanged) | 48 | 1.40 |
-| `SensPatankarResult` | `save_as_csv_CF` | Save the (t, CF) data to a CSV file. | 28 | 1.40 |
-| `SensPatankarResult` | `save_as_csv_Cx` | Save the concentration profiles (Cx) to a CSV file. | 35 | 1.40 |
-| `SensPatankarResult` | `save_as_excel_CF` | Save the (t, CF) data to an Excel file. | 28 | 1.40 |
-| `SensPatankarResult` | `save_as_excel_Cx` | Save the concentration profiles (Cx) to an Excel file. | 35 | 1.40 |
-| `SensPatankarResult` | `savestate` | Saves senspantankar inputs for simulation chaining | 5 | 1.40 |
-| `SensPatankarResult` | `to_CF_dataframe` | Returns a two-column DataFrame with columns ["time_s", "CF_a.u."], containing the raw time vector (self.t) and food concentration (self.CF). | 9 | 1.40 |
-| `SensPatankarResult` | `to_Cx_dataframe` | Return a DataFrame of concentration profiles (Cx) vs. position (x), at user-specified or automatically sampled times. | 79 | 1.40 |
-| `SensPatankarResult` | `update` | Update modifiable parameters of the SensPatankarResult object. Parameters: - name (str): New name for the object. - description (str): New description. - tscale (float or tuple): Time scale (can be tuple like (1, "day")). - tunit (str): Time unit. - lscale (float or tuple): Length scale (can be tuple like (1e-6, "µm")). - lunit (str): Length unit. - Cscale (float or tuple): Concentration scale (can be tuple like (1, "a.u.")). - Cunit (str): Concentration unit. | 42 | 1.40 |
-| `restartfile_senspantakar` | `__init__` | constructor to be called at the intialization | 43 | 1.40 |
-| `restartfile_senspantakar` | `__repr__` | representation of the restart object | 9 | 1.40 |
-| `restartfile_senspantakar` | `__str__` | Formatted representation of the restart object | 4 | 1.40 |
-| `restartfile_senspantakar` | `freezeCF` | Freeze the CF solution CF(t) | 4 | 1.40 |
-| `restartfile_senspantakar` | `freezeCx` | Freeze the Cx solution Cx(x) | 3 | 1.40 |
+| (module-level) | `_clone_history_list` | Clone a list of snapshots safely (no aliasing, arrays re-frozen). | 5 | 1.50 |
+| (module-level) | `_clone_snapshot_for_store` | Clone one snapshot dict {'meta':..., 'extras': ...} in a pickle-safe way. Thaws MappingProxyType first, then deep-copies, freezing arrays. | 9 | 1.50 |
+| (module-level) | `_clone_value_for_store` | Deep clone a value; ndarrays copied (and optionally frozen). | 18 | 1.50 |
+| (module-level) | `_freeze_ndarray` | Return a read-only numpy array copy. | 8 | 1.50 |
+| (module-level) | `_freeze_recursively` | Pickle-safe, immutable sealing: - dict -> FrozenDict - SimpleNamespace -> FrozenNamespace - list/tuple -> tuple - set -> frozenset - np.ndarray -> read-only copy - everything else -> as-is (assumed already defensively copied) | 25 | 1.50 |
+| (module-level) | `_generate_figname` | Generate a clean filename based on metadata or current date/time. | 23 | 1.50 |
+| (module-level) | `_thaw_for_clone` | Recursively convert non-cloneable containers (e.g., MappingProxyType) into cloneable ones. | 14 | 1.50 |
+| (module-level) | `autoname` | Generates a random simulation name. | 25 | 1.50 |
+| (module-level) | `cleantex` | Process a LaTeX string to guess the plain text by performing substitutions and removing formatting characters, while preserving inner content as much as possible. | 48 | 1.50 |
+| (module-level) | `colormap` | Generates a list of `ncolors` colors from the specified colormap. | 51 | 1.50 |
+| (module-level) | `compute_fc_profile_PBC` | Computes the full concentration profile, including interface concentrations, for a system with periodic boundary conditions (PBC). | 89 | 1.50 |
+| (module-level) | `compute_fv_profile` | Compute the full finite-volume concentration profile, including node values and interface values. (this function is not nested inside senspantar for better readability) | 71 | 1.50 |
+| (module-level) | `create_plotmigration_widget` | Creates a widget interface for managing simulation plots, point evaluations, tabulated values, and for saving simulation data. It uses the global dictionary mymigration (keys such as "mig1") to select a simulation instance. | 379 | 1.50 |
+| (module-level) | `create_simulation_widget` | Creates a widget interface for launching a migration simulation. | 141 | 1.50 |
+| (module-level) | `custom_plt_figure` | Ensure all figures use PrintableFigure. | 4 | 1.50 |
+| (module-level) | `custom_plt_subplots` | Ensure plt.subplots() returns a PrintableFigure. | 5 | 1.50 |
+| (module-level) | `ensure_2d` | Ensure that input x is a 2D numpy.ndarray with shape (1, n) or (n, m). Parameters ---------- x : list or np.ndarray Input data. Returns ------- arr : np.ndarray 2D numpy array with shape (1, n) or (n, m). Raises ------ TypeError If input cannot be converted to a numpy.ndarray. ValueError If array shape is not compatible. | 32 | 1.50 |
+| (module-level) | `is_latex_available` | Check whether LaTeX is available in the system PATH. | 9 | 1.50 |
+| (module-level) | `is_valid_figure` | Checks if `fig` is a valid and open Matplotlib figure. | 11 | 1.50 |
+| (module-level) | `print_figure` | Save the figure in both PDF and PNG formats. | 17 | 1.50 |
+| (module-level) | `print_pdf` | Save a given figure as a PDF. | 29 | 1.50 |
+| (module-level) | `print_png` | Save a given figure as a PNG. | 29 | 1.50 |
+| (module-level) | `print_svg` | Save a given figure as a SVG. | 29 | 1.50 |
+| (module-level) | `rgb` | Displays a categorized color chart with properly aligned headers. | 33 | 1.50 |
+| (module-level) | `senspatankar` | Simulates in 1D the mass transfer of a substance initially distributed in a multilayer packaging structure into a food medium (or liquid medium). This solver uses a finite-volume method adapted from Patankar to handle partition coefficients between all layers, and between the food and the contact layer. | 424 | 1.50 |
+| (module-level) | `tooclear` | Darkens a too-bright RGB(A) color tuple. | 31 | 1.50 |
+| `CFSimulationContainer` | `__init__` | Initialize an empty container for CF results. name: str, default ="" Name of the container used to save results and shown in title description: str, default ="" description of the container, shown in subtitle SML : None or float, optional SML value in final units (usually mg/kg, adapt the value accordingly) SMLunit : str, optional SML units plotSML = True (default), bool, optional if True and SML is not None, plot SML limit as an horizontal line plotconfig : dict, optional Dictionary with plotting configuration, containing: - "tunit": Time unit label (e.g., 's'). - "Cunit": Concentration unit label (e.g., 'mg/L'). - "tscale": Time scaling factor. - "Cscale": Concentration scaling factor. | 36 | 1.50 |
+| `CFSimulationContainer` | `__repr__` | Return a summary of stored CF curves including index numbers. | 13 | 1.50 |
+| `CFSimulationContainer` | `_get_keys_by_indices` | Helper function to retrieve keys based on indices. | 20 | 1.50 |
+| `CFSimulationContainer` | `_validate_indices` | Helper function to check if indices are valid. | 7 | 1.50 |
+| `CFSimulationContainer` | `add` | Add a CF result to the container. | 48 | 1.50 |
+| `CFSimulationContainer` | `color` | Change the color of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `colormap` | Generates a list of `ncolors` colors from the specified colormap. | 26 | 1.50 |
+| `CFSimulationContainer` | `delete` | Remove a stored curve by its index (int) or label (str). | 19 | 1.50 |
+| `CFSimulationContainer` | `jet` | Generates colors from the Jet colormap. | 3 | 1.50 |
+| `CFSimulationContainer` | `label` | Change the label of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `linestyle` | Change the linestyle of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `linewidth` | Change the linewidth of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `marker` | Change the marker style of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `markeredgecolor` | Change the marker edge color of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `markerfacecolor` | Change the marker face color of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `markersize` | Change the marker size of one or multiple curves. | 3 | 1.50 |
+| `CFSimulationContainer` | `plotCF` | Plot all stored CF curves in a single figure. | 93 | 1.50 |
+| `CFSimulationContainer` | `rgb` | Displays a categorized color chart with properly aligned headers. | 4 | 1.50 |
+| `CFSimulationContainer` | `save_as_csv` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 25 | 1.50 |
+| `CFSimulationContainer` | `save_as_excel` | Save stored CF data to an Excel file. Parameters: - filename: str, Excel filename. - destinationfolder: str, where to save the file. - overwrite: bool, overwrite existing file. - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). | 26 | 1.50 |
+| `CFSimulationContainer` | `to_dataframe` | Export interpolated CF data as a pandas DataFrame. Parameters: - t_range: tuple (t_min, t_max), optional The time range for interpolation (default: min & max of all stored results). - num_points: int, optional Number of points in the interpolated time grid (default: 100). - time_list: list or array, optional Explicit list of time points for interpolation (overrides t_range & num_points). Returns: - pd.DataFrame A DataFrame with time as index and CF values as columns (one per simulation). | 35 | 1.50 |
+| `CFSimulationContainer` | `update` | Update properties of one or multiple curves. | 45 | 1.50 |
+| `CFSimulationContainer` | `viridis` | Generates colors from the Viridis colormap. | 3 | 1.50 |
+| `Cprofile` | `__init__` | Initialize the concentration profile Cx(x). | 13 | 1.50 |
+| `Cprofile` | `__repr__` | Representation of the profile. | 25 | 1.50 |
+| `Cprofile` | `__str__` | Returns a formatted string representation of the profile. | 3 | 1.50 |
+| `Cprofile` | `assign_values` | Assign new values to Cx at specified indices. | 19 | 1.50 |
+| `Cprofile` | `find_indices_Cxrange` | Find indices where Cx is within a specified range. | 12 | 1.50 |
+| `Cprofile` | `find_indices_xrange` | Find indices where x is within a specified range. | 12 | 1.50 |
+| `Cprofile` | `integrate` | Compute the integral of Cx over x using Simpson's rule. | 8 | 1.50 |
+| `Cprofile` | `interp` | Interpolate concentration values at new x positions. | 12 | 1.50 |
+| `Cprofile` | `mean_concentration` | Compute the mean concentration using the integral. | 8 | 1.50 |
+| `FrozenDict` | `__getitem__` |  | 1 | 1.50 |
+| `FrozenDict` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 7 | 1.50 |
+| `FrozenDict` | `__iter__` |  | 1 | 1.50 |
+| `FrozenDict` | `__len__` |  | 1 | 1.50 |
+| `FrozenDict` | `__reduce__` | Helper for pickle. | 2 | 1.50 |
+| `FrozenDict` | `__repr__` | Return repr(self). | 1 | 1.50 |
+| `FrozenNamespace` | `__delattr__` | Implement delattr(self, name). | 4 | 1.50 |
+| `FrozenNamespace` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 4 | 1.50 |
+| `FrozenNamespace` | `__reduce__` | Return state information for pickling | 3 | 1.50 |
+| `FrozenNamespace` | `__setattr__` | Implement setattr(self, name, value). | 4 | 1.50 |
+| `PrintableFigure` | `print` |  | 2 | 1.50 |
+| `PrintableFigure` | `print_pdf` |  | 2 | 1.50 |
+| `PrintableFigure` | `print_png` |  | 2 | 1.50 |
+| `PrintableFigure` | `show` | Show figure based on the environment: - In Jupyter: Uses display(fig) - In scripts or GUI mode: Uses plt.show() | 14 | 1.50 |
+| `SensPatankarResult` | `__add__` | Concatenate two solutions | 120 | 1.50 |
+| `SensPatankarResult` | `__init__` | Constructor for simulation results. | 84 | 1.50 |
+| `SensPatankarResult` | `__repr__` | Return repr(self). | 14 | 1.50 |
+| `SensPatankarResult` | `__rshift__` | Overloads >> to propagate migration to food. | 9 | 1.50 |
+| `SensPatankarResult` | `__str__` | Return str(self). | 4 | 1.50 |
+| `SensPatankarResult` | `__sub__` | Overloads the operator - for returning a square distance function | 3 | 1.50 |
+| `SensPatankarResult` | `_copy_for_read` |  | 19 | 1.50 |
+| `SensPatankarResult` | `_copy_for_store` |  | 22 | 1.50 |
+| `SensPatankarResult` | `append_extras_snapshot_from` | Append a safe snapshot of `other._extras` into THIS instance's `_extras_history`, while also inheriting the full lineage from `other._extras_history` if needed. | 133 | 1.50 |
+| `SensPatankarResult` | `chaining` |  | 7 | 1.50 |
+| `SensPatankarResult` | `copy` | Creates a deep copy of the current SensPatankarResult instance. | 34 | 1.50 |
+| `SensPatankarResult` | `del_extra` | Delete an extra parameter. Raises KeyError if it does not exist. | 5 | 1.50 |
+| `SensPatankarResult` | `distanceSq` | Compute the squared distance between two SensPatankarResult instances. | 63 | 1.50 |
+| `SensPatankarResult` | `export_extras_snapshot` | Build a corruption-safe snapshot of THIS instance's `_extras` so it can be appended to another instance's `_extras_history`. | 61 | 1.50 |
+| `SensPatankarResult` | `extras_as_dict` | Return a dict view of extras. copy: 'auto'|'deep'|'none' - 'auto' matches the mixin's auto read policy (arrays copied, mutables deepcopied) - 'deep' deepcopies all values - 'none' returns raw references (use with care) | 17 | 1.50 |
+| `SensPatankarResult` | `fit` | Fits simulation parameters D and k to fit a discrete CF data | 46 | 1.50 |
+| `SensPatankarResult` | `get_extra` | Retrieve the extra parameter `key`. If `default` is provided, return it when the key is missing. Otherwise, raise KeyError. Returns a defensive copy to prevent external mutation. | 14 | 1.50 |
+| `SensPatankarResult` | `get_extra_readonly` | Retrieve the extra parameter `key`. (READONLY) If `default` is provided, return it when the key is missing. Otherwise, raise KeyError. | 10 | 1.50 |
+| `SensPatankarResult` | `has_extra` | Return True if an extra parameter named `key` exists. | 3 | 1.50 |
+| `SensPatankarResult` | `inherit_extras_history_from` | Initialize THIS instance's `_extras_history` from BOTH: 1) `other._extras_history` (deep, alias-free clone), and 2) a fresh snapshot of `other._extras` appended at the end (if include_current=True). | 68 | 1.50 |
+| `SensPatankarResult` | `interpolate_CF` | Interpolates the concentration in the food (CF) at given time(s). | 39 | 1.50 |
+| `SensPatankarResult` | `plotCF` | Plot the concentration in the food (CF) as a function of time. | 142 | 1.50 |
+| `SensPatankarResult` | `plotCx` | Plot the concentration profiles (Cx) in the packaging vs. position (x) for different times, using a color gradient similar to Parula, based on time values (not index order). Additionally, highlight the concentration profile at `ttarget` with a thick black line. | 106 | 1.50 |
+| `SensPatankarResult` | `pseudoexperiment` | Generates discrete pseudo-experimental data from high-resolution simulated results. | 86 | 1.50 |
+| `SensPatankarResult` | `rerun` | Rerun the simulation (while keeping everything unchanged) This function is intended to be used with layerLinks for updating internally the parameters. R.rerun() stores the updated simulation results in R Rupdate = R.rerun() returns a copy of R while updating R | 53 | 1.50 |
+| `SensPatankarResult` | `resume` | Resume simulation for a new duration (with all parameters are unchanged) | 48 | 1.50 |
+| `SensPatankarResult` | `save_as_csv_CF` | Save the (t, CF) data to a CSV file. | 28 | 1.50 |
+| `SensPatankarResult` | `save_as_csv_Cx` | Save the concentration profiles (Cx) to a CSV file. | 35 | 1.50 |
+| `SensPatankarResult` | `save_as_excel_CF` | Save the (t, CF) data to an Excel file. | 28 | 1.50 |
+| `SensPatankarResult` | `save_as_excel_Cx` | Save the concentration profiles (Cx) to an Excel file. | 35 | 1.50 |
+| `SensPatankarResult` | `savestate` | Saves senspantankar inputs for simulation chaining | 19 | 1.50 |
+| `SensPatankarResult` | `set_extra` | Set or overwrite the extra parameter `key` to a stored copy of `value`. | 6 | 1.50 |
+| `SensPatankarResult` | `to_CF_dataframe` | Returns a two-column DataFrame with columns ["time_s", "CF_a.u."], containing the raw time vector (self.t) and food concentration (self.CF). | 9 | 1.50 |
+| `SensPatankarResult` | `to_Cx_dataframe` | Return a DataFrame of concentration profiles (Cx) vs. position (x), at user-specified or automatically sampled times. | 79 | 1.50 |
+| `SensPatankarResult` | `update` | Update modifiable parameters of the SensPatankarResult object. Parameters: - name (str): New name for the object. - description (str): New description. - tscale (float or tuple): Time scale (can be tuple like (1, "day")). - tunit (str): Time unit. - lscale (float or tuple): Length scale (can be tuple like (1e-6, "µm")). - lunit (str): Length unit. - Cscale (float or tuple): Concentration scale (can be tuple like (1, "a.u.")). - Cunit (str): Concentration unit. | 42 | 1.50 |
+| `SensPatankarResult` | `update_extras` | Update multiple extras at once. Usage ----- self.update_extras({'k1': v1, 'k2': v2}) self.update_extras(k3=v3, k4=v4) self.update_extras({'k1': v1}, k2=v2) | 15 | 1.50 |
+| `SensPatankarResultCollection` | `CF_at_target_dict` |  | 13 | 1.50 |
+| `SensPatankarResultCollection` | `__add__` | Return self+value. | 11 | 1.50 |
+| `SensPatankarResultCollection` | `__getitem__` | x.__getitem__(y) <==> x[y] | 9 | 1.50 |
+| `SensPatankarResultCollection` | `__iadd__` | Implement self+=value. | 6 | 1.50 |
+| `SensPatankarResultCollection` | `__init__` | SensPatankarResultCollection(name="collection name") SensPatankarResultCollection(...,simulations=one or list od simulations) SensPatankarResultCollection(...,description="...") | 15 | 1.50 |
+| `SensPatankarResultCollection` | `__repr__` | Return repr(self). | 29 | 1.50 |
+| `SensPatankarResultCollection` | `__rshift__` | Overloads >> to propagate PR | 35 | 1.50 |
+| `SensPatankarResultCollection` | `__setitem__` | Set self[key] to value. | 11 | 1.50 |
+| `SensPatankarResultCollection` | `__str__` | Return str(self). | 2 | 1.50 |
+| `SensPatankarResultCollection` | `_label_for` |  | 5 | 1.50 |
+| `SensPatankarResultCollection` | `_resolve_cls` |  | 12 | 1.50 |
+| `SensPatankarResultCollection` | `add` |  | 3 | 1.50 |
+| `SensPatankarResultCollection` | `append` | Append object to the end of the list. | 3 | 1.50 |
+| `SensPatankarResultCollection` | `by_name` |  | 5 | 1.50 |
+| `SensPatankarResultCollection` | `extend` | Extend list by appending elements from the iterable. | 4 | 1.50 |
+| `SensPatankarResultCollection` | `insert` | Insert object before index. | 3 | 1.50 |
+| `SensPatankarResultCollection` | `map` |  | 2 | 1.50 |
+| `restartfile_senspantakar` | `__init__` | constructor to be called at the intialization | 43 | 1.50 |
+| `restartfile_senspantakar` | `__repr__` | representation of the restart object | 9 | 1.50 |
+| `restartfile_senspantakar` | `__str__` | Formatted representation of the restart object | 4 | 1.50 |
+| `restartfile_senspantakar` | `freezeCF` | Freeze the CF solution CF(t) | 4 | 1.50 |
+| `restartfile_senspantakar` | `freezeCx` | Freeze the Cx solution Cx(x) | 3 | 1.50 |
 
 <a id="patankar_private_EUFCMannex1" name="patankar_private_EUFCMannex1"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_migration" title="Go to Previous Module: patankar.migration" style="text-decoration: none;">⬅️ Previous</a>
@@ -3114,32 +3218,32 @@ object --> EuFCMannex1
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `custom_wrap` |  | 13 | 1.41 |
-| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.41 |
-| `EuFCMannex1` | `__call__` | Callable access. For example: - dbannex1(cid) returns the record for a given PubChem cid (via bycid), - dbannex1(rec) returns the record for a given record number, - dbannex1(cid1, cid2, ...) or dbannex1([cid1, cid2, ...]) returns a list. Strings are interpreted as CAS numbers. | 33 | 1.41 |
-| `EuFCMannex1` | `__contains__` |  | 9 | 1.41 |
-| `EuFCMannex1` | `__getitem__` | __getitem__ supports: - integer keys: interpreted as record numbers. If the record number is not found, an error is raised showing the entered value and the valid range. - slices: returns a list of records whose record numbers fall within the slice. - list/tuple: returns a list of corresponding records. - string keys: interpreted as CAS numbers. If the CAS number is not found, an error is raised including the entered value and a sample of valid keys. | 40 | 1.41 |
-| `EuFCMannex1` | `__init__` | Initialize the database. | 33 | 1.41 |
-| `EuFCMannex1` | `__iter__` |  | 3 | 1.41 |
-| `EuFCMannex1` | `__len__` |  | 2 | 1.41 |
-| `EuFCMannex1` | `__repr__` | Return repr(self). | 6 | 1.41 |
-| `EuFCMannex1` | `__str__` | Return str(self). | 2 | 1.41 |
-| `EuFCMannex1` | `_load_record` | Load a record (as an annex1record) from its cached JSON file. If the file does not exist, return None with a warning. Extended records are managed via the global flag self._pubchem The local flag db sets whether the record will be informed or not from the full database | 34 | 1.41 |
-| `EuFCMannex1` | `byCAS` |  | 7 | 1.41 |
-| `EuFCMannex1` | `byEC` |  | 4 | 1.41 |
-| `EuFCMannex1` | `byFCM` |  | 5 | 1.41 |
-| `EuFCMannex1` | `byRef` |  | 4 | 1.41 |
-| `EuFCMannex1` | `bySML` |  | 9 | 1.41 |
-| `EuFCMannex1` | `bySMLT` |  | 9 | 1.41 |
-| `EuFCMannex1` | `bycid` | Search for a record by PubChem cid. | 13 | 1.41 |
-| `EuFCMannex1` | `byname` |  | 4 | 1.41 |
-| `EuFCMannex1` | `refresh_index` | Rebuild the global index by reading the CSV file and regenerating each record as recXXXXX.annex1.json (with record number as primary key). The index includes foreign key mappings for "name", "EC", "CAS", "FCM", "Ref" and a bycid index for PubChem cid. | 166 | 1.41 |
-| `annex1record` | `__init__` | Initialize an annex1record from dictionary d. order: the record number (from the CSV; if known) total: total number of records (if known) | 12 | 1.41 |
-| `annex1record` | `__repr__` | Return repr(self). | 42 | 1.41 |
-| `annex1record` | `__str__` | Return str(self). | 5 | 1.41 |
-| `annex1record_ext` | `__init__` | instantiate from a record with a consolidated databse: db | 51 | 1.41 |
-| `annex1record_ext` | `__repr__` | Return repr(self). | 42 | 1.41 |
-| `annex1record_ext` | `__str__` | Return str(self). | 5 | 1.41 |
+| (module-level) | `custom_wrap` |  | 13 | 1.50 |
+| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.50 |
+| `EuFCMannex1` | `__call__` | Callable access. For example: - dbannex1(cid) returns the record for a given PubChem cid (via bycid), - dbannex1(rec) returns the record for a given record number, - dbannex1(cid1, cid2, ...) or dbannex1([cid1, cid2, ...]) returns a list. Strings are interpreted as CAS numbers. | 33 | 1.50 |
+| `EuFCMannex1` | `__contains__` |  | 9 | 1.50 |
+| `EuFCMannex1` | `__getitem__` | __getitem__ supports: - integer keys: interpreted as record numbers. If the record number is not found, an error is raised showing the entered value and the valid range. - slices: returns a list of records whose record numbers fall within the slice. - list/tuple: returns a list of corresponding records. - string keys: interpreted as CAS numbers. If the CAS number is not found, an error is raised including the entered value and a sample of valid keys. | 40 | 1.50 |
+| `EuFCMannex1` | `__init__` | Initialize the database. | 33 | 1.50 |
+| `EuFCMannex1` | `__iter__` |  | 3 | 1.50 |
+| `EuFCMannex1` | `__len__` |  | 2 | 1.50 |
+| `EuFCMannex1` | `__repr__` | Return repr(self). | 6 | 1.50 |
+| `EuFCMannex1` | `__str__` | Return str(self). | 2 | 1.50 |
+| `EuFCMannex1` | `_load_record` | Load a record (as an annex1record) from its cached JSON file. If the file does not exist, return None with a warning. Extended records are managed via the global flag self._pubchem The local flag db sets whether the record will be informed or not from the full database | 34 | 1.50 |
+| `EuFCMannex1` | `byCAS` |  | 7 | 1.50 |
+| `EuFCMannex1` | `byEC` |  | 4 | 1.50 |
+| `EuFCMannex1` | `byFCM` |  | 5 | 1.50 |
+| `EuFCMannex1` | `byRef` |  | 4 | 1.50 |
+| `EuFCMannex1` | `bySML` |  | 9 | 1.50 |
+| `EuFCMannex1` | `bySMLT` |  | 9 | 1.50 |
+| `EuFCMannex1` | `bycid` | Search for a record by PubChem cid. | 13 | 1.50 |
+| `EuFCMannex1` | `byname` |  | 4 | 1.50 |
+| `EuFCMannex1` | `refresh_index` | Rebuild the global index by reading the CSV file and regenerating each record as recXXXXX.annex1.json (with record number as primary key). The index includes foreign key mappings for "name", "EC", "CAS", "FCM", "Ref" and a bycid index for PubChem cid. | 166 | 1.50 |
+| `annex1record` | `__init__` | Initialize an annex1record from dictionary d. order: the record number (from the CSV; if known) total: total number of records (if known) | 12 | 1.50 |
+| `annex1record` | `__repr__` | Return repr(self). | 42 | 1.50 |
+| `annex1record` | `__str__` | Return str(self). | 5 | 1.50 |
+| `annex1record_ext` | `__init__` | instantiate from a record with a consolidated databse: db | 51 | 1.50 |
+| `annex1record_ext` | `__repr__` | Return repr(self). | 42 | 1.50 |
+| `annex1record_ext` | `__str__` | Return str(self). | 5 | 1.50 |
 
 <a id="patankar_private_GBappendixA" name="patankar_private_GBappendixA"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_EUFCMannex1" title="Go to Previous Module: patankar.private.EUFCMannex1" style="text-decoration: none;">⬅️ Previous</a>
@@ -3166,36 +3270,36 @@ object --> GBappendixA
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `custom_wrap` |  | 10 | 1.41 |
-| (module-level) | `extract_number_before_keyword` | Extract numbers that immediately precede a given keyword in the text, allowing for optional punctuation or other separators between the number and the keyword (e.g. '3.4 (SML)', '3.4: SML', etc.) | 18 | 1.41 |
-| (module-level) | `extract_number_before_keyword_in_parentheses` | Extract numbers that are immediately followed by parentheses containing a given keyword. | 19 | 1.41 |
-| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.41 |
-| (module-level) | `split_col5_content` | Pattern to match number followed by (...) or [...] that contains a target keyword | 19 | 1.41 |
-| (module-level) | `unwrap` | Unwrap a list-like value: - Return None if the value is empty or None - Return the sole item if it is a singleton list or tuple - Return the full list/tuple otherwise | 12 | 1.41 |
-| `GBappendixA` | `__call__` | Callable access. For example: - GBappendixA(cid) returns the record for a given PubChem cid. - GBappendixA(fca) returns the record for a given FCA number. - GBappendixA("CAS") returns the record(s) for a given CAS number. - Multiple arguments return a list. | 35 | 1.41 |
-| `GBappendixA` | `__contains__` |  | 8 | 1.41 |
-| `GBappendixA` | `__getitem__` | Supports lookup by: - Slice: returns a list of records whose FCA numbers fall within the slice. - Integer or string: interpreted as an FCA number. - String: if not matching an FCA number then interpreted as a CAS number. - List/tuple: returns a list of corresponding records. | 31 | 1.41 |
-| `GBappendixA` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.41 |
-| `GBappendixA` | `__iter__` |  | 3 | 1.41 |
-| `GBappendixA` | `__len__` |  | 2 | 1.41 |
-| `GBappendixA` | `__repr__` | Return repr(self). | 6 | 1.41 |
-| `GBappendixA` | `__str__` | Return str(self). | 2 | 1.41 |
-| `GBappendixA` | `_load_record` | Load a record (as a gbrecord) from its cached JSON file. If PubChem extension is enabled, the record is returned as a gbrecord_ext. | 22 | 1.41 |
-| `GBappendixA` | `byCAS` |  | 8 | 1.41 |
-| `GBappendixA` | `byFCA` |  | 6 | 1.41 |
-| `GBappendixA` | `bycid` |  | 9 | 1.41 |
-| `GBappendixA` | `refresh_index` | Rebuild the global index by reading the CSV file and regenerating each record as FCAXXXX.json. The index includes mappings for "CAS", "FCA", "bycid", and "ChineseName". | 254 | 1.41 |
-| `gbrecord` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.41 |
-| `gbrecord` | `__repr__` | Return repr(self). | 46 | 1.41 |
-| `gbrecord` | `__str__` | Return str(self). | 5 | 1.41 |
-| `gbrecord_ext` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.41 |
-| `gbrecord_ext` | `__repr__` | Return repr(self). | 46 | 1.41 |
-| `gbrecord_ext` | `__str__` | Return str(self). | 5 | 1.41 |
+| (module-level) | `custom_wrap` |  | 10 | 1.50 |
+| (module-level) | `extract_number_before_keyword` | Extract numbers that immediately precede a given keyword in the text, allowing for optional punctuation or other separators between the number and the keyword (e.g. '3.4 (SML)', '3.4: SML', etc.) | 18 | 1.50 |
+| (module-level) | `extract_number_before_keyword_in_parentheses` | Extract numbers that are immediately followed by parentheses containing a given keyword. | 19 | 1.50 |
+| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.50 |
+| (module-level) | `split_col5_content` | Pattern to match number followed by (...) or [...] that contains a target keyword | 19 | 1.50 |
+| (module-level) | `unwrap` | Unwrap a list-like value: - Return None if the value is empty or None - Return the sole item if it is a singleton list or tuple - Return the full list/tuple otherwise | 12 | 1.50 |
+| `GBappendixA` | `__call__` | Callable access. For example: - GBappendixA(cid) returns the record for a given PubChem cid. - GBappendixA(fca) returns the record for a given FCA number. - GBappendixA("CAS") returns the record(s) for a given CAS number. - Multiple arguments return a list. | 35 | 1.50 |
+| `GBappendixA` | `__contains__` |  | 8 | 1.50 |
+| `GBappendixA` | `__getitem__` | Supports lookup by: - Slice: returns a list of records whose FCA numbers fall within the slice. - Integer or string: interpreted as an FCA number. - String: if not matching an FCA number then interpreted as a CAS number. - List/tuple: returns a list of corresponding records. | 31 | 1.50 |
+| `GBappendixA` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.50 |
+| `GBappendixA` | `__iter__` |  | 3 | 1.50 |
+| `GBappendixA` | `__len__` |  | 2 | 1.50 |
+| `GBappendixA` | `__repr__` | Return repr(self). | 6 | 1.50 |
+| `GBappendixA` | `__str__` | Return str(self). | 2 | 1.50 |
+| `GBappendixA` | `_load_record` | Load a record (as a gbrecord) from its cached JSON file. If PubChem extension is enabled, the record is returned as a gbrecord_ext. | 22 | 1.50 |
+| `GBappendixA` | `byCAS` |  | 8 | 1.50 |
+| `GBappendixA` | `byFCA` |  | 6 | 1.50 |
+| `GBappendixA` | `bycid` |  | 9 | 1.50 |
+| `GBappendixA` | `refresh_index` | Rebuild the global index by reading the CSV file and regenerating each record as FCAXXXX.json. The index includes mappings for "CAS", "FCA", "bycid", and "ChineseName". | 254 | 1.50 |
+| `gbrecord` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.50 |
+| `gbrecord` | `__repr__` | Return repr(self). | 46 | 1.50 |
+| `gbrecord` | `__str__` | Return str(self). | 5 | 1.50 |
+| `gbrecord_ext` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.50 |
+| `gbrecord_ext` | `__repr__` | Return repr(self). | 46 | 1.50 |
+| `gbrecord_ext` | `__str__` | Return str(self). | 5 | 1.50 |
 
 <a id="patankar_private_USFDAfcn" name="patankar_private_USFDAfcn"></a>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_GBappendixA" title="Go to Previous Module: patankar.private.GBappendixA" style="text-decoration: none;">⬅️ Previous</a>
 <a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
-<a href="#patankar_private_mstruct" title="Go to Next Module: patankar.private.mstruct" style="text-decoration: none;">➡️ Next</a>
+<a href="#patankar_private_message" title="Go to Next Module: patankar.private.message" style="text-decoration: none;">➡️ Next</a>
 </div>
 
 ## Module `patankar.private.USFDAfcn`
@@ -3217,34 +3321,102 @@ object --> USFDAfcn
 
 | Class | Method | Docstring First Paragraph | # Lines | __version__ |
 |-------|---------|---------------------------|---------|-------------|
-| (module-level) | `clean_html` |  | 2 | 1.41 |
-| (module-level) | `custom_wrap` |  | 10 | 1.41 |
-| (module-level) | `parse_food_contact_substance` | Parses the full FoodContactSubstance field to extract the chemical name(s) and CAS number(s). | 53 | 1.41 |
-| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.41 |
-| `USFDAfcn` | `__call__` | Call self as a function. | 24 | 1.41 |
-| `USFDAfcn` | `__contains__` |  | 8 | 1.41 |
-| `USFDAfcn` | `__getitem__` |  | 36 | 1.41 |
-| `USFDAfcn` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.41 |
-| `USFDAfcn` | `__iter__` |  | 3 | 1.41 |
-| `USFDAfcn` | `__len__` |  | 2 | 1.41 |
-| `USFDAfcn` | `__repr__` | Return repr(self). | 6 | 1.41 |
-| `USFDAfcn` | `__str__` | Return str(self). | 2 | 1.41 |
-| `USFDAfcn` | `_load_record` |  | 21 | 1.41 |
-| `USFDAfcn` | `byCAS` |  | 7 | 1.41 |
-| `USFDAfcn` | `byFCNNo` |  | 7 | 1.41 |
-| `USFDAfcn` | `byFCSreplacedby` |  | 7 | 1.41 |
-| `USFDAfcn` | `bycid` |  | 10 | 1.41 |
-| `USFDAfcn` | `byname` |  | 4 | 1.41 |
-| `USFDAfcn` | `refresh_index` |  | 168 | 1.41 |
-| `fcnrecord` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.41 |
-| `fcnrecord` | `__repr__` | Return repr(self). | 24 | 1.41 |
-| `fcnrecord` | `__str__` | Return str(self). | 5 | 1.41 |
-| `fcnrecord_ext` | `__init__` | Instantiate from a base fcnrecord. If a valid CAS is available, perform PubChem lookup via the 'migrant' function. | 32 | 1.41 |
-| `fcnrecord_ext` | `__repr__` | Return repr(self). | 24 | 1.41 |
-| `fcnrecord_ext` | `__str__` | Return str(self). | 5 | 1.41 |
+| (module-level) | `clean_html` |  | 2 | 1.50 |
+| (module-level) | `custom_wrap` |  | 10 | 1.50 |
+| (module-level) | `parse_food_contact_substance` | Parses the full FoodContactSubstance field to extract the chemical name(s) and CAS number(s). | 53 | 1.50 |
+| (module-level) | `printWARN` | Print a warning message only if: - it's different from the last one, or - more than `tsilent` seconds have passed since the last identical warning. | 19 | 1.50 |
+| `USFDAfcn` | `__call__` | Call self as a function. | 24 | 1.50 |
+| `USFDAfcn` | `__contains__` |  | 8 | 1.50 |
+| `USFDAfcn` | `__getitem__` |  | 36 | 1.50 |
+| `USFDAfcn` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 18 | 1.50 |
+| `USFDAfcn` | `__iter__` |  | 3 | 1.50 |
+| `USFDAfcn` | `__len__` |  | 2 | 1.50 |
+| `USFDAfcn` | `__repr__` | Return repr(self). | 6 | 1.50 |
+| `USFDAfcn` | `__str__` | Return str(self). | 2 | 1.50 |
+| `USFDAfcn` | `_load_record` |  | 21 | 1.50 |
+| `USFDAfcn` | `byCAS` |  | 7 | 1.50 |
+| `USFDAfcn` | `byFCNNo` |  | 7 | 1.50 |
+| `USFDAfcn` | `byFCSreplacedby` |  | 7 | 1.50 |
+| `USFDAfcn` | `bycid` |  | 10 | 1.50 |
+| `USFDAfcn` | `byname` |  | 4 | 1.50 |
+| `USFDAfcn` | `refresh_index` |  | 168 | 1.50 |
+| `fcnrecord` | `__init__` | Initialize self.  See help(type(self)) for accurate signature. | 6 | 1.50 |
+| `fcnrecord` | `__repr__` | Return repr(self). | 24 | 1.50 |
+| `fcnrecord` | `__str__` | Return str(self). | 5 | 1.50 |
+| `fcnrecord_ext` | `__init__` | Instantiate from a base fcnrecord. If a valid CAS is available, perform PubChem lookup via the 'migrant' function. | 32 | 1.50 |
+| `fcnrecord_ext` | `__repr__` | Return repr(self). | 24 | 1.50 |
+| `fcnrecord_ext` | `__str__` | Return str(self). | 5 | 1.50 |
+
+<a id="patankar_private_message" name="patankar_private_message"></a>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_USFDAfcn" title="Go to Previous Module: patankar.private.USFDAfcn" style="text-decoration: none;">⬅️ Previous</a>
+<a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
+<a href="#patankar_private_mstruct" title="Go to Next Module: patankar.private.mstruct" style="text-decoration: none;">➡️ Next</a>
+</div>
+
+## Module `patankar.private.message`
+
+### Class Inheritance Diagram
+```mermaid
+graph TD;
+_MessageLogger
+object --> _MessageLogger
+```
+
+**Class Examples:** Not available.
+
+### Methods Table
+
+| Class | Method | Docstring First Paragraph | # Lines | __version__ |
+|-------|---------|---------------------------|---------|-------------|
+| (module-level) | `callers` | Aggregated counts per caller. See `_MessageLogger.callers`. | 5 | 1.50 |
+| (module-level) | `clear` | Clear all state: history, counters, per-caller limits, last-printed times. | 5 | 1.50 |
+| (module-level) | `disable` | Disable actual emissions (tracking continues). | 5 | 1.50 |
+| (module-level) | `enable` | Enable actual emissions (tracking is always on). | 5 | 1.50 |
+| (module-level) | `get_history` | Return history records as a list of dicts. See `_MessageLogger.get_history`. | 6 | 1.50 |
+| (module-level) | `get_silence` | Get the effective cooldown for a caller or the global default. | 5 | 1.50 |
+| (module-level) | `history` | Pretty-print history. See `_MessageLogger.history` for parameters. | 6 | 1.50 |
+| (module-level) | `initialize` | Initialize/reconfigure the shared logger. See `_MessageLogger.initialize`. | 7 | 1.50 |
+| (module-level) | `limit` | Context manager to temporarily override repetition limits (global or per-caller). | 5 | 1.50 |
+| (module-level) | `print` | Print with repetition limiting, history, and optional cooldown. | 8 | 1.50 |
+| (module-level) | `purge_idle_keys` | Forget last-printed timestamps for keys idle longer than `idle_seconds`. | 5 | 1.50 |
+| (module-level) | `reset_counts` | Reset per-key and per-caller counters (history preserved). | 5 | 1.50 |
+| (module-level) | `reset_key` | Reset counters and last-printed timestamp for a specific message key. | 5 | 1.50 |
+| (module-level) | `save` | Save history to a TSV file on disk. See `_MessageLogger.save`. | 6 | 1.50 |
+| (module-level) | `set_history_size` | Change the maximum number of records retained in history. | 5 | 1.50 |
+| (module-level) | `set_limit` | Set repetition limit globally or for a specific caller. | 5 | 1.50 |
+| (module-level) | `set_silence` | Set global silent delay (cooldown) in seconds, or None to disable. | 5 | 1.50 |
+| (module-level) | `set_silence_for` | Set per-caller silent delay (cooldown), or None to remove override. | 5 | 1.50 |
+| (module-level) | `stats` | Aggregated counts sorted by total. See `_MessageLogger.stats`. | 5 | 1.50 |
+| (module-level) | `stats_for_caller` | Per-key stats restricted to a given caller. See `_MessageLogger.stats_for_caller`. | 5 | 1.50 |
+| (module-level) | `suppress` | Temporarily mute emissions (tracking continues). | 5 | 1.50 |
+| (module-level) | `unsuppress` | Re-enable emissions after `suppress()`. | 5 | 1.50 |
+| `_MessageLogger` | `__init__` | Initialize all shared state with sensible defaults. | 21 | 1.50 |
+| `_MessageLogger` | `_caller_id` | Determine the caller identifier (module filename). | 20 | 1.50 |
+| `_MessageLogger` | `callers` | Return aggregated counts per caller. | 17 | 1.50 |
+| `_MessageLogger` | `clear` | Clear all internal state: - history, all counters, per-caller limits, and last-printed times. | 13 | 1.50 |
+| `_MessageLogger` | `disable` | Disable actual emissions (no printing), but keep tracking and history. | 6 | 1.50 |
+| `_MessageLogger` | `enable` | Enable actual emissions to the chosen stream (default stdout). | 8 | 1.50 |
+| `_MessageLogger` | `get_history` | Return recorded history as a list of dict records. | 25 | 1.50 |
+| `_MessageLogger` | `get_silence` | Get the effective silent delay for a caller (or the global default). | 19 | 1.50 |
+| `_MessageLogger` | `history` | Pretty-print history to stdout. | 22 | 1.50 |
+| `_MessageLogger` | `initialize` | Initialize or reconfigure the logger. | 20 | 1.50 |
+| `_MessageLogger` | `limit` | Context manager to temporarily override repetition limits. | 42 | 1.50 |
+| `_MessageLogger` | `print` | Print with repetition limiting, history, and optional cooldown. | 89 | 1.50 |
+| `_MessageLogger` | `purge_idle_keys` | Remove last-printed timestamps for keys idle longer than `idle_seconds`. | 18 | 1.50 |
+| `_MessageLogger` | `reset_counts` | Reset all counters (printed/suppressed by key and by caller). | 11 | 1.50 |
+| `_MessageLogger` | `reset_key` | Reset counters and last-printed timestamp for a specific message key. | 13 | 1.50 |
+| `_MessageLogger` | `save` | Save history to a TSV file on disk. | 21 | 1.50 |
+| `_MessageLogger` | `set_history_size` | Change the maximum number of records retained in history. | 14 | 1.50 |
+| `_MessageLogger` | `set_limit` | Set repetition limit. | 18 | 1.50 |
+| `_MessageLogger` | `set_silence` | Set a global silent delay (cooldown) in seconds. | 15 | 1.50 |
+| `_MessageLogger` | `set_silence_for` | Set a per-caller silent delay (cooldown), overriding the global value. | 16 | 1.50 |
+| `_MessageLogger` | `stats` | Return aggregated counts sorted by total. | 37 | 1.50 |
+| `_MessageLogger` | `stats_for_caller` | Return per-key stats restricted to a given caller. | 34 | 1.50 |
+| `_MessageLogger` | `suppress` | Temporarily mute emissions (like a global 'quiet' mode). Tracking and history continue. | 7 | 1.50 |
+| `_MessageLogger` | `unsuppress` | Re-enable emissions after `suppress()`. | 4 | 1.50 |
 
 <a id="patankar_private_mstruct" name="patankar_private_mstruct"></a>
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_USFDAfcn" title="Go to Previous Module: patankar.private.USFDAfcn" style="text-decoration: none;">⬅️ Previous</a>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.8em;"><a href="#patankar_private_message" title="Go to Previous Module: patankar.private.message" style="text-decoration: none;">⬅️ Previous</a>
 <a href="#table_of_contents" title="Back to Table of Contents" style="text-decoration: none;">⬆️ TOC</a>
 <a href="#patankar_private_pubchempy" title="Go to Next Module: patankar.private.pubchempy" style="text-decoration: none;">➡️ Next</a>
 </div>

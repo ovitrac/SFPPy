@@ -134,7 +134,7 @@ Main user-facing method. Returns a pandas DataFrame of matching records (possibl
 <li>Large-scale usage: For large compound sets, consider optimizing the index or storing data in a more robust database.</li>
 <li>The synonyms approach: Default matching is <strong>exact</strong> (lowercased). Fuzzy or partial matches require custom logic.</li>
 </ul>
-<p>@version: 1.41
+<p>@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
@@ -148,6 +148,7 @@ Main user-facing method. Returns a pandas DataFrame of matching records (possibl
 <li>1.32: migrant Toxtree</li>
 <li>1.37: Colab compliance</li>
 <li>1.41: US FCN, GBGB9685</li>
+<li>1.50: release with message.print()</li>
 </ul>
 <details class="source">
 <summary>
@@ -273,7 +274,7 @@ Note
 - The synonyms approach: Default matching is **exact** (lowercased). Fuzzy or partial matches require custom logic.
 
 
-@version: 1.41
+@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
@@ -288,6 +289,7 @@ Version History
 - 1.32: migrant Toxtree
 - 1.37: Colab compliance
 - 1.41: US FCN, GBGB9685
+- 1.50: release with message.print()
 
 &#34;&#34;&#34;
 
@@ -463,9 +465,10 @@ floatNone = lambda x: x if isinstance(x, (float, type(None))) else float(x)
 def polarity_index(logP=None, V=None, name=None,
                    Vw=19.588376948550433,  # migrant(&#34;water&#34;).molarvolumeMiller
                    Vo=150.26143432234372,  # migrant(&#34;octanol&#34;).molarvolumeMiller
-                   A=0.18161296829146106,
-                   B=-3.412678660396018,
-                   C=14.813767205916765):
+                   A=0.07485019080020634, #0.18161296829146106,
+                   B=-2.268683501033584,  #-3.412678660396018,
+                   C=13.079540672499757   #14.813767205916765
+                   ):
     &#34;&#34;&#34;
     Computes the polarity index (P&#39;) from a given logP value and molar volume V.
     This is done using a quadratic model fitted to experimental data:
@@ -519,8 +522,8 @@ def polarity_index(logP=None, V=None, name=None,
     &#34;&#34;&#34;
 
     # Define valid logP range based on quadratic model limits
-    Emin = C - B**2 / (4*A)  # ≈ -2.78 (theoretical minimum lnKow=E)
-    Emax = C                 # ≈ 14.81 (theoretical maximum logP)
+    Emin = C - B**2 / (4*A)  # ≈ -4.111 #-2.78 (theoretical minimum lnKow=E)
+    Emax = C                 # ≈ 13.079 #14.81 (theoretical maximum logP)
     Pmax = 10.2  # Saturation value for highly polar solvents
 
     # Fetch logP and V if `name` is given
@@ -543,10 +546,22 @@ def polarity_index(logP=None, V=None, name=None,
     if logP.shape != V.shape:
         raise ValueError(&#34;logP and V must have the same shape or V must be a scalar.&#34;)
 
-    def compute_P(logP_value, V_value):
-        &#34;&#34;&#34;Computes P&#39; for a single logP and V value after input validation.&#34;&#34;&#34;
-        S = - (1/Vw - 1/Vo) * V_value
-        E = logP_value * 2.302585092994046 - S  # Convert logP to natural log (ln)
+    def compute_P(logP_value, V_value, rcritical=3.0):
+        &#34;&#34;&#34;Compute P&#39; for a single (logP, V) with compressibility correction.
+           n(r) = max(0, r/rcritical - 1) applied to r = V_i / V_j.
+        &#34;&#34;&#34;
+        # ratios r_{i,j}
+        rw = V_value / Vw
+        ro = V_value / Vo
+
+        # compressibility correction n(r)
+        def n_of(r):
+            return r / rcritical - 1.0 if r &gt;= rcritical else 0.0
+
+        # entropic/size-correction term (FH-consistent)
+        # S = - (1/Vw - 1/Vo) * V_value
+        # E = logP_value * 2.302585092994046 - S  # Convert logP to natural log (ln)
+        E = logP_value * 2.302585092994046 + (rw - ro) - (n_of(rw) - n_of(ro))
 
         # Handle extreme values
         if E &lt; Emin:
@@ -3751,7 +3766,7 @@ parse_sdf(filename: str, useDataFrame: bool) -&gt; List[Dict]:</p></div>
 </details>
 </dd>
 <dt id="loadpubchem.polarity_index"><code class="name flex">
-<span>def <span class="ident">polarity_index</span></span>(<span>logP=None, V=None, name=None, Vw=19.588376948550433, Vo=150.26143432234372, A=0.18161296829146106, B=-3.412678660396018, C=14.813767205916765)</span>
+<span>def <span class="ident">polarity_index</span></span>(<span>logP=None, V=None, name=None, Vw=19.588376948550433, Vo=150.26143432234372, A=0.07485019080020634, B=-2.268683501033584, C=13.079540672499757)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the polarity index (P') from a given logP value and molar volume V.
@@ -3809,9 +3824,10 @@ array([9.2, 4.5, 1.8])  # Example outputs
 <pre><code class="python">def polarity_index(logP=None, V=None, name=None,
                    Vw=19.588376948550433,  # migrant(&#34;water&#34;).molarvolumeMiller
                    Vo=150.26143432234372,  # migrant(&#34;octanol&#34;).molarvolumeMiller
-                   A=0.18161296829146106,
-                   B=-3.412678660396018,
-                   C=14.813767205916765):
+                   A=0.07485019080020634, #0.18161296829146106,
+                   B=-2.268683501033584,  #-3.412678660396018,
+                   C=13.079540672499757   #14.813767205916765
+                   ):
     &#34;&#34;&#34;
     Computes the polarity index (P&#39;) from a given logP value and molar volume V.
     This is done using a quadratic model fitted to experimental data:
@@ -3865,8 +3881,8 @@ array([9.2, 4.5, 1.8])  # Example outputs
     &#34;&#34;&#34;
 
     # Define valid logP range based on quadratic model limits
-    Emin = C - B**2 / (4*A)  # ≈ -2.78 (theoretical minimum lnKow=E)
-    Emax = C                 # ≈ 14.81 (theoretical maximum logP)
+    Emin = C - B**2 / (4*A)  # ≈ -4.111 #-2.78 (theoretical minimum lnKow=E)
+    Emax = C                 # ≈ 13.079 #14.81 (theoretical maximum logP)
     Pmax = 10.2  # Saturation value for highly polar solvents
 
     # Fetch logP and V if `name` is given
@@ -3889,10 +3905,22 @@ array([9.2, 4.5, 1.8])  # Example outputs
     if logP.shape != V.shape:
         raise ValueError(&#34;logP and V must have the same shape or V must be a scalar.&#34;)
 
-    def compute_P(logP_value, V_value):
-        &#34;&#34;&#34;Computes P&#39; for a single logP and V value after input validation.&#34;&#34;&#34;
-        S = - (1/Vw - 1/Vo) * V_value
-        E = logP_value * 2.302585092994046 - S  # Convert logP to natural log (ln)
+    def compute_P(logP_value, V_value, rcritical=3.0):
+        &#34;&#34;&#34;Compute P&#39; for a single (logP, V) with compressibility correction.
+           n(r) = max(0, r/rcritical - 1) applied to r = V_i / V_j.
+        &#34;&#34;&#34;
+        # ratios r_{i,j}
+        rw = V_value / Vw
+        ro = V_value / Vo
+
+        # compressibility correction n(r)
+        def n_of(r):
+            return r / rcritical - 1.0 if r &gt;= rcritical else 0.0
+
+        # entropic/size-correction term (FH-consistent)
+        # S = - (1/Vw - 1/Vo) * V_value
+        # E = logP_value * 2.302585092994046 - S  # Convert logP to natural log (ln)
+        E = logP_value * 2.302585092994046 + (rw - ro) - (n_of(rw) - n_of(ro))
 
         # Handle extreme values
         if E &lt; Emin:

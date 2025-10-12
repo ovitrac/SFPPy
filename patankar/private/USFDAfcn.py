@@ -43,11 +43,12 @@ Key features include:
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-01-10
-@rev: 2025-03-31
+@rev: 2025-08-31
 
 """
 
 import os, csv, json, datetime, time, re, textwrap
+import patankar.private.message as message
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -56,7 +57,7 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.41"
+__version__ = "1.50"
 
 
 # Default PubChem lookup error value (if not found, value remains None)
@@ -66,6 +67,13 @@ DEFAULT_PUBCHEM = None
 # Module-level variables to track last warning message and its timestamp
 _LAST_WARN_ = None
 _T_LAST_WARN_ = 0.0
+
+# printWARN() messaging is replaced by message.print() starting from v>1.42
+_MAX_MESSAGES = 1
+_SILENCE_DURATION = 60
+message.set_limit(_MAX_MESSAGES, caller="USFDAfcn.py")  # only affects this module
+message.set_silence_for("USFDAfcn.py", _SILENCE_DURATION)
+
 
 # ----------------------------------------------------------------------
 # Utility function: custom_wrap (for pretty printing)
@@ -261,7 +269,7 @@ class fcnrecord_ext(fcnrecord):
                         cids.append(m.cid)
                     except Exception:
                         if verbosity:
-                            printWARN(f"🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get('record')}")
+                            message.print(f"🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get('record')}") # printWARN
                         cids.append(DEFAULT_PUBCHEM)
                 self.cid = cids
             else:
@@ -271,7 +279,7 @@ class fcnrecord_ext(fcnrecord):
                     self.cid = m.cid
                 except Exception:
                     if verbosity:
-                        printWARN(f"🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get('record')}")
+                        message.print(f"🇺🇸 Warning: PubChem lookup failed for CAS {cas} in record {self.get('record')}") # printWARN
                     self.cid = DEFAULT_PUBCHEM
         else:
             self.cid = None
@@ -410,7 +418,7 @@ class USFDAfcn:
                             try:
                                 cid_val = migrant(cas, annex1=False).cid
                             except Exception:
-                                printWARN(f"🇺🇸 Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.")
+                                message.print(f"🇺🇸 Warning: PubChem lookup failed for component with CAS {cas} in record {rec_num}.") # printWARN
                                 cid_val = None
                                 missing_pubchem[cas] = None
                         cid_list.append(cid_val)
@@ -480,7 +488,7 @@ class USFDAfcn:
                     with open(json_filename, "w", encoding="utf-8") as jf:
                         json.dump(rec, jf, ensure_ascii=False, indent=2)
                 except Exception as e:
-                    printWARN(f"🇺🇸 Warning: Could not update FCSreplacedby_record in {json_filename}: {e}")
+                    message.print(f"🇺🇸 Warning: Could not update FCSreplacedby_record in {json_filename}: {e}") # printWARN
 
         with open(self.index_file, "w", encoding="utf-8") as f_index:
             json.dump(new_index, f_index, ensure_ascii=False, indent=2)
@@ -501,7 +509,7 @@ class USFDAfcn:
                 return self._records_cache[rec_id]
         json_filename = os.path.join(self.cache_dir, f"rec{rec_id:05d}.fcn.json")
         if not os.path.exists(json_filename):
-            printWARN(f"🇺🇸 Warning: Record file for record {rec_id} not found.")
+            message.print(f"🇺🇸 Warning: Record file for record {rec_id} not found.") # printWARN
             return None
         with open(json_filename, "r", encoding="utf-8") as jf:
             rec = json.load(jf)
@@ -562,7 +570,7 @@ class USFDAfcn:
                     rec_id = self.index["bycid"][argkey]
                     results.append(self._load_record(rec_id))
                 else:
-                    printWARN(f"🇺🇸 Warning: Record for identifier {arg} not found.")
+                    message.print(f"🇺🇸 Warning: Record for identifier {arg} not found.") # printWARN
                     results.append(None)
             elif isinstance(arg, str):
                 result_item = self.__getitem__(arg)
@@ -611,7 +619,7 @@ class USFDAfcn:
             return self._load_record(rec_id, order=rec_id)
         else:
             if verbose:
-                printWARN(f"⚠️ Warning: No 🇺🇸 US FDA FCS record found for PubChem cid {cid}.")
+                message.print(f"⚠️ Warning: No 🇺🇸 US FDA FCS record found for PubChem cid {cid}.") # printWARN
             return None
 
     def __iter__(self):

@@ -39,11 +39,12 @@ The main manager class, *GBappendixA*, builds an index for fast lookup by CAS, F
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2024-01-10
-@rev: 2025-04-01
+@rev: 2025-08-31
 
 """
 
 import os, csv, json, datetime, time, re, textwrap
+import patankar.private.message as message
 
 __all__ = ['GBappendixA', 'custom_wrap', 'extract_number_before_keyword', 'extract_number_before_keyword_in_parentheses', 'gbrecord', 'gbrecord_ext', 'printWARN', 'split_col5_content', 'unwrap']
 
@@ -55,12 +56,18 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.41"
+__version__ = "1.50"
 
 
 # Module-level variables to track last warning message and its timestamp
 _LAST_WARN_ = None
 _T_LAST_WARN_ = 0.0
+
+# printWARN() messaging is replaced by message.print() starting from v>1.42
+_MAX_MESSAGES = 1
+_SILENCE_DURATION = 60
+message.set_limit(_MAX_MESSAGES, caller="GBappendixA.py")  # only affects this module
+message.set_silence_for("GBappendixA.py", _SILENCE_DURATION)
 
 # ----------------------------------------------------------------------
 # Custom text wrapping function (similar to EU module)
@@ -261,7 +268,7 @@ class gbrecord_ext(gbrecord):
                 m = migrant(rec.get("CAS"), annex1=False)
                 M = m.M
             except Exception:
-                print(f"{rec.get('ChineseName')} could not be extended from its CAS {rec.get('CAS')}: not found")
+                message.print(f"{rec.get('ChineseName')} could not be extended from its CAS {rec.get('CAS')}: not found")
                 M = None
         else:
             M = None
@@ -529,7 +536,7 @@ class GBappendixA:
                             try:
                                 cid_val = migrant(cas_lookup, annex1=False).cid
                             except ValueError:
-                                printWARN(f"🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.")
+                                message.print(f"🇨🇳 Warning: substance {chinese_name} (CAS {cas_lookup}) not found in PubChem.") # printWARN
                                 cid_val = None
                                 missing_pubchem[cas_lookup] = None
                     else:

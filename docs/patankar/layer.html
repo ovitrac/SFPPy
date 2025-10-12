@@ -92,12 +92,12 @@ enabling to describe the partitioning between layers. All materials are automati
 a modified finite volume technique exact at steady state and offering good accuracy in non-steady
 conditions.</p>
 <p>A temperature and substance can be assigned to layers.</p>
-<p>@version: 1.40
+<p>@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-26</p>
+@rev. 2025-09-03</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -187,25 +187,25 @@ conditions.
 A temperature and substance can be assigned to layers.
 
 
-@version: 1.40
+@version: 1.50
 @project: SFPPy - SafeFoodPackaging Portal in Python initiative
 @author: INRAE\\olivier.vitrac@agroparistech.fr
 @licence: MIT
 @Date: 2022-02-21
-@rev. 2025-03-26
+@rev. 2025-09-03
 
 &#34;&#34;&#34;
 
 # ---- History ----
 # Created on Tue Jan 18 09:14:34 2022
-# 2025-01-19 RC
 # 2022-01-20 full indexing and simplification
 # 2022-01-21 add split()
 # 2022-01-22 add child classes for common polymers
 # 2022-01-23 full implementation of units
 # 2022-01-26 mesh() method generating mesh objects
 # 2022-02-21 add compatibility with migration
-
+# 2025-01-19 RC
+# 2025-09-03 version 1.50
 
 oneline = &#34;Build multilayer objects&#34;
 
@@ -2026,7 +2026,7 @@ class layer:
     # Class method returning help() for the end user
     # --------------------------------------------------------------------
     @classmethod
-    def help(cls):
+    def upd(cls):
         &#34;&#34;&#34;
         Prints a dynamically formatted summary of all input parameters,
         adjusting column widths based on content and wrapping long descriptions.
@@ -2365,6 +2365,8 @@ class layer:
     def layerclass(self): return type(self).__name__
     @property
     def name(self): return self._name
+    @property
+    def fullname(self): return str(self._name)
     @property
     def type(self): return self._type
     @property
@@ -3078,6 +3080,7 @@ class layer:
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
+        medium.substance = self.substance # debug 2025-09-01
         return self.contact(medium)
 
     # overloading in
@@ -3271,7 +3274,7 @@ We consider that polymers are solid solvents.
 # &lt;-- LDPE polymer ----------------------------------&gt;
 class LDPE(layer):
     &#34;&#34;&#34;  extended pantankar.layer for low-density polyethylene LDPE  &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-butane&#34; #&#34;ethylene&#34; # monomer for polymers
     _polarityindex = 1.0  # Very non-polar (typical for polyolefins)
     def __init__(self,l=100e-6,D=1e-12,T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
@@ -3314,7 +3317,7 @@ class LDPE(layer):
 # &lt;-- HDPE polymer ----------------------------------&gt;
 class HDPE(layer):
     &#34;&#34;&#34;  extended pantankar.layer for high-density polyethylene HDPE  &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-butane&#34; #&#34;ethylene&#34; # monomer for polymers
     _polarityindex = 2.0 # Non-polar, slightly higher density, similar overall polarity to LDPE
     def __init__(self,l=500e-6,D=1e-13, T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
@@ -3358,7 +3361,7 @@ class HDPE(layer):
 # &lt;-- LLDPE polymer ----------------------------------&gt;
 class LLDPE(layer):
     &#34;&#34;&#34; extended pantankar.layer for linear low-density polyethylene LLDPE &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-butane&#34; #&#34;ethylene&#34; # monomer for polymers
     _polarityindex = 1.5 # Similar to LDPE, can be slightly more polar if co-monomer is present
     def __init__(self, l=80e-6, D=1e-12, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3409,7 +3412,7 @@ class LLDPE(layer):
 
 # &lt;-- PP polymer ----------------------------------&gt;
 class PP(layer):
-    _chemicalsubstance = &#34;propylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;2-methylbutane&#34; #&#34;propylene&#34; # monomer for polymers
     _polarityindex = 1.0  # Among the least polar, similar to PE
     &#34;&#34;&#34;  extended pantankar.layer for isotactic polypropylene PP  &#34;&#34;&#34;
     def __init__(self,l=300e-6,D=1e-14, T=None,
@@ -3451,7 +3454,7 @@ class PP(layer):
 
 # -- PPrubber (atactic polypropylene) ---------------------------------
 class PPrubber(layer):
-    _chemicalsubstance = &#34;propylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;2-methylbutane&#34; #&#34;propylene&#34; # monomer for polymers
     _polarityindex = 1.0  # Also very non-polar
     &#34;&#34;&#34; extended pantankar.layer for atactic (rubbery) polypropylene PP &#34;&#34;&#34;
     def __init__(self, l=100e-6, D=1e-14, T=None,
@@ -3495,7 +3498,7 @@ class PPrubber(layer):
 # -- oPP (bioriented polypropylene) ------------------------------------
 class oPP(layer):
     &#34;&#34;&#34; extended pantankar.layer for bioriented polypropylene oPP &#34;&#34;&#34;
-    _chemicalsubstance = &#34;propylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;2-methylbutane&#34; #&#34;propylene&#34; # monomer for polymers
     _polarityindex = 1.0   # Non-polar, but oriented film might have slight morphological differences
     def __init__(self, l=40e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3542,7 +3545,7 @@ class oPP(layer):
 # -- PMMA (polymethyl acrylate) -----------------------------------------------
 class PMMA(layer):
     &#34;&#34;&#34; extended pantankar.layer for polystyrene (PS) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;methyl methacrylate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;Isobutyl acetate&#34; #&#34;methyl methacrylate&#34; # monomer for polymers
     _polarityindex = 5.5  #  more polar than polyolefins
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3584,7 +3587,7 @@ class PMMA(layer):
 # -- PS (polystyrene) -----------------------------------------------
 class PS(layer):
     &#34;&#34;&#34; extended pantankar.layer for polystyrene (general purpose PS) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;styrene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;Ethylbenzene&#34; #&#34;styrene&#34; # monomer for polymers
     _polarityindex = 3.0  # Slightly more polar than polyolefins, but still considered relatively non-polar
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3641,7 +3644,7 @@ class rPS(PS):
 # -- HIPS (high-impact polystyrene) -----------------------------------
 class HIPS(layer):
     &#34;&#34;&#34; extended pantankar.layer for high-impact polystyrene (HIPS) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;styrene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;ethylbenzene&#34; #&#34;styrene&#34; # monomer for polymers
     _polarityindex = 3.0  # Similar or very close to PS in polarity
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3698,7 +3701,7 @@ class rHIPS(HIPS):
 
 # -- PBS (assuming a styrene-based polymer) ---------------------------
 class SBS(layer):
-    _chemicalsubstance = &#34;styrene&#34; # Styrene + butadiene
+    _chemicalsubstance = &#34;ethylbenzene&#34; #&#34;styrene&#34; # Styrene + butadiene
     _polarityindex = 3.5  # Non-polar but somewhat more interactive than pure PE/PP due to styrene units
     &#34;&#34;&#34;
     extended pantankar.layer for a styrene-based SBS
@@ -3742,7 +3745,7 @@ class SBS(layer):
 # -- rigidPVC ---------------------------------------------------------
 class rigidPVC(layer):
     &#34;&#34;&#34; extended pantankar.layer for rigid PVC &#34;&#34;&#34;
-    _chemicalsubstance = &#34;vinyl chloride&#34; # monomer for polymers
+    _chemicalsubstance = &#34;1-chlorobutane&#34; #&#34;vinyl chloride&#34; # monomer for polymers
     _polarityindex = 4.0  # Chlorine substituents give moderate polarity.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3783,7 +3786,7 @@ class rigidPVC(layer):
 # -- plasticizedPVC ---------------------------------------------------
 class plasticizedPVC(layer):
     &#34;&#34;&#34; extended pantankar.layer for plasticized PVC &#34;&#34;&#34;
-    _chemicalsubstance = &#34;vinyl chloride&#34; # monomer for polymers
+    _chemicalsubstance = &#34;1-chlorobutane&#34;#&#34;vinyl chloride&#34; # monomer for polymers
     _polarityindex = 4.5  # Plasticizers can slightly change overall polarity/solubility.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3823,7 +3826,7 @@ class plasticizedPVC(layer):
 # -- plasticizedPVC ---------------------------------------------------
 class PVAc(layer):
     &#34;&#34;&#34; extended pantankar.layer for PVAc &#34;&#34;&#34;
-    _chemicalsubstance = &#34;vinyl acetate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;ethyl acetate&#34; #&#34;vinyl acetate&#34; # monomer for polymers
     _polarityindex = 7  # polar but it depends on the acetylation rate.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3866,7 +3869,7 @@ class PVAc(layer):
 # -- gPET (glassy PET, T &lt; 76°C) --------------------------------------
 class gPET(layer):
     &#34;&#34;&#34; extended pantankar.layer for PET in its glassy state (below ~76°C) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;dimethyl terephthalate&#34; #&#34;ethylene terephthalate&#34; # monomer for polymers
     _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3931,7 +3934,7 @@ class wPET(gPET):
 # -- rPET (rubbery PET, T &gt; 76°C) --------------------------------------
 class rPET(layer):
     &#34;&#34;&#34; extended pantankar.layer for PET in its rubbery state (above ~76°C) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;dimethyl téréphtalate&#34; #&#34;ethylene terephthalate&#34; # monomer for polymers
     _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -3976,7 +3979,7 @@ class rPET(layer):
 # -- PBT --------------------------------------------------------------
 class PBT(layer):
     &#34;&#34;&#34; extended pantankar.layer for polybutylene terephthalate (PBT) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;Buthylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;butyl terephthalate&#34; #&#34;Butylene terephthalate&#34; # monomer for polymers
     _polarityindex = 5.5  # Similar to PET, slight structural differences
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -4019,7 +4022,7 @@ class PBT(layer):
 
 # -- PEN --------------------------------------------------------------
 class PEN(layer):
-    _chemicalsubstance = &#34;Buthylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;dimethyl 2,6-naphthalenedicarboxylate&#34; #&#34;ethylene naphthalate&#34; # monomer for polymers
     _polarityindex = 6  # More aromatic than PET, often better barrier properties
     &#34;&#34;&#34; extended pantankar.layer for polyethylene naphthalate (PEN) &#34;&#34;&#34;
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -4066,7 +4069,7 @@ class PEN(layer):
 
 # -- PA6 --------------------------------------------------------------
 class PA6(layer):
-    _chemicalsubstance = &#34;caprolactam&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-hexanamide&#34; #&#34;caprolactam&#34; # monomer for polymers
     _polarityindex = 7.5  # Strong hydrogen-bonding, thus quite polar.
     &#34;&#34;&#34; extended pantankar.layer for polyamide 6 (PA6) &#34;&#34;&#34;
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -4111,7 +4114,7 @@ class PA6(layer):
 
 # -- PA66 -------------------------------------------------------------
 class PA66(layer):
-    _chemicalsubstance = &#34;hexamethylenediamine&#34; # monomer for polymers
+    _chemicalsubstance = &#34;adipamide&#34; #&#34;hexamethylenediamine&#34; # monomer for polymers
     _polarityindex = 7.5  # Similar to PA6, strongly polar with hydrogen bonds.
     &#34;&#34;&#34; extended pantankar.layer for polyamide 66 (PA66) &#34;&#34;&#34;
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -5584,7 +5587,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -5596,6 +5598,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -5848,7 +5851,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -5860,6 +5862,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6081,7 +6084,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -6093,6 +6095,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6276,7 +6279,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -6288,6 +6290,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6471,7 +6474,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -6483,6 +6485,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6704,7 +6707,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -6716,6 +6718,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -6967,7 +6970,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -6979,6 +6981,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7142,7 +7145,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -7154,6 +7156,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7173,7 +7176,7 @@ def porosity(self):
 </summary>
 <pre><code class="python">class HDPE(layer):
     &#34;&#34;&#34;  extended pantankar.layer for high-density polyethylene HDPE  &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-butane&#34; #&#34;ethylene&#34; # monomer for polymers
     _polarityindex = 2.0 # Non-polar, slightly higher density, similar overall polarity to LDPE
     def __init__(self,l=500e-6,D=1e-13, T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
@@ -7318,7 +7321,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -7330,6 +7332,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7348,7 +7351,7 @@ def porosity(self):
 </summary>
 <pre><code class="python">class HIPS(layer):
     &#34;&#34;&#34; extended pantankar.layer for high-impact polystyrene (HIPS) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;styrene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;ethylbenzene&#34; #&#34;styrene&#34; # monomer for polymers
     _polarityindex = 3.0  # Similar or very close to PS in polarity
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -7492,7 +7495,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -7504,6 +7506,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7523,7 +7526,7 @@ def porosity(self):
 </summary>
 <pre><code class="python">class LDPE(layer):
     &#34;&#34;&#34;  extended pantankar.layer for low-density polyethylene LDPE  &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-butane&#34; #&#34;ethylene&#34; # monomer for polymers
     _polarityindex = 1.0  # Very non-polar (typical for polyolefins)
     def __init__(self,l=100e-6,D=1e-12,T=None,
                  k=None,C0=None,lunit=None,Dunit=None,kunit=None,Cunit=None,
@@ -7667,7 +7670,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -7679,6 +7681,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7699,7 +7702,7 @@ LDPE/HDPE ones. Adjust them as necessary for your models.</p></div>
 </summary>
 <pre><code class="python">class LLDPE(layer):
     &#34;&#34;&#34; extended pantankar.layer for linear low-density polyethylene LLDPE &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-butane&#34; #&#34;ethylene&#34; # monomer for polymers
     _polarityindex = 1.5 # Similar to LDPE, can be slightly more polar if co-monomer is present
     def __init__(self, l=80e-6, D=1e-12, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -7860,7 +7863,6 @@ By default, uses an approximate value between LDPE and HDPE.</p></div>
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -7872,6 +7874,7 @@ By default, uses an approximate value between LDPE and HDPE.</p></div>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -7957,7 +7960,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PA6(layer):
-    _chemicalsubstance = &#34;caprolactam&#34; # monomer for polymers
+    _chemicalsubstance = &#34;n-hexanamide&#34; #&#34;caprolactam&#34; # monomer for polymers
     _polarityindex = 7.5  # Strong hydrogen-bonding, thus quite polar.
     &#34;&#34;&#34; extended pantankar.layer for polyamide 6 (PA6) &#34;&#34;&#34;
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -8105,7 +8108,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -8117,6 +8119,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8202,7 +8205,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PA66(layer):
-    _chemicalsubstance = &#34;hexamethylenediamine&#34; # monomer for polymers
+    _chemicalsubstance = &#34;adipamide&#34; #&#34;hexamethylenediamine&#34; # monomer for polymers
     _polarityindex = 7.5  # Similar to PA6, strongly polar with hydrogen bonds.
     &#34;&#34;&#34; extended pantankar.layer for polyamide 66 (PA66) &#34;&#34;&#34;
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -8351,7 +8354,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -8363,6 +8365,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8381,7 +8384,7 @@ def porosity(self):
 </summary>
 <pre><code class="python">class PBT(layer):
     &#34;&#34;&#34; extended pantankar.layer for polybutylene terephthalate (PBT) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;Buthylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;butyl terephthalate&#34; #&#34;Butylene terephthalate&#34; # monomer for polymers
     _polarityindex = 5.5  # Similar to PET, slight structural differences
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -8528,7 +8531,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -8540,6 +8542,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8625,7 +8628,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PEN(layer):
-    _chemicalsubstance = &#34;Buthylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;dimethyl 2,6-naphthalenedicarboxylate&#34; #&#34;ethylene naphthalate&#34; # monomer for polymers
     _polarityindex = 6  # More aromatic than PET, often better barrier properties
     &#34;&#34;&#34; extended pantankar.layer for polyethylene naphthalate (PEN) &#34;&#34;&#34;
     def __init__(self, l=200e-6, D=1e-14, T=None,
@@ -8773,7 +8776,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -8785,6 +8787,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -8803,7 +8806,7 @@ def porosity(self):
 </summary>
 <pre><code class="python">class PMMA(layer):
     &#34;&#34;&#34; extended pantankar.layer for polystyrene (PS) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;methyl methacrylate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;Isobutyl acetate&#34; #&#34;methyl methacrylate&#34; # monomer for polymers
     _polarityindex = 5.5  #  more polar than polyolefins
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -8942,7 +8945,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -8954,6 +8956,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9039,7 +9042,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PP(layer):
-    _chemicalsubstance = &#34;propylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;2-methylbutane&#34; #&#34;propylene&#34; # monomer for polymers
     _polarityindex = 1.0  # Among the least polar, similar to PE
     &#34;&#34;&#34;  extended pantankar.layer for isotactic polypropylene PP  &#34;&#34;&#34;
     def __init__(self,l=300e-6,D=1e-14, T=None,
@@ -9183,7 +9186,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -9195,6 +9197,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9280,7 +9283,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PPrubber(layer):
-    _chemicalsubstance = &#34;propylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;2-methylbutane&#34; #&#34;propylene&#34; # monomer for polymers
     _polarityindex = 1.0  # Also very non-polar
     &#34;&#34;&#34; extended pantankar.layer for atactic (rubbery) polypropylene PP &#34;&#34;&#34;
     def __init__(self, l=100e-6, D=1e-14, T=None,
@@ -9428,7 +9431,6 @@ can be adjusted.</p></div>
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -9440,6 +9442,7 @@ can be adjusted.</p></div>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9458,7 +9461,7 @@ can be adjusted.</p></div>
 </summary>
 <pre><code class="python">class PS(layer):
     &#34;&#34;&#34; extended pantankar.layer for polystyrene (general purpose PS) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;styrene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;Ethylbenzene&#34; #&#34;styrene&#34; # monomer for polymers
     _polarityindex = 3.0  # Slightly more polar than polyolefins, but still considered relatively non-polar
     def __init__(self, l=100e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -9602,7 +9605,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -9614,6 +9616,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9632,7 +9635,7 @@ def porosity(self):
 </summary>
 <pre><code class="python">class PVAc(layer):
     &#34;&#34;&#34; extended pantankar.layer for PVAc &#34;&#34;&#34;
-    _chemicalsubstance = &#34;vinyl acetate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;ethyl acetate&#34; #&#34;vinyl acetate&#34; # monomer for polymers
     _polarityindex = 7  # polar but it depends on the acetylation rate.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -9771,7 +9774,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -9783,6 +9785,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -9949,7 +9952,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -9961,6 +9963,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -10046,7 +10049,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SBS(layer):
-    _chemicalsubstance = &#34;styrene&#34; # Styrene + butadiene
+    _chemicalsubstance = &#34;ethylbenzene&#34; #&#34;styrene&#34; # Styrene + butadiene
     _polarityindex = 3.5  # Non-polar but somewhat more interactive than pure PE/PP due to styrene units
     &#34;&#34;&#34;
     extended pantankar.layer for a styrene-based SBS
@@ -10189,7 +10192,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -10201,6 +10203,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -10815,7 +10818,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -10827,6 +10829,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -10875,7 +10878,7 @@ the product of a numerical value and a unit of measurement.</p>
 </summary>
 <pre><code class="python">class gPET(layer):
     &#34;&#34;&#34; extended pantankar.layer for PET in its glassy state (below ~76°C) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;dimethyl terephthalate&#34; #&#34;ethylene terephthalate&#34; # monomer for polymers
     _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -11026,7 +11029,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -11038,6 +11040,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -11530,7 +11533,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     # Class method returning help() for the end user
     # --------------------------------------------------------------------
     @classmethod
-    def help(cls):
+    def upd(cls):
         &#34;&#34;&#34;
         Prints a dynamically formatted summary of all input parameters,
         adjusting column widths based on content and wrapping long descriptions.
@@ -11869,6 +11872,8 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
     def layerclass(self): return type(self).__name__
     @property
     def name(self): return self._name
+    @property
+    def fullname(self): return str(self._name)
     @property
     def type(self): return self._type
     @property
@@ -12582,6 +12587,7 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
         from patankar.food import foodphysics
         if not isinstance(medium,foodphysics):
             raise TypeError(f&#34;medium must be a foodphysics object not a {type(medium).__name__}&#34;)
+        medium.substance = self.substance # debug 2025-09-01
         return self.contact(medium)
 
     # overloading in
@@ -12745,75 +12751,6 @@ based on the substance defined in <code>substance</code> and <code>medium</code>
 </ul>
 <h3>Static methods</h3>
 <dl>
-<dt id="layer.layer.help"><code class="name flex">
-<span>def <span class="ident">help</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Prints a dynamically formatted summary of all input parameters,
-adjusting column widths based on content and wrapping long descriptions.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def help(cls):
-    &#34;&#34;&#34;
-    Prints a dynamically formatted summary of all input parameters,
-    adjusting column widths based on content and wrapping long descriptions.
-    &#34;&#34;&#34;
-
-    # Column Headers
-    headers = [&#34;Parameter&#34;, &#34;Default Value&#34;, &#34;Has Synonyms?&#34;, &#34;Description&#34;]
-    col_widths = [len(h) for h in headers]  # Start with header widths
-
-    # Collect Data Rows
-    rows = []
-    for param, default in cls._defaults.items():
-        has_synonyms = &#34;✅ Yes&#34; if param in cls._synonyms else &#34;❌ No&#34;
-        description = cls._descriptionInputs.get(param, &#34;No description available&#34;)
-
-        # Update column widths dynamically
-        col_widths[0] = max(col_widths[0], len(param))
-        col_widths[1] = max(col_widths[1], len(str(default)))
-        col_widths[2] = max(col_widths[2], len(has_synonyms))
-        col_widths[3] = max(col_widths[3], len(description))
-
-        rows.append([param, str(default), has_synonyms, description])
-
-    # Function to wrap text for a given column width
-    def wrap_text(text, width):
-        return textwrap.fill(text, width)
-
-    # Print Table with Adjusted Column Widths
-    separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in col_widths) + &#34;-+&#34;
-    print(&#34;\n### **Accepted Parameters and Defaults**\n&#34;)
-    print(separator)
-    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(col_widths[i]) for i, h in enumerate(headers)) + &#34; |&#34;)
-    print(separator)
-    for row in rows:
-        # Wrap text in the description column
-        row[3] = wrap_text(row[3], col_widths[3])
-
-        # Print row
-        print(&#34;| &#34; + &#34; | &#34;.join(row[i].ljust(col_widths[i]) for i in range(3)) + &#34; | &#34; + row[3])
-    print(separator)
-
-    # Synonyms Table
-    print(&#34;\n### **Parameter Synonyms**\n&#34;)
-    syn_headers = [&#34;Parameter&#34;, &#34;Synonyms&#34;]
-    syn_col_widths = [
-        max(len(&#34;Parameter&#34;), max(len(k) for k in cls._synonyms.keys())),  # Ensure it fits &#34;Parameter&#34;
-        max(len(&#34;Synonyms&#34;), max(len(&#34;, &#34;.join(v)) for v in cls._synonyms.values()))  # Ensure it fits &#34;Synonyms&#34;
-    ]
-    syn_separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in syn_col_widths) + &#34;-+&#34;
-    print(syn_separator)
-    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(syn_col_widths[i]) for i, h in enumerate(syn_headers)) + &#34; |&#34;)
-    print(syn_separator)
-    for param, synonyms in cls._synonyms.items():
-        print(f&#34;| {param.ljust(syn_col_widths[0])} | {&#39;, &#39;.join(synonyms).ljust(syn_col_widths[1])} |&#34;)
-    print(syn_separator)</code></pre>
-</details>
-</dd>
 <dt id="layer.layer.resolvename"><code class="name flex">
 <span>def <span class="ident">resolvename</span></span>(<span>param_value, param_key, **unresolved)</span>
 </code></dt>
@@ -12922,6 +12859,75 @@ def sum(cls, layers):
         else:
             total = total + L  # This uses the overloaded __add__ operator of the layer class.
     return total</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.upd"><code class="name flex">
+<span>def <span class="ident">upd</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints a dynamically formatted summary of all input parameters,
+adjusting column widths based on content and wrapping long descriptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def upd(cls):
+    &#34;&#34;&#34;
+    Prints a dynamically formatted summary of all input parameters,
+    adjusting column widths based on content and wrapping long descriptions.
+    &#34;&#34;&#34;
+
+    # Column Headers
+    headers = [&#34;Parameter&#34;, &#34;Default Value&#34;, &#34;Has Synonyms?&#34;, &#34;Description&#34;]
+    col_widths = [len(h) for h in headers]  # Start with header widths
+
+    # Collect Data Rows
+    rows = []
+    for param, default in cls._defaults.items():
+        has_synonyms = &#34;✅ Yes&#34; if param in cls._synonyms else &#34;❌ No&#34;
+        description = cls._descriptionInputs.get(param, &#34;No description available&#34;)
+
+        # Update column widths dynamically
+        col_widths[0] = max(col_widths[0], len(param))
+        col_widths[1] = max(col_widths[1], len(str(default)))
+        col_widths[2] = max(col_widths[2], len(has_synonyms))
+        col_widths[3] = max(col_widths[3], len(description))
+
+        rows.append([param, str(default), has_synonyms, description])
+
+    # Function to wrap text for a given column width
+    def wrap_text(text, width):
+        return textwrap.fill(text, width)
+
+    # Print Table with Adjusted Column Widths
+    separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in col_widths) + &#34;-+&#34;
+    print(&#34;\n### **Accepted Parameters and Defaults**\n&#34;)
+    print(separator)
+    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(col_widths[i]) for i, h in enumerate(headers)) + &#34; |&#34;)
+    print(separator)
+    for row in rows:
+        # Wrap text in the description column
+        row[3] = wrap_text(row[3], col_widths[3])
+
+        # Print row
+        print(&#34;| &#34; + &#34; | &#34;.join(row[i].ljust(col_widths[i]) for i in range(3)) + &#34; | &#34; + row[3])
+    print(separator)
+
+    # Synonyms Table
+    print(&#34;\n### **Parameter Synonyms**\n&#34;)
+    syn_headers = [&#34;Parameter&#34;, &#34;Synonyms&#34;]
+    syn_col_widths = [
+        max(len(&#34;Parameter&#34;), max(len(k) for k in cls._synonyms.keys())),  # Ensure it fits &#34;Parameter&#34;
+        max(len(&#34;Synonyms&#34;), max(len(&#34;, &#34;.join(v)) for v in cls._synonyms.values()))  # Ensure it fits &#34;Synonyms&#34;
+    ]
+    syn_separator = &#34;+-&#34; + &#34;-+-&#34;.join(&#34;-&#34; * w for w in syn_col_widths) + &#34;-+&#34;
+    print(syn_separator)
+    print(&#34;| &#34; + &#34; | &#34;.join(h.ljust(syn_col_widths[i]) for i, h in enumerate(syn_headers)) + &#34; |&#34;)
+    print(syn_separator)
+    for param, synonyms in cls._synonyms.items():
+        print(f&#34;| {param.ljust(syn_col_widths[0])} | {&#39;, &#39;.join(synonyms).ljust(syn_col_widths[1])} |&#34;)
+    print(syn_separator)</code></pre>
 </details>
 </dd>
 </dl>
@@ -13178,6 +13184,17 @@ def concentration(self): return sum(self.l*self.C0)/self.thickness</code></pre>
 <pre><code class="python">@property
 def crystallinity_history(self):
     return self._crystallinity_history if self._crystallinity_history != [] else [self._currentcrystallinity]</code></pre>
+</details>
+</dd>
+<dt id="layer.layer.fullname"><code class="name">var <span class="ident">fullname</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fullname(self): return str(self._name)</code></pre>
 </details>
 </dd>
 <dt id="layer.layer.hasC0link"><code class="name">var <span class="ident">hasC0link</span></code></dt>
@@ -17824,7 +17841,7 @@ If False, the method will attempt to download and prepare required data. Default
 </summary>
 <pre><code class="python">class oPP(layer):
     &#34;&#34;&#34; extended pantankar.layer for bioriented polypropylene oPP &#34;&#34;&#34;
-    _chemicalsubstance = &#34;propylene&#34; # monomer for polymers
+    _chemicalsubstance = &#34;2-methylbutane&#34; #&#34;propylene&#34; # monomer for polymers
     _polarityindex = 1.0   # Non-polar, but oriented film might have slight morphological differences
     def __init__(self, l=40e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -17974,7 +17991,6 @@ Typically close to isotactic PP around ~910 kg/m^3.</p></div>
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -17986,6 +18002,7 @@ Typically close to isotactic PP around ~910 kg/m^3.</p></div>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -18004,7 +18021,7 @@ Typically close to isotactic PP around ~910 kg/m^3.</p></div>
 </summary>
 <pre><code class="python">class plasticizedPVC(layer):
     &#34;&#34;&#34; extended pantankar.layer for plasticized PVC &#34;&#34;&#34;
-    _chemicalsubstance = &#34;vinyl chloride&#34; # monomer for polymers
+    _chemicalsubstance = &#34;1-chlorobutane&#34;#&#34;vinyl chloride&#34; # monomer for polymers
     _polarityindex = 4.5  # Plasticizers can slightly change overall polarity/solubility.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -18143,7 +18160,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -18155,6 +18171,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -18217,7 +18234,6 @@ def porosity(self):
 <li><code><a title="layer.HIPS.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.HIPS.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.HIPS.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.HIPS.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.HIPS.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.HIPS.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.HIPS.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -18230,6 +18246,7 @@ def porosity(self):
 <li><code><a title="layer.HIPS.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.HIPS.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.HIPS.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.HIPS.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.HIPS.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -18248,7 +18265,7 @@ def porosity(self):
 </summary>
 <pre><code class="python">class rPET(layer):
     &#34;&#34;&#34; extended pantankar.layer for PET in its rubbery state (above ~76°C) &#34;&#34;&#34;
-    _chemicalsubstance = &#34;ethylene terephthalate&#34; # monomer for polymers
+    _chemicalsubstance = &#34;dimethyl téréphtalate&#34; #&#34;ethylene terephthalate&#34; # monomer for polymers
     _polarityindex = 5.0  # Polyester with significant dipolar interactions (Ph = phenylene ring).
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -18398,7 +18415,6 @@ but with a different expansion slope possible, if needed</p></div>
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -18410,6 +18426,7 @@ but with a different expansion slope possible, if needed</p></div>
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -18472,7 +18489,6 @@ but with a different expansion slope possible, if needed</p></div>
 <li><code><a title="layer.PS.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.PS.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.PS.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.PS.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.PS.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.PS.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.PS.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -18485,6 +18501,7 @@ but with a different expansion slope possible, if needed</p></div>
 <li><code><a title="layer.PS.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.PS.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.PS.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.PS.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.PS.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -18503,7 +18520,7 @@ but with a different expansion slope possible, if needed</p></div>
 </summary>
 <pre><code class="python">class rigidPVC(layer):
     &#34;&#34;&#34; extended pantankar.layer for rigid PVC &#34;&#34;&#34;
-    _chemicalsubstance = &#34;vinyl chloride&#34; # monomer for polymers
+    _chemicalsubstance = &#34;1-chlorobutane&#34; #&#34;vinyl chloride&#34; # monomer for polymers
     _polarityindex = 4.0  # Chlorine substituents give moderate polarity.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
@@ -18643,7 +18660,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.layer.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.layer.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -18655,6 +18671,7 @@ def porosity(self):
 <li><code><a title="layer.layer.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.layer.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -18721,7 +18738,6 @@ def porosity(self):
 <li><code><a title="layer.gPET.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.gPET.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.gPET.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.gPET.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.gPET.klatex" href="#layer.layer.klatex">klatex</a></code></li>
 <li><code><a title="layer.gPET.klink" href="#layer.layer.klink">klink</a></code></li>
 <li><code><a title="layer.gPET.llatex" href="#layer.layer.llatex">llatex</a></code></li>
@@ -18734,6 +18750,7 @@ def porosity(self):
 <li><code><a title="layer.gPET.split" href="#layer.layer.split">split</a></code></li>
 <li><code><a title="layer.gPET.struct" href="#layer.layer.struct">struct</a></code></li>
 <li><code><a title="layer.gPET.sum" href="#layer.layer.sum">sum</a></code></li>
+<li><code><a title="layer.gPET.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.gPET.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>
@@ -19057,6 +19074,7 @@ def porosity(self):
 <li><code><a title="layer.layer.contact" href="#layer.layer.contact">contact</a></code></li>
 <li><code><a title="layer.layer.copy" href="#layer.layer.copy">copy</a></code></li>
 <li><code><a title="layer.layer.crystallinity_history" href="#layer.layer.crystallinity_history">crystallinity_history</a></code></li>
+<li><code><a title="layer.layer.fullname" href="#layer.layer.fullname">fullname</a></code></li>
 <li><code><a title="layer.layer.hasC0link" href="#layer.layer.hasC0link">hasC0link</a></code></li>
 <li><code><a title="layer.layer.hasDlink" href="#layer.layer.hasDlink">hasDlink</a></code></li>
 <li><code><a title="layer.layer.hasDmodel" href="#layer.layer.hasDmodel">hasDmodel</a></code></li>
@@ -19065,7 +19083,6 @@ def porosity(self):
 <li><code><a title="layer.layer.hasklink" href="#layer.layer.hasklink">hasklink</a></code></li>
 <li><code><a title="layer.layer.haskmodel" href="#layer.layer.haskmodel">haskmodel</a></code></li>
 <li><code><a title="layer.layer.hasllink" href="#layer.layer.hasllink">hasllink</a></code></li>
-<li><code><a title="layer.layer.help" href="#layer.layer.help">help</a></code></li>
 <li><code><a title="layer.layer.ispolymer" href="#layer.layer.ispolymer">ispolymer</a></code></li>
 <li><code><a title="layer.layer.ispolymer_history" href="#layer.layer.ispolymer_history">ispolymer_history</a></code></li>
 <li><code><a title="layer.layer.issolid" href="#layer.layer.issolid">issolid</a></code></li>
@@ -19112,6 +19129,7 @@ def porosity(self):
 <li><code><a title="layer.layer.sum" href="#layer.layer.sum">sum</a></code></li>
 <li><code><a title="layer.layer.thickness" href="#layer.layer.thickness">thickness</a></code></li>
 <li><code><a title="layer.layer.type" href="#layer.layer.type">type</a></code></li>
+<li><code><a title="layer.layer.upd" href="#layer.layer.upd">upd</a></code></li>
 <li><code><a title="layer.layer.update" href="#layer.layer.update">update</a></code></li>
 </ul>
 </li>

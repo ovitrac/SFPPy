@@ -866,12 +866,16 @@ class Compound(object):
     @property
     def canonical_smiles(self):
         &#34;&#34;&#34;Canonical SMILES, with no stereochemistry information.&#34;&#34;&#34;
-        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Canonical&#39;}, self.record[&#39;props&#39;])
+        # before July 2025
+        #return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Canonical&#39;}, self.record[&#39;props&#39;])
+        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Absolute&#39;}, self.record[&#39;props&#39;])
 
     @property
     def isomeric_smiles(self):
         &#34;&#34;&#34;Isomeric SMILES.&#34;&#34;&#34;
-        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Isomeric&#39;}, self.record[&#39;props&#39;])
+        # before July 2025
+        #return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Isomeric&#39;}, self.record[&#39;props&#39;])
+        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Connectivity&#39;}, self.record[&#39;props&#39;])
 
     @property
     def inchi(self):
@@ -2716,12 +2720,16 @@ process. Each Compound is uniquely identified by a CID.</p>
     @property
     def canonical_smiles(self):
         &#34;&#34;&#34;Canonical SMILES, with no stereochemistry information.&#34;&#34;&#34;
-        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Canonical&#39;}, self.record[&#39;props&#39;])
+        # before July 2025
+        #return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Canonical&#39;}, self.record[&#39;props&#39;])
+        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Absolute&#39;}, self.record[&#39;props&#39;])
 
     @property
     def isomeric_smiles(self):
         &#34;&#34;&#34;Isomeric SMILES.&#34;&#34;&#34;
-        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Isomeric&#39;}, self.record[&#39;props&#39;])
+        # before July 2025
+        #return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Isomeric&#39;}, self.record[&#39;props&#39;])
+        return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Connectivity&#39;}, self.record[&#39;props&#39;])
 
     @property
     def inchi(self):
@@ -3041,7 +3049,9 @@ def cactvs_fingerprint(self):
 <pre><code class="python">@property
 def canonical_smiles(self):
     &#34;&#34;&#34;Canonical SMILES, with no stereochemistry information.&#34;&#34;&#34;
-    return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Canonical&#39;}, self.record[&#39;props&#39;])</code></pre>
+    # before July 2025
+    #return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Canonical&#39;}, self.record[&#39;props&#39;])
+    return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Absolute&#39;}, self.record[&#39;props&#39;])</code></pre>
 </details>
 </dd>
 <dt id="pubchempy.Compound.charge"><code class="name">var <span class="ident">charge</span></code></dt>
@@ -3323,7 +3333,9 @@ def inchikey(self):
 <pre><code class="python">@property
 def isomeric_smiles(self):
     &#34;&#34;&#34;Isomeric SMILES.&#34;&#34;&#34;
-    return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Isomeric&#39;}, self.record[&#39;props&#39;])</code></pre>
+    # before July 2025
+    #return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Isomeric&#39;}, self.record[&#39;props&#39;])
+    return _parse_prop({&#39;label&#39;: &#39;SMILES&#39;, &#39;name&#39;: &#39;Connectivity&#39;}, self.record[&#39;props&#39;])</code></pre>
 </details>
 </dd>
 <dt id="pubchempy.Compound.isotope_atom_count"><code class="name">var <span class="ident">isotope_atom_count</span></code></dt>
