@@ -45,7 +45,7 @@
 
 | <img src="docs/assets/SFPPy_social.png" alt="SFPPy – Scientific Framework for Food Packaging" width="320"/> | [![ChatGPT SFPPy](https://img.shields.io/badge/ChatGPT-SFPPy-orange?logo=openai)](https://chatgpt.com/g/g-6780fa0b1180819198ea1d962dd4064c-sfppy) <br/> 🔥A custom AI assistant 🤖 extensively trained on **SFPPy** 🏋🏻. It helps you explore and use the framework: from the **principles of migration modeling** ⚙️ to **first simulations** 📈, **regulatory compliance** ✅, **interpretation** 📊, and **reporting**📝. |
 | :----------------------------------------------------------: | :----------------------------------------------------------- |
-| <img src="docs/assets/SFPPy_social_v15.png" alt="SFPPy – version 1.50" width="320"/> | 🧠🛡️ **SFPPy 1.5** brings **design-for-compliance** to packaging: **M0–M3**, explicit indicators, open data, AI-assisted reasoning.<br /><small>**Read our 📄 technical paper [here](https://ovitrac.github.io/SFPPy/wikipages/SafeByDesign/sfppydesign.html)**.</small> |
+| <img src="docs/assets/SFPPy_social_v15.png" alt="SFPPy – version 1.50" width="320"/> | 🧠🛡️ **SFPPy 1.5** brings **design-for-compliance** to packaging with tiers **M0–M3** , *explicit performance indicators*, *open data*, *AI-assisted reasoning*. It automates **risk assessment** for the 100s of chromatogram peaks in **recycled-material extracts**.<br /><small>**Read our 📄 technical paper [here](https://ovitrac.github.io/SFPPy/wikipages/SafeByDesign/sfppydesign.html)**.</small> |
 
 </div>
 
