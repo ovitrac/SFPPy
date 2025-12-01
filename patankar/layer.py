@@ -2575,6 +2575,10 @@ class layer:
 
     def checknumvalue(self,value,ExpectedUnits=None):
         """ returns a validate value to set properties """
+        # Prevent layerLink objects from being assigned directly to numeric fields
+        # (D, k, etc.). Use the dedicated *link attributes instead.
+        if isinstance(value, layerLink):
+            raise TypeError("Assign layerLink instances to Dlink/klink/C0link/Tlink/llink, not directly to numeric properties.")
         if isinstance(value,tuple):
             value = check_units(value,ExpectedUnits=ExpectedUnits)[0]
         if isinstance(value,int): value = float(value)
@@ -4474,7 +4478,8 @@ if __name__ == '__main__':
     A = layer()
     D = layerLink("D")
     D[0]=1.2345e-12
-    A.D = D
+    # bind via the dedicated link to avoid printing loops
+    A.Dlink = D
     repr(A)
 
 
