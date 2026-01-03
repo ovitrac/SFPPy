@@ -3934,7 +3934,7 @@ class restartfile_senspantakar(restartfile):
 def senspatankar(multilayer=None, medium=None,
                  name=f"senspatantkar:{autoname(6)}", description="",
                  t=None, autotime=True, timescale="sqrt", Cxprevious=None,
-                 ntimes=1000, RelTol=1e-6, AbsTol=1e-6,
+                 ntimes=1000, RelTol=1e-6, AbsTol=1e-6, max_step=None,
                  container=None):
     """
     Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -3989,6 +3989,11 @@ def senspatankar(multilayer=None, medium=None,
         Relative tolerance for the ODE solver (``solve_ivp``). Default is 1e-4.
     AbsTol : float, optional
         Absolute tolerance for the ODE solver (``solve_ivp``). Default is 1e-4.
+    max_step : float, optional
+        Maximum step size for the ODE solver. If None (default), uses the heuristic
+        ``max_step = max(10, ceil(Fo_max / 200))`` which ensures ~200 internal steps
+        over the Fourier number range. This dramatically improves performance for
+        high Fo scenarios (e.g., HDPE with long contact times).
 
     Raises
     ------
@@ -4117,6 +4122,15 @@ def senspatankar(multilayer=None, medium=None,
 
     # Bi: dimensionless mass transfer coefficient
     Bi = h * l_ref / D_ref
+
+    # Effective Bi accounting for high partition coefficients (stiff system detection)
+    # For hydrophobic substances in polar simulants (e.g., antioxidants in water),
+    # k >> 1 creates an effectively impervious boundary with near-zero migration.
+    # This causes BDF solver to take infinitely small steps on flat gradients.
+    # Reference: senspatankar.m MATLAB heuristic for Bi < 10 cases
+    k_max = np.max(k) if hasattr(k, '__len__') else k
+    effective_Bi = Bi / k_max if k_max > 0 else Bi
+    is_stiff_system = effective_Bi < 1.0 and k_max > 100
 
     # Compute initial amounts to be used for potential release (addition v>1.42)
     # important note PR are exact if only one C0 is non-zero (if not only effective)
@@ -4249,6 +4263,39 @@ def senspatankar(multilayer=None, medium=None,
     def odesys(_, C):
         return A.dot(C)
 
+    # Compute max_step using MATLAB heuristic: max(10, ceil(Fo_max / 200))
+    # This ensures ~200 internal steps, dramatically improving performance for high Fo
+    Fo_max = Fo_int[-1]
+    if max_step is None:
+        nstepchoice = 200  # target number of internal steps
+        MaxStepmax = 10    # minimum max_step
+        if is_stiff_system:
+            # For stiff systems (high k, low effective Bi), use tighter step control
+            # This prevents solver from hanging on essentially flat solutions
+            # Reference: senspatankar.m uses MaxStep=0.01 for such cases
+            max_step = min(1.0, max(0.01, Fo_max / 1000))
+        else:
+            max_step = max(MaxStepmax, np.ceil(Fo_max / nstepchoice))
+
+    # For extremely stiff systems, limit Fo range to avoid hanging
+    # When k >> 1000 and effective_Bi << 1, migration is negligible
+    # and we can safely truncate the integration range
+    if is_stiff_system and Fo_max > 100:
+        # Estimate time to reach ~1% of equilibrium for stiff case
+        Fo_practical = min(Fo_max, 50.0 / effective_Bi) if effective_Bi > 0 else Fo_max
+        if Fo_practical < Fo_max:
+            # Truncate Fo_int but keep minimum resolution
+            mask = Fo_int <= Fo_practical
+            if np.sum(mask) >= 10:
+                Fo_int_truncated = Fo_int[mask]
+                # Ensure we include the original endpoint for interpolation
+                if Fo_int_truncated[-1] < Fo_practical:
+                    Fo_int_truncated = np.append(Fo_int_truncated, Fo_practical)
+                Fo_int = Fo_int_truncated
+                Fo_max = Fo_int[-1]
+                # Update t to match truncated Fo_int
+                t = Fo_int * timebase
+
     sol = solve_ivp(   # <-- generic solver
         odesys,        # <-- our system (efficient sparse matrices)
         [Fo_int[0], Fo_int[-1]], # <-- integration range on Fourier scale
@@ -4256,7 +4303,9 @@ def senspatankar(multilayer=None, medium=None,
         t_eval=Fo_int, # <-- the solution is retrieved at these Fo values
         method='BDF',  # <-- backward differences are absolutely stable
         rtol=RelTol,   # <-- relative and absolute tolerances
-        atol=AbsTol
+        atol=AbsTol,
+        max_step=max_step,  # <-- adaptive step size for high Fo (MATLAB heuristic)
+        first_step=1e-8 if is_stiff_system else None  # Small initial step for stiff systems
     )
 
     # Check solution

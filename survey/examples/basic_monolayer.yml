@@ -1,0 +1,56 @@
+# Basic Monolayer Survey Example
+#
+# A simple PP film in contact with fatty food.
+# Demonstrates basic survey configuration.
+
+name: basic_monolayer_example
+
+physics:
+  monolayer:
+    polymer: PP
+    thickness_m: 50e-6           # 50 µm
+    temperature_degC: 40.0
+
+  interface:
+    h_m_s: 1e-7                  # Mass transfer coefficient
+    surface_area_m2: 0.06        # 6 dm² (typical tray)
+    food_volume_m3: 0.001        # 1 L
+    contact_temperature_degC: 40.0
+    cf0: 0.0
+    food_simulant: oliveoil      # EU Simulant D
+
+family:
+  # Generic masses representing a substance family
+  masses_g_mol: [100.0, 150.0, 200.0, 250.0]
+
+priors:
+  # Contact time: 7 days likely, up to 30 days
+  time_s:
+    triangular:
+      min: 0.0
+      mode: 604800.0             # 7 days
+      max: 2592000.0             # 30 days
+    grid:
+      nlow: 15
+      nhigh: 15
+
+  # Initial concentration: 10 mg/kg likely, up to 50 mg/kg
+  cp0_av:
+    triangular:
+      min: 0.0
+      mode: 10.0
+      max: 50.0
+    grid:
+      nlow: 15
+      nhigh: 15
+
+solver:
+  pdf_bins: 250
+  fo_grid:
+    n_fo: 200
+    fo_max_factor: 1.5
+    fo_min_floor: 1e-15
+
+tolerances:
+  pdf_l1: 1e-3
+  q_abs: 1e-3

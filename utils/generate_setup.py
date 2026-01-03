@@ -108,16 +108,67 @@ def prompt_overwrite(file_path):
             print("Please enter 'Y' or 'N'.")
 
 def generate_setup_py(sfppy_root, dependencies):
-    """Generate setup.py with specified dependencies."""
+    """Generate setup.py with specified dependencies.
+
+    Note: Since SFPPy 1.50, pyproject.toml is the primary configuration.
+    This setup.py is generated for backward compatibility only.
+    """
     setup_path = sfppy_root / "setup.py"
+    pyproject_path = sfppy_root / "pyproject.toml"
+
+    # Check if pyproject.toml exists
+    if pyproject_path.exists():
+        print(f"⚠️  pyproject.toml exists at '{sfppy_root}'.")
+        print("   Since SFPPy 1.50, pyproject.toml is the primary configuration.")
+        print("   setup.py is only needed for backward compatibility.")
 
     if setup_path.exists() and not prompt_overwrite(setup_path):
         print("Skipping setup.py generation.")
         return
 
-    setup_content = f"""from setuptools import setup, find_packages
+    setup_content = f'''"""
+setup.py — Legacy SFPPy Installation Script
+============================================
+
+DEPRECATION NOTICE:
+    This setup.py is provided for backward compatibility only.
+    For new installations, please use pyproject.toml instead:
+
+        pip install .              # Modern installation
+        pip install -e .           # Editable/development mode
+
+    This file will be removed in a future version (SFPPy >= 2.0).
+
+@project: SFPPy — Safe Food Packaging in Python
+@author: Olivier Vitrac, PhD, HDR
+@email: olivier.vitrac@agroparistech.fr
+@license: MIT
+"""
+
+from setuptools import setup, find_packages
 import sys
 import os
+import warnings
+
+# Issue deprecation warning when setup.py is invoked directly
+if __name__ == "__main__" or "setup.py" in sys.argv[0]:
+    warnings.warn(
+        "\\n"
+        "=" * 70 + "\\n"
+        "DEPRECATION WARNING: setup.py is deprecated.\\n"
+        "\\n"
+        "SFPPy now uses pyproject.toml for package configuration.\\n"
+        "This setup.py is maintained for backward compatibility only\\n"
+        "and will be removed in SFPPy >= 2.0.\\n"
+        "\\n"
+        "For installation, use:\\n"
+        "    pip install .         # Standard installation\\n"
+        "    pip install -e .      # Development/editable mode\\n"
+        "\\n"
+        "=" * 70,
+        DeprecationWarning,
+        stacklevel=2
+    )
 
 # Ensure SFPPy root is in sys.path
 sfppy_root = os.path.dirname(os.path.abspath(__file__))
@@ -149,7 +200,7 @@ setup(
         ],
     }},
 )
-"""
+'''
 
     with open(setup_path, 'w') as f:
         f.write(setup_content)
@@ -157,27 +208,28 @@ setup(
     print(f"✔ setup.py created successfully in '{sfppy_root}'.")
 
 def generate_environment_yml(sfppy_root, dependencies, conda_channels):
-    """Generate environment.yml for Conda users."""
+    """Generate environment.yml for Conda users, with pip-based deps."""
     env_path = sfppy_root / "environment.yml"
 
     if env_path.exists() and not prompt_overwrite(env_path):
         print("Skipping environment.yml generation.")
         return
 
-    conda_deps = [dep.replace(">=", "=") for dep in dependencies]
-
     env_content = f"""name: sfppy
 channels:
 {chr(10).join(f"  - {channel}" for channel in conda_channels)}
 dependencies:
   - python=3.10
-{chr(10).join(f"  - {dep}" for dep in conda_deps)}
+  - pip
+  - pip:
+{chr(10).join(f"    - {dep}" for dep in dependencies)}
 """
 
     with open(env_path, 'w') as f:
         f.write(env_content)
 
     print(f"✔ environment.yml created successfully in '{sfppy_root}'.")
+
 
 def generate_requirements_txt(sfppy_root, dependencies):
     """Generate requirements.txt for pip users."""

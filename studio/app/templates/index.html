@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ SFPPy Studio - Food Contact Migration Analysis</title>
+
+    <!-- Offline-first: Load local CSS fallback first -->
+    <link rel="stylesheet" href="/static/vendor/tailwind-offline.css" id="tailwind-offline">
+
+    <!-- Tailwind CSS CDN (JIT) - loads on top of offline CSS when online -->
+    <script src="https://cdn.tailwindcss.com" onerror="console.log('[Offline] Tailwind CDN unavailable, using offline CSS')"></script>
+    <script>
+        // Only configure Tailwind if CDN loaded
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            // SFPPy colors: green apple -> red apple (migration)
+                            sfppy: {
+                                green: '#22c55e',      // 🍏 Green apple
+                                greenDark: '#16a34a',
+                                greenLight: '#86efac',
+                                orange: '#f97316',     // Orange (transition)
+                                orangeDark: '#ea580c',
+                                red: '#ef4444',        // 🍎 Red apple
+                                redDark: '#dc2626',
+                                redLight: '#fca5a5',
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Chart.js - Local fallback with CDN plugins -->
+    <script src="/static/vendor/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" onerror="console.log('[Offline] Chart.js annotation plugin unavailable')"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8" onerror="console.log('[Offline] Hammer.js unavailable')"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js" onerror="console.log('[Offline] Chart.js zoom plugin unavailable')"></script>
+
+    <!-- Custom styles -->
+    <style>
+        /* Tab styling - clear active state */
+        .tab-btn {
+            @apply px-4 py-2.5 text-sm font-medium border-b-3 border-transparent transition-all;
+            color: #374151;
+        }
+        .dark .tab-btn {
+            color: #e5e7eb !important;
+        }
+        .tab-btn:hover {
+            @apply text-sfppy-green border-sfppy-greenLight;
+            background: rgba(34, 197, 94, 0.05);
+        }
+        .dark .tab-btn:hover {
+            color: #86efac !important;
+            background: rgba(34, 197, 94, 0.1);
+        }
+        .tab-btn.active {
+            @apply border-sfppy-green font-semibold;
+            color: #16a34a !important;
+            background: rgba(34, 197, 94, 0.1);
+            border-bottom-width: 3px;
+        }
+        .dark .tab-btn.active {
+            color: #4ade80 !important;
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        /* Layer card */
+        .layer-card {
+            @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 mb-3;
+        }
+
+        /* Help tooltip */
+        .help-icon {
+            @apply inline-block w-4 h-4 text-gray-400 cursor-help ml-1;
+        }
+        .help-icon:hover {
+            @apply text-sfppy-green;
+        }
+
+        /* Footer */
+        .footer-discrete {
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+        }
+        .footer-discrete:hover {
+            opacity: 1.0;
+        }
+
+        /* Layer visualization */
+        .layer-stack {
+            display: flex;
+            align-items: stretch;
+            height: 100px;
+            border: 2px solid #374151;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        /* Food block in layer stack - Green apple side */
+        .food-block {
+            background: linear-gradient(135deg, #86efac, #22c55e);
+            min-width: 50px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #14532d;
+            font-weight: 600;
+        }
+
+        /* Polymer colors - Based on Tg (barrier = cool colors, rubbery = warm colors) */
+        /* Rubbery/Low Tg (-130 to 0°C) - Warm colors (reds/oranges) */
+        .polymer-LDPE { background: linear-gradient(135deg, #f87171, #ef4444); }  /* Tg=-130°C */
+        .polymer-LLDPE { background: linear-gradient(135deg, #fb7185, #f43f5e); } /* Tg=-120°C */
+        .polymer-HDPE { background: linear-gradient(135deg, #fb923c, #f97316); }  /* Tg=-100°C */
+        .polymer-PP { background: linear-gradient(135deg, #fbbf24, #f59e0b); }    /* Tg=-10°C */
+        .polymer-PPrubber { background: linear-gradient(135deg, #fcd34d, #fbbf24); }
+        .polymer-oPP { background: linear-gradient(135deg, #fde047, #facc15); }
+
+        /* Mid-range Tg (0 to 70°C) - Yellows/Greens */
+        .polymer-PA6 { background: linear-gradient(135deg, #a3e635, #84cc16); }   /* Tg=50°C */
+        .polymer-PA66 { background: linear-gradient(135deg, #4ade80, #22c55e); }  /* Tg=70°C */
+        .polymer-PVAc { background: linear-gradient(135deg, #86efac, #4ade80); }
+        .polymer-wPET { background: linear-gradient(135deg, #6ee7b7, #34d399); }  /* Tg=46°C */
+
+        /* Glassy/High Tg (>70°C) - Cool colors (blues/purples) = BARRIER */
+        .polymer-gPET { background: linear-gradient(135deg, #60a5fa, #3b82f6); }  /* Tg=76°C - barrier */
+        .polymer-PET { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+        .polymer-rPET { background: linear-gradient(135deg, #38bdf8, #0ea5e9); }
+        .polymer-PBT { background: linear-gradient(135deg, #22d3ee, #06b6d4); }   /* Tg=66°C */
+        .polymer-PEN { background: linear-gradient(135deg, #2dd4bf, #14b8a6); }   /* Tg=120°C - excellent barrier */
+        .polymer-PS { background: linear-gradient(135deg, #818cf8, #6366f1); }    /* Tg=100°C */
+        .polymer-HIPS { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+        .polymer-PMMA { background: linear-gradient(135deg, #c084fc, #a855f7); }  /* Tg=105°C */
+        .polymer-SBS { background: linear-gradient(135deg, #e879f9, #d946ef); }
+
+        /* PVC */
+        .polymer-rigidPVC { background: linear-gradient(135deg, #67e8f9, #22d3ee); }  /* Tg=87°C */
+        .polymer-plasticizedPVC { background: linear-gradient(135deg, #fda4af, #fb7185); }
+
+        /* Adhesives - Neutral tones */
+        .polymer-AdhesiveEVA { background: linear-gradient(135deg, #d4d4d4, #a3a3a3); }
+        .polymer-AdhesiveVAE { background: linear-gradient(135deg, #d4d4d4, #a3a3a3); }
+        .polymer-AdhesivePVAC { background: linear-gradient(135deg, #d4d4d4, #a3a3a3); }
+        .polymer-AdhesiveAcrylate { background: linear-gradient(135deg, #cbd5e1, #94a3b8); }
+        .polymer-AdhesivePU { background: linear-gradient(135deg, #cbd5e1, #94a3b8); }
+        .polymer-AdhesiveNaturalRubber { background: linear-gradient(135deg, #fcd34d, #fbbf24); }
+        .polymer-AdhesiveSyntheticRubber { background: linear-gradient(135deg, #fdba74, #fb923c); }
+
+        /* Paper & Board - Earthy tones */
+        .polymer-Paper { background: linear-gradient(135deg, #d6d3d1, #a8a29e); }
+        .polymer-Cardboard { background: linear-gradient(135deg, #a8a29e, #78716c); }
+
+        /* Air/Gas */
+        .polymer-air { background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(240,240,240,0.8)); color: #333; }
+
+        .polymer-default { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+
+        /* Clickable layer visualization */
+        .layer-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            min-width: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-right: 1px solid rgba(0,0,0,0.1);
+        }
+        .layer-block:hover {
+            filter: brightness(1.1);
+            transform: scaleY(1.02);
+        }
+        .layer-block.selected {
+            box-shadow: inset 0 0 0 3px white;
+        }
+        .layer-block .thickness-label {
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.5rem;
+            opacity: 0.85;
+        }
+        .layer-block .tg-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.45rem;
+            opacity: 0.7;
+        }
+
+        /* Concentration histogram below layers */
+        .concentration-bar {
+            display: flex;
+            align-items: flex-end;
+            height: 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 0 0 4px 4px;
+            border-top: none;
+            overflow: hidden;
+            background: #f9fafb;
+        }
+        .dark .concentration-bar {
+            border-color: #4b5563;
+            background: #1f2937;
+        }
+        .conc-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 0.5rem;
+            color: #6b7280;
+            position: relative;
+        }
+        .conc-fill {
+            width: 100%;
+            background: linear-gradient(to top, #fbbf24, #fde047);
+            transition: height 0.3s ease;
+        }
+        .conc-label {
+            position: absolute;
+            bottom: 100%;
+            font-size: 0.45rem;
+            color: #374151;
+            white-space: nowrap;
+        }
+        .dark .conc-label {
+            color: #9ca3af;
+        }
+
+        /* Tg legend */
+        .tg-legend {
+            display: flex;
+            gap: 8px;
+            font-size: 0.6rem;
+            margin-top: 4px;
+        }
+        .tg-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .tg-swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        /* Help panel */
+        #help-panel {
+            transition: all 0.3s ease;
+        }
+        #help-panel.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Scrollable content */
+        .tab-content {
+            max-height: calc(100vh - 160px);
+            overflow-y: auto;
+        }
+
+        /* Override panel */
+        .override-badge {
+            @apply text-xs px-2 py-0.5 rounded-full;
+        }
+        .override-badge.computed {
+            @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400;
+        }
+        .override-badge.override {
+            @apply bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400;
+        }
+
+        /* Dark mode text fixes - comprehensive */
+        .dark .text-gray-800 { color: #f3f4f6 !important; }
+        .dark .text-gray-700 { color: #d1d5db !important; }
+        .dark .text-gray-600 { color: #9ca3af !important; }
+        .dark .text-gray-500 { color: #9ca3af !important; }
+        .dark label { color: #d1d5db !important; }
+        .dark input:not([type="checkbox"]):not([type="radio"]) {
+            color: #f3f4f6 !important;
+            background-color: #374151 !important;
+        }
+        .dark select {
+            color: #f3f4f6 !important;
+            background-color: #374151 !important;
+        }
+        .dark optgroup { color: #f3f4f6; background: #374151; }
+        .dark option { color: #f3f4f6; background: #374151; }
+        .dark h2, .dark h3, .dark h4 { color: #f3f4f6 !important; }
+        .dark p { color: #d1d5db; }
+        .dark span:not(.text-sfppy-green):not(.text-sfppy-orange):not(.text-sfppy-red) { color: inherit; }
+        .dark .font-medium { color: #f3f4f6; }
+        .dark .font-semibold { color: #f3f4f6; }
+        .dark .font-bold { color: #f3f4f6; }
+        .dark summary { color: #d1d5db !important; }
+        .dark details summary { color: #d1d5db !important; }
+        .dark .layer-card h3 { color: #f3f4f6 !important; }
+        .dark .layer-card h3 span { color: inherit !important; }
+        .dark .btn-primary, .dark .btn-secondary { color: white !important; }
+        .dark .override-badge { color: inherit; }
+        /* Dark mode form elements */
+        .dark .input-field {
+            background-color: #374151 !important;
+            color: #f3f4f6 !important;
+            border-color: #4b5563 !important;
+        }
+        .dark .input-field::placeholder {
+            color: #9ca3af !important;
+        }
+        .dark .border { border-color: #4b5563; }
+        .dark .border-gray-200 { border-color: #4b5563 !important; }
+        .dark .border-gray-300 { border-color: #4b5563 !important; }
+        .dark .bg-gray-50 { background-color: #374151 !important; }
+        .dark .bg-white { background-color: #1f2937 !important; }
+        /* Fix specific text elements */
+        .dark [class*="text-gray"] { color: #d1d5db !important; }
+        .dark .text-xs { color: inherit; }
+        .dark .text-sm { color: inherit; }
+
+        /* Substance card styling */
+        .substance-detail-card {
+            @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4;
+        }
+        .regulatory-badge {
+            @apply px-2 py-0.5 rounded text-xs font-medium;
+        }
+        .regulatory-badge.authorized {
+            @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
+        }
+        .regulatory-badge.not-listed {
+            @apply bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400;
+        }
+        .regulatory-badge.restricted {
+            @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
+        }
+
+        /* Layer table styling */
+        .layer-table {
+            @apply w-full text-sm border-collapse;
+        }
+        .layer-table th {
+            @apply px-3 py-2 text-left font-semibold bg-gray-100 border-b border-gray-300;
+            color: #374151;
+        }
+        .dark .layer-table th {
+            background: #374151 !important;
+            color: #e5e7eb !important;
+            border-color: #4b5563;
+        }
+        .layer-table td {
+            @apply px-3 py-2 border-b border-gray-200;
+            color: #1f2937;
+        }
+        .dark .layer-table td {
+            color: #e5e7eb !important;
+            border-color: #4b5563;
+        }
+        .layer-table tbody tr {
+            @apply transition-colors cursor-pointer;
+        }
+        .layer-table tbody tr:hover {
+            background: rgba(34, 197, 94, 0.05);
+        }
+        .dark .layer-table tbody tr:hover {
+            background: rgba(34, 197, 94, 0.1);
+        }
+        .layer-table tr.selected {
+            background: rgba(34, 197, 94, 0.15) !important;
+            border-left: 3px solid #22c55e;
+        }
+        .dark .layer-table tr.selected {
+            background: rgba(34, 197, 94, 0.25) !important;
+        }
+
+        /* Concentration matrix */
+        .conc-matrix {
+            @apply w-full text-xs border-collapse;
+        }
+        .conc-matrix th, .conc-matrix td {
+            @apply border border-gray-200 dark:border-gray-600 px-2 py-1 text-center;
+        }
+        .conc-matrix th {
+            @apply bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium;
+        }
+        .conc-matrix input, .c0-matrix-input {
+            @apply w-16 text-center text-xs p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200;
+        }
+        .conc-matrix input:focus, .c0-matrix-input:focus {
+            @apply ring-1 ring-sfppy-green outline-none;
+        }
+
+        /* Toggle switch for dark mode */
+        .toggle-checkbox:checked { right: 0; border-color: #22c55e; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #22c55e; }
+        .toggle-checkbox { right: 1.5rem; }
+
+        /* Dark mode molecule image */
+        .dark .molecule-img { filter: invert(1) hue-rotate(180deg); background: white; border-radius: 8px; }
+
+        /* Substance card */
+        .substance-card {
+            transition: all 0.2s ease;
+        }
+        .substance-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Compliance badges */
+        .compliant-badge {
+            @apply bg-sfppy-green text-white px-3 py-1 rounded-full font-bold;
+        }
+        .non-compliant-badge {
+            @apply bg-sfppy-red text-white px-3 py-1 rounded-full font-bold;
+        }
+
+        /* Input styling */
+        .input-field {
+            @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-sfppy-green focus:border-sfppy-green;
+        }
+
+        /* Button styling */
+        .btn-primary {
+            @apply px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition text-sm font-medium;
+        }
+        .btn-secondary {
+            @apply px-4 py-2 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded-lg transition text-sm font-medium;
+        }
+        .btn-danger {
+            @apply px-4 py-2 bg-sfppy-red hover:bg-sfppy-redDark text-white rounded-lg transition text-sm font-medium;
+        }
+
+        /* Toxicological alerts */
+        .tox-alert {
+            @apply px-2 py-1 rounded text-xs font-medium;
+        }
+        .tox-class-1 { @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400; }
+        .tox-class-2 { @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400; }
+        .tox-class-3 { @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400; }
+
+        /* Regulatory flags */
+        .reg-flag {
+            font-size: 1rem;
+            cursor: help;
+        }
+        .reg-flag.reg-eu { filter: drop-shadow(0 0 2px rgba(0, 51, 153, 0.3)); }
+        .reg-flag.reg-us { filter: drop-shadow(0 0 2px rgba(60, 59, 110, 0.3)); }
+        .reg-flag.reg-cn { filter: drop-shadow(0 0 2px rgba(238, 28, 37, 0.3)); }
+
+        /* Chart fullscreen mode */
+        .chart-fullscreen-wrapper {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            background: white !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .dark .chart-fullscreen-wrapper {
+            background: #1f2937 !important;
+        }
+        .chart-fullscreen-wrapper .chart-container {
+            flex: 1 !important;
+            min-height: 0 !important;
+            position: relative !important;
+        }
+        .chart-fullscreen-wrapper canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .chart-fullscreen-wrapper .chart-controls-bar {
+            flex-shrink: 0 !important;
+            margin-bottom: 10px !important;
+        }
+        /* Zoom controls styling */
+        .chart-zoom-controls {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+        .chart-zoom-controls button {
+            padding: 2px 8px;
+            font-size: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+        }
+        .chart-zoom-controls button:hover {
+            background: #f3f4f6;
+        }
+        .dark .chart-zoom-controls button {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e7eb;
+        }
+        .dark .chart-zoom-controls button:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Offline Mode Indicator -->
+    <div id="offline-indicator" class="hidden fixed top-0 left-0 right-0 z-50 bg-orange-500 text-white text-center py-2 px-4 shadow-lg">
+        <div class="flex items-center justify-center gap-3">
+            <span class="offline-badge font-medium">📴 Offline Mode</span>
+            <span class="offline-count text-sm text-orange-100 hidden">Queued requests: 0</span>
+            <button onclick="document.getElementById('offline-indicator').classList.add('hidden')" class="ml-4 text-orange-200 hover:text-white text-sm">✕</button>
+        </div>
+    </div>
+
+    <!-- Compact Header with Gradient -->
+    <header class="bg-gradient-to-r from-sfppy-green via-sfppy-orange to-sfppy-red text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-2">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🍽️</span>
+                    <div>
+                        <h1 class="text-lg font-bold">SFPPy Studio</h1>
+                        <p class="text-white/80 text-xs">🍏⏩🍎 Food Contact Migration Analysis</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-white/70">v{{ version.studio_version }} | SFPPy {{ version.sfppy_version }}</span>
+
+                    <!-- Health & Queue Status -->
+                    <div class="flex items-center gap-2 px-2 py-1 bg-white/10 rounded-lg">
+                        <!-- Server Health Indicator -->
+                        <div id="server-health" class="flex items-center gap-1 cursor-pointer" title="Server Status: Checking...">
+                            <span id="health-indicator" class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                            <span class="text-xs text-white/80">API</span>
+                        </div>
+                        <!-- Queue Status -->
+                        <div class="border-l border-white/30 pl-2 flex items-center gap-1" title="Pending tasks">
+                            <span class="text-xs">📋</span>
+                            <span id="queue-count" class="text-xs text-white/80">0</span>
+                        </div>
+                        <!-- Restart Server Button -->
+                        <button id="restart-server-btn" class="border-l border-white/30 pl-2 text-xs hover:text-yellow-300 transition-colors" title="Check server health / reconnect">
+                            🔄
+                        </button>
+                    </div>
+
+                    <!-- Dark Mode Toggle -->
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs">☀️</span>
+                        <div class="relative inline-block w-10 align-middle select-none">
+                            <input type="checkbox" id="darkModeToggle"
+                                   class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300"/>
+                            <label for="darkModeToggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-400 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                        <span class="text-xs">🌙</span>
+                    </div>
+                    <button id="help-toggle" class="p-1 rounded hover:bg-white/20" title="Toggle Help Panel">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex space-x-1 overflow-x-auto">
+                <button class="tab-btn active" data-tab="substances">
+                    <span class="mr-1">🧪</span> Substances
+                </button>
+                <button class="tab-btn" data-tab="assembly">
+                    <span class="mr-1">🧱</span> Assembly
+                </button>
+                <button class="tab-btn" data-tab="food">
+                    <span class="mr-1">🍽️</span> Food
+                </button>
+                <button class="tab-btn" data-tab="simulate">
+                    <span class="mr-1">▶️</span> Simulate
+                </button>
+                <button class="tab-btn" data-tab="results">
+                    <span class="mr-1">📊</span> Results
+                </button>
+                <button class="tab-btn" data-tab="jobs">
+                    <span class="mr-1">📁</span> Jobs
+                </button>
+                <button class="tab-btn" data-tab="config">
+                    <span class="mr-1">⚙️</span> Config
+                </button>
+                <button class="tab-btn" data-tab="fitting">
+                    <span class="mr-1">📈</span> Fitting
+                </button>
+                <button class="tab-btn" data-tab="help">
+                    <span class="mr-1">❓</span> Help
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex">
+        <!-- Content Area -->
+        <div class="flex-1 max-w-7xl mx-auto px-4 py-4">
+
+            <!-- Tab 1: Assembly -->
+            <div id="tab-assembly" class="tab-panel">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">🧱</span> Multilayer Assembly Builder
+                    </h2>
+
+                    <!-- Layer Count Selector -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Number of Layers
+                            <span class="help-icon" data-help="assembly/layer_count">?</span>
+                        </label>
+                        <div class="flex space-x-1">
+                            {% for i in range(1, 11) %}
+                            <button class="layer-count-btn px-2 py-1 text-sm border rounded {% if i == 1 %}bg-sfppy-green text-white{% else %}bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300{% endif %}"
+                                    data-count="{{ i }}">{{ i }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Layer Visualization -->
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Structure Preview</label>
+                            <div class="tg-legend text-gray-600 dark:text-gray-400">
+                                <span class="tg-legend-item"><span class="tg-swatch" style="background: linear-gradient(135deg, #f87171, #ef4444);"></span> Rubbery</span>
+                                <span class="tg-legend-item"><span class="tg-swatch" style="background: linear-gradient(135deg, #a3e635, #84cc16);"></span> Mid-Tg</span>
+                                <span class="tg-legend-item"><span class="tg-swatch" style="background: linear-gradient(135deg, #60a5fa, #3b82f6);"></span> Barrier</span>
+                            </div>
+                        </div>
+                        <!-- Layer Stack (clickable) -->
+                        <div id="layer-stack" class="layer-stack" title="Click a layer to edit it">
+                            <div class="food-block">
+                                <span class="text-lg">🍏</span>
+                                <span class="text-xs">Food</span>
+                            </div>
+                            <div class="layer-block polymer-LDPE selected" style="flex-grow: 1;" data-layer="1">
+                                <span>L1</span>
+                                <span>LDPE</span>
+                                <span class="thickness-label">100 µm</span>
+                                <span class="tg-indicator">-130°C</span>
+                            </div>
+                        </div>
+                        <!-- Concentration Histogram -->
+                        <div id="concentration-bar" class="concentration-bar">
+                            <div class="conc-block" style="flex-grow: 1; min-width: 50px;"></div>
+                            <div class="conc-block" style="flex-grow: 1;" data-layer="1">
+                                <div class="conc-fill" style="height: 0%;"></div>
+                                <span class="conc-label">C0: 0</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">Click layers to edit • Bar height = total C₀ • Colors = polymer type (see detailed histogram below)</p>
+                    </div>
+
+                    <!-- Layer Table -->
+                    <div class="mb-4 overflow-x-auto">
+                        <table class="layer-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="w-8">#</th>
+                                    <th>Material</th>
+                                    <th class="w-32">Thickness</th>
+                                    <th class="w-16">Tg</th>
+                                    <th class="w-20" title="Density at contact temperature (kg/m³)">ρ (kg/m³)</th>
+                                    <th class="w-20">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="layer-table-body">
+                                <tr class="selected cursor-pointer" data-layer="1" onclick="selectLayer(1)">
+                                    <td class="font-medium text-sfppy-green">1</td>
+                                    <td>
+                                        <select class="input-field text-sm layer-polymer" data-layer="1">
+                                            <optgroup label="Polyethylenes (Rubbery)">
+                                                <option value="LDPE">LDPE - Low Density PE</option>
+                                                <option value="LLDPE">LLDPE - Linear Low Density PE</option>
+                                                <option value="HDPE">HDPE - High Density PE</option>
+                                            </optgroup>
+                                            <optgroup label="Polypropylenes">
+                                                <option value="PP">PP - Polypropylene</option>
+                                                <option value="PPrubber">PP Rubber</option>
+                                                <option value="oPP">oPP - Oriented PP</option>
+                                            </optgroup>
+                                            <optgroup label="Polyesters (Barrier)">
+                                                <option value="gPET">gPET - Glassy PET (barrier)</option>
+                                                <option value="rPET">rPET - Rubbery PET</option>
+                                                <option value="wPET">wPET - Plasticized PET</option>
+                                                <option value="PBT">PBT - Polybutylene Terephthalate</option>
+                                                <option value="PEN">PEN - Polyethylene Naphthalate</option>
+                                            </optgroup>
+                                            <optgroup label="Polyamides (Barrier)">
+                                                <option value="PA6">PA6 - Nylon 6</option>
+                                                <option value="PA66">PA66 - Nylon 6,6</option>
+                                            </optgroup>
+                                            <optgroup label="Styrenic Polymers">
+                                                <option value="PS">PS - Polystyrene</option>
+                                                <option value="HIPS">HIPS - High Impact PS</option>
+                                                <option value="SBS">SBS - Styrene-Butadiene-Styrene</option>
+                                            </optgroup>
+                                            <optgroup label="Other Polymers">
+                                                <option value="PMMA">PMMA - Acrylic</option>
+                                                <option value="PVAc">PVAc - Polyvinyl Acetate</option>
+                                                <option value="rigidPVC">Rigid PVC</option>
+                                                <option value="plasticizedPVC">Plasticized PVC</option>
+                                            </optgroup>
+                                            <optgroup label="Adhesives">
+                                                <option value="AdhesiveEVA">Adhesive EVA</option>
+                                                <option value="AdhesiveVAE">Adhesive VAE</option>
+                                                <option value="AdhesivePVAC">Adhesive PVAC</option>
+                                                <option value="AdhesiveAcrylate">Adhesive Acrylate</option>
+                                                <option value="AdhesivePU">Adhesive PU</option>
+                                                <option value="AdhesiveNaturalRubber">Adhesive Natural Rubber</option>
+                                                <option value="AdhesiveSyntheticRubber">Adhesive Synthetic Rubber</option>
+                                            </optgroup>
+                                            <optgroup label="Paper & Board">
+                                                <option value="Paper">Paper</option>
+                                                <option value="Cardboard">Cardboard</option>
+                                            </optgroup>
+                                            <optgroup label="Gases">
+                                                <option value="air">Air (gap)</option>
+                                            </optgroup>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="flex">
+                                            <input type="number" class="flex-1 input-field rounded-r-none text-sm layer-thickness"
+                                                   data-layer="1" value="100" min="0.001" step="any">
+                                            <select class="border-l-0 input-field rounded-l-none w-14 text-xs layer-thickness-unit" data-layer="1">
+                                                <option value="um">µm</option>
+                                                <option value="mm">mm</option>
+                                                <option value="nm">nm</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="text-xs layer-tg-display" data-layer="1">-130°C</td>
+                                    <td class="text-xs layer-rho-display" data-layer="1" title="Density at T">920</td>
+                                    <td><span class="override-badge computed" id="layer-1-override-badge">Computed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Layer 1 = food contact. ρ = density at contact temperature. Temperature is defined in Contact Conditions (Food tab).
+                        </p>
+                    </div>
+
+                    <!-- Selected Layer Detail (Parameter Overrides) -->
+                    <div id="layer-detail-panel" class="layer-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-medium text-gray-800 dark:text-white text-sm">
+                                <span class="text-sfppy-green">Layer <span id="detail-layer-num">1</span></span>
+                                <span id="detail-layer-contact" class="text-xs text-gray-500 dark:text-gray-400 ml-1">(Food Contact)</span>
+                            </h3>
+                        </div>
+                        <!-- Density Display -->
+                        <div class="mb-3 p-2 bg-gray-50 dark:bg-gray-700 rounded text-xs">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600 dark:text-gray-400">Density (ρ):</span>
+                                <span class="font-medium text-gray-800 dark:text-white" id="layer-density-value">920 kg/m³</span>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 mt-1 text-[10px]" id="layer-density-note">
+                                Temperature-dependent: ρ(T) from patankar
+                            </p>
+                        </div>
+
+                        <details class="border-t border-gray-200 dark:border-gray-700 pt-3">
+                            <summary class="cursor-pointer text-xs font-medium text-gray-700 dark:text-gray-300 hover:text-sfppy-green">
+                                ⚡ Parameter Overrides (D, k, ρ)
+                            </summary>
+                            <div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <!-- D Override -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="flex items-center space-x-1">
+                                            <input type="checkbox" class="rounded text-sfppy-green layer-D-use-computed" data-layer="1" checked>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">Use computed D</span>
+                                        </label>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400" id="layer-D-computed">-</span>
+                                    </div>
+                                    <input type="text" class="input-field text-xs layer-D-override"
+                                           data-layer="1" placeholder="e.g., 1.2e-14 m²/s" disabled>
+                                </div>
+                                <!-- k Override (layer-layer partition) -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="flex items-center space-x-1">
+                                            <input type="checkbox" class="rounded text-sfppy-green layer-k-use-computed" data-layer="1" checked>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">Use computed k</span>
+                                        </label>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400" id="layer-k-computed">-</span>
+                                    </div>
+                                    <input type="text" class="input-field text-xs layer-k-override"
+                                           data-layer="1" placeholder="e.g., 1.0" disabled>
+                                </div>
+                                <!-- ρ Override (density) -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="flex items-center space-x-1">
+                                            <input type="checkbox" class="rounded text-sfppy-green layer-rho-use-computed" data-layer="1" checked>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">Use computed ρ</span>
+                                        </label>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400" id="layer-rho-computed">-</span>
+                                    </div>
+                                    <input type="number" class="input-field text-xs layer-rho-override"
+                                           data-layer="1" placeholder="e.g., 920" step="any" disabled>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                k0 (partition with food) is set per substance in the Substances tab. ρ used for concentration units (mg/kg).
+                            </p>
+                        </details>
+                    </div>
+
+                    <!-- Hidden layer-cards container for backward compatibility -->
+                    <div id="layer-cards" class="hidden"></div>
+
+                    <!-- Substance Assignments Section -->
+                    <div id="assembly-substances" class="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-3 text-sm flex items-center gap-2">
+                            <span>🧪</span> Substance Assignments (C0, D, k per Layer)
+                            <span class="help-icon" data-help="assembly/substances">?</span>
+                        </h3>
+
+                        <!-- No substances message -->
+                        <div id="assembly-no-substances" class="text-gray-500 dark:text-gray-400 text-sm p-3 border border-dashed dark:border-gray-600 rounded text-center">
+                            No substances added. Go to the <strong>Substances tab</strong> to add substances first.
+                        </div>
+
+                        <!-- Warning when substances exist but none assigned to layers -->
+                        <div id="assembly-no-assignment-warning" class="hidden mb-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-lg">
+                            <div class="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                                <span class="text-lg">⚠️</span>
+                                <div>
+                                    <p class="font-medium text-sm">No substance assigned to any layer</p>
+                                    <p class="text-xs mt-0.5 text-amber-600 dark:text-amber-500">Check the boxes below to assign substances to layers, then set initial concentrations (C0).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Substance assignment matrix (shown when substances exist) -->
+                        <div id="assembly-substances-matrix" class="hidden overflow-x-auto">
+                            <table class="w-full text-sm border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-left text-xs">Substance</th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs">Layer</th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs">C0</th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs">Unit</th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs" title="Diffusion coefficient (checkbox = auto-compute)">
+                                            <span class="flex items-center justify-center gap-1">☑️ D (m²/s)</span>
+                                        </th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs" title="Henry coefficient k (checkbox = auto-compute). Hover over k values to see the partition coefficient KF/P = k/k0">
+                                            <span class="flex items-center justify-center gap-1">☑️ k</span>
+                                        </th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs" title="Specific Migration Limit">SML</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assembly-substances-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                <strong>☑ = auto-compute</strong> (recalculates when polymer changes).
+                                Uncheck to enter manual override values.
+                                k0 (food partition) is set in the Food tab.
+                            </p>
+
+                            <!-- Concentration Profile Histogram -->
+                            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400">Initial Concentration Profile (C₀)</h4>
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">View by:</span>
+                                        <button id="c0-profile-by-layer" class="px-2 py-0.5 text-xs rounded border border-gray-300 dark:border-gray-600 bg-sfppy-green text-white">Layer</button>
+                                        <button id="c0-profile-by-substance" class="px-2 py-0.5 text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">Substance</button>
+                                    </div>
+                                </div>
+                                <div class="relative bg-gray-50 dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700 p-2">
+                                    <canvas id="c0-profile-canvas" width="600" height="150" class="w-full"></canvas>
+                                </div>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 italic">Bar height = C₀ concentration (mg/kg). Colored bars = different substances/layers.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-4 flex justify-between">
+                        <button class="text-sm text-gray-600 dark:text-gray-400 hover:text-sfppy-red" id="assembly-reset">
+                            Reset
+                        </button>
+                        <button class="btn-primary" id="assembly-validate">
+                            ✓ Validate Assembly
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Food & Conditions -->
+            <div id="tab-food" class="tab-panel hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">🍽️</span> Food Type & Contact Conditions
+                    </h2>
+
+                    <!-- Food Type + Simulant (combined icons) -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm flex items-center gap-2">
+                            Food Type → Simulant
+                            <span class="help-icon" data-help="food/simulant">?</span>
+                        </h3>
+                        <div class="flex flex-wrap gap-2" id="food-type-icons">
+                            <!-- Food type icons with built-in simulant mapping -->
+                        </div>
+                    </div>
+
+                    <!-- Food Texture (icons) -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Food Texture</h3>
+                        <div class="flex flex-wrap gap-2" id="food-texture-icons">
+                            <!-- Texture icons -->
+                        </div>
+                    </div>
+
+                    <!-- Food/Simulant Density Display -->
+                    <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-blue-800 dark:text-blue-300">Simulant Density</span>
+                                <p class="text-xs text-blue-600 dark:text-blue-400 mt-0.5" id="food-simulant-name">Ethanol 95%</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-semibold text-blue-800 dark:text-blue-200" id="food-density-value">789</span>
+                                <span class="text-xs text-blue-600 dark:text-blue-400">kg/m³</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-blue-500 dark:text-blue-400 mt-1" id="food-density-note">
+                            Temperature-dependent: ρ(T) = ρ₂₅ × (1 - α × (T - 25))
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Hidden food categories container for backward compatibility -->
+                        <div id="food-categories" class="hidden"></div>
+
+                        <!-- Geometry -->
+                        <div>
+                            <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Packaging Geometry</h3>
+                            <!-- Shape icons (like Food Type) -->
+                            <div class="flex flex-wrap gap-2 mb-3" id="geometry-shape-icons">
+                                <!-- Populated by JS -->
+                            </div>
+                            <!-- Hidden select for backward compatibility -->
+                            <select id="geometry-shape" class="hidden">
+                                <option value="cylinder">Cylinder</option>
+                                <option value="bottle">Bottle</option>
+                                <option value="rectangle">Rectangle</option>
+                                <option value="pouch">Pouch</option>
+                                <option value="sphere">Sphere</option>
+                            </select>
+                            <div id="geometry-dimensions" class="space-y-2">
+                                <!-- Populated based on shape -->
+                            </div>
+                            <div class="mt-2 p-2 bg-gray-50 dark:bg-gray-700 rounded text-xs" id="geometry-results">
+                                <div class="flex justify-between"><span class="text-gray-600 dark:text-gray-400">Volume:</span><span id="geom-volume">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-600 dark:text-gray-400">Surface:</span><span id="geom-surface">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-600 dark:text-gray-400">V/S ratio:</span><span id="geom-vs-ratio">--</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Steps -->
+                    <div class="mt-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Contact Steps</h3>
+                        <div id="contact-steps">
+                            <!-- Step 1 -->
+                            <div class="border dark:border-gray-700 rounded-lg p-3 mb-2 step-card" data-step="1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-medium text-sm text-gray-800 dark:text-white">Step 1</span>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="checkbox" class="rounded text-sfppy-green step-with-food" data-step="1" checked>
+                                        <span class="text-xs text-gray-600 dark:text-gray-400">Food contact</span>
+                                    </label>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <label class="text-xs text-gray-600 dark:text-gray-400">Type</label>
+                                        <select class="input-field text-sm step-type" data-step="1">
+                                            <option value="storage">Storage</option>
+                                            <option value="hotfill">Hot Fill</option>
+                                            <option value="transport">Transport</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-600 dark:text-gray-400">Temperature</label>
+                                        <div class="flex">
+                                            <input type="number" class="flex-1 input-field rounded-r-none text-sm step-temp"
+                                                   data-step="1" value="40" step="any">
+                                            <select class="border-l-0 input-field rounded-l-none w-14 text-sm step-temp-unit" data-step="1">
+                                                <option value="C">°C</option>
+                                                <option value="K">K</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-600 dark:text-gray-400">Duration</label>
+                                        <div class="flex">
+                                            <input type="number" class="flex-1 input-field rounded-r-none text-sm step-duration"
+                                                   data-step="1" value="10" min="0" step="any">
+                                            <select class="border-l-0 input-field rounded-l-none w-16 text-sm step-duration-unit" data-step="1">
+                                                <option value="days">days</option>
+                                                <option value="hours">h</option>
+                                                <option value="minutes">min</option>
+                                                <option value="seconds">s</option>
+                                                <option value="months">mo</option>
+                                                <option value="years">yr</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="text-sfppy-green hover:text-sfppy-greenDark text-sm" id="add-step">+ Add Step</button>
+                    </div>
+
+                    <!-- Presets -->
+                    <div class="mt-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Quick Presets</h3>
+                        <div class="flex flex-wrap gap-1" id="condition-presets"></div>
+                    </div>
+
+                    <!-- k0 (Food Partition) Section -->
+                    <div class="mt-4 border-t border-gray-200 dark:border-gray-600 pt-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm flex items-center gap-2">
+                            <span>⚖️</span> k0 - Food/Polymer Partition Coefficients
+                            <span class="help-icon" data-help="food/k0">?</span>
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                            k0 describes partitioning between polymer and food. K<sub>F/P</sub> = k/k0 is the effective food/polymer partition.
+                            Computed from simulant polarity and substance logP.
+                        </p>
+
+                        <!-- No substances message -->
+                        <div id="food-no-substances" class="text-gray-500 dark:text-gray-400 text-sm p-3 border border-dashed dark:border-gray-600 rounded text-center">
+                            No substances added. Go to the <strong>Substances tab</strong> to add substances first.
+                        </div>
+
+                        <!-- k0 values table (shown when substances exist) -->
+                        <div id="food-k0-matrix" class="hidden overflow-x-auto">
+                            <table class="w-full text-sm border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-gray-700">
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-left text-xs">Substance</th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs">logP</th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs" title="Food partition coefficient (checkbox = auto-compute)">
+                                            <span class="flex items-center justify-center gap-1">☑️ k0</span>
+                                        </th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs" title="Computed K food/polymer">K<sub>F/P</sub></th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs" title="Initial concentration in food (mg/kg). Default: 0">
+                                            <span class="flex items-center justify-center gap-1">CF₀</span>
+                                        </th>
+                                        <th class="border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-center text-xs">Simulant</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="food-k0-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                <strong>☑ = auto-compute</strong> k0 from logP and simulant. <strong>CF₀</strong> = initial concentration in food (default 0 mg/kg).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Substances -->
+            <div id="tab-substances" class="tab-panel hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">🧪</span> Substances & Concentrations
+                    </h2>
+
+                    <!-- Search -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search Substance</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="substance-search" class="flex-1 input-field text-sm"
+                                   placeholder="Name, CAS number, or PubChem CID...">
+                            <button class="btn-primary" id="search-btn">🔍 Search</button>
+                        </div>
+                        <div id="search-results" class="mt-2 border dark:border-gray-700 rounded max-h-64 overflow-y-auto hidden"></div>
+                    </div>
+
+                    <!-- Substance Detail Preview (shown after search/selection) -->
+                    <div id="substance-preview" class="mb-4 hidden">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Substance Preview</h3>
+                        <div class="substance-detail-card">
+                            <div class="flex gap-4">
+                                <!-- Structure Image -->
+                                <div class="flex-shrink-0">
+                                    <img id="preview-structure" class="w-32 h-32 border dark:border-gray-600 rounded molecule-img cursor-pointer hover:opacity-80 transition-opacity"
+                                         src="" alt="Structure" title="Click to enlarge"
+                                         onerror="this.style.display='none'">
+                                </div>
+                                <!-- Info -->
+                                <div class="flex-1 min-w-0">
+                                    <h4 id="preview-name" class="text-lg font-semibold text-gray-800 dark:text-white truncate"></h4>
+                                    <p id="preview-alt-names" class="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate"></p>
+                                    <div class="grid grid-cols-2 gap-2 text-sm">
+                                        <div><span class="text-gray-500 dark:text-gray-400">CAS:</span> <span id="preview-cas" class="font-mono text-gray-800 dark:text-gray-200">-</span></div>
+                                        <div><span class="text-gray-500 dark:text-gray-400">MW:</span> <span id="preview-mw" class="text-gray-800 dark:text-gray-200">-</span></div>
+                                        <div><span class="text-gray-500 dark:text-gray-400">logP:</span> <span id="preview-logp" class="text-gray-800 dark:text-gray-200">-</span></div>
+                                        <div><span class="text-gray-500 dark:text-gray-400">Formula:</span> <span id="preview-formula" class="font-mono text-gray-800 dark:text-gray-200">-</span></div>
+                                    </div>
+                                    <!-- Regulatory Status -->
+                                    <div class="mt-3" id="preview-regulatory">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Regulatory:</span>
+                                        <div class="flex flex-wrap gap-1 mt-1" id="preview-badges"></div>
+                                    </div>
+                                    <!-- Toxicological - Enhanced for NIAS assessment -->
+                                    <div class="mt-3 p-2 bg-gray-50 dark:bg-gray-700 rounded" id="preview-tox">
+                                        <div class="text-xs text-gray-600 dark:text-gray-300 font-medium mb-2">Toxicological Assessment (ToxTree)</div>
+                                        <div class="grid grid-cols-2 gap-2 text-sm">
+                                            <div>
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">Cramer Class:</span>
+                                                <span id="preview-cramer" class="tox-alert ml-1 font-medium">-</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">TTC:</span>
+                                                <span id="preview-ttc" class="ml-1 text-gray-800 dark:text-gray-200">-</span>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">Max Exposure (60 kg adult):</span>
+                                                <span id="preview-cfttc" class="ml-1 text-gray-800 dark:text-gray-200 font-mono">-</span>
+                                            </div>
+                                        </div>
+                                        <!-- Structural Alerts Section -->
+                                        <div id="preview-alerts-section" class="mt-2 hidden">
+                                            <div class="flex items-center gap-2">
+                                                <span id="preview-alerts-badge" class="px-2 py-0.5 rounded text-xs font-medium">-</span>
+                                                <span id="preview-alerts-text" class="text-xs text-gray-600 dark:text-gray-400"></span>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-gray-400 mt-2 italic">Used for NIAS when no SML is defined.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-end">
+                                <button class="btn-primary text-sm" id="add-previewed-substance">+ Add to Simulation</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Substances -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Common Substances</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="common-substances"></div>
+                    </div>
+
+                    <!-- Selected Substances with C0 Matrix -->
+                    <div>
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Selected Substances</h3>
+                        <div id="selected-substances" class="space-y-3">
+                            <div class="text-gray-500 dark:text-gray-400 text-sm p-3 border border-dashed dark:border-gray-600 rounded text-center">
+                                No substances added. Search above or select from common substances.
+                            </div>
+                        </div>
+                        <!-- C0 Concentration Matrix (shown when substances are added) -->
+                        <div id="c0-matrix-container" class="mt-4 hidden">
+                            <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">
+                                Initial Concentrations (C0) by Layer
+                                <span class="help-icon" data-help="substances/c0_matrix">?</span>
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table id="c0-matrix" class="conc-matrix">
+                                    <thead>
+                                        <tr>
+                                            <th>Substance</th>
+                                            <!-- Layer columns added dynamically -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Rows added dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enter C0 in mg/kg for each layer. Leave 0 if substance not present.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Simulate -->
+            <div id="tab-simulate" class="tab-panel hidden">
+                <!-- Session Files Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 mb-4">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">📂</span> Session Files
+                    </h2>
+
+                    <!-- Load Example Sessions -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm flex items-center gap-2">
+                            <span>📚</span> Example Sessions
+                            <span class="text-xs text-gray-500">(Click to load)</span>
+                        </h3>
+                        <div id="example-sessions-list" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div class="text-gray-500 dark:text-gray-400 text-sm p-3 text-center">Loading examples...</div>
+                        </div>
+                    </div>
+
+                    <!-- Save/Load Actions -->
+                    <div class="flex flex-wrap gap-2 border-t border-gray-200 dark:border-gray-600 pt-3">
+                        <button class="btn-secondary text-sm" id="save-session-btn">
+                            💾 Save Session
+                        </button>
+                        <button class="btn-secondary text-sm" id="load-session-btn">
+                            📁 Load Session File
+                        </button>
+                        <input type="file" id="session-file-input" accept=".json,.sfppy.json" class="hidden">
+                        <button class="btn-secondary text-sm" id="export-session-json-btn">
+                            📤 Export JSON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">▶️</span> Run Simulation
+                    </h2>
+
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-3 text-center border border-green-200 dark:border-green-800">
+                            <p class="text-2xl font-bold text-sfppy-green dark:text-green-400" id="sim-layer-count">1</p>
+                            <p class="text-xs text-green-700 dark:text-green-300 font-medium">layers</p>
+                        </div>
+                        <div class="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-3 text-center border border-orange-200 dark:border-orange-800">
+                            <p class="text-2xl font-bold text-sfppy-orange dark:text-orange-400" id="sim-step-count">1</p>
+                            <p class="text-xs text-orange-700 dark:text-orange-300 font-medium">steps</p>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900/30 rounded-lg p-3 text-center border border-red-200 dark:border-red-800">
+                            <p class="text-2xl font-bold text-sfppy-red dark:text-red-400" id="sim-substance-count">0</p>
+                            <p class="text-xs text-red-700 dark:text-red-300 font-medium">migrants</p>
+                        </div>
+                    </div>
+
+                    <!-- Simulation Name -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Simulation Name</label>
+                        <input type="text" id="sim-name" class="input-field text-sm" placeholder="e.g., LDPE_olive_oil_40C_10d">
+                    </div>
+
+                    <!-- Restart Options -->
+                    <div class="mb-4">
+                        <details class="border border-gray-200 dark:border-gray-600 rounded-lg">
+                            <summary class="px-3 py-2 cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sfppy-green">
+                                🔄 Restart Options (Multi-step Simulation)
+                            </summary>
+                            <div class="p-3 border-t border-gray-200 dark:border-gray-600">
+                                <div class="space-y-3">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" id="restart-enabled" class="rounded text-sfppy-green">
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">Enable restart from previous simulation</span>
+                                    </label>
+                                    <div id="restart-options" class="hidden pl-5 space-y-2">
+                                        <div>
+                                            <label class="text-xs text-gray-600 dark:text-gray-400">Start from step:</label>
+                                            <select id="restart-from-step" class="input-field text-sm w-24 ml-2">
+                                                <option value="1">Step 1</option>
+                                                <option value="2">Step 2</option>
+                                                <option value="3">Step 3</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-600 dark:text-gray-400">Source session:</label>
+                                            <input type="text" id="restart-source" class="input-field text-sm ml-2"
+                                                   placeholder="Previous session file" readonly>
+                                            <button class="text-xs text-sfppy-green hover:underline ml-2" id="restart-browse-btn">Browse...</button>
+                                        </div>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            Use restart to continue from a previous simulation's final state,
+                                            enabling multi-step contact scenarios (e.g., set-off → hot-fill → storage).
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
+                    <!-- Validation Status -->
+                    <div id="validation-status" class="mb-4 p-3 rounded border hidden"></div>
+
+                    <!-- Warning when no substance assigned -->
+                    <div id="simulate-no-assignment-warning" class="hidden mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-lg">
+                        <div class="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                            <span class="text-lg">⚠️</span>
+                            <div>
+                                <p class="font-medium text-sm">No substance assigned to any layer</p>
+                                <p class="text-xs mt-0.5 text-amber-600 dark:text-amber-500">Go to the <strong>Assembly tab</strong> to assign substances to layers before running simulation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end space-x-2">
+                        <button class="btn-secondary" id="validate-all-btn">✓ Validate</button>
+                        <button class="btn-primary" id="run-simulation-btn">▶️ Run Simulation</button>
+                    </div>
+                </div>
+
+                <!-- Progress -->
+                <div id="simulation-progress" class="mt-4 bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700 hidden">
+                    <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Progress</h3>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2">
+                        <div class="bg-sfppy-green h-3 rounded-full transition-all" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400" id="progress-text">Initializing...</p>
+                </div>
+            </div>
+
+            <!-- Tab 5: Results -->
+            <div id="tab-results" class="tab-panel hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">📊</span> Simulation Results
+                    </h2>
+
+                    <!-- No Results -->
+                    <div id="no-results" class="text-center py-8">
+                        <div class="text-4xl mb-2">📊</div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">No results yet. Run a simulation first.</p>
+                    </div>
+
+                    <!-- Results Content -->
+                    <div id="results-content" class="hidden">
+                        <!-- Compliance Summary -->
+                        <div id="compliance-summary" class="mb-4 p-4 rounded-lg text-center"></div>
+
+                        <!-- Migration Kinetics Chart -->
+                        <div class="mb-4" id="migration-chart-wrapper">
+                            <div class="chart-controls-bar flex items-center justify-between mb-2">
+                                <h3 class="font-medium text-gray-700 dark:text-gray-300 text-sm">Migration Kinetics CF(t)</h3>
+                                <div class="flex items-center">
+                                    <!-- Chart controls are dynamically inserted here by JS -->
+                                    <div id="chart-controls-container"></div>
+                                    <div class="chart-zoom-controls">
+                                        <button onclick="zoomChart('migration', 'in')" title="Zoom In">+</button>
+                                        <button onclick="zoomChart('migration', 'out')" title="Zoom Out">-</button>
+                                        <button onclick="zoomChart('migration', 'reset')" title="Reset Zoom">↺</button>
+                                    </div>
+                                    <button id="chart-fullscreen" class="ml-2 px-2 py-1 border dark:border-gray-600 rounded text-sm hover:bg-gray-100 dark:hover:bg-gray-700" title="Toggle Fullscreen">
+                                        ⛶
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="height: 280px; position: relative;">
+                                <canvas id="migration-chart"></canvas>
+                            </div>
+                            <div id="migration-chart-legend" class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex flex-wrap gap-4">
+                                <!-- Legend with CF values will be populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Concentration Profiles Chart -->
+                        <div class="mb-4" id="concentration-profile-container">
+                            <!-- Dynamically populated by drawConcentrationProfileChart() -->
+                        </div>
+
+                        <!-- Key Values - Dynamic per substance -->
+                        <div id="results-key-values-container" class="mb-4">
+                            <!-- Dynamically populated by displayKeyValueCards() -->
+                        </div>
+
+                        <!-- Export Options -->
+                        <div class="flex justify-end space-x-2">
+                            <button class="btn-secondary text-xs" id="export-csv-btn">CSV</button>
+                            <button class="btn-secondary text-xs" id="export-xlsx-btn">XLSX</button>
+                            <button class="btn-secondary text-xs" id="export-json-btn">JSON</button>
+                            <button class="btn-primary text-xs" id="export-pdf-btn">PDF</button>
+                            <button class="btn-primary text-xs" id="export-png-btn">PNG</button>
+                            <button class="btn-primary text-xs" id="export-svg-btn">SVG</button>
+                            <button class="btn-primary text-xs bg-gray-600 hover:bg-gray-700" id="show-report-btn" title="Open print-ready report">📄 Report</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: Jobs -->
+            <div id="tab-jobs" class="tab-panel hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">📁</span> Simulation History
+                    </h2>
+
+                    <div class="flex space-x-2 mb-4">
+                        <select id="jobs-filter-status" class="input-field text-sm w-32">
+                            <option value="">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="failed">Failed</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                        <input type="text" id="jobs-search" class="flex-1 input-field text-sm" placeholder="Search...">
+                        <button class="btn-danger text-xs" id="clear-old-jobs">Clear Old</button>
+                    </div>
+
+                    <div id="jobs-list" class="space-y-2">
+                        <div class="text-gray-500 dark:text-gray-400 text-sm p-3 text-center">Loading...</div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg" id="jobs-stats"></div>
+                </div>
+            </div>
+
+            <!-- Tab 7: Configuration -->
+            <div id="tab-config" class="tab-panel hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">⚙️</span> Configuration
+                    </h2>
+
+                    <div class="space-y-4">
+                        <!-- User Profile -->
+                        <div class="border-b dark:border-gray-700 pb-4">
+                            <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-3 text-sm">User Profile</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Name</label>
+                                    <input type="text" id="config-user-name" class="input-field text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Organization</label>
+                                    <input type="text" id="config-user-org" class="input-field text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Email</label>
+                                    <input type="email" id="config-user-email" class="input-field text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Role</label>
+                                    <select id="config-user-role" class="input-field text-sm">
+                                        <option value="analyst">Analyst</option>
+                                        <option value="researcher">Researcher</option>
+                                        <option value="regulator">Regulator</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Solver Settings (Patankar Parameters) -->
+                        <div class="border-b dark:border-gray-700 pb-4">
+                            <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-3 text-sm flex items-center gap-2">
+                                Solver Settings
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400 font-normal">(Patankar Finite Volume)</span>
+                            </h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1" title="Total spatial grid points for all layers">
+                                        nmesh (spatial)
+                                    </label>
+                                    <input type="number" id="config-solver-nmesh" class="input-field text-sm" value="600" min="100" max="2000">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1" title="Minimum mesh points per layer (important for thin barriers)">
+                                        nmeshmin (per layer)
+                                    </label>
+                                    <input type="number" id="config-solver-nmeshmin" class="input-field text-sm" value="20" min="5" max="100">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1" title="Number of time output points">
+                                        ntimes (time points)
+                                    </label>
+                                    <input type="number" id="config-solver-ntimes" class="input-field text-sm" value="1000" min="100" max="5000">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1" title="Time distribution: sqrt (better early resolution) or linear">
+                                        timescale
+                                    </label>
+                                    <select id="config-solver-timescale" class="input-field text-sm">
+                                        <option value="sqrt" selected>sqrt (recommended)</option>
+                                        <option value="linear">linear</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <details class="text-xs">
+                                <summary class="cursor-pointer text-gray-500 dark:text-gray-400 hover:text-sfppy-green">
+                                    Advanced ODE Settings
+                                </summary>
+                                <div class="mt-2 grid grid-cols-3 gap-3">
+                                    <div>
+                                        <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">RelTol</label>
+                                        <input type="text" id="config-solver-reltol" class="input-field text-sm" value="1e-6">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">AbsTol</label>
+                                        <input type="text" id="config-solver-abstol" class="input-field text-sm" value="1e-9">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Max Step</label>
+                                        <input type="text" id="config-solver-maxstep" class="input-field text-sm" value="auto" placeholder="auto">
+                                    </div>
+                                </div>
+                            </details>
+                            <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-2">
+                                Higher nmesh/nmeshmin improves accuracy but increases computation time. For multi-step scenarios with temperature changes, increase nmeshmin to reduce interpolation error.
+                            </p>
+                        </div>
+
+                        <!-- Version Info -->
+                        <div>
+                            <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-3 text-sm">System Information</h3>
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 text-xs grid grid-cols-2 gap-1">
+                                <span class="text-gray-600 dark:text-gray-400">SFPPy:</span>
+                                <span class="text-gray-800 dark:text-white">{{ version.sfppy_version }}</span>
+                                <span class="text-gray-600 dark:text-gray-400">Studio:</span>
+                                <span class="text-gray-800 dark:text-white">{{ version.studio_version }}</span>
+                                <span class="text-gray-600 dark:text-gray-400">Python:</span>
+                                <span class="text-gray-800 dark:text-white">{{ version.python_version }}</span>
+                                <span class="text-gray-600 dark:text-gray-400">Machine:</span>
+                                <span class="text-gray-800 dark:text-white">{{ version.machine_name }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-between">
+                            <button class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm" id="config-reset">Reset</button>
+                            <button class="btn-primary" id="config-save">Save Configuration</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 8: Fitting -->
+            <div id="tab-fitting" class="tab-panel hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-base font-semibold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">📈</span> Parameter Fitting (D, k)
+                    </h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Fit diffusivity (D) and partition coefficient (k) from experimental or synthetic migration data.
+                        Based on <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">example4.py</code>.
+                    </p>
+
+                    <!-- Data Source Selection -->
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Data Source</h3>
+                        <div class="flex gap-2 mb-3">
+                            <button class="fitting-source-btn px-3 py-2 border border-sfppy-green bg-green-50 dark:bg-green-900/30 rounded text-sm text-sfppy-green font-medium" data-source="synthetic">
+                                🎲 Synthetic Data
+                            </button>
+                            <button class="fitting-source-btn px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700" data-source="experimental">
+                                📊 Experimental Data
+                            </button>
+                            <button class="fitting-source-btn px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700" data-source="upload">
+                                📤 Upload CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Synthetic Data Config -->
+                    <div id="fitting-synthetic-config" class="mb-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Synthetic Data Configuration</h3>
+
+                        <!-- Presets -->
+                        <div class="mb-3">
+                            <label class="text-xs text-gray-600 dark:text-gray-400">Presets</label>
+                            <div id="fitting-presets" class="flex flex-wrap gap-1 mt-1"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <!-- Layer Parameters -->
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Thickness (µm)</label>
+                                <input type="number" id="fit-thickness" class="input-field text-sm" value="100" min="1">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">C0 (mg/kg)</label>
+                                <input type="number" id="fit-c0" class="input-field text-sm" value="1000" min="0">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">D true (m²/s)</label>
+                                <input type="text" id="fit-d-true" class="input-field text-sm" value="1e-14">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">k true</label>
+                                <input type="number" id="fit-k-true" class="input-field text-sm" value="0.1" step="0.01" min="0.001">
+                            </div>
+                            <!-- Food Parameters -->
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Contact Time (days)</label>
+                                <input type="number" id="fit-contact-time" class="input-field text-sm" value="10" min="0.1" step="0.5">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Volume (L)</label>
+                                <input type="number" id="fit-volume" class="input-field text-sm" value="1" min="0.01" step="0.1">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Surface Area (dm²)</label>
+                                <input type="number" id="fit-surface-area" class="input-field text-sm" value="6" min="0.1" step="0.5">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Noise (rel. std)</label>
+                                <input type="number" id="fit-noise" class="input-field text-sm" value="0.01" min="0" max="0.5" step="0.01">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">N Points</label>
+                                <input type="number" id="fit-n-points" class="input-field text-sm" value="30" min="5" max="200">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Random Seed</label>
+                                <input type="number" id="fit-seed" class="input-field text-sm" placeholder="(optional)">
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn-primary" id="generate-synthetic-data">
+                                🎲 Generate Synthetic Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Experimental Data Config (hidden by default) -->
+                    <div id="fitting-experimental-config" class="mb-4 hidden">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Experimental Data</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                            Enter time-concentration pairs or upload a CSV file.
+                        </p>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Thickness (µm)</label>
+                                <input type="number" id="fit-exp-thickness" class="input-field text-sm" value="100" min="1">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">C0 (mg/kg)</label>
+                                <input type="number" id="fit-exp-c0" class="input-field text-sm" value="1000" min="0">
+                            </div>
+                        </div>
+                        <div id="experimental-data-table">
+                            <textarea id="fit-exp-data" class="input-field text-sm w-full h-32 font-mono" placeholder="time_days,CF
+0.5,12.3
+1.0,24.5
+2.0,45.6
+5.0,89.2
+10.0,120.5"></textarea>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn-primary" id="load-experimental-data">
+                                📊 Load Experimental Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CSV Upload Config (hidden by default) -->
+                    <div id="fitting-upload-config" class="mb-4 hidden">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Upload CSV File</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                            Expected format: <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">time_days,CF</code>
+                        </p>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Thickness (µm)</label>
+                                <input type="number" id="fit-upload-thickness" class="input-field text-sm" value="100" min="1">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">C0 (mg/kg)</label>
+                                <input type="number" id="fit-upload-c0" class="input-field text-sm" value="1000" min="0">
+                            </div>
+                        </div>
+                        <input type="file" id="fit-csv-file" accept=".csv" class="input-field text-sm">
+                        <div class="mt-3">
+                            <button class="btn-primary" id="upload-csv-data">
+                                📤 Upload and Load
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Data Preview -->
+                    <div id="fitting-data-preview" class="mb-4 hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-medium text-gray-700 dark:text-gray-300 text-sm flex items-center gap-2">
+                                📈 Data Preview
+                                <span id="fitting-job-id" class="text-xs text-gray-500"></span>
+                            </h3>
+                            <div class="chart-zoom-controls">
+                                <button onclick="zoomChart('fitting-data', 'in')" title="Zoom In">+</button>
+                                <button onclick="zoomChart('fitting-data', 'out')" title="Zoom Out">-</button>
+                                <button onclick="zoomChart('fitting-data', 'reset')" title="Reset Zoom">↺</button>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3" style="height: 220px; position: relative;">
+                            <canvas id="fitting-data-chart"></canvas>
+                        </div>
+                        <div id="fitting-data-stats" class="mt-2 text-xs text-gray-600 dark:text-gray-400"></div>
+                    </div>
+
+                    <!-- Fitting Options -->
+                    <div id="fitting-options" class="mb-4 hidden">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Fitting Options</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" id="fit-D-enabled" class="rounded text-sfppy-green" checked>
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Fit D</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" id="fit-k-enabled" class="rounded text-sfppy-green" checked>
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Fit k</span>
+                            </label>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">D min (m²/s)</label>
+                                <input type="text" id="fit-d-min" class="input-field text-sm" value="1e-18">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">D max (m²/s)</label>
+                                <input type="text" id="fit-d-max" class="input-field text-sm" value="1e-10">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">k min</label>
+                                <input type="number" id="fit-k-min" class="input-field text-sm" value="0.001" step="0.001">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">k max</label>
+                                <input type="number" id="fit-k-max" class="input-field text-sm" value="1000" step="1">
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn-primary" id="run-fitting">
+                                🔬 Run Fitting
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fitting Results -->
+                    <div id="fitting-results" class="hidden">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Fitting Results</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Fitted Parameters -->
+                            <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-3 border border-green-200 dark:border-green-800">
+                                <h4 class="font-medium text-green-800 dark:text-green-400 mb-2 text-sm">Fitted Parameters</h4>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="text-gray-600 dark:text-gray-400">D fitted:</div>
+                                    <div id="fit-result-D" class="font-mono text-gray-800 dark:text-white"></div>
+                                    <div class="text-gray-600 dark:text-gray-400">k fitted:</div>
+                                    <div id="fit-result-k" class="font-mono text-gray-800 dark:text-white"></div>
+                                </div>
+                            </div>
+                            <!-- Fit Quality -->
+                            <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
+                                <h4 class="font-medium text-blue-800 dark:text-blue-400 mb-2 text-sm">Fit Quality</h4>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="text-gray-600 dark:text-gray-400">R²:</div>
+                                    <div id="fit-result-R2" class="font-mono text-gray-800 dark:text-white"></div>
+                                    <div class="text-gray-600 dark:text-gray-400">RMSE:</div>
+                                    <div id="fit-result-RMSE" class="font-mono text-gray-800 dark:text-white"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison with True Values (for synthetic) -->
+                        <div id="fit-comparison" class="mt-4 hidden">
+                            <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Comparison with True Values</h4>
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                                <div class="grid grid-cols-3 gap-2 text-sm">
+                                    <div class="text-gray-600 dark:text-gray-400"></div>
+                                    <div class="text-gray-600 dark:text-gray-400 font-medium">True</div>
+                                    <div class="text-gray-600 dark:text-gray-400 font-medium">Error</div>
+                                    <div class="text-gray-600 dark:text-gray-400">D:</div>
+                                    <div id="fit-compare-D-true" class="font-mono text-gray-800 dark:text-white"></div>
+                                    <div id="fit-compare-D-error" class="font-mono"></div>
+                                    <div class="text-gray-600 dark:text-gray-400">k:</div>
+                                    <div id="fit-compare-k-true" class="font-mono text-gray-800 dark:text-white"></div>
+                                    <div id="fit-compare-k-error" class="font-mono"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fitted Curve Plot -->
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300 text-sm">Fitted Curve</h4>
+                                <div class="chart-zoom-controls">
+                                    <button onclick="zoomChart('fitting-result', 'in')" title="Zoom In">+</button>
+                                    <button onclick="zoomChart('fitting-result', 'out')" title="Zoom Out">-</button>
+                                    <button onclick="zoomChart('fitting-result', 'reset')" title="Reset Zoom">↺</button>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3" style="height: 250px; position: relative;">
+                                <canvas id="fitting-result-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fitting Jobs List -->
+                    <div class="mt-6 border-t border-gray-200 dark:border-gray-600 pt-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Recent Fitting Jobs</h3>
+                        <div id="fitting-jobs-list" class="text-sm text-gray-600 dark:text-gray-400">
+                            No fitting jobs yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Tab Panel -->
+            <div class="tab-panel hidden p-4" id="panel-help">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Header -->
+                    <div class="text-center mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+                            🍏⏩🍎 SFPPy Studio
+                        </h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-400">
+                            Scientific Framework for Food Packaging Migration Modeling
+                        </p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                            Version {{ version.studio_version }} | SFPPy Engine {{ version.sfppy_version }}
+                        </p>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="bg-sfppy-green/10 dark:bg-sfppy-green/20 rounded-xl p-4 mb-6 border border-sfppy-green/30">
+                        <div class="flex flex-wrap items-center justify-center gap-4 text-sm">
+                            <a href="mailto:olivier.vitrac@gmail.com" class="flex items-center gap-2 text-sfppy-green hover:underline">
+                                ✉️ Contact: olivier.vitrac@gmail.com
+                            </a>
+                            <span class="text-gray-300 dark:text-gray-600">|</span>
+                            <a href="https://github.com/ovitrac/SFPPy" target="_blank" class="flex items-center gap-2 text-sfppy-green hover:underline">
+                                🔗 GitHub Repository
+                            </a>
+                            <span class="text-gray-300 dark:text-gray-600">|</span>
+                            <span class="text-gray-600 dark:text-gray-400">📜 MIT License</span>
+                        </div>
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 mb-6 border border-amber-200 dark:border-amber-700 text-sm text-amber-800 dark:text-amber-300">
+                        <strong>⚠️ Disclaimer:</strong> All simulation results are provided <strong>AS IS</strong> without warranty of any kind.
+                        Users are responsible for validating results against experimental data and regulatory requirements.
+                        This tool is intended for research and preliminary assessment purposes.
+                    </div>
+
+                    <!-- Workflow Overview -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">📋 Workflow Overview</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Follow these steps to run a migration simulation</p>
+                        </div>
+                        <div class="p-4 space-y-4">
+
+                            <!-- Step 1: Substances -->
+                            <div class="flex gap-4 items-start p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex-shrink-0 w-10 h-10 bg-sfppy-green text-white rounded-full flex items-center justify-center font-bold">1</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                                        <span class="text-xl">🧪</span> Substances Tab
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        Define the migrants (additives, monomers, contaminants) to simulate.
+                                        Search PubChem for substances or select from common additives like Irganox 1076, BHT, DEHA.
+                                        Each substance needs a CAS number for accurate property lookup.
+                                    </p>
+                                    <div class="mt-2 text-xs text-gray-500 dark:text-gray-500">
+                                        <strong>Key features:</strong> PubChem integration, regulatory SML values (EU/US/CN), Cramer classification
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Assembly -->
+                            <div class="flex gap-4 items-start p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex-shrink-0 w-10 h-10 bg-sfppy-green text-white rounded-full flex items-center justify-center font-bold">2</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                                        <span class="text-xl">🧱</span> Assembly Tab
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        Build your packaging structure: monolayer or multilayer (up to 10 layers).
+                                        Select polymers (LDPE, PP, PET, etc.), set layer thicknesses, and define initial concentrations (C₀) for each substance in each layer.
+                                        Choose packaging geometry (box, cylinder, bottle) for accurate surface-to-volume calculations.
+                                    </p>
+                                    <div class="mt-2 text-xs text-gray-500 dark:text-gray-500">
+                                        <strong>Key features:</strong> Layer visualization, C₀ matrix, geometry selection, auto-computed diffusivities (Piringer model)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Food -->
+                            <div class="flex gap-4 items-start p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex-shrink-0 w-10 h-10 bg-sfppy-green text-white rounded-full flex items-center justify-center font-bold">3</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                                        <span class="text-xl">🍽️</span> Food Tab
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        Define the food/simulant contact conditions. Select food category (aqueous, fatty, alcoholic) and simulant (water, ethanol 10-95%, olive oil, etc.).
+                                        Configure contact steps: temperature, duration, and contact mode.
+                                    </p>
+                                    <div class="mt-2 text-xs text-gray-500 dark:text-gray-500">
+                                        <strong>Key features:</strong> Multi-step scenarios, 📦 set-off mode (stacking/rolling before food contact), EU simulant compliance
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Simulate -->
+                            <div class="flex gap-4 items-start p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex-shrink-0 w-10 h-10 bg-sfppy-green text-white rounded-full flex items-center justify-center font-bold">4</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                                        <span class="text-xl">▶️</span> Simulate Tab
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        Review your configuration summary and run the simulation.
+                                        The Patankar finite-volume solver computes migration kinetics for all substances through the multilayer structure.
+                                        Load example sessions or presets for quick testing.
+                                    </p>
+                                    <div class="mt-2 text-xs text-gray-500 dark:text-gray-500">
+                                        <strong>Key features:</strong> Validation check, restart from previous simulation, session management
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Results -->
+                            <div class="flex gap-4 items-start p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex-shrink-0 w-10 h-10 bg-sfppy-green text-white rounded-full flex items-center justify-center font-bold">5</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                                        <span class="text-xl">📊</span> Results Tab
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        Visualize migration kinetics (CF vs time), concentration profiles (C vs position), and compliance status.
+                                        Compare final concentrations against SML values. Export results as PDF reports, CSV data, or interactive plots.
+                                    </p>
+                                    <div class="mt-2 text-xs text-gray-500 dark:text-gray-500">
+                                        <strong>Key features:</strong> Interactive charts, SML compliance badges, multi-substance comparison, PDF/CSV export
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ToxTree & NIAS Assessment -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">🔬 ToxTree & NIAS Assessment</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Toxicological evaluation for Non-Intentionally Added Substances</p>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <!-- Cramer Classification -->
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Cramer Classification (ToxTree)</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                        The Cramer decision tree classifies substances into three classes based on chemical structure and predicted toxicity:
+                                    </p>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/30 rounded">
+                                            <span class="px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded text-xs font-medium">Class I</span>
+                                            <span class="text-gray-700 dark:text-gray-300">Low concern — TTC: 30 µg/kg bw/day → <strong>1.8 mg/kg food</strong></span>
+                                        </div>
+                                        <div class="flex items-center gap-2 p-2 bg-yellow-50 dark:bg-yellow-900/30 rounded">
+                                            <span class="px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 rounded text-xs font-medium">Class II</span>
+                                            <span class="text-gray-700 dark:text-gray-300">Intermediate — TTC: 9 µg/kg bw/day → <strong>0.54 mg/kg food</strong></span>
+                                        </div>
+                                        <div class="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/30 rounded">
+                                            <span class="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded text-xs font-medium">Class III</span>
+                                            <span class="text-gray-700 dark:text-gray-300">High concern — TTC: 1.5 µg/kg bw/day → <strong>0.09 mg/kg food</strong></span>
+                                        </div>
+                                        <div class="flex items-center gap-2 p-2 bg-purple-100 dark:bg-purple-900/50 rounded border-2 border-purple-300 dark:border-purple-700">
+                                            <span class="px-2 py-0.5 bg-purple-600 text-white rounded text-xs font-bold">☢️ Genotoxic</span>
+                                            <span class="text-purple-800 dark:text-purple-200"><strong>TTC: 0.0025 µg/kg bw/day → 0.00015 mg/kg food</strong></span>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-3">
+                                        * Max Exposure assumes 60 kg adult, 1 kg food/day consumption (EU convention).
+                                    </p>
+                                </div>
+
+                                <!-- Structural Alerts -->
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Structural Alerts</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                        ToxTree identifies structural alerts. <strong>Genotoxic alerts</strong> require the strictest threshold:
+                                    </p>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex items-start gap-2 p-2 bg-purple-100 dark:bg-purple-900/50 rounded border-2 border-purple-300 dark:border-purple-700">
+                                            <span class="text-purple-600">☢️</span>
+                                            <div>
+                                                <strong class="text-purple-800 dark:text-purple-200">Genotoxic Alert</strong>
+                                                <p class="text-purple-700 dark:text-purple-300 text-xs mt-1">
+                                                    Detected keywords: <code>genotox</code>, <code>mutagen</code>, <code>carcinogen</code>, <code>DNA</code>.
+                                                    <br><strong>TTC = 0.0025 µg/kg bw/day applies</strong> — individual risk assessment mandatory.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-2 p-2 bg-orange-50 dark:bg-orange-900/30 rounded">
+                                            <span class="text-orange-600">⚠️</span>
+                                            <div>
+                                                <strong class="text-gray-800 dark:text-gray-200">Informational Alert</strong>
+                                                <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">
+                                                    Other structural alerts (skin sensitization, eye irritation, etc.).
+                                                    <br>Relevant for <strong>cosmetics/homecare</strong> applications. Cramer TTC still applies for food.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-2 p-2 bg-green-50 dark:bg-green-900/30 rounded">
+                                            <span class="text-green-600">✓</span>
+                                            <div>
+                                                <strong class="text-gray-800 dark:text-gray-200">No Alerts</strong>
+                                                <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">
+                                                    No structural alerts identified. TTC approach can be used for initial safety assessment.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- NIAS Note -->
+                            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                                <h4 class="font-medium text-blue-800 dark:text-blue-300 mb-1">NIAS Assessment</h4>
+                                <p class="text-sm text-blue-700 dark:text-blue-400">
+                                    <strong>NIAS</strong> (Non-Intentionally Added Substances) have no regulatory SML.
+                                    Use the TTC-based limit as a screening threshold. If simulated migration exceeds the TTC limit,
+                                    a full toxicological evaluation is required. Always check for structural alerts.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Tabs -->
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <!-- Jobs -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="text-lg">📁</span> Jobs
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                View simulation history, rerun past jobs, and manage saved sessions.
+                                Each job stores complete input configuration and results for reproducibility.
+                            </p>
+                        </div>
+
+                        <!-- Config -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="text-lg">⚙️</span> Config
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                Adjust solver settings (mesh resolution, time scale, tolerances) and view system information.
+                                Advanced users can tune numerical parameters for specific scenarios.
+                            </p>
+                        </div>
+
+                        <!-- Fitting -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-2">
+                                <span class="text-lg">📈</span> Fitting
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                Fit diffusivity (D) and partition coefficient (k) from experimental migration data.
+                                Upload CSV data or generate synthetic data for testing fitting algorithms.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Technical Details -->
+                    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700 mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">🔬 Technical Details</h2>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white mb-1">Solver</h4>
+                                <p>Patankar finite-volume method with adaptive meshing. Handles discontinuous diffusion coefficients at layer interfaces.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white mb-1">Diffusivity Models</h4>
+                                <p>Piringer (EU default), Welle FHP, or user-defined values. Temperature-dependent via Arrhenius activation energy.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white mb-1">Chemical Database</h4>
+                                <p>PubChem integration via <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">migrantToxtree</code>. Cached data for EU/US/CN regulated substances.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white mb-1">Regulatory Compliance</h4>
+                                <p>SML values from EU 10/2011, US FDA 21 CFR, CN GB 9685. Cramer classification for TTC assessment.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scientific References -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">📚 Scientific References</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                            The diffusivity models implemented in SFPPy are based on the following peer-reviewed publications:
+                        </p>
+                        <div class="space-y-4 text-sm">
+                            <!-- Piringer Model -->
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-sfppy-green font-bold">[1]</span>
+                                    <div>
+                                        <p class="text-gray-800 dark:text-gray-200">
+                                            <strong>Piringer Model (EU Reference)</strong>
+                                        </p>
+                                        <p class="text-gray-600 dark:text-gray-400 mt-1">
+                                            Begley, T., Castle, L., Feigenbaum, A., Franz, R., Hinrichs, K., Lickly, T., Mercea, P., Milana, M., O'Brien, A., Rebre, S., Rijk, R., &amp; Piringer, O. (2005).
+                                            Evaluation of migration models that might be used in support of regulations for food-contact plastics.
+                                            <em>Food Additives and Contaminants</em>, 22(1), 73–90.
+                                        </p>
+                                        <a href="https://doi.org/10.1080/02652030400028035" target="_blank" class="inline-flex items-center gap-1 text-sfppy-green hover:underline mt-1">
+                                            🔗 doi:10.1080/02652030400028035
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Vitrac FHP Model -->
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-sfppy-green font-bold">[2]</span>
+                                    <div>
+                                        <p class="text-gray-800 dark:text-gray-200">
+                                            <strong>Blob Model (above and below Tg)</strong>
+                                        </p>
+                                        <p class="text-gray-600 dark:text-gray-400 mt-1">
+                                            Zhu, Y., Welle, F., &amp; Vitrac, O. (2019).
+                                            A blob model to parameterize polymer hole free volumes and solute diffusion.
+                                            <em>Soft Matter</em>, 15(43), 8912–8932.
+                                        </p>
+                                        <a href="https://doi.org/10.1039/c9sm01556f" target="_blank" class="inline-flex items-center gap-1 text-sfppy-green hover:underline mt-1">
+                                            🔗 doi:10.1039/c9sm01556f
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Welle PET -->
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-sfppy-green font-bold">[3]</span>
+                                    <div>
+                                        <p class="text-gray-800 dark:text-gray-200">
+                                            <strong>PET Diffusion Coefficients</strong>
+                                        </p>
+                                        <p class="text-gray-600 dark:text-gray-400 mt-1">
+                                            Ewender, J., &amp; Welle, F. (2022).
+                                            A new method for the prediction of diffusion coefficients in poly(ethylene terephthalate)—Validation data.
+                                            <em>Packaging Technology and Science</em>, 35(5), 405–413.
+                                        </p>
+                                        <a href="https://doi.org/10.1002/pts.2638" target="_blank" class="inline-flex items-center gap-1 text-sfppy-green hover:underline mt-1">
+                                            🔗 doi:10.1002/pts.2638
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fang & Vitrac Review -->
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-sfppy-green font-bold">[4]</span>
+                                    <div>
+                                        <p class="text-gray-800 dark:text-gray-200">
+                                            <strong>Hole Free-Volume Theory Review</strong>
+                                        </p>
+                                        <p class="text-gray-600 dark:text-gray-400 mt-1">
+                                            Fang, X., &amp; Vitrac, O. (2017).
+                                            Predicting diffusion coefficients of chemicals in and through packaging materials.
+                                            <em>Critical Reviews in Food Science and Nutrition</em>, 57(2), 275–312.
+                                        </p>
+                                        <a href="https://doi.org/10.1080/10408398.2013.849654" target="_blank" class="inline-flex items-center gap-1 text-sfppy-green hover:underline mt-1">
+                                            🔗 doi:10.1080/10408398.2013.849654
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fang et al. Macromolecules -->
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-sfppy-green font-bold">[5]</span>
+                                    <div>
+                                        <p class="text-gray-800 dark:text-gray-200">
+                                            <strong>Diffusion Above Glass Transition</strong>
+                                        </p>
+                                        <p class="text-gray-600 dark:text-gray-400 mt-1">
+                                            Fang, X., Domenek, S., Ducruet, V., Réfrégiers, M., &amp; Vitrac, O. (2013).
+                                            Diffusion of aromatic solutes in aliphatic polymers above glass transition temperature.
+                                            <em>Macromolecules</em>, 46(3), 874–888.
+                                        </p>
+                                        <a href="https://doi.org/10.1021/ma3022103" target="_blank" class="inline-flex items-center gap-1 text-sfppy-green hover:underline mt-1">
+                                            🔗 doi:10.1021/ma3022103
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center mt-8 text-sm text-gray-500 dark:text-gray-500">
+                        <p>
+                            <strong>SFPPy</strong> is developed by
+                            <a href="mailto:olivier.vitrac@gmail.com" class="text-sfppy-green hover:underline">Olivier Vitrac, PhD, HDR</a>
+                            at INRAE / Generative Simulation.
+                        </p>
+                        <p class="mt-1">
+                            Licensed under the
+                            <a href="https://opensource.org/licenses/MIT" target="_blank" class="text-sfppy-green hover:underline">MIT License</a>.
+                            Source code available on
+                            <a href="https://github.com/ovitrac/SFPPy" target="_blank" class="text-sfppy-green hover:underline">GitHub</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Help Panel -->
+        <aside id="help-panel" class="w-72 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 p-3 collapsed">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-gray-700 dark:text-gray-300 text-sm">Help</h3>
+                <button id="close-help" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">✕</button>
+            </div>
+            <div id="help-content" class="text-sm text-gray-600 dark:text-gray-400">
+                Click on a help icon (?) to see contextual help.
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer - Single Line -->
+    <footer class="footer-discrete bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-1.5 text-center text-xs text-gray-500 dark:text-gray-400">
+        <p class="flex items-center justify-center space-x-2 flex-wrap">
+            <span>🍏⏩🍎 INRAE / Generative Simulation</span>
+            <span class="text-gray-300 dark:text-gray-600">—</span>
+            <a href="mailto:olivier.vitrac@gmail.com" class="hover:text-sfppy-green transition-colors">Olivier Vitrac, PhD, HDR</a>
+            <span class="text-gray-300 dark:text-gray-600">|</span>
+            <span>{{ current_year }}</span>
+            <span class="text-gray-300 dark:text-gray-600">|</span>
+            <span>SFPPy v.{{ version.sfppy_version }}</span>
+            <span class="text-gray-300 dark:text-gray-600">|</span>
+            <span>Studio v.{{ version.studio_version }}</span>
+        </p>
+    </footer>
+
+    <!-- Help Bar Toggle Button - Always visible -->
+    <button id="help-bar-toggle" class="fixed bottom-4 right-4 z-50 w-10 h-10 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110" title="Toggle Help Tips">
+        <span class="text-lg">💡</span>
+    </button>
+
+    <!-- Dynamic Help Bar - Slides up from bottom -->
+    <div id="help-bar" class="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-sfppy-green/10 to-emerald-50 dark:from-sfppy-green/20 dark:to-gray-800 border-t border-sfppy-green/30 dark:border-sfppy-green/40 py-2 px-4 z-40 transition-transform duration-300 transform translate-y-full" style="display: none;">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 flex-1 min-w-0">
+                <span class="text-sfppy-green text-lg flex-shrink-0" id="help-bar-icon">💡</span>
+                <span id="help-bar-text" class="text-sm text-gray-700 dark:text-gray-300 truncate">Welcome to SFPPy Studio! Start by defining your substances in the 🧪 Substances tab.</span>
+            </div>
+            <div class="flex items-center space-x-1 flex-shrink-0 ml-3">
+                <!-- Tip counter -->
+                <span id="help-bar-counter" class="text-xs text-gray-500 dark:text-gray-400 px-2 font-mono">1/4</span>
+                <!-- Navigation buttons -->
+                <button id="help-bar-first" class="px-1.5 py-1 text-xs bg-white dark:bg-gray-700 rounded border hover:bg-gray-50 dark:hover:bg-gray-600" title="First tip">⏮</button>
+                <button id="help-bar-prev" class="px-1.5 py-1 text-xs bg-white dark:bg-gray-700 rounded border hover:bg-gray-50 dark:hover:bg-gray-600" title="Previous tip">◀</button>
+                <button id="help-bar-next" class="px-1.5 py-1 text-xs bg-white dark:bg-gray-700 rounded border hover:bg-gray-50 dark:hover:bg-gray-600" title="Next tip">▶</button>
+                <button id="help-bar-last" class="px-1.5 py-1 text-xs bg-white dark:bg-gray-700 rounded border hover:bg-gray-50 dark:hover:bg-gray-600" title="Last tip">⏭</button>
+                <span class="text-gray-300 dark:text-gray-600 mx-1">|</span>
+                <button id="help-bar-close" class="px-1.5 py-1 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" title="Minimize">▼</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/offline-manager.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Dark mode toggle
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+        }
+
+        // Initialize dark mode from localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedMode = localStorage.getItem('darkMode');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const shouldBeDark = savedMode === 'dark' || (!savedMode && prefersDark);
+
+            if (shouldBeDark) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('darkModeToggle').checked = true;
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('darkModeToggle').checked = false;
+            }
+
+            document.getElementById('darkModeToggle').addEventListener('change', toggleDarkMode);
+        });
+    </script>
+
+    <!-- Print-Friendly Report Modal -->
+    <div id="report-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50" onclick="closeReportModal()"></div>
+        <div class="absolute inset-4 bg-white rounded-lg shadow-2xl overflow-auto print:inset-0 print:rounded-none print:shadow-none">
+            <div class="sticky top-0 bg-white border-b px-6 py-3 flex items-center justify-between print:hidden">
+                <h2 class="text-lg font-bold text-gray-800">📄 Migration Analysis Report</h2>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                        🖨️ Print
+                    </button>
+                    <button onclick="closeReportModal()" class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm">
+                        ✕ Close
+                    </button>
+                </div>
+            </div>
+            <div id="report-content" class="p-8 max-w-4xl mx-auto">
+                <!-- Report content populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media print {
+            body > *:not(#report-modal) { display: none !important; }
+            #report-modal { display: block !important; position: static !important; }
+            #report-modal > div:first-child { display: none !important; }
+            #report-modal > div:last-child {
+                position: static !important;
+                inset: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+            .print\\:hidden { display: none !important; }
+        }
+    </style>
+</body>
+</html>

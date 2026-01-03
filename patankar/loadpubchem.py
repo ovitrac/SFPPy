@@ -2648,9 +2648,14 @@ class migrantToxtree(migrant):
         "kroes": "KroesTTCDecisionTree"
     }
 
-    TTC = [0.0025, 1.5, 9.0 , 30] # µg/kg bw/day
+    # TTC values indexed by CramerValue (1=Class I, 2=Class II, 3=Class III)
+    # Class I (low concern) = 30 µg/kg bw/day
+    # Class II (intermediate) = 9 µg/kg bw/day
+    # Class III (high concern) = 1.5 µg/kg bw/day
+    # Index 0 reserved for genotoxic/unknown = 0.0025 µg/kg bw/day
+    TTC = [0.0025, 30, 9.0, 1.5] # µg/kg bw/day - CORRECT ORDER
     TTCunits = "[µg/kg bw/day]"
-    CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake
+    CFTTC = [ttc * 60 * 1 * 1e-3 for ttc in TTC] # mg/kg intake (60 kg adult, 1 kg food/day)
     CFTTCunits = "[mg/kg food intake]"
 
     def __init__(self, compound_name, cache_folder='cache.ToxTree',

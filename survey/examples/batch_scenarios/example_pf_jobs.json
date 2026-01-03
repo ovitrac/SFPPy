@@ -1,0 +1,98 @@
+[
+  {
+    "name": "yogurt_PET_125g",
+    "description": "Yogurt in PET thermoformed pot",
+    "polymer": "gPET",
+    "thickness_value": 200,
+    "thickness_unit": "µm",
+    "layer_temperature_C": 6,
+    "simulant": "ethanol50",
+    "h_m_s": 1e-7,
+    "surface_area_value": 140,
+    "surface_area_unit": "cm²",
+    "food_volume_value": 125,
+    "food_volume_unit": "mL",
+    "contact_temperature_C": 6,
+    "time_min": 0,
+    "time_mode": 30,
+    "time_max": 60,
+    "time_unit": "days",
+    "substances": [
+      {"identifier": "70321-86-7", "c0_min": 3.5, "c0_mode": 7, "c0_max": 14, "unit": "mg/kg"},
+      {"identifier": "872-50-4", "c0_min": 40, "c0_mode": 80, "c0_max": 160, "unit": "mg/kg"},
+      {"identifier": "301-02-0", "c0_min": 100, "c0_mode": 200, "c0_max": 400, "unit": "mg/kg"}
+    ]
+  },
+  {
+    "name": "water_PET_1500mL",
+    "description": "Mineral water in PET bottle",
+    "polymer": "gPET",
+    "thickness_value": 180,
+    "thickness_unit": "µm",
+    "layer_temperature_C": 25,
+    "simulant": "water",
+    "h_m_s": 1e-7,
+    "surface_area_value": 850,
+    "surface_area_unit": "cm²",
+    "food_volume_value": 1500,
+    "food_volume_unit": "mL",
+    "contact_temperature_C": 25,
+    "time_min": 0,
+    "time_mode": 365,
+    "time_max": 730,
+    "time_unit": "days",
+    "substances": [
+      {"identifier": "70321-86-7", "c0_min": 3.5, "c0_mode": 7, "c0_max": 14, "unit": "mg/kg"},
+      {"identifier": "872-50-4", "c0_min": 40, "c0_mode": 80, "c0_max": 160, "unit": "mg/kg"},
+      {"identifier": "124-26-5", "c0_min": 5, "c0_mode": 10, "c0_max": 20, "unit": "mg/kg"}
+    ]
+  },
+  {
+    "name": "water_HDPE_cap",
+    "description": "HDPE cap for water bottle",
+    "polymer": "HDPE",
+    "thickness_value": 800,
+    "thickness_unit": "µm",
+    "layer_temperature_C": 25,
+    "simulant": "water",
+    "h_m_s": 1e-7,
+    "surface_area_value": 20,
+    "surface_area_unit": "cm²",
+    "food_volume_value": 10,
+    "food_volume_unit": "mL",
+    "contact_temperature_C": 25,
+    "time_min": 0,
+    "time_mode": 365,
+    "time_max": 730,
+    "time_unit": "days",
+    "substances": [
+      {"identifier": "31570-04-4", "c0_min": 500, "c0_mode": 1000, "c0_max": 2000, "unit": "mg/kg"},
+      {"identifier": "2082-79-3", "c0_min": 100, "c0_mode": 200, "c0_max": 400, "unit": "mg/kg"},
+      {"identifier": "124-26-5", "c0_min": 200, "c0_mode": 500, "c0_max": 1000, "unit": "mg/kg"}
+    ]
+  },
+  {
+    "name": "cheese_PP_tray",
+    "description": "Cheese in PP thermoformed tray",
+    "polymer": "PP",
+    "thickness_value": 400,
+    "thickness_unit": "µm",
+    "layer_temperature_C": 6,
+    "simulant": "oliveoil",
+    "h_m_s": 1e-7,
+    "surface_area_value": 250,
+    "surface_area_unit": "cm²",
+    "food_volume_value": 250,
+    "food_volume_unit": "mL",
+    "contact_temperature_C": 6,
+    "time_min": 0,
+    "time_mode": 30,
+    "time_max": 60,
+    "time_unit": "days",
+    "substances": [
+      {"identifier": "2082-79-3", "c0_min": 100, "c0_mode": 300, "c0_max": 600, "unit": "mg/kg"},
+      {"identifier": "31570-04-4", "c0_min": 200, "c0_mode": 500, "c0_max": 1000, "unit": "mg/kg"},
+      {"identifier": "112-84-5", "c0_min": 50, "c0_mode": 130, "c0_max": 300, "unit": "mg/kg"}
+    ]
+  }
+]

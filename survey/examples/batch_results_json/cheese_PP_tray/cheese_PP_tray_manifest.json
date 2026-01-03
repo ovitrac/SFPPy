@@ -1,0 +1,83 @@
+{
+  "name": "cheese_PP_tray",
+  "fingerprint": "8737ea7254ac108eeed759fe5082c4b3b5984da5d49b8b4cb8d100c6634c9083",
+  "config": {
+    "name": "cheese_PP_tray",
+    "packaging": {
+      "layers": [
+        {
+          "polymer": "PP",
+          "thickness_m": 0.00039999999999999996,
+          "C0": 0.0,
+          "temperature_degC": 6.0
+        }
+      ],
+      "h_m_s": 1e-07,
+      "surface_area_m2": 0.025,
+      "food_volume_m3": 0.00025,
+      "contact_temperature_degC": 6.0,
+      "cf0": 0.0,
+      "food_simulant": "oliveoil"
+    },
+    "time_prior": {
+      "mode": 2592000.0,
+      "max_val": 5184000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "time"
+    },
+    "conc_prior": {
+      "mode": 310.0,
+      "max_val": 1000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "concentration"
+    },
+    "pdf_bins": 250,
+    "n_fo": 200,
+    "fo_max_factor": 1.5,
+    "fo_min_floor": 1e-15,
+    "cache_dir": ".survey_cache"
+  },
+  "substances": [
+    {
+      "id": "2082-79-3",
+      "mass_g_mol": 530.9,
+      "name": "2082-79-3",
+      "cas": "2082-79-3",
+      "D": 6.597008265067603e-17,
+      "k": 0.6389373341572655,
+      "k0": 1.0
+    },
+    {
+      "id": "31570-04-4",
+      "mass_g_mol": 646.9,
+      "name": "31570-04-4",
+      "cas": "31570-04-4",
+      "D": 2.6863689306237896e-17,
+      "k": 0.7831724901953403,
+      "k0": 1.0
+    },
+    {
+      "id": "112-84-5",
+      "mass_g_mol": 337.6,
+      "name": "112-84-5",
+      "cas": "112-84-5",
+      "D": 3.7064741494010267e-16,
+      "k": 0.4008202636826803,
+      "k0": 1.0
+    }
+  ],
+  "i_ref": 0,
+  "ref_layer_details": [
+    {
+      "index": 0,
+      "polymer": "PP",
+      "thickness_m": 0.00039999999999999996
+    }
+  ],
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0
+  }
+}

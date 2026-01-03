@@ -1,0 +1,139 @@
+{
+  "version": "1.1",
+  "metadata": {
+    "name": "Example 3: Trilayer ABA Migration with Multi-Step",
+    "description": "Migration of limonene from recycled PP core through PET barrier layers. Trilayer ABA structure (wPET/PP/gPET) with three contact steps: setoff (stacked storage), hotfilling, storage. Demonstrates proper multi-step temperature handling and set-off boundary conditions.",
+    "author": "INRAE/olivier.vitrac@agroparistech.fr",
+    "source_script": "example3.py",
+    "sfppy_version": "1.50+"
+  },
+  "geometry": {
+    "shape": "box_container",
+    "dimensions": {
+      "length": {"value": 19, "unit": "cm"},
+      "width": {"value": 10, "unit": "cm"},
+      "height": {"value": 8, "unit": "cm"}
+    }
+  },
+  "substances": [
+    {
+      "id": "limonene",
+      "source": "pubchem",
+      "lookup_name": "limonene",
+      "cid": 22311,
+      "properties": {
+        "name": "Limonene",
+        "cas": ["7705-14-8", "138-86-3"],
+        "mw": 136.23,
+        "logP": 3.4,
+        "formula": "C10H16"
+      },
+      "SML": 60.0,
+      "color": "#3B82F6"
+    }
+  ],
+  "layers": [
+    {
+      "index": 1,
+      "polymer": "wPET",
+      "thickness": {"value": 20, "unit": "um"},
+      "name": "PET barrier (food side)",
+      "substances": [
+        {
+          "substance_id": "limonene",
+          "C0": {"value": 0, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "polymer": "PP",
+      "thickness": {"value": 500, "unit": "um"},
+      "name": "PP core (recycled)",
+      "substances": [
+        {
+          "substance_id": "limonene",
+          "C0": {"value": 200, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "polymer": "gPET",
+      "thickness": {"value": 20, "unit": "um"},
+      "name": "PET barrier (outer)",
+      "substances": [
+        {
+          "substance_id": "limonene",
+          "C0": {"value": 0, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    }
+  ],
+  "food": {
+    "category": "fatty",
+    "texture": "liquid",
+    "affinity": "fat",
+    "simulant": "ethanol",
+    "name": "Fatty liquid food",
+    "CF0": {
+      "limonene": {"value": 0, "unit": "mg/kg"}
+    }
+  },
+  "contact_steps": [
+    {
+      "index": 1,
+      "name": "Setoff storage (stacked)",
+      "type": "setoff",
+      "temperature": {"value": 20, "unit": "degC"},
+      "duration": {"value": 4, "unit": "months"},
+      "with_food_contact": false,
+      "setoff_type": "stacked"
+    },
+    {
+      "index": 2,
+      "name": "Hot filling",
+      "type": "hotfilling",
+      "temperature": {"value": 80, "unit": "degC"},
+      "duration": {"value": 20, "unit": "minutes"},
+      "with_food_contact": true
+    },
+    {
+      "index": 3,
+      "name": "Long-term storage",
+      "type": "storage",
+      "temperature": {"value": 25, "unit": "degC"},
+      "duration": {"value": 6, "unit": "months"},
+      "with_food_contact": true
+    }
+  ],
+  "simulation_config": {
+    "solver": "senspatankar",
+    "ntimes": 1000,
+    "nmesh": 600,
+    "nmeshmin": 20,
+    "timescale": "sqrt",
+    "RelTol": 1e-6,
+    "AbsTol": 1e-6,
+    "nmax": 15,
+    "output_units": {
+      "time": "days",
+      "length": "um",
+      "concentration": "mg/kg"
+    }
+  },
+  "notes": {
+    "scientific_context": "This example demonstrates the importance of proper multi-step temperature handling. D(T) follows Arrhenius kinetics with Ea ~ 60-100 kJ/mol, meaning diffusivity at 80C (hot-fill) is orders of magnitude higher than at 20C (setoff). The setoff step uses periodic boundary conditions (stacked packaging) before food contact.",
+    "expected_behavior": [
+      "Step 1 (setoff): Migration between stacked layers at 20C - slow D(T), PBC",
+      "Step 2 (hotfill): Rapid migration at 80C - D increases ~1000x",
+      "Step 3 (storage): Continued migration at 25C to equilibrium"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "SFPPy Studio Vendor Dependencies",
+  "studio_version": "0.3.0",
+  "generated": "2026-01-02",
+  "dependencies": {
+    "chart.js": {
+      "version": "4.4.1",
+      "license": "MIT",
+      "source": "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js",
+      "file": "chart.min.js"
+    },
+    "tailwindcss": {
+      "version": "3.4.0",
+      "license": "MIT",
+      "note": "Pre-compiled subset for offline operation",
+      "file": "tailwind-offline.css"
+    }
+  }
+}

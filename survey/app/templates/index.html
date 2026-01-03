@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ SFPPy Family Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // SFPPy colors: green apple, orange, red
+                        sfppy: {
+                            green: '#22c55e',      // Green apple
+                            greenDark: '#16a34a',
+                            orange: '#f97316',     // Orange
+                            orangeDark: '#ea580c',
+                            red: '#ef4444',        // Red apple
+                            redDark: '#dc2626',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .molecule-img { max-width: 100px; max-height: 100px; border-radius: 8px; }
+        .substance-card { transition: all 0.2s ease; }
+        .substance-card:hover { transform: translateY(-2px); }
+        .error-card { border-left: 4px solid #ef4444; }
+        .valid-card { border-left: 4px solid #22c55e; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
+        /* Dark mode molecule image */
+        .dark .molecule-img { filter: invert(1) hue-rotate(180deg); background: white; }
+        /* Toggle switch */
+        .toggle-checkbox:checked { right: 0; border-color: #22c55e; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #22c55e; }
+        .toggle-checkbox { right: 1.5rem; }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-sfppy-green via-sfppy-orange to-sfppy-red text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl">🍽️</span>
+                    <div>
+                        <h1 class="text-2xl font-bold">SFPPy Family Editor</h1>
+                        <p class="text-white/80 text-sm">🍏⏩🍎 Create and manage substance families for migration surveys</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Survey Simulator Link -->
+                    <a href="http://127.0.0.1:8001" target="_blank" class="px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-sm font-medium transition flex items-center gap-1"
+                       title="Open Survey Simulator to run migration simulations (port 8001)">
+                        <span>🚀</span> Survey Simulator
+                    </a>
+                    <!-- Dark Mode Toggle -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm">☀️</span>
+                        <div class="relative inline-block w-12 align-middle select-none">
+                            <input type="checkbox" id="darkModeToggle" checked
+                                   class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300"
+                                   onchange="toggleDarkMode()"/>
+                            <label for="darkModeToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-400 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                        <span class="text-sm">🌙</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Action Bar -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div class="flex gap-2">
+                    <button onclick="newFamily()" class="px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition text-sm font-medium">
+                        ✨ New Family
+                    </button>
+                    <label class="px-4 py-2 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded-lg cursor-pointer transition text-sm font-medium">
+                        📂 Import YAML
+                        <input type="file" accept=".yml,.yaml" onchange="importYaml(this)" class="hidden">
+                    </label>
+                    <button onclick="exportYaml()" class="px-4 py-2 bg-sfppy-red hover:bg-sfppy-redDark text-white rounded-lg transition text-sm font-medium">
+                        💾 Export YAML
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleFolderPanel()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition text-sm font-medium">
+                        📁 Working Folder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Folder Panel (collapsible) -->
+    <div id="folderPanel" class="hidden bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Working Folder</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="workingFolderPath" placeholder="/path/to/families"
+                               class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                        <button onclick="setWorkingFolder()" class="px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition">
+                            Set
+                        </button>
+                        <button onclick="discoverFamilies()" class="px-4 py-2 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded-lg transition">
+                            🔍 Discover
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Discovered Families -->
+            <div id="discoveredFamilies" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <!-- Family cards will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Panel: Family Info & Add Substance -->
+            <div class="space-y-6">
+                <!-- Family Info -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-green">📋</span> Family Information
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Family Name</label>
+                            <input type="text" id="familyName" value="{{ family.name }}"
+                                   onchange="updateFamily()"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-sfppy-green focus:border-sfppy-green">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                            <textarea id="familyDescription" rows="2" onchange="updateFamily()"
+                                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-sfppy-green focus:border-sfppy-green">{{ family.description }}</textarea>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">
+                                <span id="substanceCount">{{ family.substances|length }}</span> substances
+                            </span>
+                            <button onclick="saveToFolder()" class="text-sfppy-green hover:text-sfppy-greenDark font-medium">
+                                💾 Save to Folder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Substance -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-orange">🧪</span> Add Substance
+                    </h2>
+                    <form onsubmit="addSubstance(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name or CAS Number</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="substanceId" placeholder="e.g., limonene or 138-86-3"
+                                       class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-sfppy-orange">
+                                <button type="button" onclick="lookupSubstance()"
+                                        class="px-4 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-white rounded-lg transition text-sm">
+                                    🔍
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Preview Card -->
+                        <div id="previewCard" class="hidden border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+                            <div class="flex gap-4">
+                                <div id="previewImage" class="flex-shrink-0"></div>
+                                <div class="flex-1 text-sm">
+                                    <div id="previewName" class="font-semibold text-gray-800 dark:text-white"></div>
+                                    <div id="previewFormula" class="text-gray-600 dark:text-gray-300"></div>
+                                    <div id="previewMass" class="text-gray-600 dark:text-gray-300"></div>
+                                    <div id="previewCAS" class="text-gray-600 dark:text-gray-300"></div>
+                                    <div id="previewLogP" class="text-gray-600 dark:text-gray-300"></div>
+                                </div>
+                            </div>
+                            <div id="previewError" class="mt-2 text-sfppy-red text-sm hidden"></div>
+                        </div>
+
+                        <!-- Concentration Parameters -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">C0 Min (mg/kg)</label>
+                                <input type="number" id="c0Min" value="0" step="0.1" min="0"
+                                       class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">C0 Likely (mg/kg)</label>
+                                <input type="number" id="c0Likely" value="100" step="0.1" min="0"
+                                       class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">C0 Max (mg/kg)</label>
+                                <input type="number" id="c0Max" value="500" step="0.1" min="0"
+                                       class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notes</label>
+                            <input type="text" id="notes" placeholder="Optional notes..."
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
+                        </div>
+
+                        <button type="submit" id="addBtn"
+                                class="w-full py-2 bg-gradient-to-r from-sfppy-green to-sfppy-orange hover:from-sfppy-greenDark hover:to-sfppy-orangeDark text-white rounded-lg font-medium transition">
+                            ➕ Add to Family
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Validation -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-red">✅</span> Validation
+                    </h2>
+                    <button onclick="validateAll()"
+                            class="w-full py-2 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded-lg font-medium transition">
+                        🔄 Re-validate All Substances
+                    </button>
+                    <div id="validationResults" class="mt-4 text-sm text-gray-600 dark:text-gray-400"></div>
+                </div>
+            </div>
+
+            <!-- Middle/Right Panel: Chart and Substances -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Distribution Chart -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="text-sfppy-orange">📊</span> Concentration Distributions
+                    </h2>
+                    <div class="h-64">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Substance Cards -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                            <span>🧬</span> Substances
+                        </h2>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="inline-block w-3 h-3 bg-sfppy-green rounded-full mr-1"></span> Valid
+                            <span class="inline-block w-3 h-3 bg-sfppy-red rounded-full mr-1 ml-3"></span> Error
+                        </div>
+                    </div>
+                    <div id="substanceList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Substance cards will be inserted here -->
+                    </div>
+                    <div id="emptyState" class="text-center py-12 text-gray-400 dark:text-gray-500 {{ 'hidden' if family.substances }}">
+                        <div class="text-5xl mb-4">🧪</div>
+                        <p>No substances yet. Add your first substance above.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+    </div>
+
+    <!-- Validation Modal -->
+    <div id="validationModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">🔍 Family Validation</h3>
+                <button onclick="closeValidationModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="validationModalContent" class="p-6 overflow-y-auto max-h-[60vh]">
+                <!-- Validation results -->
+            </div>
+            <div class="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                <button onclick="closeValidationModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-white rounded-lg">
+                    Close
+                </button>
+                <button onclick="loadValidatedFamily()" id="loadValidatedBtn" class="hidden px-4 py-2 bg-sfppy-green text-white rounded-lg">
+                    Load Family
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentFamily = {
+            name: '{{ family.name }}',
+            description: '{{ family.description }}',
+            substances: []
+        };
+        let previewSubstance = null;
+        let distributionChart = null;
+        let pendingValidation = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFamily();
+            initChart();
+            loadWorkingFolder();
+            // Apply saved dark mode preference (default: dark)
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode === 'false') {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('darkModeToggle').checked = false;
+            }
+        });
+
+        // Dark mode toggle
+        function toggleDarkMode() {
+            const isDark = document.getElementById('darkModeToggle').checked;
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+            }
+            // Update chart colors
+            updateChartColors();
+        }
+
+        function updateChartColors() {
+            if (!distributionChart) return;
+            const isDark = document.documentElement.classList.contains('dark');
+            distributionChart.options.scales.x.grid.color = isDark ? '#374151' : '#e5e7eb';
+            distributionChart.options.scales.y.grid.color = isDark ? '#374151' : '#e5e7eb';
+            distributionChart.options.scales.x.ticks.color = isDark ? '#9ca3af' : '#6b7280';
+            distributionChart.options.scales.y.ticks.color = isDark ? '#9ca3af' : '#6b7280';
+            distributionChart.options.plugins.legend.labels.color = isDark ? '#d1d5db' : '#374151';
+            distributionChart.update();
+        }
+
+        // Load family from server
+        async function loadFamily() {
+            const res = await fetch('/api/family');
+            const data = await res.json();
+            currentFamily = data;
+            document.getElementById('familyName').value = data.name;
+            document.getElementById('familyDescription').value = data.description;
+            renderSubstances();
+            updateDistributionChart();
+            document.getElementById('substanceCount').textContent = data.substances.length;
+        }
+
+        // Initialize Chart.js
+        function initChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            const isDark = document.documentElement.classList.contains('dark');
+
+            distributionChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: [] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: isDark ? '#d1d5db' : '#374151' }
+                        },
+                        tooltip: { enabled: true }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: 'C0 (mg/kg polymer)', color: isDark ? '#9ca3af' : '#6b7280' },
+                            grid: { color: isDark ? '#374151' : '#e5e7eb' },
+                            ticks: { color: isDark ? '#9ca3af' : '#6b7280' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Probability Density', color: isDark ? '#9ca3af' : '#6b7280' },
+                            beginAtZero: true,
+                            grid: { color: isDark ? '#374151' : '#e5e7eb' },
+                            ticks: { color: isDark ? '#9ca3af' : '#6b7280' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update distribution chart
+        async function updateDistributionChart() {
+            const res = await fetch('/api/all-distributions');
+            const data = await res.json();
+
+            // SFPPy color palette
+            const colors = [
+                '#22c55e', '#f97316', '#ef4444', '#3b82f6',
+                '#a855f7', '#ec4899', '#14b8a6', '#eab308'
+            ];
+
+            distributionChart.data.datasets = data.distributions.map((d, i) => ({
+                label: `${d.name} (${d.params.likely} mg/kg)`,
+                data: d.distribution.x.map((x, j) => ({ x, y: d.distribution.y[j] })),
+                borderColor: colors[i % colors.length],
+                backgroundColor: colors[i % colors.length] + '20',
+                fill: true,
+                tension: 0.1,
+                pointRadius: 0,
+                borderWidth: 2
+            }));
+
+            distributionChart.update();
+        }
+
+        // Render substance cards
+        function renderSubstances() {
+            const list = document.getElementById('substanceList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (currentFamily.substances.length === 0) {
+                list.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            list.innerHTML = currentFamily.substances.map((s, i) => `
+                <div class="substance-card rounded-lg border p-4 ${s.validated ? 'valid-card bg-white dark:bg-gray-700' : 'error-card bg-red-50 dark:bg-red-900/20'} border-gray-200 dark:border-gray-600">
+                    <div class="flex gap-3">
+                        ${s.image_base64 ? `
+                            <img src="data:image/png;base64,${s.image_base64}" class="molecule-img">
+                        ` : `
+                            <div class="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center text-gray-400">
+                                <span class="text-2xl">🧪</span>
+                            </div>
+                        `}
+                        <div class="flex-1 min-w-0">
+                            <div class="font-semibold text-gray-800 dark:text-white truncate">${s.name}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+                                ${s.formula ? `<div>📐 ${s.formula}</div>` : ''}
+                                <div>⚖️ ${s.mass_g_mol.toFixed(2)} g/mol</div>
+                                ${s.cas ? `<div>🏷️ ${s.cas}</div>` : ''}
+                                ${s.logP !== null ? `<div>💧 logP = ${s.logP.toFixed(2)}</div>` : ''}
+                            </div>
+                            ${s.error ? `<div class="text-xs text-sfppy-red mt-1">⚠️ ${s.error}</div>` : ''}
+                        </div>
+                        <button onclick="removeSubstance(${i})" class="text-gray-400 hover:text-sfppy-red transition self-start">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Min:</span>
+                                <input type="number" value="${s.C0_min}" step="0.1" min="0"
+                                       onchange="updateSubstance(${i}, 'C0_min', this.value)"
+                                       class="w-full px-1 py-0.5 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            </div>
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Likely:</span>
+                                <input type="number" value="${s.C0_likely}" step="0.1" min="0"
+                                       onchange="updateSubstance(${i}, 'C0_likely', this.value)"
+                                       class="w-full px-1 py-0.5 border border-sfppy-orange rounded text-center font-medium bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            </div>
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Max:</span>
+                                <input type="number" value="${s.C0_max}" step="0.1" min="0"
+                                       onchange="updateSubstance(${i}, 'C0_max', this.value)"
+                                       class="w-full px-1 py-0.5 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            </div>
+                        </div>
+                        ${s.notes ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">📝 ${s.notes}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Lookup substance
+        async function lookupSubstance() {
+            const identifier = document.getElementById('substanceId').value.trim();
+            if (!identifier) return;
+
+            const card = document.getElementById('previewCard');
+            card.classList.remove('hidden');
+            card.classList.add('animate-pulse');
+
+            const formData = new FormData();
+            formData.append('identifier', identifier);
+
+            const res = await fetch('/api/lookup', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            card.classList.remove('animate-pulse');
+            previewSubstance = data.substance;
+
+            document.getElementById('previewName').textContent = data.substance.name;
+            document.getElementById('previewFormula').textContent = data.substance.formula ? `📐 ${data.substance.formula}` : '';
+            document.getElementById('previewMass').textContent = `⚖️ ${data.substance.mass_g_mol.toFixed(2)} g/mol`;
+            document.getElementById('previewCAS').textContent = data.substance.cas ? `🏷️ ${data.substance.cas}` : '';
+            document.getElementById('previewLogP').textContent = data.substance.logP !== null ? `💧 logP = ${data.substance.logP.toFixed(2)}` : '';
+
+            const imgDiv = document.getElementById('previewImage');
+            if (data.substance.image_base64) {
+                imgDiv.innerHTML = `<img src="data:image/png;base64,${data.substance.image_base64}" class="molecule-img">`;
+            } else {
+                imgDiv.innerHTML = '<div class="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center"><span class="text-2xl">🧪</span></div>';
+            }
+
+            const errorDiv = document.getElementById('previewError');
+            if (data.substance.error) {
+                errorDiv.textContent = `⚠️ ${data.substance.error}`;
+                errorDiv.classList.remove('hidden');
+            } else {
+                errorDiv.classList.add('hidden');
+            }
+        }
+
+        // Add substance
+        async function addSubstance(event) {
+            event.preventDefault();
+
+            const identifier = document.getElementById('substanceId').value.trim();
+            if (!identifier) {
+                showToast('Please enter a substance name or CAS', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('identifier', identifier);
+            formData.append('c0_min', document.getElementById('c0Min').value);
+            formData.append('c0_likely', document.getElementById('c0Likely').value);
+            formData.append('c0_max', document.getElementById('c0Max').value);
+            formData.append('notes', document.getElementById('notes').value);
+
+            const res = await fetch('/api/add-substance', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast(`✅ Added ${data.substance.name}`, 'success');
+                document.getElementById('substanceId').value = '';
+                document.getElementById('notes').value = '';
+                document.getElementById('previewCard').classList.add('hidden');
+                loadFamily();
+            } else {
+                showToast(`⚠️ ${data.error}`, 'error');
+            }
+        }
+
+        // Remove substance
+        async function removeSubstance(index) {
+            if (!confirm('Remove this substance?')) return;
+
+            const formData = new FormData();
+            formData.append('index', index);
+
+            const res = await fetch('/api/remove-substance', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast(`🗑️ Removed ${data.removed}`, 'success');
+                loadFamily();
+            }
+        }
+
+        // Update substance
+        async function updateSubstance(index, field, value) {
+            const s = currentFamily.substances[index];
+            s[field] = parseFloat(value);
+
+            const formData = new FormData();
+            formData.append('index', index);
+            formData.append('c0_min', s.C0_min);
+            formData.append('c0_likely', s.C0_likely);
+            formData.append('c0_max', s.C0_max);
+            formData.append('notes', s.notes || '');
+
+            await fetch('/api/update-substance', { method: 'POST', body: formData });
+            updateDistributionChart();
+        }
+
+        // Update family
+        async function updateFamily() {
+            const formData = new FormData();
+            formData.append('name', document.getElementById('familyName').value);
+            formData.append('description', document.getElementById('familyDescription').value);
+            await fetch('/api/update-family', { method: 'POST', body: formData });
+        }
+
+        // New family
+        async function newFamily() {
+            if (currentFamily.substances.length > 0 && !confirm('Create new empty family? Current data will be lost.')) return;
+            await fetch('/api/new-family', { method: 'POST' });
+            document.getElementById('familyName').value = 'new_family';
+            document.getElementById('familyDescription').value = '';
+            loadFamily();
+            showToast('✨ New family created', 'success');
+        }
+
+        // Export YAML
+        async function exportYaml() {
+            window.location.href = '/download-yaml';
+            showToast('💾 Downloading YAML...', 'success');
+        }
+
+        // Import YAML
+        async function importYaml(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const res = await fetch('/api/import-yaml', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                document.getElementById('familyName').value = data.family_name;
+                loadFamily();
+
+                if (data.errors.length > 0) {
+                    showToast(`⚠️ Imported with ${data.errors.length} errors`, 'warning');
+                } else {
+                    showToast(`✅ Imported ${data.substances_count} substances`, 'success');
+                }
+            } else {
+                showToast(`❌ ${data.error}`, 'error');
+            }
+
+            input.value = '';
+        }
+
+        // Validate all
+        async function validateAll() {
+            const res = await fetch('/api/validate-all');
+            const data = await res.json();
+
+            const resultsDiv = document.getElementById('validationResults');
+            const fixed = data.results.filter(r => r.status === 'fixed').length;
+            const failed = data.results.filter(r => r.status === 'failed').length;
+            const ok = data.results.filter(r => r.status === 'ok').length;
+
+            resultsDiv.innerHTML = `
+                <div class="space-y-1">
+                    <div class="text-sfppy-green">✅ ${ok} valid</div>
+                    ${fixed > 0 ? `<div class="text-blue-500">🔧 ${fixed} fixed</div>` : ''}
+                    ${failed > 0 ? `<div class="text-sfppy-red">❌ ${failed} failed</div>` : ''}
+                </div>
+            `;
+
+            loadFamily();
+        }
+
+        // =====================================================
+        // Working Folder Functions
+        // =====================================================
+
+        function toggleFolderPanel() {
+            const panel = document.getElementById('folderPanel');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                discoverFamilies();
+            }
+        }
+
+        async function loadWorkingFolder() {
+            const res = await fetch('/api/working-folder');
+            const data = await res.json();
+            document.getElementById('workingFolderPath').value = data.path;
+        }
+
+        async function setWorkingFolder() {
+            const path = document.getElementById('workingFolderPath').value;
+            const formData = new FormData();
+            formData.append('path', path);
+
+            const res = await fetch('/api/set-working-folder', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast('📁 Working folder updated', 'success');
+                discoverFamilies();
+            } else {
+                showToast(`❌ ${data.error}`, 'error');
+            }
+        }
+
+        async function discoverFamilies() {
+            const res = await fetch('/api/discover-families');
+            const data = await res.json();
+
+            const container = document.getElementById('discoveredFamilies');
+
+            if (!data.success) {
+                container.innerHTML = `<div class="text-sfppy-red">❌ ${data.error}</div>`;
+                return;
+            }
+
+            if (data.families.length === 0) {
+                container.innerHTML = `<div class="text-gray-500 dark:text-gray-400">No family files found in this folder.</div>`;
+                return;
+            }
+
+            container.innerHTML = data.families.map(f => `
+                <div class="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600 ${f.error ? 'border-sfppy-red' : ''}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium text-gray-800 dark:text-white">${f.name || f.filename}</span>
+                        <span class="text-xs px-2 py-1 rounded ${f.error ? 'bg-sfppy-red/20 text-sfppy-red' : 'bg-sfppy-green/20 text-sfppy-green'}">
+                            ${f.error ? '⚠️ Error' : `${f.substance_count} substances`}
+                        </span>
+                    </div>
+                    ${f.description ? `<p class="text-xs text-gray-500 dark:text-gray-400 mb-2">${f.description}</p>` : ''}
+                    ${f.error ? `<p class="text-xs text-sfppy-red mb-2">${f.error}</p>` : ''}
+                    <div class="flex gap-2">
+                        <button onclick="loadFamilyFromFolder('${f.filename}')" class="text-xs px-3 py-1 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded transition">
+                            📂 Load
+                        </button>
+                        <button onclick="validateFamilyFile('${f.filename}')" class="text-xs px-3 py-1 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded transition">
+                            🔍 Validate
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadFamilyFromFolder(filename) {
+            const formData = new FormData();
+            formData.append('filename', filename);
+
+            const res = await fetch('/api/load-family-from-folder', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                loadFamily();
+                document.getElementById('folderPanel').classList.add('hidden');
+
+                if (data.errors.length > 0) {
+                    showToast(`⚠️ Loaded with ${data.errors.length} validation errors`, 'warning');
+                } else {
+                    showToast(`✅ Loaded ${data.family_name}`, 'success');
+                }
+            } else {
+                showToast(`❌ ${data.error}`, 'error');
+            }
+        }
+
+        async function validateFamilyFile(filename) {
+            pendingValidation = filename;
+
+            const res = await fetch(`/api/validate-family-file?filename=${encodeURIComponent(filename)}`);
+            const data = await res.json();
+
+            const modal = document.getElementById('validationModal');
+            const content = document.getElementById('validationModalContent');
+            const loadBtn = document.getElementById('loadValidatedBtn');
+
+            if (!data.success) {
+                content.innerHTML = `<div class="text-sfppy-red">❌ ${data.error}</div>`;
+                loadBtn.classList.add('hidden');
+            } else {
+                content.innerHTML = `
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-gray-800 dark:text-white">${data.family_name}</h4>
+                        <div class="flex gap-4 text-sm mt-2">
+                            <span class="text-sfppy-green">✅ ${data.valid} valid</span>
+                            <span class="text-sfppy-red">❌ ${data.errors} errors</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        ${data.substances.map(s => `
+                            <div class="flex items-center gap-3 p-2 rounded ${s.status === 'valid' ? 'bg-sfppy-green/10' : 'bg-sfppy-red/10'}">
+                                <span class="${s.status === 'valid' ? 'text-sfppy-green' : 'text-sfppy-red'}">
+                                    ${s.status === 'valid' ? '✅' : '❌'}
+                                </span>
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-800 dark:text-white">${s.identifier}</span>
+                                    ${s.status === 'valid' ? `
+                                        <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                                            ${s.name} • ${s.mass_g_mol.toFixed(2)} g/mol
+                                        </span>
+                                    ` : `
+                                        <span class="text-xs text-sfppy-red ml-2">${s.error}</span>
+                                    `}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                loadBtn.classList.remove('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeValidationModal() {
+            const modal = document.getElementById('validationModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function loadValidatedFamily() {
+            if (pendingValidation) {
+                await loadFamilyFromFolder(pendingValidation);
+                closeValidationModal();
+            }
+        }
+
+        async function saveToFolder() {
+            const formData = new FormData();
+            formData.append('filename', currentFamily.name);
+
+            const res = await fetch('/api/save-family-to-folder', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast(`💾 Saved to ${data.filename}`, 'success');
+                discoverFamilies();
+            } else {
+                showToast(`❌ ${data.error}`, 'error');
+            }
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const colors = {
+                success: 'bg-sfppy-green text-white',
+                error: 'bg-sfppy-red text-white',
+                warning: 'bg-sfppy-orange text-white',
+                info: 'bg-blue-500 text-white'
+            };
+
+            toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 z-50 ${colors[type]}`;
+            toast.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

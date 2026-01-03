@@ -1,0 +1,102 @@
+# SFPPy Survey Simulator Configuration
+# =====================================
+# This file configures default settings for batch simulations.
+# Edit values below or load custom configuration via the UI.
+
+# Parallel Processing
+parallel:
+  # Number of workers (null = auto: 50% of CPUs)
+  workers: null
+  # Maximum workers allowed
+  max_workers: 20
+
+# Monte Carlo Sampling
+sampling:
+  # Default number of samples
+  n_samples: 1000
+  # Available presets
+  presets:
+    quick: 100
+    fast: 500
+    standard: 1000
+    precise: 5000
+    high_precision: 10000
+
+# Physics Defaults
+physics:
+  # Default polymer if not specified
+  default_polymer: LDPE
+  # Default thickness (µm)
+  default_thickness_um: 100
+  # Default temperature (°C)
+  default_temperature_C: 25
+  # Default contact time (days)
+  default_contact_days: 10
+  # Default food volume (mL)
+  default_food_volume_ml: 1000
+  # Default food density (kg/L)
+  default_food_density: 1.0
+  # Default mass transfer coefficient (m/s)
+  default_h_m_s: 1.0e-7
+  # Default surface area (m²)
+  default_surface_area_m2: 0.06
+
+# Solver Settings
+solver:
+  # Number of PDF bins
+  pdf_bins: 250
+  # Fourier number grid
+  fo_grid:
+    n_fo: 200
+    fo_max_factor: 1.5
+    fo_min_floor: 1.0e-15
+
+# Priors Configuration
+priors:
+  # Grid resolution for discretization
+  grid:
+    n_low: 15
+    n_high: 15
+  # Time prior mode (multiplier of contact_days)
+  time_mode_factor: 1.0
+  time_max_factor: 2.0
+
+# Output Settings
+output:
+  # Generate plots
+  generate_plots: true
+  # Plot formats
+  plot_formats:
+    - png
+    - svg
+  # Plot DPI
+  plot_dpi: 150
+  # Quantiles to report
+  quantiles:
+    - 0.50
+    - 0.75
+    - 0.90
+    - 0.95
+    - 0.99
+
+# Available Polymers
+polymers:
+  - LDPE
+  - HDPE
+  - PP
+  - PET
+  - PS
+  - PVC
+  - PA
+  - EVOH
+  - generic
+
+# Food Simulants
+food_simulants:
+  - ethanol10
+  - ethanol20
+  - ethanol50
+  - ethanol95
+  - oliveoil
+  - water
+  - acetic3

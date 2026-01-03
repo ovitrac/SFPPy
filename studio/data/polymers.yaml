@@ -1,0 +1,261 @@
+# SFPPy Studio - Polymer Database
+# Reference data for food contact polymer materials
+#
+# Sources:
+# - EU 10/2011 (Plastics Regulation)
+# - Piringer & Baner, Plastic Packaging, 2008
+# - Brandsch et al., Food Additives & Contaminants, 2002
+
+polymers:
+  # Polyolefins
+  - code: LDPE
+    name: Low Density Polyethylene
+    family: polyolefin
+    Tg: -120  # Glass transition temperature (°C)
+    Tm: 115   # Melting temperature (°C)
+    density: 920  # kg/m³
+    icon: "♳"
+    description: "Flexible, low crystallinity PE. High diffusivity."
+    piringer_Ap: 11.5
+    piringer_tau: 0
+    typical_uses:
+      - films
+      - liners
+      - flexible packaging
+
+  - code: HDPE
+    name: High Density Polyethylene
+    family: polyolefin
+    Tg: -120
+    Tm: 135
+    density: 960
+    icon: "♴"
+    description: "Rigid, high crystallinity PE. Lower diffusivity than LDPE."
+    piringer_Ap: 11.5
+    piringer_tau: 0
+    typical_uses:
+      - bottles
+      - containers
+      - caps
+
+  - code: PP
+    name: Polypropylene
+    family: polyolefin
+    Tg: -10
+    Tm: 165
+    density: 905
+    icon: "♵"
+    description: "Semi-crystalline, good chemical resistance."
+    piringer_Ap: 13.1
+    piringer_tau: 0
+    typical_uses:
+      - containers
+      - closures
+      - films
+
+  # Polyesters
+  - code: PET
+    name: Polyethylene Terephthalate
+    family: polyester
+    Tg: 75
+    Tm: 255
+    density: 1380
+    icon: "♳"
+    description: "Semi-crystalline polyester. Good barrier."
+    piringer_Ap: 6.4
+    piringer_tau: 1577
+    is_glassy_below_Tg: true
+    typical_uses:
+      - bottles
+      - trays
+      - films
+
+  - code: gPET
+    name: Glassy PET
+    family: polyester
+    Tg: 75
+    Tm: 255
+    density: 1380
+    icon: "♳"
+    description: "PET below Tg - acts as functional barrier."
+    piringer_Ap: 3.0
+    piringer_tau: 1577
+    is_glassy: true
+    functional_barrier: true
+    typical_uses:
+      - barrier layers
+      - virgin PET layer in rPET structures
+
+  - code: wPET
+    name: Wet/Plasticized PET
+    family: polyester
+    Tg: 40
+    Tm: 255
+    density: 1380
+    icon: "♳"
+    description: "PET with water/ethanol plasticization effect."
+    piringer_Ap: 6.4
+    piringer_tau: 1000
+    plasticized: true
+    typical_uses:
+      - aqueous food contact
+      - ethanol contact
+
+  # Styrenics
+  - code: PS
+    name: Polystyrene
+    family: styrenic
+    Tg: 100
+    Tm: 240
+    density: 1050
+    icon: "♶"
+    description: "Amorphous, glassy polymer."
+    piringer_Ap: 0.0
+    piringer_tau: 0
+    typical_uses:
+      - cups
+      - trays
+      - foam packaging
+
+  - code: HIPS
+    name: High Impact Polystyrene
+    family: styrenic
+    Tg: 100
+    Tm: 240
+    density: 1040
+    icon: "♶"
+    description: "PS modified with rubber for impact resistance."
+    piringer_Ap: 0.0
+    piringer_tau: 0
+    typical_uses:
+      - dairy containers
+      - lids
+      - trays
+
+  # Polyamides
+  - code: PA6
+    name: Polyamide 6 (Nylon 6)
+    family: polyamide
+    Tg: 50
+    Tm: 220
+    density: 1130
+    icon: "♷"
+    description: "Semi-crystalline polyamide. Good barrier when dry."
+    piringer_Ap: 2.0
+    piringer_tau: 0
+    moisture_sensitive: true
+    typical_uses:
+      - multilayer films
+      - thermoformed trays
+
+  - code: PA66
+    name: Polyamide 66 (Nylon 66)
+    family: polyamide
+    Tg: 50
+    Tm: 260
+    density: 1140
+    icon: "♷"
+    description: "Higher melting point than PA6."
+    piringer_Ap: 2.0
+    piringer_tau: 0
+    moisture_sensitive: true
+    typical_uses:
+      - high-temperature applications
+      - retort packaging
+
+  # Barrier polymers
+  - code: EVOH
+    name: Ethylene Vinyl Alcohol
+    family: barrier
+    Tg: 55
+    Tm: 160
+    density: 1140
+    icon: "♹"
+    description: "Excellent oxygen barrier. Moisture sensitive."
+    piringer_Ap: 0.0
+    piringer_tau: 0
+    oxygen_barrier: excellent
+    moisture_sensitive: true
+    typical_uses:
+      - oxygen barrier layer
+      - multilayer films
+
+  - code: PVDC
+    name: Polyvinylidene Chloride
+    family: barrier
+    Tg: -17
+    Tm: 175
+    density: 1700
+    icon: "♸"
+    description: "Good oxygen and moisture barrier."
+    piringer_Ap: 0.0
+    piringer_tau: 0
+    oxygen_barrier: good
+    moisture_barrier: good
+    typical_uses:
+      - barrier coatings
+      - cling films
+
+  # Vinyl polymers
+  - code: PVC
+    name: Polyvinyl Chloride
+    family: vinyl
+    Tg: 80
+    Tm: null  # Amorphous
+    density: 1400
+    icon: "♲"
+    description: "Rigid when unplasticized. Requires additives."
+    piringer_Ap: 0.0
+    piringer_tau: 0
+    requires_plasticizer: true
+    typical_uses:
+      - rigid containers
+      - blister packs
+
+  - code: pPVC
+    name: Plasticized PVC
+    family: vinyl
+    Tg: -40  # Depends on plasticizer level
+    Tm: null
+    density: 1300
+    icon: "♲"
+    description: "Flexible PVC with plasticizer (20-50% w/w)."
+    piringer_Ap: 14.0
+    piringer_tau: 0
+    plasticized: true
+    typical_uses:
+      - cling films
+      - flexible packaging
+      - seals
+
+# Polymer families for grouping
+families:
+  polyolefin:
+    name: Polyolefins
+    description: "PE and PP family - high diffusivity, good chemical resistance"
+    members: [LDPE, HDPE, PP]
+
+  polyester:
+    name: Polyesters
+    description: "PET family - good barrier, can act as functional barrier"
+    members: [PET, gPET, wPET]
+
+  styrenic:
+    name: Styrenics
+    description: "PS family - amorphous, easy processing"
+    members: [PS, HIPS]
+
+  polyamide:
+    name: Polyamides
+    description: "Nylon family - good mechanical properties, moisture sensitive"
+    members: [PA6, PA66]
+
+  barrier:
+    name: Barrier Polymers
+    description: "High barrier to oxygen and/or moisture"
+    members: [EVOH, PVDC]
+
+  vinyl:
+    name: Vinyl Polymers
+    description: "PVC family - versatile with additives"
+    members: [PVC, pPVC]

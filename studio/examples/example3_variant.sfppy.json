@@ -1,0 +1,120 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "name": "Example 3 Variant: Reduced Barrier Thickness",
+    "description": "Variant of Example 3 with reduced PET barrier thickness (10 um instead of 20 um) to evaluate barrier efficiency.",
+    "author": "INRAE/olivier.vitrac@agroparistech.fr",
+    "source_script": "example3_shortvariant.py"
+  },
+  "geometry": {
+    "shape": "box_container",
+    "dimensions": {
+      "length": {"value": 19, "unit": "cm"},
+      "width": {"value": 10, "unit": "cm"},
+      "height": {"value": 8, "unit": "cm"}
+    }
+  },
+  "substances": [
+    {
+      "id": "limonene",
+      "source": "pubchem",
+      "lookup_name": "limonene",
+      "cid": 22311,
+      "properties": {
+        "name": "Limonene",
+        "cas": ["7705-14-8", "138-86-3"],
+        "mw": 136.23,
+        "logP": 3.4,
+        "formula": "C10H16"
+      },
+      "color": "#22C55E"
+    }
+  ],
+  "layers": [
+    {
+      "index": 1,
+      "polymer": "wPET",
+      "thickness": {"value": 10, "unit": "um"},
+      "name": "Thin PET barrier (food side)",
+      "substances": [
+        {
+          "substance_id": "limonene",
+          "C0": {"value": 0, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "polymer": "PP",
+      "thickness": {"value": 500, "unit": "um"},
+      "name": "PP core (recycled)",
+      "substances": [
+        {
+          "substance_id": "limonene",
+          "C0": {"value": 200, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "polymer": "gPET",
+      "thickness": {"value": 10, "unit": "um"},
+      "name": "Thin PET barrier (outer)",
+      "substances": [
+        {
+          "substance_id": "limonene",
+          "C0": {"value": 0, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    }
+  ],
+  "food": {
+    "category": "realfood",
+    "texture": "liquid",
+    "affinity": "fat",
+    "name": "Fatty liquid food"
+  },
+  "contact_steps": [
+    {
+      "index": 1,
+      "name": "Setoff storage",
+      "type": "setoff",
+      "temperature": {"value": 20, "unit": "degC"},
+      "duration": {"value": 4, "unit": "months"},
+      "with_food_contact": false
+    },
+    {
+      "index": 2,
+      "name": "Hot filling",
+      "type": "hotfilling",
+      "temperature": {"value": 80, "unit": "degC"},
+      "duration": {"value": 20, "unit": "minutes"},
+      "with_food_contact": true
+    },
+    {
+      "index": 3,
+      "name": "Long-term storage",
+      "type": "storage",
+      "temperature": {"value": 30, "unit": "degC"},
+      "duration": {"value": 6, "unit": "months"},
+      "with_food_contact": true
+    }
+  ],
+  "simulation_config": {
+    "solver": "senspatankar",
+    "time_factor": 2.0,
+    "n_time_points": 1000,
+    "n_space_points": 200,
+    "output_units": {
+      "time": "days",
+      "length": "um",
+      "concentration": "mg/kg"
+    }
+  }
+}

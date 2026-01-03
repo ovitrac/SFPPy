@@ -1,0 +1,3703 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ SFPPy Survey Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sfppy: {
+                            green: '#22c55e',
+                            greenDark: '#16a34a',
+                            orange: '#f97316',
+                            orangeDark: '#ea580c',
+                            red: '#ef4444',
+                            redDark: '#dc2626',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .toggle-checkbox:checked { right: 0; border-color: #22c55e; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #22c55e; }
+        .toggle-checkbox { right: 1.5rem; }
+        .chart-container { position: relative; height: 250px; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
+        .progress-bar { transition: width 0.3s ease; }
+        .modal { transition: opacity 0.2s ease; }
+        .concentration-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #22c55e, #f97316, #ef4444);
+            border-radius: 4px;
+            position: relative;
+        }
+        .concentration-marker {
+            position: absolute;
+            width: 4px;
+            height: 16px;
+            background: white;
+            border: 2px solid #374151;
+            border-radius: 2px;
+        }
+        /* Fullscreen modal styles */
+        .fullscreen-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+        }
+        .fullscreen-modal.active { display: flex; }
+        .fullscreen-modal .chart-container { height: calc(100vh - 120px) !important; }
+        .fullscreen-modal canvas { max-height: 100% !important; }
+        /* Export dropdown styles */
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .export-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            min-width: 140px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            overflow: hidden;
+        }
+        .dark .export-dropdown-content { background: #374151; }
+        .export-dropdown:hover .export-dropdown-content,
+        .export-dropdown:focus-within .export-dropdown-content { display: block; }
+        .export-dropdown-content button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            text-align: left;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .export-dropdown-content button:hover { background: #f3f4f6; }
+        .dark .export-dropdown-content button:hover { background: #4b5563; }
+        /* Result card checkbox */
+        .result-checkbox { width: 18px; height: 18px; cursor: pointer; }
+        .result-checkbox:checked { accent-color: #22c55e; }
+        /* Select all checkbox row */
+        .select-all-row { border-bottom: 2px solid #e5e7eb; }
+        .dark .select-all-row { border-bottom: 2px solid #4b5563; }
+        .family-card { transition: all 0.2s ease; }
+        .family-card:hover { transform: translateY(-2px); }
+        .substance-row:hover { background-color: rgba(34, 197, 94, 0.1); }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-sfppy-green via-sfppy-orange to-sfppy-red text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl">🍽️</span>
+                    <div>
+                        <h1 class="text-2xl font-bold">SFPPy Survey Simulator</h1>
+                        <p class="text-white/80 text-sm flex items-center gap-1">
+                            <span class="cursor-pointer hover:text-white" onclick="renameBatch()" title="Click to rename batch">
+                                📋 Batch: <span id="currentBatchName" class="font-medium underline decoration-dotted">Untitled</span> ✏️
+                            </span>
+                            <span class="mx-2">|</span>
+                            <span id="batchItemCount">0 PF items</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Family Editor Link -->
+                    <a href="http://127.0.0.1:8000" target="_blank" class="px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-sm font-medium transition flex items-center gap-1"
+                       title="Open Family Editor to manage substance families and spreadsheets (port 8000)">
+                        <span>📝</span> Family Editor
+                    </a>
+                    <!-- Batch Actions -->
+                    <div class="flex gap-1">
+                        <button onclick="newBatch()" class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded text-xs font-medium transition"
+                                title="Create a new empty batch">New</button>
+                        <button onclick="showLoadBatchModal()" class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded text-xs font-medium transition"
+                                title="Load a saved batch">Load</button>
+                        <button onclick="saveBatch()" class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded text-xs font-medium transition"
+                                title="Save current batch to server">Save</button>
+                    </div>
+                    <!-- Mode Tabs -->
+                    <div class="flex bg-white/20 rounded-lg p-1">
+                        <button onclick="switchMode('pfitems')" id="tabPfitems" class="px-4 py-1 rounded-md text-sm font-medium transition bg-white text-gray-800"
+                                title="Define packaged food items: packaging, contact conditions, substances">
+                            📦 PF Items
+                        </button>
+                        <button onclick="switchMode('runner')" id="tabRunner" class="px-4 py-1 rounded-md text-sm font-medium transition text-white"
+                                title="Run migration simulations for all PF items in the batch">
+                            🚀 Run
+                        </button>
+                        <button onclick="switchMode('results')" id="tabResults" class="px-4 py-1 rounded-md text-sm font-medium transition text-white"
+                                title="View PDF/CDF results and statistics for each PF item">
+                            📊 Results
+                        </button>
+                        <button onclick="switchMode('settings')" id="tabSettings" class="px-4 py-1 rounded-md text-sm font-medium transition text-white"
+                                title="Configure simulation parameters and output settings">
+                            ⚙️ Settings
+                        </button>
+                    </div>
+                    <!-- Dark Mode Toggle -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm">☀️</span>
+                        <div class="relative inline-block w-12 align-middle select-none">
+                            <input type="checkbox" id="darkModeToggle" checked
+                                   class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300"
+                                   onchange="toggleDarkMode()"/>
+                            <label for="darkModeToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-400 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                        <span class="text-sm">🌙</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- ========== PF ITEMS MODE (Packaged Food Items) ========== -->
+        <section id="pfitemsMode">
+            <!-- Help Banner -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-4 text-sm">
+                <p class="text-blue-800 dark:text-blue-200 mb-1">
+                    <strong>📦 PF Items</strong> = Packaged Food Items. Each row represents one food packaging scenario
+                    (polymer + simulant + contact conditions + substances). Click a row to expand details, ✏️ to edit.
+                </p>
+                <p class="text-blue-700 dark:text-blue-300 text-xs">
+                    💡 <strong>Substances:</strong> Use pre-defined families (plasticizers, antioxidants, UV stabilizers) or enter CAS numbers manually.
+                    Format: <code class="bg-blue-100 dark:bg-blue-800 px-1 rounded">CAS:min-mode-max</code> where values are C₀ in mg/kg (triangular prior).
+                </p>
+            </div>
+
+            <!-- PF Items Toolbar -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex items-center justify-between flex-wrap gap-3">
+                    <div class="flex gap-2">
+                        <button onclick="addNewPFItem()" class="px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition text-sm font-medium"
+                                title="Add a new packaged food item to the batch">
+                            + Add PF Item
+                        </button>
+                        <button onclick="loadDemoPFItems()" class="px-4 py-2 bg-gradient-to-r from-sfppy-green via-sfppy-orange to-sfppy-red hover:opacity-90 text-white rounded-lg transition text-sm font-medium"
+                                title="Load example PF items (yogurt cup, olive oil bottle, water bottle)">
+                            🎬 Demo
+                        </button>
+                        <label class="px-4 py-2 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded-lg cursor-pointer transition text-sm font-medium"
+                               title="Import PF items from Excel spreadsheet (.xlsx or .ods)">
+                            📥 Import XLS
+                            <input type="file" accept=".xlsx,.ods" onchange="importPFItemsXLS(this)" class="hidden">
+                        </label>
+                        <label class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition text-sm font-medium"
+                               title="Import PF Jobs from JSON file (batch runner format)">
+                            📥 Import JSON
+                            <input type="file" accept=".json" onchange="importPFItemsJSON(this)" class="hidden">
+                        </label>
+                        <button onclick="exportPFItemsJSON()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition text-sm font-medium"
+                                title="Export all PF items to JSON (batch runner format)">
+                            📤 Export JSON
+                        </button>
+                        <button onclick="exportPFItemsXLS()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition text-sm font-medium"
+                                title="Export all PF items to Excel spreadsheet">
+                            📤 Export XLS
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-gray-500 dark:text-gray-400" id="pfItemsStatus">0 PF items</span>
+                        <button onclick="clearAllPFItems()" class="px-3 py-1 bg-sfppy-red hover:bg-sfppy-redDark text-white rounded text-xs font-medium"
+                                title="Remove all PF items from the batch">
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PF Items Table (Collapsible) -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <!-- Visibility slider -->
+                <div class="flex items-center gap-3 px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                    <label class="text-xs text-gray-500 dark:text-gray-400">Show rows:</label>
+                    <input type="range" id="pfItemsVisibleSlider" min="5" max="50" value="10"
+                           class="w-24 h-1 bg-gray-300 rounded-lg cursor-pointer dark:bg-gray-600"
+                           oninput="updatePfItemsVisibility()">
+                    <span id="pfItemsVisibleValue" class="text-xs text-gray-500 dark:text-gray-400 w-8">10</span>
+                    <span id="pfItemsHiddenCount" class="text-xs text-gray-400 dark:text-gray-500 hidden">(+0 hidden)</span>
+                </div>
+                <div id="pfItemsTableContainer" class="max-h-96 overflow-y-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                            <tr>
+                                <th class="w-10 px-3 py-3" title="Click row to expand/collapse details"></th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase cursor-help"
+                                    title="Unique identifier for this packaged food item">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase cursor-help"
+                                    title="Polymer type of the food contact layer (e.g., PP, PET, LDPE)">Polymer</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase cursor-help"
+                                    title="Food simulant used for migration testing (EU regulation)">Simulant</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase cursor-help"
+                                    title="Most likely contact time (mode of triangular distribution)">Time (mode)</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase cursor-help"
+                                    title="Number of migrating substances defined for this item">Substances</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase cursor-help"
+                                    title="Validation status: ✅ = all parameters valid, ⚠️ = needs attention">Status</th>
+                                <th class="w-16 px-3 py-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="pfItemsTableBody" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr>
+                                <td colspan="8" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                                    <p class="text-xl mb-2">📦 No PF items yet</p>
+                                    <p>Click "+ Add PF Item" or "🎬 Demo" to get started</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== EDITOR MODE ========== -->
+        <section id="editorMode" class="hidden">
+            <!-- Editor Toolbar -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex items-center justify-between flex-wrap gap-3">
+                    <div class="flex gap-2">
+                        <button onclick="newSpreadsheet()" class="px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition text-sm font-medium">
+                            ✨ New
+                        </button>
+                        <button onclick="loadDemo()" class="px-4 py-2 bg-gradient-to-r from-sfppy-green via-sfppy-orange to-sfppy-red hover:opacity-90 text-white rounded-lg transition text-sm font-medium">
+                            🎬 Demo
+                        </button>
+                        <label class="px-4 py-2 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded-lg cursor-pointer transition text-sm font-medium">
+                            📂 Import XLSX
+                            <input type="file" accept=".xlsx,.ods" onchange="importSpreadsheet(this)" class="hidden">
+                        </label>
+                        <button onclick="exportSpreadsheet()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition text-sm font-medium">
+                            💾 Export XLSX
+                        </button>
+                        <a href="/api/download-template" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition text-sm font-medium">
+                            📥 Template
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500 dark:text-gray-400" id="editorStatus">No data loaded</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Family Button -->
+            <div class="mb-4">
+                <button onclick="showAddFamilyModal()" class="px-6 py-3 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition font-bold flex items-center gap-2">
+                    <span class="text-xl">+</span> Add Family
+                </button>
+            </div>
+
+            <!-- Families Grid -->
+            <div id="familiesContainer" class="grid gap-4">
+                <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                    <p class="text-xl mb-2">📦 No families yet</p>
+                    <p>Click "Add Family" to create your first substance family</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== RUNNER MODE ========== -->
+        <section id="runnerMode" class="hidden">
+            <!-- Help Banner -->
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4 text-sm">
+                <p class="text-green-800 dark:text-green-200">
+                    <strong>🚀 Run</strong> executes migration simulations for all PF items in the current batch.
+                    Each item produces a PDF/CDF of expected migration levels.
+                    <span class="text-green-600 dark:text-green-400 cursor-help" title="Uses deterministic quadrature on triangular priors (not Monte Carlo). Results are fully reproducible.">
+                        [?]
+                    </span>
+                </p>
+            </div>
+
+            <!-- Batch Summary -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                    📋 Batch: <span id="runnerBatchName" class="text-sfppy-green">Untitled</span>
+                </h2>
+
+                <!-- PF Items to Run -->
+                <div id="runnerItemsList" class="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex justify-between items-center text-sm mb-2">
+                        <div class="flex gap-4">
+                            <span class="text-gray-600 dark:text-gray-300">PF Items: <span id="summaryPFItems" class="font-bold text-sfppy-green">0</span></span>
+                            <span class="text-gray-600 dark:text-gray-300">Total Substances: <span id="summarySubstances" class="font-bold text-sfppy-orange">0</span></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs text-gray-500 dark:text-gray-400">Show:</label>
+                            <input type="range" id="runnerItemsSlider" min="5" max="150" value="10"
+                                   class="w-24 h-1 bg-gray-300 rounded-lg cursor-pointer dark:bg-gray-600"
+                                   oninput="updateRunnerItemsDisplay()">
+                            <span id="runnerItemsSliderValue" class="text-xs text-gray-500 dark:text-gray-400 w-8">10</span>
+                        </div>
+                    </div>
+                    <div id="runnerItemsPreviewContainer" class="max-h-96 overflow-y-auto">
+                        <div id="runnerItemsPreview" class="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                            No PF items defined. Go to PF Items tab to add some.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Workers -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-help"
+                               title="Number of parallel processes for computing master curves">
+                            🖥️ Parallel Workers
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="range" id="workersSlider" min="1" max="{{ cpu_count }}" value="{{ default_workers }}"
+                                   class="flex-1" onchange="updateWorkersDisplay()">
+                            <span id="workersValue" class="w-12 text-center font-bold text-sfppy-green">{{ default_workers }}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {{ cpu_count }} CPUs available (50% = {{ default_workers }})
+                        </p>
+                    </div>
+
+                    <!-- Grid Resolution -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-help"
+                               title="Grid resolution for triangular prior discretization (higher = more precise but slower)">
+                            📐 Grid Resolution
+                        </label>
+                        <select id="samplesSelect" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                            <option value="100">15×15 (Quick test)</option>
+                            <option value="500">20×20 (Fast)</option>
+                            <option value="1000" selected>25×25 (Standard)</option>
+                            <option value="5000">30×30 (Precise)</option>
+                            <option value="10000">50×50 (High precision)</option>
+                        </select>
+                    </div>
+
+                    <!-- Run Button -->
+                    <div class="flex items-end">
+                        <button onclick="runBatchSimulation()" id="runButton"
+                                class="w-full px-6 py-3 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition font-bold text-lg"
+                                title="Run migration simulation for all PF items">
+                            🚀 Run All PF Items
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div id="progressSection" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hidden">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    ⏳ Progress
+                    <span id="statusBadge" class="ml-2 px-2 py-1 rounded text-xs font-medium"></span>
+                </h2>
+
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-1">
+                        <span><span id="completedCount">0</span> / <span id="totalCount">0</span> PF items</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full bg-gradient-to-r from-sfppy-green via-sfppy-orange to-sfppy-red progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-5 gap-4 text-center">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                        <div class="text-2xl font-bold text-sfppy-green" id="successCount">0</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Successful</div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                        <div class="text-2xl font-bold text-sfppy-red" id="failedCount">0</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Failed</div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                        <div class="text-2xl font-bold text-sfppy-orange" id="elapsedTime">0s</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Elapsed</div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                        <div class="text-2xl font-bold text-blue-500" id="etaTime">-</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">ETA</div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                        <div class="text-2xl font-bold text-gray-600 dark:text-gray-300" id="workersUsed">0</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Workers</div>
+                    </div>
+                </div>
+
+                <!-- Current Processing -->
+                <div id="currentProcessing" class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg hidden">
+                    <div class="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                        <span class="animate-pulse">🔄</span>
+                        <span>Processing:</span>
+                        <span id="currentScenarioName" class="font-mono font-medium">-</span>
+                    </div>
+                </div>
+
+                <!-- Pending Items Preview (collapsible) -->
+                <div class="mt-4">
+                    <button onclick="togglePendingPanel()" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                        <span id="pendingToggleIcon">▶</span>
+                        <span>⏳ Pending Items</span>
+                        <span id="pendingCount" class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded">0</span>
+                    </button>
+                    <div id="pendingPanel" class="mt-2 hidden">
+                        <div class="flex items-center gap-2 mb-2">
+                            <label class="text-xs text-gray-500 dark:text-gray-400">Show:</label>
+                            <input type="range" id="pendingItemsSlider" min="5" max="150" value="10"
+                                   class="w-24 h-1 bg-gray-200 rounded-lg cursor-pointer dark:bg-gray-600"
+                                   oninput="updatePendingDisplay()">
+                            <span id="pendingItemsSliderValue" class="text-xs text-gray-500 dark:text-gray-400 w-8">10</span>
+                        </div>
+                        <div id="pendingContent" class="bg-gray-100 dark:bg-gray-700 font-mono text-xs p-3 rounded-lg max-h-96 overflow-y-auto">
+                            <div class="text-gray-500">No pending items</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collapsible Log Panel -->
+                <div class="mt-4">
+                    <button onclick="toggleLogPanel()" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                        <span id="logToggleIcon">▶</span>
+                        <span>📋 Execution Log</span>
+                        <span id="logCount" class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded">0</span>
+                    </button>
+                    <div id="logPanel" class="mt-2 hidden">
+                        <div class="flex items-center gap-2 mb-2">
+                            <label class="text-xs text-gray-500 dark:text-gray-400">Lines:</label>
+                            <input type="range" id="logLinesSlider" min="5" max="50" value="10"
+                                   class="w-24 h-1 bg-gray-200 rounded-lg cursor-pointer dark:bg-gray-600"
+                                   oninput="updateLogDisplay()">
+                            <span id="logLinesValue" class="text-xs text-gray-500 dark:text-gray-400 w-6">10</span>
+                        </div>
+                        <div id="logContent" class="bg-gray-900 text-green-400 font-mono text-xs p-3 rounded-lg max-h-48 overflow-y-auto">
+                            <div class="text-gray-500">Waiting for simulation to start...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== RESULTS MODE ========== -->
+        <section id="resultsMode" class="hidden">
+            <!-- Help Banner -->
+            <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3 mb-4 text-sm">
+                <p class="text-purple-800 dark:text-purple-200">
+                    <strong>📊 Results</strong> shows migration PDF (probability density) and CDF (cumulative distribution) for each PF item.
+                    <span class="text-purple-600 dark:text-purple-400 cursor-help" title="PDF shows the probability distribution of migration levels. CDF shows the probability of not exceeding a given level (e.g., Q95 = 95% of cases below this value).">
+                        [?]
+                    </span>
+                </p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white">
+                        📊 Results: <span id="resultsBatchName" class="text-sfppy-green">Untitled</span>
+                    </h2>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <!-- Display Mode -->
+                        <div class="flex gap-1 border-r border-gray-300 dark:border-gray-600 pr-2">
+                            <button onclick="showAllPDF()" class="px-3 py-1.5 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded transition text-sm font-medium"
+                                    title="Show Probability Density Function - probability of each migration level">
+                                PDF
+                            </button>
+                            <button onclick="showAllCDF()" class="px-3 py-1.5 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded transition text-sm font-medium"
+                                    title="Show Cumulative Distribution Function - probability of NOT exceeding a level">
+                                CDF
+                            </button>
+                            <button onclick="showBoth()" class="px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white rounded transition text-sm font-medium"
+                                    title="Show both PDF and CDF on the same chart">
+                                Both
+                            </button>
+                        </div>
+                        <!-- Scale Toggle -->
+                        <div class="flex gap-1 border-r border-gray-300 dark:border-gray-600 pr-2">
+                            <button id="scaleLinearBtn" onclick="setXScale('linear')" class="px-3 py-1.5 bg-blue-600 text-white rounded transition text-sm font-medium"
+                                    title="Linear X scale">
+                                Linear
+                            </button>
+                            <button id="scaleLogBtn" onclick="setXScale('log')" class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white rounded transition text-sm font-medium"
+                                    title="Logarithmic X scale - useful for wide concentration ranges">
+                                Log
+                            </button>
+                        </div>
+                        <!-- PDF Smoothing -->
+                        <div class="flex items-center gap-2 border-r border-gray-300 dark:border-gray-600 pr-2">
+                            <label class="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300 cursor-pointer" title="Apply Gaussian kernel smoothing to identify the mode">
+                                <input type="checkbox" id="smoothingEnabled" onchange="toggleSmoothing()" class="rounded">
+                                <span>Smooth</span>
+                            </label>
+                            <input type="range" id="smoothingSlider" min="1" max="20" value="5"
+                                   class="w-20 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600 disabled:opacity-50"
+                                   oninput="updateSmoothing(this.value)" disabled
+                                   title="Smoothing bandwidth (kernel width)">
+                            <span id="smoothingValue" class="text-xs text-gray-500 dark:text-gray-400 w-6">5</span>
+                        </div>
+                        <!-- Zoom Controls -->
+                        <div class="flex gap-1 border-r border-gray-300 dark:border-gray-600 pr-2">
+                            <button onclick="resetAllZoom()" class="px-3 py-1.5 bg-gray-500 hover:bg-gray-600 text-white rounded transition text-sm font-medium"
+                                    title="Reset zoom on all charts (or double-click a chart)">
+                                🔄 Reset Zoom
+                            </button>
+                        </div>
+                        <!-- Bulk Export -->
+                        <div class="export-dropdown">
+                            <button class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded transition text-sm font-medium flex items-center gap-1"
+                                    title="Export selected results (use checkboxes to select)">
+                                📤 Export Selected <span class="text-xs">▼</span>
+                            </button>
+                            <div class="export-dropdown-content text-gray-700 dark:text-gray-200">
+                                <button onclick="bulkExport('png')" title="Export charts as PNG images (ZIP)">🖼️ PNG (ZIP)</button>
+                                <button onclick="bulkExport('svg')" title="Export charts as SVG vectors (ZIP)">📐 SVG (ZIP)</button>
+                                <button onclick="bulkExport('pdf')" title="Export charts as PDF documents (ZIP)">📄 PDF (ZIP)</button>
+                                <button onclick="bulkExport('csv')" title="Export data as CSV files (ZIP)">📊 CSV (ZIP)</button>
+                                <button onclick="bulkExport('json')" title="Export data as JSON files (ZIP)">📋 JSON (ZIP)</button>
+                                <button onclick="bulkExport('xlsx')" title="Export all data to Excel (one sheet per result)">📗 XLSX (multi-sheet)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    💡 <strong>Zoom:</strong> Scroll to zoom, drag to pan. Double-click to reset. <strong>Smooth:</strong> Enable to apply Gaussian kernel smoothing and identify the mode (▲). <strong>Export:</strong> Select results with checkboxes.
+                </p>
+
+                <!-- Results Table -->
+                <div class="mb-6">
+                    <!-- Visibility slider -->
+                    <div class="flex items-center gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-t-lg border border-gray-200 dark:border-gray-600">
+                        <label class="text-xs text-gray-500 dark:text-gray-400">Show rows:</label>
+                        <input type="range" id="resultsVisibleSlider" min="5" max="100" value="10"
+                               class="w-24 h-1 bg-gray-300 rounded-lg cursor-pointer dark:bg-gray-600"
+                               oninput="updateResultsVisibility()">
+                        <span id="resultsVisibleValue" class="text-xs text-gray-500 dark:text-gray-400 w-8">10</span>
+                        <span id="resultsHiddenCount" class="text-xs text-gray-400 dark:text-gray-500 hidden">(+0 hidden)</span>
+                    </div>
+                    <div id="resultsTableContainer" class="max-h-80 overflow-y-auto overflow-x-auto border-x border-b border-gray-200 dark:border-gray-600 rounded-b-lg">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gradient-to-r from-sfppy-green via-sfppy-orange to-sfppy-red text-white sticky top-0">
+                                <tr class="select-all-row">
+                                    <th class="px-2 py-2 w-10">
+                                        <input type="checkbox" id="selectAllResults" class="result-checkbox" onchange="toggleSelectAllResults(this)" title="Select/deselect all results">
+                                    </th>
+                                    <th class="px-4 py-2 text-left cursor-help" title="Packaged Food Item name">PF Item</th>
+                                    <th class="px-4 py-2 text-right cursor-help" title="Median migration (50th percentile) - half of cases below this value">Q50</th>
+                                    <th class="px-4 py-2 text-right cursor-help" title="95th percentile - 95% of cases below this value (typical regulatory threshold)">Q95</th>
+                                    <th class="px-4 py-2 text-right cursor-help" title="99th percentile - worst-case realistic scenario">Q99</th>
+                                    <th class="px-4 py-2 text-right cursor-help" title="Maximum observed migration level">Max</th>
+                                    <th class="px-4 py-2 text-center cursor-help" title="Computation status">Status</th>
+                                    <th class="px-2 py-2 w-10 cursor-help" title="View fullscreen">🔍</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTable" class="text-gray-600 dark:text-gray-300">
+                                <tr><td colspan="8" class="text-center py-8 text-gray-500">Run a simulation to see results</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Selected count indicator -->
+                <div id="selectedCountBar" class="hidden mb-4 p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-between">
+                    <span class="text-purple-800 dark:text-purple-200 font-medium">
+                        <span id="selectedCount">0</span> result(s) selected
+                    </span>
+                    <button onclick="clearResultSelection()" class="text-purple-600 dark:text-purple-400 hover:underline text-sm">Clear selection</button>
+                </div>
+
+                <!-- Charts -->
+                <div id="chartsContainer" class="grid md:grid-cols-2 gap-6"></div>
+            </div>
+        </section>
+
+        <!-- ========== SETTINGS MODE ========== -->
+        <section id="settingsMode" class="hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white">⚙️ Configuration</h2>
+                    <div class="flex gap-2">
+                        <button onclick="resetConfig()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition text-sm font-medium">
+                            🔄 Reset to Defaults
+                        </button>
+                        <button onclick="saveConfig()" class="px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition text-sm font-medium">
+                            💾 Save Configuration
+                        </button>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    Edit the YAML configuration below to customize batch simulation settings.
+                </p>
+
+                <!-- YAML Editor -->
+                <div class="relative">
+                    <textarea id="configEditor"
+                              class="w-full h-96 font-mono text-sm p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+                              spellcheck="false"
+                              placeholder="Loading configuration..."></textarea>
+                    <div id="configStatus" class="absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium hidden"></div>
+                </div>
+
+                <!-- Quick Settings -->
+                <div class="mt-6 grid md:grid-cols-3 gap-6">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <h3 class="font-bold text-gray-800 dark:text-white mb-3">🖥️ Parallel Processing</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Default workers:</span>
+                                <span id="cfgWorkers" class="font-mono text-sfppy-green">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Max workers:</span>
+                                <span id="cfgMaxWorkers" class="font-mono">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <h3 class="font-bold text-gray-800 dark:text-white mb-3">📐 Probability Discretization</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Grid points:</span>
+                                <span id="cfgSamples" class="font-mono text-sfppy-orange">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">PDF bins:</span>
+                                <span id="cfgPdfBins" class="font-mono">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <h3 class="font-bold text-gray-800 dark:text-white mb-3">📊 Output</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Plot formats:</span>
+                                <span id="cfgFormats" class="font-mono">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Plot DPI:</span>
+                                <span id="cfgDpi" class="font-mono">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== MODALS ========== -->
+
+    <!-- Add/Edit Family Modal -->
+    <div id="familyModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <h3 id="familyModalTitle" class="text-xl font-bold text-gray-800 dark:text-white mb-4">Add Family</h3>
+
+                <form id="familyForm" class="space-y-4">
+                    <input type="hidden" id="familyEditName">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Family Name *</label>
+                        <input type="text" id="familyName" required
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                               placeholder="e.g., plasticizers">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                        <input type="text" id="familyDescription"
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                               placeholder="e.g., Common plasticizers for PVC">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Polymer</label>
+                            <select id="familyPolymer" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                                <option value="LDPE">LDPE</option>
+                                <option value="HDPE">HDPE</option>
+                                <option value="PP">PP</option>
+                                <option value="PET">PET</option>
+                                <option value="PS">PS</option>
+                                <option value="PVC">PVC</option>
+                                <option value="PA">PA</option>
+                                <option value="generic">Generic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Thickness (µm)</label>
+                            <input type="number" id="familyThickness" value="100" step="1" min="1"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Temperature (°C)</label>
+                            <input type="number" id="familyTemperature" value="25" step="1"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contact Time (days)</label>
+                            <input type="number" id="familyContactDays" value="10" step="1" min="1"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-4">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition font-medium">
+                            Save Family
+                        </button>
+                        <button type="button" onclick="closeFamilyModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition font-medium">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Substance Modal -->
+    <div id="substanceModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4">
+            <div class="p-6">
+                <h3 id="substanceModalTitle" class="text-xl font-bold text-gray-800 dark:text-white mb-4">Add Substance</h3>
+
+                <form id="substanceForm" class="space-y-4">
+                    <input type="hidden" id="substanceFamilyName">
+                    <input type="hidden" id="substanceEditId">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Identifier (CAS or Name) *</label>
+                        <input type="text" id="substanceId" required
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                               placeholder="e.g., 77-90-7 or ATBC">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Initial Concentration (mg/kg)
+                        </label>
+
+                        <!-- Visual concentration range -->
+                        <div class="mb-4">
+                            <div class="concentration-bar">
+                                <div id="markerMin" class="concentration-marker bg-sfppy-green" style="left: 10%"></div>
+                                <div id="markerLikely" class="concentration-marker bg-sfppy-orange" style="left: 50%"></div>
+                                <div id="markerMax" class="concentration-marker bg-sfppy-red" style="left: 90%"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs text-sfppy-green font-medium mb-1">Minimum</label>
+                                <input type="number" id="substanceC0Min" value="10" step="1" min="0" required
+                                       onchange="updateConcentrationMarkers()"
+                                       class="w-full px-3 py-2 border-2 border-sfppy-green rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-sfppy-orange font-medium mb-1">Likely (Mode)</label>
+                                <input type="number" id="substanceC0Likely" value="100" step="1" min="0" required
+                                       onchange="updateConcentrationMarkers()"
+                                       class="w-full px-3 py-2 border-2 border-sfppy-orange rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-sfppy-red font-medium mb-1">Maximum</label>
+                                <input type="number" id="substanceC0Max" value="500" step="1" min="0" required
+                                       onchange="updateConcentrationMarkers()"
+                                       class="w-full px-3 py-2 border-2 border-sfppy-red rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-4">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition font-medium">
+                            Save Substance
+                        </button>
+                        <button type="button" onclick="closeSubstanceModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition font-medium">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Job Modal -->
+    <div id="jobModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <h3 id="jobModalTitle" class="text-xl font-bold text-gray-800 dark:text-white mb-4">Add Packaged Food</h3>
+
+                <form id="jobForm" class="space-y-4">
+                    <input type="hidden" id="jobEditOriginalName">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name *</label>
+                            <input type="text" id="jobName" required
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                                   placeholder="e.g., yogurt_cup">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                            <input type="text" id="jobDescription"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                                   placeholder="e.g., PP yogurt packaging">
+                        </div>
+                    </div>
+
+                    <!-- Packaging Section -->
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-3">📦 Packaging (physics.monolayer)</h4>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Polymer</label>
+                                <select id="jobPolymer" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                    <option value="LDPE">LDPE</option>
+                                    <option value="HDPE">HDPE</option>
+                                    <option value="LLDPE">LLDPE</option>
+                                    <option value="PP">PP</option>
+                                    <option value="aPP">aPP</option>
+                                    <option value="oPP">oPP</option>
+                                    <option value="PET">PET</option>
+                                    <option value="gPET">gPET</option>
+                                    <option value="rPET">rPET</option>
+                                    <option value="wPET">wPET</option>
+                                    <option value="PS">PS</option>
+                                    <option value="HIPS">HIPS</option>
+                                    <option value="PVC">PVC</option>
+                                    <option value="pPVC">pPVC</option>
+                                    <option value="PA6">PA6</option>
+                                    <option value="PA6,6">PA6,6</option>
+                                    <option value="PEN">PEN</option>
+                                    <option value="PBT">PBT</option>
+                                    <option value="PBS">PBS</option>
+                                    <option value="EVA">EVA</option>
+                                    <option value="Acryl">Acryl</option>
+                                    <option value="rubber">rubber</option>
+                                    <option value="sRubber">sRubber</option>
+                                    <option value="PU">PU</option>
+                                    <option value="PVAc">PVAc</option>
+                                    <option value="VAE">VAE</option>
+                                    <option value="board_polar">board_polar</option>
+                                    <option value="board_apol">board_apol</option>
+                                    <option value="paper">paper</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Thickness</label>
+                                <div class="flex gap-1">
+                                    <input type="number" id="jobThickness" value="100" step="1" min="1"
+                                           class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                    <select id="jobThicknessUnit" class="w-16 px-1 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                        <option value="µm">µm</option>
+                                        <option value="mm">mm</option>
+                                        <option value="cm">cm</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Layer Temp (°C)</label>
+                                <input type="number" id="jobLayerTemp" value="40" step="1"
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Food Contact Section -->
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-3">🍲 Food Contact (physics.interface)</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Food Simulant</label>
+                                <select id="jobSimulant" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                    <option value="oliveoil">Olive Oil (D - Fatty)</option>
+                                    <option value="ethanol50">50% Ethanol (D1 - Dairy)</option>
+                                    <option value="water">Water (A - Aqueous)</option>
+                                    <option value="water3aceticacid">3% Acetic Acid (B - Acidic)</option>
+                                    <option value="ethanol95">95% Ethanol (Alcoholic)</option>
+                                    <option value="ethanol">Pure Ethanol</option>
+                                    <option value="isooctane">Isooctane (Fat)</option>
+                                    <option value="tenax">Tenax (E - Dry)</option>
+                                    <option value="acetonitrile">Acetonitrile</option>
+                                    <option value="methanol">Methanol</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Contact Temp (°C)</label>
+                                <input type="number" id="jobContactTemp" value="40" step="1"
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Surface Area</label>
+                                <div class="flex gap-1">
+                                    <input type="number" id="jobSurfaceArea" value="600" step="1" min="1"
+                                           class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                    <select id="jobSurfaceAreaUnit" class="w-16 px-1 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                        <option value="cm²">cm²</option>
+                                        <option value="dm²">dm²</option>
+                                        <option value="m²">m²</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Food Volume</label>
+                                <div class="flex gap-1">
+                                    <input type="number" id="jobVolume" value="1000" step="1" min="1"
+                                           class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                    <select id="jobVolumeUnit" class="w-16 px-1 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                        <option value="mL">mL</option>
+                                        <option value="L">L</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time Distribution Section -->
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-3">⏱️ Contact Time (priors.time_s.triangular)</h4>
+                        <div class="grid grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-sfppy-green mb-1">Min</label>
+                                <input type="number" id="jobTimeMin" value="0" step="1" min="0"
+                                       class="w-full px-3 py-2 border-2 border-sfppy-green rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-sfppy-orange mb-1">Mode</label>
+                                <input type="number" id="jobTimeMode" value="10" step="1" min="0"
+                                       class="w-full px-3 py-2 border-2 border-sfppy-orange rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-sfppy-red mb-1">Max</label>
+                                <input type="number" id="jobTimeMax" value="30" step="1" min="0"
+                                       class="w-full px-3 py-2 border-2 border-sfppy-red rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Unit</label>
+                                <select id="jobTimeUnit" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                    <option value="days">days</option>
+                                    <option value="h">hours</option>
+                                    <option value="months">months</option>
+                                    <option value="years">years</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Substances Section -->
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">🧪 Substances (family.substances)</h4>
+
+                        <!-- Help text -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded p-2 mb-3 text-xs text-blue-800 dark:text-blue-200">
+                            <p class="mb-1"><strong>Format:</strong> <code class="bg-blue-100 dark:bg-blue-800 px-1 rounded">CAS:min-mode-max</code></p>
+                            <p class="mb-1"><strong>Units:</strong> Initial concentration C₀ in <strong>mg/kg</strong> (ppm) in the polymer layer</p>
+                            <p><strong>Triangular prior:</strong> min = minimum, mode = most likely, max = maximum expected C₀</p>
+                        </div>
+
+                        <!-- Family selector -->
+                        <div class="mb-3">
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                📁 Load from pre-defined family (optional)
+                            </label>
+                            <div class="flex gap-2">
+                                <select id="familySelector" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                                    <option value="">-- Select a family to add --</option>
+                                    <option value="plasticizers_pvc">PVC Plasticizers (DEHP, DINP, DIDP, DEHA, ATBC)</option>
+                                    <option value="plasticizers_pp">PP Plasticizers (ATBC, DEHA)</option>
+                                    <option value="antioxidants_pe">PE/PP Antioxidants (Irganox 1076, Irgafos 168, BHT)</option>
+                                    <option value="antioxidants_pet">PET Antioxidants (Irganox 1010, Irganox 1076)</option>
+                                    <option value="uv_stabilizers">UV Stabilizers (UV-531, Tinuvin 326, Tinuvin 328)</option>
+                                    <option value="slip_agents">Slip Agents (Erucamide, Oleamide)</option>
+                                </select>
+                                <button type="button" onclick="addFamilySubstances()" class="px-3 py-2 bg-sfppy-orange hover:bg-sfppy-orangeDark text-white rounded-lg text-sm font-medium">
+                                    + Add
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Manual entry -->
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                            Substances (one per line)
+                        </label>
+                        <textarea id="jobSubstances" rows="5"
+                                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white font-mono text-sm"
+                                  placeholder="77-90-7:50-150-300&#10;103-23-1:100-250-500"></textarea>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                            Use CAS number (e.g., 77-90-7) or name (e.g., ATBC). Values validated against PubChem.
+                        </p>
+                    </div>
+
+                    <div class="flex gap-2 pt-4">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded-lg transition font-medium">
+                            Save PF Item
+                        </button>
+                        <button type="button" onclick="closePFItemModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition font-medium">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Batch Modal -->
+    <div id="loadBatchModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">📂 Load Saved Batch</h3>
+
+                <div id="savedBatchesList" class="space-y-2 max-h-64 overflow-y-auto mb-4">
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Loading...</p>
+                </div>
+
+                <div class="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-600">
+                    <button type="button" onclick="closeLoadBatchModal()" class="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition font-medium">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-gray-400 py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+            🍽️ SFPPy Survey Simulator | Food Contact Compliance & Risk Assessment
+        </div>
+    </footer>
+
+    <script>
+        // ========== STATE ==========
+        let pfItems = [];              // Packaged Food Items (renamed from jobs)
+        let expandedItems = new Set(); // Expanded rows
+        let currentBatchName = 'Untitled';
+        let currentJobId = null;
+        let pollInterval = null;
+        let charts = {};
+        let currentMode = 'pfitems';
+
+        // Chart settings
+        let currentXScale = 'linear';  // 'linear' or 'logarithmic'
+        let currentDisplayMode = 'both'; // 'pdf', 'cdf', or 'both'
+        let lastResults = null;        // Store results for re-rendering charts
+        let smoothingEnabled = false;  // PDF smoothing toggle
+        let smoothingBandwidth = 5;    // Gaussian kernel bandwidth (number of points)
+
+        // ========== PDF SMOOTHING ==========
+        /**
+         * Gaussian kernel smoother for PDF data.
+         * Uses a robust weighted moving average with Gaussian weights.
+         * @param {Array} data - Array of {x, y} points
+         * @param {number} bandwidth - Kernel width (number of points on each side)
+         * @returns {Array} Smoothed {x, y} points
+         */
+        function gaussianSmooth(data, bandwidth) {
+            if (!data || data.length === 0) return data;
+            if (bandwidth < 1) return data;
+
+            const n = data.length;
+            const sigma = bandwidth / 2.5; // Standard deviation of Gaussian
+            const smoothed = [];
+
+            for (let i = 0; i < n; i++) {
+                let weightSum = 0;
+                let valueSum = 0;
+
+                // Apply Gaussian weights to neighbors
+                for (let j = Math.max(0, i - bandwidth); j <= Math.min(n - 1, i + bandwidth); j++) {
+                    const distance = Math.abs(i - j);
+                    const weight = Math.exp(-0.5 * (distance / sigma) ** 2);
+                    weightSum += weight;
+                    valueSum += weight * data[j].y;
+                }
+
+                smoothed.push({
+                    x: data[i].x,
+                    y: valueSum / weightSum
+                });
+            }
+
+            return smoothed;
+        }
+
+        /**
+         * Find the mode (peak) of a PDF.
+         * @param {Array} data - Array of {x, y} points
+         * @returns {Object} {x, y} of the mode
+         */
+        function findMode(data) {
+            if (!data || data.length === 0) return null;
+
+            let maxY = -Infinity;
+            let mode = data[0];
+
+            for (const point of data) {
+                if (point.y > maxY) {
+                    maxY = point.y;
+                    mode = point;
+                }
+            }
+
+            return mode;
+        }
+
+        function toggleSmoothing() {
+            const checkbox = document.getElementById('smoothingEnabled');
+            const slider = document.getElementById('smoothingSlider');
+            smoothingEnabled = checkbox.checked;
+            slider.disabled = !smoothingEnabled;
+
+            if (lastResults) {
+                createCharts(lastResults, currentDisplayMode, currentXScale);
+            }
+        }
+
+        function updateSmoothing(value) {
+            smoothingBandwidth = parseInt(value);
+            document.getElementById('smoothingValue').textContent = value;
+
+            if (smoothingEnabled && lastResults) {
+                createCharts(lastResults, currentDisplayMode, currentXScale);
+            }
+        }
+
+        // Legacy state (for editor compatibility during transition)
+        let families = [];
+        let substances = [];
+
+        // ========== DARK MODE ==========
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+        }
+
+        (function() {
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('darkModeToggle').checked = false;
+            }
+        })();
+
+        // ========== BATCH MANAGEMENT ==========
+        function updateBatchDisplay() {
+            document.getElementById('currentBatchName').textContent = currentBatchName;
+            document.getElementById('batchItemCount').textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+
+            // Update runner and results headers
+            const runnerBatch = document.getElementById('runnerBatchName');
+            const resultsBatch = document.getElementById('resultsBatchName');
+            if (runnerBatch) runnerBatch.textContent = currentBatchName;
+            if (resultsBatch) resultsBatch.textContent = currentBatchName;
+        }
+
+        function newBatch() {
+            if (pfItems.length > 0 && !confirm('Create new batch? Unsaved changes will be lost.')) return;
+            pfItems = [];
+            expandedItems.clear();
+            currentBatchName = 'Untitled';
+            // Clear server-side jobs too
+            fetch('/api/jobs/clear', { method: 'POST' });
+            updateBatchDisplay();
+            renderPFItemsTable();
+        }
+
+        function renameBatch() {
+            const newName = prompt('Enter batch name:', currentBatchName);
+            if (newName && newName.trim()) {
+                currentBatchName = newName.trim();
+                updateBatchDisplay();
+            }
+        }
+
+        async function saveBatch() {
+            if (pfItems.length === 0) {
+                alert('No PF items to save');
+                return;
+            }
+
+            // Prompt for name if still "Untitled"
+            if (currentBatchName === 'Untitled') {
+                const newName = prompt('Enter batch name:', 'My Batch');
+                if (!newName || !newName.trim()) return;
+                currentBatchName = newName.trim();
+                updateBatchDisplay();
+            }
+
+            try {
+                const response = await fetch('/api/batches/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: currentBatchName })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const status = document.getElementById('pfItemsStatus');
+                    status.textContent = `✅ Saved "${currentBatchName}"`;
+                    setTimeout(() => {
+                        status.textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+                    }, 2000);
+                } else {
+                    alert('Save failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Save failed: ' + error.message);
+            }
+        }
+
+        async function showLoadBatchModal() {
+            document.getElementById('loadBatchModal').classList.remove('hidden');
+
+            // Fetch saved batches
+            try {
+                const response = await fetch('/api/batches/list');
+                const data = await response.json();
+
+                const container = document.getElementById('savedBatchesList');
+
+                if (!data.success || data.batches.length === 0) {
+                    container.innerHTML = `
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-4">
+                            No saved batches found.<br>
+                            <span class="text-sm">Save a batch first using the Save button.</span>
+                        </p>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.batches.map(batch => `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800 dark:text-white">${escapeHtml(batch.name)}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">
+                                ${batch.item_count} items • ${batch.saved_at}
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="loadBatch('${escapeHtml(batch.filename)}')" class="px-3 py-1 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded text-sm font-medium">
+                                Load
+                            </button>
+                            <button onclick="deleteBatch('${escapeHtml(batch.filename)}')" class="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm" title="Delete batch">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('savedBatchesList').innerHTML = `
+                    <p class="text-red-500 text-center py-4">Failed to load batches: ${error.message}</p>
+                `;
+            }
+        }
+
+        function closeLoadBatchModal() {
+            document.getElementById('loadBatchModal').classList.add('hidden');
+        }
+
+        async function loadBatch(filename) {
+            if (pfItems.length > 0 && !confirm('Load batch? Current changes will be replaced.')) return;
+
+            try {
+                const response = await fetch(`/api/batches/load/${filename}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    pfItems = data.jobs;
+                    currentBatchName = data.name;
+                    expandedItems.clear();
+                    renderPFItemsTable();
+                    updateBatchDisplay();
+                    closeLoadBatchModal();
+
+                    const status = document.getElementById('pfItemsStatus');
+                    status.textContent = `✅ Loaded "${currentBatchName}"`;
+                    setTimeout(() => {
+                        status.textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+                    }, 2000);
+                } else {
+                    alert('Load failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Load failed: ' + error.message);
+            }
+        }
+
+        async function deleteBatch(filename) {
+            if (!confirm('Delete this saved batch?')) return;
+
+            try {
+                const response = await fetch(`/api/batches/delete/${filename}`, { method: 'DELETE' });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Refresh the list
+                    showLoadBatchModal();
+                } else {
+                    alert('Delete failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Delete failed: ' + error.message);
+            }
+        }
+
+        // ========== MODE SWITCHING ==========
+        function switchMode(mode) {
+            currentMode = mode;
+
+            // Hide all sections
+            document.getElementById('pfitemsMode').classList.add('hidden');
+            document.getElementById('editorMode').classList.add('hidden');
+            document.getElementById('runnerMode').classList.add('hidden');
+            document.getElementById('resultsMode').classList.add('hidden');
+            document.getElementById('settingsMode').classList.add('hidden');
+
+            // Reset tab styles
+            ['tabPfitems', 'tabRunner', 'tabResults', 'tabSettings'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('bg-white', 'text-gray-800');
+                    el.classList.add('text-white');
+                }
+            });
+
+            // Show selected and style tab
+            document.getElementById(mode + 'Mode').classList.remove('hidden');
+            const tabId = 'tab' + mode.charAt(0).toUpperCase() + mode.slice(1);
+            const tabEl = document.getElementById(tabId);
+            if (tabEl) {
+                tabEl.classList.add('bg-white', 'text-gray-800');
+                tabEl.classList.remove('text-white');
+            }
+
+            // Update runner summary when switching to runner
+            if (mode === 'runner') {
+                updateBatchDisplay();  // Sync batch name
+                updateRunnerSummary();
+            }
+
+            // Load config when switching to settings
+            if (mode === 'settings') {
+                loadConfig();
+            }
+
+            // Load PF items when switching to pfitems tab
+            if (mode === 'pfitems') {
+                loadPFItems();
+            }
+        }
+
+        // ========== WORKERS SLIDER ==========
+        function updateWorkersDisplay() {
+            const slider = document.getElementById('workersSlider');
+            document.getElementById('workersValue').textContent = slider.value;
+        }
+
+        // ========== SPREADSHEET OPERATIONS ==========
+        async function newSpreadsheet() {
+            families = [];
+            substances = [];
+            await fetch('/api/editor/new', { method: 'POST' });
+            renderFamilies();
+            updateEditorStatus();
+        }
+
+        async function loadDemo() {
+            try {
+                const response = await fetch('/api/editor/load-demo', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    await loadCurrentSpreadsheet();
+                    // Show a brief notification
+                    const status = document.getElementById('editorStatus');
+                    status.innerHTML = `<span class="text-sfppy-green font-medium">🎬 Demo loaded!</span> ${data.families} families, ${data.substances} substances`;
+                    setTimeout(() => updateEditorStatus(), 3000);
+                } else {
+                    alert('Failed to load demo: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to load demo: ' + error.message);
+            }
+        }
+
+        async function importSpreadsheet(input) {
+            if (!input.files[0]) return;
+
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+
+            try {
+                const response = await fetch('/api/upload-spreadsheet', { method: 'POST', body: formData });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Load into editor
+                    await fetch('/api/editor/load-from-upload', {
+                        method: 'POST',
+                        body: new URLSearchParams({ file_path: data.file_path })
+                    });
+
+                    // Fetch current state
+                    await loadCurrentSpreadsheet();
+                }
+            } catch (error) {
+                alert('Import failed: ' + error.message);
+            }
+        }
+
+        async function loadCurrentSpreadsheet() {
+            try {
+                const response = await fetch('/api/editor/current');
+                const data = await response.json();
+
+                if (data.success) {
+                    families = data.families;
+                    substances = data.substances;
+                    renderFamilies();
+                    updateEditorStatus();
+                }
+            } catch (error) {
+                console.error('Failed to load spreadsheet:', error);
+            }
+        }
+
+        function exportSpreadsheet() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/api/editor/save-xlsx';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'filename';
+            input.value = 'survey_families.xlsx';
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        function updateEditorStatus() {
+            const el = document.getElementById('editorStatus');
+            el.textContent = `${families.length} families, ${substances.length} substances`;
+        }
+
+        // NOTE: updateRunnerSummary() is defined later using pfItems (not families)
+
+        // ========== RENDER FAMILIES ==========
+        function renderFamilies() {
+            const container = document.getElementById('familiesContainer');
+
+            if (families.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                        <p class="text-xl mb-2">📦 No families yet</p>
+                        <p>Click "Add Family" to create your first substance family</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = families.map(fam => {
+                const famSubstances = substances.filter(s => s.family_name === fam.name);
+
+                return `
+                    <div class="family-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                        <!-- Family Header -->
+                        <div class="bg-gradient-to-r from-sfppy-green/10 to-sfppy-orange/10 dark:from-sfppy-green/20 dark:to-sfppy-orange/20 p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">${fam.name}</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">${fam.description || 'No description'}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 bg-sfppy-green/20 text-sfppy-green rounded text-xs font-medium">${fam.polymer}</span>
+                                    <span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs">${fam.thickness_um}µm</span>
+                                    <span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs">${fam.temperature_C}°C</span>
+                                    <button onclick="showEditFamilyModal('${fam.name}')" class="p-1 text-gray-500 hover:text-sfppy-orange">✏️</button>
+                                    <button onclick="deleteFamily('${fam.name}')" class="p-1 text-gray-500 hover:text-sfppy-red">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Substances -->
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Substances (${famSubstances.length})</span>
+                                <button onclick="showAddSubstanceModal('${fam.name}')" class="px-3 py-1 bg-sfppy-green hover:bg-sfppy-greenDark text-white rounded text-xs font-medium">
+                                    + Add
+                                </button>
+                            </div>
+
+                            ${famSubstances.length === 0 ? `
+                                <p class="text-sm text-gray-400 dark:text-gray-500 italic">No substances added yet</p>
+                            ` : `
+                                <div class="space-y-2">
+                                    ${famSubstances.map(sub => `
+                                        <div class="substance-row flex items-center justify-between p-2 rounded border border-gray-100 dark:border-gray-700">
+                                            <div class="flex items-center gap-3">
+                                                <span class="font-mono text-sm font-medium text-gray-800 dark:text-white">${sub.identifier}</span>
+                                                <div class="flex items-center gap-1 text-xs">
+                                                    <span class="text-sfppy-green">${sub.C0_min}</span>
+                                                    <span class="text-gray-400">→</span>
+                                                    <span class="text-sfppy-orange font-bold">${sub.C0_likely}</span>
+                                                    <span class="text-gray-400">→</span>
+                                                    <span class="text-sfppy-red">${sub.C0_max}</span>
+                                                    <span class="text-gray-500">${sub.unit}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-1">
+                                                <button onclick="showEditSubstanceModal('${fam.name}', '${sub.identifier}')" class="p-1 text-gray-400 hover:text-sfppy-orange text-sm">✏️</button>
+                                                <button onclick="deleteSubstance('${fam.name}', '${sub.identifier}')" class="p-1 text-gray-400 hover:text-sfppy-red text-sm">🗑️</button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========== FAMILY MODAL ==========
+        function showAddFamilyModal() {
+            document.getElementById('familyModalTitle').textContent = 'Add Family';
+            document.getElementById('familyEditName').value = '';
+            document.getElementById('familyForm').reset();
+            document.getElementById('familyModal').classList.remove('hidden');
+        }
+
+        function showEditFamilyModal(name) {
+            const fam = families.find(f => f.name === name);
+            if (!fam) return;
+
+            document.getElementById('familyModalTitle').textContent = 'Edit Family';
+            document.getElementById('familyEditName').value = name;
+            document.getElementById('familyName').value = fam.name;
+            document.getElementById('familyDescription').value = fam.description || '';
+            document.getElementById('familyPolymer').value = fam.polymer;
+            document.getElementById('familyThickness').value = fam.thickness_um;
+            document.getElementById('familyTemperature').value = fam.temperature_C;
+            document.getElementById('familyContactDays').value = fam.contact_days;
+            document.getElementById('familyModal').classList.remove('hidden');
+        }
+
+        function closeFamilyModal() {
+            document.getElementById('familyModal').classList.add('hidden');
+        }
+
+        document.getElementById('familyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const editName = document.getElementById('familyEditName').value;
+            const family = {
+                name: document.getElementById('familyName').value,
+                description: document.getElementById('familyDescription').value,
+                polymer: document.getElementById('familyPolymer').value,
+                thickness_um: parseFloat(document.getElementById('familyThickness').value),
+                temperature_C: parseFloat(document.getElementById('familyTemperature').value),
+                contact_days: parseFloat(document.getElementById('familyContactDays').value),
+                food_volume_ml: 1000,
+                food_density: 1.0
+            };
+
+            try {
+                let response;
+                if (editName) {
+                    response = await fetch(`/api/editor/update-family/${editName}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(family)
+                    });
+                } else {
+                    response = await fetch('/api/editor/add-family', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(family)
+                    });
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    await loadCurrentSpreadsheet();
+                    closeFamilyModal();
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Failed: ' + error.message);
+            }
+        });
+
+        async function deleteFamily(name) {
+            if (!confirm(`Delete family "${name}" and all its substances?`)) return;
+
+            try {
+                const response = await fetch(`/api/editor/delete-family/${name}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    await loadCurrentSpreadsheet();
+                }
+            } catch (error) {
+                alert('Delete failed: ' + error.message);
+            }
+        }
+
+        // ========== SUBSTANCE MODAL ==========
+        function showAddSubstanceModal(familyName) {
+            document.getElementById('substanceModalTitle').textContent = 'Add Substance';
+            document.getElementById('substanceFamilyName').value = familyName;
+            document.getElementById('substanceEditId').value = '';
+            document.getElementById('substanceForm').reset();
+            document.getElementById('substanceC0Min').value = 10;
+            document.getElementById('substanceC0Likely').value = 100;
+            document.getElementById('substanceC0Max').value = 500;
+            updateConcentrationMarkers();
+            document.getElementById('substanceModal').classList.remove('hidden');
+        }
+
+        function showEditSubstanceModal(familyName, identifier) {
+            const sub = substances.find(s => s.family_name === familyName && s.identifier === identifier);
+            if (!sub) return;
+
+            document.getElementById('substanceModalTitle').textContent = 'Edit Substance';
+            document.getElementById('substanceFamilyName').value = familyName;
+            document.getElementById('substanceEditId').value = identifier;
+            document.getElementById('substanceId').value = sub.identifier;
+            document.getElementById('substanceC0Min').value = sub.C0_min;
+            document.getElementById('substanceC0Likely').value = sub.C0_likely;
+            document.getElementById('substanceC0Max').value = sub.C0_max;
+            updateConcentrationMarkers();
+            document.getElementById('substanceModal').classList.remove('hidden');
+        }
+
+        function closeSubstanceModal() {
+            document.getElementById('substanceModal').classList.add('hidden');
+        }
+
+        function updateConcentrationMarkers() {
+            const min = parseFloat(document.getElementById('substanceC0Min').value) || 0;
+            const likely = parseFloat(document.getElementById('substanceC0Likely').value) || 0;
+            const max = parseFloat(document.getElementById('substanceC0Max').value) || 1;
+
+            const range = max > 0 ? max : 1;
+            document.getElementById('markerMin').style.left = `${(min / range) * 100}%`;
+            document.getElementById('markerLikely').style.left = `${(likely / range) * 100}%`;
+            document.getElementById('markerMax').style.left = `${(max / range) * 100}%`;
+        }
+
+        document.getElementById('substanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const familyName = document.getElementById('substanceFamilyName').value;
+            const editId = document.getElementById('substanceEditId').value;
+            const substance = {
+                family_name: familyName,
+                identifier: document.getElementById('substanceId').value,
+                C0_min: parseFloat(document.getElementById('substanceC0Min').value),
+                C0_likely: parseFloat(document.getElementById('substanceC0Likely').value),
+                C0_max: parseFloat(document.getElementById('substanceC0Max').value),
+                unit: 'mg/kg'
+            };
+
+            try {
+                let response;
+                if (editId) {
+                    const formData = new FormData();
+                    formData.append('family_name', familyName);
+                    formData.append('old_identifier', editId);
+                    formData.append('identifier', substance.identifier);
+                    formData.append('C0_min', substance.C0_min);
+                    formData.append('C0_likely', substance.C0_likely);
+                    formData.append('C0_max', substance.C0_max);
+                    formData.append('unit', substance.unit);
+
+                    response = await fetch('/api/editor/update-substance', {
+                        method: 'PUT',
+                        body: formData
+                    });
+                } else {
+                    response = await fetch('/api/editor/add-substance', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(substance)
+                    });
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    await loadCurrentSpreadsheet();
+                    closeSubstanceModal();
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Failed: ' + error.message);
+            }
+        });
+
+        async function deleteSubstance(familyName, identifier) {
+            if (!confirm(`Delete substance "${identifier}"?`)) return;
+
+            try {
+                const response = await fetch(`/api/editor/delete-substance?family_name=${familyName}&identifier=${identifier}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    await loadCurrentSpreadsheet();
+                }
+            } catch (error) {
+                alert('Delete failed: ' + error.message);
+            }
+        }
+
+        // ========== SIMULATION ==========
+        async function runSimulation() {
+            // Use PF items (not legacy families)
+            if (pfItems.length === 0) {
+                alert('Add at least one PF item before running simulation');
+                return;
+            }
+
+            const workers = document.getElementById('workersSlider').value;
+            const samples = document.getElementById('samplesSelect').value;
+
+            const runBtn = document.getElementById('runButton');
+            runBtn.disabled = true;
+            runBtn.innerHTML = '⏳ Starting...';
+
+            try {
+                const formData = new FormData();
+                formData.append('n_workers', workers);
+                formData.append('n_samples', samples);
+
+                // Use PF items batch endpoint
+                const response = await fetch('/api/jobs/run-batch', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    currentJobId = data.job_id;
+                    clearLog();  // Clear previous log entries
+                    document.getElementById('progressSection').classList.remove('hidden');
+                    document.getElementById('workersUsed').textContent = workers;
+                    startPolling();
+                } else {
+                    alert('Error: ' + data.error);
+                    runBtn.disabled = false;
+                    runBtn.innerHTML = '🚀 Run Simulation';
+                }
+            } catch (error) {
+                alert('Failed: ' + error.message);
+                runBtn.disabled = false;
+                runBtn.innerHTML = '🚀 Run Simulation';
+            }
+        }
+
+        function startPolling() {
+            pollInterval = setInterval(pollJobStatus, 1000);
+        }
+
+        async function pollJobStatus() {
+            if (!currentJobId) return;
+
+            try {
+                const response = await fetch(`/api/job-status/${currentJobId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    updateProgress(data);
+
+                    if (data.status === 'completed' || data.status === 'failed') {
+                        clearInterval(pollInterval);
+                        if (data.status === 'completed') {
+                            showResults(data);
+                            switchMode('results');
+                        } else {
+                            alert('Job failed: ' + data.error);
+                        }
+
+                        document.getElementById('runButton').disabled = false;
+                        document.getElementById('runButton').innerHTML = '🚀 Run Simulation';
+                    }
+                }
+            } catch (error) {
+                console.error('Poll error:', error);
+            }
+        }
+
+        // ========== EXECUTION LOG ==========
+        let executionLog = [];
+        let lastCompletedCount = 0;
+        let logPanelOpen = false;
+        let pendingPanelOpen = false;
+        let completedTaskNames = new Set();
+        let lastPendingTaskNames = [];
+        let lastPendingResults = [];
+
+        function togglePendingPanel() {
+            pendingPanelOpen = !pendingPanelOpen;
+            const panel = document.getElementById('pendingPanel');
+            const icon = document.getElementById('pendingToggleIcon');
+            if (pendingPanelOpen) {
+                panel.classList.remove('hidden');
+                icon.textContent = '▼';
+            } else {
+                panel.classList.add('hidden');
+                icon.textContent = '▶';
+            }
+        }
+
+        function updatePendingDisplay(taskNames, results) {
+            // Store for slider-only updates
+            if (taskNames !== undefined) lastPendingTaskNames = taskNames;
+            if (results !== undefined) lastPendingResults = results;
+
+            const slider = document.getElementById('pendingItemsSlider');
+            const valueSpan = document.getElementById('pendingItemsSliderValue');
+            valueSpan.textContent = slider.value;
+
+            // Get completed task names from results
+            completedTaskNames.clear();
+            if (lastPendingResults) {
+                lastPendingResults.forEach(r => completedTaskNames.add(r.family_name));
+            }
+
+            // Filter to get pending items
+            const pendingItems = lastPendingTaskNames ? lastPendingTaskNames.filter(name => !completedTaskNames.has(name)) : [];
+            document.getElementById('pendingCount').textContent = pendingItems.length;
+
+            const pendingContent = document.getElementById('pendingContent');
+            const maxVisible = parseInt(slider.value);
+
+            if (pendingItems.length === 0) {
+                pendingContent.innerHTML = '<div class="text-gray-500">All items completed</div>';
+            } else {
+                const visibleItems = pendingItems.slice(0, maxVisible);
+                const hiddenCount = pendingItems.length - visibleItems.length;
+                let html = visibleItems.map((name, i) =>
+                    `<div class="py-0.5 text-gray-600 dark:text-gray-300"><span class="text-gray-400">${i + 1}.</span> ${name}</div>`
+                ).join('');
+                if (hiddenCount > 0) {
+                    html += `<div class="py-0.5 text-gray-400 italic">... and ${hiddenCount} more</div>`;
+                }
+                pendingContent.innerHTML = html;
+            }
+        }
+
+        function toggleLogPanel() {
+            logPanelOpen = !logPanelOpen;
+            const panel = document.getElementById('logPanel');
+            const icon = document.getElementById('logToggleIcon');
+            if (logPanelOpen) {
+                panel.classList.remove('hidden');
+                icon.textContent = '▼';
+            } else {
+                panel.classList.add('hidden');
+                icon.textContent = '▶';
+            }
+        }
+
+        function updateLogDisplay() {
+            const slider = document.getElementById('logLinesSlider');
+            const valueSpan = document.getElementById('logLinesValue');
+            valueSpan.textContent = slider.value;
+
+            const logContent = document.getElementById('logContent');
+            const maxLines = parseInt(slider.value);
+            const recentLogs = executionLog.slice(-maxLines);
+
+            if (recentLogs.length === 0) {
+                logContent.innerHTML = '<div class="text-gray-500">Waiting for simulation to start...</div>';
+            } else {
+                logContent.innerHTML = recentLogs.map(entry => {
+                    const statusClass = entry.success ? 'text-green-400' : 'text-red-400';
+                    const statusIcon = entry.success ? '✓' : '✗';
+                    return `<div class="${statusClass}">[${entry.time}] ${statusIcon} ${entry.name} (${entry.duration})</div>`;
+                }).join('');
+                // Auto-scroll to bottom
+                logContent.scrollTop = logContent.scrollHeight;
+            }
+
+            document.getElementById('logCount').textContent = executionLog.length;
+        }
+
+        function addLogEntry(name, success, duration) {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            executionLog.push({
+                time: time,
+                name: name,
+                success: success,
+                duration: duration
+            });
+            updateLogDisplay();
+        }
+
+        function clearLog() {
+            executionLog = [];
+            lastCompletedCount = 0;
+            updateLogDisplay();
+        }
+
+        function updateProgress(data) {
+            document.getElementById('progressBar').style.width = `${data.progress}%`;
+            document.getElementById('progressPercent').textContent = `${data.progress.toFixed(1)}%`;
+            document.getElementById('completedCount').textContent = data.completed_tasks;
+            document.getElementById('totalCount').textContent = data.total_tasks;
+            document.getElementById('successCount').textContent = data.completed_tasks - data.failed_tasks;
+            document.getElementById('failedCount').textContent = data.failed_tasks;
+            document.getElementById('elapsedTime').textContent = `${data.elapsed_s.toFixed(1)}s`;
+
+            // Calculate and display ETA
+            const etaElem = document.getElementById('etaTime');
+            if (data.completed_tasks > 0 && data.completed_tasks < data.total_tasks) {
+                const avgTimePerTask = data.elapsed_s / data.completed_tasks;
+                const remainingTasks = data.total_tasks - data.completed_tasks;
+                const etaSeconds = remainingTasks * avgTimePerTask;
+                if (etaSeconds < 60) {
+                    etaElem.textContent = `${etaSeconds.toFixed(0)}s`;
+                } else if (etaSeconds < 3600) {
+                    const mins = Math.floor(etaSeconds / 60);
+                    const secs = Math.floor(etaSeconds % 60);
+                    etaElem.textContent = `${mins}m${secs}s`;
+                } else {
+                    const hrs = Math.floor(etaSeconds / 3600);
+                    const mins = Math.floor((etaSeconds % 3600) / 60);
+                    etaElem.textContent = `${hrs}h${mins}m`;
+                }
+            } else if (data.completed_tasks >= data.total_tasks) {
+                etaElem.textContent = 'Done';
+            } else {
+                etaElem.textContent = '-';
+            }
+
+            const badge = document.getElementById('statusBadge');
+            const colors = {
+                'pending': 'bg-gray-500',
+                'running': 'bg-sfppy-orange animate-pulse',
+                'completed': 'bg-sfppy-green',
+                'failed': 'bg-sfppy-red'
+            };
+            badge.className = `ml-2 px-2 py-1 rounded text-xs font-medium text-white ${colors[data.status] || ''}`;
+            badge.textContent = data.status;
+
+            // Update current processing indicator
+            const currentProcessing = document.getElementById('currentProcessing');
+            const currentName = document.getElementById('currentScenarioName');
+            if (data.status === 'running' && data.current_task) {
+                currentProcessing.classList.remove('hidden');
+                currentName.textContent = data.current_task;
+            } else if (data.status === 'completed' || data.status === 'failed') {
+                currentProcessing.classList.add('hidden');
+            }
+
+            // Add newly completed tasks to log
+            if (data.results && data.results.length > lastCompletedCount) {
+                const newResults = data.results.slice(lastCompletedCount);
+                newResults.forEach(result => {
+                    addLogEntry(
+                        result.family_name,
+                        result.success,
+                        result.duration_s ? `${result.duration_s.toFixed(1)}s` : '-'
+                    );
+                });
+                lastCompletedCount = data.results.length;
+            }
+
+            // Update pending items display
+            if (data.task_names) {
+                updatePendingDisplay(data.task_names, data.results);
+            }
+        }
+
+        function showResults(data) {
+            const tbody = document.getElementById('resultsTable');
+            tbody.innerHTML = '';
+
+            // Reset selection state
+            selectedResults.clear();
+            document.getElementById('selectAllResults').checked = false;
+            document.getElementById('selectAllResults').indeterminate = false;
+            updateSelectedCount();
+
+            data.results.forEach((result, index) => {
+                const q = result.quantiles || {};
+                const statusIcon = result.success ? '✅' : '❌';
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="px-2 py-2 text-center">
+                            <input type="checkbox" class="result-row-checkbox result-checkbox" data-index="${index}"
+                                   onchange="toggleResultSelection(this, ${index})" title="Select for bulk export">
+                        </td>
+                        <td class="px-4 py-2 font-medium">${result.family_name}</td>
+                        <td class="px-4 py-2 text-right">${q.q50 ? q.q50.toFixed(4) : '-'}</td>
+                        <td class="px-4 py-2 text-right">${q.q95 ? q.q95.toFixed(4) : '-'}</td>
+                        <td class="px-4 py-2 text-right">${q.q99 ? q.q99.toFixed(4) : '-'}</td>
+                        <td class="px-4 py-2 text-right">${q.max ? q.max.toFixed(4) : '-'}</td>
+                        <td class="px-4 py-2 text-center">${statusIcon}</td>
+                        <td class="px-2 py-2 text-center">
+                            <button onclick="openFullscreen(${index})" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                                    title="View fullscreen">🔍</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            createCharts(data.results);
+        }
+
+        function createCharts(results, displayMode = 'both', xScaleType = 'linear') {
+            const container = document.getElementById('chartsContainer');
+            container.innerHTML = '';
+
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => chart.destroy());
+            charts = {};
+
+            // Store results for re-rendering
+            lastResults = results;
+            currentDisplayMode = displayMode;
+            currentXScale = xScaleType;
+
+            // Update scale button styles
+            updateScaleButtons();
+
+            results.forEach((result, index) => {
+                if (!result.success || !result.centers) return;
+
+                const chartId = `chart-${index}`;
+                const q = result.quantiles || {};
+
+                container.innerHTML += `
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="font-bold text-gray-800 dark:text-white">${result.family_name}</h3>
+                            <div class="flex items-center gap-1">
+                                <button onclick="openFullscreen(${index})" class="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                                        title="View fullscreen">🔍</button>
+                                <div class="export-dropdown">
+                                    <button class="p-1 text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 rounded hover:bg-purple-100 dark:hover:bg-purple-900/30"
+                                            title="Export this result">📤</button>
+                                    <div class="export-dropdown-content text-gray-700 dark:text-gray-200 text-xs">
+                                        <button onclick="exportSingleResult('png', ${index})">🖼️ PNG</button>
+                                        <button onclick="exportSingleResult('pdf', ${index})">📄 PDF</button>
+                                        <button onclick="exportSingleResult('csv', ${index})">📊 CSV</button>
+                                        <button onclick="exportSingleResult('json', ${index})">📋 JSON</button>
+                                        <button onclick="exportSingleResult('xlsx', ${index})">📗 XLSX</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                            Q95: ${q.q95?.toFixed(3) || '-'} | Max: ${q.max?.toFixed(3) || '-'} mg/kg
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="${chartId}"></canvas>
+                        </div>
+                    </div>
+                `;
+            });
+
+            results.forEach((result, index) => {
+                if (!result.success || !result.centers) return;
+
+                const chartId = `chart-${index}`;
+                const ctx = document.getElementById(chartId);
+                if (!ctx) return;
+
+                const isDark = document.documentElement.classList.contains('dark');
+                const textColor = isDark ? '#e5e7eb' : '#374151';
+                const gridColor = isDark ? '#374151' : '#e5e7eb';
+
+                // Prepare data as {x, y} points for proper numerical axis
+                const pdfData = result.centers.map((x, i) => ({ x: x, y: result.pdf[i] }));
+                const cdfData = result.centers.map((x, i) => ({ x: x, y: result.cdf[i] }));
+
+                // Filter out zero/negative values for log scale
+                const filteredPdfData = xScaleType === 'logarithmic'
+                    ? pdfData.filter(p => p.x > 0)
+                    : pdfData;
+                const filteredCdfData = xScaleType === 'logarithmic'
+                    ? cdfData.filter(p => p.x > 0)
+                    : cdfData;
+
+                // Build datasets based on display mode
+                const datasets = [];
+                let modePoint = null;  // For mode marker annotation
+
+                if (displayMode === 'pdf' || displayMode === 'both') {
+                    // Original PDF (lighter if smoothing enabled)
+                    datasets.push({
+                        label: smoothingEnabled ? 'PDF (raw)' : 'PDF',
+                        data: filteredPdfData,
+                        borderColor: smoothingEnabled ? 'rgba(34, 197, 94, 0.3)' : '#22c55e',
+                        backgroundColor: smoothingEnabled ? 'rgba(34, 197, 94, 0.05)' : 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        yAxisID: 'y',
+                        borderWidth: smoothingEnabled ? 1 : 2,
+                    });
+
+                    // Smoothed PDF and mode marker (if enabled)
+                    if (smoothingEnabled) {
+                        const smoothedPdf = gaussianSmooth(filteredPdfData, smoothingBandwidth);
+                        modePoint = findMode(smoothedPdf);
+
+                        datasets.push({
+                            label: 'PDF (smoothed)',
+                            data: smoothedPdf,
+                            borderColor: '#16a34a',  // Darker green
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            yAxisID: 'y',
+                            borderWidth: 2.5,
+                        });
+
+                        // Mode marker (single point at peak)
+                        if (modePoint) {
+                            datasets.push({
+                                label: `Mode: ${modePoint.x.toFixed(4)} mg/kg`,
+                                data: [modePoint],
+                                borderColor: '#dc2626',  // Red
+                                backgroundColor: '#dc2626',
+                                pointRadius: 8,
+                                pointStyle: 'triangle',
+                                yAxisID: 'y',
+                                showLine: false,
+                            });
+                        }
+                    }
+                }
+                if (displayMode === 'cdf' || displayMode === 'both') {
+                    datasets.push({
+                        label: 'CDF',
+                        data: filteredCdfData,
+                        borderColor: '#f97316',
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        yAxisID: displayMode === 'cdf' ? 'y' : 'y1',
+                    });
+                }
+
+                // Build scales
+                const scales = {
+                    x: {
+                        type: xScaleType,
+                        title: { display: true, text: 'Migration (mg/kg)', color: textColor },
+                        ticks: {
+                            color: textColor,
+                            callback: function(value) {
+                                if (xScaleType === 'logarithmic') {
+                                    // Show clean log scale labels
+                                    if (value === 0.001 || value === 0.01 || value === 0.1 ||
+                                        value === 1 || value === 10 || value === 100 || value === 1000) {
+                                        return value;
+                                    }
+                                    return '';
+                                }
+                                return value.toFixed(2);
+                            }
+                        },
+                        grid: { color: gridColor },
+                        min: xScaleType === 'logarithmic' ? 0.001 : undefined,
+                    },
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: displayMode === 'cdf' ? 'CDF' : 'PDF',
+                            color: displayMode === 'cdf' ? '#f97316' : '#22c55e'
+                        },
+                        ticks: { color: displayMode === 'cdf' ? '#f97316' : '#22c55e' },
+                        grid: { color: gridColor },
+                        beginAtZero: true,
+                    }
+                };
+
+                // Add second Y axis if showing both
+                if (displayMode === 'both') {
+                    scales.y1 = {
+                        type: 'linear',
+                        position: 'right',
+                        title: { display: true, text: 'CDF', color: '#f97316' },
+                        ticks: { color: '#f97316' },
+                        grid: { drawOnChartArea: false },
+                        beginAtZero: true,
+                        max: 1,
+                    };
+                }
+
+                charts[chartId] = new Chart(ctx, {
+                    type: 'line',
+                    data: { datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        parsing: false,  // Data is already in {x, y} format
+                        plugins: {
+                            legend: { labels: { color: textColor } },
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x',
+                                },
+                                zoom: {
+                                    wheel: { enabled: true },
+                                    pinch: { enabled: true },
+                                    mode: 'x',
+                                    onZoomComplete: function({ chart }) {
+                                        chart.update('none');
+                                    }
+                                }
+                            }
+                        },
+                        scales: scales,
+                        interaction: {
+                            mode: 'nearest',
+                            axis: 'x',
+                            intersect: false
+                        },
+                    }
+                });
+            });
+        }
+
+        function updateScaleButtons() {
+            const linearBtn = document.getElementById('scaleLinearBtn');
+            const logBtn = document.getElementById('scaleLogBtn');
+            if (currentXScale === 'linear') {
+                linearBtn.className = 'px-3 py-1.5 bg-blue-600 text-white rounded transition text-sm font-medium';
+                logBtn.className = 'px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white rounded transition text-sm font-medium';
+            } else {
+                linearBtn.className = 'px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white rounded transition text-sm font-medium';
+                logBtn.className = 'px-3 py-1.5 bg-blue-600 text-white rounded transition text-sm font-medium';
+            }
+        }
+
+        function setXScale(scaleType) {
+            if (!lastResults) return;
+            const newScale = scaleType === 'log' ? 'logarithmic' : 'linear';
+            createCharts(lastResults, currentDisplayMode, newScale);
+        }
+
+        function resetAllZoom() {
+            Object.values(charts).forEach(chart => {
+                chart.resetZoom();
+            });
+        }
+
+        function showAllPDF() {
+            if (!lastResults) return;
+            createCharts(lastResults, 'pdf', currentXScale);
+        }
+
+        function showAllCDF() {
+            if (!lastResults) return;
+            createCharts(lastResults, 'cdf', currentXScale);
+        }
+
+        function showBoth() {
+            if (!lastResults) return;
+            createCharts(lastResults, 'both', currentXScale);
+        }
+
+        // ========== CONFIGURATION ==========
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config/yaml');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('configEditor').value = data.yaml;
+                    updateConfigSummary();
+                }
+            } catch (error) {
+                console.error('Failed to load config:', error);
+            }
+        }
+
+        function updateConfigSummary() {
+            try {
+                // Parse YAML from editor to update summary
+                const yaml = document.getElementById('configEditor').value;
+                // Simple parsing for summary display
+                const lines = yaml.split('\n');
+                let config = {};
+
+                // Extract key values (simplified parsing)
+                lines.forEach(line => {
+                    if (line.includes('workers:') && !line.includes('max_workers')) {
+                        const val = line.split(':')[1]?.trim();
+                        document.getElementById('cfgWorkers').textContent = val === 'null' ? 'auto (50%)' : val;
+                    }
+                    if (line.includes('max_workers:')) {
+                        document.getElementById('cfgMaxWorkers').textContent = line.split(':')[1]?.trim() || '-';
+                    }
+                    if (line.includes('n_samples:')) {
+                        document.getElementById('cfgSamples').textContent = line.split(':')[1]?.trim() || '-';
+                    }
+                    if (line.includes('pdf_bins:')) {
+                        document.getElementById('cfgPdfBins').textContent = line.split(':')[1]?.trim() || '-';
+                    }
+                    if (line.includes('plot_dpi:')) {
+                        document.getElementById('cfgDpi').textContent = line.split(':')[1]?.trim() || '-';
+                    }
+                });
+
+                // Check for plot_formats array
+                const formatsMatch = yaml.match(/plot_formats:\s*\n((?:\s*-\s*\w+\s*\n?)+)/);
+                if (formatsMatch) {
+                    const formats = formatsMatch[1].match(/-\s*(\w+)/g)?.map(f => f.replace('-', '').trim()) || [];
+                    document.getElementById('cfgFormats').textContent = formats.join(', ');
+                }
+
+            } catch (error) {
+                console.error('Failed to parse config:', error);
+            }
+        }
+
+        async function saveConfig() {
+            const yaml = document.getElementById('configEditor').value;
+            const status = document.getElementById('configStatus');
+
+            try {
+                const formData = new FormData();
+                formData.append('config_yaml', yaml);
+
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    status.textContent = '✓ Saved';
+                    status.className = 'absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-sfppy-green text-white';
+                    status.classList.remove('hidden');
+                    updateConfigSummary();
+                    setTimeout(() => status.classList.add('hidden'), 2000);
+                } else {
+                    status.textContent = '✗ ' + data.error;
+                    status.className = 'absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-sfppy-red text-white';
+                    status.classList.remove('hidden');
+                }
+            } catch (error) {
+                status.textContent = '✗ Save failed';
+                status.className = 'absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-sfppy-red text-white';
+                status.classList.remove('hidden');
+            }
+        }
+
+        async function resetConfig() {
+            if (!confirm('Reset configuration to defaults?')) return;
+
+            try {
+                const response = await fetch('/api/config/reset', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    await loadConfig();
+                    alert('Configuration reset to defaults');
+                }
+            } catch (error) {
+                alert('Reset failed: ' + error.message);
+            }
+        }
+
+        // Update summary when editing
+        document.getElementById('configEditor')?.addEventListener('input', updateConfigSummary);
+
+        // ========== PF ITEMS MANAGEMENT (Packaged Food Items) ==========
+        // Note: "jobs" renamed to "pfItems" in state, but API still uses /api/jobs
+
+        async function loadPFItems() {
+            try {
+                const response = await fetch('/api/jobs');
+                const data = await response.json();
+                if (data.success) {
+                    pfItems = data.jobs;
+                    renderPFItemsTable();
+                    updateBatchDisplay();
+                    document.getElementById('pfItemsStatus').textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+                }
+            } catch (error) {
+                console.error('Failed to load PF items:', error);
+            }
+        }
+
+        async function loadDemoPFItems() {
+            try {
+                const response = await fetch('/api/jobs/load-demo', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    pfItems = data.jobs;
+                    currentBatchName = 'Demo Batch';
+                    renderPFItemsTable();
+                    updateBatchDisplay();
+                    document.getElementById('pfItemsStatus').textContent = `${pfItems.length} demo items loaded`;
+                    setTimeout(() => {
+                        document.getElementById('pfItemsStatus').textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+                    }, 2000);
+                } else {
+                    alert('Failed to load demo: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to load demo: ' + error.message);
+            }
+        }
+
+        async function clearAllPFItems() {
+            if (!confirm('Clear all PF items?')) return;
+            try {
+                const response = await fetch('/api/jobs/clear', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    pfItems = [];
+                    expandedItems.clear();
+                    currentBatchName = 'Untitled';
+                    renderPFItemsTable();
+                    updateBatchDisplay();
+                    document.getElementById('pfItemsStatus').textContent = '0 PF items';
+                }
+            } catch (error) {
+                alert('Failed to clear: ' + error.message);
+            }
+        }
+
+        async function importPFItemsXLS(input) {
+            if (!input.files[0]) return;
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+
+            try {
+                const response = await fetch('/api/jobs/import-xlsx', { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.success) {
+                    pfItems = data.jobs;
+                    currentBatchName = input.files[0].name.replace(/\.[^.]+$/, '');
+                    renderPFItemsTable();
+                    updateBatchDisplay();
+                    document.getElementById('pfItemsStatus').textContent = `${data.imported} items imported`;
+                    setTimeout(() => {
+                        document.getElementById('pfItemsStatus').textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+                    }, 2000);
+                } else {
+                    alert('Import failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Import failed: ' + error.message);
+            }
+            input.value = '';
+        }
+
+        async function exportPFItemsXLS() {
+            if (pfItems.length === 0) {
+                alert('No PF items to export');
+                return;
+            }
+            window.location.href = '/api/jobs/export-xlsx';
+        }
+
+        async function importPFItemsJSON(input) {
+            if (!input.files[0]) return;
+            const file = input.files[0];
+
+            try {
+                const text = await file.text();
+                let jobs = JSON.parse(text);
+
+                // Handle both array and {jobs: [...]} formats
+                if (jobs.jobs && Array.isArray(jobs.jobs)) {
+                    jobs = jobs.jobs;
+                }
+                if (!Array.isArray(jobs)) {
+                    jobs = [jobs];
+                }
+
+                // Show loading state
+                document.getElementById('pfItemsStatus').textContent = `Importing ${jobs.length} items...`;
+
+                // Send to server endpoint for validation and server-side storage
+                const response = await fetch('/api/jobs/import-json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        jobs: jobs,
+                        clear_existing: true
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Import failed');
+                }
+
+                // Update client-side state from server response
+                pfItems = result.jobs || [];
+                currentBatchName = file.name.replace(/\.[^.]+$/, '');
+                renderPFItemsTable();
+                updateBatchDisplay();
+
+                // Show result summary
+                let statusMsg = `${result.jobs_imported} PF items imported`;
+                if (result.jobs_skipped > 0) {
+                    statusMsg += ` (${result.jobs_skipped} skipped)`;
+                }
+                if (result.validation_errors && result.validation_errors.length > 0) {
+                    console.warn('Import validation errors:', result.validation_errors);
+                    // Show first few errors
+                    const errorSummary = result.validation_errors.slice(0, 3)
+                        .map(e => `${e.job || e.family}: ${e.error}`)
+                        .join('\n');
+                    if (result.validation_errors.length > 3) {
+                        alert(`Import completed with warnings:\n${errorSummary}\n... and ${result.validation_errors.length - 3} more`);
+                    } else if (result.validation_errors.length > 0) {
+                        alert(`Import completed with warnings:\n${errorSummary}`);
+                    }
+                }
+
+                document.getElementById('pfItemsStatus').textContent = statusMsg;
+                setTimeout(() => {
+                    document.getElementById('pfItemsStatus').textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+                }, 3000);
+
+            } catch (error) {
+                alert('JSON import failed: ' + error.message);
+                document.getElementById('pfItemsStatus').textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+            }
+            input.value = '';
+        }
+
+        function exportPFItemsJSON() {
+            if (pfItems.length === 0) {
+                alert('No PF items to export');
+                return;
+            }
+
+            // Convert to batch runner format
+            const exportData = pfItems.map(job => ({
+                name: job.name,
+                description: job.description || '',
+                polymer: job.polymer,
+                thickness_value: job.thickness_value,
+                thickness_unit: job.thickness_unit,
+                layer_temperature_C: job.layer_temperature_C,
+                simulant: job.simulant,
+                h_m_s: job.h_m_s,
+                surface_area_value: job.surface_area_value,
+                surface_area_unit: job.surface_area_unit,
+                food_volume_value: job.food_volume_value,
+                food_volume_unit: job.food_volume_unit,
+                contact_temperature_C: job.contact_temperature_C,
+                time_min: job.time_min || 0,
+                time_mode: job.time_mode,
+                time_max: job.time_max,
+                time_unit: job.time_unit,
+                substances: (job.substances || []).map(s => ({
+                    identifier: s.identifier,
+                    c0_min: s.c0_min,
+                    c0_mode: s.c0_mode,
+                    c0_max: s.c0_max,
+                    unit: s.unit || 'mg/kg'
+                }))
+            }));
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentBatchName || 'pf_jobs'}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function togglePFItemRow(name) {
+            if (expandedItems.has(name)) {
+                expandedItems.delete(name);
+            } else {
+                expandedItems.add(name);
+            }
+            renderPFItemsTable();
+        }
+
+        async function deletePFItem(name) {
+            if (!confirm(`Delete PF item "${name}"?`)) return;
+            try {
+                const response = await fetch(`/api/jobs/${encodeURIComponent(name)}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    pfItems = pfItems.filter(j => j.name !== name);
+                    expandedItems.delete(name);
+                    renderPFItemsTable();
+                    updateBatchDisplay();
+                    document.getElementById('pfItemsStatus').textContent = `${pfItems.length} PF item${pfItems.length !== 1 ? 's' : ''}`;
+                }
+            } catch (error) {
+                alert('Delete failed: ' + error.message);
+            }
+        }
+
+        // Pre-defined substance families with typical concentration ranges (mg/kg)
+        const substanceFamilies = {
+            plasticizers_pvc: [
+                { cas: '117-81-7', name: 'DEHP', min: 50, mode: 200, max: 500 },
+                { cas: '28553-12-0', name: 'DINP', min: 50, mode: 150, max: 400 },
+                { cas: '26761-40-0', name: 'DIDP', min: 50, mode: 150, max: 400 },
+                { cas: '103-23-1', name: 'DEHA', min: 100, mode: 300, max: 600 },
+                { cas: '77-90-7', name: 'ATBC', min: 50, mode: 150, max: 350 },
+            ],
+            plasticizers_pp: [
+                { cas: '77-90-7', name: 'ATBC', min: 50, mode: 150, max: 300 },
+                { cas: '103-23-1', name: 'DEHA', min: 100, mode: 250, max: 500 },
+            ],
+            antioxidants_pe: [
+                { cas: '2082-79-3', name: 'Irganox 1076', min: 100, mode: 300, max: 600 },
+                { cas: '31570-04-4', name: 'Irgafos 168', min: 50, mode: 200, max: 500 },
+                { cas: '128-37-0', name: 'BHT', min: 10, mode: 50, max: 150 },
+            ],
+            antioxidants_pet: [
+                { cas: '6683-19-8', name: 'Irganox 1010', min: 50, mode: 200, max: 500 },
+                { cas: '2082-79-3', name: 'Irganox 1076', min: 100, mode: 300, max: 600 },
+            ],
+            uv_stabilizers: [
+                { cas: '1843-05-6', name: 'UV-531', min: 50, mode: 200, max: 400 },
+                { cas: '3896-11-5', name: 'Tinuvin 326', min: 50, mode: 150, max: 350 },
+                { cas: '25973-55-1', name: 'Tinuvin 328', min: 50, mode: 150, max: 350 },
+            ],
+            slip_agents: [
+                { cas: '112-84-5', name: 'Erucamide', min: 50, mode: 200, max: 500 },
+                { cas: '301-02-0', name: 'Oleamide', min: 50, mode: 200, max: 500 },
+            ],
+        };
+
+        function addFamilySubstances() {
+            const selector = document.getElementById('familySelector');
+            const familyKey = selector.value;
+            if (!familyKey) return;
+
+            const family = substanceFamilies[familyKey];
+            if (!family) return;
+
+            const textarea = document.getElementById('jobSubstances');
+            const existingLines = textarea.value.trim();
+            const existingCAS = new Set(
+                existingLines.split('\n')
+                    .map(line => line.split(':')[0].trim())
+                    .filter(x => x)
+            );
+
+            // Add substances not already present
+            const newLines = family
+                .filter(sub => !existingCAS.has(sub.cas))
+                .map(sub => `${sub.cas}:${sub.min}-${sub.mode}-${sub.max}`)
+                .join('\n');
+
+            if (newLines) {
+                textarea.value = existingLines ? `${existingLines}\n${newLines}` : newLines;
+            }
+
+            // Reset selector
+            selector.value = '';
+        }
+
+        function addNewPFItem() {
+            // Create a new PF item with default values
+            const newItem = {
+                name: `pf_item_${Date.now()}`,
+                description: 'New packaged food item',
+                polymer: 'LDPE',
+                thickness_value: 100,
+                thickness_unit: 'µm',
+                layer_temperature_C: 40,
+                simulant: 'oliveoil',
+                h_m_s: 1e-7,
+                surface_area_value: 600,
+                surface_area_unit: 'cm²',
+                food_volume_value: 1000,
+                food_volume_unit: 'mL',
+                contact_temperature_C: 40,
+                time_min: 0,
+                time_mode: 10,
+                time_max: 30,
+                time_unit: 'days',
+                substances: [],
+                is_valid: true,
+                validation_errors: []
+            };
+            showPFItemModal(newItem, true);
+        }
+
+        function editPFItem(name) {
+            const item = pfItems.find(j => j.name === name);
+            if (item) {
+                showPFItemModal(item, false);
+            }
+        }
+
+        function showPFItemModal(item, isNew) {
+            // Populate the modal with PF item data
+            document.getElementById('jobModalTitle').textContent = isNew ? 'Add PF Item' : 'Edit PF Item';
+            document.getElementById('jobEditOriginalName').value = isNew ? '' : item.name;
+            document.getElementById('jobName').value = item.name;
+            document.getElementById('jobDescription').value = item.description || '';
+            document.getElementById('jobPolymer').value = item.polymer;
+            document.getElementById('jobThickness').value = item.thickness_value;
+            document.getElementById('jobThicknessUnit').value = item.thickness_unit;
+            document.getElementById('jobLayerTemp').value = item.layer_temperature_C;
+            document.getElementById('jobSimulant').value = item.simulant;
+            document.getElementById('jobSurfaceArea').value = item.surface_area_value;
+            document.getElementById('jobSurfaceAreaUnit').value = item.surface_area_unit;
+            document.getElementById('jobVolume').value = item.food_volume_value;
+            document.getElementById('jobVolumeUnit').value = item.food_volume_unit;
+            document.getElementById('jobContactTemp').value = item.contact_temperature_C;
+            document.getElementById('jobTimeMin').value = item.time_min;
+            document.getElementById('jobTimeMode').value = item.time_mode;
+            document.getElementById('jobTimeMax').value = item.time_max;
+            document.getElementById('jobTimeUnit').value = item.time_unit;
+
+            // Populate substances
+            document.getElementById('jobSubstances').value = item.substances.map(s =>
+                `${s.identifier}:${s.c0_min}-${s.c0_mode}-${s.c0_max}`
+            ).join('\n');
+
+            document.getElementById('jobModal').classList.remove('hidden');
+        }
+
+        function closePFItemModal() {
+            document.getElementById('jobModal').classList.add('hidden');
+        }
+
+        document.getElementById('jobForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const originalName = document.getElementById('jobEditOriginalName').value;
+            const isNew = !originalName;
+
+            // Parse substances from textarea
+            const substancesText = document.getElementById('jobSubstances').value.trim();
+            const substances = substancesText ? substancesText.split('\n').map(line => {
+                const [identifier, range] = line.split(':');
+                const [min, mode, max] = (range || '0-10-50').split('-').map(parseFloat);
+                return {
+                    identifier: identifier.trim(),
+                    c0_min: min || 0,
+                    c0_mode: mode || 10,
+                    c0_max: max || 50,
+                    unit: 'mg/kg'
+                };
+            }) : [];
+
+            const jobData = {
+                name: document.getElementById('jobName').value,
+                description: document.getElementById('jobDescription').value,
+                polymer: document.getElementById('jobPolymer').value,
+                thickness_value: parseFloat(document.getElementById('jobThickness').value),
+                thickness_unit: document.getElementById('jobThicknessUnit').value,
+                layer_temperature_C: parseFloat(document.getElementById('jobLayerTemp').value),
+                simulant: document.getElementById('jobSimulant').value,
+                h_m_s: 1e-7,
+                surface_area_value: parseFloat(document.getElementById('jobSurfaceArea').value),
+                surface_area_unit: document.getElementById('jobSurfaceAreaUnit').value,
+                food_volume_value: parseFloat(document.getElementById('jobVolume').value),
+                food_volume_unit: document.getElementById('jobVolumeUnit').value,
+                contact_temperature_C: parseFloat(document.getElementById('jobContactTemp').value),
+                time_min: parseFloat(document.getElementById('jobTimeMin').value),
+                time_mode: parseFloat(document.getElementById('jobTimeMode').value),
+                time_max: parseFloat(document.getElementById('jobTimeMax').value),
+                time_unit: document.getElementById('jobTimeUnit').value,
+                substances: substances
+            };
+
+            try {
+                let response;
+                if (isNew) {
+                    response = await fetch('/api/jobs', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(jobData)
+                    });
+                } else {
+                    response = await fetch(`/api/jobs/${encodeURIComponent(originalName)}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(jobData)
+                    });
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    await loadPFItems();
+                    closePFItemModal();
+                } else {
+                    alert('Save failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Save failed: ' + error.message);
+            }
+        });
+
+        function renderPFItemsTable() {
+            const tbody = document.getElementById('pfItemsTableBody');
+
+            if (pfItems.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                            <p class="text-xl mb-2">📦 No PF items yet</p>
+                            <p>Click "+ Add PF Item" or "🎬 Demo" to get started</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = pfItems.map(item => {
+                const isExpanded = expandedItems.has(item.name);
+                const statusIcon = item.is_valid ? '✅' : '⚠️';
+                const statusClass = item.is_valid ? 'text-sfppy-green' : 'text-sfppy-orange';
+                const chevron = isExpanded ? '▼' : '▶';
+
+                let html = `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer" onclick="togglePFItemRow('${item.name}')">
+                        <td class="px-3 py-3 text-gray-400">${chevron}</td>
+                        <td class="px-4 py-3">
+                            <div class="font-medium text-gray-800 dark:text-white">${escapeHtml(item.name)}</div>
+                            ${item.description ? `<div class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(item.description)}</div>` : ''}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">${item.polymer}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">${item.simulant}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">${item.time_mode} ${item.time_unit}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">${item.substances.length}</td>
+                        <td class="px-4 py-3 ${statusClass}">${statusIcon}</td>
+                        <td class="px-3 py-3" onclick="event.stopPropagation()">
+                            <div class="flex gap-1">
+                                <button onclick="editPFItem('${item.name}')" class="p-1 text-blue-500 hover:text-blue-700" title="Edit">✏️</button>
+                                <button onclick="deletePFItem('${item.name}')" class="p-1 text-red-500 hover:text-red-700" title="Delete">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                if (isExpanded) {
+                    html += `
+                        <tr class="bg-gray-50 dark:bg-gray-700/50">
+                            <td colspan="8" class="px-6 py-4">
+                                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                    <div>
+                                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">📦 Packaging (physics.monolayer)</h4>
+                                        <div class="space-y-1 text-gray-600 dark:text-gray-400">
+                                            <div>Polymer: <span class="font-mono">${item.polymer}</span></div>
+                                            <div>Thickness: <span class="font-mono">${item.thickness_value} ${item.thickness_unit}</span></div>
+                                            <div>Layer Temp: <span class="font-mono">${item.layer_temperature_C}°C</span></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">🍲 Food Contact (physics.interface)</h4>
+                                        <div class="space-y-1 text-gray-600 dark:text-gray-400">
+                                            <div>Simulant: <span class="font-mono">${item.simulant}</span></div>
+                                            <div>Volume: <span class="font-mono">${item.food_volume_value} ${item.food_volume_unit}</span></div>
+                                            <div>Surface: <span class="font-mono">${item.surface_area_value} ${item.surface_area_unit}</span></div>
+                                            <div>Contact Temp: <span class="font-mono">${item.contact_temperature_C}°C</span></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">⏱️ Time (priors.time_s.triangular)</h4>
+                                        <div class="space-y-1 text-gray-600 dark:text-gray-400">
+                                            <div>Min: <span class="font-mono">${item.time_min} ${item.time_unit}</span></div>
+                                            <div>Mode: <span class="font-mono">${item.time_mode} ${item.time_unit}</span></div>
+                                            <div>Max: <span class="font-mono">${item.time_max} ${item.time_unit}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                ${item.substances.length > 0 ? `
+                                    <div class="mt-4">
+                                        <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">🧪 Substances (${item.substances.length})</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            ${item.substances.map(s => `
+                                                <span class="px-2 py-1 bg-sfppy-green/20 text-sfppy-green rounded text-xs font-mono"
+                                                      title="Concentration prior: min=${s.c0_min}, mode=${s.c0_mode}, max=${s.c0_max} ${s.unit}">
+                                                    ${escapeHtml(s.identifier)} (${s.c0_min}-${s.c0_mode}-${s.c0_max})
+                                                </span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                ${item.validation_errors && item.validation_errors.length > 0 ? `
+                                    <div class="mt-4 p-2 bg-sfppy-orange/10 rounded">
+                                        <h4 class="font-bold text-sfppy-orange mb-1">⚠️ Validation Issues</h4>
+                                        <ul class="text-xs text-sfppy-orange list-disc list-inside">
+                                            ${item.validation_errors.map(e => `<li>${escapeHtml(e)}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                return html;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ========== RUNNER SUMMARY ==========
+        function updateRunnerSummary() {
+            // Update the runner tab with PF items preview
+            const totalSubstances = pfItems.reduce((sum, item) => sum + (item.substances?.length || 0), 0);
+            document.getElementById('summaryPFItems').textContent = pfItems.length;
+            document.getElementById('summarySubstances').textContent = totalSubstances;
+
+            // Update items preview with slider control
+            updateRunnerItemsDisplay();
+        }
+
+        function updateRunnerItemsDisplay() {
+            const slider = document.getElementById('runnerItemsSlider');
+            const valueSpan = document.getElementById('runnerItemsSliderValue');
+            const preview = document.getElementById('runnerItemsPreview');
+            const container = document.getElementById('runnerItemsPreviewContainer');
+
+            const maxVisible = parseInt(slider.value);
+            valueSpan.textContent = maxVisible;
+
+            // Update container height based on slider
+            const lineHeight = 24; // Approximate line height in pixels
+            container.style.maxHeight = `${Math.max(72, maxVisible * lineHeight)}px`;
+
+            if (pfItems.length === 0) {
+                preview.innerHTML = '<span class="text-gray-500">No PF items defined. Go to PF Items tab to add some.</span>';
+            } else {
+                const visibleItems = pfItems.slice(0, maxVisible);
+                const hiddenCount = Math.max(0, pfItems.length - maxVisible);
+                let html = visibleItems.map((item, i) =>
+                    `<div class="py-0.5"><span class="text-gray-400">${i + 1}.</span> <span class="text-gray-700 dark:text-gray-300">${escapeHtml(item.name)}</span> <span class="text-gray-400">(${item.polymer}, ${item.substances?.length || 0} sub)</span></div>`
+                ).join('');
+                if (hiddenCount > 0) {
+                    html += `<div class="py-0.5 text-gray-400 italic">... and ${hiddenCount} more (scroll or adjust slider)</div>`;
+                }
+                preview.innerHTML = html;
+            }
+        }
+
+        // Update runBatchSimulation to use pfItems
+        function runBatchSimulation() {
+            if (pfItems.length === 0) {
+                alert('No PF items to simulate. Add items in the PF Items tab first.');
+                return;
+            }
+            // Call the original runSimulation function
+            runSimulation();
+        }
+
+        // ========== RESULT SELECTION & EXPORT ==========
+        let selectedResults = new Set();
+
+        function toggleSelectAllResults(checkbox) {
+            const checkboxes = document.querySelectorAll('.result-row-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+                const index = parseInt(cb.dataset.index);
+                if (checkbox.checked) {
+                    selectedResults.add(index);
+                } else {
+                    selectedResults.delete(index);
+                }
+            });
+            updateSelectedCount();
+        }
+
+        function toggleResultSelection(checkbox, index) {
+            if (checkbox.checked) {
+                selectedResults.add(index);
+            } else {
+                selectedResults.delete(index);
+            }
+            updateSelectedCount();
+            // Update select all checkbox
+            const selectAll = document.getElementById('selectAllResults');
+            const allCheckboxes = document.querySelectorAll('.result-row-checkbox');
+            selectAll.checked = selectedResults.size === allCheckboxes.length && allCheckboxes.length > 0;
+            selectAll.indeterminate = selectedResults.size > 0 && selectedResults.size < allCheckboxes.length;
+        }
+
+        function updateSelectedCount() {
+            const countBar = document.getElementById('selectedCountBar');
+            const countSpan = document.getElementById('selectedCount');
+            countSpan.textContent = selectedResults.size;
+            if (selectedResults.size > 0) {
+                countBar.classList.remove('hidden');
+            } else {
+                countBar.classList.add('hidden');
+            }
+        }
+
+        function clearResultSelection() {
+            selectedResults.clear();
+            document.querySelectorAll('.result-row-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAllResults').checked = false;
+            document.getElementById('selectAllResults').indeterminate = false;
+            updateSelectedCount();
+        }
+
+        // ========== TABLE VISIBILITY CONTROLS ==========
+        function updatePfItemsVisibility() {
+            const slider = document.getElementById('pfItemsVisibleSlider');
+            const valueSpan = document.getElementById('pfItemsVisibleValue');
+            const hiddenSpan = document.getElementById('pfItemsHiddenCount');
+            const container = document.getElementById('pfItemsTableContainer');
+
+            const maxVisible = parseInt(slider.value);
+            valueSpan.textContent = maxVisible;
+
+            // Update container max-height based on slider
+            const rowHeight = 48; // Approximate row height in pixels
+            container.style.maxHeight = `${Math.max(200, maxVisible * rowHeight)}px`;
+
+            // Count total rows and show hidden count
+            const rows = document.querySelectorAll('#pfItemsTableBody > tr');
+            const total = rows.length;
+            if (total > maxVisible) {
+                hiddenSpan.textContent = `(+${total - maxVisible} scroll)`;
+                hiddenSpan.classList.remove('hidden');
+            } else {
+                hiddenSpan.classList.add('hidden');
+            }
+        }
+
+        function updateResultsVisibility() {
+            const slider = document.getElementById('resultsVisibleSlider');
+            const valueSpan = document.getElementById('resultsVisibleValue');
+            const hiddenSpan = document.getElementById('resultsHiddenCount');
+            const container = document.getElementById('resultsTableContainer');
+
+            const maxVisible = parseInt(slider.value);
+            valueSpan.textContent = maxVisible;
+
+            // Update container max-height based on slider
+            const rowHeight = 40; // Approximate row height in pixels
+            container.style.maxHeight = `${Math.max(160, maxVisible * rowHeight)}px`;
+
+            // Count total rows and show hidden count
+            const rows = document.querySelectorAll('#resultsTable > tr');
+            const total = rows.length;
+            if (total > maxVisible) {
+                hiddenSpan.textContent = `(+${total - maxVisible} scroll)`;
+                hiddenSpan.classList.remove('hidden');
+            } else {
+                hiddenSpan.classList.add('hidden');
+            }
+        }
+
+        // ========== FULLSCREEN MODAL ==========
+        let fullscreenChart = null;
+        let currentFullscreenResult = null;
+        let fullscreenSmoothingEnabled = false;
+
+        function toggleFullscreenSmoothing() {
+            const checkbox = document.getElementById('fullscreenSmoothingEnabled');
+            const slider = document.getElementById('fullscreenSmoothingSlider');
+            fullscreenSmoothingEnabled = checkbox.checked;
+            slider.disabled = !fullscreenSmoothingEnabled;
+            updateFullscreenChart();
+        }
+
+        function updateFullscreenSmoothing() {
+            const slider = document.getElementById('fullscreenSmoothingSlider');
+            const valueSpan = document.getElementById('fullscreenSmoothingValue');
+            valueSpan.textContent = slider.value;
+            if (fullscreenSmoothingEnabled) {
+                updateFullscreenChart();
+            }
+        }
+
+        function updateFullscreenChart() {
+            if (!currentFullscreenResult || !fullscreenChart) return;
+            const result = currentFullscreenResult;
+            const bandwidth = parseInt(document.getElementById('fullscreenSmoothingSlider').value);
+
+            const pdfData = result.centers.map((x, i) => ({ x: x, y: result.pdf[i] }));
+            const cdfData = result.centers.map((x, i) => ({ x: x, y: result.cdf[i] }));
+
+            // Build datasets
+            const datasets = [];
+
+            if (fullscreenSmoothingEnabled) {
+                // Raw PDF (faded)
+                datasets.push({
+                    label: 'PDF (raw)',
+                    data: pdfData,
+                    borderColor: 'rgba(34, 197, 94, 0.3)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    yAxisID: 'y',
+                });
+
+                // Smoothed PDF
+                const smoothedPdf = gaussianSmooth(pdfData, bandwidth);
+                datasets.push({
+                    label: 'PDF (smoothed)',
+                    data: smoothedPdf,
+                    borderColor: '#16a34a',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    yAxisID: 'y',
+                });
+
+                // Mode marker
+                const mode = findMode(smoothedPdf);
+                if (mode) {
+                    datasets.push({
+                        label: 'Mode',
+                        data: [mode],
+                        borderColor: '#dc2626',
+                        backgroundColor: '#dc2626',
+                        pointStyle: 'triangle',
+                        pointRadius: 10,
+                        pointHoverRadius: 12,
+                        showLine: false,
+                        yAxisID: 'y',
+                    });
+                    // Update mode stat
+                    document.getElementById('fsStatMode').textContent = mode.x.toFixed(4);
+                }
+            } else {
+                // Regular PDF
+                datasets.push({
+                    label: 'PDF',
+                    data: pdfData,
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    yAxisID: 'y',
+                });
+                // Reset mode to raw mode
+                const rawMode = findMode(pdfData);
+                if (rawMode) {
+                    document.getElementById('fsStatMode').textContent = rawMode.x.toFixed(4);
+                }
+            }
+
+            // CDF (always shown)
+            datasets.push({
+                label: 'CDF',
+                data: cdfData,
+                borderColor: '#f97316',
+                borderDash: [5, 5],
+                fill: false,
+                tension: 0.4,
+                pointRadius: 0,
+                yAxisID: 'y1',
+            });
+
+            fullscreenChart.data.datasets = datasets;
+            fullscreenChart.update();
+        }
+
+        function openFullscreen(index) {
+            if (!lastResults || !lastResults[index]) return;
+            const result = lastResults[index];
+            currentFullscreenResult = result;
+
+            const modal = document.getElementById('fullscreenModal');
+            const title = document.getElementById('fullscreenTitle');
+            const canvas = document.getElementById('fullscreenCanvas');
+
+            title.textContent = result.family_name;
+            modal.classList.add('active');
+
+            // Reset smoothing controls
+            document.getElementById('fullscreenSmoothingEnabled').checked = false;
+            document.getElementById('fullscreenSmoothingSlider').disabled = true;
+            fullscreenSmoothingEnabled = false;
+
+            // Update stats panel
+            const q = result.quantiles || {};
+            document.getElementById('fsStatQ50').textContent = q.q50 ? q.q50.toFixed(4) : '-';
+            document.getElementById('fsStatQ95').textContent = q.q95 ? q.q95.toFixed(4) : '-';
+            document.getElementById('fsStatQ99').textContent = q.q99 ? q.q99.toFixed(4) : '-';
+            document.getElementById('fsStatMax').textContent = q.max ? q.max.toFixed(4) : '-';
+
+            // Find raw mode
+            const pdfData = result.centers.map((x, i) => ({ x: x, y: result.pdf[i] }));
+            const rawMode = findMode(pdfData);
+            document.getElementById('fsStatMode').textContent = rawMode ? rawMode.x.toFixed(4) : '-';
+
+            // Destroy previous fullscreen chart
+            if (fullscreenChart) {
+                fullscreenChart.destroy();
+                fullscreenChart = null;
+            }
+
+            // Create fullscreen chart
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#e5e7eb' : '#374151';
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+
+            const cdfData = result.centers.map((x, i) => ({ x: x, y: result.cdf[i] }));
+
+            // Build annotation lines for percentiles
+            const annotations = {};
+            if (q.q50) {
+                annotations.q50Line = {
+                    type: 'line',
+                    xMin: q.q50,
+                    xMax: q.q50,
+                    borderColor: '#3b82f6',
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    label: {
+                        display: true,
+                        content: `Q50: ${q.q50.toFixed(4)}`,
+                        position: 'start',
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        color: 'white',
+                        font: { size: 10 }
+                    }
+                };
+            }
+            if (q.q95) {
+                annotations.q95Line = {
+                    type: 'line',
+                    xMin: q.q95,
+                    xMax: q.q95,
+                    borderColor: '#f97316',
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    label: {
+                        display: true,
+                        content: `Q95: ${q.q95.toFixed(4)}`,
+                        position: 'center',
+                        backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                        color: 'white',
+                        font: { size: 10 }
+                    }
+                };
+            }
+            if (q.q99) {
+                annotations.q99Line = {
+                    type: 'line',
+                    xMin: q.q99,
+                    xMax: q.q99,
+                    borderColor: '#ef4444',
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    label: {
+                        display: true,
+                        content: `Q99: ${q.q99.toFixed(4)}`,
+                        position: 'end',
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        color: 'white',
+                        font: { size: 10 }
+                    }
+                };
+            }
+
+            fullscreenChart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'PDF',
+                            data: pdfData,
+                            borderColor: '#22c55e',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: 'CDF',
+                            data: cdfData,
+                            borderColor: '#f97316',
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            yAxisID: 'y1',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    parsing: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { size: 14 } } },
+                        zoom: {
+                            pan: { enabled: true, mode: 'x' },
+                            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' }
+                        },
+                        annotation: {
+                            annotations: annotations
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: currentXScale === 'log' ? 'logarithmic' : 'linear',
+                            title: { display: true, text: 'Migration (mg/kg)', color: textColor, font: { size: 14 } },
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            title: { display: true, text: 'PDF', color: '#22c55e', font: { size: 14 } },
+                            ticks: { color: '#22c55e' },
+                            grid: { color: gridColor },
+                            beginAtZero: true
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: 'CDF', color: '#f97316', font: { size: 14 } },
+                            ticks: { color: '#f97316' },
+                            grid: { drawOnChartArea: false },
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }
+                }
+            });
+
+            // Store current index for export
+            modal.dataset.currentIndex = index;
+        }
+
+        function closeFullscreen() {
+            const modal = document.getElementById('fullscreenModal');
+            modal.classList.remove('active');
+            if (fullscreenChart) {
+                fullscreenChart.destroy();
+                fullscreenChart = null;
+            }
+        }
+
+        // ESC key handler for fullscreen modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('fullscreenModal');
+                if (modal && modal.classList.contains('active')) {
+                    closeFullscreen();
+                }
+            }
+        });
+
+        // ========== SINGLE RESULT EXPORT ==========
+        async function exportSingleResult(format, index) {
+            if (!lastResults || !lastResults[index]) {
+                alert('No result data available');
+                return;
+            }
+
+            const result = lastResults[index];
+            const safeName = result.family_name.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+            if (format === 'png' || format === 'svg') {
+                // Export chart image
+                const chartId = `chart-${index}`;
+                const chart = charts[chartId];
+                if (!chart) {
+                    alert('Chart not found');
+                    return;
+                }
+
+                if (format === 'png') {
+                    const url = chart.toBase64Image('image/png', 1);
+                    downloadDataUrl(url, `${safeName}.png`);
+                } else {
+                    // SVG export - create SVG from canvas
+                    const canvas = chart.canvas;
+                    const url = canvas.toDataURL('image/png');
+                    downloadDataUrl(url, `${safeName}.png`);  // Note: Chart.js doesn't natively export SVG
+                    alert('Note: Direct SVG export not available. PNG downloaded instead.');
+                }
+            } else if (format === 'pdf') {
+                // Server-side PDF generation
+                await exportToServer([index], 'pdf');
+            } else if (format === 'csv') {
+                // Generate CSV
+                const csv = generateCSV(result);
+                downloadText(csv, `${safeName}.csv`, 'text/csv');
+            } else if (format === 'json') {
+                // Generate JSON
+                const json = JSON.stringify(result, null, 2);
+                downloadText(json, `${safeName}.json`, 'application/json');
+            } else if (format === 'xlsx') {
+                // Server-side XLSX generation
+                await exportToServer([index], 'xlsx');
+            }
+        }
+
+        function generateCSV(result) {
+            const q = result.quantiles || {};
+            let csv = 'Metric,Value\n';
+            csv += `Family,${result.family_name}\n`;
+            csv += `Q50,${q.q50 || ''}\n`;
+            csv += `Q75,${q.q75 || ''}\n`;
+            csv += `Q90,${q.q90 || ''}\n`;
+            csv += `Q95,${q.q95 || ''}\n`;
+            csv += `Q99,${q.q99 || ''}\n`;
+            csv += `Max,${q.max || ''}\n`;
+            csv += `Mean,${q.mean || ''}\n`;
+            csv += `Std,${q.std || ''}\n`;
+            csv += '\nMigration (mg/kg),PDF,CDF\n';
+            if (result.centers) {
+                for (let i = 0; i < result.centers.length; i++) {
+                    csv += `${result.centers[i]},${result.pdf[i]},${result.cdf[i]}\n`;
+                }
+            }
+            return csv;
+        }
+
+        function downloadDataUrl(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function downloadText(text, filename, mimeType) {
+            const blob = new Blob([text], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            downloadDataUrl(url, filename);
+            URL.revokeObjectURL(url);
+        }
+
+        // ========== BULK EXPORT ==========
+        async function bulkExport(format) {
+            if (selectedResults.size === 0) {
+                alert('No results selected. Use checkboxes to select results for export.');
+                return;
+            }
+
+            const indices = Array.from(selectedResults).sort((a, b) => a - b);
+
+            if (format === 'xlsx') {
+                // Multi-sheet Excel export
+                await exportToServer(indices, 'xlsx');
+            } else if (format === 'png') {
+                // Client-side PNG export as ZIP
+                await exportChartsAsZip(indices, 'png');
+            } else if (format === 'svg') {
+                alert('SVG export will download as PNG. For true SVG, use PDF export.');
+                await exportChartsAsZip(indices, 'png');
+            } else {
+                // Server-side export for PDF, CSV, JSON
+                await exportToServer(indices, format);
+            }
+        }
+
+        async function exportChartsAsZip(indices, format) {
+            // For client-side PNG export, we need JSZip
+            // If not available, fall back to individual downloads
+            if (typeof JSZip === 'undefined') {
+                // Download individually
+                for (const index of indices) {
+                    const chartId = `chart-${index}`;
+                    const chart = charts[chartId];
+                    if (chart) {
+                        const result = lastResults[index];
+                        const safeName = result.family_name.replace(/[^a-zA-Z0-9_-]/g, '_');
+                        const url = chart.toBase64Image('image/png', 1);
+                        downloadDataUrl(url, `${safeName}.png`);
+                        await new Promise(r => setTimeout(r, 100)); // Small delay between downloads
+                    }
+                }
+                return;
+            }
+
+            // With JSZip
+            const zip = new JSZip();
+            for (const index of indices) {
+                const chartId = `chart-${index}`;
+                const chart = charts[chartId];
+                if (chart) {
+                    const result = lastResults[index];
+                    const safeName = result.family_name.replace(/[^a-zA-Z0-9_-]/g, '_');
+                    const dataUrl = chart.toBase64Image('image/png', 1);
+                    const base64Data = dataUrl.split(',')[1];
+                    zip.file(`${safeName}.png`, base64Data, { base64: true });
+                }
+            }
+
+            const blob = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(blob);
+            downloadDataUrl(url, `${currentBatchName || 'results'}_charts.zip`);
+            URL.revokeObjectURL(url);
+        }
+
+        async function exportToServer(indices, format) {
+            if (!lastResults || lastResults.length === 0) {
+                alert('No results to export');
+                return;
+            }
+
+            // Prepare export data
+            const exportData = indices.map(i => lastResults[i]).filter(r => r && r.success);
+
+            try {
+                const response = await fetch('/api/results/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        results: exportData,
+                        format: format,
+                        batch_name: currentBatchName || 'results'
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Export failed');
+                }
+
+                // Download the file
+                const blob = await response.blob();
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = `${currentBatchName || 'results'}.${format}`;
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                    if (match) filename = match[1];
+                }
+
+                const url = URL.createObjectURL(blob);
+                downloadDataUrl(url, filename);
+                URL.revokeObjectURL(url);
+
+            } catch (error) {
+                alert('Export error: ' + error.message);
+            }
+        }
+
+        // Export from fullscreen modal
+        function exportFromFullscreen(format) {
+            const modal = document.getElementById('fullscreenModal');
+            const index = parseInt(modal.dataset.currentIndex);
+            if (!isNaN(index)) {
+                exportSingleResult(format, index);
+            }
+        }
+
+        // ========== INIT ==========
+        loadPFItems();
+        loadCurrentSpreadsheet();
+        updateBatchDisplay();
+    </script>
+
+    <!-- Fullscreen Modal -->
+    <div id="fullscreenModal" class="fullscreen-modal">
+        <div class="p-4 flex items-center justify-between bg-gray-900 flex-wrap gap-2">
+            <h2 id="fullscreenTitle" class="text-xl font-bold text-white"></h2>
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Smoothing controls -->
+                <div class="flex items-center gap-2 bg-gray-800 rounded px-3 py-1">
+                    <label class="flex items-center gap-1 text-sm text-gray-300 cursor-pointer">
+                        <input type="checkbox" id="fullscreenSmoothingEnabled" onchange="toggleFullscreenSmoothing()" class="rounded">
+                        <span>Smooth</span>
+                    </label>
+                    <input type="range" id="fullscreenSmoothingSlider" min="1" max="20" value="5"
+                           class="w-16 h-1 bg-gray-600 rounded-lg cursor-pointer disabled:opacity-50"
+                           oninput="updateFullscreenSmoothing()" disabled>
+                    <span id="fullscreenSmoothingValue" class="text-xs text-gray-400 w-4">5</span>
+                </div>
+                <!-- Export dropdown -->
+                <div class="export-dropdown">
+                    <button class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded transition font-medium flex items-center gap-2">
+                        📤 Export <span class="text-xs">▼</span>
+                    </button>
+                    <div class="export-dropdown-content">
+                        <button onclick="exportFromFullscreen('png')">🖼️ PNG</button>
+                        <button onclick="exportFromFullscreen('pdf')">📄 PDF</button>
+                        <button onclick="exportFromFullscreen('csv')">📊 CSV</button>
+                        <button onclick="exportFromFullscreen('json')">📋 JSON</button>
+                        <button onclick="exportFromFullscreen('xlsx')">📗 XLSX</button>
+                    </div>
+                </div>
+                <button onclick="closeFullscreen()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition font-medium">
+                    ✕ Close
+                </button>
+            </div>
+        </div>
+        <!-- Stats panel -->
+        <div id="fullscreenStats" class="px-4 py-2 bg-gray-800 flex flex-wrap gap-4 text-sm">
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">Mode:</span>
+                <span id="fsStatMode" class="text-green-400 font-mono">-</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">Q50:</span>
+                <span id="fsStatQ50" class="text-blue-400 font-mono">-</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">Q95:</span>
+                <span id="fsStatQ95" class="text-orange-400 font-mono">-</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">Q99:</span>
+                <span id="fsStatQ99" class="text-red-400 font-mono">-</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">Max:</span>
+                <span id="fsStatMax" class="text-purple-400 font-mono">-</span>
+            </div>
+        </div>
+        <div class="flex-1 p-4">
+            <div class="chart-container bg-white dark:bg-gray-800 rounded-lg p-4 h-full">
+                <canvas id="fullscreenCanvas"></canvas>
+            </div>
+        </div>
+        <div class="p-4 bg-gray-900 text-gray-400 text-sm text-center">
+            💡 Scroll to zoom, drag to pan. Press ESC or click Close to exit. Enable smoothing to see mode marker (▲).
+        </div>
+    </div>
+</body>
+</html>

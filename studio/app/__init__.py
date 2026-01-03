@@ -1,0 +1,3 @@
+"""
+SFPPy Studio Application Package
+"""

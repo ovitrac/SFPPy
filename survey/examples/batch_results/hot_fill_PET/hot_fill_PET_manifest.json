@@ -1,0 +1,92 @@
+{
+  "name": "hot_fill_PET",
+  "fingerprint": "eb46f866951e71fb1bb9877764dba1f77bb17e0604851151efe6fcfd64d8de03",
+  "config": {
+    "name": "hot_fill_PET",
+    "packaging": {
+      "layers": [
+        {
+          "polymer": "PET",
+          "thickness_m": 0.00035,
+          "C0": 0.0,
+          "temperature_degC": 40.0
+        }
+      ],
+      "h_m_s": 1e-07,
+      "surface_area_m2": 0.065,
+      "food_volume_m3": 0.001,
+      "contact_temperature_degC": 40.0,
+      "cf0": 0.0,
+      "food_simulant": "water3aceticacid"
+    },
+    "time_prior": {
+      "mode": 15768000.0,
+      "max_val": 31536000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "time"
+    },
+    "conc_prior": {
+      "mode": 100.0,
+      "max_val": 500.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "concentration"
+    },
+    "pdf_bins": 250,
+    "n_fo": 200,
+    "fo_max_factor": 1.5,
+    "fo_min_floor": 1e-15,
+    "cache_dir": ".survey_cache"
+  },
+  "substances": [
+    {
+      "id": "100-21-0",
+      "mass_g_mol": 166.13,
+      "name": "100-21-0",
+      "cas": "100-21-0",
+      "D": 1.2754623944709917e-17,
+      "k": 1.0,
+      "k0": 1.0
+    },
+    {
+      "id": "107-21-1",
+      "mass_g_mol": 62.07,
+      "name": "107-21-1",
+      "cas": "107-21-1",
+      "D": 6.64932225745425e-17,
+      "k": 1.0,
+      "k0": 1.0
+    },
+    {
+      "id": "70321-86-7",
+      "mass_g_mol": 447.6,
+      "name": "70321-86-7",
+      "cas": "70321-86-7",
+      "D": 6.509313998266262e-19,
+      "k": 1.0,
+      "k0": 1.0
+    },
+    {
+      "id": "111-90-0",
+      "mass_g_mol": 134.17,
+      "name": "111-90-0",
+      "cas": "111-90-0",
+      "D": 1.9918497272167626e-17,
+      "k": 1.0,
+      "k0": 1.0
+    }
+  ],
+  "i_ref": 0,
+  "ref_layer_details": [
+    {
+      "index": 0,
+      "polymer": "PET",
+      "thickness_m": 0.00035
+    }
+  ],
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "name": "water_HDPE_cap",
+  "fingerprint": "1504e9986f6d08bb0ff87bcb8ffb3c2686f5991abbeba26e97a0e408e56047b4",
+  "config": {
+    "name": "water_HDPE_cap",
+    "packaging": {
+      "layers": [
+        {
+          "polymer": "HDPE",
+          "thickness_m": 0.0008,
+          "C0": 0.0,
+          "temperature_degC": 25.0
+        }
+      ],
+      "h_m_s": 1e-07,
+      "surface_area_m2": 0.002,
+      "food_volume_m3": 1e-05,
+      "contact_temperature_degC": 25.0,
+      "cf0": 0.0,
+      "food_simulant": "water"
+    },
+    "time_prior": {
+      "mode": 31536000.0,
+      "max_val": 63072000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "time"
+    },
+    "conc_prior": {
+      "mode": 500.0,
+      "max_val": 2000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "concentration"
+    },
+    "pdf_bins": 250,
+    "n_fo": 200,
+    "fo_max_factor": 1.5,
+    "fo_min_floor": 1e-15,
+    "cache_dir": ".survey_cache"
+  },
+  "substances": [
+    {
+      "id": "24157-81-1",
+      "mass_g_mol": 212.33,
+      "name": "24157-81-1",
+      "cas": "24157-81-1",
+      "D": 9.172562172056367e-14,
+      "k": 0.4112702699637179,
+      "k0": 1.0
+    },
+    {
+      "id": "31570-04-4",
+      "mass_g_mol": 646.9,
+      "name": "31570-04-4",
+      "cas": "31570-04-4",
+      "D": 1.6981526597363707e-15,
+      "k": 0.7831724901953403,
+      "k0": 1.0
+    },
+    {
+      "id": "2082-79-3",
+      "mass_g_mol": 530.9,
+      "name": "2082-79-3",
+      "cas": "2082-79-3",
+      "D": 4.170211695020623e-15,
+      "k": 0.6389373341572655,
+      "k0": 1.0
+    },
+    {
+      "id": "872-50-4",
+      "mass_g_mol": 99.13,
+      "name": "872-50-4",
+      "cas": "872-50-4",
+      "D": 4.42482810243594e-13,
+      "k": 0.11344527642606757,
+      "k0": 1.0
+    },
+    {
+      "id": "124-26-5",
+      "mass_g_mol": 283.5,
+      "name": "124-26-5",
+      "cas": "124-26-5",
+      "D": 4.0899694585083416e-14,
+      "k": 0.3348303473885851,
+      "k0": 1.0
+    }
+  ],
+  "i_ref": 0,
+  "ref_layer_details": [
+    {
+      "index": 0,
+      "polymer": "HDPE",
+      "thickness_m": 0.0008
+    }
+  ],
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0
+  }
+}

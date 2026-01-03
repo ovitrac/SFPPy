@@ -1,0 +1,46 @@
+# Plasticizers Family
+#
+# Common plasticizers used in flexible PVC and other polymers.
+# High molecular weight substances with relatively slow diffusion.
+
+name: plasticizers
+description: "Common plasticizers for flexible packaging"
+
+substances:
+  - name: "ATBC"
+    cas: "77-90-7"
+    full_name: "Acetyl tributyl citrate"
+    C0_min: 0.0
+    C0_likely: 500.0           # mg/kg
+    C0_max: 2000.0
+    notes: "Primary plasticizer in PVC cling film"
+
+  - name: "DEHA"
+    cas: "103-23-1"
+    full_name: "Di(2-ethylhexyl) adipate"
+    C0_min: 0.0
+    C0_likely: 300.0
+    C0_max: 1500.0
+    notes: "Alternative to phthalates"
+
+  - name: "DBS"
+    cas: "109-43-3"
+    full_name: "Dibutyl sebacate"
+    C0_min: 0.0
+    C0_likely: 200.0
+    C0_max: 800.0
+    notes: "Low temperature plasticizer"
+
+  - name: "TOTM"
+    cas: "3319-31-1"
+    full_name: "Tris(2-ethylhexyl) trimellitate"
+    C0_min: 0.0
+    C0_likely: 400.0
+    C0_max: 1200.0
+    notes: "High molecular weight, low migration"
+
+# Typical usage:
+# - PVC cling films: 15-40% plasticizer by weight
+# - Initial concentration in polymer: 150,000-400,000 mg/kg
+# - For survey purposes, we use reduced values representing
+#   what could migrate under realistic conditions

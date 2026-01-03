@@ -1,0 +1,83 @@
+{
+  "name": "water_HDPE_cap",
+  "fingerprint": "13914b89990b709319bd4a96b89a177da8035811df3c233787d94c203c1d4446",
+  "config": {
+    "name": "water_HDPE_cap",
+    "packaging": {
+      "layers": [
+        {
+          "polymer": "HDPE",
+          "thickness_m": 0.0007999999999999999,
+          "C0": 0.0,
+          "temperature_degC": 25.0
+        }
+      ],
+      "h_m_s": 1e-07,
+      "surface_area_m2": 0.002,
+      "food_volume_m3": 9.999999999999999e-06,
+      "contact_temperature_degC": 25.0,
+      "cf0": 0.0,
+      "food_simulant": "water"
+    },
+    "time_prior": {
+      "mode": 31536000.0,
+      "max_val": 63072000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "time"
+    },
+    "conc_prior": {
+      "mode": 566.6666666666666,
+      "max_val": 2000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "concentration"
+    },
+    "pdf_bins": 250,
+    "n_fo": 200,
+    "fo_max_factor": 1.5,
+    "fo_min_floor": 1e-15,
+    "cache_dir": ".survey_cache"
+  },
+  "substances": [
+    {
+      "id": "31570-04-4",
+      "mass_g_mol": 646.9,
+      "name": "31570-04-4",
+      "cas": "31570-04-4",
+      "D": 1.6981526597363707e-15,
+      "k": 0.7831724901953403,
+      "k0": 1.0
+    },
+    {
+      "id": "2082-79-3",
+      "mass_g_mol": 530.9,
+      "name": "2082-79-3",
+      "cas": "2082-79-3",
+      "D": 4.170211695020623e-15,
+      "k": 0.6389373341572655,
+      "k0": 1.0
+    },
+    {
+      "id": "124-26-5",
+      "mass_g_mol": 283.5,
+      "name": "124-26-5",
+      "cas": "124-26-5",
+      "D": 4.0899694585083416e-14,
+      "k": 0.3348303473885851,
+      "k0": 1.0
+    }
+  ],
+  "i_ref": 0,
+  "ref_layer_details": [
+    {
+      "index": 0,
+      "polymer": "HDPE",
+      "thickness_m": 0.0007999999999999999
+    }
+  ],
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0
+  }
+}

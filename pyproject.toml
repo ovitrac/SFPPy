@@ -1,0 +1,163 @@
+# pyproject.toml — SFPPy Project Configuration
+# =============================================
+# Modern Python packaging configuration (PEP 517/518/621)
+#
+# @project: SFPPy — Safe Food Packaging in Python
+# @author: Olivier Vitrac, PhD, HDR
+# @email: olivier.vitrac@agroparistech.fr
+# @license: MIT
+# @url: https://github.com/ovitrac/SFPPy
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SFPPy"
+version = "1.50"
+description = "Safe Food Packaging in Python — Mass transfer modeling for food contact materials"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Olivier Vitrac", email = "olivier.vitrac@agroparistech.fr"}
+]
+maintainers = [
+    {name = "Olivier Vitrac", email = "olivier.vitrac@agroparistech.fr"}
+]
+keywords = [
+    "food packaging",
+    "migration modeling",
+    "mass transfer",
+    "diffusion",
+    "food contact materials",
+    "regulatory compliance",
+    "EU 10/2011",
+    "Patankar method",
+    "finite volume",
+    "polymer",
+    "food safety"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+dependencies = [
+    "numpy>=1.21.0",
+    "matplotlib>=3.4.0",
+    "scipy>=1.7.0",
+    "pandas>=1.3.0",
+    "openpyxl>=3.0.10",
+    "pillow>=8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+]
+notebooks = [
+    "jupyter>=1.0.0",
+    "ipywidgets>=8.0.0",
+]
+pubchem = [
+    "requests>=2.28.0",
+]
+all = [
+    "SFPPy[dev,notebooks,pubchem]",
+]
+
+[project.urls]
+Homepage = "https://github.com/ovitrac/SFPPy"
+Documentation = "https://ovitrac.github.io/SFPPy/"
+Repository = "https://github.com/ovitrac/SFPPy.git"
+Issues = "https://github.com/ovitrac/SFPPy/issues"
+Changelog = "https://github.com/ovitrac/SFPPy/releases"
+
+[project.scripts]
+sfppy = "cli:main"
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = true
+
+[tool.setuptools.packages.find]
+include = ["patankar", "patankar.*"]
+
+[tool.setuptools.package-data]
+patankar = [
+    "cache.PubChem/*.json",
+    "cache.PubChem/thumbs/*.png",
+]
+
+# =============================================================================
+# Development Tool Configuration
+# =============================================================================
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "INSERM/fixtures"]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311', 'py312']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | html
+  | wiki
+  | notebooks
+  | release
+  | studio
+  | survey
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip_glob = ["html/*", "wiki/*", "notebooks/*", "release/*", "studio/*", "survey/*"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = [
+    "html/",
+    "wiki/",
+    "notebooks/",
+    "release/",
+    "studio/",
+    "survey/",
+]

@@ -1,0 +1,92 @@
+{
+  "name": "dairy_PET_pot",
+  "fingerprint": "bb61a2a2e562b185b7aa28d9af7e0488c040338c7d287dd77e515151a233b1b5",
+  "config": {
+    "name": "dairy_PET_pot",
+    "packaging": {
+      "layers": [
+        {
+          "polymer": "gPET",
+          "thickness_m": 0.0002,
+          "C0": 0.0,
+          "temperature_degC": 6.0
+        }
+      ],
+      "h_m_s": 1e-07,
+      "surface_area_m2": 0.014,
+      "food_volume_m3": 0.000125,
+      "contact_temperature_degC": 6.0,
+      "cf0": 0.0,
+      "food_simulant": "ethanol50"
+    },
+    "time_prior": {
+      "mode": 2592000.0,
+      "max_val": 5184000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "time"
+    },
+    "conc_prior": {
+      "mode": 50.0,
+      "max_val": 200.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "concentration"
+    },
+    "pdf_bins": 250,
+    "n_fo": 200,
+    "fo_max_factor": 1.5,
+    "fo_min_floor": 1e-15,
+    "cache_dir": ".survey_cache"
+  },
+  "substances": [
+    {
+      "id": "70321-86-7",
+      "mass_g_mol": 447.6,
+      "name": "70321-86-7",
+      "cas": "70321-86-7",
+      "D": 6.043598918908261e-21,
+      "k": 0.535934775791724,
+      "k0": 1.0
+    },
+    {
+      "id": "872-50-4",
+      "mass_g_mol": 99.13,
+      "name": "872-50-4",
+      "cas": "872-50-4",
+      "D": 3.1779020779157553e-19,
+      "k": 0.11344527642606757,
+      "k0": 1.0
+    },
+    {
+      "id": "301-02-0",
+      "mass_g_mol": 281.5,
+      "name": "301-02-0",
+      "cas": "301-02-0",
+      "D": 3.001043055891378e-20,
+      "k": 0.6728398504452114,
+      "k0": 1.0
+    },
+    {
+      "id": "124-26-5",
+      "mass_g_mol": 283.5,
+      "name": "124-26-5",
+      "cas": "124-26-5",
+      "D": 2.9374073161509554e-20,
+      "k": 0.6475442405170612,
+      "k0": 1.0
+    }
+  ],
+  "i_ref": 0,
+  "ref_layer_details": [
+    {
+      "index": 0,
+      "polymer": "gPET",
+      "thickness_m": 0.0002
+    }
+  ],
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0
+  }
+}

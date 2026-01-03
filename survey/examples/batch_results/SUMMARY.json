@@ -1,0 +1,101 @@
+{
+  "total": 5,
+  "success": 5,
+  "failed": 0,
+  "duration_s": 10.02041745185852,
+  "timestamp": "2025-12-19T14:21:46.894528",
+  "input_path": "/home/olivi/natacha/python/survey/examples/batch_scenarios",
+  "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results",
+  "results": [
+    {
+      "name": "fatty_PP_tray",
+      "success": true,
+      "error": null,
+      "duration_s": 2.349153518676758,
+      "quantiles": {
+        "q50": 0.5334207065991692,
+        "q75": 0.8106314675089736,
+        "q90": 1.0878422284187779,
+        "q95": 1.2558487501822957,
+        "q99": 1.5246591850039244
+      },
+      "n_substances": 4,
+      "polymer": "PP",
+      "simulant": "oliveoil",
+      "thickness_um": 400.0,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results/fatty_PP_tray"
+    },
+    {
+      "name": "hot_fill_PET",
+      "success": true,
+      "error": null,
+      "duration_s": 0.7436037063598633,
+      "quantiles": {
+        "q50": 0.21120775128570923,
+        "q75": 0.32990301647106646,
+        "q90": 0.44859828165642374,
+        "q95": 0.5149279886717704,
+        "q99": 0.6371142910684617
+      },
+      "n_substances": 4,
+      "polymer": "PET",
+      "simulant": "water3aceticacid",
+      "thickness_um": 350.0,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results/hot_fill_PET"
+    },
+    {
+      "name": "dairy_PET_pot",
+      "success": true,
+      "error": null,
+      "duration_s": 3.3822052478790283,
+      "quantiles": {
+        "q50": 0.0033450029494004195,
+        "q75": 0.005085492288925841,
+        "q90": 0.006880371920311432,
+        "q95": 0.00796817775751482,
+        "q99": 0.00981744768076058
+      },
+      "n_substances": 4,
+      "polymer": "gPET",
+      "simulant": "ethanol50",
+      "thickness_um": 200.0,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results/dairy_PET_pot"
+    },
+    {
+      "name": "water_PET_bottle",
+      "success": true,
+      "error": null,
+      "duration_s": 3.1047637462615967,
+      "quantiles": {
+        "q50": 0.025366869394389265,
+        "q75": 0.03834526768919307,
+        "q90": 0.05171695078080912,
+        "q95": 0.05918936192024162,
+        "q99": 0.07216776021504542
+      },
+      "n_substances": 4,
+      "polymer": "gPET",
+      "simulant": "water",
+      "thickness_um": 180.0,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results/water_PET_bottle"
+    },
+    {
+      "name": "water_HDPE_cap",
+      "success": true,
+      "error": null,
+      "duration_s": 6.913259267807007,
+      "quantiles": {
+        "q50": 62.51052354197958,
+        "q75": 92.48633015275342,
+        "q90": 118.80655059148165,
+        "q95": 132.6977780452549,
+        "q99": 153.1690606087102
+      },
+      "n_substances": 5,
+      "polymer": "HDPE",
+      "simulant": "water",
+      "thickness_um": 800.0,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results/water_HDPE_cap"
+    }
+  ]
+}

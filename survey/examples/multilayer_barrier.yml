@@ -1,0 +1,64 @@
+# Multilayer Functional Barrier Example
+#
+# PET barrier layer protecting food from recycled PP content.
+# Demonstrates multilayer reference layer selection.
+
+name: multilayer_barrier_example
+
+physics:
+  multilayer:
+    temperature_degC: 40.0
+    layers:
+      # Layer 0: PET functional barrier (food contact side)
+      - polymer: gPET
+        thickness_m: 30e-6       # 30 µm barrier
+        C0: 0.0                  # Virgin material
+
+      # Layer 1: Recycled PP (outer side)
+      - polymer: PP
+        thickness_m: 200e-6      # 200 µm recycled
+        C0: 100.0                # Contaminated at 100 mg/kg
+
+  interface:
+    h_m_s: 1e-7
+    surface_area_m2: 0.06        # 6 dm²
+    food_volume_m3: 0.001        # 1 L
+    contact_temperature_degC: 40.0
+    cf0: 0.0
+    food_simulant: oliveoil
+
+family:
+  # Named substances for PET migrants
+  substances:
+    - name: limonene             # M ~ 136 g/mol
+    - name: benzaldehyde         # M ~ 106 g/mol
+    - name: acetaldehyde         # M ~ 44 g/mol
+
+priors:
+  # Long storage: 30 days likely, up to 90 days
+  time_s:
+    triangular:
+      min: 0.0
+      mode: 2592000.0            # 30 days
+      max: 7776000.0             # 90 days
+    grid:
+      nlow: 15
+      nhigh: 15
+
+  # High contamination: 50 mg/kg likely, up to 200 mg/kg
+  cp0_av:
+    triangular:
+      min: 0.0
+      mode: 50.0
+      max: 200.0
+    grid:
+      nlow: 15
+      nhigh: 15
+
+solver:
+  pdf_bins: 250
+  fo_grid:
+    n_fo: 200
+    fo_max_factor: 1.5
+
+# Expected: i_ref = 0 (gPET is the rate-limiting barrier)

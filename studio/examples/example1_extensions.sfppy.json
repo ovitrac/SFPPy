@@ -1,0 +1,85 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "name": "Example 1 Extensions: Two-Step Migration",
+    "description": "Migration of Irganox 1076 with two sequential contact steps: 10 days at 7C (storage), then 4 hours at 25C (warming before consumption).",
+    "author": "INRAE/olivier.vitrac@agroparistech.fr",
+    "source_script": "example1_extensions.py"
+  },
+  "geometry": {
+    "shape": "cylinder",
+    "dimensions": {
+      "radius": {"value": 30, "unit": "mm"},
+      "height": {"value": 19, "unit": "cm"}
+    }
+  },
+  "substances": [
+    {
+      "id": "m1",
+      "source": "pubchem",
+      "lookup_name": "irganox 1076",
+      "cid": 16386,
+      "properties": {
+        "name": "Irganox 1076",
+        "cas": ["2082-79-3"],
+        "mw": 530.9,
+        "logP": 13.8,
+        "formula": "C35H62O3"
+      },
+      "SML": 6.0,
+      "color": "#EF4444"
+    }
+  ],
+  "layers": [
+    {
+      "index": 1,
+      "polymer": "LDPE",
+      "thickness": {"value": 100, "unit": "um"},
+      "name": "LDPE film",
+      "substances": [
+        {
+          "substance_id": "m1",
+          "C0": {"value": 5000, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    }
+  ],
+  "food": {
+    "category": "realfood",
+    "texture": "semisolid",
+    "affinity": "fat",
+    "simulant": "ethanol",
+    "name": "Fatty sandwich"
+  },
+  "contact_steps": [
+    {
+      "index": 1,
+      "name": "Cold storage",
+      "type": "storage",
+      "temperature": {"value": 7, "unit": "degC"},
+      "duration": {"value": 10, "unit": "days"},
+      "with_food_contact": true
+    },
+    {
+      "index": 2,
+      "name": "Warming before consumption",
+      "type": "ambient",
+      "temperature": {"value": 25, "unit": "degC"},
+      "duration": {"value": 4, "unit": "hours"},
+      "with_food_contact": true
+    }
+  ],
+  "simulation_config": {
+    "solver": "senspatankar",
+    "time_factor": 2.0,
+    "n_time_points": 1000,
+    "n_space_points": 200,
+    "output_units": {
+      "time": "days",
+      "length": "um",
+      "concentration": "mg/kg"
+    }
+  }
+}

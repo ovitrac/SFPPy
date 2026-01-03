@@ -1,0 +1,83 @@
+{
+  "total": 4,
+  "success": 4,
+  "failed": 0,
+  "duration_s": 5.857743740081787,
+  "timestamp": "2025-12-19T14:22:07.459850",
+  "input_path": "/home/olivi/natacha/python/survey/examples/batch_scenarios/example_pf_jobs.json",
+  "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results_json",
+  "results": [
+    {
+      "name": "yogurt_PET_125g",
+      "success": true,
+      "error": null,
+      "duration_s": 3.581568717956543,
+      "quantiles": {
+        "q50": 0.0073841885627832435,
+        "q75": 0.011346436084276691,
+        "q90": 0.015308683605770139,
+        "q95": 0.017710045740008593,
+        "q99": 0.02167229326150204
+      },
+      "n_substances": 3,
+      "polymer": "gPET",
+      "simulant": "ethanol50",
+      "thickness_um": 199.99999999999997,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results_json/yogurt_PET_125g"
+    },
+    {
+      "name": "water_PET_1500mL",
+      "success": true,
+      "error": null,
+      "duration_s": 3.7341063022613525,
+      "quantiles": {
+        "q50": 0.02124830891419268,
+        "q75": 0.032995341484640665,
+        "q90": 0.0443968730971343,
+        "q95": 0.05130689225622135,
+        "q99": 0.06305392482666933
+      },
+      "n_substances": 3,
+      "polymer": "gPET",
+      "simulant": "water",
+      "thickness_um": 179.99999999999997,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results_json/water_PET_1500mL"
+    },
+    {
+      "name": "cheese_PP_tray",
+      "success": true,
+      "error": null,
+      "duration_s": 1.4737944602966309,
+      "quantiles": {
+        "q50": 0.7694793216101642,
+        "q75": 1.1237719588982973,
+        "q90": 1.4780645961864305,
+        "q95": 1.6773542046610053,
+        "q99": 2.0427184868643926
+      },
+      "n_substances": 3,
+      "polymer": "PP",
+      "simulant": "oliveoil",
+      "thickness_um": 399.99999999999994,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results_json/cheese_PP_tray"
+    },
+    {
+      "name": "water_HDPE_cap",
+      "success": true,
+      "error": null,
+      "duration_s": 2.2576122283935547,
+      "quantiles": {
+        "q50": 59.84944367301895,
+        "q75": 87.02035675156745,
+        "q90": 112.72257182587006,
+        "q95": 125.94085386408284,
+        "q99": 146.50262592352493
+      },
+      "n_substances": 3,
+      "polymer": "HDPE",
+      "simulant": "water",
+      "thickness_um": 799.9999999999999,
+      "output_dir": "/home/olivi/natacha/python/survey/examples/batch_results_json/water_HDPE_cap"
+    }
+  ]
+}

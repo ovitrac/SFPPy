@@ -1,0 +1,60 @@
+# HDPE Bottle Cap in Contact with Water — Survey Scenario
+#
+# Simulates migration from an HDPE screw cap in contact with
+# bottled water. Cap-to-liquid contact is intermittent but
+# relevant for compliance assessment.
+#
+# Food simulant: water (EU Simulant A)
+# Typical packaging: HDPE injection-molded cap
+
+name: water_HDPE_cap
+
+physics:
+  monolayer:
+    polymer: HDPE                # High-density polyethylene
+    thickness_m: 800e-6          # 800 µm typical cap wall
+    temperature_degC: 25.0       # Ambient storage
+
+  interface:
+    h_m_s: 1e-7                  # Mass transfer coefficient
+    surface_area_m2: 0.002       # ~20 cm² (cap inner surface)
+    food_volume_m3: 10e-6        # ~10 mL headspace contact
+    contact_temperature_degC: 25.0
+    cf0: 0.0
+    food_simulant: water         # EU Simulant A
+
+# Substances: typical HDPE additives
+family:
+  substances:
+    - cas: "24157-81-1"          # DIPN (printing ink migrant)
+    - cas: "31570-04-4"          # Irgafos 168 (antioxidant)
+    - cas: "2082-79-3"           # Irganox 1076 (antioxidant)
+    - cas: "872-50-4"            # NMP (residual solvent)
+    - cas: "124-26-5"            # Stearamide (slip agent)
+
+priors:
+  # Contact time: 1 year likely, up to 2 years
+  time_s:
+    triangular:
+      min: 0.0
+      mode: 31536000.0           # 365 days
+      max: 63072000.0            # 730 days
+    grid:
+      nlow: 15
+      nhigh: 15
+
+  # Initial concentration (HDPE typically has higher additive levels)
+  cp0_av:
+    triangular:
+      min: 0.0
+      mode: 500.0                # 500 mg/kg typical for HDPE
+      max: 2000.0                # 2000 mg/kg max
+    grid:
+      nlow: 15
+      nhigh: 15
+
+solver:
+  pdf_bins: 250
+  fo_grid:
+    n_fo: 200
+    fo_max_factor: 1.5

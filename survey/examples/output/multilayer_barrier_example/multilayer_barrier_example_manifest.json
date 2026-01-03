@@ -1,0 +1,100 @@
+{
+  "name": "multilayer_barrier_example",
+  "fingerprint": "1e06915a82e961d37a71cfba95cc3501585f2b57aa7d10059ba2b3c6afb15ec0",
+  "config": {
+    "name": "multilayer_barrier_example",
+    "packaging": {
+      "layers": [
+        {
+          "polymer": "gPET",
+          "thickness_m": 3e-05,
+          "C0": 0.0,
+          "temperature_degC": 40.0
+        },
+        {
+          "polymer": "PP",
+          "thickness_m": 0.0002,
+          "C0": 100.0,
+          "temperature_degC": 40.0
+        }
+      ],
+      "h_m_s": 1e-07,
+      "surface_area_m2": 0.06,
+      "food_volume_m3": 0.001,
+      "contact_temperature_degC": 40.0,
+      "cf0": 0.0,
+      "food_simulant": "oliveoil"
+    },
+    "time_prior": {
+      "mode": 2592000.0,
+      "max_val": 7776000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "time"
+    },
+    "conc_prior": {
+      "mode": 50.0,
+      "max_val": 200.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "concentration"
+    },
+    "pdf_bins": 250,
+    "n_fo": 200,
+    "fo_max_factor": 1.5,
+    "fo_min_floor": 1e-15,
+    "cache_dir": ".survey_cache"
+  },
+  "substances": [
+    {
+      "id": "138-86-3",
+      "mass_g_mol": 136.23,
+      "name": "limonene",
+      "cas": "138-86-3",
+      "D": 1.9330914971052684e-17,
+      "k": 0.27396574905754884,
+      "k0": 1.0
+    },
+    {
+      "id": "55279-75-9",
+      "mass_g_mol": 106.12,
+      "name": "benzaldehyde",
+      "cas": "55279-75-9",
+      "D": 3.055808506782151e-17,
+      "k": 0.5814206291176556,
+      "k0": 1.0
+    },
+    {
+      "id": "75-07-0",
+      "mass_g_mol": 44.05,
+      "name": "acetaldehyde",
+      "cas": "75-07-0",
+      "D": 9.70829587119809e-17,
+      "k": 43.23621739667753,
+      "k0": 1.0
+    }
+  ],
+  "i_ref": 0,
+  "ref_layer_details": [
+    {
+      "index": 0,
+      "polymer": "gPET",
+      "thickness_m": 3e-05,
+      "D": 1.9330914971052684e-17,
+      "k": 1.0,
+      "permeability_proxy": 6.443638323684228e-13
+    },
+    {
+      "index": 1,
+      "polymer": "PP",
+      "thickness_m": 0.0002,
+      "D": 4.2579173739220903e-13,
+      "k": 1.0,
+      "permeability_proxy": 2.128958686961045e-09
+    }
+  ],
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0
+  }
+}

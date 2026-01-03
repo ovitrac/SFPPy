@@ -1,0 +1,92 @@
+{
+  "name": "basic_monolayer_example",
+  "fingerprint": "169253ccf8e07f79bd2ff33091f026dc945ff9bd216216a949976d4cec952fac",
+  "config": {
+    "name": "basic_monolayer_example",
+    "packaging": {
+      "layers": [
+        {
+          "polymer": "PP",
+          "thickness_m": 5e-05,
+          "C0": 0.0,
+          "temperature_degC": 40.0
+        }
+      ],
+      "h_m_s": 1e-07,
+      "surface_area_m2": 0.06,
+      "food_volume_m3": 0.001,
+      "contact_temperature_degC": 40.0,
+      "cf0": 0.0,
+      "food_simulant": "oliveoil"
+    },
+    "time_prior": {
+      "mode": 604800.0,
+      "max_val": 2592000.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "time"
+    },
+    "conc_prior": {
+      "mode": 10.0,
+      "max_val": 50.0,
+      "n_low": 15,
+      "n_high": 15,
+      "name": "concentration"
+    },
+    "pdf_bins": 250,
+    "n_fo": 200,
+    "fo_max_factor": 1.5,
+    "fo_min_floor": 1e-15,
+    "cache_dir": ".survey_cache"
+  },
+  "substances": [
+    {
+      "id": "M100.0_0",
+      "mass_g_mol": 100.0,
+      "name": "Substance (M=100.0)",
+      "cas": null,
+      "D": 7.432271233269217e-13,
+      "k": 1.0,
+      "k0": 1.0
+    },
+    {
+      "id": "M150.0_1",
+      "mass_g_mol": 150.0,
+      "name": "Substance (M=150.0)",
+      "cas": null,
+      "D": 3.5012582740067676e-13,
+      "k": 1.0,
+      "k0": 1.0
+    },
+    {
+      "id": "M200.0_2",
+      "mass_g_mol": 200.0,
+      "name": "Substance (M=200.0)",
+      "cas": null,
+      "D": 1.8173570433677599e-13,
+      "k": 1.0,
+      "k0": 1.0
+    },
+    {
+      "id": "M250.0_3",
+      "mass_g_mol": 250.0,
+      "name": "Substance (M=250.0)",
+      "cas": null,
+      "D": 1.0068632220214325e-13,
+      "k": 1.0,
+      "k0": 1.0
+    }
+  ],
+  "i_ref": 0,
+  "ref_layer_details": [
+    {
+      "index": 0,
+      "polymer": "PP",
+      "thickness_m": 5e-05
+    }
+  ],
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0
+  }
+}

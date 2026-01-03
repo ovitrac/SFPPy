@@ -47,6 +47,8 @@
 | <img src="docs/assets/SFPPy_social.png" alt="SFPPy – Scientific Framework for Food Packaging" width="320"/> | [![ChatGPT SFPPy](https://img.shields.io/badge/ChatGPT-SFPPy-orange?logo=openai)](https://chatgpt.com/g/g-6780fa0b1180819198ea1d962dd4064c-sfppy) <br/> 🔥A custom AI assistant 🤖 extensively trained on **SFPPy** 🏋🏻. It helps you explore and use the framework: from the **principles of migration modeling** ⚙️ to **first simulations** 📈, **regulatory compliance** ✅, **interpretation** 📊, and **reporting**📝. |
 | :----------------------------------------------------------: | :----------------------------------------------------------- |
 | <img src="docs/assets/SFPPy_social_v15.png" alt="SFPPy – version 1.50" width="320"/> | 🧠🛡️ **SFPPy 1.5** brings **design-for-compliance** to packaging with tiers **M0–M3** , *explicit performance indicators*, *open data*, *AI-assisted reasoning*. It automates **risk assessment** for the 100s of chromatogram peaks in **recycled-material extracts**.<br />Empower these new capabilities by exploring: [![View on DeepWiki](https://img.shields.io/badge/%F0%9F%93%98%20DeepWiki-SFPPy%20v1.5-8a2be2?logo=wiki)](https://deepwiki.com/ovitrac/SFPPy)[![📄 SFPPy – Safe by Design](https://img.shields.io/badge/%F0%9F%93%84%20Open_Paper-Safe--by--Design-blue)](https://ovitrac.github.io/SFPPy/wikipages/SafeByDesign/sfppydesign.html) |
+| <img src="studio/docs/images/studio.png" alt="SFPPy – studio" width="320"/> | 🆕🌐🔥 [SFPPy Studio](studio/README.md) 0.3 is a web-based graphical user interface for the SFPPy framework. It provides an intuitive interface for food contact migration simulation and compliance checking, with support for **offline operation** and comprehensive **safety assessment**. |
+| <img src="survey/docs/images/survey1.png" alt="SFPPy – studio" width="320"/><br/><img src="survey/docs/images/survey2.png" alt="SFPPy – studio" width="320"/> | 🆕👩🏻‍🔬🥼 The [survey](survey/README.md) module provides production-grade infrastructure for estimating **migration exposure** across *populations*. It is designed for regulatory science applications (reproducible, traceable, auditable, scalable). |
 
 </div>
 
@@ -465,7 +467,7 @@ print(response.response)
 
 ## 📖 Case Studies
 
-The project includes four detailed examples (`example1.py`, `example2.py`, `example3.py`, and `example4.py`), showcasing real-world scenarios with various materials, substances, food types, geometries, and usage conditions.
+The project includes five detailed examples (`examples/example1.py`… `examples/example5.py`), showcasing real-world scenarios with various materials, substances, food types, geometries, and usage conditions.
 
 ### [Example <kbd>1</kbd>](https://ovitrac.github.io/SFPPy/wikipages/#examples/example1.html): | **Mass Transfer from** ♶ **Monolayer Materials**
 
@@ -519,8 +521,102 @@ The project includes four detailed examples (`example1.py`, `example2.py`, `exam
 > These examples do not discuss sources of uncertainty. Please refer to our publications and this [link](https://ovitrac.github.io/SFPPy/MigrationModeling/) for details on the limitations of the presented approaches and assumptions.
 
 
+***
 
-## 
+## 🖥️ SFPPy Studio (v0.3.0)
+
+**SFPPy Studio** is a **web-based graphical user interface** for the SFPPy framework, providing an intuitive way to configure and run migration simulations without writing code. Version 0.3.0 introduces **offline operation**, **ToxTree safety assessment**, and a complete **9-tab interface**.
+
+### Features
+
+| Feature | Description |
+|---------|-------------|
+| **9-Tab Interface** | 🧪 Substances, 🧱 Assembly, 🍽️ Food, ▶️ Simulate, 📊 Results, 📁 Jobs, ⚙️ Config, 📈 Fitting, ❓ Help |
+| **Substance Search** | Search PubChem for migrants by name, CAS, or CID |
+| **Safety Assessment** | ToxTree Cramer class, genotoxicity alerts, DNA binding potential |
+| **Layer Assembly** | Visual multilayer packaging builder (1-5+ layers) |
+| **Food & Conditions** | Configure food types, geometries, and multi-step contact scenarios |
+| **Simulation** | Run Patankar solver with async job management |
+| **Parameter Fitting** | Fit D and k from experimental or synthetic data |
+| **Session Files** | Save/load `.sfppy.json` configurations |
+| **Offline Operation** | Work without internet using cached substances and images |
+| **Export** | CSV, XLSX, JSON, PDF, PNG, SVG output formats |
+
+### Installation
+
+```bash
+# Required dependencies
+pip install fastapi uvicorn pyyaml numpy scipy jinja2 pydantic
+
+# Optional for exports
+pip install matplotlib openpyxl
+```
+
+### Launch
+
+```bash
+# From the python/ directory
+python studio/launcher.py
+
+# With options
+python studio/launcher.py --port 8080 --reload
+
+# Access at: http://127.0.0.1:8002
+```
+
+### Documentation
+
+📖 See [`studio/README.md`](studio/README.md) for the complete user manual with all 9 tabs documented.
+
+***
+
+## 📊 SFPPy Survey Module
+
+**SFPPy Survey** is a **production-grade module** for survey-scale exposure estimation with deterministic uncertainty propagation. Designed for regulatory science applications requiring reproducibility, traceability, and auditability.
+
+### Features
+
+| Feature | Description |
+|---------|-------------|
+| **Deterministic** | Finite-difference quadrature on triangular priors (no Monte Carlo) |
+| **Parallel** | Master curve computation distributed across workers |
+| **Cached** | Content-addressed persistent cache prevents redundant computation |
+| **Resumable** | Interrupted computations can be resumed from checkpoint |
+| **Multilayer** | Supports functional barriers with reference layer selection |
+| **Auditable** | Every output traceable to inputs via fingerprinting |
+
+### Installation
+
+```bash
+# Survey module is part of SFPPy core
+# Ensure SFPPy is installed
+pip install -e .
+
+# Dependencies: numpy, pyyaml, patankar (included in SFPPy)
+```
+
+### Usage
+
+```python
+from survey import Survey
+
+# Load scenario from YAML
+survey = Survey.from_scenario("scenario.yml")
+
+# Preview and compute
+print(survey.preview())
+survey.compute(parallel=True)
+
+# Get results
+print(survey.summary())
+q95 = survey.quantile(0.95)
+```
+
+### Documentation
+
+📖 See [`survey/README.md`](survey/README.md) for the complete module documentation.
+
+##
 
 ## 🌟 Why **SFPPy**?
 

@@ -1,0 +1,53 @@
+# Antioxidants Family
+#
+# Primary and secondary antioxidants used in polyolefins.
+# Essential for polymer stability during processing.
+
+name: antioxidants
+description: "Antioxidants used in polyolefin packaging"
+
+substances:
+  - name: "BHT"
+    cas: "128-37-0"
+    full_name: "Butylated hydroxytoluene"
+    C0_min: 0.0
+    C0_likely: 100.0           # mg/kg
+    C0_max: 500.0
+    notes: "Primary hindered phenol antioxidant"
+
+  - name: "Irganox 1010"
+    cas: "6683-19-8"
+    full_name: "Pentaerythritol tetrakis(3-(3,5-di-tert-butyl-4-hydroxyphenyl)propionate)"
+    C0_min: 0.0
+    C0_likely: 500.0
+    C0_max: 2000.0
+    notes: "High MW primary antioxidant"
+
+  - name: "Irganox 1076"
+    cas: "2082-79-3"
+    full_name: "Octadecyl 3-(3,5-di-tert-butyl-4-hydroxyphenyl)propionate"
+    C0_min: 0.0
+    C0_likely: 400.0
+    C0_max: 1500.0
+    notes: "Processing stabilizer"
+
+  - name: "Irgafos 168"
+    cas: "31570-04-4"
+    full_name: "Tris(2,4-di-tert-butylphenyl)phosphite"
+    C0_min: 0.0
+    C0_likely: 300.0
+    C0_max: 1000.0
+    notes: "Secondary phosphite antioxidant"
+
+  - name: "Chimassorb 944"
+    cas: "70624-18-9"
+    full_name: "Poly[[6-[(1,1,3,3-tetramethylbutyl)amino]-1,3,5-triazine-2,4-diyl][(2,2,6,6-tetramethyl-4-piperidinyl)imino]-1,6-hexanediyl[(2,2,6,6-tetramethyl-4-piperidinyl)imino]]"
+    C0_min: 0.0
+    C0_likely: 200.0
+    C0_max: 800.0
+    notes: "HALS light stabilizer"
+
+# Typical formulation:
+# - Primary AO: 500-2000 ppm
+# - Secondary AO: 300-1000 ppm
+# - HALS (for outdoor use): 200-1000 ppm

@@ -1,0 +1,123 @@
+{
+  "version": "1.1",
+  "metadata": {
+    "name": "Example 1: LDPE Film Migration",
+    "description": "Migration of Irganox 1076 and Irgafos 168 from 100 µm LDPE film into a fatty sandwich. Single isothermal step at 7°C for 10 days. Demonstrates multi-substance simulation with different molecular weights.",
+    "author": "INRAE/olivier.vitrac@agroparistech.fr",
+    "source_script": "example1.py",
+    "sfppy_version": "1.50+"
+  },
+  "geometry": {
+    "shape": "cylinder",
+    "dimensions": {
+      "radius": {"value": 30, "unit": "mm"},
+      "height": {"value": 19, "unit": "cm"}
+    }
+  },
+  "substances": [
+    {
+      "id": "m1",
+      "source": "pubchem",
+      "lookup_name": "irganox 1076",
+      "cid": 16386,
+      "properties": {
+        "name": "Irganox 1076",
+        "cas": ["2082-79-3"],
+        "mw": 530.9,
+        "logP": 13.8,
+        "formula": "C35H62O3"
+      },
+      "regulatory": {
+        "EU": {"authorized": true, "SML": 6.0},
+        "US": {"fcs_listed": true},
+        "CN": {"gb_listed": true, "SML": 6.0}
+      },
+      "SML": 6.0,
+      "color": "#EF4444"
+    },
+    {
+      "id": "m2",
+      "source": "pubchem",
+      "lookup_name": "irgafos 168",
+      "cid": 91601,
+      "properties": {
+        "name": "Irgafos 168",
+        "cas": ["31570-04-4"],
+        "mw": 646.9,
+        "logP": 15.5,
+        "formula": "C42H63O3P"
+      },
+      "regulatory": {
+        "EU": {"authorized": true, "SML": 60.0}
+      },
+      "SML": 60.0,
+      "color": "#3B82F6"
+    }
+  ],
+  "layers": [
+    {
+      "index": 1,
+      "polymer": "LDPE",
+      "thickness": {"value": 100, "unit": "um"},
+      "name": "LDPE film",
+      "substances": [
+        {
+          "substance_id": "m1",
+          "C0": {"value": 5000, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        },
+        {
+          "substance_id": "m2",
+          "C0": {"value": 5000, "unit": "mg/kg"},
+          "D_auto": true,
+          "k_auto": true
+        }
+      ]
+    }
+  ],
+  "food": {
+    "category": "fatty",
+    "texture": "semisolid",
+    "affinity": "fat",
+    "simulant": "ethanol",
+    "name": "Fatty sandwich",
+    "CF0": {
+      "m1": {"value": 0, "unit": "mg/kg"},
+      "m2": {"value": 0, "unit": "mg/kg"}
+    }
+  },
+  "contact_steps": [
+    {
+      "index": 1,
+      "name": "Cold storage",
+      "type": "storage",
+      "temperature": {"value": 7, "unit": "degC"},
+      "duration": {"value": 10, "unit": "days"},
+      "with_food_contact": true
+    }
+  ],
+  "simulation_config": {
+    "solver": "senspatankar",
+    "ntimes": 1000,
+    "nmesh": 600,
+    "nmeshmin": 20,
+    "timescale": "sqrt",
+    "RelTol": 1e-6,
+    "AbsTol": 1e-6,
+    "nmax": 15,
+    "output_units": {
+      "time": "days",
+      "length": "um",
+      "concentration": "mg/kg"
+    }
+  },
+  "notes": {
+    "scientific_context": "Example 1 demonstrates basic isothermal migration from a monolayer LDPE film. The two antioxidants have different molecular weights (531 vs 647 g/mol) leading to different diffusivities via the Piringer model.",
+    "expected_behavior": [
+      "Irganox 1076 (MW=531): Higher D, faster migration",
+      "Irgafos 168 (MW=647): Lower D, slower migration",
+      "Both should remain well below their respective SML values"
+    ]
+  }
+}
