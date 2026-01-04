@@ -1,26 +1,25 @@
 # =============================================================================
-# SFPPy Survey Module — pip Requirements
+# SFPPy Studio — pip Requirements
 # =============================================================================
 #
-# Dependencies for the Survey module (batch simulations).
+# Dependencies for Studio (interactive web GUI).
 # Assumes SFPPy core is already installed.
 #
 # Usage:
-#   pip install -r survey/requirements.txt
+#   pip install -r studio/requirements.txt
 #
 # Or install from SFPPy root (recommended):
-#   pip install -e ".[survey]"
+#   pip install -e ".[studio]"
 #
 # Alternative installation methods:
 #   - Root environment.yml        (conda, full installation)
-#   - survey/environment.yml      (conda, survey-specific)
-#   - requirements/survey.txt     (modular pip requirements)
+#   - studio/environment.yml      (conda, studio-specific)
+#   - requirements/studio.txt     (modular pip requirements)
 #   - docker/docker-compose.yml   (Docker deployment)
 #
-# Launch applications:
-#   python survey/launcher.py              # Both apps (ports 8000, 8001)
-#   python survey/launcher.py --app editor # Family Editor only (port 8000)
-#   python survey/launcher.py --app simulator # Simulator only (port 8001)
+# Launch application:
+#   python studio/launcher.py           # Default port 8002
+#   python studio/launcher.py --port 9002  # Custom port
 #
 # =============================================================================
 
@@ -36,12 +35,11 @@ pandas>=1.3.0
 # Configuration & File I/O
 # ---------------------------------------------
 pyyaml>=6.0
-openpyxl>=3.1.0              # XLSX spreadsheets
-odfpy>=1.4.0                 # ODS spreadsheets
-pillow>=8.0.0                # Images
+openpyxl>=3.1.0              # XLSX export
+pillow>=8.0.0                # Images (PubChem thumbnails)
 
 # ---------------------------------------------
-# Web Applications (Editor & Simulator)
+# Web Application
 # ---------------------------------------------
 fastapi>=0.100.0
 uvicorn[standard]>=0.23.0
@@ -49,4 +47,3 @@ pydantic>=2.0.0
 jinja2>=3.1.0
 python-multipart>=0.0.6
 requests>=2.28.0             # PubChem API
-aiofiles>=23.0.0             # Async file operations

@@ -1,0 +1,64 @@
+# =============================================================================
+# SFPPy Survey - Batch Processing Docker Image
+# =============================================================================
+# Survey-scale exposure estimation with deterministic uncertainty propagation
+#
+# Build:
+#   docker build -f docker/Dockerfile.survey -t sfppy-survey .
+#
+# Run (both apps):
+#   docker-compose up sfppy-survey-editor sfppy-survey-simulator
+#
+# Run (editor only):
+#   docker run -p 8000:8000 sfppy-survey python -m uvicorn survey.app.main:app --host 0.0.0.0 --port 8000
+#
+# Run (simulator only):
+#   docker run -p 8001:8001 sfppy-survey python -m uvicorn survey.app.simulator:app --host 0.0.0.0 --port 8001
+#
+# Access at:
+#   Family Editor:    http://localhost:8000
+#   Survey Simulator: http://localhost:8001
+#
+# Author: Olivier Vitrac, PhD, HDR
+# Organization: INRAE + Generative Simulation
+# =============================================================================
+
+FROM python:3.10-slim AS base
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements/core.txt /app/requirements/core.txt
+COPY requirements/survey.txt /app/requirements/survey.txt
+RUN pip install --no-cache-dir -r requirements/core.txt \
+    && pip install --no-cache-dir -r requirements/survey.txt
+
+# Copy SFPPy core and survey
+COPY patankar/ /app/patankar/
+COPY survey/ /app/survey/
+COPY pyproject.toml /app/
+COPY README.md /app/
+
+# Create data directories
+RUN mkdir -p /app/data /app/survey/cache /app/survey/examples
+
+# Expose ports (editor: 8000, simulator: 8001)
+EXPOSE 8000 8001
+
+# Health check for editor (default app)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" || exit 1
+
+# Default: launch editor
+CMD ["python", "-m", "uvicorn", "survey.app.main:app", "--host", "0.0.0.0", "--port", "8000"]

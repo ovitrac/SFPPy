@@ -1,0 +1,129 @@
+# =============================================================================
+# SFPPy Docker Compose Configuration
+# =============================================================================
+# Deploy SFPPy services with Docker Compose
+#
+# Usage:
+#   # Start all services
+#   docker-compose -f docker/docker-compose.yml up
+#
+#   # Start specific service
+#   docker-compose -f docker/docker-compose.yml up sfppy-studio
+#
+#   # Build and start
+#   docker-compose -f docker/docker-compose.yml up --build
+#
+#   # Run in background
+#   docker-compose -f docker/docker-compose.yml up -d
+#
+#   # Stop all services
+#   docker-compose -f docker/docker-compose.yml down
+#
+# Author: Olivier Vitrac, PhD, HDR
+# Organization: INRAE + Generative Simulation
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ===========================================================================
+  # SFPPy Studio - Full Migration GUI
+  # ===========================================================================
+  # Interactive web interface for food contact migration simulation
+  # Access at: http://localhost:8002
+  sfppy-studio:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.studio
+    container_name: sfppy-studio
+    ports:
+      - "8002:8002"
+    volumes:
+      # Persistent data storage
+      - sfppy-data:/app/data
+      - sfppy-studio-exports:/app/studio/exports
+      - sfppy-studio-jobs:/app/studio/jobs
+      - sfppy-studio-config:/app/studio/config
+      # PubChem cache (shared with survey)
+      - sfppy-pubchem-cache:/app/patankar/cache.PubChem
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/api/substances/structure/available')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ===========================================================================
+  # SFPPy Survey - Family Editor
+  # ===========================================================================
+  # Scenario configuration UI for batch simulations
+  # Access at: http://localhost:8000
+  sfppy-survey-editor:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.survey
+    container_name: sfppy-survey-editor
+    ports:
+      - "8000:8000"
+    command: ["python", "-m", "uvicorn", "survey.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - sfppy-data:/app/data
+      - sfppy-survey-cache:/app/survey/cache
+      - sfppy-pubchem-cache:/app/patankar/cache.PubChem
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ===========================================================================
+  # SFPPy Survey - Simulator
+  # ===========================================================================
+  # Batch processing UI for survey-scale computations
+  # Access at: http://localhost:8001
+  sfppy-survey-simulator:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.survey
+    container_name: sfppy-survey-simulator
+    ports:
+      - "8001:8001"
+    command: ["python", "-m", "uvicorn", "survey.app.simulator:app", "--host", "0.0.0.0", "--port", "8001"]
+    volumes:
+      - sfppy-data:/app/data
+      - sfppy-survey-cache:/app/survey/cache
+      - sfppy-pubchem-cache:/app/patankar/cache.PubChem
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# =============================================================================
+# Named Volumes
+# =============================================================================
+# Persistent storage for data, caches, and exports
+volumes:
+  sfppy-data:
+    name: sfppy-data
+  sfppy-studio-exports:
+    name: sfppy-studio-exports
+  sfppy-studio-jobs:
+    name: sfppy-studio-jobs
+  sfppy-studio-config:
+    name: sfppy-studio-config
+  sfppy-survey-cache:
+    name: sfppy-survey-cache
+  sfppy-pubchem-cache:
+    name: sfppy-pubchem-cache

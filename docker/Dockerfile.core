@@ -1,0 +1,45 @@
+# =============================================================================
+# SFPPy Core - Minimal Docker Image
+# =============================================================================
+# Scientific migration modeling kernel (patankar solver)
+#
+# Build:
+#   docker build -f docker/Dockerfile.core -t sfppy-core .
+#
+# Run examples:
+#   docker run -it --rm -v $(pwd)/examples:/app/examples sfppy-core python examples/example1.py
+#
+# Author: Olivier Vitrac, PhD, HDR
+# Organization: INRAE + Generative Simulation
+# =============================================================================
+
+FROM python:3.10-slim AS base
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements/core.txt /app/requirements/core.txt
+RUN pip install --no-cache-dir -r requirements/core.txt
+
+# Copy SFPPy core modules
+COPY patankar/ /app/patankar/
+COPY examples/ /app/examples/
+COPY pyproject.toml /app/
+COPY README.md /app/
+
+# Create data directories
+RUN mkdir -p /app/data /app/tmp
+
+# Default command: Python shell
+CMD ["python"]

@@ -1,0 +1,22 @@
+# =============================================================================
+# SFPPy Full Requirements
+# =============================================================================
+# All dependencies (core + studio + survey + rag)
+#
+# Install: pip install -r requirements/full.txt
+# =============================================================================
+
+# Core (scientific computing)
+-r core.txt
+
+# Studio (web GUI)
+-r studio.txt
+
+# Survey (batch processing) - note: overlaps with studio
+# Only odfpy and aiofiles are additional
+odfpy>=1.4.0
+aiofiles>=23.0.0
+
+# RAG (AI/LLM) - optional, heavy dependencies
+# Uncomment if needed:
+# -r rag.txt

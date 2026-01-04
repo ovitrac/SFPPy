@@ -1,0 +1,28 @@
+# =============================================================================
+# SFPPy Studio Requirements
+# =============================================================================
+# Web GUI dependencies (requires core.txt)
+#
+# Install:
+#   pip install -r requirements/core.txt
+#   pip install -r requirements/studio.txt
+# =============================================================================
+
+# Web framework
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+
+# Data validation
+pydantic>=2.0.0
+
+# Templating
+jinja2>=3.1.0
+
+# Form handling
+python-multipart>=0.0.6
+
+# HTTP client (for PubChem API)
+requests>=2.28.0
+
+# YAML configuration
+pyyaml>=6.0

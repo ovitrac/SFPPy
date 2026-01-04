@@ -1,0 +1,67 @@
+# =============================================================================
+# SFPPy Full - Complete Docker Image
+# =============================================================================
+# All-in-one image with Studio, Survey, and examples
+#
+# Build:
+#   docker build -f docker/Dockerfile.full -t sfppy-full .
+#
+# Run:
+#   docker run -p 8000:8000 -p 8001:8001 -p 8002:8002 sfppy-full
+#
+# Access at:
+#   Studio:           http://localhost:8002
+#   Survey Editor:    http://localhost:8000
+#   Survey Simulator: http://localhost:8001
+#
+# Author: Olivier Vitrac, PhD, HDR
+# Organization: INRAE + Generative Simulation
+# =============================================================================
+
+FROM python:3.10-slim AS base
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# Install system dependencies (including Java for ToxTree)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    default-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy all requirements and install dependencies
+COPY requirements/ /app/requirements/
+RUN pip install --no-cache-dir -r requirements/core.txt \
+    && pip install --no-cache-dir -r requirements/studio.txt \
+    && pip install --no-cache-dir -r requirements/survey.txt
+
+# Copy entire SFPPy project
+COPY patankar/ /app/patankar/
+COPY studio/ /app/studio/
+COPY survey/ /app/survey/
+COPY examples/ /app/examples/
+COPY notebooks/ /app/notebooks/
+COPY docs/ /app/docs/
+COPY pyproject.toml /app/
+COPY README.md /app/
+
+# Create data directories
+RUN mkdir -p /app/data \
+    /app/studio/exports /app/studio/jobs /app/studio/config \
+    /app/survey/cache \
+    /app/tmp
+
+# Expose all ports
+EXPOSE 8000 8001 8002
+
+# Copy and set entrypoint script
+COPY docker/entrypoint-full.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Default: run all services via entrypoint
+CMD ["/app/entrypoint.sh"]

@@ -38,37 +38,65 @@ The `survey` module provides production-grade infrastructure for estimating migr
 - **Python 3.10+** (required by SFPPy core)
 - **SFPPy core library** (patankar module)
 
-### Quick Install (pip)
+### Option 1: Docker (Recommended for Industry)
+
+No Python installation required — just Docker.
 
 ```bash
-# Clone and install SFPPy with core dependencies
-git clone https://github.com/ovitrac/SFPPy.git
-cd SFPPy
-pip install -r requirements.txt
-
-# Install survey web application dependencies
-pip install fastapi uvicorn pydantic jinja2
+# From SFPPy root directory - start both Survey apps
+docker-compose -f docker/docker-compose.yml up sfppy-survey-editor sfppy-survey-simulator
 ```
 
-### Quick Install (conda + pip)
+**Access the applications:**
+
+| Service | URL | Default Port |
+|---------|-----|--------------|
+| **Family Editor** | http://localhost:8000 | 8000 |
+| **Survey Simulator** | http://localhost:8001 | 8001 |
+
+> 📌 Ports can be changed in `docker/docker-compose.yml` or via command line:
+> ```bash
+> docker run -p 9000:8000 sfppy-survey python -m uvicorn survey.app.main:app --host 0.0.0.0 --port 8000
+> ```
+
+### Option 2: pip Install (Recommended)
 
 ```bash
-# Create conda environment with scientific stack
+# Clone SFPPy
+git clone https://github.com/ovitrac/SFPPy.git
+cd SFPPy
+
+# Install with Survey dependencies
+pip install -e ".[survey]"
+
+# Launch both apps
+python survey/launcher.py
+```
+
+### Option 3: Modular Requirements
+
+```bash
+# Install core + survey requirements
+pip install -r requirements/core.txt
+pip install -r requirements/survey.txt
+```
+
+### Option 4: Conda + pip
+
+```bash
+# Create environment
 conda create -n sfppy python=3.10 numpy scipy matplotlib pandas -y
 conda activate sfppy
 
-# Clone and install SFPPy
+# Clone and install
 git clone https://github.com/ovitrac/SFPPy.git
 cd SFPPy
-pip install -r requirements.txt
-
-# Install survey web dependencies (pip only)
-pip install fastapi uvicorn pydantic jinja2
+pip install -e ".[survey]"
 ```
 
 ### Dependencies
 
-**Core SFPPy** (installed via `requirements.txt`):
+**Core SFPPy** (see `requirements/core.txt`):
 
 | Package | Purpose |
 |---------|---------|
@@ -79,7 +107,7 @@ pip install fastapi uvicorn pydantic jinja2
 | `openpyxl` | Excel file support |
 | `pillow` | Image processing |
 
-**Survey Web Applications** (additional):
+**Survey Web Applications** (see `requirements/survey.txt`):
 
 | Package | Purpose |
 |---------|---------|
@@ -88,14 +116,36 @@ pip install fastapi uvicorn pydantic jinja2
 | `pydantic` | Data validation |
 | `jinja2` | HTML templating |
 | `pyyaml` | YAML configuration parsing |
+| `requests` | PubChem API access |
+| `odfpy` | ODS spreadsheet support |
+| `aiofiles` | Async file operations |
 
-**Optional Dependencies:**
+### Launching the Applications
 
-| Package | Purpose | Install |
-|---------|---------|---------|
-| `odfpy` | ODS spreadsheet support | `pip install odfpy` |
-| `requests` | PubChem API access | `pip install requests` |
-| `aiofiles` | Async file operations | `pip install aiofiles` |
+```bash
+# Launch both apps (Editor on 8000, Simulator on 8001)
+python survey/launcher.py
+
+# Launch only the Family Editor
+python survey/launcher.py --app editor
+
+# Launch only the Simulator
+python survey/launcher.py --app simulator
+
+# Custom ports
+python survey/launcher.py --editor-port 9000 --simulator-port 9001
+```
+
+**Options:**
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--app` | both | Which app to launch: `editor`, `simulator`, or `both` |
+| `--editor-port` | 8000 | Port for Family Editor (reconfigurable) |
+| `--simulator-port` | 8001 | Port for Survey Simulator (reconfigurable) |
+| `--no-reload` | off | Disable auto-reload |
+| `--no-browser` | off | Don't open browser automatically |
+| `--check` | off | Check dependencies and exit |
 
 ### Dependency Checker
 

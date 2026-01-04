@@ -1,0 +1,56 @@
+# =============================================================================
+# SFPPy Studio - Web GUI Docker Image
+# =============================================================================
+# Interactive web interface for migration simulation
+#
+# Build:
+#   docker build -f docker/Dockerfile.studio -t sfppy-studio .
+#
+# Run:
+#   docker run -p 8002:8002 -v $(pwd)/data:/app/data sfppy-studio
+#
+# Access at: http://localhost:8002
+#
+# Author: Olivier Vitrac, PhD, HDR
+# Organization: INRAE + Generative Simulation
+# =============================================================================
+
+FROM python:3.10-slim AS base
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements/core.txt /app/requirements/core.txt
+COPY requirements/studio.txt /app/requirements/studio.txt
+RUN pip install --no-cache-dir -r requirements/core.txt \
+    && pip install --no-cache-dir -r requirements/studio.txt
+
+# Copy SFPPy core and studio
+COPY patankar/ /app/patankar/
+COPY studio/ /app/studio/
+COPY pyproject.toml /app/
+COPY README.md /app/
+
+# Create data directories
+RUN mkdir -p /app/data /app/studio/exports /app/studio/jobs /app/studio/config
+
+# Expose port
+EXPOSE 8002
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8002/api/substances/structure/available')" || exit 1
+
+# Run Studio
+CMD ["python", "-m", "uvicorn", "studio.app.main:app", "--host", "0.0.0.0", "--port", "8002"]

@@ -1,0 +1,96 @@
+# =============================================================================
+# SFPPy Docker Ignore File
+# =============================================================================
+# Files and directories to exclude from Docker build context
+# =============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python cache
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.spyproject/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Documentation build
+docs/_build/
+html/
+
+# Temporary files
+tmp/
+*.tmp
+*.temp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large data files (rebuild from source)
+*.npz
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+
+# Cache directories (will be created fresh)
+patankar/cache.PubChem/
+patankar/cache.ToxTree/
+survey/cache/
+studio/jobs/
+studio/exports/
+
+# Development files
+CLAUDE.md
+*.md~
+release/
+history/
+wiki/
+
+# Backup files
+*_backup*/
+*.bak
+
+# Test fixtures (large)
+INSERM/
+
+# Docker files (avoid recursion)
+docker/
+!docker/entrypoint*.sh

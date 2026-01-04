@@ -1,36 +1,35 @@
 # =============================================================================
-# SFPPy Survey Module — Conda Environment
+# SFPPy Studio — Conda Environment
 # =============================================================================
 #
-# Complete conda environment for the Survey module (batch simulations).
+# Complete conda environment for Studio (interactive web GUI).
 # Installs all dependencies from conda-forge for better compatibility.
 #
 # Create environment:
-#   conda env create -f survey/environment.yml
+#   conda env create -f studio/environment.yml
 #
 # Or with mamba (faster):
-#   mamba env create -f survey/environment.yml
+#   mamba env create -f studio/environment.yml
 #
 # Activate:
-#   conda activate sfppy-survey
+#   conda activate sfppy-studio
 #
 # Update existing environment:
-#   conda env update -f survey/environment.yml --prune
+#   conda env update -f studio/environment.yml --prune
 #
 # Alternative installation methods:
 #   - Root environment.yml    (full SFPPy with Studio + Survey)
-#   - pip install -e ".[survey]"  (from SFPPy root)
-#   - requirements/survey.txt     (modular pip requirements)
+#   - pip install -e ".[studio]"  (from SFPPy root)
+#   - requirements/studio.txt     (modular pip requirements)
 #   - docker/docker-compose.yml   (Docker deployment)
 #
-# Launch applications:
-#   python survey/launcher.py              # Both apps (ports 8000, 8001)
-#   python survey/launcher.py --app editor # Family Editor only (port 8000)
-#   python survey/launcher.py --app simulator # Simulator only (port 8001)
+# Launch application:
+#   python studio/launcher.py           # Default port 8002
+#   python studio/launcher.py --port 9002  # Custom port
 #
 # =============================================================================
 
-name: sfppy-survey
+name: sfppy-studio
 
 channels:
   - conda-forge
@@ -53,13 +52,12 @@ dependencies:
   # ---------------------------------------------
   # Configuration & File I/O
   # ---------------------------------------------
-  - pyyaml>=6.0             # YAML scenario files
-  - openpyxl>=3.1           # XLSX spreadsheets
-  - odfpy>=1.4              # ODS spreadsheets
-  - pillow>=8.0             # Images
+  - pyyaml>=6.0             # YAML configuration
+  - openpyxl>=3.1           # XLSX export
+  - pillow>=8.0             # Images (PubChem thumbnails)
 
   # ---------------------------------------------
-  # Web Applications (Editor & Simulator)
+  # Web Application
   # ---------------------------------------------
   - fastapi>=0.100
   - uvicorn>=0.23
@@ -67,7 +65,6 @@ dependencies:
   - jinja2>=3.1
   - python-multipart>=0.0.6
   - requests>=2.28           # PubChem API
-  - aiofiles>=23.0           # Async file operations
 
   # ---------------------------------------------
   # Development & Testing

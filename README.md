@@ -130,15 +130,90 @@ This project implements **first-principles chemical migration modeling** and int
 
 ## 🚀 Quick Start
 
+### Option 1: Docker (Recommended for Industry)
+
+The easiest way to run SFPPy with Studio and Survey — no Python installation required.
+
+```bash
+# Clone and start all services
+git clone https://github.com/ovitrac/SFPPy.git
+cd SFPPy
+docker-compose -f docker/docker-compose.yml up
+```
+
+**Access the applications:**
+
+| Service | URL | Default Port |
+|---------|-----|--------------|
+| **Studio** (Full GUI) | http://localhost:8002 | 8002 |
+| **Survey Editor** | http://localhost:8000 | 8000 |
+| **Survey Simulator** | http://localhost:8001 | 8001 |
+
+> 📌 Ports can be reconfigured in `docker/docker-compose.yml` or via command line.
+> See [`docker/README.md`](docker/README.md) for detailed Docker documentation.
+
+### Option 2: pip Install (Researchers)
+
 ```bash
 # Clone the repository
 git clone https://github.com/ovitrac/SFPPy.git
 cd SFPPy
 
-# Install dependencies
-pip install -r requirements.txt
+# Install core only
+pip install -e .
+
+# Or with Studio GUI
+pip install -e ".[studio]"
+
+# Or with Survey batch processing
+pip install -e ".[survey]"
+
+# Or full installation (Studio + Survey + dev tools)
+pip install -e ".[full]"
 ```
 
+### Option 3: Modular Requirements
+
+For fine-grained control over dependencies:
+
+```bash
+# Core only (patankar solver)
+pip install -r requirements/core.txt
+
+# Add Studio
+pip install -r requirements/studio.txt
+
+# Add Survey
+pip install -r requirements/survey.txt
+```
+
+> 📌 See [`requirements/README.md`](requirements/README.md) for all installation profiles.
+
+### Option 4: Conda + pip
+
+```bash
+# Create environment with scientific stack
+conda create -n sfppy python=3.10 numpy scipy matplotlib pandas -y
+conda activate sfppy
+
+# Clone and install
+git clone https://github.com/ovitrac/SFPPy.git
+cd SFPPy
+pip install -e ".[studio]"
+```
+
+### Launch Applications
+
+```bash
+# Studio GUI (port 8002)
+python studio/launcher.py
+
+# Survey apps (ports 8000, 8001)
+python survey/launcher.py
+
+# Custom port
+python studio/launcher.py --port 9002
+```
 
 > [!TIP]
 >

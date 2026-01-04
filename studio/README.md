@@ -172,37 +172,60 @@ studio/
 - **Python 3.10+** (required by SFPPy core)
 - **SFPPy core library** (patankar module)
 
-### Quick Install (pip)
+### Option 1: Docker (Recommended for Industry)
+
+No Python installation required — just Docker.
 
 ```bash
-# Clone and install SFPPy with core dependencies
-git clone https://github.com/ovitrac/SFPPy.git
-cd SFPPy
-pip install -r requirements.txt
-
-# Install Studio web application dependencies
-pip install fastapi uvicorn pydantic jinja2
+# From SFPPy root directory
+docker-compose -f docker/docker-compose.yml up sfppy-studio
 ```
 
-### Quick Install (conda + pip)
+Access at: **http://localhost:8002**
+
+> 📌 Port can be changed in `docker/docker-compose.yml` or via:
+> ```bash
+> docker run -p 9002:8002 sfppy-studio
+> ```
+
+### Option 2: pip Install (Recommended)
 
 ```bash
-# Create conda environment with scientific stack
+# Clone SFPPy
+git clone https://github.com/ovitrac/SFPPy.git
+cd SFPPy
+
+# Install with Studio dependencies
+pip install -e ".[studio]"
+
+# Launch
+python studio/launcher.py
+```
+
+### Option 3: Modular Requirements
+
+```bash
+# Install core + studio requirements
+pip install -r requirements/core.txt
+pip install -r requirements/studio.txt
+```
+
+### Option 4: Conda + pip
+
+```bash
+# Create environment
 conda create -n sfppy python=3.10 numpy scipy matplotlib pandas -y
 conda activate sfppy
 
-# Clone and install SFPPy
+# Clone and install
 git clone https://github.com/ovitrac/SFPPy.git
 cd SFPPy
-pip install -r requirements.txt
-
-# Install Studio web dependencies (pip only)
-pip install fastapi uvicorn pydantic jinja2
+pip install -e ".[studio]"
 ```
 
 ### Dependencies
 
-**Core SFPPy** (installed via `requirements.txt`):
+**Core SFPPy** (see `requirements/core.txt`):
 
 | Package | Purpose |
 |---------|---------|
@@ -213,7 +236,7 @@ pip install fastapi uvicorn pydantic jinja2
 | `openpyxl` | Excel file support |
 | `pillow` | Image processing |
 
-**Studio Web Application** (additional):
+**Studio Web Application** (see `requirements/studio.txt`):
 
 | Package | Purpose |
 |---------|---------|
@@ -222,23 +245,30 @@ pip install fastapi uvicorn pydantic jinja2
 | `pydantic` | Data validation |
 | `jinja2` | HTML templating |
 | `pyyaml` | YAML configuration parsing |
+| `requests` | PubChem API access |
 
 ### Launching the Application
 
 ```bash
-# From the python/ directory
+# From the SFPPy root directory
 python studio/launcher.py
 
-# Or with custom options
-python studio/launcher.py --port 8080 --reload
+# With custom port
+python studio/launcher.py --port 9002
+
+# With auto-reload for development
+python studio/launcher.py --reload
 ```
 
 **Options:**
-- `--port PORT` - Server port (default: 8002)
-- `--host HOST` - Host binding (default: 127.0.0.1)
-- `--reload` - Enable auto-reload for development
 
-Access the application at: `http://127.0.0.1:8002`
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--port` | 8002 | Server port (reconfigurable) |
+| `--host` | 127.0.0.1 | Host binding |
+| `--reload` | off | Enable auto-reload for development |
+
+**Default URL:** http://127.0.0.1:8002
 
 ---
 

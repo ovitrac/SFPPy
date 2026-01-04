@@ -1,0 +1,30 @@
+# =============================================================================
+# SFPPy RAG Requirements
+# =============================================================================
+# AI/LLM dependencies for regulatory knowledge base queries (requires core.txt)
+#
+# Install:
+#   pip install -r requirements/core.txt
+#   pip install -r requirements/rag.txt
+#
+# Also requires Ollama: https://ollama.ai
+#   ollama pull mistral
+# =============================================================================
+
+# LlamaIndex core
+llama-index>=0.10.0
+
+# Embeddings
+llama-index-embeddings-huggingface>=0.1.0
+sentence-transformers>=2.2.0
+
+# Local LLM via Ollama
+llama-index-llms-ollama>=0.1.0
+
+# Vector store
+llama-index-vector-stores-chroma>=0.1.0
+chromadb>=0.4.0
+
+# Transformers (for embeddings)
+transformers>=4.30.0
+torch>=2.0.0
