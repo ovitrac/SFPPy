@@ -34,8 +34,18 @@ from survey.models import (
     SubstanceSpec,
     PriorSpec,
     SurveyConfig,
+    ComponentSpec,
+    MultiComponentJob,
 )
 from survey.spreadsheet import SpreadsheetData, read_spreadsheet
+from survey.aggregation import (
+    combine_tensors,
+    aggregate_components,
+    compute_pdf_from_samples,
+    compute_statistics,
+    compute_percentiles,
+    aggregate_packaging_components,
+)
 
 
 @dataclass
@@ -70,6 +80,8 @@ class SimulationResult:
     centers: Optional[List[float]] = None
     pdf: Optional[List[float]] = None
     cdf: Optional[List[float]] = None
+    # Percentiles at configurable resolution (e.g., 50 → P2, P4, ..., P100)
+    percentiles: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -84,6 +96,7 @@ class SimulationResult:
             "centers": self.centers,
             "pdf": self.pdf,
             "cdf": self.cdf,
+            "percentiles": self.percentiles,
         }
 
 
@@ -118,6 +131,68 @@ class BatchProgress:
             "percent": self.percent,
             "elapsed_s": self.elapsed_s,
             "results": [r.to_dict() for r in self.results],
+        }
+
+
+# =============================================================================
+# Multi-Component Job Support (Phase 4)
+# =============================================================================
+
+@dataclass
+class MultiComponentTask:
+    """A multi-component simulation task."""
+    task_id: str
+    job: MultiComponentJob
+    output_dir: Optional[Path] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "task_id": self.task_id,
+            "job_name": self.job.name,
+            "food_code": self.job.food_code,
+            "n_components": self.job.n_components,
+            "components": self.job.pack_codes,
+            "output_dir": str(self.output_dir) if self.output_dir else None,
+        }
+
+
+@dataclass
+class MultiComponentResult:
+    """Result of a multi-component simulation."""
+    task_id: str
+    job_name: str
+    food_code: str
+    success: bool
+    error: Optional[str] = None
+    duration_s: float = 0.0
+    n_samples: int = 0
+    # Combined results
+    quantiles: Dict[str, float] = field(default_factory=dict)
+    centers: Optional[List[float]] = None
+    pdf: Optional[List[float]] = None
+    cdf: Optional[List[float]] = None
+    # Percentiles at configurable resolution (e.g., 50 → P2, P4, ..., P100)
+    percentiles: Optional[Dict[str, Any]] = None
+    # Per-component results
+    component_results: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    output_files: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "task_id": self.task_id,
+            "job_name": self.job_name,
+            "food_code": self.food_code,
+            "success": self.success,
+            "error": self.error,
+            "duration_s": self.duration_s,
+            "n_samples": self.n_samples,
+            "quantiles": self.quantiles,
+            "centers": self.centers,
+            "pdf": self.pdf,
+            "cdf": self.cdf,
+            "percentiles": self.percentiles,
+            "component_results": self.component_results,
+            "output_files": self.output_files,
         }
 
 
@@ -287,6 +362,20 @@ def _run_single_simulation(task: SimulationTask) -> SimulationResult:
                 "max": float(np.max(results['CF_samples'])),
             }
 
+            # Compute percentiles at configurable resolution (default 50)
+            percentile_resolution = config.get('percentile_resolution', 50)
+            percentiles_result = compute_percentiles(
+                results['CF_samples'],
+                results['weights'],
+                resolution=percentile_resolution
+            )
+            # Convert numpy arrays to lists for JSON serialization
+            percentiles = {
+                'levels': percentiles_result['levels'].tolist(),
+                'values': percentiles_result['values'].tolist(),
+                'percentiles': percentiles_result['percentiles'],
+            }
+
         # Generate output files if output_dir specified
         output_files = []
         if task.output_dir:
@@ -333,6 +422,7 @@ def _run_single_simulation(task: SimulationTask) -> SimulationResult:
             centers=centers,
             pdf=pdf,
             cdf=cdf,
+            percentiles=percentiles,
         )
 
     except Exception as e:
@@ -343,7 +433,192 @@ def _run_single_simulation(task: SimulationTask) -> SimulationResult:
             success=False,
             error=f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}",
             duration_s=duration,
+            percentiles=None,
         )
+
+
+def _run_multicomponent_simulation(task: MultiComponentTask) -> MultiComponentResult:
+    """
+    Execute a multi-component simulation task.
+
+    Runs each component independently, then aggregates via tensor product.
+
+    Parameters
+    ----------
+    task : MultiComponentTask
+        Multi-component task to execute.
+
+    Returns
+    -------
+    MultiComponentResult
+        Combined result with per-component details.
+    """
+    start_time = time.time()
+    job = task.job
+
+    try:
+        component_results = {}
+
+        # Run each component independently
+        for component in job.components:
+            # Create SurveyConfig for this component
+            config = job.to_survey_config(component)
+
+            # Create Survey and compute
+            survey = Survey(
+                config=config,
+                substances=component.substances,
+            )
+            survey.compute(parallel=False)  # No nested parallelism
+
+            # Store results keyed by pack_code
+            results = survey.results
+            component_results[component.pack_code] = {
+                'CF_samples': results['CF_samples'],
+                'weights': results['weights'],
+                'substance_ids': [s.id for s in component.substances],
+                'quantiles': {
+                    'q50': float(survey.quantile(0.50)),
+                    'q95': float(survey.quantile(0.95)),
+                    'q99': float(survey.quantile(0.99)),
+                },
+                'polymer': component.polymer,
+            }
+
+        # Aggregate components via tensor product
+        if len(component_results) == 1:
+            # Single component - use directly
+            pack_code = list(component_results.keys())[0]
+            cf_combined = component_results[pack_code]['CF_samples']
+            w_combined = component_results[pack_code]['weights']
+        else:
+            # Multiple components - tensor product aggregation
+            tensors = [
+                (r['CF_samples'], r['weights'])
+                for r in component_results.values()
+            ]
+            cf_combined = tensors[0][0]
+            w_combined = tensors[0][1]
+            for cf2, w2 in tensors[1:]:
+                cf_combined, w_combined = combine_tensors(
+                    cf_combined, w_combined, cf2, w2
+                )
+
+        # Compute combined PDF/CDF
+        pdf_result = compute_pdf_from_samples(cf_combined, w_combined, n_bins=250)
+        stats = compute_statistics(cf_combined, w_combined)
+
+        # Prepare output
+        centers = pdf_result['bin_centers'].tolist()
+        pdf = pdf_result['pdf'].tolist()
+        cdf = pdf_result['cdf'].tolist()
+
+        quantiles = {
+            'q50': stats['q50'],
+            'q75': float(np.percentile(cf_combined, 75)),  # Approx
+            'q90': float(np.percentile(cf_combined, 90)),  # Approx
+            'q95': stats['q95'],
+            'q99': stats['q99'],
+            'mean': stats['mean'],
+            'std': stats['std'],
+            'min': float(cf_combined.min()),
+            'max': stats['max'],
+        }
+
+        # Compute percentiles at configurable resolution (default 50)
+        percentile_resolution = 50  # Default for multi-component
+        percentiles_result = compute_percentiles(
+            cf_combined, w_combined, resolution=percentile_resolution
+        )
+        percentiles = {
+            'levels': percentiles_result['levels'].tolist(),
+            'values': percentiles_result['values'].tolist(),
+            'percentiles': percentiles_result['percentiles'],
+        }
+
+        # Format component results for output
+        component_output = {}
+        for pack_code, cr in component_results.items():
+            component_output[pack_code] = {
+                'polymer': cr['polymer'],
+                'substance_ids': cr['substance_ids'],
+                'quantiles': cr['quantiles'],
+                'n_samples': len(cr['CF_samples']),
+            }
+
+        duration = time.time() - start_time
+
+        return MultiComponentResult(
+            task_id=task.task_id,
+            job_name=job.name,
+            food_code=job.food_code,
+            success=True,
+            duration_s=duration,
+            n_samples=len(cf_combined),
+            quantiles=quantiles,
+            centers=centers,
+            pdf=pdf,
+            cdf=cdf,
+            percentiles=percentiles,
+            component_results=component_output,
+        )
+
+    except Exception as e:
+        duration = time.time() - start_time
+        return MultiComponentResult(
+            task_id=task.task_id,
+            job_name=job.name,
+            food_code=job.food_code,
+            success=False,
+            error=f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}",
+            duration_s=duration,
+            percentiles=None,
+        )
+
+
+def run_multicomponent_job(
+    job: MultiComponentJob,
+    output_dir: Optional[Path] = None,
+) -> MultiComponentResult:
+    """
+    Run a multi-component simulation job.
+
+    Convenience function for running a single multi-component job.
+
+    Parameters
+    ----------
+    job : MultiComponentJob
+        Multi-component job specification.
+    output_dir : Path, optional
+        Directory for output files.
+
+    Returns
+    -------
+    MultiComponentResult
+        Combined simulation result.
+
+    Examples
+    --------
+    >>> from survey.models import MultiComponentJob, ComponentSpec, PriorSpec
+    >>> job = MultiComponentJob(
+    ...     name='E01_combined',
+    ...     food_code='E01',
+    ...     components=[comp1, comp2],
+    ...     food_volume_m3=0.001,
+    ...     food_simulant='water',
+    ...     contact_temperature_degC=25.0,
+    ...     time_prior=PriorSpec(mode=2592000, max_val=7776000),
+    ...     conc_prior=PriorSpec(mode=20.0, max_val=50.0),
+    ... )
+    >>> result = run_multicomponent_job(job)
+    >>> print(f"Q95: {result.quantiles['q95']:.4f} mg/kg")
+    """
+    task = MultiComponentTask(
+        task_id=f"mc_{job.food_code}",
+        job=job,
+        output_dir=output_dir,
+    )
+    return _run_multicomponent_simulation(task)
 
 
 class BatchRunner:
@@ -371,6 +646,7 @@ class BatchRunner:
         self.n_workers = n_workers or get_default_workers()
         self.output_dir = Path(output_dir) if output_dir else None
         self.tasks: List[SimulationTask] = []
+        self.multicomponent_tasks: List[MultiComponentTask] = []
         self.progress = BatchProgress()
         self._progress_callback: Optional[Callable[[BatchProgress], None]] = None
 
@@ -379,6 +655,20 @@ class BatchRunner:
         if self.output_dir and task.output_dir is None:
             task.output_dir = self.output_dir / task.family_name
         self.tasks.append(task)
+
+    def add_multicomponent_task(self, task: MultiComponentTask) -> None:
+        """Add a multi-component simulation task."""
+        if self.output_dir and task.output_dir is None:
+            task.output_dir = self.output_dir / task.job.name
+        self.multicomponent_tasks.append(task)
+
+    def add_multicomponent_job(self, job: MultiComponentJob, task_id: Optional[str] = None) -> None:
+        """Add a multi-component job."""
+        task = MultiComponentTask(
+            task_id=task_id or f"mc_{len(self.multicomponent_tasks):04d}",
+            job=job,
+        )
+        self.add_multicomponent_task(task)
 
     def add_from_config(self, config: Dict[str, Any], task_id: Optional[str] = None) -> None:
         """Add a task from a configuration dictionary."""
@@ -563,6 +853,112 @@ class BatchRunner:
             self._update_progress()
 
         return results
+
+    def run_multicomponent(
+        self,
+        parallel: bool = True,
+    ) -> List[MultiComponentResult]:
+        """
+        Run all multi-component tasks.
+
+        Parameters
+        ----------
+        parallel : bool
+            Use parallel execution (default True).
+
+        Returns
+        -------
+        List[MultiComponentResult]
+            Results for all multi-component tasks.
+        """
+        if not self.multicomponent_tasks:
+            return []
+
+        # Initialize progress for multi-component tasks
+        self.progress = BatchProgress(
+            total=len(self.multicomponent_tasks),
+            start_time=time.time(),
+        )
+        self._update_progress()
+
+        results = []
+
+        if parallel and self.n_workers > 1:
+            # Parallel execution
+            with ProcessPoolExecutor(max_workers=self.n_workers) as executor:
+                future_to_task = {
+                    executor.submit(_run_multicomponent_simulation, task): task
+                    for task in self.multicomponent_tasks
+                }
+
+                self.progress.running = len(future_to_task)
+                self._update_progress()
+
+                for future in as_completed(future_to_task):
+                    task = future_to_task[future]
+
+                    try:
+                        result = future.result()
+                    except Exception as e:
+                        result = MultiComponentResult(
+                            task_id=task.task_id,
+                            job_name=task.job.name,
+                            food_code=task.job.food_code,
+                            success=False,
+                            error=f"Process error: {str(e)}",
+                        )
+
+                    results.append(result)
+                    self.progress.completed += 1
+                    self.progress.running -= 1
+
+                    if not result.success:
+                        self.progress.failed += 1
+
+                    self._update_progress()
+        else:
+            # Sequential execution
+            for task in self.multicomponent_tasks:
+                self.progress.running = 1
+                self._update_progress()
+
+                result = _run_multicomponent_simulation(task)
+                results.append(result)
+                self.progress.completed += 1
+                self.progress.running = 0
+
+                if not result.success:
+                    self.progress.failed += 1
+
+                self._update_progress()
+
+        return results
+
+    def run_all(
+        self,
+        n_samples: int = 1000,
+        parallel: bool = True,
+    ) -> Dict[str, List[Any]]:
+        """
+        Run all tasks (single and multi-component).
+
+        Parameters
+        ----------
+        n_samples : int
+            Grid samples per simulation.
+        parallel : bool
+            Use parallel execution.
+
+        Returns
+        -------
+        Dict with keys:
+            - 'single': List[SimulationResult]
+            - 'multicomponent': List[MultiComponentResult]
+        """
+        return {
+            'single': self.run(n_samples=n_samples) if self.tasks else [],
+            'multicomponent': self.run_multicomponent(parallel=parallel),
+        }
 
 
 def run_batch_from_spreadsheet(

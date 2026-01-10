@@ -23,6 +23,8 @@ from survey.models import (
     SubstanceSpec,
     PriorSpec,
     SurveyConfig,
+    ComponentSpec,
+    MultiComponentJob,
 )
 
 
@@ -338,3 +340,315 @@ def save_manifest(
     }
 
     path.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
+
+
+# =============================================================================
+# Multi-Component I/O (Phase 4)
+# =============================================================================
+
+def save_multicomponent_results(
+    path: Union[str, Path],
+    job_name: str,
+    food_code: str,
+    combined_cf: np.ndarray,
+    combined_weights: np.ndarray,
+    pdf_bin_centers: np.ndarray,
+    pdf: np.ndarray,
+    cdf: np.ndarray,
+    component_results: Dict[str, Dict[str, Any]],
+    statistics: Dict[str, float],
+    **metadata: Any,
+) -> None:
+    """
+    Save multi-component survey results to NPZ + JSON.
+
+    Creates two files:
+    - {path}.npz: NumPy arrays (CF samples, weights, PDF, CDF)
+    - {path}_manifest.json: Metadata and per-component summary
+
+    Parameters
+    ----------
+    path : str or Path
+        Base output path (without extension).
+    job_name : str
+        Multi-component job name.
+    food_code : str
+        Food code identifier.
+    combined_cf : np.ndarray
+        Combined CF samples from tensor product.
+    combined_weights : np.ndarray
+        Combined weights from tensor product.
+    pdf_bin_centers : np.ndarray
+        PDF bin centers.
+    pdf : np.ndarray
+        Combined PDF values.
+    cdf : np.ndarray
+        Combined CDF values.
+    component_results : Dict[str, Dict]
+        Per-component results keyed by pack_code.
+    statistics : Dict[str, float]
+        Summary statistics (mean, std, quantiles).
+    **metadata
+        Additional metadata.
+    """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Save numerical arrays
+    npz_path = path.with_suffix('.npz')
+    np.savez_compressed(
+        npz_path,
+        combined_cf=combined_cf,
+        combined_weights=combined_weights,
+        pdf_bin_centers=pdf_bin_centers,
+        pdf=pdf,
+        cdf=cdf,
+    )
+
+    # Build manifest with component summaries
+    component_summary = {}
+    for pack_code, results in component_results.items():
+        component_summary[pack_code] = {
+            'polymer': results.get('polymer'),
+            'n_samples': results.get('n_samples', len(results.get('CF_samples', []))),
+            'substance_ids': results.get('substance_ids', []),
+            'quantiles': results.get('quantiles', {}),
+        }
+
+    manifest = {
+        'job_name': job_name,
+        'food_code': food_code,
+        'n_components': len(component_results),
+        'pack_codes': list(component_results.keys()),
+        'combined_n_samples': len(combined_cf),
+        'statistics': statistics,
+        'components': component_summary,
+        **metadata,
+    }
+
+    json_path = path.parent / f"{path.stem}_manifest.json"
+    json_path.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
+
+
+def load_multicomponent_results(path: Union[str, Path]) -> Dict[str, Any]:
+    """
+    Load multi-component survey results from NPZ + JSON.
+
+    Parameters
+    ----------
+    path : str or Path
+        Base path (with or without .npz extension).
+
+    Returns
+    -------
+    Dict[str, Any]
+        Dictionary containing:
+        - 'combined_cf': np.ndarray
+        - 'combined_weights': np.ndarray
+        - 'pdf_bin_centers': np.ndarray
+        - 'pdf': np.ndarray
+        - 'cdf': np.ndarray
+        - 'manifest': dict with metadata
+    """
+    path = Path(path)
+    if path.suffix != '.npz':
+        npz_path = path.with_suffix('.npz')
+    else:
+        npz_path = path
+
+    if not npz_path.exists():
+        raise FileNotFoundError(f"Results file not found: {npz_path}")
+
+    # Load arrays
+    with np.load(npz_path) as data:
+        results = {
+            'combined_cf': data['combined_cf'],
+            'combined_weights': data['combined_weights'],
+            'pdf_bin_centers': data['pdf_bin_centers'],
+            'pdf': data['pdf'],
+            'cdf': data['cdf'],
+        }
+
+    # Load manifest
+    json_path = npz_path.parent / f"{npz_path.stem}_manifest.json"
+    if json_path.exists():
+        results['manifest'] = json.loads(json_path.read_text(encoding='utf-8'))
+    else:
+        results['manifest'] = {}
+
+    return results
+
+
+def parse_multicomponent_scenario(data: Dict[str, Any]) -> MultiComponentJob:
+    """
+    Parse multi-component scenario from YAML dict.
+
+    Expected format:
+    ```yaml
+    name: "E01_combined"
+    food_code: "E01"
+    food_volume_m3: 0.001
+    food_simulant: "water"
+    contact_temperature_degC: 25.0
+    time_prior:
+      triangular: {mode: 2592000, max: 7776000}
+      grid: {nlow: 15, nhigh: 15}
+    conc_prior:
+      triangular: {mode: 50, max: 200}
+      grid: {nlow: 15, nhigh: 15}
+    components:
+      - pack_code: "S1"
+        polymer: "PET"
+        thickness_m: 0.0001
+        surface_area_m2: 0.06
+        temperature_degC: 25.0
+        substances:
+          - {cas: "123-45-6", name: "SubstanceA", mass_g_mol: 150}
+      - pack_code: "S2"
+        polymer: "HDPE"
+        thickness_m: 0.00015
+        surface_area_m2: 0.04
+        temperature_degC: 25.0
+        substances:
+          - {cas: "789-01-2", name: "SubstanceB", mass_g_mol: 200}
+    ```
+
+    Parameters
+    ----------
+    data : Dict[str, Any]
+        Parsed YAML data.
+
+    Returns
+    -------
+    MultiComponentJob
+        Multi-component job specification.
+    """
+    # Parse priors
+    time_prior_cfg = data.get('time_prior', {})
+    conc_prior_cfg = data.get('conc_prior', {})
+
+    time_prior = parse_prior_spec(time_prior_cfg, name='time')
+    conc_prior = parse_prior_spec(conc_prior_cfg, name='concentration')
+
+    # Parse components
+    components = []
+    for comp_cfg in data.get('components', []):
+        # Parse substances for this component
+        substances = []
+        for sub_cfg in comp_cfg.get('substances', []):
+            substances.append(SubstanceSpec(
+                id=sub_cfg.get('cas', f"sub_{len(substances)}"),
+                name=sub_cfg.get('name', ''),
+                mass_g_mol=float(sub_cfg.get('mass_g_mol', 100)),
+                weight=float(sub_cfg.get('weight', 1.0)),
+            ))
+
+        components.append(ComponentSpec(
+            pack_code=comp_cfg['pack_code'],
+            polymer=comp_cfg['polymer'],
+            thickness_m=float(comp_cfg.get('thickness_m', 100e-6)),
+            surface_area_m2=float(comp_cfg.get('surface_area_m2', 0.06)),
+            temperature_degC=float(comp_cfg.get('temperature_degC', 25.0)),
+            substances=substances,
+        ))
+
+    return MultiComponentJob(
+        name=data.get('name', 'unnamed'),
+        food_code=data.get('food_code', ''),
+        components=components,
+        food_volume_m3=float(data.get('food_volume_m3', 0.001)),
+        food_simulant=data.get('food_simulant', 'water'),
+        contact_temperature_degC=float(data.get('contact_temperature_degC', 25.0)),
+        time_prior=time_prior,
+        conc_prior=conc_prior,
+        h_m_s=float(data.get('h_m_s', 1e-7)),
+        cf0=float(data.get('cf0', 0.0)),
+    )
+
+
+def load_multicomponent_scenario(path: Union[str, Path]) -> MultiComponentJob:
+    """
+    Load multi-component scenario from YAML file.
+
+    Parameters
+    ----------
+    path : str or Path
+        Path to YAML file.
+
+    Returns
+    -------
+    MultiComponentJob
+        Multi-component job specification.
+    """
+    data = load_yaml(path)
+    return parse_multicomponent_scenario(data)
+
+
+def save_multicomponent_scenario(
+    path: Union[str, Path],
+    job: MultiComponentJob,
+) -> None:
+    """
+    Save multi-component job specification to YAML.
+
+    Parameters
+    ----------
+    path : str or Path
+        Output path.
+    job : MultiComponentJob
+        Job specification.
+    """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    data = {
+        'name': job.name,
+        'food_code': job.food_code,
+        'food_volume_m3': job.food_volume_m3,
+        'food_simulant': job.food_simulant,
+        'contact_temperature_degC': job.contact_temperature_degC,
+        'h_m_s': job.h_m_s,
+        'cf0': job.cf0,
+        'time_prior': {
+            'triangular': {
+                'mode': job.time_prior.mode,
+                'max': job.time_prior.max_val,
+            },
+            'grid': {
+                'nlow': job.time_prior.n_low,
+                'nhigh': job.time_prior.n_high,
+            },
+        },
+        'conc_prior': {
+            'triangular': {
+                'mode': job.conc_prior.mode,
+                'max': job.conc_prior.max_val,
+            },
+            'grid': {
+                'nlow': job.conc_prior.n_low,
+                'nhigh': job.conc_prior.n_high,
+            },
+        },
+        'components': [
+            {
+                'pack_code': comp.pack_code,
+                'polymer': comp.polymer,
+                'thickness_m': comp.thickness_m,
+                'surface_area_m2': comp.surface_area_m2,
+                'temperature_degC': comp.temperature_degC,
+                'substances': [
+                    {
+                        'cas': s.id,
+                        'name': s.name,
+                        'mass_g_mol': s.mass_g_mol,
+                        'weight': s.weight,
+                    }
+                    for s in comp.substances
+                ],
+            }
+            for comp in job.components
+        ],
+    }
+
+    with open(path, 'w', encoding='utf-8') as f:
+        yaml.dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)

@@ -98,6 +98,34 @@ app = FastAPI(
 STUDIO_DIR = Path(__file__).parent.parent
 APP_DIR = Path(__file__).parent
 
+
+# Favicon - serve the SFPPy logo
+@app.get("/favicon.ico")
+async def favicon():
+    """Serve the SFPPy SVG logo as favicon."""
+    from fastapi.responses import FileResponse
+    logo_path = STUDIO_DIR.parent / "docs" / "assets" / "SFPPy.svg"
+    if logo_path.exists():
+        return FileResponse(path=str(logo_path), media_type="image/svg+xml")
+    # Fallback to simple green "S" favicon if logo not found
+    from fastapi.responses import Response
+    svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="#10B981"/><text x="16" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="white">S</text></svg>'
+    return Response(content=svg, media_type="image/svg+xml")
+
+
+# Service Worker with proper scope header (must be before static files mount)
+@app.get("/service-worker.js")
+async def service_worker():
+    """Serve service worker from root with proper scope header."""
+    from fastapi.responses import FileResponse
+    sw_path = APP_DIR / "static" / "js" / "service-worker.js"
+    return FileResponse(
+        path=str(sw_path),
+        media_type="application/javascript",
+        headers={"Service-Worker-Allowed": "/"}
+    )
+
+
 app.mount("/static", StaticFiles(directory=APP_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=APP_DIR / "templates")
 

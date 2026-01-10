@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field
 import os
@@ -554,24 +554,38 @@ def search_pubchem(query: str, max_results: int = 10) -> List[Dict[str, Any]]:
             # Handle name attribute which can be a list
             name = result.name if hasattr(result, 'name') else query
             if isinstance(name, list):
-                # Find the best name: prefer short, simple names without codes
-                def name_score(n):
-                    # Lower score = better
-                    score = 0
-                    if n.startswith(('DTXSID', 'SCHEMBL', 'CHEBI', 'NSC', 'EINECS', 'EC ', 'UNII-', 'AKOS')):
-                        score += 100  # Code-like names
-                    if any(c.isdigit() for c in n[:3]):
-                        score += 50  # Starts with digits (CAS-like)
-                    if len(n) > 30:
-                        score += len(n) - 30  # Penalize long names
-                    if '(' in n or '[' in n:
-                        score += 20  # Penalize names with annotations
-                    if n.isupper() and len(n) > 5:
-                        score += 30  # Penalize all-caps codes
-                    return score
+                query_lower = query.lower().strip()
 
-                sorted_names = sorted(name, key=name_score)
-                name = sorted_names[0] if sorted_names else query
+                # First: exact match with user's query (case-insensitive)
+                for n in name:
+                    if n.lower() == query_lower:
+                        name = n
+                        break
+                else:
+                    # Second: user's query contained in a name
+                    for n in name:
+                        if query_lower in n.lower():
+                            name = n
+                            break
+                    else:
+                        # Third: find the best name by scoring
+                        def name_score(n):
+                            # Lower score = better
+                            score = 0
+                            if n.startswith(('DTXSID', 'SCHEMBL', 'CHEBI', 'NSC', 'EINECS', 'EC ', 'UNII-', 'AKOS')):
+                                score += 100  # Code-like names
+                            if any(c.isdigit() for c in n[:3]):
+                                score += 50  # Starts with digits (CAS-like)
+                            if len(n) > 30:
+                                score += len(n) - 30  # Penalize long names
+                            if '(' in n or '[' in n:
+                                score += 20  # Penalize names with annotations
+                            if n.isupper() and len(n) > 5:
+                                score += 30  # Penalize all-caps codes
+                            return score
+
+                        sorted_names = sorted(name, key=name_score)
+                        name = sorted_names[0] if sorted_names else query
 
             # Handle logP which can be an array
             logP = None
@@ -604,12 +618,15 @@ def search_pubchem(query: str, max_results: int = 10) -> List[Dict[str, Any]]:
 
 
 def get_substance_by_cid(cid: int) -> Optional[Dict[str, Any]]:
-    """Get substance details by PubChem CID using get_compounds."""
+    """Get substance details by PubChem CID using get_compounds with rate limiting."""
     try:
-        from patankar.loadpubchem import get_compounds
+        from patankar.loadpubchem import pubchem_query_with_retry, get_compounds, PubChemQueryError
 
-        # Use get_compounds for direct CID lookup
-        results = get_compounds(str(cid), 'cid')
+        # Use rate-limited query for direct CID lookup
+        try:
+            results = pubchem_query_with_retry(get_compounds, cid, 'cid')
+        except PubChemQueryError:
+            return None
         if not results:
             return None
 
@@ -812,8 +829,33 @@ async def search_substances(
 
     # Search PubChem if enabled and we have room for more results
     if source in ["all", "pubchem"] and len(results) < max_results:
+        # Collect CAS numbers from local results to avoid duplicates
+        local_cas_set = set()
+        local_cid_set = set()
+        for r in results:
+            if r.get("cas"):
+                cas = r["cas"]
+                if isinstance(cas, list):
+                    local_cas_set.update(cas)
+                else:
+                    local_cas_set.add(cas)
+            if r.get("cid"):
+                local_cid_set.add(r["cid"])
+
         pubchem_results = search_pubchem(q, max_results - len(results))
         for r in pubchem_results:
+            # Skip if same CAS already in local results
+            r_cas = r.get("cas")
+            if r_cas:
+                if isinstance(r_cas, list):
+                    if any(c in local_cas_set for c in r_cas):
+                        continue
+                elif r_cas in local_cas_set:
+                    continue
+            # Skip if same CID already in local results
+            if r.get("cid") and r["cid"] in local_cid_set:
+                continue
+
             results.append({
                 "source": "pubchem",
                 "id": f"pubchem_{r.get('cid', 'unknown')}",
@@ -1058,15 +1100,17 @@ async def list_substance_categories():
     })
 
 
-@router.get("/thumbnail/{cid}")
-async def get_substance_thumbnail(cid: int):
-    """Get thumbnail URL for a PubChem substance."""
+@router.get("/thumbnail-urls/{cid}")
+async def get_substance_thumbnail_urls(cid: int):
+    """Get thumbnail URLs for a PubChem substance (metadata only, no image)."""
     return JSONResponse({
         "success": True,
         "cid": cid,
         "thumbnail_url": f"https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={cid}&t=l",
         "structure_2d_url": f"https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={cid}&t=s",
         "structure_3d_url": f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/PNG?record_type=3d",
+        "local_tiny_url": f"/api/substances/thumbnail/{cid}.png",
+        "local_large_url": f"/api/substances/structure/{cid}.png",
     })
 
 
@@ -1154,21 +1198,75 @@ async def debug_toxtree(query: str):
 
 # Path to the PubChem cache directory
 PUBCHEM_CACHE_DIR = Path(__file__).parent.parent.parent.parent / "patankar" / "cache.PubChem"
+# Large images (800x800) - managed by loadpubchem.py
 PUBCHEM_THUMBS_DIR = PUBCHEM_CACHE_DIR / "thumbs"
+# Tiny thumbnails (~150px) - for studio UI, separate from loadpubchem
+PUBCHEM_TINY_DIR = PUBCHEM_CACHE_DIR / "thumbs_tiny"
 
 
-@router.get("/structure/{cid}.png")
-async def get_structure_image(cid: int):
+@router.get("/structure/available")
+async def list_cached_structures():
     """
-    Serve structure image from local PubChem cache.
+    List all CIDs with cached structure images (both large and tiny).
 
-    This endpoint serves cached PNG images of molecular structures,
-    enabling offline operation without PubChem CDN access.
-
-    Falls back to 404 if image not cached (frontend should handle this).
+    Useful for offline mode to know which substances have local images.
     """
+    # Large images (800x800) from loadpubchem
+    large_cids = []
+    if PUBCHEM_THUMBS_DIR.exists():
+        for f in PUBCHEM_THUMBS_DIR.glob("*.png"):
+            try:
+                cid = int(f.stem)
+                large_cids.append(cid)
+            except ValueError:
+                pass
+
+    # Tiny thumbnails (~150px) for studio UI
+    tiny_cids = []
+    if PUBCHEM_TINY_DIR.exists():
+        for f in PUBCHEM_TINY_DIR.glob("*.png"):
+            try:
+                cid = int(f.stem)
+                tiny_cids.append(cid)
+            except ValueError:
+                pass
+
+    return JSONResponse({
+        "success": True,
+        "large": {
+            "count": len(large_cids),
+            "cached_cids": sorted(large_cids),
+            "cache_dir": str(PUBCHEM_THUMBS_DIR)
+        },
+        "tiny": {
+            "count": len(tiny_cids),
+            "cached_cids": sorted(tiny_cids),
+            "cache_dir": str(PUBCHEM_TINY_DIR)
+        }
+    })
+
+
+@router.get("/structure/{cid}.png", summary="Get structure image with auto-caching")
+async def get_structure_image_with_cache(cid: int, auto_cache: bool = True):
+    """
+    Serve structure image from local cache, with optional auto-download from PubChem.
+
+    This endpoint:
+    1. First checks local cache (patankar/cache.PubChem/thumbs/)
+    2. If not cached and auto_cache=True, downloads from PubChem and caches locally
+    3. Returns 404 if not cached and auto_cache=False
+
+    This enables offline operation by caching images as they're accessed.
+
+    Parameters:
+    - cid: PubChem Compound ID
+    - auto_cache: If True, download and cache images not found locally (default: True)
+    """
+    import httpx
+
     image_path = PUBCHEM_THUMBS_DIR / f"{cid}.png"
 
+    # 1. Check local cache first
     if image_path.exists():
         return FileResponse(
             path=str(image_path),
@@ -1179,7 +1277,37 @@ async def get_structure_image(cid: int):
             }
         )
 
-    # If not cached locally, return 404 with hint
+    # 2. If auto_cache enabled, try to download and cache
+    if auto_cache:
+        # PubChem image URL - use larger size for better quality
+        pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={cid}&t=l"
+
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(pubchem_url)
+                response.raise_for_status()
+
+                # Ensure thumbs directory exists
+                PUBCHEM_THUMBS_DIR.mkdir(parents=True, exist_ok=True)
+
+                # Save to cache
+                image_path.write_bytes(response.content)
+
+                return Response(
+                    content=response.content,
+                    media_type="image/png",
+                    headers={
+                        "Cache-Control": "public, max-age=31536000",
+                        "X-Source": "auto-cached-from-pubchem"
+                    }
+                )
+        except httpx.HTTPError as e:
+            # Log error but don't fail - return 404 with fallback URL
+            print(f"[Substances] Failed to auto-cache CID {cid}: {e}")
+        except Exception as e:
+            print(f"[Substances] Unexpected error caching CID {cid}: {e}")
+
+    # 3. Not cached and couldn't download
     raise HTTPException(
         status_code=404,
         detail={
@@ -1191,25 +1319,208 @@ async def get_structure_image(cid: int):
     )
 
 
-@router.get("/structure/available")
-async def list_cached_structures():
+@router.post("/structure/cache-batch")
+async def cache_structure_images_batch(cids: List[int]):
     """
-    List all CIDs with cached structure images.
+    Cache structure images for multiple CIDs in batch.
 
-    Useful for offline mode to know which substances have local images.
+    Useful for pre-caching images for offline use.
+
+    Parameters:
+    - cids: List of PubChem CIDs to cache (max 50)
+
+    Returns:
+    - success: list of CIDs successfully cached
+    - already_cached: list of CIDs already in cache
+    - failed: list of CIDs that failed to cache
     """
-    cached_cids = []
-    if PUBCHEM_THUMBS_DIR.exists():
-        for f in PUBCHEM_THUMBS_DIR.glob("*.png"):
+    import httpx
+
+    if len(cids) > 50:
+        raise HTTPException(
+            status_code=400,
+            detail="Maximum 50 CIDs per batch request"
+        )
+
+    results = {
+        "success": [],
+        "already_cached": [],
+        "failed": []
+    }
+
+    # Ensure thumbs directory exists
+    PUBCHEM_THUMBS_DIR.mkdir(parents=True, exist_ok=True)
+
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        for cid in cids:
+            image_path = PUBCHEM_THUMBS_DIR / f"{cid}.png"
+
+            # Skip if already cached
+            if image_path.exists():
+                results["already_cached"].append(cid)
+                continue
+
+            # Try to download
             try:
-                cid = int(f.stem)
-                cached_cids.append(cid)
-            except ValueError:
-                pass
+                pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={cid}&t=l"
+                response = await client.get(pubchem_url)
+                response.raise_for_status()
+
+                image_path.write_bytes(response.content)
+                results["success"].append(cid)
+
+                # Small delay to be nice to PubChem
+                import asyncio
+                await asyncio.sleep(0.2)
+
+            except Exception as e:
+                results["failed"].append({"cid": cid, "error": str(e)})
 
     return JSONResponse({
         "success": True,
-        "count": len(cached_cids),
-        "cached_cids": sorted(cached_cids),
-        "cache_dir": str(PUBCHEM_THUMBS_DIR)
+        "cached": len(results["success"]),
+        "already_cached": len(results["already_cached"]),
+        "failed": len(results["failed"]),
+        "details": results
+    })
+
+
+# ========== TINY THUMBNAILS (for studio UI) ==========
+
+@router.get("/thumbnail/{cid}.png", summary="Get tiny thumbnail with auto-caching")
+async def get_tiny_thumbnail_with_cache(cid: int, auto_cache: bool = True):
+    """
+    Serve tiny thumbnail (~150px) from local cache, with optional auto-download from PubChem.
+
+    This endpoint serves the SMALL thumbnails used in the studio UI (not the 800x800 images
+    from loadpubchem). These are cached separately in cache.PubChem/thumbs_tiny/.
+
+    This endpoint:
+    1. First checks local tiny cache (patankar/cache.PubChem/thumbs_tiny/)
+    2. If not cached and auto_cache=True, downloads small thumbnail from PubChem
+    3. Returns 404 if not cached and auto_cache=False
+
+    Parameters:
+    - cid: PubChem Compound ID
+    - auto_cache: If True, download and cache images not found locally (default: True)
+    """
+    import httpx
+
+    image_path = PUBCHEM_TINY_DIR / f"{cid}.png"
+
+    # 1. Check local tiny cache first
+    if image_path.exists():
+        return FileResponse(
+            path=str(image_path),
+            media_type="image/png",
+            headers={
+                "Cache-Control": "public, max-age=31536000",  # 1 year cache
+                "X-Source": "local-tiny-cache"
+            }
+        )
+
+    # 2. If auto_cache enabled, try to download small thumbnail
+    if auto_cache:
+        # PubChem small thumbnail URL (t=s for small, ~150px)
+        pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={cid}&t=s"
+
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(pubchem_url)
+                response.raise_for_status()
+
+                # Ensure tiny thumbs directory exists
+                PUBCHEM_TINY_DIR.mkdir(parents=True, exist_ok=True)
+
+                # Save to tiny cache
+                image_path.write_bytes(response.content)
+
+                return Response(
+                    content=response.content,
+                    media_type="image/png",
+                    headers={
+                        "Cache-Control": "public, max-age=31536000",
+                        "X-Source": "auto-cached-tiny-from-pubchem"
+                    }
+                )
+        except httpx.HTTPError as e:
+            print(f"[Substances] Failed to auto-cache tiny thumbnail CID {cid}: {e}")
+        except Exception as e:
+            print(f"[Substances] Unexpected error caching tiny CID {cid}: {e}")
+
+    # 3. Not cached and couldn't download
+    raise HTTPException(
+        status_code=404,
+        detail={
+            "error": "Tiny thumbnail not cached",
+            "cid": cid,
+            "hint": "Use online mode to cache this substance first",
+            "fallback_url": f"https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={cid}&t=s"
+        }
+    )
+
+
+@router.post("/thumbnail/cache-batch")
+async def cache_tiny_thumbnails_batch(cids: List[int]):
+    """
+    Cache tiny thumbnails for multiple CIDs in batch.
+
+    Useful for pre-caching small thumbnails for offline use in the studio UI.
+
+    Parameters:
+    - cids: List of PubChem CIDs to cache (max 50)
+
+    Returns:
+    - success: list of CIDs successfully cached
+    - already_cached: list of CIDs already in cache
+    - failed: list of CIDs that failed to cache
+    """
+    import httpx
+
+    if len(cids) > 50:
+        raise HTTPException(
+            status_code=400,
+            detail="Maximum 50 CIDs per batch request"
+        )
+
+    results = {
+        "success": [],
+        "already_cached": [],
+        "failed": []
+    }
+
+    # Ensure tiny thumbs directory exists
+    PUBCHEM_TINY_DIR.mkdir(parents=True, exist_ok=True)
+
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        for cid in cids:
+            image_path = PUBCHEM_TINY_DIR / f"{cid}.png"
+
+            # Skip if already cached
+            if image_path.exists():
+                results["already_cached"].append(cid)
+                continue
+
+            # Try to download small thumbnail
+            try:
+                pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={cid}&t=s"
+                response = await client.get(pubchem_url)
+                response.raise_for_status()
+
+                image_path.write_bytes(response.content)
+                results["success"].append(cid)
+
+                # Small delay to be nice to PubChem
+                import asyncio
+                await asyncio.sleep(0.2)
+
+            except Exception as e:
+                results["failed"].append({"cid": cid, "error": str(e)})
+
+    return JSONResponse({
+        "success": True,
+        "cached": len(results["success"]),
+        "already_cached": len(results["already_cached"]),
+        "failed": len(results["failed"]),
+        "details": results
     })

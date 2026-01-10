@@ -41,7 +41,7 @@ class OfflineManager {
         if ('serviceWorker' in navigator) {
             try {
                 this.swRegistration = await navigator.serviceWorker.register(
-                    '/static/js/service-worker.js',
+                    '/service-worker.js',  // Served from root with Service-Worker-Allowed header
                     { scope: '/' }
                 );
 

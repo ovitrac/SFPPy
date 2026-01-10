@@ -372,8 +372,8 @@ def load_migrant_toxtree(query: str) -> Optional[SubstanceData]:
         if m is None or m.cid is None:
             return None
 
-        # Create substance ID
-        substance_id = f"cid_{m.cid}" if m.cid else f"name_{query.lower().replace(' ', '_')}"
+        # Create substance ID (must match frontend format: pubchem_{cid})
+        substance_id = f"pubchem_{m.cid}" if m.cid else f"name_{query.lower().replace(' ', '_')}"
 
         # Handle name which can be a list
         name = m.name

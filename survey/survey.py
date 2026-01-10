@@ -345,8 +345,19 @@ class Survey:
                 cf_over_cp0,
             )
 
-        # Average over substances (equal share)
-        g_avg_t = np.mean(g_tj, axis=1)
+        # Weighted average over substances using occurrence weights
+        # If substances have weight attribute (from database), use it; else equal weights
+        substance_weights = np.array([
+            getattr(s, 'weight', 1.0) for s in self._substances
+        ], dtype=float)
+        w_sum = substance_weights.sum()
+        if w_sum > 0:
+            substance_weights /= w_sum
+        else:
+            substance_weights = np.ones(n_sub) / n_sub
+
+        # Weighted average: g_avg(t) = Σ w_j * g_j(t)
+        g_avg_t = np.dot(g_tj, substance_weights)
 
         # CF_family(t_i, CP0_j) = g_avg(t_i) * CP0_j
         cf_family = np.outer(g_avg_t, conc_vals)
@@ -363,6 +374,7 @@ class Survey:
             'conc_weights': conc_w,
             'time_vals': time_vals,
             'time_weights': time_w,
+            'substance_weights': substance_weights,  # Occurrence-based weights
         }
 
     def _compute_pdf(

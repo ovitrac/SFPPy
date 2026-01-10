@@ -8,6 +8,8 @@ Defines the core data structures for survey-scale migration estimation:
 - SubstanceSpec: Substance with inferred parameters
 - PriorSpec: Triangular prior specification
 - SurveyConfig: Full survey configuration
+- ComponentSpec: Single packaging component (Phase 4)
+- MultiComponentJob: Multi-component packaging job (Phase 4)
 
 @project: SFPPy/INSERM — Survey-scale exposure estimation
 @author: Olivier Vitrac, PhD, HDR
@@ -134,6 +136,10 @@ class SubstanceSpec:
         Inferred partition coefficient. Set during inference.
     k0 : float, optional
         Inferred k0 parameter. Set during inference.
+    weight : float
+        Occurrence-based weight for family CDF computation.
+        Default 1.0 (equiprobable). Use occurrence values (0.5, 1, 2)
+        to weight substances by likelihood of presence.
     """
     id: str
     mass_g_mol: float
@@ -142,6 +148,7 @@ class SubstanceSpec:
     D: Optional[float] = None
     k: Optional[float] = None
     k0: Optional[float] = None
+    weight: float = 1.0
 
     @classmethod
     def from_mass(cls, mass_g_mol: float, idx: int = 0) -> "SubstanceSpec":
@@ -177,6 +184,7 @@ class SubstanceSpec:
             'D': self.D,
             'k': self.k,
             'k0': self.k0,
+            'weight': self.weight,
         }
 
 
@@ -294,9 +302,86 @@ class SubstanceModel:
     - k0: 1.0 (neutral)
     """
 
+    # Mapping from polymer code to layer class
+    _polymer_class_map = None
+
     def __init__(self, food_simulant: str = "oliveoil"):
         self.food_simulant = food_simulant
         self._migrant_cache = {}
+        self._init_polymer_map()
+
+    def _init_polymer_map(self):
+        """Initialize polymer code to layer class mapping."""
+        if SubstanceModel._polymer_class_map is not None:
+            return
+        from patankar import layer as layer_module
+        SubstanceModel._polymer_class_map = {
+            # Polyolefins
+            "LDPE": layer_module.LDPE,
+            "HDPE": layer_module.HDPE,
+            "LLDPE": layer_module.LLDPE,
+            "PP": layer_module.PP,
+            "oPP": getattr(layer_module, 'oPP', layer_module.PP),
+            # Polyesters
+            "PET": layer_module.gPET,
+            "gPET": layer_module.gPET,
+            "wPET": layer_module.wPET,
+            "rPET": layer_module.rPET,
+            "PBT": layer_module.PBT,
+            "PEN": layer_module.PEN,
+            # Styrenes
+            "PS": layer_module.PS,
+            "HIPS": layer_module.HIPS,
+            "SBS": layer_module.SBS,
+            # Acrylics
+            "PMMA": layer_module.PMMA,
+            "PVAc": layer_module.PVAc,
+            # Polyamides
+            "PA": layer_module.PA6,
+            "PA6": layer_module.PA6,
+            "PA66": layer_module.PA66,
+        }
+
+    def _get_migrant(self, substance_name: str = None, cas: str = None):
+        """
+        Get or create cached migrant object.
+
+        Prioritizes CAS lookup over name lookup since CAS numbers are
+        more reliable for PubChem queries.
+
+        Parameters
+        ----------
+        substance_name : str, optional
+            Substance name for fallback lookup.
+        cas : str, optional
+            CAS registry number (preferred).
+
+        Returns
+        -------
+        migrant
+            Migrant object from PubChem.
+        """
+        from patankar.loadpubchem import migrant
+
+        # Use CAS as primary key if available
+        cache_key = cas or substance_name
+        if not cache_key:
+            raise ValueError("Either cas or substance_name must be provided")
+
+        if cache_key not in self._migrant_cache:
+            # Try CAS first, then name
+            if cas:
+                try:
+                    self._migrant_cache[cache_key] = migrant(cas)
+                except Exception:
+                    if substance_name:
+                        self._migrant_cache[cache_key] = migrant(substance_name)
+                    else:
+                        raise
+            else:
+                self._migrant_cache[cache_key] = migrant(substance_name)
+
+        return self._migrant_cache[cache_key]
 
     def infer_D(self, polymer: str, mass_g_mol: float, temperature_degC: float) -> float:
         """Infer diffusivity using Piringer model."""
@@ -304,34 +389,149 @@ class SubstanceModel:
         return float(Dpiringer.evaluate(polymer=polymer, M=mass_g_mol, T=temperature_degC))
 
     def infer_k(self, polymer: str, mass_g_mol: float, temperature_degC: float,
-                substance_name: str = None) -> float:
+                substance_name: str = None, cas: str = None) -> float:
         """
-        Infer partition coefficient k.
+        Infer polymer-side Henry-like coefficient k.
 
-        If substance_name is provided, attempts to compute k from
-        substance/food simulant pair. Otherwise returns 1.0.
+        Uses Flory-Huggins theory via the layer class to compute k
+        based on polarity indices and molar volumes of the migrant
+        and polymer monomer.
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer code (e.g., 'PET', 'LDPE', 'PP').
+        mass_g_mol : float
+            Molar mass (g/mol).
+        temperature_degC : float
+            Temperature (°C).
+        substance_name : str, optional
+            Substance name for migrant lookup (fallback).
+        cas : str, optional
+            CAS registry number (preferred for lookup).
+
+        Returns
+        -------
+        float
+            Polymer-side Henry-like coefficient k.
         """
-        if substance_name and self.food_simulant:
+        if (substance_name or cas) and polymer:
             try:
-                return self._compute_k_from_food(substance_name, temperature_degC)
+                return self._compute_k_from_layer(polymer, substance_name, temperature_degC, cas)
             except Exception:
                 pass
         return 1.0
 
     def infer_k0(self, polymer: str, mass_g_mol: float, temperature_degC: float,
-                 substance_name: str = None) -> float:
-        """Infer k0 parameter. Default: 1.0."""
+                 substance_name: str = None, cas: str = None) -> float:
+        """
+        Infer food-side Henry-like coefficient k0.
+
+        Uses Flory-Huggins theory via the food class to compute k0
+        based on polarity indices and molar volumes of the migrant
+        and food simulant.
+
+        At equilibrium: k * Cp_eq = k0 * CF_eq
+        Partition coefficient K = k / k0
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer code (unused, for signature consistency).
+        mass_g_mol : float
+            Molar mass (g/mol).
+        temperature_degC : float
+            Temperature (°C).
+        substance_name : str, optional
+            Substance name for migrant lookup (fallback).
+        cas : str, optional
+            CAS registry number (preferred for lookup).
+
+        Returns
+        -------
+        float
+            Food-side Henry-like coefficient k0.
+        """
+        if (substance_name or cas) and self.food_simulant:
+            try:
+                return self._compute_k0_from_food(substance_name, temperature_degC, cas)
+            except Exception:
+                pass
         return 1.0
 
-    def _compute_k_from_food(self, substance_name: str, T: float) -> float:
-        """Compute k from substance/food pair using SFPPy food class."""
-        from patankar.loadpubchem import migrant
+    def _compute_k_from_layer(self, polymer: str, substance_name: str, T: float,
+                               cas: str = None) -> float:
+        """
+        Compute polymer-side k from substance/polymer pair using SFPPy layer.
+
+        Uses Flory-Huggins theory (kFHP) via layer class to compute the
+        Henry-like coefficient in the polymer phase.
+
+        Parameters
+        ----------
+        polymer : str
+            Polymer code (e.g., 'PET', 'LDPE').
+        substance_name : str
+            Substance name for migrant lookup (fallback).
+        T : float
+            Contact temperature (°C).
+        cas : str, optional
+            CAS registry number (preferred for lookup).
+
+        Returns
+        -------
+        float
+            Polymer-side Henry-like coefficient k.
+        """
+        # Get layer class for polymer
+        polymer_upper = polymer.upper().strip()
+        if polymer_upper not in SubstanceModel._polymer_class_map:
+            # Try without case sensitivity
+            for key in SubstanceModel._polymer_class_map:
+                if key.upper() == polymer_upper:
+                    polymer_upper = key
+                    break
+            else:
+                return 1.0
+
+        layer_class = SubstanceModel._polymer_class_map[polymer_upper]
+
+        # Get migrant (CAS preferred)
+        m = self._get_migrant(substance_name=substance_name, cas=cas)
+
+        # Create layer with substance - k is computed automatically via FH
+        lay = layer_class(substance=m, T=T)
+
+        k_val = lay.k
+        if hasattr(k_val, '__len__'):
+            k_val = float(k_val[0])
+        return float(k_val)
+
+    def _compute_k0_from_food(self, substance_name: str, T: float, cas: str = None) -> float:
+        """
+        Compute food-side k0 from substance/food simulant pair using SFPPy.
+
+        Uses Flory-Huggins theory (kFHP) via food class to compute the
+        Henry-like coefficient in the food phase.
+
+        Parameters
+        ----------
+        substance_name : str
+            Substance name for migrant lookup (fallback).
+        T : float
+            Contact temperature (°C).
+        cas : str, optional
+            CAS registry number (preferred for lookup).
+
+        Returns
+        -------
+        float
+            Food-side Henry-like coefficient k0.
+        """
         from patankar import food
 
-        # Cache migrant lookup
-        if substance_name not in self._migrant_cache:
-            self._migrant_cache[substance_name] = migrant(substance_name)
-        m = self._migrant_cache[substance_name]
+        # Get migrant (CAS preferred)
+        m = self._get_migrant(substance_name=substance_name, cas=cas)
 
         # Get food class
         simulant_map = {
@@ -359,12 +559,13 @@ class SubstanceModel:
         Infer all parameters (D, k, k0) for a substance.
 
         Returns a new SubstanceSpec with inferred values.
+        Uses CAS for migrant lookup (more reliable than names).
         """
         D = self.infer_D(layer.polymer, substance.mass_g_mol, layer.temperature_degC)
         k = self.infer_k(layer.polymer, substance.mass_g_mol, layer.temperature_degC,
-                        substance.name)
+                        substance_name=substance.name, cas=substance.cas)
         k0 = self.infer_k0(layer.polymer, substance.mass_g_mol, layer.temperature_degC,
-                          substance.name)
+                          substance_name=substance.name, cas=substance.cas)
 
         return SubstanceSpec(
             id=substance.id,
@@ -438,3 +639,173 @@ def select_reference_layer(
 
     i_ref = int(np.argmin(permeability_proxies))
     return i_ref, layer_details
+
+
+# =============================================================================
+# Multi-Component Packaging (Phase 4)
+# =============================================================================
+
+@dataclass
+class ComponentSpec:
+    """
+    Single packaging component specification for multi-component jobs.
+
+    A component represents one physical part of a packaging system
+    (e.g., bottle body, cap, lid) that contacts the same food.
+
+    Attributes
+    ----------
+    pack_code : str
+        Unique component identifier (e.g., 'E01_S1', 'E01_S2').
+    polymer : str
+        Polymer identifier (e.g., 'gPET', 'HDPE').
+    thickness_m : float
+        Component thickness in meters.
+    surface_area_m2 : float
+        Contact surface area in m².
+    temperature_degC : float
+        Contact temperature (°C).
+    substances : List[SubstanceSpec]
+        Substances present in this component.
+    """
+    pack_code: str
+    polymer: str
+    thickness_m: float
+    surface_area_m2: float
+    temperature_degC: float
+    substances: List[SubstanceSpec] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            'pack_code': self.pack_code,
+            'polymer': self.polymer,
+            'thickness_m': self.thickness_m,
+            'surface_area_m2': self.surface_area_m2,
+            'temperature_degC': self.temperature_degC,
+            'substances': [s.to_dict() for s in self.substances],
+        }
+
+    @property
+    def n_substances(self) -> int:
+        return len(self.substances)
+
+
+@dataclass
+class MultiComponentJob:
+    """
+    Multi-component packaging job specification.
+
+    Groups multiple packaging components that contact the same food product.
+    Used for aggregating migration contributions via tensor product.
+
+    Attributes
+    ----------
+    name : str
+        Job name (typically '{food_code}_combined').
+    food_code : str
+        Food product identifier (e.g., 'E01').
+    components : List[ComponentSpec]
+        List of packaging components.
+    food_volume_m3 : float
+        Total food volume in m³.
+    food_simulant : str
+        Food simulant name for k inference.
+    contact_temperature_degC : float
+        Contact temperature (°C).
+    time_prior : PriorSpec
+        Contact time prior (seconds).
+    conc_prior : PriorSpec
+        Initial concentration prior (mg/kg).
+    h_m_s : float
+        Mass transfer coefficient at food/polymer interface (m/s).
+    cf0 : float
+        Initial food concentration.
+    """
+    name: str
+    food_code: str
+    components: List[ComponentSpec]
+    food_volume_m3: float
+    food_simulant: str
+    contact_temperature_degC: float
+    time_prior: PriorSpec
+    conc_prior: PriorSpec
+    h_m_s: float = 1e-7
+    cf0: float = 0.0
+
+    @property
+    def is_multicomponent(self) -> bool:
+        """True if job has multiple components."""
+        return len(self.components) > 1
+
+    @property
+    def n_components(self) -> int:
+        return len(self.components)
+
+    @property
+    def pack_codes(self) -> List[str]:
+        return [c.pack_code for c in self.components]
+
+    @property
+    def polymers(self) -> List[str]:
+        return [c.polymer for c in self.components]
+
+    @property
+    def total_surface_area_m2(self) -> float:
+        return sum(c.surface_area_m2 for c in self.components)
+
+    def get_all_substances(self) -> List[SubstanceSpec]:
+        """Get all unique substances across all components."""
+        seen = set()
+        result = []
+        for comp in self.components:
+            for sub in comp.substances:
+                if sub.id not in seen:
+                    seen.add(sub.id)
+                    result.append(sub)
+        return result
+
+    def get_substance_components(self, substance_id: str) -> List[ComponentSpec]:
+        """Get components containing a specific substance."""
+        return [c for c in self.components
+                if any(s.id == substance_id for s in c.substances)]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            'name': self.name,
+            'food_code': self.food_code,
+            'components': [c.to_dict() for c in self.components],
+            'food_volume_m3': self.food_volume_m3,
+            'food_simulant': self.food_simulant,
+            'contact_temperature_degC': self.contact_temperature_degC,
+            'time_prior': self.time_prior.to_dict(),
+            'conc_prior': self.conc_prior.to_dict(),
+            'h_m_s': self.h_m_s,
+            'cf0': self.cf0,
+        }
+
+    def to_survey_config(self, component: ComponentSpec) -> SurveyConfig:
+        """
+        Create a SurveyConfig for a single component.
+
+        Used to run per-component simulations before aggregation.
+        """
+        layer = LayerSpec(
+            polymer=component.polymer,
+            thickness_m=component.thickness_m,
+            temperature_degC=component.temperature_degC,
+        )
+        packaging = PackagingSpec(
+            layers=[layer],
+            h_m_s=self.h_m_s,
+            surface_area_m2=component.surface_area_m2,
+            food_volume_m3=self.food_volume_m3,
+            contact_temperature_degC=self.contact_temperature_degC,
+            cf0=self.cf0,
+            food_simulant=self.food_simulant,
+        )
+        return SurveyConfig(
+            name=f"{self.name}_{component.pack_code}",
+            packaging=packaging,
+            time_prior=self.time_prior,
+            conc_prior=self.conc_prior,
+        )

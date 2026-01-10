@@ -33,6 +33,21 @@ from survey.tables import (
     generate_summary_report,
     save_summary_report,
 )
+from survey.aggregation import (
+    combine_tensors,
+    combine_multiple_tensors,
+    aggregate_components,
+    aggregate_family_weighted,
+    compute_pdf_from_samples,
+    compute_statistics,
+    compute_percentiles,
+    compute_risk_percentiles,
+    RISK_PERCENTILES,
+    aggregate_packaging_components,
+    aggregate_food_exposure,
+    quantile_from_samples,
+    quantile_from_cdf,
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -54,4 +69,18 @@ __all__ = [
     "format_outputs_table",
     "generate_summary_report",
     "save_summary_report",
+    # Aggregation
+    "combine_tensors",
+    "combine_multiple_tensors",
+    "aggregate_components",
+    "aggregate_family_weighted",
+    "compute_pdf_from_samples",
+    "compute_statistics",
+    "compute_percentiles",
+    "compute_risk_percentiles",
+    "RISK_PERCENTILES",
+    "aggregate_packaging_components",
+    "aggregate_food_exposure",
+    "quantile_from_samples",
+    "quantile_from_cdf",
 ]

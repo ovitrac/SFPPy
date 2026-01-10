@@ -168,7 +168,15 @@ import patankar.private.USFDAfcn as complyUS # US FCN inventory list (idem)
 import patankar.private.GBappendixA as complyCN # Chinese Appendix A (GB 9685-2016)
 
 
-__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'dbfca', 'dbfcn', 'floatNone', 'get_compounds', 'get_default_index', 'get_java_version', 'is_java_available', 'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index', 'safe_json_dump', 'unique']
+__all__ = ['CompoundIndex', 'create_substance_widget', 'dbannex1', 'dbfca', 'dbfcn', 'floatNone',
+           'get_compounds', 'get_default_index', 'get_java_version', 'is_java_available',
+           'migrant', 'migrantToxtree', 'parse_molblock', 'parse_sdf', 'polarity_index',
+           'safe_json_dump', 'unique',
+           # v1.50 additions for parallel usage
+           'PubChemRateLimiter', 'PubChemQueryError', 'pubchem_query_with_retry',
+           'get_pubchem_rate_limiter',
+           # v1.51 additions for non-pure compound handling
+           'NonPureIndex', 'get_nonpure_index', 'is_nonpure_substance']
 
 __project__ = "SFPPy"
 __author__ = "Olivier Vitrac"
@@ -177,7 +185,41 @@ __credits__ = ["Olivier Vitrac"]
 __license__ = "MIT"
 __maintainer__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
-__version__ = "1.41"
+__version__ = "1.52"
+
+# =============================================================================
+# Revision History
+# =============================================================================
+# v1.52 (2026-01-09) - Cache status checking for prioritization
+#   - Added CompoundIndex.is_cached(query): fast cache lookup without loading data
+#   - Added CompoundIndex.list_cached_cids(): returns all cached CID numbers
+#   - Added CompoundIndex.cache_stats(): returns cache statistics
+#   - Added is_substance_cached(query): checks both pure and non-pure caches
+#   - Added batch_check_cached(queries): efficient batch cache status check
+#   - Enables prioritization workflows (skip cached substances)
+#   - Improved: PubChem retry messages now show the query being made for easier debugging
+#   - Fixed: CAS numbers with leading zeros (e.g., "02809-21-4") now normalized before lookup
+#   - Fixed: CAS numbers in regulatory missing files skip PubChem query (fast-fail for known missing)
+#   - Fixed: "NotFound" errors from PubChem are NOT retried (definitive - compound doesn't exist)
+#   - Added: Negative cache (missing_names.json) for failed name queries (fast-fail on repeat queries)
+#   - Changed: Name queries use 2 retries (not 5) since invalid names can't succeed anyway
+# v1.51 (2026-01-09) - Non-pure compound handling
+#   - Added NonPureIndex class for mixtures/polymers/UVCB substances
+#   - Added cache.NonPure/ directory for non-pure compound metadata
+#   - Added pure_only parameter to migrant and migrantToxtree (default=True)
+#   - Added is_nonpure_substance() helper function
+#   - Fail fast for known non-pure substances (no PubChem query)
+#   - Fixed: numeric queries (CIDs like "22311") now search by 'cid' not 'name'
+#   - Fixed: CID queries now check cache file (cid{N}.simple.json) before PubChem
+# v1.50 (2026-01-09) - Parallel usage improvements for INSERM batch processing
+#   - Added PubChemRateLimiter: inter-process rate limiting via lock file
+#   - Added pubchem_query_with_retry: exponential backoff with max 5 retries
+#   - Lock file auto-expires after 5s to handle stale locks
+#   - Returns clear PubChemQueryError instead of getting stuck
+#   - Supports 3-6 queries/second across all parallel workers
+#   - Fixed rate limiter bug (was `-` instead of `=` on timestamp update)
+# v1.41 - Previous stable version
+# =============================================================================
 
 
 # %% SFFy.Comply databases version 2025
@@ -204,8 +246,535 @@ else:
 _PATANKAR_FOLDER = os.path.dirname(__file__)
 
 # Enforcing rate limiting cap: https://www.ncbi.nlm.nih.gov/books/NBK25497/
-PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms)
-PubChem_lastQueryTime = 0 # global variable
+PubChem_MIN_DELAY = 1 / 3.0  # 1/3 second (333ms) — 3 queries/s max
+PubChem_lastQueryTime = 0  # global variable (legacy, per-process only)
+
+# Inter-process rate limiter for parallel usage
+PUBCHEM_RATE_LOCK_FILE = os.path.join(_PATANKAR_FOLDER, "cache.PubChem", ".pubchem_rate.lock")
+PUBCHEM_LOCK_EXPIRY_S = 5.0  # Auto-expire stale locks after 5 seconds
+PUBCHEM_MAX_RETRIES = 5  # Max retry attempts with exponential backoff
+PUBCHEM_BACKOFF_BASE = 1.0  # Base delay for exponential backoff (seconds)
+
+
+class PubChemRateLimiter:
+    """
+    Inter-process rate limiter using a lock file with automatic expiration.
+
+    Ensures that across all Python processes, PubChem is queried at most
+    ~3 times per second (configurable via min_delay).
+
+    The lock file stores the timestamp of the last query. If the lock file
+    is older than `expiry_s`, it is considered stale and can be overwritten.
+    """
+
+    def __init__(self, lock_file: str = None, min_delay: float = 0.35, expiry_s: float = 5.0):
+        """
+        Parameters
+        ----------
+        lock_file : str
+            Path to the lock file. Default: cache.PubChem/.pubchem_rate.lock
+        min_delay : float
+            Minimum delay between queries in seconds. Default: 0.35s (~3 req/s)
+        expiry_s : float
+            Lock file expiry time. If lock is older than this, it's stale.
+        """
+        self.lock_file = lock_file or PUBCHEM_RATE_LOCK_FILE
+        self.min_delay = min_delay
+        self.expiry_s = expiry_s
+
+        # Ensure directory exists
+        lock_dir = os.path.dirname(self.lock_file)
+        if lock_dir and not os.path.exists(lock_dir):
+            os.makedirs(lock_dir, exist_ok=True)
+
+    def _read_last_query_time(self) -> float:
+        """Read last query timestamp from lock file."""
+        try:
+            if os.path.exists(self.lock_file):
+                # Check if lock is stale (file modification time)
+                mtime = os.path.getmtime(self.lock_file)
+                if time.time() - mtime > self.expiry_s:
+                    return 0.0  # Stale lock, ignore
+
+                with open(self.lock_file, 'r') as f:
+                    content = f.read().strip()
+                    if content:
+                        return float(content)
+        except (IOError, ValueError, OSError):
+            pass
+        return 0.0
+
+    def _write_query_time(self, timestamp: float) -> None:
+        """Write query timestamp to lock file atomically."""
+        try:
+            # Write to temp file then rename (atomic on POSIX)
+            tmp_file = self.lock_file + f".{os.getpid()}.tmp"
+            with open(tmp_file, 'w') as f:
+                f.write(f"{timestamp:.6f}")
+            os.replace(tmp_file, self.lock_file)
+        except (IOError, OSError) as e:
+            # Non-fatal: rate limiting may be less effective but won't block
+            pass
+
+    def acquire(self, timeout: float = 10.0) -> bool:
+        """
+        Wait until it's safe to make a PubChem query.
+
+        Returns True if acquired within timeout, False otherwise.
+        """
+        start = time.time()
+
+        while time.time() - start < timeout:
+            last_query = self._read_last_query_time()
+            elapsed = time.time() - last_query
+
+            if elapsed >= self.min_delay:
+                # Safe to query - update timestamp
+                self._write_query_time(time.time())
+                return True
+
+            # Wait for remaining time
+            wait_time = self.min_delay - elapsed
+            time.sleep(min(wait_time + 0.01, 0.5))  # Small buffer, max 500ms wait
+
+        return False
+
+    def release(self) -> None:
+        """Update timestamp after query completes (optional refinement)."""
+        self._write_query_time(time.time())
+
+
+# Global rate limiter instance
+_pubchem_rate_limiter = None
+
+def get_pubchem_rate_limiter() -> PubChemRateLimiter:
+    """Get or create the global PubChem rate limiter."""
+    global _pubchem_rate_limiter
+    if _pubchem_rate_limiter is None:
+        _pubchem_rate_limiter = PubChemRateLimiter()
+    return _pubchem_rate_limiter
+
+
+class PubChemQueryError(Exception):
+    """Raised when PubChem query fails after all retries."""
+    pass
+
+
+def pubchem_query_with_retry(query_func, *args, max_retries: int = None, **kwargs):
+    """
+    Execute a PubChem query with inter-process rate limiting and exponential backoff.
+
+    Parameters
+    ----------
+    query_func : callable
+        The PubChem query function (e.g., get_compounds)
+    *args, **kwargs
+        Arguments to pass to query_func
+    max_retries : int
+        Maximum retry attempts. Default: PUBCHEM_MAX_RETRIES (5)
+
+    Returns
+    -------
+    Result of query_func
+
+    Raises
+    ------
+    PubChemQueryError
+        If all retries fail
+    """
+    if max_retries is None:
+        max_retries = PUBCHEM_MAX_RETRIES
+
+    rate_limiter = get_pubchem_rate_limiter()
+    last_error = None
+
+    for attempt in range(max_retries):
+        try:
+            # Acquire rate limit slot
+            if not rate_limiter.acquire(timeout=30.0):
+                raise PubChemQueryError("Rate limiter timeout - too many concurrent requests")
+
+            # Execute query
+            result = query_func(*args, **kwargs)
+
+            # Success - update timestamp
+            rate_limiter.release()
+            return result
+
+        except Exception as e:
+            last_error = e
+            error_str = str(e)
+
+            # Check if it's a retriable error
+            # v1.52: "NotFound" errors are NEVER retriable - compound doesn't exist
+            not_found = any(x in error_str for x in [
+                'NotFound', 'Not Found', 'not found', 'No results',
+                'PUGREST.NotFound', 'does not exist'
+            ])
+            if not_found:
+                # Not found is definitive - don't retry
+                break
+
+            retriable = any(x in error_str for x in [
+                'ServerBusy', 'PUGREST.ServerBusy', 'timeout', 'Timeout',
+                'Connection', 'URLError', 'SSL', 'EOF'
+            ])
+
+            if not retriable or attempt >= max_retries - 1:
+                break
+
+            # Exponential backoff: 1s, 2s, 4s, 8s, 16s
+            backoff = PUBCHEM_BACKOFF_BASE * (2 ** attempt)
+            # Add jitter to prevent thundering herd
+            jitter = (hash(str(args)) % 1000) / 1000.0  # 0-1s jitter based on query
+            wait_time = backoff + jitter
+
+            # Format query info for debugging
+            query_info = str(args[0]) if args else "unknown"
+            if len(query_info) > 50:
+                query_info = query_info[:47] + "..."
+
+            if attempt == 0:
+                print(f"LOADPUBCHEM: PubChem busy for '{query_info}', retrying in {wait_time:.1f}s... (attempt {attempt+1}/{max_retries})")
+            else:
+                print(f"LOADPUBCHEM: Retry '{query_info}' {attempt+1}/{max_retries} in {wait_time:.1f}s...")
+
+            time.sleep(wait_time)
+
+    # All retries exhausted
+    query_info = str(args[0]) if args else "unknown"
+    raise PubChemQueryError(f"PubChem query for '{query_info}' failed after {max_retries} retries: {last_error}")
+
+
+# =============================================================================
+# Non-Pure Compound Index (v1.51)
+# =============================================================================
+# Handles mixtures, polymers, and UVCB substances that are NOT in PubChem
+
+NONPURE_CACHE_DIR = os.path.join(_PATANKAR_FOLDER, "cache.NonPure")
+NONPURE_INDEX_FILE = os.path.join(NONPURE_CACHE_DIR, "nonpure_index.json")
+
+
+class NonPureIndex:
+    """
+    Index for non-pure substances (mixtures, polymers, UVCB).
+
+    These substances do NOT have a defined molecular structure in PubChem.
+    This cache enables:
+    1. Fast failure - avoids wasted PubChem API calls
+    2. Metadata storage - records what we know about these substances
+    3. Explicit handling - users can opt-in via pure_only=False
+
+    Attributes
+    ----------
+    cache_dir : str
+        Path to cache.NonPure directory
+    index_file : str
+        Path to nonpure_index.json
+    index : dict
+        CAS → metadata mapping
+
+    Example
+    -------
+    >>> db = NonPureIndex()
+    >>> db.is_nonpure("8001-79-4")  # Castor oil
+    True
+    >>> db.get("8001-79-4")
+    {'name': 'Castor oil', 'type': 'mixture', ...}
+    """
+
+    def __init__(self, cache_dir: str = None, index_file: str = None):
+        """
+        Initialize the non-pure compound index.
+
+        Parameters
+        ----------
+        cache_dir : str, optional
+            Path to cache directory. Default: cache.NonPure/
+        index_file : str, optional
+            Path to index file. Default: nonpure_index.json
+        """
+        self.cache_dir = cache_dir or NONPURE_CACHE_DIR
+        self.index_file = index_file or NONPURE_INDEX_FILE
+        self.index = {}
+
+        # Ensure directory exists
+        os.makedirs(self.cache_dir, exist_ok=True)
+
+        # Load index
+        self._load_index()
+
+    def _load_index(self) -> None:
+        """Load index from JSON file."""
+        if os.path.exists(self.index_file):
+            try:
+                with open(self.index_file, 'r') as f:
+                    self.index = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                self.index = {}
+
+    def save(self) -> None:
+        """Save index to JSON file."""
+        with open(self.index_file, 'w') as f:
+            json.dump(self.index, f, indent=2)
+
+    def is_nonpure(self, cas: str) -> bool:
+        """
+        Check if a CAS number is a known non-pure substance.
+
+        Parameters
+        ----------
+        cas : str
+            CAS number (e.g., "8001-79-4")
+
+        Returns
+        -------
+        bool
+            True if known non-pure substance
+        """
+        return cas.lower().strip() in self.index or cas.strip() in self.index
+
+    def get(self, cas: str) -> dict:
+        """
+        Get metadata for a non-pure substance.
+
+        Parameters
+        ----------
+        cas : str
+            CAS number
+
+        Returns
+        -------
+        dict or None
+            Substance metadata if found, None otherwise
+        """
+        cas_clean = cas.strip()
+        return self.index.get(cas_clean) or self.index.get(cas_clean.lower())
+
+    def add(self, cas: str, metadata: dict) -> None:
+        """
+        Add a non-pure substance to the index.
+
+        Parameters
+        ----------
+        cas : str
+            CAS number
+        metadata : dict
+            Substance metadata with keys:
+            - name (str): Substance name
+            - type (str): 'mixture', 'polymer', 'uvcb', 'undefined'
+            - category (str): Category (e.g., 'vegetable_oil', 'polyolefin')
+            - source (str): Data source
+            - note (str): Additional notes
+        """
+        from datetime import datetime
+        if 'date_added' not in metadata:
+            metadata['date_added'] = datetime.now().strftime("%Y-%m-%d")
+        self.index[cas.strip()] = metadata
+
+    def __len__(self) -> int:
+        return len(self.index)
+
+    def __contains__(self, cas: str) -> bool:
+        return self.is_nonpure(cas)
+
+    def __repr__(self) -> str:
+        return f"<NonPureIndex: {len(self)} substances>"
+
+
+# Global non-pure index instance
+_nonpure_index = None
+
+
+def get_nonpure_index() -> NonPureIndex:
+    """Get or create the global non-pure compound index."""
+    global _nonpure_index
+    if _nonpure_index is None:
+        _nonpure_index = NonPureIndex()
+    return _nonpure_index
+
+
+def is_nonpure_substance(query: str) -> bool:
+    """
+    Check if a query (name, CAS) corresponds to a known non-pure substance.
+
+    Parameters
+    ----------
+    query : str
+        CAS number or name to check
+
+    Returns
+    -------
+    bool
+        True if known non-pure substance
+
+    Example
+    -------
+    >>> is_nonpure_substance("8001-79-4")  # Castor oil
+    True
+    >>> is_nonpure_substance("50-00-0")    # Formaldehyde
+    False
+    """
+    db = get_nonpure_index()
+    return db.is_nonpure(query)
+
+
+def is_substance_cached(query: str, pure_index: "CompoundIndex" = None) -> dict:
+    """
+    Check if a substance is cached (either as pure compound or non-pure).
+
+    This is the main entry point for prioritization workflows. It checks both:
+    1. Pure compound cache (cache.PubChem/) via CompoundIndex
+    2. Non-pure substance cache (cache.NonPure/) via NonPureIndex
+
+    Parameters
+    ----------
+    query : str
+        CID (numeric), name, CAS number, or other identifier
+    pure_index : CompoundIndex, optional
+        Pre-loaded CompoundIndex instance. If None, uses lazy-loaded default.
+
+    Returns
+    -------
+    dict
+        {
+            'cached': bool,           # True if found in any cache
+            'pure': bool,             # True if found as pure compound
+            'nonpure': bool,          # True if found as non-pure substance
+            'source': str or None,    # 'pure_index', 'pure_cid', 'nonpure', or None
+            'cids': list[int],        # CIDs if pure compound (empty otherwise)
+            'nonpure_type': str,      # Type if non-pure ('mixture', 'polymer', etc.)
+        }
+
+    Example
+    -------
+    >>> is_substance_cached("limonene")
+    {'cached': True, 'pure': True, 'nonpure': False, 'source': 'pure_index',
+     'cids': [22311], 'nonpure_type': None}
+    >>> is_substance_cached("8001-79-4")  # Castor oil (if in NonPure cache)
+    {'cached': True, 'pure': False, 'nonpure': True, 'source': 'nonpure',
+     'cids': [], 'nonpure_type': 'mixture'}
+    >>> is_substance_cached("unknown_xyz")
+    {'cached': False, 'pure': False, 'nonpure': False, 'source': None,
+     'cids': [], 'nonpure_type': None}
+
+    Notes
+    -----
+    - For batch processing, pass a pre-loaded CompoundIndex to avoid repeated loading
+    - Non-pure check is fast (in-memory dict lookup)
+    - Pure check uses file existence checks (no data loading)
+    """
+    result = {
+        'cached': False,
+        'pure': False,
+        'nonpure': False,
+        'source': None,
+        'cids': [],
+        'nonpure_type': None,
+    }
+
+    if not query or not isinstance(query, str):
+        return result
+
+    # Check 1: Non-pure substances (fast in-memory lookup)
+    nonpure_db = get_nonpure_index()
+    if nonpure_db.is_nonpure(query):
+        metadata = nonpure_db.get(query)
+        result['cached'] = True
+        result['nonpure'] = True
+        result['source'] = 'nonpure'
+        result['nonpure_type'] = metadata.get('type', 'unknown') if metadata else 'unknown'
+        return result
+
+    # Check 2: Pure compounds via CompoundIndex
+    # Use provided index or lazy-load default
+    if pure_index is None:
+        pure_index = get_default_index()
+
+    pure_status = pure_index.is_cached(query)
+    if pure_status['cached']:
+        result['cached'] = True
+        result['pure'] = True
+        result['source'] = 'pure_' + pure_status['source']  # 'pure_index' or 'pure_cid_file'
+        result['cids'] = pure_status['cids']
+        return result
+
+    return result
+
+
+def batch_check_cached(queries: list, pure_index: "CompoundIndex" = None) -> dict:
+    """
+    Efficiently check cache status for multiple substances.
+
+    Parameters
+    ----------
+    queries : list[str]
+        List of substance identifiers (CIDs, names, CAS numbers)
+    pure_index : CompoundIndex, optional
+        Pre-loaded CompoundIndex instance for efficiency
+
+    Returns
+    -------
+    dict
+        {
+            'cached': list[str],       # Queries found in cache
+            'not_cached': list[str],   # Queries not in cache
+            'pure': list[str],         # Queries found as pure compounds
+            'nonpure': list[str],      # Queries found as non-pure
+            'stats': {
+                'total': int,
+                'cached_count': int,
+                'not_cached_count': int,
+                'pure_count': int,
+                'nonpure_count': int,
+            }
+        }
+
+    Example
+    -------
+    >>> substances = ["limonene", "BHT", "castor oil", "unknown_xyz"]
+    >>> result = batch_check_cached(substances)
+    >>> print(f"Need to fetch: {result['not_cached']}")
+    """
+    # Pre-load index once for efficiency
+    if pure_index is None:
+        pure_index = get_default_index()
+
+    cached = []
+    not_cached = []
+    pure = []
+    nonpure = []
+
+    for query in queries:
+        status = is_substance_cached(query, pure_index=pure_index)
+        if status['cached']:
+            cached.append(query)
+            if status['pure']:
+                pure.append(query)
+            elif status['nonpure']:
+                nonpure.append(query)
+        else:
+            not_cached.append(query)
+
+    return {
+        'cached': cached,
+        'not_cached': not_cached,
+        'pure': pure,
+        'nonpure': nonpure,
+        'stats': {
+            'total': len(queries),
+            'cached_count': len(cached),
+            'not_cached_count': len(not_cached),
+            'pure_count': len(pure),
+            'nonpure_count': len(nonpure),
+        }
+    }
+
+
+class NonPureSubstanceError(Exception):
+    """Raised when attempting to use a non-pure substance with pure_only=True."""
+    pass
+
 
 def is_java_available():
     """Returns True if java is installed"""
@@ -928,6 +1497,112 @@ class CompoundIndex:
         if cid not in self.index[syn_lower]:
             self.index[syn_lower].append(cid)
 
+    def _is_known_missing_cas(self, cas: str) -> bool:
+        """
+        Check if a CAS number is known to be missing from PubChem.
+
+        Checks regulatory database missing files (EU, US, CN) to avoid
+        expensive PubChem retry cycles for CAS numbers that were already
+        tried and failed.
+
+        Parameters
+        ----------
+        cas : str
+            CAS number to check (e.g., "167883-19-4")
+
+        Returns
+        -------
+        bool
+            True if CAS is in any missing file, False otherwise
+        """
+        # Normalize CAS (strip leading zeros)
+        if self._cas_regex.match(cas):
+            parts = cas.split('-')
+            normalized = f"{int(parts[0])}-{parts[1]}-{parts[2]}"
+        else:
+            normalized = cas
+
+        # Check all known missing files
+        missing_files = [
+            os.path.join(_PATANKAR_FOLDER, "private", "cache.EuFCMannex1", "missing.pubchem.annex1.json"),
+            os.path.join(_PATANKAR_FOLDER, "private", "cache.USFDAfcn", "missing.pubchem.fcn.json"),
+            os.path.join(_PATANKAR_FOLDER, "private", "cache.GBappendixA", "missing.pubchem.gb.json"),
+        ]
+
+        for mfile in missing_files:
+            if os.path.isfile(mfile):
+                try:
+                    with open(mfile, "r", encoding="utf-8") as f:
+                        missing = json.load(f)
+                    # Check both original and normalized forms
+                    if cas in missing or normalized in missing:
+                        return True
+                except (json.JSONDecodeError, IOError):
+                    continue
+
+        return False
+
+    def _is_known_missing_name(self, name: str) -> bool:
+        """
+        Check if a name is known to be missing from PubChem.
+
+        Uses a local negative cache to avoid expensive retry cycles for names
+        that were already tried and failed.
+
+        Parameters
+        ----------
+        name : str
+            Compound name to check
+
+        Returns
+        -------
+        bool
+            True if name is in the missing cache, False otherwise
+        """
+        missing_file = os.path.join(self.cache_dir, "missing_names.json")
+        if not os.path.isfile(missing_file):
+            return False
+
+        try:
+            with open(missing_file, "r", encoding="utf-8") as f:
+                missing = json.load(f)
+            return name.lower().strip() in missing
+        except (json.JSONDecodeError, IOError):
+            return False
+
+    def _add_missing_name(self, name: str) -> None:
+        """
+        Add a name to the missing names cache after a failed PubChem query.
+
+        Parameters
+        ----------
+        name : str
+            Compound name that was not found in PubChem
+        """
+        missing_file = os.path.join(self.cache_dir, "missing_names.json")
+
+        # Load existing missing names
+        missing = {}
+        if os.path.isfile(missing_file):
+            try:
+                with open(missing_file, "r", encoding="utf-8") as f:
+                    missing = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                missing = {}
+
+        # Add the name with timestamp
+        name_lower = name.lower().strip()
+        if name_lower not in missing:
+            missing[name_lower] = {
+                "original": name,
+                "date_added": datetime.now().strftime("%Y-%m-%d")
+            }
+            try:
+                with open(missing_file, "w", encoding="utf-8") as f:
+                    json.dump(missing, f, indent=2)
+            except IOError:
+                pass  # Silently fail if can't write
+
     def _gather_synonyms(self, full_data):
         """
         Gathers synonyms from the loaded full-data dictionary.
@@ -1094,25 +1769,78 @@ class CompoundIndex:
         :param output_format: 'simple' or 'full'
         :return: pd.DataFrame with the results (possibly multiple rows)
         """
-        global PubChem_lastQueryTime
-
         if query in (None,""):
             return
         if not isinstance(query,str):
             raise TypeError(f"query must be a str not a {type(query).__name__}")
         qlower = query.strip().lower()
 
+        # v1.52: Normalize CAS numbers by stripping leading zeros
+        # CAS format: XXXXXXX-XX-X where first part can have leading zeros (e.g., "02809-21-4" → "2809-21-4")
+        if self._cas_regex.match(qlower):
+            parts = qlower.split('-')
+            normalized_cas = f"{int(parts[0])}-{parts[1]}-{parts[2]}"
+            if normalized_cas != qlower and normalized_cas in self.index:
+                qlower = normalized_cas  # Use normalized version
+
+        # v1.51: For numeric queries (CIDs), check if cache file exists BEFORE checking index
+        # The index maps names → CIDs, so "22311" won't be found even if cid22311.simple.json exists
+        query_stripped = query.strip()
+        if query_stripped.isdigit():
+            cid_to_check = int(query_stripped)
+            simple_path = os.path.join(self.cache_dir, f"cid{cid_to_check}.simple.json")
+            if os.path.isfile(simple_path):
+                # Cache file exists - load from there
+                if output_format == "full":
+                    full_path = os.path.join(self.cache_dir, f"cid{cid_to_check}.full.json")
+                    if os.path.isfile(full_path):
+                        with open(full_path, "r", encoding="utf-8") as f:
+                            return pd.DataFrame([json.load(f)])
+                with open(simple_path, "r", encoding="utf-8") as f:
+                    return pd.DataFrame([json.load(f)])
+
         if qlower not in self.index:
-            # Not found locally => do a PubChem call while respecting cap limit
-            # doing more than 3 queries per second will ban you for a day or so
-            elapsed = time.time() - PubChem_lastQueryTime # time elapsed since last request
-            if elapsed < PubChem_MIN_DELAY:
-                wait_time = PubChem_MIN_DELAY - elapsed
-                print(f"LOADPUBCHEM: Rate limit reached. Waiting {wait_time:.2f} s...")
-                time.sleep(wait_time)
-            matches = get_compounds(query, 'name')
-            PubChem_lastQueryTime - time.time() # update last request time
+            # Not found locally => do a PubChem call with inter-process rate limiting
+            # Uses exponential backoff with max retries for resilience
+
+            # v1.51: Detect numeric queries (likely CIDs) vs name queries
+            # Pure integers should be queried by 'cid', not 'name'
+            if query_stripped.isdigit():
+                # Numeric query - search by CID (faster, direct lookup)
+                search_namespace = 'cid'
+                search_value = int(query_stripped)
+            else:
+                # Non-numeric - search by name
+                search_namespace = 'name'
+                search_value = query
+
+            # v1.52: Check regulatory database missing files before querying PubChem
+            # If a CAS was already tried and failed, skip the expensive retry cycle
+            if self._cas_regex.match(qlower):
+                if self._is_known_missing_cas(query_stripped):
+                    return pd.DataFrame()  # Known to not exist in PubChem
+
+            # v1.52: Check negative cache for name queries
+            # If this name was already tried and failed, skip the expensive retry cycle
+            if search_namespace == 'name':
+                if self._is_known_missing_name(query):
+                    return pd.DataFrame()  # Known to not exist in PubChem
+
+            try:
+                # v1.52: Fewer retries for name queries (more likely to be invalid names)
+                # CID queries use full retries since they're direct lookups
+                name_max_retries = 2 if search_namespace == 'name' else None
+                matches = pubchem_query_with_retry(get_compounds, search_value, search_namespace,
+                                                   max_retries=name_max_retries)
+            except PubChemQueryError as e:
+                # All retries failed - add to missing cache and raise error
+                if search_namespace == 'name':
+                    self._add_missing_name(query)
+                raise RuntimeError(f"Compound <{query}> not found: {e}") from e
             if not matches:
+                # No hits - add to missing cache for future fast-fail
+                if search_namespace == 'name':
+                    self._add_missing_name(query)
                 return pd.DataFrame()  # no hits at all
 
             best = matches[0]
@@ -1175,6 +1903,130 @@ class CompoundIndex:
                 return pd.DataFrame()
 
             return pd.DataFrame(results)
+
+    def is_cached(self, query: str) -> dict:
+        """
+        Efficiently check if a substance is cached without loading full data.
+
+        Parameters
+        ----------
+        query : str
+            CID (numeric), name, CAS number, or other identifier
+
+        Returns
+        -------
+        dict
+            {
+                'cached': bool,           # True if found in cache
+                'source': str or None,    # 'index', 'cid_file', or None
+                'cids': list[int],        # List of matching CIDs (empty if not cached)
+                'has_simple': bool,       # True if simple.json exists
+                'has_full': bool,         # True if full.json exists
+            }
+
+        Example
+        -------
+        >>> db = CompoundIndex()
+        >>> db.is_cached("limonene")
+        {'cached': True, 'source': 'index', 'cids': [22311], 'has_simple': True, 'has_full': True}
+        >>> db.is_cached("22311")
+        {'cached': True, 'source': 'cid_file', 'cids': [22311], 'has_simple': True, 'has_full': True}
+        >>> db.is_cached("unknown_compound_xyz")
+        {'cached': False, 'source': None, 'cids': [], 'has_simple': False, 'has_full': False}
+        """
+        result = {
+            'cached': False,
+            'source': None,
+            'cids': [],
+            'has_simple': False,
+            'has_full': False,
+        }
+
+        if not query or not isinstance(query, str):
+            return result
+
+        query_stripped = query.strip()
+        qlower = query_stripped.lower()
+
+        # Check 1: Numeric query (likely a CID) - check file directly
+        if query_stripped.isdigit():
+            cid = int(query_stripped)
+            simple_path = os.path.join(self.cache_dir, f"cid{cid}.simple.json")
+            full_path = os.path.join(self.cache_dir, f"cid{cid}.full.json")
+            has_simple = os.path.isfile(simple_path)
+            has_full = os.path.isfile(full_path)
+            if has_simple or has_full:
+                result['cached'] = True
+                result['source'] = 'cid_file'
+                result['cids'] = [cid]
+                result['has_simple'] = has_simple
+                result['has_full'] = has_full
+                return result
+
+        # Check 2: Look up in synonym index
+        if qlower in self.index:
+            cids = self.index[qlower]
+            if cids:
+                # Verify at least one file exists
+                for cid in cids:
+                    simple_path = os.path.join(self.cache_dir, f"cid{cid}.simple.json")
+                    full_path = os.path.join(self.cache_dir, f"cid{cid}.full.json")
+                    if os.path.isfile(simple_path):
+                        result['has_simple'] = True
+                    if os.path.isfile(full_path):
+                        result['has_full'] = True
+
+                if result['has_simple'] or result['has_full']:
+                    result['cached'] = True
+                    result['source'] = 'index'
+                    result['cids'] = list(cids)
+                    return result
+
+        return result
+
+    def list_cached_cids(self) -> list:
+        """
+        Return list of all CIDs currently in the cache.
+
+        Returns
+        -------
+        list[int]
+            Sorted list of all cached CID numbers
+        """
+        cids = set()
+        for filepath in glob.glob(os.path.join(self.cache_dir, "cid*.simple.json")):
+            filename = os.path.basename(filepath)
+            # Extract CID from filename like "cid22311.simple.json"
+            cid_str = filename.replace("cid", "").replace(".simple.json", "")
+            try:
+                cids.add(int(cid_str))
+            except ValueError:
+                continue
+        return sorted(cids)
+
+    def cache_stats(self) -> dict:
+        """
+        Return statistics about the cache.
+
+        Returns
+        -------
+        dict
+            {
+                'total_compounds': int,
+                'index_entries': int,
+                'simple_files': int,
+                'full_files': int,
+            }
+        """
+        simple_count = len(glob.glob(os.path.join(self.cache_dir, "cid*.simple.json")))
+        full_count = len(glob.glob(os.path.join(self.cache_dir, "cid*.full.json")))
+        return {
+            'total_compounds': simple_count,
+            'index_entries': len(self.index),
+            'simple_files': simple_count,
+            'full_files': full_count,
+        }
+
 
 # %% Configuration of migrant class: cache, available Dmodel and kmodel
 
@@ -1426,6 +2278,8 @@ class migrant:
 
                  toxtree = True, # flag to promote to toxtree if toxicological data are cached
 
+                 pure_only = True, # v1.51: only accept pure compounds (reject mixtures/polymers)
+
                  ):
         """
         Create a new migrant instance.
@@ -1448,6 +2302,10 @@ class migrant:
             - If omitted or None, no search is attempted, even if name is given.
         raiseerror : bool (default=True), optional
             Raise an error if name is not found
+        pure_only : bool (default=True), optional
+            If True, reject known non-pure substances (mixtures, polymers, UVCB).
+            If False, allow non-pure substances and return available metadata.
+            See cache.NonPure/ for known non-pure substances.
 
         Advanced Parameters
         -------------------
@@ -1531,54 +2389,86 @@ class migrant:
             if db is None:
                 raise ValueError("A db instance is required for searching by name when M is None.")
 
-            df = db.find(name, output_format="simple")
-            if df is None or df.empty:
-                if raiseerror:
-                    raise ValueError(f"Compound <{name}> not found")
-                print(f"LOADPUBCHEM ERRROR: <{name}> not found - empty object returned")
-                self.compound = name
-                self.name = [name]
-                self.cid = []
-                self.CAS = []
-                self.InChi = []
-                self.InChiKey = []
-                self.M_array = np.array([], dtype=float)
-                self.M = None
-                self.formula = None
-                self.smiles = None
-                self.logP = None
-            else:
-                self.compound = name
-                # Initialize dictionary to accumulate properties from each row
-                all_data = {
-                    "names": [],
-                    "cid": [],
-                    "cas": [],
-                    "inchi": [],
-                    "inchikey": [],
-                    "m": [],
-                    "logp": [],
-                    "formula": [],
-                    "smiles": [],
-                }
+            # v1.51: Check for non-pure substances (mixtures, polymers, UVCB)
+            _handled_as_nonpure = False
+            nonpure_db = get_nonpure_index()
+            if nonpure_db.is_nonpure(name):
+                nonpure_info = nonpure_db.get(name)
+                if pure_only:
+                    # Reject non-pure substances when pure_only=True
+                    raise NonPureSubstanceError(
+                        f"Substance '{name}' is a non-pure compound ({nonpure_info.get('type', 'unknown')}: "
+                        f"{nonpure_info.get('name', 'unknown')}). "
+                        f"Use pure_only=False to allow non-pure substances."
+                    )
+                else:
+                    # Return non-pure metadata (limited information)
+                    _handled_as_nonpure = True
+                    self.compound = name
+                    self.name = [nonpure_info.get('name', name)]
+                    self.cid = []
+                    self.CAS = [name] if '-' in name else []
+                    self.InChi = []
+                    self.InChiKey = []
+                    self.M_array = np.array([], dtype=float)
+                    self.M = None
+                    self.formula = None
+                    self.smiles = None
+                    self.logP = None
+                    self._nonpure_info = nonpure_info  # Store non-pure metadata
+                    self._is_nonpure = True
+                    if verbose:
+                        print(f"LOADPUBCHEM: '{name}' is a non-pure substance ({nonpure_info.get('type')}) - limited data available")
 
-                # Helper functions
-                def ensure_list(val):
-                    if val is None:
-                        return []
-                    return val if isinstance(val, list) else [val]
+            if not _handled_as_nonpure:  # Only proceed if not handled as non-pure
+                df = db.find(name, output_format="simple")
+                if df is None or df.empty:
+                    if raiseerror:
+                        raise ValueError(f"Compound <{name}> not found")
+                    print(f"LOADPUBCHEM ERRROR: <{name}> not found - empty object returned")
+                    self.compound = name
+                    self.name = [name]
+                    self.cid = []
+                    self.CAS = []
+                    self.InChi = []
+                    self.InChiKey = []
+                    self.M_array = np.array([], dtype=float)
+                    self.M = None
+                    self.formula = None
+                    self.smiles = None
+                    self.logP = None
+                else:
+                    self.compound = name
+                    # Initialize dictionary to accumulate properties from each row
+                    all_data = {
+                        "names": [],
+                        "cid": [],
+                        "cas": [],
+                        "inchi": [],
+                        "inchikey": [],
+                        "m": [],
+                        "logp": [],
+                        "formula": [],
+                        "smiles": [],
+                    }
 
-                def to_float(val):
-                    try:
-                        return float(val)
-                    except Exception:
-                        return np.nan
+                    # Helper functions
+                    def ensure_list(val):
+                        if val is None:
+                            return []
+                        return val if isinstance(val, list) else [val]
 
-                for _, row in df.iterrows():
-                    # Combine name and synonyms into one set
-                    names = ensure_list(row.get("name", []))
-                    syns = ensure_list(row.get("synonyms", []))
-                    all_data["names"].extend(set(names) | set(syns))
+                    def to_float(val):
+                        try:
+                            return float(val)
+                        except Exception:
+                            return np.nan
+
+                    for _, row in df.iterrows():
+                        # Combine name and synonyms into one set
+                        names = ensure_list(row.get("name", []))
+                        syns = ensure_list(row.get("synonyms", []))
+                        all_data["names"].extend(set(names) | set(syns))
 
                     # Process CID (append if exists)
                     cid = row.get("CID", None)
@@ -2659,7 +3549,8 @@ class migrantToxtree(migrant):
     CFTTCunits = "[mg/kg food intake]"
 
     def __init__(self, compound_name, cache_folder='cache.ToxTree',
-                 refresh=False, no_cache=False, raiseerror=True, verbose=True, checkalterts=True):
+                 refresh=False, no_cache=False, raiseerror=True, verbose=True, checkalterts=True,
+                 pure_only=True):
         """
         Construct a `migrantToxtree` instance from a compound name or identifier.
 
@@ -2686,6 +3577,10 @@ class migrantToxtree(migrant):
             If True, prints information during compound resolution and toxicological analysis. Default is True.
         checkalerts : bool, optional
             If True, a message if alerts have been found.
+        pure_only : bool, optional
+            If True (default), reject non-pure substances. ToxTree requires molecular structure,
+            so non-pure substances cannot be processed. Set to False to allow migrant-level
+            metadata without ToxTree analysis.
 
         Raises
         ------
@@ -2693,13 +3588,26 @@ class migrantToxtree(migrant):
             If multiple CIDs or SMILES are associated with the input compound, or if toxicological data is ambiguous.
         RuntimeError
             If PubChem structure download or ToxTree execution fails (depending on `raiseerror`).
+        NonPureSubstanceError
+            If the compound is a non-pure substance and pure_only=True.
         """
         self.ispromoted = False  # Always set by default
 
         isempty = compound_name in (None, "", [])
-        super().__init__(compound_name, raiseerror=raiseerror, verbose=verbose)
+        super().__init__(compound_name, raiseerror=raiseerror, verbose=verbose, pure_only=pure_only)
 
         if isempty:
+            return
+
+        # v1.51: Handle non-pure substances (no ToxTree possible without molecular structure)
+        if getattr(self, '_is_nonpure', False):
+            if verbose:
+                print(f"LOADPUBCHEM: '{compound_name}' is non-pure - ToxTree analysis not possible")
+            self.ToxTree = None
+            self.CramerValue = None
+            self.CramerClass = None
+            self.TTC = None
+            self.CFTTC = None
             return
 
         if isinstance(self.cid, list):

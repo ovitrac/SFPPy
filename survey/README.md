@@ -1196,6 +1196,59 @@ python survey/run_batch.py survey/examples/batch_scenarios/
 
 ---
 
+## Known Limitations & Open Issues
+
+### logP Dependency for Flory-Huggins k/k0 Computation
+
+The partition coefficients `k` (polymer-side) and `k0` (food-side) are computed using **Flory-Huggins theory** via the SFPPy layer and food classes. This computation requires the **polarity index** of the migrant, which is derived from `logP` (octanol-water partition coefficient).
+
+**Scientific basis:**
+- `logP` is used to estimate the Flory-Huggins interaction parameter `χ` by applying FH theory to the water/octanol partitioning system
+- From `χ`, activity coefficients and Henry-like coefficients (`k`, `k0`) are derived
+- This approach is based on: *Vitrac, O. (2009). Estimation of solubility parameters from logP values.*
+
+**Limitation:**
+When PubChem lacks `XLogP` data for a compound, the polarity index cannot be computed, and the FH calculation fails. In such cases, `k` and `k0` fall back to **1.0** (neutral partitioning assumption).
+
+**Affected compound types:**
+- Organometallic compounds (organotin, lead compounds)
+- Complex salts and ionic species
+- Polymeric additives (e.g., PE wax)
+- Some industrial chemicals with limited characterization
+
+**Example — Dibutyltin dilaurate (CAS 77-58-7):**
+
+```python
+from patankar.loadpubchem import migrant
+from patankar import layer, food
+
+m = migrant('77-58-7')
+print(f"logP: {m.logP}")  # None - missing from PubChem
+
+# FH computation fails:
+try:
+    lay = layer.HDPE(substance=m, T=25)
+    print(f"k = {lay.k}")
+except RuntimeError as e:
+    print(f"Error: {e}")
+# Error: At least one of the elements lacks chemical information.
+```
+
+**Current behavior:**
+- Substances with missing logP get `k=k0=1.0`
+- This affects ~1.7% of substances in typical production runs
+- Results remain conservative (neutral partitioning)
+
+**Potential future improvements:**
+1. Estimate logP from SMILES using fragment-based methods (requires additional dependencies)
+2. Use molecular weight correlations for specific compound classes
+3. Allow manual logP override in scenario files
+4. Maintain a curated lookup table for common industrial chemicals
+
+> **Note:** RDKit could provide logP estimation from SMILES but is intentionally not included as a dependency to keep SFPPy lightweight and focused on its own validated approaches.
+
+---
+
 ## License
 
 MIT License. See LICENSE file in repository root.

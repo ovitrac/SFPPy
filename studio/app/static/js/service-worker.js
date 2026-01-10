@@ -21,9 +21,9 @@ const PRECACHE_URLS = [
     '/static/vendor/chart.min.js',
     '/static/vendor/tailwind-offline.css',
     '/static/vendor/manifest.json',
-    '/api/polymers/list',
-    '/api/simulants/list',
-    '/api/substances/categories',
+    '/api/assembly/polymers',
+    '/api/food/simulants',
+    '/api/substances/common',
 ];
 
 // URLs that should use CacheFirst strategy

@@ -992,7 +992,7 @@ function getStructureImageUrl(cid, size = 's') {
 }
 
 /**
- * Get local SFPPy structure image URL
+ * Get local SFPPy structure image URL (large 800x800)
  * @param {number} cid - PubChem CID
  * @returns {string} Local image URL
  */
@@ -1002,27 +1002,79 @@ function getLocalStructureImageUrl(cid) {
 }
 
 /**
- * Set image source - PubChem thumbnail primary, local SFPPy as fallback
+ * Get local tiny thumbnail URL (~150px)
+ * @param {number} cid - PubChem CID
+ * @returns {string} Local tiny thumbnail URL
+ */
+function getLocalTinyThumbnailUrl(cid) {
+    if (!cid) return '';
+    return `/api/substances/thumbnail/${cid}.png`;
+}
+
+/**
+ * Handle image fallback chain for inline images: tiny → large → PubChem
+ * @param {HTMLImageElement} img - The image element
+ * @param {number} cid - PubChem CID
+ */
+function handleImageFallback(img, cid) {
+    const tinyUrl = `/api/substances/thumbnail/${cid}.png`;
+    const largeUrl = `/api/substances/structure/${cid}.png`;
+    const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=${cid}&t=s`;
+
+    // Check which URL failed and try next in chain
+    if (img.src.includes('/thumbnail/')) {
+        // Tiny failed, try large
+        console.log('[Image] Tiny not cached, trying large for CID:', cid);
+        img.src = largeUrl;
+    } else if (img.src.includes('/structure/')) {
+        // Large failed, try PubChem
+        console.log('[Image] Large not cached, trying PubChem for CID:', cid);
+        img.src = pubchemUrl;
+    } else {
+        // PubChem also failed
+        console.log('[Image] All sources failed for CID:', cid);
+        img.onerror = null; // Prevent infinite loop
+    }
+}
+
+/**
+ * Set image source with fallback chain based on size:
+ * - size='s': local tiny → local large → PubChem small
+ * - size='l': local large → local tiny → PubChem large
  * @param {HTMLImageElement} img - Image element
  * @param {number} cid - PubChem CID
- * @param {string} size - 's' for small, 'l' for large
+ * @param {string} size - 's' for small (default, for lists), 'l' for large (for previews)
  */
 function setStructureImage(img, cid, size = 's') {
     if (!cid || !img) return;
 
+    const tinyUrl = `/api/substances/thumbnail/${cid}.png`;      // Local tiny (~150px)
+    const largeUrl = `/api/substances/structure/${cid}.png`;     // Local large (800x800)
     const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=${cid}&t=${size}`;
-    const localUrl = `/api/substances/structure/${cid}.png`;
 
     // Store CID for click handler
     img.dataset.cid = cid;
 
-    // Primary: PubChem thumbnail (fast, cached by browser/CDN)
-    img.src = pubchemUrl;
+    // For large size requests (previews), prefer large local image first
+    const primaryUrl = (size === 'l') ? largeUrl : tinyUrl;
+    const secondaryUrl = (size === 'l') ? tinyUrl : largeUrl;
+
+    // Primary: Try preferred local image first (offline-first approach)
+    img.src = primaryUrl;
     img.onerror = function() {
-        // Fallback to local SFPPy cache if PubChem unavailable (offline)
-        if (this.src !== localUrl) {
-            console.log('[Image] PubChem unavailable, using local cache for CID:', cid);
-            this.src = localUrl;
+        // Fallback 1: Try secondary local image
+        if (this.src === primaryUrl || this.src.endsWith(primaryUrl)) {
+            console.log('[Image] Primary not cached, trying secondary for CID:', cid);
+            this.src = secondaryUrl;
+        }
+        // Fallback 2: Try PubChem
+        else if (this.src === secondaryUrl || this.src.endsWith(secondaryUrl)) {
+            console.log('[Image] Secondary not cached, trying PubChem for CID:', cid);
+            this.src = pubchemUrl;
+        }
+        // Final fallback failed
+        else {
+            console.log('[Image] All sources failed for CID:', cid);
             this.onerror = null; // Prevent infinite loop
         }
     };
@@ -1670,7 +1722,7 @@ async function updateAssemblySubstances() {
                     </td>
                     <td class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-center text-xs
                                ${smlValue ? 'text-green-600 dark:text-green-400 font-medium' : 'text-gray-400 dark:text-gray-500'}">
-                        ${smlValue ? `${smlValue}` : '-'}
+                        ${smlValue ? `${smlValue} mg/kg` : '-'}
                     </td>
                 </tr>
             `);
@@ -2494,7 +2546,7 @@ function updateC0Matrix() {
                         </td>
                     `;
                 }).join('')}
-                <td class="text-xs ${sub.SML ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}">${sub.SML || '-'}</td>
+                <td class="text-xs ${sub.SML ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}">${sub.SML ? `${sub.SML} mg/kg` : '-'}</td>
             </tr>
         `;
     }).join('');
@@ -3482,12 +3534,12 @@ function updateSubstancesList() {
         return `
             <div class="substance-detail-card sub-card" data-index="${i}" data-id="${subId}">
                 <div class="flex items-start gap-3">
-                    ${s.cid ? `<img src="${getStructureImageUrl(s.cid)}"
+                    ${s.cid ? `<img src="${getLocalTinyThumbnailUrl(s.cid)}"
                                    class="w-14 h-14 molecule-img flex-shrink-0 cursor-pointer"
                                    title="Click to enlarge"
                                    data-cid="${s.cid}"
                                    onclick="showStructureModal(${s.cid})"
-                                   onerror="this.onerror=null; this.src='/api/substances/structure/${s.cid}.png';">` : ''}
+                                   onerror="handleImageFallback(this, ${s.cid})">` : ''}
                     <div class="flex-1 min-w-0">
                         <div class="flex items-start justify-between">
                             <div>
@@ -3556,12 +3608,12 @@ function initSubstancesTab() {
                 resultsContainer.innerHTML = data.results.map(r => `
                     <div class="p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border-b dark:border-gray-700 search-result flex items-center gap-3"
                          data-id="${r.id}" data-source="${r.source}" data-cid="${r.cid || ''}">
-                        ${r.cid ? `<img src="${getStructureImageUrl(r.cid)}"
+                        ${r.cid ? `<img src="${getLocalTinyThumbnailUrl(r.cid)}"
                                        class="w-12 h-12 molecule-img cursor-pointer"
                                        title="Click to enlarge"
                                        data-cid="${r.cid}"
                                        onclick="event.stopPropagation(); showStructureModal(${r.cid})"
-                                       onerror="this.onerror=null; this.src='/api/substances/structure/${r.cid}.png';">` : ''}
+                                       onerror="handleImageFallback(this, ${r.cid})">` : ''}
                         <div class="flex-1 min-w-0">
                             <div class="font-medium text-gray-800 dark:text-gray-200 truncate">${r.name}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400">
@@ -3580,6 +3632,8 @@ function initSubstancesTab() {
 
                         const result = data.results.find(r => r.id === div.dataset.id);
                         if (result) {
+                            // Pass user's search query for proper display name
+                            result.searchQuery = query;
                             await addSubstanceToState(result);
                             resultsContainer.classList.add('hidden');
                             searchInput.value = '';
@@ -3594,6 +3648,8 @@ function initSubstancesTab() {
                         const resultDiv = btn.closest('.search-result');
                         const result = data.results.find(r => r.id === resultDiv.dataset.id);
                         if (result) {
+                            // Pass user's search query for proper display name
+                            result.searchQuery = query;
                             await showSubstancePreview(result);
                         }
                     });
@@ -3635,7 +3691,10 @@ async function showSubstancePreview(basicResult) {
     // Prefer CAS for lookup (most reliable), then name, then try CID
     // Note: migrantToxtree doesn't support direct CID lookups - needs name or CAS
     let detailData = null;
-    const queryParam = basicResult.cas || basicResult.name || (basicResult.cid ? String(basicResult.cid) : null);
+    // Handle CAS which can be array or string
+    let casParam = basicResult.cas;
+    if (Array.isArray(casParam)) casParam = casParam[0];
+    const queryParam = casParam || basicResult.name || (basicResult.cid ? String(basicResult.cid) : null);
     console.log('[ToxTree Debug] showSubstancePreview called with:', basicResult);
     console.log('[ToxTree Debug] Using query param:', queryParam);
 
@@ -3833,22 +3892,42 @@ async function showSubstancePreview(basicResult) {
 }
 
 async function addSubstanceToState(result) {
-    const existingId = result.id || result.cid || result.name;
-    if (state.substances.find(s => (s.id || s.cid || s.name) === existingId)) {
+    // Preserve the user's original search query for display name
+    const userSearchQuery = result.searchQuery || result.name;
+
+    // Check for duplicates by CID (most reliable)
+    const existingByCid = result.cid ? state.substances.find(s => s.cid === result.cid) : null;
+    if (existingByCid) {
         showToast('Substance already added', 'warning');
         return;
     }
 
     // Always fetch full details including regulatory data from migrantToxtree
-    const query = result.cid || result.cas || result.name;
+    // Handle CAS which can be array or string
+    let casQuery = result.cas;
+    if (Array.isArray(casQuery)) casQuery = casQuery[0];
+    const query = result.cid ? String(result.cid) : (casQuery || result.name);
     try {
         const detailResult = await apiGet(`/substances/detail/${encodeURIComponent(query)}`);
         if (detailResult.success && detailResult.substance) {
             const sub = detailResult.substance;
+            // Pick best display name: prefer user's search query if it matches a known name
+            let displayName = userSearchQuery;
+            const subNames = Array.isArray(sub.name) ? sub.name : [sub.name];
+            // Check if user's query matches any known name (case-insensitive)
+            const matchedName = subNames.find(n => n && n.toLowerCase() === userSearchQuery?.toLowerCase());
+            if (matchedName) {
+                displayName = matchedName;  // Use the properly cased version
+            } else if (!displayName || displayName === String(sub.cid)) {
+                // If user searched by CID, use the first reasonable name
+                displayName = subNames[0] || userSearchQuery;
+            }
+
             result = {
                 ...result,
                 id: sub.cid ? `pubchem_${sub.cid}` : (result.id || sub.name),
-                name: sub.name || result.name,
+                name: displayName,
+                allNames: subNames,  // Store all names for reference
                 cid: sub.cid || result.cid,
                 cas: sub.cas || result.cas,
                 mw: sub.mw || result.mw,
@@ -3869,9 +3948,9 @@ async function addSubstanceToState(result) {
     }
 
     // Add to backend session if available
-    if (state.sessionId) {
+    if (state.sessionId && query) {
         try {
-            const backendResult = await apiPost(`/sessions/${state.sessionId}/substances`, { query });
+            const backendResult = await apiPost(`/sessions/${state.sessionId}/substances`, { query: String(query) });
             if (backendResult.success) {
                 console.log('Substance added to backend session');
             }
@@ -3880,9 +3959,9 @@ async function addSubstanceToState(result) {
         }
     }
 
+    // Use the properly formatted ID (pubchem_{cid}) from result, not the old existingId
     const newSubstance = {
         ...result,
-        id: existingId,
         SML: result.SML || result.regulatory?.EU?.SML || null,
     };
 
