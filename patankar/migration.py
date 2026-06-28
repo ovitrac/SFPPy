@@ -102,7 +102,12 @@ import random
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.sparse import diags, coo_matrix
-from scipy.interpolate import interp1d
+
+# NumPy compatibility shim: np.trapz was renamed to np.trapezoid in
+# NumPy 2.0 and is removed in later 2.x releases. Keep one symbol that
+# works across both 1.x and 2.x.
+_np_trapezoid = getattr(np, "trapezoid", None) or np.trapz
+from scipy.interpolate import interp1d, PchipInterpolator
 from scipy.integrate import simpson, cumulative_trapezoid
 from scipy.optimize import minimize
 # plot libraries
@@ -1448,17 +1453,26 @@ class SensPatankarResult:
         target simulation time
         It is a duration not an absolute time.
     CFtarget : ndarray with shape (1,)
-        CF value at ttarget
+        CF value at ttarget — computed as ``interp_CF(ttarget)``.
+        **Use this for "CF at the user's requested final time"**, not
+        ``CF[-1]`` (see warning under ``t`` and ``CF`` below).
     Cxtarget : ndarray with shape (npoints,)
          Cx concentration profile at t=ttarget
     t : ndarray with shape (ntimes,)
-        1D array of time points (in seconds) covering from 0 to 2*ttarget
-        It is a duration not an absolute time.
+        1D array of time points (in seconds) covering from 0 to 2*ttarget.
+        **Extends beyond the user-supplied t grid** (when ``t`` was passed
+        to ``senspatankar``) with a post-contact diagnostic window used
+        to compute PRT / PR_effective. Consequently ``t[-1] > ttarget``.
     C : ndarray with shape (ntimes,)
         1D array of mean concentration in the packaging (averaged over all packaging nodes)
         at each time step. Shape: (ntimes,).
     CF : ndarray with shape (ntimes,)
         1D array of concentration in the food (left boundary) at each time step. Shape: (ntimes,).
+        **Aligned with ``t`` (including the post-contact window) — so
+        ``CF[-1]`` is NOT the CF at ttarget.** To read CF at the user's
+        ttarget use ``CFtarget``; for an arbitrary user grid, interpolate:
+        ``np.interp(user_grid, sol.t, sol.CF)``
+        (or use ``survey.utils.cf_at_user_grid(sol, user_grid)``).
     fc : ndarray with shape (ntimes,)
         1D array of the cumulative flux into the food. Shape: (ntimes,).
     f : ndarray with shape (ntimes,)
@@ -1502,8 +1516,23 @@ class SensPatankarResult:
     def __init__(self, name, description, ttarget, t, C, CF, fc, f, PR, x, Cx, tC, C0eq, timebase,
                  restart,restart_unsecure,xi,Cxi,
                  SML = None, SMLunit=None, plotSML=True,
-                 plotconfig=None, createcontainer=True, container=None, discrete=False):
-        """Constructor for simulation results."""
+                 plotconfig=None, createcontainer=True, container=None, discrete=False,
+                 C0eq_is_default=False):
+        """Constructor for simulation results.
+
+        C0eq_is_default : bool
+            GUARDRAIL on the meaning of ``self.C0eq``. ``C0eq`` is used internally
+            only to non-dimensionalise the concentration field (the solution is
+            divided by it at the start and multiplied by it at the end, so the
+            physical CF is invariant to its value). It coincides with the
+            closed-system EQUILIBRIUM concentration ONLY when it was genuinely
+            computed from the uniform-C0 mass balance — i.e. when this flag is
+            False. It is True when ``C0eq`` was DEFAULTED to 1.0: on a resume
+            (the carried profile, not a uniform C0, is the initial state — an
+            OPEN system once the source layer is removed), or in the degenerate
+            zero case. Consumers MUST NOT interpret ``self.C0eq`` as an
+            equilibrium concentration when ``self.C0eq_is_default`` is True.
+        """
         self.name = name
         self.description = description
         self.ttarget = ttarget
@@ -1516,12 +1545,23 @@ class SensPatankarResult:
         self.Cx = Cx
         self.tC = tC
         self.C0eq = C0eq
+        # Guardrail: is C0eq the genuine equilibrium concentration (False) or a
+        # defaulted conditioning scale (True, e.g. on resume / open system)?
+        self.C0eq_is_default = bool(C0eq_is_default)
         self.timebase = timebase
         self.discrete = discrete  # New flag for discrete data
 
-        # Interpolation for CF and Cx
+        # Interpolation for CF and Cx.
+        # NumPy 2.0 tightened scalar coercion: float(shape-(1,) array) now
+        # raises TypeError. Producers must unwrap size-1 outputs to a 0-d
+        # ndarray so every consumer (float(), .item(), arithmetic) works
+        # unchanged on both NumPy 1.x and 2.x. The shape contract is
+        # preserved for true multi-element ttarget (else branch returns
+        # the array unchanged). Numerical values are untouched —
+        # idempotency of previously-computed manifests is preserved.
         self.interp_CF = interp1d(t, CF, kind="linear", fill_value="extrapolate")
-        self.CFtarget = self.interp_CF(ttarget)
+        _ctf = np.asarray(self.interp_CF(ttarget))
+        self.CFtarget = _ctf.reshape(()) if _ctf.size == 1 else _ctf
         self.interp_Cx = interp1d(t, Cx.T, kind="linear", axis=1, fill_value="extrapolate")
         self.Cxtarget = self.interp_Cx(ttarget)
 
@@ -1534,11 +1574,28 @@ class SensPatankarResult:
             self.PR.PRTtarget_effective = PR.PRT_effective(self.CFtarget)
 
         # Restart handling
+        # Retain the restart-safe spatial mesh (xi: interface nodes nudged apart so
+        # x is strictly increasing) and the TIME interpolator of the profile on that
+        # mesh. These let resumeat() rebuild a valid Cprofile at any earlier time
+        # WITHOUT spatial interpolation — partition/Rankine discontinuities at the
+        # interfaces are preserved exactly (only time is interpolated).
+        self._restart_xi = None
+        self._restart_Cxi_interp = None
         if xi is not None and Cxi is not None:
             Cxi_interp = interp1d(t, Cxi.T, kind="linear", axis=1, fill_value="extrapolate")
             Cxi_at_t = Cxi_interp(ttarget)
             restart.freezeCF(ttarget, self.CFtarget)
             restart.freezeCx(xi, Cxi_at_t)
+            self._restart_xi = np.asarray(xi, dtype=float)
+            # Time interpolation for resumeat(): PCHIP (monotone, shape-preserving)
+            # rather than linear — linear-in-time commits errors at off-node restart
+            # times, while cubic would overshoot near steep fronts. PCHIP avoids both.
+            _t = np.asarray(t, dtype=float)
+            if _t.size >= 2:
+                self._restart_Cxi_interp = PchipInterpolator(
+                    _t, np.asarray(Cxi, dtype=float), axis=0, extrapolate=True)
+            else:
+                self._restart_Cxi_interp = Cxi_interp
         self.restart = restart # secure restart file (cannot be modified from outside)
         self.restart_unsecure = restart_unsecure # unsecure one (can be modified from outside)
 
@@ -1657,6 +1714,7 @@ class SensPatankarResult:
             Cx=np.zeros((len(t_discrete), len(self.x))),
             tC=self.tC,
             C0eq=self.C0eq,
+            C0eq_is_default=self.C0eq_is_default,
             timebase=self.timebase,
             restart=self.restart,
             restart_unsecure=self.restart_unsecure,
@@ -1899,6 +1957,7 @@ class SensPatankarResult:
         self.Cx = R.Cx
         self.tC = R.tC
         self.C0eq = R.C0eq
+        self.C0eq_is_default = getattr(R, "C0eq_is_default", False)
         self.timebase = R.timebase
         self.discrete = R.discrete
         self.interp_CF = R.interp_CF
@@ -1961,6 +2020,81 @@ class SensPatankarResult:
         return newsol
 
 
+    def resumeat(self, trestart, *, tail_integration=False, Fotail=5.0, **kwargs):
+        """
+        Resume from the retained state at an EARLIER prescribed time ``trestart``
+        (same time units as ``self.t``), instead of from the final target state.
+
+        A single ``senspatankar`` solve already retains the full kinetics: ``CF(t)``
+        (``self.interp_CF``) and the concentration profile ``Cx(t)``
+        (``self.interp_Cx``). This method reconstructs the state at ``trestart``
+        from those histories and hands it to :meth:`resume` through its existing
+        ``CF0=`` / ``Cx0=`` overrides — so ``resume`` itself is unchanged.
+
+        This is the Python analogue of restart-from-any-time in
+        ``senspatankar.m`` (``F.restart = {x, C, CF}``). It lets a chained
+        two-step query solve the storage step **once** over the whole ``t1``
+        grid and then start the second (oven) step from the profile at each
+        ``t1`` — avoiding one full storage solve per ``t1`` grid point.
+
+        Parameters
+        ----------
+        trestart : float
+            Time at which to restart, in the same units as ``self.t``
+            (real seconds for the survey chain engine). Clamped to
+            ``[self.t.min(), self.t.max()]`` by the underlying interpolators.
+        **kwargs :
+            Forwarded to :meth:`resume` (``multilayer``, ``medium``, ``t``,
+            ``autotime``, ...). ``CF0`` and ``Cx0`` are pre-filled from the
+            state at ``trestart`` unless the caller overrides them.
+
+        Returns
+        -------
+        SensPatankarResult
+            The continued simulation, exactly as :meth:`resume` would return.
+        """
+        if self._restart_Cxi_interp is None or self._restart_xi is None:
+            raise ValueError(
+                "resumeat requires a fresh senspatankar solution that retained the "
+                "restart field (xi/Cxi). This result has none (e.g. a copy/merge/discrete "
+                "result); use resume() from its target instead.")
+        tr = float(np.asarray(trestart).ravel()[0])
+        CF_at = float(np.asarray(self.interp_CF(tr)).ravel()[0])
+        # Profile at tr on the restart-safe (strictly-increasing) mesh — TIME
+        # interpolation only; interface discontinuities preserved.
+        Cx_at = np.asarray(self._restart_Cxi_interp(tr), dtype=float).ravel()
+        Cx0 = Cprofile(self._restart_xi, Cx_at)
+
+        # resume() is left unchanged. resumeat reproduces its restart wiring here
+        # and adds the OPT-IN tail_integration for the hot (large-Fo) second step
+        # — senspatankar's own default stays legacy (tail_integration=False).
+        inputs = self.restart.inputs
+        newmedium = kwargs.get("medium", inputs["medium"].copy())
+        newmedium.CF0 = kwargs.get("CF0", CF_at)
+        t = kwargs.get("t", None)
+        if t is None:
+            ttarget = newmedium.get_param("contacttime", (10, "days"), acceptNone=False)
+            t = 2 * ttarget
+        return senspatankar(
+            multilayer=kwargs.get("multilayer", inputs["multilayer"]),
+            medium=newmedium,
+            name=kwargs.get("name", inputs["name"]),
+            description=kwargs.get("description", inputs["description"]),
+            t=t,
+            autotime=kwargs.get("autotime", inputs["autotime"]),
+            timescale=useroverride("timescale", kwargs.get("timescale", inputs["timescale"]),
+                                   valuelist=("linear", "sqrt")),
+            Cxprevious=Cx0,
+            ntimes=useroverride("ntimes", kwargs.get("ntimes", inputs["ntimes"]),
+                                valuemin=10, valuemax=20000),
+            RelTol=useroverride("RelTol", kwargs.get("RelTol", inputs["RelTol"]),
+                                valuemin=1e-9, valuemax=1e-3),
+            AbsTol=useroverride("AbsTol", kwargs.get("AbsTol", inputs["AbsTol"]),
+                                valuemin=1e-9, valuemax=1e-3),
+            tail_integration=tail_integration, Fotail=Fotail,
+        )
+
+
     def copy(self):
         """
         Creates a deep copy of the current SensPatankarResult instance.
@@ -1984,6 +2118,7 @@ class SensPatankarResult:
             Cx=self.Cx.copy(),
             tC=self.tC.copy(),
             C0eq=self.C0eq,
+            C0eq_is_default=self.C0eq_is_default,
             timebase=self.timebase,
             restart=self.restart,
             restart_unsecure=self.restart_unsecure,
@@ -2122,6 +2257,7 @@ class SensPatankarResult:
             Cx=Cx_merged,
             tC=tC_merged,
             C0eq=self.C0eq,  # Keep self.C0eq
+            C0eq_is_default=self.C0eq_is_default,
             timebase=other.timebase,  # Take timebase from other
             restart=other.restart,  # Take restart from other (the last valid one)
             restart_unsecure=other.restart_unsecure,  # Take restart from other (the last valid one)
@@ -3935,6 +4071,7 @@ def senspatankar(multilayer=None, medium=None,
                  name=f"senspatantkar:{autoname(6)}", description="",
                  t=None, autotime=True, timescale="sqrt", Cxprevious=None,
                  ntimes=1000, RelTol=1e-6, AbsTol=1e-6, max_step=None,
+                 tail_integration=False, Fotail=5.0,
                  container=None):
     """
     Simulates in 1D the mass transfer of a substance initially distributed in a multilayer
@@ -3994,6 +4131,23 @@ def senspatankar(multilayer=None, medium=None,
         ``max_step = max(10, ceil(Fo_max / 200))`` which ensures ~200 internal steps
         over the Fourier number range. This dramatically improves performance for
         high Fo scenarios (e.g., HDPE with long contact times).
+    tail_integration : bool, optional (default=False)
+        OPT-IN performance option; the default (False) preserves the legacy,
+        published solver behaviour exactly. When True AND the Fourier horizon
+        exceeds ``Fotail`` (and the solve is not a normalised master curve,
+        ``D_ref < 1e-6``), the integration is split into a cautious early
+        transient ``Fo in [0, Fotail]`` and a relaxed late tail ``Fo in
+        [Fotail, Fo_max]`` restarted from the exact BDF state at ``Fotail``
+        (Markov-exact: same mesh/operator, full profile, no interpolation).
+        This removes the over-resolution of the flat late-time tail that makes
+        hot resumes slow. LIMITATION: a SINGLE split assumes one dominant
+        transient by ``Fotail``; it is not general (structures with multiple
+        time-scales / internal reflections may need the legacy solve). Must be
+        explicitly enabled by the caller and falsified against the legacy solve.
+    Fotail : float, optional (default=5.0)
+        Fourier-time (dimensionless, scaled on the reference layer) at which the
+        early-transient segment ends and the relaxed tail begins. Only used when
+        ``tail_integration=True`` and ``Fo_max > Fotail``.
 
     Raises
     ------
@@ -4018,6 +4172,27 @@ def senspatankar(multilayer=None, medium=None,
     - Results are normalized internally using a reference layer (``iref``) specified in ``multilayer``.
       The reference layer is used to define dimensionless time (Fourier number Fo).
     - The dimensionless solution is solved by the Patankar approach with partition coefficients.
+
+    Warning — alignment of ``sol.t`` and ``sol.CF`` with the user's ``t``
+    --------------------------------------------------------------------
+    The returned solution's ``sol.t`` array is **extended beyond**
+    ``ttarget = max(t)`` with a post-contact diagnostic window that the
+    solver needs to compute ``PRT`` and ``PR_effective``. As a result,
+    ``sol.t[-1] > ttarget`` in every non-degenerate call, and
+    ``sol.CF[-1]`` is the CF at that post-contact endpoint — **not**
+    the CF at the user's requested ``ttarget``.
+
+    To read CF at user-requested time(s), use one of:
+
+        sol.CFtarget                       # CF at ttarget = max(t)
+        np.interp(user_grid, sol.t, sol.CF)  # CF over an arbitrary user grid
+
+    Reading ``sol.CF[-1]`` as "CF at the last user time" is unsafe and
+    will silently return a near-equilibrium value (because the post-
+    contact window sits well past ``contacttime``). This pitfall was
+    caught during survey-engine validation; see
+    ``survey/utils/cf_extract.py`` for the canonical safe-extraction
+    helper.
 
     Example
     -------
@@ -4111,6 +4286,9 @@ def senspatankar(multilayer=None, medium=None,
         t = Fo_int * timebase
     else:
         Fo_int = Fo
+    # Save original requested grid for potential interpolation later
+    Fo_int_requested = Fo_int.copy()
+    t_requested = t.copy()
 
     # L: dimensionless ratio of packaging to food volumes (scaled by reference layer thickness)
     A = medium.get_param("surfacearea",0)
@@ -4149,8 +4327,31 @@ def senspatankar(multilayer=None, medium=None,
     sum_lL_C0 = np.sum(l_normalized * L * C0)
     sum_terms = np.sum((1 / k) * l_normalized * L)
     C0eq = (CF0 + sum_lL_C0) / (1 + sum_terms)
-    if C0eq == 0:
+    # C0eq is ONLY a conditioning rescale of the concentration field; the system
+    # is linear in C, so the physical CF is invariant to its value (CF =
+    # CF_dimless * C0eq). The mass balance above assumes the initial state is the
+    # UNIFORM per-layer C0. On a RESUME the true initial state is the carried
+    # spatial PROFILE (Cxprevious), not that uniform C0 — the estimate is stale,
+    # and it underflows to a denormal (~1e-320) when the resumed layer's C0 is 0
+    # (e.g. the overpack is removed for the oven step), which then makes
+    # C0/C0eq overflow to inf and solve_ivp reject the initial state. So on a
+    # resume use unity (the conditioning-neutral choice; equivalently one could
+    # integrate the profile in space). First-step (non-resume) solves keep the
+    # original exact-zero guard and remain bit-identical.
+    #
+    # C0eq_is_default flags WHETHER C0eq is the genuine closed-system mass-balance
+    # equilibrium concentration (False) or a DEFAULTED conditioning scale (True).
+    # It is True on a resume (open system / source possibly removed → the
+    # uniform-C0 balance does not hold) and on the degenerate zero case. Consumers
+    # MUST NOT interpret C0eq as a physical equilibrium concentration when this is
+    # True. See SensPatankarResult.C0eq_is_default.
+    C0eq_is_default = False
+    if Cxprevious is not None:
         C0eq = 1.0
+        C0eq_is_default = True
+    elif C0eq == 0:
+        C0eq = 1.0
+        C0eq_is_default = True
 
     # Normalize initial concentrations
     C0_normalized = C0 / C0eq
@@ -4257,7 +4458,13 @@ def senspatankar(multilayer=None, medium=None,
                 upper_diag[i + 1] = he[i] / denom
                 lower_diag[i] = (hw[i] * k_mesh[i - 1] / k_mesh[i]) / denom
         A = diags([main_diag, upper_diag, lower_diag], [0, 1, -1], shape=(size, size), format='csr')
-        C_initial = np.concatenate([CF0_normalized, C0_mesh])
+        # The food node (index 0) is a single value, so CF0_normalized must be a
+        # 1-D length-1 array for np.concatenate. In the first step medium.CF0 is
+        # np.array([0]) (already 1-D), but on a chaining/resume step CF0 is
+        # restart.CF == CFtarget, which is stored 0-D (reshape(()) for size==1,
+        # NumPy-2.x compat). atleast_1d keeps the 1-D case unchanged and lifts the
+        # 0-D restart value to shape (1,) so the two-step chain assembles correctly.
+        C_initial = np.concatenate([np.atleast_1d(CF0_normalized), C0_mesh])
 
     # ODE system: dC/dFo = A * C
     def odesys(_, C):
@@ -4276,6 +4483,18 @@ def senspatankar(multilayer=None, medium=None,
             max_step = min(1.0, max(0.01, Fo_max / 1000))
         else:
             max_step = max(MaxStepmax, np.ceil(Fo_max / nstepchoice))
+            # High-D relaxation (2026-06-15). The Fo/200 cap is calibrated for
+            # plastics (reference-layer D_ref < 1e-12 m^2/s, month/year storage).
+            # For a faster reference layer the solution flattens far sooner, so the
+            # cap over-resolves the post-equilibrium tail. Relax it
+            # ~ sqrt(D_ref/1e-12); rtol/atol still govern the transient, so accuracy
+            # is preserved (falsified: 0.00% vs tight-tol GT; ~1.7x on warm
+            # paper/board D~1e-10 over months). GUARD 1e-12 < D_ref < 1e-6 restricts
+            # this to real diffusivities: a normalised master-curve solve carries
+            # D_ref = D[iref] of O(1) (>= 1e-6) and is left bit-identical, as are
+            # all plastics (D_ref <= 1e-12).
+            if 1e-12 < D_ref < 1e-6:
+                max_step = max_step * np.sqrt(D_ref / 1e-12)
 
     # For extremely stiff systems, limit Fo range to avoid hanging
     # When k >> 1000 and effective_Bi << 1, migration is negligible
@@ -4296,17 +4515,80 @@ def senspatankar(multilayer=None, medium=None,
                 # Update t to match truncated Fo_int
                 t = Fo_int * timebase
 
-    sol = solve_ivp(   # <-- generic solver
-        odesys,        # <-- our system (efficient sparse matrices)
-        [Fo_int[0], Fo_int[-1]], # <-- integration range on Fourier scale
-        C_initial,     # <-- initial solution
-        t_eval=Fo_int, # <-- the solution is retrieved at these Fo values
-        method='BDF',  # <-- backward differences are absolutely stable
-        rtol=RelTol,   # <-- relative and absolute tolerances
-        atol=AbsTol,
-        max_step=max_step,  # <-- adaptive step size for high Fo (MATLAB heuristic)
-        first_step=1e-8 if is_stiff_system else None  # Small initial step for stiff systems
-    )
+    # Fomin = max(1e-8, 1e-6·Fomax): initial step a fixed fraction of the horizon
+    # (self-similar in Fo), not a fixed 1e-8 that ramps microscopically for large
+    # Fo. MUST be capped by solve_ivp's bounds — first_step <= |t_bound-t0| and
+    # <= max_step — else short/chained spans raise "first_step exceeds bounds".
+    _span = abs(float(Fo_int[-1] - Fo_int[0]))
+    _first_step = max(1e-8, 1e-6 * Fo_max)
+    if max_step:
+        _first_step = min(_first_step, max_step)
+    if _span > 0:
+        _first_step = min(_first_step, 0.5 * _span)
+
+    # --- TAIL INTEGRATION for large-Fourier horizons (option, 2026-06-27) -------
+    # A high-temperature resume has two incompatible numerical regimes: a fast
+    # initial boundary/partition transient (needs small steps) and a long, nearly
+    # flat late-time tail (where small steps only waste work). One global step
+    # policy cannot serve both: a small max_step protects the transient but crawls
+    # the tail (the oven-resume bottleneck — ~1000 BDF steps at max_step=Fo/1000).
+    # With tail_integration: integrate AS NOW up to Fo=Fotail (cautious policy);
+    # then EXTEND the previous solution beyond Fotail by RESTARTING from the exact
+    # BDF state vector at Fotail (the full profile — Markov-exact, same mesh/operator,
+    # no interpolation) with a relaxed step policy. rtol/atol still govern accuracy.
+    # Second segment is skipped when Fofinal <= Fotail. Normalised master-curve
+    # solves (D_ref >= 1e-6) are left bit-identical (no split), as elsewhere.
+    #
+    # LIMITATION (opt-in only; legacy default keeps the published behaviour):
+    # this is a SINGLE split, valid when a single dominant transient is resolved
+    # by Fo=Fotail (the usual mono-/bi-layer packaging case). It is NOT general:
+    # complex structures can carry multiple time-scales / internal reflections
+    # ("bounces" between interfaces) that raise later transients a single relaxed
+    # tail would under-resolve. Do not enable it for such structures — falsify
+    # against the legacy (tail_integration=False) solve before trusting it.
+    _Fo0, _Fo1 = float(Fo_int[0]), float(Fo_int[-1])
+    _do_tail = bool(tail_integration) and (_Fo0 < Fotail < _Fo1) and (D_ref < 1e-6)
+    if _do_tail:
+        m1 = Fo_int <= Fotail
+        Fo_eval1 = Fo_int[m1]
+        if Fo_eval1.size == 0 or float(Fo_eval1[-1]) < Fotail:
+            Fo_eval1 = np.append(Fo_eval1, Fotail)       # ensure a state read AT Fotail
+        sol1 = solve_ivp(odesys, [_Fo0, Fotail], C_initial, t_eval=Fo_eval1,
+                         method='BDF', jac=A, rtol=RelTol, atol=AbsTol, max_step=max_step,
+                         first_step=(_first_step if _first_step > 0 else None))
+        y_split = sol1.y[:, -1]                           # full profile at Fotail
+        Fo_eval2 = Fo_int[Fo_int > Fotail]
+        # relaxed tail policy (transient already resolved): larger first/max step
+        _span2 = _Fo1 - Fotail
+        _ms2 = max(1.0, _span2 / 50.0)                    # ~50 steps over the tail
+        _fs2 = min(1e-2, 0.5 * _span2)
+        sol2 = solve_ivp(odesys, [Fotail, _Fo1], y_split, t_eval=Fo_eval2,
+                         method='BDF', jac=A, rtol=RelTol, atol=AbsTol, max_step=_ms2,
+                         first_step=_fs2)
+        n_keep1 = int(np.count_nonzero(m1))               # drop the appended Fotail if unrequested
+        sol = SimpleNamespace(
+            t=np.concatenate([Fo_int[m1], Fo_eval2]),
+            y=np.concatenate([sol1.y[:, :n_keep1], sol2.y], axis=1),
+            success=bool(sol1.success and sol2.success),
+            message=(sol1.message if not sol1.success else sol2.message),
+            nfev=int(sol1.nfev) + int(sol2.nfev),
+        )
+    else:
+        sol = solve_ivp(   # <-- generic solver
+            odesys,        # <-- our system (efficient sparse matrices)
+            [Fo_int[0], Fo_int[-1]], # <-- integration range on Fourier scale
+            C_initial,     # <-- initial solution
+            t_eval=Fo_int, # <-- the solution is retrieved at these Fo values
+            method='BDF',  # <-- backward differences are absolutely stable
+            jac=A,         # CONSTANT SPARSE Jacobian (system is linear, dC/dFo=A·C):
+                           # avoids BDF's finite-difference dense-Jacobian estimation
+                           # and uses sparse LU on the tridiagonal A (was ~54% of
+                           # runtime in dense lu_factor). Result is unchanged.
+            rtol=RelTol,   # <-- relative and absolute tolerances
+            atol=AbsTol,
+            max_step=max_step,  # <-- adaptive step size for high Fo (MATLAB heuristic)
+            first_step=(_first_step if _first_step > 0 else None)
+        )
 
     # Check solution
     if not sol.success:
@@ -4322,6 +4604,35 @@ def senspatankar(multilayer=None, medium=None,
         C_dimless = sol.y[1:, :]
         # Robin flux
         f = hw[0] * (k0 * CF_dimless - C_dimless[0, :]) * C0eq
+
+    # =========================================================================
+    # Interpolation fix: handle solver returning fewer time points than requested
+    # This can occur when the system reaches equilibrium early and the BDF solver
+    # truncates the time grid. We interpolate back to the original requested grid
+    # using linear extrapolation for any points beyond the solver's range.
+    # =========================================================================
+    Fo_solver = sol.t  # Actual Fo values returned by solver
+    if len(Fo_solver) != len(Fo_int_requested):
+        from scipy.interpolate import interp1d
+        # Interpolate CF_dimless (food concentration)
+        interp_CF = interp1d(Fo_solver, CF_dimless, kind='linear',
+                             bounds_error=False, fill_value='extrapolate')
+        CF_dimless = interp_CF(Fo_int_requested)
+        # Interpolate C_dimless (concentration profile, each node)
+        C_dimless_interp = np.empty((C_dimless.shape[0], len(Fo_int_requested)), dtype=float)
+        for i in range(C_dimless.shape[0]):
+            interp_C = interp1d(Fo_solver, C_dimless[i, :], kind='linear',
+                                bounds_error=False, fill_value='extrapolate')
+            C_dimless_interp[i, :] = interp_C(Fo_int_requested)
+        C_dimless = C_dimless_interp
+        # Recompute flux on the interpolated grid (more accurate than interpolating f)
+        if not PBC:
+            f = hw[0] * (k0 * CF_dimless - C_dimless[0, :]) * C0eq
+        else:
+            f = np.zeros(len(Fo_int_requested), dtype=float)
+        # Restore original requested grids
+        Fo_int = Fo_int_requested
+        t = t_requested
 
     # Compute cumulative flux
     fc = cumulative_trapezoid(f, t, initial=0)
@@ -4387,7 +4698,7 @@ def senspatankar(multilayer=None, medium=None,
         description=description,
         ttarget = ttarget,             # target time
         t=t,     # time where concentrations are calculated
-        C= np.trapz(Cfull_dimless, xfull, axis=1)*C0eq,
+        C= _np_trapezoid(Cfull_dimless, xfull, axis=1)*C0eq,
         CF=CF,
         fc=fc,
         f=f,
@@ -4395,6 +4706,7 @@ def senspatankar(multilayer=None, medium=None,
         Cx=Cx,
         tC=sol.t,
         C0eq=C0eq,
+        C0eq_is_default=C0eq_is_default,
         PR = PR,
         timebase=timebase,
         restart=restart, # <--- restart info (inputs only)

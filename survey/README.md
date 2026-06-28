@@ -295,6 +295,40 @@ $$
 
 This identifies the rate-limiting barrier (lowest permeability proxy).
 
+### Substance Exchangeability (v3.2)
+
+Within a family, substances can be classified as **exchangeable** or **non-exchangeable**:
+
+**Exchangeable** (default): Alternatives within a family — only one is typically present in any given formulation. Represents epistemic uncertainty about which specific substance is used.
+
+**Non-exchangeable**: Always present in the formulation — contributes its full concentration. Monomers are non-exchangeable by definition.
+
+**Mathematical formulation:**
+
+For a family with E exchangeable and N non-exchangeable substances:
+
+$$
+CF_{family} = \underbrace{\sum_{i=1}^{E} p_i \cdot g_i(t)}_{\text{exchangeable}} \times C_0 + \underbrace{\sum_{j=1}^{N} w_j \cdot g_j(t)}_{\text{non-exchangeable}} \times C_0
+$$
+
+Where:
+- $p_i = \omega_i / \sum_k \omega_k$ — probability of substance i being the one used (sum to 1)
+- $w_j = \omega_j / \max_k(\omega_k)$ — normalized weight (max = 1)
+- $\omega$ — occurrence weight from database (0.5, 1.0, or 2.0)
+
+> **Exchangeable operator (2026-06-12, F8).** $C_0$ is the *family* concentration and
+> the exchangeable term is the occurrence-weighted **average** $\sum_i p_i g_i$ (one
+> alternative present at $C_0$). The earlier extra $1/E$ factor — a second dilution on top
+> of the already-normalised mean ($\sum_i p_i = 1$) — has been **removed**: it diluted a
+> family $E$-fold and made the result scale with how many alternatives the database
+> happened to list. The non-exchangeable (monomer) term is unchanged.
+
+**Example:** Styrene (occurrence=2) and ethylbenzene (occurrence=1) at 300 ppm family concentration:
+- Styrene: $300 \times (2/2) = 300$ ppm
+- Ethylbenzene: $300 \times (1/2) = 150$ ppm
+
+**Backward compatibility:** If `exchangeable` is not specified, defaults to `True` (original behavior).
+
 ---
 
 ## API Reference
@@ -396,6 +430,31 @@ class SubstanceSpec:
     D: float = None              # diffusivity (inferred)
     k: float = None              # partition coef (inferred)
     k0: float = None             # k0 parameter (inferred)
+    weight: float = 1.0          # occurrence weight (0.5, 1.0, 2.0)
+    exchangeable: bool = True    # True=alternatives, False=always present
+```
+
+#### Exchangeability (v3.2)
+
+The `exchangeable` attribute controls how substances contribute to the family PDF:
+
+| Value | Meaning | Concentration | Weight Normalization |
+|-------|---------|---------------|---------------------|
+| `True` (default) | Alternatives within family | Fractionated: C0/E | Sum to 1 (probabilities) |
+| `False` | Always present | Full: C0 | Normalized so max = 1 |
+
+**Backward Compatibility:** If `exchangeable` is not specified in the scenario YAML, it defaults to `True`, preserving the original mixture-model behavior.
+
+**Example:** Monomers (styrene, ethylbenzene) with occurrence weights 2:1
+```yaml
+family:
+  substances:
+    - cas: "100-42-5"        # Styrene
+      weight: 2.0
+      exchangeable: false    # Always present → 300 ppm × (2/2) = 300 ppm
+    - cas: "100-41-4"        # Ethylbenzene
+      weight: 1.0
+      exchangeable: false    # Always present → 300 ppm × (1/2) = 150 ppm
 ```
 
 ### PriorSpec

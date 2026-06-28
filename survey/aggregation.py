@@ -17,7 +17,7 @@ The PDF of X_total is computed via tensor product expansion:
 This is the deterministic equivalent of convolution, consistent with
 survey's finite-difference quadrature approach.
 
-@project: SFPPy/INSERM — Survey-scale exposure estimation
+@project: SFPPy — Survey-scale exposure estimation
 @author: Olivier Vitrac, PhD, HDR
 @email: olivier.vitrac@gmail.com
 @license: MIT
@@ -829,3 +829,317 @@ def aggregate_food_exposure(
             )
 
     return aggregated
+
+
+# =========================================================================
+# R5b primitives — shared contact-time aggregation (Phase 2.1)
+# =========================================================================
+#
+# Context: the Phase-1 NPZ contract persists each source's CF as a
+# structured tensor aligned with its own axis grids (time, time2, conc).
+# For a food × family × simulant group, all sources share the same t1
+# (and the same t2 if every source is step-2-active) because the food
+# record has one contact event. R5b mandates that the cross-source sum
+# must happen ON the shared t axis BEFORE integrating time out — not
+# as a tensor product over time.
+#
+# Primitives below implement:
+#   - sources_share_t_axis()          — invariant check
+#   - sum_sources_at_fixed_t()        — cross-source sum at a fixed t
+#                                       cell (Cp0 tensor product over
+#                                       independent per-source priors)
+#   - combine_sources_shared_t()      — full pipeline producing the
+#                                       weighted empirical CF for a
+#                                       food × family × simulant group
+#
+# Memory note: for K sources each with n_cp0 Cp0 nodes, the per-cell
+# Cp0 tensor product has n_cp0^K weighted samples. For K=2 (typical
+# bilayer), n_cp0=31: ≈ 1k/cell → ≈ 30k for a 1-step group, ≈ 1M for
+# a 2-step group. Tractable. For K=4 (hypothetical B33-like with all
+# four layer-sources aggregated directly), n_cp0^4 ≈ 1M/cell ≈ 30M
+# samples — tight but workable. Deterministic compression hooks
+# (workplan § 6.5 G6) are not implemented here; they are deferred
+# until a real dataset triggers a memory breach.
+
+
+def sources_share_t_axis(sources) -> bool:
+    """
+    Return True if every source in `sources` has identical `time_vals`,
+    and — when any source is step2-active — every step2-active source
+    has identical `time2_vals`. Raise ValueError otherwise.
+
+    Each source is a dict with keys:
+      time_vals     : np.ndarray
+      time_weights  : np.ndarray
+      (2-step only) time2_vals, time2_weights : np.ndarray
+      step2_active  : Optional[bool]     # True for 2-step sources,
+                                          # False / absent otherwise
+    """
+    if not sources:
+        raise ValueError("sources must be non-empty")
+
+    ref_t1 = np.asarray(sources[0]["time_vals"], dtype=float)
+    ref_t1_w = np.asarray(sources[0]["time_weights"], dtype=float)
+    for i, s in enumerate(sources[1:], start=1):
+        t1 = np.asarray(s["time_vals"], dtype=float)
+        t1_w = np.asarray(s["time_weights"], dtype=float)
+        if t1.shape != ref_t1.shape or not np.allclose(t1, ref_t1):
+            raise ValueError(
+                f"time_vals mismatch in source {i} "
+                f"(shape {t1.shape} vs {ref_t1.shape} or values differ)")
+        if t1_w.shape != ref_t1_w.shape or not np.allclose(t1_w, ref_t1_w):
+            raise ValueError(f"time_weights mismatch in source {i}")
+
+    active = [s for s in sources if s.get("step2_active")]
+    if active:
+        ref_t2 = np.asarray(active[0]["time2_vals"], dtype=float)
+        ref_t2_w = np.asarray(active[0]["time2_weights"], dtype=float)
+        for i, s in enumerate(active[1:], start=1):
+            t2 = np.asarray(s["time2_vals"], dtype=float)
+            t2_w = np.asarray(s["time2_weights"], dtype=float)
+            if t2.shape != ref_t2.shape or not np.allclose(t2, ref_t2):
+                raise ValueError(
+                    f"time2_vals mismatch in step2-active source {i}")
+            if t2_w.shape != ref_t2_w.shape or not np.allclose(t2_w, ref_t2_w):
+                raise ValueError(
+                    f"time2_weights mismatch in step2-active source {i}")
+    return True
+
+
+def _cf_at_fixed_t(source, t1_idx: int, t2_idx=None) -> np.ndarray:
+    """
+    Slice the source's CF_tensor at a fixed (t1_idx, t2_idx).
+
+    Returns a 1-D array of CF values indexed by the source's Cp0 grid.
+
+    For a step-2-active source with 3-D CF_tensor (n_t1, n_t2, n_cp0),
+    this returns CF_tensor[t1_idx, t2_idx, :].
+
+    For a step-2-inactive source (scenario has no step 2 OR this source
+    is a t2=0 "removed" component), CF_tensor is 2-D (n_t1, n_cp0) and
+    t2_idx is ignored — the source contributes the same CF regardless
+    of t2, which is the correct physics (no step 2 for this source).
+    """
+    cf = np.asarray(source["CF_tensor"])
+    if cf.ndim == 3:
+        if t2_idx is None:
+            raise ValueError(
+                "t2_idx required for step-2-active source with 3-D CF_tensor")
+        return cf[t1_idx, t2_idx, :]
+    elif cf.ndim == 2:
+        return cf[t1_idx, :]
+    raise ValueError(f"unsupported CF_tensor.ndim = {cf.ndim}")
+
+
+def sum_sources_at_fixed_t(sources, t1_idx: int, t2_idx=None):
+    """
+    Cross-source CF sum at a fixed (t1_idx, t2_idx) cell.
+
+    Each source contributes a 1-D CF(Cp0) vector (sliced from its
+    CF_tensor at the given t indices) and an independent Cp0 prior.
+    The sum-of-independent-random-variables is the tensor product of
+    (CF_s, w_cp0_s) pairs — `combine_multiple_tensors` is exactly this.
+
+    Returns
+    -------
+    (cf_samples, weights) : Tuple[np.ndarray, np.ndarray]
+        Flattened weighted empirical distribution of the cross-source
+        CF sum at the fixed t cell, shape (Π n_cp0_s,).
+
+    Notes
+    -----
+    Step-2-active and step-2-inactive sources can be mixed freely in
+    `sources`. Inactive sources' 2-D CF_tensor is sliced with t1_idx
+    only, so their contribution is constant across t2 — which is the
+    correct physical semantics of a removed-at-step-2 component.
+    """
+    tensors = []
+    for s in sources:
+        cf_slice = _cf_at_fixed_t(s, t1_idx, t2_idx)
+        w_cp0 = np.asarray(s["conc_weights"], dtype=float)
+        tensors.append((cf_slice, w_cp0))
+    return combine_multiple_tensors(tensors)
+
+
+# Above this exact flat-sample count the group is aggregated by Monte-Carlo
+# instead of the exact tensor product. The exact path enumerates
+#   n_t1 * (n_t2 or 1) * prod_s(n_cp0_s)
+# samples — prod_s(n_cp0_s) = 30^K for K sources, so it explodes for K>=3
+# (generic family_ids like 'monomer' span many pack components → large K).
+MAX_EXACT_FLAT_SAMPLES = 2_000_000
+MC_SAMPLES = 200_000
+MC_SEED = 20260523  # deterministic → reproducible aggregation
+
+
+def _norm_p(w: np.ndarray) -> np.ndarray:
+    w = np.asarray(w, dtype=float).ravel()
+    w = np.clip(w, 0.0, None)
+    s = w.sum()
+    return (w / s) if s > 0 else np.full(len(w), 1.0 / max(len(w), 1))
+
+
+def _exact_flat_size(sources) -> float:
+    """Flat sample count the exact tensor-product path would materialise."""
+    ref = sources[0]
+    n_t1 = len(np.asarray(ref["time_weights"]).ravel())
+    active = [s for s in sources if s.get("step2_active")]
+    n_t2 = len(np.asarray(active[0]["time2_weights"]).ravel()) if active else 1
+    prod_cp0 = 1.0
+    for s in sources:
+        prod_cp0 *= len(np.asarray(s["conc_weights"]).ravel())
+    return n_t1 * n_t2 * prod_cp0
+
+
+def combine_sources_shared_t_mc(sources, n_mc: int = MC_SAMPLES,
+                                seed: int = MC_SEED):
+    """Monte-Carlo equivalent of `combine_sources_shared_t` for large groups.
+
+    Draws `n_mc` joint samples honoring R5b shared contact time: each sample
+    draws ONE (t1, t2) index from the shared time weights (applied to every
+    source), and an INDEPENDENT Cp0 index per source, then sums the per-source
+    CF slices. O(n_mc · K) and O(n_mc) memory — scales to any group size.
+
+    Deterministic (fixed seed) so the aggregation is reproducible. Returns
+    (cf_samples, weights) with uniform weights, ready for the percentile/
+    statistics helpers exactly like the exact path.
+    """
+    if not sources:
+        raise ValueError("sources must be non-empty")
+    sources_share_t_axis(sources)
+    rng = np.random.default_rng(seed)
+
+    ref = sources[0]
+    t1_p = _norm_p(ref["time_weights"])
+    t1_idx = rng.choice(len(t1_p), size=n_mc, p=t1_p)
+
+    active = [s for s in sources if s.get("step2_active")]
+    if active:
+        t2_p = _norm_p(active[0]["time2_weights"])
+        t2_idx = rng.choice(len(t2_p), size=n_mc, p=t2_p)
+    else:
+        t2_idx = None
+
+    cf_total = np.zeros(n_mc, dtype=float)
+    for s in sources:
+        cf = np.asarray(s["CF_tensor"], dtype=float)
+        cp0_p = _norm_p(s["conc_weights"])
+        cp0_idx = rng.choice(len(cp0_p), size=n_mc, p=cp0_p)
+        if cf.ndim == 3:
+            if t2_idx is None:
+                raise ValueError("3-D source in a group with no step-2 time axis")
+            cf_total += cf[t1_idx, t2_idx, cp0_idx]
+        elif cf.ndim == 2:
+            cf_total += cf[t1_idx, cp0_idx]   # step-2-inactive: constant in t2
+        else:
+            raise ValueError(f"unsupported CF_tensor.ndim = {cf.ndim}")
+
+    return cf_total, np.full(n_mc, 1.0 / n_mc, dtype=float)
+
+
+def combine_sources_shared_t(sources):
+    """
+    Aggregate all sources of a food × family × simulant group into a
+    single weighted empirical CF distribution, honoring R5b shared
+    contact time.
+
+    Dispatch: groups whose exact tensor-product would stay within
+    ``MAX_EXACT_FLAT_SAMPLES`` use the exact enumeration below (unchanged,
+    preserving prior results); larger groups fall back to the deterministic
+    Monte-Carlo path ``combine_sources_shared_t_mc`` so aggregation scales to
+    142k+ jobs without the 30^K blow-up.
+
+    Pipeline:
+      1. verify shared t axes (raise if violated)
+      2. for each (t1_i, t2_j) cell on the shared grid:
+           cf_cell, w_cell = sum_sources_at_fixed_t(...)
+      3. accumulate with shared time weights:
+           weighted samples = cf_cell, w_cell * w_t1[i] * w_t2[j]
+      4. flatten and return as (cf_samples, weights)
+
+    The returned distribution is normalised (sum of weights = 1) so
+    it can be fed directly to compute_percentiles / compute_risk_
+    percentiles / compute_statistics.
+
+    Parameters
+    ----------
+    sources : List[dict]
+        Each dict has keys: CF_tensor, time_vals, time_weights,
+        conc_vals, conc_weights, and optionally time2_vals,
+        time2_weights, step2_active.
+
+    Returns
+    -------
+    (cf_samples, weights) : Tuple[np.ndarray, np.ndarray]
+        Flattened weighted empirical CF distribution for the group.
+    """
+    if not sources:
+        raise ValueError("sources must be non-empty")
+
+    sources_share_t_axis(sources)
+
+    # Scale guard: fall back to Monte-Carlo for groups that would explode the
+    # exact tensor product (K >= 3 sources). Small groups stay exact.
+    if _exact_flat_size(sources) > MAX_EXACT_FLAT_SAMPLES:
+        return combine_sources_shared_t_mc(sources)
+
+    ref = sources[0]
+    t1_w = np.asarray(ref["time_weights"], dtype=float)
+    n_t1 = len(t1_w)
+
+    active = [s for s in sources if s.get("step2_active")]
+    has_step2 = bool(active)
+    if has_step2:
+        t2_w = np.asarray(active[0]["time2_weights"], dtype=float)
+        n_t2 = len(t2_w)
+    else:
+        t2_w = None
+        n_t2 = None
+
+    cf_chunks: List[np.ndarray] = []
+    w_chunks: List[np.ndarray] = []
+
+    if has_step2:
+        for i in range(n_t1):
+            for j in range(n_t2):
+                cf_ij, w_ij = sum_sources_at_fixed_t(sources, i, j)
+                cf_chunks.append(np.asarray(cf_ij, dtype=float))
+                w_chunks.append(np.asarray(w_ij, dtype=float)
+                                * t1_w[i] * t2_w[j])
+    else:
+        for i in range(n_t1):
+            cf_i, w_i = sum_sources_at_fixed_t(sources, i)
+            cf_chunks.append(np.asarray(cf_i, dtype=float))
+            w_chunks.append(np.asarray(w_i, dtype=float) * t1_w[i])
+
+    cf_flat = np.concatenate(cf_chunks)
+    w_flat = np.concatenate(w_chunks)
+
+    total = w_flat.sum()
+    if total > 0:
+        w_flat = w_flat / total
+    return cf_flat, w_flat
+
+
+def jaccard_similarity(cas_sets) -> float:
+    """
+    Minimum pairwise Jaccard similarity over a collection of CAS sets.
+
+    Returns 1.0 for singletons or if all sets are identical;
+    returns a value in [0, 1] reflecting the worst overlap across
+    all pairs of sources. Used as a diagnostic flag per R5b (§ 6.2 of
+    multicomponent_bilayer_aggregation_20260415.md) — it does NOT
+    gate summation.
+    """
+    cas_sets = [set(cs) for cs in cas_sets]
+    if len(cas_sets) <= 1:
+        return 1.0
+    j_min = 1.0
+    for i in range(len(cas_sets)):
+        for k in range(i + 1, len(cas_sets)):
+            a, b = cas_sets[i], cas_sets[k]
+            union = a | b
+            inter = a & b
+            j = (len(inter) / len(union)) if union else 1.0
+            if j < j_min:
+                j_min = j
+    return j_min

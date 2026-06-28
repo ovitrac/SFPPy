@@ -5,7 +5,7 @@ survey/workers.py — Parallel Worker Functions for Master Curve Computation
 Worker functions compatible with multiprocessing for computing
 master curves in parallel.
 
-@project: SFPPy/INSERM — Survey-scale exposure estimation
+@project: SFPPy — Survey-scale exposure estimation
 @author: Olivier Vitrac, PhD, HDR
 @email: olivier.vitrac@gmail.com
 @license: MIT
@@ -20,6 +20,56 @@ import numpy as np
 
 # Keep OMP single-threaded to avoid oversubscription in workers
 os.environ.setdefault("OMP_NUM_THREADS", "1")
+
+
+# Default tolerance for the in-solver bilayer mass-conservation guard.
+# The (l_1+l_2)/l_ref normalisation defect (now fixed) inflated CF/CP0 by
+# >=1.18x; conserving solutions land at <=1.00x. 5% cleanly separates them.
+MASS_CONSERVATION_TOL = 0.05
+
+
+def assert_bilayer_mass_conservation(
+    field: np.ndarray,
+    *,
+    l_1_m: float,
+    l_2_m: float,
+    C0_1: float,
+    C0_2: float,
+    surface_area: float,
+    food_volume: float,
+    tol: float = MASS_CONSERVATION_TOL,
+    context: str = "",
+) -> None:
+    """In-solver guard: the dimensionless field ``max(CF/CP0)`` cannot exceed
+    the source mass per unit food volume.
+
+    ``CF/CP0`` is frame-independent (the kernel returns the physical ratio), so
+    the guard MUST test it against the ceiling built from the REAL geometry —
+    not the normalised one. The kernel always conserves mass in whatever frame
+    it is handed; a wrong normalisation inflates BOTH the curve and a
+    normalised ceiling in lock-step, so only the physical ceiling exposes it.
+
+    Only the focal layer carries C0 (the other layer's C0 is 0), so the source
+    mass is ``m0 = (C0_1*l_1_m + C0_2*l_2_m)*A`` and the absolute ceiling
+    (no polymer retention) is ``m0 / V_F`` (migration.py:4186-4190).
+
+    Raises ``ValueError`` on breach so a regression in the food-volume
+    normalisation (``_normalise_bilayer``) fails loudly at solve time rather
+    than silently emitting non-physical, mass-violating CF/CP0 curves.
+    """
+    m0 = (C0_1 * l_1_m + C0_2 * l_2_m) * surface_area
+    if food_volume <= 0 or m0 <= 0:
+        return
+    ceiling = m0 / food_volume                       # V_source / V_F (physical)
+    peak = float(np.nanmax(field))
+    if peak > ceiling * (1.0 + tol):
+        raise ValueError(
+            f"bilayer mass-conservation breach"
+            f"{(' ' + context) if context else ''}: "
+            f"max(CF/CP0)={peak:.6g} > V_focal/V_F={ceiling:.6g} "
+            f"(x{peak / ceiling:.3f}, tol={tol:.0%}). "
+            f"Check _normalise_bilayer food-volume scaling (l_ref*A)."
+        )
 
 
 def make_fo_grid(Fo_max: float, n_fo: int, fo_min_floor: float = 1e-15) -> np.ndarray:
@@ -44,11 +94,49 @@ def make_fo_grid(Fo_max: float, n_fo: int, fo_min_floor: float = 1e-15) -> np.nd
     if Fo_max <= 0.0:
         return np.array([0.0, 1.0], dtype=float)
 
+    # Fomin = max(1e-8, 1e-6·Fomax): grid floor is a fixed fraction of the
+    # horizon (self-similar in Fo), not an absolute 1e-15 that over-resolves
+    # the early region for large Fo. Mirrors the senspatankar first_step rule.
+    fo_min_floor = max(fo_min_floor, 1e-8, 1e-6 * Fo_max)
     lo = math.log10(max(fo_min_floor, 1e-30))
     hi = math.log10(max(Fo_max, fo_min_floor))
     grid = np.logspace(lo, hi, int(max(4, n_fo)), dtype=float)
     grid = np.unique(np.concatenate([np.array([0.0], dtype=float), grid]))
     return grid
+
+
+def _cfeq_from_sol(sol) -> float:
+    """
+    Equilibrium CF computed by the solver from input geometry.
+
+    Line 4146-4149 of patankar/migration.py:
+        peq  = k0 * m0P / (VF + sum((k0/k)*V))
+        mFeq = (peq/k0) * VF
+
+    CFeq = mFeq / VF is the mass-balance equilibrium; divided by VF gives
+    concentration in the food. sol.PR exposes mFeq and VF directly.
+    mFeq is an array (one entry per layer under multi-source initial
+    conditions); the food-side equilibrium CF is the sum over layers
+    divided by VF (total mass in food / VF).
+    """
+    mFeq = np.asarray(sol.PR.mFeq).reshape(-1)
+    VF = float(np.asarray(sol.PR.VF).reshape(-1)[0])
+    if VF <= 0:
+        return 0.0
+    return float(mFeq.sum() / VF)
+
+
+def _eq_knee(cf_array: np.ndarray, cfeq: float, rel_tol: float) -> int:
+    """
+    Index of the first sample within rel_tol of equilibrium (inclusive).
+    Returns len(cf_array) if equilibrium is never reached.
+    """
+    if cfeq <= 0:
+        return len(cf_array)
+    mask = np.abs(cf_array - cfeq) <= rel_tol * cfeq
+    if not mask.any():
+        return len(cf_array)
+    return int(np.argmax(mask))
 
 
 def solve_master_curve(
@@ -142,7 +230,12 @@ def solve_master_curve(
 
     # Solve
     sol = senspatankar(lay, food, t=fo_grid, autotime=False)
-    cf = np.array(sol.CF, dtype=float).reshape(-1)
+    # Route CF extraction through the shared helper (workplan § 1.6).
+    # For a full-grid call like this one the solver typically does not
+    # extend sol.t, but going through cf_at_user_grid is defence against
+    # future call-pattern changes and keeps the survey package uniform.
+    from survey.utils import cf_at_user_grid
+    cf = cf_at_user_grid(sol, fo_grid)
 
     return fo_grid, cf
 

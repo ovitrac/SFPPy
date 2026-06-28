@@ -46,7 +46,7 @@
 
 | <img src="docs/assets/SFPPy_social.png" alt="SFPPy – Scientific Framework for Food Packaging" width="320"/> | [![ChatGPT SFPPy](https://img.shields.io/badge/ChatGPT-SFPPy-orange?logo=openai)](https://chatgpt.com/g/g-6780fa0b1180819198ea1d962dd4064c-sfppy) <br/> 🔥A custom AI assistant 🤖 extensively trained on **SFPPy** 🏋🏻. It helps you explore and use the framework: from the **principles of migration modeling** ⚙️ to **first simulations** 📈, **regulatory compliance** ✅, **interpretation** 📊, and **reporting**📝. |
 | :----------------------------------------------------------: | :----------------------------------------------------------- |
-| <img src="docs/assets/SFPPy_social_v15.png" alt="SFPPy – version 1.50" width="320"/> | 🧠🛡️ **SFPPy 1.5** brings **design-for-compliance** to packaging with tiers **M0–M3** , *explicit performance indicators*, *open data*, *AI-assisted reasoning*. It automates **risk assessment** for the 100s of chromatogram peaks in **recycled-material extracts**.<br />Empower these new capabilities by exploring: [![View on DeepWiki](https://img.shields.io/badge/%F0%9F%93%98%20DeepWiki-SFPPy%20v1.5-8a2be2?logo=wiki)](https://deepwiki.com/ovitrac/SFPPy)[![📄 SFPPy – Safe by Design](https://img.shields.io/badge/%F0%9F%93%84%20Open_Paper-Safe--by--Design-blue)](https://ovitrac.github.io/SFPPy/wikipages/SafeByDesign/sfppydesign.html) |
+| <img src="docs/assets/SFPPy_social_v15.png" alt="SFPPy – version 1.6" width="320"/> | 🧠🛡️ **SFPPy 1.6** brings **design-for-compliance** to packaging with tiers **M0–M3** , *explicit performance indicators*, *open data*, *AI-assisted reasoning*. It automates **risk assessment** for the 100s of chromatogram peaks in **recycled-material extracts**. *v1.6 adds a faster real-units migration engine (constant‑Jacobian BDF) and a unified N‑layer × multi‑step survey solver.*<br />Empower these new capabilities by exploring: [![View on DeepWiki](https://img.shields.io/badge/%F0%9F%93%98%20DeepWiki-SFPPy%20v1.5-8a2be2?logo=wiki)](https://deepwiki.com/ovitrac/SFPPy)[![📄 SFPPy – Safe by Design](https://img.shields.io/badge/%F0%9F%93%84%20Open_Paper-Safe--by--Design-blue)](https://ovitrac.github.io/SFPPy/wikipages/SafeByDesign/sfppydesign.html) |
 | <img src="studio/docs/images/studio.png" alt="SFPPy – studio" width="320"/> | 🆕🌐🔥 [SFPPy Studio](studio/README.md) 0.3 is a web-based graphical user interface for the SFPPy framework. It provides an intuitive interface for food contact migration simulation and compliance checking, with support for **offline operation** and comprehensive **safety assessment**. |
 | <img src="survey/docs/images/survey1.png" alt="SFPPy – studio" width="320"/><br/><img src="survey/docs/images/survey2.png" alt="SFPPy – studio" width="320"/> | 🆕👩🏻‍🔬🥼 The [survey](survey/README.md) module provides production-grade infrastructure for estimating **migration exposure** across *populations*. It is designed for regulatory science applications (reproducible, traceable, auditable, scalable). |
 
@@ -752,7 +752,7 @@ $2025-09-15$
 🍽️🍽️🍎🍎🍎🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍏🍏🍏🍏🍽️🍽️🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍽️🐍🍽️🐍🍽️🍽️
 🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
 🍽️🍎🍎🍎🍎🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍏🍽️🍽️🍽️🍽️🍽️🍽️🍎🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🐍🍽️🍽️🍽️
-🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.50$<br/>
+🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️🍽️ $v1.6$<br/>
 </pre>
 
 

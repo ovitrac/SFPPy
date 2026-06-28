@@ -2,6 +2,36 @@
 
 All notable changes to the Survey module are documented in this file.
 
+## [0.4.0] - 2026-06-28
+
+### Added - Real-units physical engine
+
+#### survey/chain_engine.py (new)
+- Unified real-units **N-layer × K-step** migration solver core. Generalizes the
+  bilayer two-step chain to N spatial layers and K ∈ {1, 2} steps. Physical
+  diffusivities are passed directly to the kernel (no Fo-axis normalisation); the
+  reference layer is the minimum-permeability `D/(k·l)` layer, reused across steps.
+
+#### survey/physical_query.py (new)
+- Physical-primary survey query: evaluates the real-units chain at the scenario's
+  **actual discretised time-prior points** (no Fo-surface, no time interpolation).
+  Provides drop-in family, per-substance, and step-resolved CF tensors, flag-gated
+  by the survey object.
+
+#### survey/utils/ (new)
+- `cf_at_user_grid` — safe extraction of CF from a `senspatankar` result onto a
+  user-requested time grid, guarding against the solver's post-contact diagnostic
+  window extending `sol.t` beyond `ttarget`.
+
+#### survey/workers.py
+- Canonical equilibrium helpers `_cfeq_from_sol` (closed-form CFeq from solver
+  geometry) and `_eq_knee` (first sample within tolerance of equilibrium) now live
+  here and are shared across the survey solvers.
+
+### Changed
+- `survey/__init__.py` `__version__` corrected from `0.1.0` to `0.4.0`; the declared
+  version had lagged behind this changelog.
+
 ## [0.3.0] - 2026-01-10
 
 ### Fixed - CAS-based k/k0 Inference
