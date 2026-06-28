@@ -1,0 +1,225 @@
+{
+  "cid": 12521010,
+  "synonyms": [
+    "Difluoro(trifluoromethoxy)acetyl fluoride",
+    "690-43-7",
+    "DTXSID90501192",
+    "RefChem:338167",
+    "DTXCID20452002",
+    "Acetyl fluoride, difluoro(trifluoromethoxy)-",
+    "SCHEMBL10532437",
+    "MSKOCYDZUWGKKM-UHFFFAOYSA-N"
+  ],
+  "sids": [
+    53915467,
+    128641086,
+    162568745,
+    235812296,
+    273182049,
+    316031442,
+    403048872,
+    426598331,
+    460202816,
+    463342315,
+    464867770,
+    472490820,
+    498635720,
+    504636608,
+    513544765
+  ],
+  "aids": [],
+  "elements": [
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "O",
+    "O",
+    "C",
+    "C",
+    "C"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "F",
+      "x": 3.2321,
+      "y": 1.183,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "F",
+      "x": 4.2321,
+      "y": -0.549,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "F",
+      "x": 6.3301,
+      "y": -0.183,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "F",
+      "x": 5.9641,
+      "y": 1.183,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "F",
+      "x": 4.9641,
+      "y": -0.549,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "F",
+      "x": 2,
+      "y": 0.317,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 4.5981,
+      "y": 0.817,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "O",
+      "x": 2.866,
+      "y": -1.183,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 3.7321,
+      "y": 0.317,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 5.4641,
+      "y": 0.317,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 2.866,
+      "y": -0.183,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 11,
+      "order": 2
+    },
+    {
+      "aid1": 9,
+      "aid2": 11,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C3F6O2",
+  "molecular_weight": "182.02",
+  "canonical_smiles": "C(=O)(C(OC(F)(F)F)(F)F)F",
+  "isomeric_smiles": "C(=O)(C(OC(F)(F)F)(F)F)F",
+  "inchi": "InChI=1S/C3F6O2/c4-1(10)2(5,6)11-3(7,8)9",
+  "inchikey": "MSKOCYDZUWGKKM-UHFFFAOYSA-N",
+  "iupac_name": "2,2-difluoro-2-(trifluoromethoxy)acetyl fluoride",
+  "xlogp": 2.1,
+  "exact_mass": "181.98024821",
+  "monoisotopic_mass": "181.98024821",
+  "tpsa": 26.3,
+  "complexity": 160,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 8,
+  "rotatable_bond_count": 2,
+  "fingerprint": "00000371004031C0000000000000000000000000000000000000000000000000000000000000000B000000000000000080100000000004000800001000020000000000000000004000000000000000040000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000010000000011000111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101100000000000000000000000000000000000000000000000000000000000000001000000000010000000000000000000000000000000000000000010000000000000010000000000000000000000100000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 11,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

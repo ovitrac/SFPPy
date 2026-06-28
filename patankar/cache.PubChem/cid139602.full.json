@@ -1,0 +1,180 @@
+{
+  "cid": 139602,
+  "synonyms": [
+    "Hexasulfur",
+    "Sulfur hexamer",
+    "Sulfur, mol. (S6)",
+    "DTXSID00893333",
+    "RefChem:146283",
+    "DTXCID801323273",
+    "Hexathiane",
+    "13798-23-7",
+    "Cyclohexasulfur",
+    "Cyclohexasulfide",
+    "Sulfur, S6",
+    "Cyclic hexaatomic sulfur",
+    "SCHEMBL3175446",
+    "FEXCMMPRRBSCRG-UHFFFAOYSA-N",
+    "Q5748936",
+    "S6"
+  ],
+  "sids": [
+    10246572,
+    10507391,
+    29316738,
+    50459225,
+    104395902,
+    135093561,
+    162222012,
+    162475319,
+    176267037,
+    250070326,
+    319158970,
+    341459534,
+    374401417,
+    384439359,
+    385789842,
+    386626994,
+    404744967,
+    419509911,
+    447137111,
+    468674244,
+    472556735,
+    485975397,
+    488357730,
+    497494574,
+    500789701,
+    509160388,
+    521296784
+  ],
+  "aids": [],
+  "elements": [
+    "S",
+    "S",
+    "S",
+    "S",
+    "S",
+    "S"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "S",
+      "x": 2.866,
+      "y": -1,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "S",
+      "x": 2,
+      "y": -0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "S",
+      "x": 3.7321,
+      "y": -0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "S",
+      "x": 2,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "S",
+      "x": 3.7321,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "S",
+      "x": 2.866,
+      "y": 1,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 2,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 3,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 6,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "S6",
+  "molecular_weight": "192.4",
+  "canonical_smiles": "S1SSSSS1",
+  "isomeric_smiles": "S1SSSSS1",
+  "inchi": "InChI=1S/S6/c1-2-4-6-5-3-1",
+  "inchikey": "FEXCMMPRRBSCRG-UHFFFAOYSA-N",
+  "iupac_name": "hexathiane",
+  "xlogp": 2.6,
+  "exact_mass": "191.83242704",
+  "monoisotopic_mass": "191.83242704",
+  "tpsa": 152,
+  "complexity": 15.5,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 6,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371000000007000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000000000000000000000000000011100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 6,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

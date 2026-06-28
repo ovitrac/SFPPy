@@ -1,0 +1,725 @@
+{
+  "cid": 76605,
+  "synonyms": [
+    "3147-76-0",
+    "2-(2H-Benzotriazol-2-yl)-4-tert-butylphenol",
+    "EINECS 221-574-0",
+    "Phenol, 2-(2H-benzotriazol-2-yl)-4-(1,1-dimethylethyl)-",
+    "DTXSID7062871",
+    "2-(2H-Benzotriazol-2-yl)-4-(1,1-dimethylethyl)phenol",
+    "RefChem:860796",
+    "DTXCID6038372",
+    "221-574-0",
+    "2-(5-tert-Butyl-2-hydroxyphenyl)benzotriazole",
+    "2-(2H-Benzo[d][1,2,3]triazol-2-yl)-4-(tert-butyl)phenol",
+    "2-(benzotriazol-2-yl)-4-tert-butylphenol",
+    "MFCD03844795",
+    "2-(2H-1,2,3-benzotriazol-2-yl)-4-tert-butylphenol",
+    "2-(2-HYDROXY-5-TERT-BUTYLPHENYL)BENZOTRIAZOLE",
+    "UV-PS",
+    "2-benzotriazol-2-yl-4-tert-butyl-phenol",
+    "SCHEMBL78159",
+    "153613-75-3",
+    "2-(2-hydroxy-5-tert-butylphenyl)-2H-benzotriazole",
+    "SCHEMBL11459986",
+    "SCHEMBL29354646",
+    "AKOS027321003",
+    "MSK160794-100M",
+    "MSK160794-1000M",
+    "AS-69883",
+    "SY054744",
+    "2-(5-t-butyl-2-hydroxyphenyl)benzotriazole",
+    "DS-022468",
+    "2-(benzotriazol-2-yl)-4-tert-butyl-phenol",
+    "CS-0435383",
+    "H0719",
+    "NS00015577",
+    "2-(2'-hydroxy-5'-t-butylphenyl)benzotriazole",
+    "2-(2H-benzotriazol-2-yl)-4-tert-butyl-phenol",
+    "D95318",
+    "2-(2-Hydroxy-5-tert-butylphenyl)benzotriazole;",
+    "F763713",
+    "phenol, 2-(2H-1,2,3-benzotriazol-2-yl)-4-(1,1-dimethylethyl)-",
+    "2-(5-tert-Butyl-2-hydroxyphenyl)benzotriazole Solution in Methanol, 1000ug/mL",
+    "2-(5-tert-Butyl-2-hydroxyphenyl)benzotriazole Solution in Methanol, 100ug/mL"
+  ],
+  "sids": [
+    8198190,
+    14848261,
+    43132277,
+    79182597,
+    87571086,
+    103103618,
+    104364861,
+    117521099,
+    126560155,
+    128729743,
+    129647824,
+    135034267,
+    142435938,
+    160794630,
+    162280181,
+    162765124,
+    176323869,
+    204420433,
+    207188287,
+    224795770,
+    226457477,
+    241068707,
+    249583434,
+    249773314,
+    250101352,
+    256532989,
+    274273184,
+    304748923,
+    315690973,
+    316413394,
+    317876483,
+    319115428,
+    321920192,
+    341133729,
+    341714210,
+    342528594,
+    346445399,
+    347631015,
+    348968334,
+    355087595,
+    365267936,
+    374067048,
+    374174830,
+    375537754,
+    376266128,
+    377872006,
+    383300672,
+    387036359,
+    387172365,
+    403401654,
+    404646114,
+    404802918,
+    405101520,
+    406561568,
+    415760281,
+    433969715,
+    434678773,
+    438604857,
+    439451474,
+    440683293,
+    443637066,
+    444060436,
+    445589493,
+    446080675,
+    458787578,
+    462809569,
+    464081097,
+    464788110,
+    468790101,
+    470564750,
+    472516763,
+    476106448,
+    482001831,
+    485248843,
+    486117542,
+    486456151,
+    488279117,
+    489032333,
+    489641176,
+    490566925,
+    491176484,
+    491531695,
+    492685693,
+    495985026,
+    503531729,
+    504120097,
+    505856721,
+    506042807,
+    507447576,
+    507596172,
+    508837364,
+    509936429,
+    513787055,
+    513826915,
+    514166413,
+    517118516,
+    517587072,
+    517729251,
+    518801908,
+    518801909,
+    521755232,
+    527796806,
+    527918435
+  ],
+  "aids": [],
+  "elements": [
+    "O",
+    "N",
+    "N",
+    "N",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "O",
+      "x": 6.2619,
+      "y": 1.8966,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "N",
+      "x": 5.2619,
+      "y": 0.1645,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "N",
+      "x": 4.6783,
+      "y": -0.6402,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "N",
+      "x": 4.6783,
+      "y": 0.9693,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "C",
+      "x": 8.2619,
+      "y": -1.5675,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "C",
+      "x": 7.7619,
+      "y": -0.7015,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "C",
+      "x": 8.7619,
+      "y": -2.4335,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "C",
+      "x": 9.1279,
+      "y": -1.0675,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 7.3959,
+      "y": -2.0675,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 6.7619,
+      "y": -0.7015,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 8.2619,
+      "y": 0.1645,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "C",
+      "x": 6.2619,
+      "y": 0.1645,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "C",
+      "x": 6.7619,
+      "y": 1.0306,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "C",
+      "x": 7.7619,
+      "y": 1.0306,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "C",
+      "x": 3.7321,
+      "y": -0.3355,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "C",
+      "x": 3.7321,
+      "y": 0.6645,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "C",
+      "x": 2.866,
+      "y": -0.8355,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "C",
+      "x": 2.866,
+      "y": 1.1645,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "C",
+      "x": 2,
+      "y": -0.3355,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "C",
+      "x": 2,
+      "y": 0.6645,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "H",
+      "x": 8.2249,
+      "y": -2.7435,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 22,
+      "element": "H",
+      "x": 9.0719,
+      "y": -2.9705,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 23,
+      "element": "H",
+      "x": 9.2988,
+      "y": -2.1235,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 24,
+      "element": "H",
+      "x": 9.4379,
+      "y": -1.6044,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 25,
+      "element": "H",
+      "x": 9.6648,
+      "y": -0.7575,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 26,
+      "element": "H",
+      "x": 8.8179,
+      "y": -0.5306,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 27,
+      "element": "H",
+      "x": 7.0859,
+      "y": -1.5306,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 28,
+      "element": "H",
+      "x": 6.8589,
+      "y": -2.3775,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 29,
+      "element": "H",
+      "x": 7.7059,
+      "y": -2.6044,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 30,
+      "element": "H",
+      "x": 6.4519,
+      "y": -1.2384,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 31,
+      "element": "H",
+      "x": 8.8819,
+      "y": 0.1645,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 32,
+      "element": "H",
+      "x": 8.0719,
+      "y": 1.5675,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 33,
+      "element": "H",
+      "x": 2.866,
+      "y": -1.4555,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 34,
+      "element": "H",
+      "x": 2.866,
+      "y": 1.7845,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 35,
+      "element": "H",
+      "x": 6.5719,
+      "y": 2.4335,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 36,
+      "element": "H",
+      "x": 1.4631,
+      "y": -0.6455,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 37,
+      "element": "H",
+      "x": 1.4631,
+      "y": 0.9745,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 35,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 3,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 15,
+      "order": 2
+    },
+    {
+      "aid1": 4,
+      "aid2": 16,
+      "order": 2
+    },
+    {
+      "aid1": 5,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 10,
+      "order": 2
+    },
+    {
+      "aid1": 6,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 21,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 22,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 23,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 24,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 25,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 26,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 27,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 28,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 29,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 30,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 14,
+      "order": 2
+    },
+    {
+      "aid1": 11,
+      "aid2": 31,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 13,
+      "order": 2
+    },
+    {
+      "aid1": 13,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 32,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 16,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 17,
+      "aid2": 19,
+      "order": 2
+    },
+    {
+      "aid1": 17,
+      "aid2": 33,
+      "order": 1
+    },
+    {
+      "aid1": 18,
+      "aid2": 20,
+      "order": 2
+    },
+    {
+      "aid1": 18,
+      "aid2": 34,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 20,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 36,
+      "order": 1
+    },
+    {
+      "aid1": 20,
+      "aid2": 37,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C16H17N3O",
+  "molecular_weight": "267.33",
+  "canonical_smiles": "CC(C)(C)C1=CC(=C(C=C1)O)N2N=C3C=CC=CC3=N2",
+  "isomeric_smiles": "CC(C)(C)C1=CC(=C(C=C1)O)N2N=C3C=CC=CC3=N2",
+  "inchi": "InChI=1S/C16H17N3O/c1-16(2,3)11-8-9-15(20)14(10-11)19-17-12-6-4-5-7-13(12)18-19/h4-10,20H,1-3H3",
+  "inchikey": "WXHVQMGINBSVAY-UHFFFAOYSA-N",
+  "iupac_name": "2-(benzotriazol-2-yl)-4-tert-butylphenol",
+  "xlogp": 5.6,
+  "exact_mass": "267.137162174",
+  "monoisotopic_mass": "267.137162174",
+  "tpsa": 50.9,
+  "complexity": 327,
+  "h_bond_donor_count": 1,
+  "h_bond_acceptor_count": 3,
+  "rotatable_bond_count": 2,
+  "fingerprint": "00000371E07B200000000000000000000000000000016000000030600000000000005801F400001E00080800000E0C819E0032C6B0000200A20324624000920404203200189820377C980A66A292919380700064C81108D80790C0D00FA0000040000010204000008000002040000000000000",
+  "cactvs_fingerprint": "11100000011110110010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101100000000000000000000000000000001100000110000000000000000000000000000000000000000000000000000001011000000000011111010000000000000000000001111000000000000010000000100000000000000000000000111000001100100000011001111000000000001100101100011010110000000000000000001000000000101000100000001100100100011000100100000000000000100100100000010000000100001000000011001000000000000110001001100000100000001101110111110010011000000010100110011010100010100100101001000110010011100000000111000000000000011001001100100000010001000010001101100000000111100100001100000011010000000011111010000000000000000000000100000000000000000000000001000000100000010000000000000000000000100000000000000000000000001000000100000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 20,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

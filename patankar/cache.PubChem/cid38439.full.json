@@ -1,0 +1,493 @@
+{
+  "cid": 38439,
+  "synonyms": [
+    "1,2,3,7,8-PENTACHLORODIBENZO-P-DIOXIN",
+    "40321-76-4",
+    "1,2,3,7,8-Pentachlorodibenzodioxin",
+    "1,2,3,7,8-PeCDD",
+    "PCDD 54",
+    "Dibenzo-p-dioxin, 1,2,3,7,8-pentachloro-",
+    "2NE6H0QPCH",
+    "DTXSID7052078",
+    "1,2,3,7,8-Pentachlorooxanthrene",
+    "1,2,3,7,8-Pentachlorodibenzo(b,e)(1,4)dioxin",
+    "1,2,3,7,8-Pentachlorodibenzo[b,e][1,4]dioxin",
+    "Dibenzo(b,e)(1,4)dioxin, 1,2,3,7,8-pentachloro-",
+    "PeCDD",
+    "RefChem:71372",
+    "DTXCID2030645",
+    "694-814-9",
+    "CHEMBL137220",
+    "BRN 1626844",
+    "1,2,3,7,8-Pentachlorodibenzo-p-dioxin (>85%)",
+    "UNII-2NE6H0QPCH",
+    "FSPZPQQWDODWAU-UHFFFAOYSA-N",
+    "1,2,3,7,8-PnCDD",
+    "1,2,3,7,8-PCDD",
+    "C12H3Cl5O2",
+    "SCHEMBL2885718",
+    "SCHEMBL29353294",
+    "CHEBI:81501",
+    "MSK6042",
+    "1,2,3,7,8-Pentachlorodibenzo-p-dioxin 50 microg/mL in Nonane",
+    "BDBM50408363",
+    "1,2,3,7,8-Pentachlorooxanthrene #",
+    "FP26796",
+    "PD197807",
+    "1,2,3,7,8-Penta-chlorodibenzo-p-dioxin",
+    "DB-300913",
+    "CS-0831759",
+    "NS00098495",
+    "C18099",
+    "Q27155426",
+    "1,2,3,7,8-PENTACHLORODIBENZO(B,E)(1,4)DIOXIN [MI]",
+    "1,2,3,7,8-Pentachlorodibenzo-p-dioxin 50 |Ig/mL in Nonane"
+  ],
+  "sids": [
+    8175546,
+    10521776,
+    14852267,
+    34704496,
+    49855400,
+    52295460,
+    57312213,
+    96024316,
+    99437687,
+    103092095,
+    103148657,
+    103374616,
+    104329231,
+    117356526,
+    127893793,
+    135001981,
+    163160927,
+    163357387,
+    164232205,
+    164764115,
+    176317059,
+    198958835,
+    223446549,
+    228954320,
+    241088372,
+    250125077,
+    256564609,
+    275068815,
+    315685220,
+    319088446,
+    319088447,
+    341170321,
+    347732306,
+    349781172,
+    354299543,
+    355063869,
+    368269376,
+    385686231,
+    386522813,
+    387091182,
+    403768582,
+    404748842,
+    415723097,
+    438795143,
+    441614878,
+    443254923,
+    444656923,
+    446293762,
+    446339005,
+    447218740,
+    462405863,
+    463930925,
+    468826502,
+    468826504,
+    470604158,
+    472705887,
+    473085760,
+    485309576,
+    486317158,
+    486325815,
+    488269275,
+    490206090,
+    490478757,
+    491671256,
+    491744544,
+    496079874,
+    496079875,
+    500714790,
+    500866835,
+    505058724,
+    505240634,
+    507525122,
+    514165083,
+    517633743,
+    518306729,
+    521973231,
+    522858428,
+    527690623,
+    527799294
+  ],
+  "aids": [
+    39064
+  ],
+  "elements": [
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Cl",
+      "x": 7.2785,
+      "y": 1.5346,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "Cl",
+      "x": 9.0603,
+      "y": 0.5242,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "Cl",
+      "x": 9.0603,
+      "y": -1.5241,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "Cl",
+      "x": 2,
+      "y": 0.5242,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "Cl",
+      "x": 2,
+      "y": -1.5241,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "O",
+      "x": 5.5301,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 5.5301,
+      "y": -1.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "C",
+      "x": 6.3962,
+      "y": 0,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 6.3962,
+      "y": -1,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 4.6641,
+      "y": 0,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 4.6641,
+      "y": -1,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "C",
+      "x": 7.2901,
+      "y": 0.5347,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "C",
+      "x": 7.2901,
+      "y": -1.5346,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "C",
+      "x": 3.7702,
+      "y": 0.5347,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "C",
+      "x": 3.7702,
+      "y": -1.5346,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "C",
+      "x": 8.1962,
+      "y": 0.0208,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "C",
+      "x": 8.1962,
+      "y": -1.0208,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "C",
+      "x": 2.8641,
+      "y": 0.0208,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "C",
+      "x": 2.8641,
+      "y": -1.0208,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "H",
+      "x": 7.2829,
+      "y": -2.1546,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "H",
+      "x": 3.7773,
+      "y": 1.1547,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 22,
+      "element": "H",
+      "x": 3.7773,
+      "y": -2.1546,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 19,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 12,
+      "order": 2
+    },
+    {
+      "aid1": 9,
+      "aid2": 13,
+      "order": 2
+    },
+    {
+      "aid1": 10,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 14,
+      "order": 2
+    },
+    {
+      "aid1": 11,
+      "aid2": 15,
+      "order": 2
+    },
+    {
+      "aid1": 12,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 20,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 21,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 19,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 22,
+      "order": 1
+    },
+    {
+      "aid1": 16,
+      "aid2": 17,
+      "order": 2
+    },
+    {
+      "aid1": 18,
+      "aid2": 19,
+      "order": 2
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C12H3Cl5O2",
+  "molecular_weight": "356.4",
+  "canonical_smiles": "C1=C2C(=CC(=C1Cl)Cl)OC3=C(C(=C(C=C3O2)Cl)Cl)Cl",
+  "isomeric_smiles": "C1=C2C(=CC(=C1Cl)Cl)OC3=C(C(=C(C=C3O2)Cl)Cl)Cl",
+  "inchi": "InChI=1S/C12H3Cl5O2/c13-4-1-7-8(2-5(4)14)19-12-9(18-7)3-6(15)10(16)11(12)17/h1-3H",
+  "inchikey": "FSPZPQQWDODWAU-UHFFFAOYSA-N",
+  "iupac_name": "1,2,3,7,8-pentachlorodibenzo-p-dioxin",
+  "xlogp": 6.6,
+  "exact_mass": "355.854618",
+  "monoisotopic_mass": "353.857568",
+  "tpsa": 18.5,
+  "complexity": 344,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 2,
+  "rotatable_bond_count": 0,
+  "fingerprint": "0000037100703000070000000000000000000000000000000000346080000000000000914000001A02000000000806809020300680000400800020420000020800202540008A40068B880D262385321A823822A4C0110AA8078040000000200001008048040040000201009008000000000000",
+  "cactvs_fingerprint": "00000000011100000011000000000000000001110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101000110000010000000000000000000000000000000000000000000000000000000100100010100000000000000000000000001101000000010000000000000000000000000000000000000100000000110100000001001000000100000001100000000011010000000000000000000010000000000100000000000000000100000010000100000000000000000000000100000100000000000001000000010010101000000000000001000101001000000000001101000101110001000000011010010011000100011100001010011001000011010100000100011100000100010101001001100000000010001000010101010100000000111100000000100000000000000000000000000000000100000000000000000000100000000100000000100100000000100000000000100000000000000000000100000000100000000100100000000100000000000000000000000000000000000000000000",
+  "heavy_atom_count": 19,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}
