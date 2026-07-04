@@ -11,7 +11,7 @@ Defines the core data structures for survey-scale migration estimation:
 - ComponentSpec: Single packaging component (Phase 4)
 - MultiComponentJob: Multi-component packaging job (Phase 4)
 
-@project: SFPPy/INSERM — Survey-scale exposure estimation
+@project: SFPPy — Survey-scale exposure estimation
 @author: Olivier Vitrac, PhD, HDR
 @email: olivier.vitrac@gmail.com
 @license: MIT
@@ -140,6 +140,12 @@ class SubstanceSpec:
         Occurrence-based weight for family CDF computation.
         Default 1.0 (equiprobable). Use occurrence values (0.5, 1, 2)
         to weight substances by likelihood of presence.
+    exchangeable : bool
+        Whether substance is exchangeable within the family.
+        - True (default): Alternatives - concentration is fractionated among
+          exchangeable substances (represents uncertainty about which is used).
+        - False: Always present - uses full family concentration.
+        Monomers are non-exchangeable by definition.
     """
     id: str
     mass_g_mol: float
@@ -149,6 +155,7 @@ class SubstanceSpec:
     k: Optional[float] = None
     k0: Optional[float] = None
     weight: float = 1.0
+    exchangeable: bool = True
 
     @classmethod
     def from_mass(cls, mass_g_mol: float, idx: int = 0) -> "SubstanceSpec":
@@ -185,6 +192,7 @@ class SubstanceSpec:
             'k': self.k,
             'k0': self.k0,
             'weight': self.weight,
+            'exchangeable': self.exchangeable,
         }
 
 
@@ -197,7 +205,7 @@ class PriorSpec:
     """
     Triangular prior specification.
 
-    Represents Triangular(min=0, mode, max) distribution
+    Represents Triangular(min_val, mode, max_val) distribution
     discretized into a finite grid with cell-integrated weights.
 
     Attributes
@@ -206,25 +214,41 @@ class PriorSpec:
         Mode of the triangular distribution.
     max_val : float
         Maximum value of the triangular distribution.
+    min_val : float
+        Minimum value (lower bound). Default 0.0 for backward compatibility
+        with pre-D0 scenarios. Added 2026-04-08 (D0): the solver now honours
+        this field. YAML scenarios with min > 0 are discretized from min,
+        not from 0.
     n_low : int
-        Number of grid points below mode.
+        Number of grid points between min_val and mode.
     n_high : int
-        Number of grid points above mode.
+        Number of grid points between mode and max_val.
+    spacing_low : str
+        'linear' (default) or 'log'. Log-spaced low segment for wide-span
+        priors (D6 of singleton cp0 revision).
+    spacing_high : str
+        'linear' (default) or 'log'.
     name : str
         Name for display/logging.
     """
     mode: float
     max_val: float
+    min_val: float = 0.0
     n_low: int = 15
     n_high: int = 15
+    spacing_low: str = 'linear'
+    spacing_high: str = 'linear'
     name: str = "prior"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            'min_val': self.min_val,
             'mode': self.mode,
             'max_val': self.max_val,
             'n_low': self.n_low,
             'n_high': self.n_high,
+            'spacing_low': self.spacing_low,
+            'spacing_high': self.spacing_high,
             'name': self.name,
         }
 
@@ -258,6 +282,10 @@ class SurveyConfig:
         Minimum Fo value (floor for log grid).
     cache_dir : str
         Directory for master curve cache.
+    quantity : int
+        Number of food units per pack (dbs `Quantity`). >1 marks a shared
+        OVERPACK; used by the physical engine to remove an overpack paper/board
+        layer at the oven step (WP-physical, OV 2026-06-25). Default 1.
     """
     name: str
     packaging: PackagingSpec
@@ -268,6 +296,7 @@ class SurveyConfig:
     fo_max_factor: float = 1.5
     fo_min_floor: float = 1e-15
     cache_dir: str = ".survey_cache"
+    quantity: int = 1
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -383,10 +412,27 @@ class SubstanceModel:
 
         return self._migrant_cache[cache_key]
 
-    def infer_D(self, polymer: str, mass_g_mol: float, temperature_degC: float) -> float:
-        """Infer diffusivity using Piringer model."""
+    def infer_D(self, polymer: str, mass_g_mol: float, temperature_degC: float,
+                substance_name: str = None, cas: str = None) -> float:
+        """Infer diffusivity. Piringer for plastics; for paper/board (NOT Piringer polymers) use the
+        SFPPy Cardboard/Paper layer class D; fall back to a conservative 1e-14 if neither resolves.
+        Previously Piringer-only and uncaught — it crashed reference-layer selection on paper/board."""
         from patankar.property import Dpiringer
-        return float(Dpiringer.evaluate(polymer=polymer, M=mass_g_mol, T=temperature_degC))
+        p = str(polymer)
+        if any(t in p.upper() for t in ("PAPER", "BOARD", "CARTON")):
+            try:
+                from patankar import layer as _lm
+                import numpy as _np
+                cls = _lm.Cardboard if "BOARD" in p.upper() else _lm.Paper
+                m = self._get_migrant(substance_name=substance_name, cas=cas) if (substance_name or cas) else None
+                lay = cls(l=1e-4, substance=m, T=temperature_degC) if m is not None else cls(l=1e-4, T=temperature_degC)
+                return float(_np.asarray(lay.D).ravel()[0])
+            except Exception:
+                return 1e-14
+        try:
+            return float(Dpiringer.evaluate(polymer=polymer, M=mass_g_mol, T=temperature_degC))
+        except Exception:
+            return 1e-14
 
     def infer_k(self, polymer: str, mass_g_mol: float, temperature_degC: float,
                 substance_name: str = None, cas: str = None) -> float:
@@ -560,6 +606,7 @@ class SubstanceModel:
 
         Returns a new SubstanceSpec with inferred values.
         Uses CAS for migrant lookup (more reliable than names).
+        Preserves weight and exchangeable attributes from input.
         """
         D = self.infer_D(layer.polymer, substance.mass_g_mol, layer.temperature_degC)
         k = self.infer_k(layer.polymer, substance.mass_g_mol, layer.temperature_degC,
@@ -575,6 +622,8 @@ class SubstanceModel:
             D=D,
             k=k,
             k0=k0,
+            weight=substance.weight,
+            exchangeable=substance.exchangeable,
         )
 
 

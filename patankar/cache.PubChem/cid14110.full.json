@@ -6,8 +6,6 @@
     "N-Ethyl-2-methylbenzenesulfonamide",
     "Benzenesulfonamide, N-ethyl-2-methyl-",
     "N-Ethyltoluene-2-sulphonamide",
-    "N-ethyl-2-methylbenzene-1-sulfonamide",
-    "n-e-o/ptsa",
     "o-Toluenesulfonamide, N-ethyl-",
     "HSDB 5782",
     "O-TOLUENE ETHYL SULFONAMIDE",
@@ -17,13 +15,24 @@
     "EINECS 214-073-3",
     "DTXSID5052416",
     "N-ETHYL-O-TOLUENESULFONAMIDE [HSDB]",
-    "MFCD00059226",
+    "RefChem:163332",
     "oToluenesulfonamide, Nethyl",
-    "N-Ethyl-2-toluenesulfonamide",
-    "SCHEMBL126986",
     "DTXCID1030101",
     "Benzenesulfonamide, Nethyl2methyl",
+    "8047-99-2",
+    "NATWUQFQFMZVMT-UHFFFAOYSA-N",
+    "N-ethyl-2-methylbenzene-1-sulfonamide",
+    "n-e-o/ptsa",
+    "MFCD00059226",
+    "N-ethyl-2-methyl-benzenesulfonamide",
+    "N-Ethyl-2-toluenesulfonamide",
+    "SCHEMBL126986",
+    "SCHEMBL9341407",
+    "SCHEMBL9468430",
+    "SCHEMBL16825009",
+    "SCHEMBL30194714",
     "N-Ethyl-o(or p)-toluenesulfonamide",
+    "MSK161675",
     "AKOS006275681",
     "AS-59292",
     "DB-221628",
@@ -31,6 +40,7 @@
     "NS00010733",
     "D88149",
     "EN300-1452505",
+    "F765759",
     "Q27265713"
   ],
   "sids": [
@@ -44,6 +54,7 @@
     104333596,
     126673944,
     128675472,
+    131326925,
     132558308,
     134980445,
     162827054,
@@ -100,6 +111,7 @@
     438652137,
     439436075,
     440077510,
+    441082195,
     441083707,
     441124156,
     442067726,
@@ -112,12 +124,15 @@
     468575529,
     469478838,
     470190132,
+    470724801,
     472430307,
     472497421,
     472678123,
+    472678136,
     472918232,
     473347487,
     475716322,
+    477519197,
     481128373,
     486346103,
     488222198,
@@ -134,7 +149,22 @@
     500806750,
     504182227,
     504730610,
-    506098906
+    506098906,
+    507628701,
+    508754906,
+    509771402,
+    509783604,
+    510122032,
+    514035450,
+    514992307,
+    518062816,
+    518307590,
+    521788909,
+    527719449,
+    527719450,
+    527796950,
+    527810219,
+    527918749
   ],
   "aids": [],
   "elements": [
@@ -169,7 +199,7 @@
     {
       "aid": 1,
       "element": "S",
-      "x": 3.732,
+      "x": 3.7321,
       "y": 0.25,
       "z": null,
       "charge": 0
@@ -177,7 +207,7 @@
     {
       "aid": 2,
       "element": "O",
-      "x": 4.732,
+      "x": 4.7321,
       "y": 0.25,
       "z": null,
       "charge": 0
@@ -185,7 +215,7 @@
     {
       "aid": 3,
       "element": "O",
-      "x": 2.732,
+      "x": 2.7321,
       "y": 0.25,
       "z": null,
       "charge": 0
@@ -193,7 +223,7 @@
     {
       "aid": 4,
       "element": "N",
-      "x": 3.732,
+      "x": 3.7321,
       "y": 1.25,
       "z": null,
       "charge": 0
@@ -201,7 +231,7 @@
     {
       "aid": 5,
       "element": "C",
-      "x": 3.732,
+      "x": 3.7321,
       "y": -0.75,
       "z": null,
       "charge": 0
@@ -257,7 +287,7 @@
     {
       "aid": 12,
       "element": "C",
-      "x": 3.732,
+      "x": 3.7321,
       "y": -2.75,
       "z": null,
       "charge": 0
@@ -345,7 +375,7 @@
     {
       "aid": 23,
       "element": "H",
-      "x": 3.732,
+      "x": 3.7321,
       "y": -3.37,
       "z": null,
       "charge": 0

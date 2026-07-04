@@ -1,0 +1,290 @@
+{
+  "cid": 30177,
+  "synonyms": [
+    "20521-42-0",
+    "2-ETHENYL-2-BUTENAL",
+    "RefChem:260218",
+    "2-Vinyl-2-butenal",
+    "2-ethenylbut-2-enal",
+    "2-Butenal, 2-ethenyl-",
+    "SCHEMBL2039137",
+    "SCHEMBL2050665",
+    "XOBGIOGZLQNHMM-UHFFFAOYSA-N",
+    "DTXSID401315557",
+    "DB-251663",
+    "NS00051783"
+  ],
+  "sids": [
+    129716483,
+    312839002,
+    319083696,
+    341449286,
+    349713293,
+    387175611,
+    398583635,
+    421471064,
+    461437068,
+    471097364,
+    472154621,
+    472577406,
+    485985427,
+    489084342,
+    490153113,
+    504139591,
+    504558659,
+    509061567,
+    509065778,
+    521345342
+  ],
+  "aids": [],
+  "elements": [
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "O",
+      "x": 4.5981,
+      "y": 0,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "C",
+      "x": 2.866,
+      "y": 0,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "C",
+      "x": 2.866,
+      "y": -1,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "C",
+      "x": 2,
+      "y": -1.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "C",
+      "x": 2,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "C",
+      "x": 3.7321,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "C",
+      "x": 2,
+      "y": 1.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "H",
+      "x": 3.403,
+      "y": -1.31,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "H",
+      "x": 1.69,
+      "y": -0.9631,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "H",
+      "x": 1.4631,
+      "y": -1.81,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "H",
+      "x": 2.31,
+      "y": -2.0369,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "H",
+      "x": 1.4631,
+      "y": 0.19,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "H",
+      "x": 3.7321,
+      "y": 1.12,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "H",
+      "x": 2.5369,
+      "y": 1.81,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "H",
+      "x": 1.4631,
+      "y": 1.81,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 6,
+      "order": 2
+    },
+    {
+      "aid1": 2,
+      "aid2": 3,
+      "order": 2
+    },
+    {
+      "aid1": 2,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 7,
+      "order": 2
+    },
+    {
+      "aid1": 5,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 15,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C6H8O",
+  "molecular_weight": "96.13",
+  "canonical_smiles": "CC=C(C=C)C=O",
+  "isomeric_smiles": "CC=C(C=C)C=O",
+  "inchi": "InChI=1S/C6H8O/c1-3-6(4-2)5-7/h3-5H,1H2,2H3",
+  "inchikey": "XOBGIOGZLQNHMM-UHFFFAOYSA-N",
+  "iupac_name": "2-ethenylbut-2-enal",
+  "xlogp": 1.3,
+  "exact_mass": "96.057514874",
+  "monoisotopic_mass": "96.057514874",
+  "tpsa": 17.1,
+  "complexity": 101,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 1,
+  "rotatable_bond_count": 2,
+  "fingerprint": "00000371C0602000000000000000000000000000000000000000000000000000000000000000001A00000000000C00A080020200000000008802285280000000002000000808010000480800000001000000000000000081800000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "11000000011000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101000000000000000000000000000000000000000000000110000000000101000001000000000000010000000100000000000000000000000000000000000000000100010000000001000101000010100101000000000000000000000000000000000000000001000000000000000000000000010000000100000000001000000000000000001001000000010000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000001000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 7,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 1,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 1,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

@@ -1,0 +1,615 @@
+{
+  "cid": 50851128,
+  "synonyms": [
+    "83329-89-9",
+    "Potassium 11-chloroeicosafluoro-3-oxaundecane-1-sulfonate",
+    "DTXSID00892447",
+    "RefChem:373684",
+    "DTXCID701079633",
+    "2-[(8-chloro-1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8-hexadecafluoroctyl)oxyl]-1,1,2,2-tetrafluoro-ethanesulfonic acid,potassium salt",
+    "potassium;2-(8-chloro-1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8-hexadecafluorooctoxy)-1,1,2,2-tetrafluoroethanesulfonate",
+    "SCHEMBL25287986",
+    "MSK157675K",
+    "PD192653",
+    "NS00117956",
+    "8:2 CHLORINATED POLYFLUORINATED ETHER SULFONATE",
+    "11-Chloro-3-oxa-perfluoroundecanesulfonic acid potassium salt",
+    "11-Chloroeicosafluoro-3-oxaundecane-1-sulfonic acid potassium",
+    "11-Chloroeicosafluoro-3-oxaundecane-1-sulfonic acid potassium 50 microg/mL in Methanol:Water",
+    "2-[(8-Chloro-1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8-hexadecafluoroctyl)oxyl]-1,1,2,2-tetrafluoro-ethanesulfonic acid potassium salt",
+    "Potassium 2-[(8-chloro-1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8-hexadecafluorooctyl)oxy]-1,1,2,2-tetrafluoroethane-1-sulfonate"
+  ],
+  "sids": [
+    121153944,
+    241164326,
+    375940423,
+    384439003,
+    441373019,
+    441605172,
+    446311176,
+    446470317,
+    463179513,
+    464858380,
+    464994275,
+    469630687,
+    469697709,
+    470730839,
+    472919705,
+    475873987,
+    479844715,
+    480517845,
+    482003239,
+    482110037,
+    482318791,
+    486903832,
+    490961468,
+    495955020,
+    496987679,
+    497725155,
+    504672125,
+    507668598,
+    508838197,
+    513787544,
+    522201474,
+    523582148
+  ],
+  "aids": [],
+  "elements": [
+    "K",
+    "Cl",
+    "S",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "O",
+    "O",
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "K",
+      "x": 2,
+      "y": -0.75,
+      "z": null,
+      "charge": 1
+    },
+    {
+      "aid": 2,
+      "element": "Cl",
+      "x": 14.1244,
+      "y": 2.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "S",
+      "x": 3.7321,
+      "y": -0.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "F",
+      "x": 9.2942,
+      "y": 0.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "F",
+      "x": 10.2942,
+      "y": -1.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "F",
+      "x": 10.1603,
+      "y": 1.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "F",
+      "x": 11.1603,
+      "y": -0.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "F",
+      "x": 8.4282,
+      "y": 0.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "F",
+      "x": 9.4282,
+      "y": -1.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "F",
+      "x": 12.0263,
+      "y": -0.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "F",
+      "x": 11.0263,
+      "y": 1.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "F",
+      "x": 7.5622,
+      "y": -0.384,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "F",
+      "x": 8.5622,
+      "y": -2.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "F",
+      "x": 12.8923,
+      "y": 0.384,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "F",
+      "x": 11.8923,
+      "y": 2.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "F",
+      "x": 6.6962,
+      "y": -0.884,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "F",
+      "x": 7.6962,
+      "y": -2.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "F",
+      "x": 13.7583,
+      "y": 0.884,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "F",
+      "x": 12.7583,
+      "y": 2.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "F",
+      "x": 4.9641,
+      "y": -2.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "F",
+      "x": 5.9641,
+      "y": -0.884,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 22,
+      "element": "F",
+      "x": 4.0981,
+      "y": -2.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 23,
+      "element": "F",
+      "x": 5.0981,
+      "y": -0.384,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 24,
+      "element": "O",
+      "x": 6.3301,
+      "y": -2.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 25,
+      "element": "O",
+      "x": 2.866,
+      "y": -0.25,
+      "z": null,
+      "charge": -1
+    },
+    {
+      "aid": 26,
+      "element": "O",
+      "x": 3.2321,
+      "y": -1.616,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 27,
+      "element": "O",
+      "x": 4.2321,
+      "y": 0.116,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 28,
+      "element": "C",
+      "x": 9.7942,
+      "y": -0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 29,
+      "element": "C",
+      "x": 10.6603,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 30,
+      "element": "C",
+      "x": 8.9282,
+      "y": -0.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 31,
+      "element": "C",
+      "x": 11.5263,
+      "y": 0.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 32,
+      "element": "C",
+      "x": 8.0622,
+      "y": -1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 33,
+      "element": "C",
+      "x": 12.3923,
+      "y": 1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 34,
+      "element": "C",
+      "x": 7.1962,
+      "y": -1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 35,
+      "element": "C",
+      "x": 13.2583,
+      "y": 1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 36,
+      "element": "C",
+      "x": 5.4641,
+      "y": -1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 37,
+      "element": "C",
+      "x": 4.5981,
+      "y": -1.25,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 25,
+      "order": 7
+    },
+    {
+      "aid1": 2,
+      "aid2": 35,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 25,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 26,
+      "order": 2
+    },
+    {
+      "aid1": 3,
+      "aid2": 27,
+      "order": 2
+    },
+    {
+      "aid1": 3,
+      "aid2": 37,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 28,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 28,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 29,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 29,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 30,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 30,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 31,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 31,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 32,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 32,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 33,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 33,
+      "order": 1
+    },
+    {
+      "aid1": 16,
+      "aid2": 34,
+      "order": 1
+    },
+    {
+      "aid1": 17,
+      "aid2": 34,
+      "order": 1
+    },
+    {
+      "aid1": 18,
+      "aid2": 35,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 35,
+      "order": 1
+    },
+    {
+      "aid1": 20,
+      "aid2": 36,
+      "order": 1
+    },
+    {
+      "aid1": 21,
+      "aid2": 36,
+      "order": 1
+    },
+    {
+      "aid1": 22,
+      "aid2": 37,
+      "order": 1
+    },
+    {
+      "aid1": 23,
+      "aid2": 37,
+      "order": 1
+    },
+    {
+      "aid1": 24,
+      "aid2": 34,
+      "order": 1
+    },
+    {
+      "aid1": 24,
+      "aid2": 36,
+      "order": 1
+    },
+    {
+      "aid1": 28,
+      "aid2": 29,
+      "order": 1
+    },
+    {
+      "aid1": 28,
+      "aid2": 30,
+      "order": 1
+    },
+    {
+      "aid1": 29,
+      "aid2": 31,
+      "order": 1
+    },
+    {
+      "aid1": 30,
+      "aid2": 32,
+      "order": 1
+    },
+    {
+      "aid1": 31,
+      "aid2": 33,
+      "order": 1
+    },
+    {
+      "aid1": 32,
+      "aid2": 34,
+      "order": 1
+    },
+    {
+      "aid1": 33,
+      "aid2": 35,
+      "order": 1
+    },
+    {
+      "aid1": 36,
+      "aid2": 37,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C10ClF20KO4S",
+  "molecular_weight": "670.69",
+  "canonical_smiles": "C(C(C(C(C(F)(F)Cl)(F)F)(F)F)(F)F)(C(C(C(OC(C(F)(F)S(=O)(=O)[O-])(F)F)(F)F)(F)F)(F)F)(F)F.[K+]",
+  "isomeric_smiles": "C(C(C(C(C(F)(F)Cl)(F)F)(F)F)(F)F)(C(C(C(OC(C(F)(F)S(=O)(=O)[O-])(F)F)(F)F)(F)F)(F)F)(F)F.[K+]",
+  "inchi": "InChI=1S/C10HClF20O4S.K/c11-7(24,25)5(20,21)3(16,17)1(12,13)2(14,15)4(18,19)6(22,23)8(26,27)35-9(28,29)10(30,31)36(32,33)34;/h(H,32,33,34);/q;+1/p-1",
+  "inchikey": "BDKYEEMJFNONPU-UHFFFAOYSA-M",
+  "iupac_name": "potassium 2-(8-chloro-1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8-hexadecafluorooctoxy)-1,1,2,2-tetrafluoroethanesulfonate",
+  "xlogp": null,
+  "exact_mass": "669.8523521",
+  "monoisotopic_mass": "669.8523521",
+  "tpsa": 74.8,
+  "complexity": 943,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 24,
+  "rotatable_bond_count": 11,
+  "fingerprint": "00000371007039C0444000000000000000000000000000000000000000000000000000000000000B0600000000080200C01000000000040200000000007040000000000000000000020000000201000002000004000000000180C0A00000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000011100000011100111000000010001000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101100000110000000000000000000000000000000000000100000000010000000001100000000010000000000000000000000000000000000000000010000000010000000000000000000000000000000000000000001110000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000010000000010000000000000000000000100000000000000000000001000000000000000000000000000000000000000001100000001100000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 37,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 2,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

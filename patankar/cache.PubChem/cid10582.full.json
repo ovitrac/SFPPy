@@ -1,0 +1,612 @@
+{
+  "cid": 10582,
+  "synonyms": [
+    "Myrtenol",
+    "515-00-4",
+    "2-PINEN-10-OL",
+    "Bicyclo[3.1.1]hept-2-ene-2-methanol, 6,6-dimethyl-",
+    "FEMA No. 3439",
+    "6,6-Dimethylbicyclo(3.1.1)hept-2-ene-2-methanol",
+    "6,6-Dimethylbicyclo[3.1.1]hept-2-ene-2-methanol",
+    "(6,6-dimethyl-2-bicyclo[3.1.1]hept-2-enyl)methanol",
+    "Bicyclo(3.1.1)hept-2-ene-2-methanol, 6,6-dimethyl-",
+    "DTXSID00862089",
+    "pin-2-ene-10-ol",
+    "6,6-dimethyl-2-oxymethylbicyclo(1.1.3)hept-2-ene",
+    "(6,6-dimethyl-2-bicyclo(3.1.1)hept-2-enyl)methanol",
+    "(+-)-Myrtenol",
+    "RefChem:819777",
+    "DTXCID00218168",
+    "(6,6-dimethyl-4-bicyclo(3.1.1)hept-3-enyl)methanol",
+    "208-193-5",
+    "933-307-1",
+    "(-)-MYRTENOL, 97",
+    "(+/-)-Myrtenol",
+    "(-)-Pin-2-ene-10-ol",
+    "alpha-Pinene-10-ol",
+    "(6,6-Dimethylbicyclo[3.1.1]hept-2-en-2-yl)methanol",
+    "( inverted exclamation markA)-Myrtenol",
+    "2-Hydroxymethyl-6,6-dimethylbicyclo(3.1.1)hept-2-ene",
+    "6,6-Dimethyl-2-hydroxymethylbicyclo(3.1.1)hept-2-ene",
+    "Bicyclo(3.1.1)hept-2-ene-2-methanol, 6,6-dimethyl-, (1S)-",
+    "6,6-Dimethyl-2-oxymethylbicyclo[3.1.1]hept-2-ene",
+    "6,6-Dimethyl-2-(hydroxymethyl)bicyclo[3.1.1]hept-2-ene",
+    "Bicyclo[3.1.1]hept-2-ene-2-methanol, 6,6-dimethyl-, (1S)-",
+    "(1R)-2-Pinen-10-ol",
+    "myteol",
+    "EINECS 208-193-5",
+    "( )-Myrtenol",
+    "NSC 408846",
+    "pin-2-en-10-ol",
+    "bmse000555",
+    "(1R)-6,6-Dimethylbicyclo[3.1.1]hept-2-ene-2-methanol",
+    "SCHEMBL155709",
+    "CHEMBL443408",
+    "orb2813778",
+    "SCHEMBL4228933",
+    "SCHEMBL5297079",
+    "SCHEMBL9425838",
+    "PINEN-10-OL, L-2-",
+    "Myrtenol (.alpha.-pinene-10-ol)",
+    "NSC408846",
+    "TN8431",
+    "AKOS000120271",
+    "FM57844",
+    "HY-W576589",
+    "LMPR0102120022",
+    "NSC-408846",
+    "DB-065984",
+    "NS00013018",
+    "ST50824367",
+    "G79021",
+    "6,6-Dimethyl-bicyclo[3,1,1]hept-2-ene-2-methanol",
+    "Q15425810",
+    "(6,6-Dimethylbicyclo[3.1.1]hept-2-en-2-yl)methanol #",
+    "rac-(6,6-dimethylbicyclo[3.1.1]hept-2-en-2-yl)methanol",
+    "((5S,1R)-6,6-dimethylbicyclo[3.1.1]hept-2-en-2-yl)methan-1-ol",
+    "6,6-dimethyl-2-oxymethlybicyclo[1.1.3]-hept-2-ene (myrtenol)",
+    "1056567-07-7",
+    "111957-74-5"
+  ],
+  "sids": [
+    14099,
+    478426,
+    3137644,
+    6572903,
+    8157640,
+    10524858,
+    10532326,
+    14709081,
+    29204421,
+    29229059,
+    31672865,
+    53620930,
+    57309614,
+    57326315,
+    74382218,
+    85165335,
+    88833601,
+    103584830,
+    104323695,
+    104668694,
+    126677651,
+    129194184,
+    134975904,
+    135092835,
+    143015168,
+    143895146,
+    176327601,
+    179293437,
+    223672049,
+    224837568,
+    226519913,
+    241128363,
+    249943439,
+    254778480,
+    275662973,
+    289306376,
+    316964222,
+    319068767,
+    319068768,
+    341156935,
+    341477213,
+    348290235,
+    349091986,
+    363599138,
+    384445477,
+    385642288,
+    386478561,
+    387018871,
+    387151303,
+    388321252,
+    401963545,
+    404756651,
+    419539728,
+    434263055,
+    438590302,
+    438622489,
+    438798880,
+    439452595,
+    443335064,
+    444601086,
+    446363246,
+    459141718,
+    461478113,
+    462278306,
+    468855427,
+    470634206,
+    472485741,
+    472986540,
+    481996159,
+    481998880,
+    483131512,
+    485303755,
+    485512601,
+    486195278,
+    489033280,
+    489684061,
+    490642096,
+    493536757,
+    496206080,
+    496221413,
+    497713908,
+    500580928,
+    503664800,
+    505113926,
+    505237022,
+    505815506,
+    505954546,
+    506259823,
+    507657202,
+    509241179,
+    509335013,
+    509779163,
+    516496273,
+    516621951,
+    517634225,
+    517902296,
+    518138523,
+    521820330,
+    522859579,
+    523514660
+  ],
+  "aids": [
+    344007,
+    344008,
+    344009,
+    344010,
+    1066527,
+    1108696,
+    1108697,
+    1108698,
+    1108699
+  ],
+  "elements": [
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "O",
+      "x": 2.0159,
+      "y": -1.8619,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "C",
+      "x": 5.449,
+      "y": 0.5418,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "C",
+      "x": 4.3089,
+      "y": 1.499,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "C",
+      "x": 4.0501,
+      "y": 0.533,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "C",
+      "x": 3.5723,
+      "y": 2.4816,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "C",
+      "x": 2.2756,
+      "y": 1.1878,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "C",
+      "x": 2.829,
+      "y": -0.3326,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "C",
+      "x": 5.949,
+      "y": -0.3242,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 6.315,
+      "y": 1.0419,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 2,
+      "y": 0.2266,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 2.8639,
+      "y": -1.332,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "H",
+      "x": 4.7592,
+      "y": 1.9251,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "H",
+      "x": 4.2401,
+      "y": -0.0571,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "H",
+      "x": 3.8901,
+      "y": 3.0139,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "H",
+      "x": 2.9591,
+      "y": 2.5735,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "H",
+      "x": 2.2706,
+      "y": 1.8078,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "H",
+      "x": 1.6613,
+      "y": 1.2716,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "H",
+      "x": 5.4121,
+      "y": -0.6342,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "H",
+      "x": 6.259,
+      "y": -0.8611,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "H",
+      "x": 6.4859,
+      "y": -0.0142,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "H",
+      "x": 6.625,
+      "y": 0.5049,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 22,
+      "element": "H",
+      "x": 6.852,
+      "y": 1.3519,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 23,
+      "element": "H",
+      "x": 6.005,
+      "y": 1.5788,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 24,
+      "element": "H",
+      "x": 1.4174,
+      "y": 0.0145,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 25,
+      "element": "H",
+      "x": 3.0962,
+      "y": -1.9069,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 26,
+      "element": "H",
+      "x": 3.4704,
+      "y": -1.2031,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 27,
+      "element": "H",
+      "x": 2.0375,
+      "y": -2.4816,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 27,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 3,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 15,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 10,
+      "order": 2
+    },
+    {
+      "aid1": 7,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 19,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 20,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 21,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 22,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 23,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 24,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 25,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 26,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C10H16O",
+  "molecular_weight": "152.23",
+  "canonical_smiles": "CC1(C2CC=C(C1C2)CO)C",
+  "isomeric_smiles": "CC1(C2CC=C(C1C2)CO)C",
+  "inchi": "InChI=1S/C10H16O/c1-10(2)8-4-3-7(6-11)9(10)5-8/h3,8-9,11H,4-6H2,1-2H3",
+  "inchikey": "RXBQNMWIQKOSCS-UHFFFAOYSA-N",
+  "iupac_name": "(6,6-dimethyl-2-bicyclo[3.1.1]hept-2-enyl)methanol",
+  "xlogp": 1.6,
+  "exact_mass": "152.120115130",
+  "monoisotopic_mass": "152.120115130",
+  "tpsa": 20.2,
+  "complexity": 203,
+  "h_bond_donor_count": 1,
+  "h_bond_acceptor_count": 1,
+  "rotatable_bond_count": 1,
+  "fingerprint": "00000371E0702000000000000000000000000000600000000000204000000000000000000000001A00000800000F00A0800202000000020080022042000000000020000000080000000800140200010000500004800008100380C0700F80000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "11100000011100000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011000000000000000000000000000000000000000000000001000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101000000000000000000000100000000000000000000000111100000000101000001000000000000010000000100000000000000000000000000000001000000000100000000000001000100000010000100000000000000000000000000000000000000000001000000000000000000000000000000000100000000000000000000000000000001000000000000001010000000010000000000000000100000000000000000101000000000000000001001000000000000000000010000001000000000011100000001100000001110000000011111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 11,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 2,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 2,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

@@ -11,7 +11,7 @@ Features:
 - Resume support for interrupted computations
 - Multilayer support with reference layer selection
 
-@project: SFPPy/INSERM — Survey-scale exposure estimation
+@project: SFPPy — Survey-scale exposure estimation
 @author: Olivier Vitrac, PhD, HDR
 @email: olivier.vitrac@gmail.com
 @license: MIT
@@ -315,8 +315,58 @@ class Survey:
 
         return self._curve_cache.stats
 
+    def _family_mass_ceiling(self, per_substance_ceiling: float) -> float:
+        """Upper bound on the combined family ``CF/CP0`` given that every
+        substance's own plateau is ``<= per_substance_ceiling`` (= V_focal/V_F).
+
+        Mirrors the probabilistic family-combination model exactly:
+        - **exchangeable** substances are alternatives — their combined
+          contribution is the occurrence-weighted **average** $\\sum_j p_j g_j$
+          ($\\sum_j p_j = 1$), a convex combination of the per-substance curves,
+          so it is bounded by the largest member and ``<= per_substance_ceiling``
+          (one alternative present at the family concentration; no 1/E — F8,
+          2026-06-12, consistent with the kernel's exchangeable term);
+        - **non-exchangeable** substances are co-present and contribute their
+          normalised-weight sum, ``<= per_substance_ceiling × Σ (w_j/max w)``.
+
+        Used by the family-level mass-conservation check so that a legitimate
+        multi-substance family (whose total migration is the weighted sum over
+        co-present substances) is not falsely flagged against a single-substance
+        bound, while a genuine over-prediction still trips it. The per-substance
+        guard in the solver (``survey.workers.assert_bilayer_mass_conservation``)
+        remains the independent first check.
+        """
+        subs = self._substances
+        exch = [s for s in subs if getattr(s, 'exchangeable', True)]
+        non = [s for s in subs if not getattr(s, 'exchangeable', True)]
+        total = 0.0
+        if exch:
+            # weighted average of alternatives (Σ p_j = 1) ≤ max member ≤ ceiling
+            total += per_substance_ceiling
+        if non:
+            w = np.array([getattr(s, 'weight', 1.0) for s in non], dtype=float)
+            w_max = w.max()
+            w_norm = (w / w_max) if w_max > 0 else np.ones(len(non))
+            total += per_substance_ceiling * float(w_norm.sum())
+        return total
+
     def _compute_cf_tensor(self) -> Dict[str, np.ndarray]:
-        """Compute CF tensor from master curves and priors."""
+        """
+        Compute CF tensor from master curves and priors.
+
+        Handles exchangeability of substances:
+        - Exchangeable: Alternatives (one OR another is present).
+          Concentration is fractionated among exchangeable substances.
+          Represents uncertainty about which specific substance is used.
+        - Non-exchangeable: Always present (AND).
+          Uses full family concentration with normalized weights.
+          Monomers are non-exchangeable by definition.
+
+        Mathematical formulation:
+        - Exchangeable: CF_exch = g_exch(t) × C0/E where E = number of exchangeable
+        - Non-exchangeable: CF_non = Σ (w_j/max(w)) × g_j(t) × C0
+        - Combined: CF_family = CF_exch + CF_non
+        """
         # Discretize priors
         time_vals, time_w = discretize_prior(self.config.time_prior)
         conc_vals, conc_w = discretize_prior(self.config.conc_prior)
@@ -345,8 +395,125 @@ class Survey:
                 cf_over_cp0,
             )
 
-        # Weighted average over substances using occurrence weights
-        # If substances have weight attribute (from database), use it; else equal weights
+        # Separate substances by exchangeability
+        # BACKWARD COMPATIBILITY: If 'exchangeable' attribute is missing, default to True
+        # This ensures older scenarios without the field work as before (all substances
+        # treated as exchangeable alternatives with concentration fractionation)
+        exch_indices = [i for i, s in enumerate(self._substances)
+                        if getattr(s, 'exchangeable', True)]
+        non_exch_indices = [i for i, s in enumerate(self._substances)
+                           if not getattr(s, 'exchangeable', True)]
+
+        n_exch = len(exch_indices)
+        n_non_exch = len(non_exch_indices)
+
+        # Initialize combined migration curve
+        g_combined = np.zeros(n_t, dtype=float)
+
+        # Track contribution fractions for diagnostics
+        conc_fraction_exch = 0.0
+        conc_fraction_non_exch = 0.0
+
+        # =========================================================
+        # Exchangeable substances: mixture model with fractionation
+        # =========================================================
+        if n_exch > 0:
+            # Get occurrence weights for exchangeable substances
+            w_exch = np.array([
+                getattr(self._substances[i], 'weight', 1.0)
+                for i in exch_indices
+            ], dtype=float)
+
+            # Normalize to probabilities (sum to 1)
+            w_sum = w_exch.sum()
+            if w_sum > 0:
+                p_exch = w_exch / w_sum
+            else:
+                p_exch = np.ones(n_exch) / n_exch
+
+            # Weighted average migration curve for exchangeable
+            g_exch_curves = g_tj[:, exch_indices]  # Shape: (n_t, n_exch)
+            g_exch = np.dot(g_exch_curves, p_exch)  # Shape: (n_t,)
+
+            # Exchangeable contribution: weighted average of the alternatives.
+            # CF_exch = C0 * Σ_j p_j g_j  (one alternative present at the family
+            # concentration C0). The former 1/E factor was a SECOND dilution on
+            # top of the already-normalised weighted mean (Σ p_j = 1) and is
+            # removed (decision 2026-06-12; see REVIEW_20260612*, finding F8).
+            conc_fraction_exch = 1.0
+            g_combined += g_exch * conc_fraction_exch
+
+        # =========================================================
+        # Non-exchangeable substances: full concentration, normalized weights
+        # Each substance contributes independently: CF_j = g_j(t) × C0 × w_norm_j
+        # Example: styrene (occ=2) and EB (occ=1) at 300 ppm
+        #   w_norm = [2/2, 1/2] = [1.0, 0.5]
+        #   styrene: 300×1.0 = 300 ppm, EB: 300×0.5 = 150 ppm
+        # =========================================================
+        w_norm = np.array([])  # Initialize for scope
+        if n_non_exch > 0:
+            # Get occurrence weights for non-exchangeable substances
+            w_non = np.array([
+                getattr(self._substances[i], 'weight', 1.0)
+                for i in non_exch_indices
+            ], dtype=float)
+
+            # Normalize so maximum weight is 1 (not sum to 1)
+            # This means the highest-occurrence non-exchangeable gets full concentration
+            w_max = w_non.max()
+            if w_max > 0:
+                w_norm = w_non / w_max
+            else:
+                w_norm = np.ones(n_non_exch)
+
+            # Each non-exchangeable substance contributes independently
+            # Sum of weighted migration curves: Σ w_norm_j × g_j(t)
+            # This is NOT averaged - each substance adds its own contribution
+            g_non_curves = g_tj[:, non_exch_indices]  # Shape: (n_t, n_non_exch)
+            g_non = np.dot(g_non_curves, w_norm)  # Shape: (n_t,) - weighted sum, not average
+
+            # Non-exchangeable contribution: each substance contributes w_norm_j × C0
+            # Total contribution = Σ g_j × C0 × w_norm_j = C0 × Σ (g_j × w_norm_j) = C0 × g_non
+            conc_fraction_non_exch = 1.0  # Full concentration, weighting is in g_non
+            g_combined += g_non * conc_fraction_non_exch
+
+        # Store sum of normalized weights for diagnostics
+        # For non-exch with styrene(2)+EB(1): w_norm_sum = 1.0 + 0.5 = 1.5
+        w_norm_sum = w_norm.sum() if n_non_exch > 0 else 0.0
+
+        # If no substances at all, fall back to zero migration
+        if n_sub == 0:
+            g_combined = np.zeros(n_t)
+            conc_fraction_exch = 0.0
+            conc_fraction_non_exch = 0.0
+            w_norm_sum = 0.0
+
+        # CF_family(t_i, CP0_j) = g_combined(t_i) * CP0_j
+        cf_family = np.outer(g_combined, conc_vals)
+
+        # Family-level mass-conservation check (proper probabilistic weights).
+        # Per-substance conservation (g_j <= V_focal/V_F) is the solver's job;
+        # here we bound the COMBINED family curve by the SAME exchangeable/
+        # non-exchangeable weighting applied to that per-substance ceiling, so a
+        # legitimate multi-substance family is not flagged against a single-
+        # substance bound. Monolayer: focal layer == the only layer.
+        import warnings
+        from survey.workers import MASS_CONSERVATION_TOL
+        V_F = self.config.packaging.food_volume_m3
+        if V_F > 0:
+            per_sub_ceiling = layer.thickness_m * \
+                self.config.packaging.surface_area_m2 / V_F
+            family_ceiling = self._family_mass_ceiling(per_sub_ceiling)
+            g_max = float(g_combined.max())
+            if g_max > family_ceiling * (1.0 + MASS_CONSERVATION_TOL):
+                warnings.warn(
+                    f"family CF/CP0 max={g_max:.4g} exceeds weighted family mass "
+                    f"bound={family_ceiling:.4g} (per-substance V_focal/V_F="
+                    f"{per_sub_ceiling:.4g}); check substance combination weights",
+                    RuntimeWarning,
+                )
+
+        # Build substance weights array for backward compatibility
         substance_weights = np.array([
             getattr(s, 'weight', 1.0) for s in self._substances
         ], dtype=float)
@@ -354,13 +521,7 @@ class Survey:
         if w_sum > 0:
             substance_weights /= w_sum
         else:
-            substance_weights = np.ones(n_sub) / n_sub
-
-        # Weighted average: g_avg(t) = Σ w_j * g_j(t)
-        g_avg_t = np.dot(g_tj, substance_weights)
-
-        # CF_family(t_i, CP0_j) = g_avg(t_i) * CP0_j
-        cf_family = np.outer(g_avg_t, conc_vals)
+            substance_weights = np.ones(n_sub) / max(n_sub, 1)
 
         return {
             'CF_tensor': cf_family,
@@ -375,7 +536,91 @@ class Survey:
             'time_vals': time_vals,
             'time_weights': time_w,
             'substance_weights': substance_weights,  # Occurrence-based weights
+            # Exchangeability diagnostics
+            'n_exchangeable': n_exch,
+            'n_non_exchangeable': n_non_exch,
+            'conc_fraction_exchangeable': conc_fraction_exch,
+            'conc_fraction_non_exchangeable': conc_fraction_non_exch,
+            'non_exch_weight_sum': w_norm_sum,  # Sum of normalized weights for non-exchangeable
         }
+
+    def _per_substance_factors(self) -> np.ndarray:
+        """Per-substance contribution factor: exchangeable → p_i = w_i/Σ_exch w
+        (expected presence); non-exchangeable → w_i/max_non w (co-presence).
+        Such that Σ_i factor_i · g_i == the combined family curve/surface."""
+        subs = self._substances
+        n_sub = len(subs)
+        factor = np.zeros(n_sub, dtype=float)
+        exch_idx = [i for i, s in enumerate(subs) if getattr(s, 'exchangeable', True)]
+        non_idx = [i for i, s in enumerate(subs) if not getattr(s, 'exchangeable', True)]
+        if exch_idx:
+            w = np.array([getattr(subs[i], 'weight', 1.0) for i in exch_idx], dtype=float)
+            ws = w.sum()
+            p = (w / ws) if ws > 0 else np.ones(len(exch_idx)) / len(exch_idx)
+            for k, i in enumerate(exch_idx):
+                factor[i] = p[k]
+        if non_idx:
+            w = np.array([getattr(subs[i], 'weight', 1.0) for i in non_idx], dtype=float)
+            wm = w.max()
+            wn = (w / wm) if wm > 0 else np.ones(len(non_idx))
+            for k, i in enumerate(non_idx):
+                factor[i] = wn[k]
+        return factor
+
+    def per_substance_cf_tensors(self) -> Dict[str, Dict[str, np.ndarray]]:
+        """Decompose the family CF into per-substance contributions.
+
+        Concentration is applied AFTER the (C0-independent) master curve, so
+        each substance's *expected* contribution is a post-hoc re-weighting of
+        its own curve g_i:
+
+          - exchangeable     : CF_i = p_i · outer(g_i, conc_vals),  p_i = w_i/Σ_exch w
+          - non-exchangeable : CF_i = (w_i/max_non w) · outer(g_i, conc_vals)
+
+        By construction ``Σ_i CF_i == family CF_tensor`` (drop-1/E model). Used
+        by the per-substance aggregation (keyed by CAS) requested by Mai; needs
+        no re-solve — only the cached master curves. Base Survey = monolayer /
+        single-curve path; BilayerSurvey overrides for its surface combination.
+
+        Returns
+        -------
+        dict  {cas: {CF_tensor, CF_samples, weights, time_vals, time_weights,
+                     conc_vals, conc_weights, exchangeable, weight}}
+        """
+        time_vals, time_w = discretize_prior(self.config.time_prior)
+        conc_vals, conc_w = discretize_prior(self.config.conc_prior)
+        layer = self.ref_layer
+        l2 = layer.thickness_m ** 2
+        subs = self._substances
+        n_sub = len(subs)
+        D_vals = np.array([s.D or 1e-14 for s in subs], dtype=float)
+        Fo = np.outer(time_vals, D_vals / l2)
+
+        g_tj = np.empty((len(time_vals), n_sub), dtype=float)
+        for j, s in enumerate(subs):
+            fo_grid, cf_over_cp0 = self._curves[s.id]
+            g_tj[:, j] = np.interp(np.clip(Fo[:, j], 0.0, None), fo_grid, cf_over_cp0)
+
+        # Per-substance weight factor (same convention as _compute_cf_tensor).
+        factor = self._per_substance_factors()
+
+        wmat = compute_weight_matrix(time_w, conc_w).ravel()
+        out: Dict[str, Dict[str, np.ndarray]] = {}
+        for j, s in enumerate(subs):
+            cf_j = np.outer(factor[j] * g_tj[:, j], conc_vals)
+            cas = getattr(s, 'cas', None) or getattr(s, 'id', f"idx{j}")
+            if cas in out:                       # same CAS twice in a family: accumulate
+                out[cas]['CF_tensor'] = out[cas]['CF_tensor'] + cf_j
+                out[cas]['CF_samples'] = out[cas]['CF_tensor'].ravel()
+                continue
+            out[cas] = {
+                'CF_tensor': cf_j, 'CF_samples': cf_j.ravel(), 'weights': wmat,
+                'time_vals': time_vals, 'time_weights': time_w,
+                'conc_vals': conc_vals, 'conc_weights': conc_w,
+                'exchangeable': bool(getattr(s, 'exchangeable', True)),
+                'weight': float(getattr(s, 'weight', 1.0)),
+            }
+        return out
 
     def _compute_pdf(
         self,
@@ -388,6 +633,32 @@ class Survey:
         if s <= 0:
             raise ValueError("Sum of weights must be positive")
         w /= s
+
+        # Degenerate distributions: when the sample range is zero or denormal
+        # (e.g. a non-migrating overpack chain, max CF ~1e-310), np.histogram
+        # with integer bins raises "Too many bins for data range. Cannot
+        # create N finite-sized bins" (caught on a degenerate near-zero
+        # overpack case). Values below 1e-250 are hundreds of decades under
+        # LOD/10 — physically zero: emit a single-spike PDF at 0 on [0, 1].
+        smp = np.asarray(samples, dtype=float)
+        smax = float(np.nanmax(smp)) if smp.size else 0.0
+        smin = float(np.nanmin(smp)) if smp.size else 0.0
+        degenerate = (not np.isfinite(smax)) or smax < 1e-250 \
+            or (smax - smin) <= 0.0 or not np.isfinite(smax - smin)
+        if degenerate:
+            # physically-zero case → spike in the first bin of [0, 1];
+            # equal-but-finite case → spike at the common value.
+            if (not np.isfinite(smax)) or smax < 1e-250:
+                lo, hi = 0.0, 1.0
+            else:
+                lo, hi = 0.9 * smax, 1.1 * smax
+            edges = np.linspace(lo, hi, self.config.pdf_bins + 1)
+            centers = 0.5 * (edges[:-1] + edges[1:])
+            hist = np.zeros(self.config.pdf_bins)
+            j = self.config.pdf_bins // 2 if lo > 0.0 else 0
+            hist[j] = 1.0 / (edges[1] - edges[0])   # all mass in one bin
+            cdf = np.concatenate([np.zeros(j), np.ones(self.config.pdf_bins - j)])
+            return centers, hist, cdf
 
         hist, edges = np.histogram(
             samples,

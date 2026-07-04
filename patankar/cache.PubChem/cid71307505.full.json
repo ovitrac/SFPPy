@@ -1,0 +1,864 @@
+{
+  "cid": 71307505,
+  "synonyms": [
+    "776297-69-9",
+    "RefChem:424031",
+    "1-(3-Methylbutyl) 2-pentyl 1,2-benzenedicarboxylate",
+    "Isopentyl pentyl phthalate",
+    "MFCD11114532",
+    "n-pentyl isopentyl phthalate",
+    "2-O-(3-methylbutyl) 1-O-pentyl benzene-1,2-dicarboxylate",
+    "Phthalic acid, n-pentyl-isopentyl ester",
+    "3-Methylbutyl pentyl phthalate",
+    "Isopentyl pentan-2-yl phthalate",
+    "1,2-Benzenedicarboxylic acid, 1-(3-methylbutyl) 2-pentyl ester; 1,2-Benzenedicarboxylic acid, 3-methylbutyl pentyl ester (9CI); 1-(3-Methylbutyl) 2-pentyl 1,2-benzenedicarboxylate; n-Pentyl-isopentylphthalate; Isopentyl pentyl phthalate; Phthalic acid, n-pentyl-isopentyl ester",
+    "Isopentylpentylphthalate",
+    "N-Pentyl- Isopentyl Phthalate",
+    "SCHEMBL19667982",
+    "SCHEMBL29399353",
+    "DTXSID90998846",
+    "Isopentyl pentyl phthalate, 97%",
+    "MSK1156",
+    "776297-69-9 (unlabeled)",
+    "AKOS025402564",
+    "CS-W022765",
+    "s10363",
+    "AS-19170",
+    "Phthalic acid, 3-methylbutyl pentyl ester",
+    "SY102979",
+    "DB-287659",
+    "3-Methylbutyl pentyl benzene-1,2-dicarboxylate",
+    "O2-isopentyl O1-pentyl benzene-1,2-dicarboxylate",
+    "1,2-Benzenedicarboxylic Acid-d4 3-Methylbutyl Pentyl Ester",
+    "N-Isopentyl-3-(1-naphthoyl)indole-d11 (JWH 018 isomer)",
+    "1,2-Benzenedicarboxylic Acid-d4 1-(3-Methylbutyl) 2-pentyl Ester",
+    "n-Pentyl iso-pentyl phthalate (n-Pentyl 3-methlybutyl phthalate)"
+  ],
+  "sids": [
+    162201723,
+    164044394,
+    164227749,
+    164761311,
+    189024746,
+    223401373,
+    223701316,
+    249866592,
+    250029722,
+    252307696,
+    266095341,
+    273008996,
+    300426112,
+    310917397,
+    314973319,
+    316577097,
+    318469171,
+    319408822,
+    335969251,
+    340510329,
+    346401143,
+    347237208,
+    347736084,
+    349311165,
+    354174393,
+    354271861,
+    354321797,
+    354342774,
+    354732465,
+    355174486,
+    373431462,
+    374087725,
+    375395728,
+    375681707,
+    375776075,
+    376142483,
+    377923254,
+    381938593,
+    383427947,
+    384415109,
+    384555811,
+    397271162,
+    405117092,
+    406530440,
+    406708151,
+    413962386,
+    433837556,
+    434668329,
+    438506743,
+    441117880,
+    441562313,
+    442072960,
+    442866800,
+    444058156,
+    445566864,
+    445656527,
+    446156578,
+    446309298,
+    446443981,
+    462932067,
+    464079489,
+    464456285,
+    468992964,
+    470717854,
+    472832089,
+    472832177,
+    472945565,
+    473062540,
+    475730382,
+    478239427,
+    481393314,
+    481997325,
+    482568071,
+    483690232,
+    484201805,
+    485290763,
+    485464785,
+    488202196,
+    488986922,
+    489135312,
+    489591005,
+    489839319,
+    490186468,
+    490532473,
+    491527166,
+    492722948,
+    495656635,
+    496050765,
+    496050766,
+    496050767,
+    497168531,
+    503327091,
+    504198183,
+    505419761,
+    506063014,
+    507592540,
+    508463854,
+    508837767,
+    513790702,
+    514030926,
+    514210739,
+    517735293,
+    517913170,
+    521750640,
+    523072541,
+    523519983,
+    527796940
+  ],
+  "aids": [],
+  "elements": [
+    "O",
+    "O",
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "O",
+      "x": 9.7942,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "O",
+      "x": 6.3301,
+      "y": -1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "O",
+      "x": 8.0622,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "O",
+      "x": 7.1962,
+      "y": -0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "C",
+      "x": 10.6603,
+      "y": 2.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "C",
+      "x": 10.6603,
+      "y": 1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "C",
+      "x": 9.7942,
+      "y": 1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "C",
+      "x": 3.732,
+      "y": -1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 11.5263,
+      "y": 3.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 9.7942,
+      "y": 3.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 4.5981,
+      "y": -1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "C",
+      "x": 2.866,
+      "y": -1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "C",
+      "x": 5.4641,
+      "y": -1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "C",
+      "x": 2,
+      "y": -1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "C",
+      "x": 8.9282,
+      "y": -1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "C",
+      "x": 8.0622,
+      "y": -1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "C",
+      "x": 8.9282,
+      "y": -0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "C",
+      "x": 7.1962,
+      "y": -1.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "C",
+      "x": 9.7942,
+      "y": -1.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "C",
+      "x": 8.0622,
+      "y": -2.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "C",
+      "x": 9.7942,
+      "y": -2.75,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 22,
+      "element": "C",
+      "x": 8.9282,
+      "y": -3.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 23,
+      "element": "H",
+      "x": 11.1972,
+      "y": 2.44,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 24,
+      "element": "H",
+      "x": 10.8723,
+      "y": 1.1674,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 25,
+      "element": "H",
+      "x": 11.2708,
+      "y": 1.8577,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 26,
+      "element": "H",
+      "x": 9.5822,
+      "y": 1.8326,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 27,
+      "element": "H",
+      "x": 9.1836,
+      "y": 1.1423,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 28,
+      "element": "H",
+      "x": 4.1306,
+      "y": -0.7751,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 29,
+      "element": "H",
+      "x": 3.3335,
+      "y": -0.7751,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 30,
+      "element": "H",
+      "x": 11.8363,
+      "y": 2.7131,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 31,
+      "element": "H",
+      "x": 12.0632,
+      "y": 3.56,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 32,
+      "element": "H",
+      "x": 11.2163,
+      "y": 3.7869,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 33,
+      "element": "H",
+      "x": 10.1042,
+      "y": 3.7869,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 34,
+      "element": "H",
+      "x": 9.2573,
+      "y": 3.56,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 35,
+      "element": "H",
+      "x": 9.4842,
+      "y": 2.7131,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 36,
+      "element": "H",
+      "x": 4.1996,
+      "y": -2.225,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 37,
+      "element": "H",
+      "x": 4.9966,
+      "y": -2.225,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 38,
+      "element": "H",
+      "x": 2.4675,
+      "y": -2.225,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 39,
+      "element": "H",
+      "x": 3.2646,
+      "y": -2.225,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 40,
+      "element": "H",
+      "x": 5.8626,
+      "y": -0.7751,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 41,
+      "element": "H",
+      "x": 5.0656,
+      "y": -0.7751,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 42,
+      "element": "H",
+      "x": 2.31,
+      "y": -0.7131,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 43,
+      "element": "H",
+      "x": 1.4631,
+      "y": -0.94,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 44,
+      "element": "H",
+      "x": 1.69,
+      "y": -1.7869,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 45,
+      "element": "H",
+      "x": 10.3312,
+      "y": -1.44,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 46,
+      "element": "H",
+      "x": 7.5252,
+      "y": -3.06,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 47,
+      "element": "H",
+      "x": 10.3312,
+      "y": -3.06,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 48,
+      "element": "H",
+      "x": 8.9282,
+      "y": -3.87,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 17,
+      "order": 2
+    },
+    {
+      "aid1": 4,
+      "aid2": 18,
+      "order": 2
+    },
+    {
+      "aid1": 5,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 23,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 24,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 25,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 26,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 27,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 28,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 29,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 30,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 31,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 32,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 33,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 34,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 35,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 36,
+      "order": 1
+    },
+    {
+      "aid1": 11,
+      "aid2": 37,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 38,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 39,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 40,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 41,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 42,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 43,
+      "order": 1
+    },
+    {
+      "aid1": 14,
+      "aid2": 44,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 19,
+      "order": 2
+    },
+    {
+      "aid1": 16,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 16,
+      "aid2": 20,
+      "order": 2
+    },
+    {
+      "aid1": 19,
+      "aid2": 21,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 45,
+      "order": 1
+    },
+    {
+      "aid1": 20,
+      "aid2": 22,
+      "order": 1
+    },
+    {
+      "aid1": 20,
+      "aid2": 46,
+      "order": 1
+    },
+    {
+      "aid1": 21,
+      "aid2": 22,
+      "order": 2
+    },
+    {
+      "aid1": 21,
+      "aid2": 47,
+      "order": 1
+    },
+    {
+      "aid1": 22,
+      "aid2": 48,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C18H26O4",
+  "molecular_weight": "306.4",
+  "canonical_smiles": "CCCCCOC(=O)C1=CC=CC=C1C(=O)OCCC(C)C",
+  "isomeric_smiles": "CCCCCOC(=O)C1=CC=CC=C1C(=O)OCCC(C)C",
+  "inchi": "InChI=1S/C18H26O4/c1-4-5-8-12-21-17(19)15-9-6-7-10-16(15)18(20)22-13-11-14(2)3/h6-7,9-10,14H,4-5,8,11-13H2,1-3H3",
+  "inchikey": "MCXWUHMDAJQKBI-UHFFFAOYSA-N",
+  "iupac_name": "2-O-(3-methylbutyl) 1-O-pentyl benzene-1,2-dicarboxylate",
+  "xlogp": 5.7,
+  "exact_mass": "306.18310931",
+  "monoisotopic_mass": "306.18310931",
+  "tpsa": 52.6,
+  "complexity": 338,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 4,
+  "rotatable_bond_count": 11,
+  "fingerprint": "00000371E0783800000000000000000000000000000000000000300000000000000000010000001A00000000000D00A09802320880000400880220D208000200002400000888010008C808263280351882310024C00108A987CBC8A08E80000000001000000000000000200000000000000000",
+  "cactvs_fingerprint": "11100000011110000011100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000001101000000000000000000000000000000000000000000000110100000000101000001001100000000010001100100000100010000000000000000000010000000000100010000000001000100000110100100000100000000000000000100000000000000000001001000000000000000000000010001000100000000001000000000000100011001000000010000010011000110010100000000011010100011000100000100011000100000000001001001100000000000001000010001010100110000111110010111100100010100000100011101000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 22,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

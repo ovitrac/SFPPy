@@ -1,0 +1,257 @@
+{
+  "cid": 601666,
+  "synonyms": [
+    "1,1,3,3,4,4-hexachlorobut-1-ene",
+    "1,1,3,3,4,4-Hexachloro-1-butene",
+    "34973-39-2",
+    "1-Butene, 1,1,3,3,4,4-hexachloro-",
+    "MFCD18968487",
+    "C4H2Cl6",
+    "SCHEMBL4864007",
+    "DTXSID20345066",
+    "ABMSWFCHXPNDHQ-UHFFFAOYSA-N",
+    "DB-259025",
+    "1,1,3,3,4,4-Hexachloro-1-butene, 95%"
+  ],
+  "sids": [
+    8694056,
+    16169447,
+    43161200,
+    50980421,
+    113513416,
+    141438559,
+    142679276,
+    162511171,
+    230750721,
+    247735093,
+    250058447,
+    274158695,
+    313601903,
+    315875474,
+    316486459,
+    319238999,
+    341509275,
+    349765222,
+    363596587,
+    368649592,
+    390468270,
+    404761723,
+    416033921,
+    468805110,
+    472690652,
+    485066793,
+    488357109,
+    490160367,
+    498299136,
+    513986184
+  ],
+  "aids": [],
+  "elements": [
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Cl",
+      "x": 4.0981,
+      "y": 0.549,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "Cl",
+      "x": 5.0981,
+      "y": -1.183,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "Cl",
+      "x": 6.3301,
+      "y": -0.317,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "Cl",
+      "x": 5.4641,
+      "y": 1.183,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "Cl",
+      "x": 2,
+      "y": -0.817,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "Cl",
+      "x": 2.866,
+      "y": 0.683,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "C",
+      "x": 4.5981,
+      "y": -0.317,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "C",
+      "x": 5.4641,
+      "y": 0.183,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 3.732,
+      "y": -0.817,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 2.866,
+      "y": -0.317,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "H",
+      "x": 5.4641,
+      "y": -0.437,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "H",
+      "x": 3.732,
+      "y": -1.437,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 10,
+      "order": 2
+    },
+    {
+      "aid1": 9,
+      "aid2": 12,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C4H2Cl6",
+  "molecular_weight": "262.8",
+  "canonical_smiles": "C(=C(Cl)Cl)C(C(Cl)Cl)(Cl)Cl",
+  "isomeric_smiles": "C(=C(Cl)Cl)C(C(Cl)Cl)(Cl)Cl",
+  "inchi": "InChI=1S/C4H2Cl6/c5-2(6)1-4(9,10)3(7)8/h1,3H",
+  "inchikey": "ABMSWFCHXPNDHQ-UHFFFAOYSA-N",
+  "iupac_name": "1,1,3,3,4,4-hexachlorobut-1-ene",
+  "xlogp": 4.5,
+  "exact_mass": "261.825816",
+  "monoisotopic_mass": "259.828766",
+  "tpsa": 0,
+  "complexity": 133,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 0,
+  "rotatable_bond_count": 2,
+  "fingerprint": "00000371006000000700000000000000000000000000000000000000000000000000000000000018020000000008038000C00000000000008000204200000000002000000000400002080000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "00000000011000000000000000000000000001110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100000000010000000000000000000000000000000000000100000000011100000000000000011000000000000000000000000000000000000000000000000000000100000000000000000100000010000100000000000000000000000000000000000000000001000000000000000000000000000000000000001000000000000000000001000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 10,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

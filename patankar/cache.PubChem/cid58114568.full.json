@@ -1,0 +1,315 @@
+{
+  "cid": 58114568,
+  "synonyms": [
+    "50807-72-2",
+    "1,1,1-Trifluoro-2-(1,1,2,2-tetrafluoroethoxy)propane",
+    "SCHEMBL12924126",
+    "DTXSID20728830",
+    "Propane, 1,1,1-trifluoro-2-(1,1,2,2-tetrafluoroethoxy)-"
+  ],
+  "sids": [
+    138242426,
+    138912206,
+    162543239,
+    237935281,
+    316258717,
+    464867445,
+    468852159,
+    472718205,
+    495932773,
+    513544870
+  ],
+  "aids": [],
+  "elements": [
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "F",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "F",
+      "x": 4.232,
+      "y": -0.799,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "F",
+      "x": 3.232,
+      "y": 0.933,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "F",
+      "x": 7.1962,
+      "y": 1.067,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "F",
+      "x": 6.8301,
+      "y": -0.299,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "F",
+      "x": 5.8301,
+      "y": 1.433,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "F",
+      "x": 2,
+      "y": 0.067,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "F",
+      "x": 2.866,
+      "y": -1.433,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "O",
+      "x": 4.5981,
+      "y": 0.567,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 5.4641,
+      "y": 0.067,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 3.732,
+      "y": 0.067,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 6.3301,
+      "y": 0.567,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "C",
+      "x": 5.4641,
+      "y": -0.933,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "C",
+      "x": 2.866,
+      "y": -0.433,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "H",
+      "x": 5.4641,
+      "y": 0.687,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "H",
+      "x": 4.8441,
+      "y": -0.933,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "H",
+      "x": 5.4641,
+      "y": -1.553,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "H",
+      "x": 6.0841,
+      "y": -0.933,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "H",
+      "x": 2.866,
+      "y": 0.187,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 12,
+      "order": 1
+    },
+    {
+      "aid1": 9,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 15,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 18,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C5H5F7O",
+  "molecular_weight": "214.08",
+  "canonical_smiles": "CC(C(F)(F)F)OC(C(F)F)(F)F",
+  "isomeric_smiles": "CC(C(F)(F)F)OC(C(F)F)(F)F",
+  "inchi": "InChI=1S/C5H5F7O/c1-2(4(8,9)10)13-5(11,12)3(6)7/h2-3H,1H3",
+  "inchikey": "XJHZQQULQSNUMH-UHFFFAOYSA-N",
+  "iupac_name": "1,1,1-trifluoro-2-(1,1,2,2-tetrafluoroethoxy)propane",
+  "xlogp": 3.2,
+  "exact_mass": "214.02286191",
+  "monoisotopic_mass": "214.02286191",
+  "tpsa": 9.2,
+  "complexity": 163,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 8,
+  "rotatable_bond_count": 3,
+  "fingerprint": "00000371806021C0000000000000000000000000000000000000000000000000000000000000001B00000000000814A080120200000004000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "10000000011000000010000111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101100000000000000000000000000000000000000000000100000010100101000001000000000010010000000100000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 13,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 1,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 1,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}
