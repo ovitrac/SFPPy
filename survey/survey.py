@@ -634,6 +634,32 @@ class Survey:
             raise ValueError("Sum of weights must be positive")
         w /= s
 
+        # Degenerate distributions: when the sample range is zero or denormal
+        # (e.g. a non-migrating overpack chain, max CF ~1e-310), np.histogram
+        # with integer bins raises "Too many bins for data range. Cannot
+        # create N finite-sized bins" (caught on a degenerate near-zero
+        # overpack case). Values below 1e-250 are hundreds of decades under
+        # LOD/10 — physically zero: emit a single-spike PDF at 0 on [0, 1].
+        smp = np.asarray(samples, dtype=float)
+        smax = float(np.nanmax(smp)) if smp.size else 0.0
+        smin = float(np.nanmin(smp)) if smp.size else 0.0
+        degenerate = (not np.isfinite(smax)) or smax < 1e-250 \
+            or (smax - smin) <= 0.0 or not np.isfinite(smax - smin)
+        if degenerate:
+            # physically-zero case → spike in the first bin of [0, 1];
+            # equal-but-finite case → spike at the common value.
+            if (not np.isfinite(smax)) or smax < 1e-250:
+                lo, hi = 0.0, 1.0
+            else:
+                lo, hi = 0.9 * smax, 1.1 * smax
+            edges = np.linspace(lo, hi, self.config.pdf_bins + 1)
+            centers = 0.5 * (edges[:-1] + edges[1:])
+            hist = np.zeros(self.config.pdf_bins)
+            j = self.config.pdf_bins // 2 if lo > 0.0 else 0
+            hist[j] = 1.0 / (edges[1] - edges[0])   # all mass in one bin
+            cdf = np.concatenate([np.zeros(j), np.ones(self.config.pdf_bins - j)])
+            return centers, hist, cdf
+
         hist, edges = np.histogram(
             samples,
             bins=self.config.pdf_bins,

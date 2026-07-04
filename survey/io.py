@@ -45,6 +45,8 @@ SURROGATE_CAS = {
     "65447-77-0": "2226-96-2",    # Tinuvin 622 LD → 4-Hydroxy-TEMPO
     "9005-32-7":  "6814-36-4",    # Alginic acid → D-Mannuronic acid
     "9036-19-5":  "140-66-9",     # PEG octylphenyl ether → 4-tert-Octylphenol
+    "24980-41-4": "502-44-3",     # Polycaprolactone → ε-Caprolactone (monomer)
+    "26780-96-1": "147-47-7",     # poly(2,2,4-trimethyl-1,2-dihydroquinoline) (TMQ) → 2,2,4-trimethyl-1,2-dihydroquinoline (monomer)
 
     # Flame retardants → Base structure
     "68631-49-2": "101-84-8",     # Hexabromodiphenyl ether → Diphenyl ether
@@ -88,11 +90,10 @@ SURROGATE_CAS = {
     "1325-82-2":  "548-62-9",     # Pigment Violet 3 → Crystal violet
 
     # ------------------------------------------------------------------
-    # UVCB / mixture representatives — dbs_20260618 (3a) paper-overpack
-    # families. Each is a NEUTRAL, single-CID, conservative representative
-    # (no salts/ions); oils/surfactants→fatty acid, polymer→monomer,
-    # rosin→abietic, halogenated→retains halogen (Rev1 ladder rules).
-    # Approved OV 2026-06-27.
+    # UVCB / mixture representatives — paper-overpack families. Each is a
+    # NEUTRAL, single-CID, conservative representative (no salts/ions);
+    # oils/surfactants→fatty acid, polymer→monomer, rosin→abietic,
+    # halogenated→retains halogen (Rev-1 ladder rules).
     # ------------------------------------------------------------------
     "1330-80-9":  "112-80-1",                 # PG monooleate → Oleic acid
     "1336-36-3":  "2051-60-7",                # PCBs → 2-Chlorobiphenyl (retains Cl)
@@ -113,9 +114,116 @@ SURROGATE_CAS = {
 
     # Fluorescent whitening agents (sulfonated stilbenes, M~1300, logP missing
     # → non-finite partition → solver abort). Conservative neutral stilbene-core
-    # representative (trans-stilbene: smallest/most-mobile, valid logP). OV 2026-06-27.
+    # representative (trans-stilbene: smallest/most-mobile, valid logP).
     "41098-56-0": "103-30-0",                 # Hexasulfo FWA → trans-Stilbene
     "68971-49-3": "103-30-0",                 # Fluorescent Brightener 264 → trans-Stilbene
+
+    # Additional substances that failed to resolve in a full-base run. Right
+    # alternatives per the Rev-1 ladder rules — polymer→monomer,
+    # glycerol-ester/oil→(triglyceride, fatty acid), ethoxylated→base phenol/alcohol,
+    # branched/UVCB phthalate→DEHP, biopolymer→monomer. Conservative representatives.
+    "24937-78-8": "108-05-4",                 # EVA copolymer wax → Vinyl acetate (FCM-relevant monomer)
+    "1333-07-9":  "70-55-3",                  # Toluenesulfonamide (o/p mix) → p-Toluenesulfonamide
+    "26027-38-3": "104-40-5",                 # 4-Nonylphenol ethoxylated → 4-Nonylphenol
+    "68515-48-0": "117-81-7",                 # DINP (diisononyl phthalate, UVCB) → DEHP
+    "68648-92-0": "117-81-7",                 # Di-n-nonyl phthalate → DEHP
+    "9002-92-0":  "112-53-8",                 # Dodecyl alcohol ethoxylated (laureth) → 1-Dodecanol
+    "73398-61-5": ("538-23-8", "124-07-2"),   # Caprylic/capric triglycerides → Tricaprylin, Caprylic acid
+    "38264-86-7": "106-14-9",                 # Glycerol esters of 12-hydroxystearic acid → 12-Hydroxystearic acid
+    "41755-77-5": ("555-43-1", "57-11-4"),    # Glycerol esters of stearic acid → Tristearin, Stearic acid
+    "9004-61-9":  "6556-12-3",                # Hyaluronic acid (biopolymer) → D-Glucuronic acid (monomer)
+
+    # ------------------------------------------------------------------
+    # SURROGATE_CAS Rev-2 — prewarm not-found triage.
+    # UVCB / mixed-isomer / trade-name / polymeric substances mapped to
+    # neutral single-CID conservative representatives per the Rev-1 rules
+    # (R1 single-substance worst case, R2 neutral only, R3 retain halogens;
+    # polymer→monomer, oil/ester→fatty acid or triglyceride, ethoxylate→base,
+    # wax→n-alkane, trade antioxidant/photoinitiator→parent structure).
+    # ------------------------------------------------------------------
+    # fatty alcohols (UVCB ranges → named n-alkanol)
+    "66455-17-2": "112-30-1",                 # Alcohols C9-11 → 1-Decanol
+    "67762-25-8": "629-76-5",                 # Alcohols C14-15 → 1-Pentadecanol
+    "68911-61-5": "112-92-5",                 # Alcohols UVCB (octadecanol) → 1-Octadecanol
+    "29354-98-1": "36653-82-4",               # Hexadecanol UVCB → 1-Hexadecanol
+    "90604-34-5": "629-96-9",                 # Eicosanol UVCB → 1-Eicosanol
+    "8027-33-6":  "36653-82-4",               # Lanolin alcohols → 1-Hexadecanol
+    # fatty acids & esters (UVCB → named homologue)
+    "61788-47-4": "143-07-7",                 # Coco fatty acids C12 → Lauric acid
+    "45184-05-2": "544-63-8",                 # Coco fatty acids C14 → Myristic acid
+    "67254-79-9": "57-11-4",                  # Fatty acids C16-18 sat. → Stearic acid
+    "97593-30-1": "123-94-4",                 # Acetylated mono/diglycerides → Glyceryl monostearate
+    "127377-16-6": "142-18-7",                # Glycerol esters of lauric acid → Glyceryl monolaurate
+    "85116-93-4": "115-83-3",                 # C8-22 pentaerythritol esters → Pentaerythritol tetrastearate
+    "100830-53-3": "123-94-4",                # Glyceryl tetracosanoate → Glyceryl monostearate
+    "736150-63-3": "123-94-4",                # Acet./hydrog. castor monoglycerides → Glyceryl monostearate
+    "27194-74-7": "143-07-7",                 # PG monolaurate → Lauric acid
+    "103819-46-1": "112-80-1",                # PEG-10 olive glycerides → Oleic acid
+    "68648-27-1": "112-92-5",                 # PEG-20 hydrogenated lanolin → 1-Octadecanol
+    "61788-85-0": "106-14-9",                 # PEG-40 hydrogenated castor oil → 12-Hydroxystearic acid
+    # waxes → n-alkane representative (C31, matches candelilla entry)
+    "8002-74-2": "630-04-6",                  # Paraffin → Hentriacontane
+    "8063-08-9": "630-04-6",                  # Wax (unspecified) → Hentriacontane
+    "8001-75-0": "630-04-6",                  # Ceresine → Hentriacontane
+    "8015-86-9": "630-04-6",                  # Carnauba → Hentriacontane
+    # PEG & epoxidized oils
+    "25322-68-3": "112-27-6",                 # PEG → Triethylene glycol
+    "8013-07-8": "122-32-7",                  # ESBO → Triolein (triglyceride rep)
+    "8016-11-3": "122-32-7",                  # Epoxidized linseed oil → Triolein
+    # plasticizers with defined structure but unindexed CAS
+    "105557-17-3": "103-23-1",                # Diisodecyl adipate → DEHA
+    "122729-70-8": "103-24-2",                # Diisooctyl azelate → Di(2-ethylhexyl) azelate
+    "1330-98-9":  "122-62-3",                 # Diisooctyl sebacate → DOS
+    "154766-25-3": "3648-20-2",               # Diundecyl phthalate → DUP
+    "55799-38-7": "103-23-1",                 # Palamoll 636 (polyester adipate) → DEHA
+    "28301-90-8": "103-23-1",                 # Poly(TMP adipate) → DEHA
+    "263244-54-8": "120-61-6",                # Cyclic PBT oligomers → Dimethyl terephthalate (monomer)
+    "25395-31-7": "102-76-1",                 # Glycerol diacetate → Triacetin
+    "959226-07-4": "542-52-9",                # Decyl isobutyl carbonate → Dibutyl carbonate
+    "207790-01-0": "131-11-3",                # Methoxy-PEG phthalate half-ester → Dimethyl phthalate
+    # mixed-isomer solvents / aromatics → single isomer
+    "1330-20-7": "95-47-6",                   # Xylenes → o-Xylene
+    "1330-78-5": "78-30-8",                   # Tricresyl phosphate → Tri-o-cresyl phosphate
+    "26471-62-5": "584-84-9",                 # TDI (mixed) → 2,4-TDI
+    "68648-86-2": "123-01-3",                 # Alkylbenzenes → Dodecylbenzene
+    "63231-51-6": "91-20-3",                  # Aromatic hydrocarbons → Naphthalene
+    "36876-13-8": "92-52-4",                  # Diisopropylbiphenyl → Biphenyl
+    "25498-49-1": "34590-94-8",               # Tripropylene glycol methyl ether → Dipropylene glycol methyl ether
+    "25513-64-8": "124-09-4",                 # Trimethylhexanediamine mix → Hexamethylenediamine
+    "27175-63-9": "623-05-2",                 # Hydroxybenzyl alcohol → 4-Hydroxybenzyl alcohol
+    # antioxidants / photoinitiators (trade / polymeric → parent structure)
+    "125643-61-0": "2082-79-3",               # Irganox 1135 → Irganox 1076
+    "119345-01-6": "31570-04-4",              # Irgafos P-EPQ → Irgafos 168
+    "1821217-71-3": "31570-04-4",             # Polymeric phosphite → Irgafos 168
+    "1227937-46-3": "31570-04-4",             # Polymeric phosphite → Irgafos 168
+    "939402-02-5": "31570-04-4",              # Phosphite triester mix → Irgafos 168
+    "171090-93-0": "2082-79-3",               # Hindered-phenol propanoate esters → Irganox 1076
+    "1003567-83-6": "492-22-8",               # Speedcure 7010 → Thioxanthone
+    "1182753-56-5": "492-22-8",               # Speedcure 7005 → Thioxanthone
+    "813452-37-8": "492-22-8",                # Carboxymethoxythioxanthone-PTMG diester → Thioxanthone
+    "515136-48-8": "119-61-9",                # Carboxymethoxybenzophenone-PTMG diester → Benzophenone
+    "51728-26-8": "4986-89-4",                # Alkoxylated pentaerythritol tetraacrylate → PETA
+    "158163-01-0": "1675-54-3",               # Novolac glycidyl ether (3-ring) → BADGE
+    # halogenated — retain halogens (R3)
+    "84852-15-3": "104-40-5",                 # 4-Nonylphenols (branched) → 4-n-Nonylphenol
+    "90193-67-2": "5436-43-1",                # Brominated diphenyl ethers → BDE-47
+    "132405-96-0": "5436-43-1",               # PentaBDE → BDE-47
+    "2624-80-8":  "1763-23-1",                # N-Et-PFOS-amidoethyl sulfate → PFOS
+    "757124-22-4": "27619-97-2",              # 4:2 FTS → 6:2 FTS (nearest indexed homologue)
+    "26523-64-8": "76-13-1",                  # Trichlorotrifluoroethane → CFC-113
+    "191680-83-8": "80-09-1",                 # Chloroether-bisphenol S polymer → Bisphenol S (monomer)
+    # amines / quats / salts
+    "61789-80-8": "112-02-7",                 # Dimethyldialkyl(C16-18) ammonium chloride → CTAC
+    "61790-82-7": "10213-78-2",               # Bis(2-HE)alkylamine (tallow) → Bis(2-HE)stearylamine
+    "71786-60-2": "10213-78-2",               # Bis(2-HE)alkyl(C8-18)amine → Bis(2-HE)stearylamine
+    "26896-20-8": "112-05-0",                 # Neodecanoic acid, salts → Nonanoic acid
+    "51818-56-5": "112-05-0",                 # Ni neodecanoate → Nonanoic acid (organic part; Ni out of scope)
+    # others
+    "70131-67-8": "556-67-2",                 # Polysiloxane (OH-terminated PDMS) → D4
+    "25038-36-2": "16219-75-3",               # EPDM terpolymer → Ethylidenenorbornene (monomer)
+    "8004-87-3": "548-62-9",                  # Basic Violet 1 → Crystal violet
+    "39276-09-0": "98-01-1",                  # Furancarboxaldehyde → Furfural
+    "61262-67-7": "475-20-7",                 # Longifolene-(V4) → Longifolene
 }
 
 
@@ -407,6 +515,16 @@ def parse_substances(
     # Named substances
     if 'substances' in family_cfg:
         substances = []
+        # NO within-family de-duplication of resolved compounds (by design).
+        # When two DISTINCT input CAS in one family map to
+        # the SAME surrogate (e.g. DnNP + branched phthalate → DEHP; several oils → oleic
+        # acid), they are TWO DISTINCT original substances of concern that happen to share a
+        # conservative proxy — NOT a duplicate. Collapsing them would lose a real substance
+        # and be under-conservative. The original identity is preserved instead: the
+        # SubstanceSpec keeps the ORIGINAL CAS and labels the name "… [surrogate:Y]", and
+        # the per-substance aggregate is keyed on the ORIGINAL CAS, so each stays distinct
+        # with no bias. (The only genuine duplicate — the SAME original CAS listed twice in
+        # one family — does not occur in the dbs: the FCC check found 0 same-CAS repeats.)
         for i, spec in enumerate(family_cfg['substances']):
             name = spec.get('name')
             cas = spec.get('cas')
@@ -528,6 +646,9 @@ def parse_substances(
                 # Handle 0/1, "true"/"false", etc.
                 exchangeable = bool(int(exchangeable_val))  # 0/1 -> False/True
 
+            # (No resolved-compound de-duplication here — see the note at the top of this
+            # branch. Each original substance is kept distinct; the surrogate is recorded in
+            # the name and the original CAS is retained for keying.)
             sub_spec = SubstanceSpec.from_name(
                 name=resolved_name,
                 mass_g_mol=M,

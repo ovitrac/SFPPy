@@ -338,8 +338,13 @@ def compute_pdf_from_samples(
     cf_samples = np.asarray(cf_samples)
     weights = np.asarray(weights, dtype=float)
 
-    # Handle edge case: all zeros
-    if cf_samples.max() == 0:
+    # Handle edge case: all zeros — or numerically-dust distributions whose
+    # max is denormal/tiny (e.g. ~1e-310 for a non-migrating overpack chain).
+    # np.linspace(0, max*1.1, n_bins+1) then underflows to duplicate edges and
+    # np.histogram raises "Too many bins for data range" (caught on a
+    # degenerate near-zero overpack case). Anything below 1e-250
+    # is hundreds of decades under LOD/10 — physically zero.
+    if (not np.isfinite(cf_samples.max())) or cf_samples.max() < 1e-250:
         bin_edges = np.linspace(0, 1, n_bins + 1)
         bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
         pdf = np.zeros(n_bins)
