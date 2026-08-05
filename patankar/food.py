@@ -49,6 +49,7 @@ import sys
 import inspect
 import textwrap
 import numpy as np
+from warnings import warn
 from copy import deepcopy as duplicate
 
 from patankar.layer import check_units, NoUnits, layer # to convert units to SI
@@ -578,7 +579,7 @@ def create_food_tree_widget():
                 print("Please provide an instance name.")
                 return
             instance.update(contacttime=(time_val.value,time_unit.value),
-                            contactemperature=(temp_val.value,temp_unit.value))
+                            contacttemperature=(temp_val.value,temp_unit.value))
             builtins.mycontacts[name_val] = instance
             print(f"Instantiated custom condition '{name_val}':")
             print(instance)
@@ -703,7 +704,11 @@ class foodphysics:
         # users use "k", but internally we use k0, keep _kmodel in the instance
         "k0","k0unit","kmodel","_compute_kmodel", # Henry-like coefficients returned as properties with possible user override with medium.k0model=None or a function
         # SML properties
-        "SML","SMLunit"
+        "SML","SMLunit",
+        # deprecated names kept as aliases (see foodlayer): the misspelled
+        # contactemperature, and the two off-convention units labels
+        "contactemperature","contactemperatureUnits",
+        "CF0units","contacttime_units"
         ]
 
     # ------------------------------------------------------
@@ -1408,9 +1413,9 @@ class foodlayer(foodphysics):
     volume,volumeUnits = check_units((1,"dm**3"))
     surfacearea,surfaceareaUnits = check_units((6,"dm**2"))
     density,densityUnits = check_units((1000,"kg/m**3"))
-    CF0,CF0units = check_units((0,NoUnits))  # initial concentration (arbitrary units)
-    contacttime, contacttime_units = check_units((10,"days"))
-    contactemperature,contactemperatureUnits = check_units((40,"degC"),ExpectedUnits="degC") # temperature in °C
+    CF0,CF0Units = check_units((0,NoUnits))  # initial concentration (arbitrary units)
+    contacttime,contacttimeUnits = check_units((10,"days"))
+    contacttemperature,contacttemperatureUnits = check_units((40,"degC"),ExpectedUnits="degC") # temperature in °C
     _substance = None # substance container / similar construction in pantankar.layer = migrant
     _k0model = None
     # -----------------------------------------------------------------------------
@@ -1549,6 +1554,73 @@ class foodlayer(foodphysics):
             self._kmodel = value
         else:
             raise ValueError("kmodel must be None or a callable function")
+
+    # ---------------------------------------------------------------------
+    # Deprecated alias: contactemperature (one "t") -> contacttemperature
+    # ---------------------------------------------------------------------
+    # foodlayer historically declared the contact temperature as
+    # "contactemperature", while parametersWithUnits, _list_categories,
+    # _transferable_properties, layer.contact() and migration.senspatankar()
+    # all read "contacttemperature". The attribute was therefore written but
+    # never read: a bare foodlayer had no "contacttemperature" at all, and
+    # layer.contact() silently substituted the layer's own T (layer._defaults
+    # ["T"]=40 degC, numerically equal to the foodlayer default, which is why
+    # this went unnoticed). The declaration is now spelled correctly; these
+    # aliases keep any external code that used the old name working.
+    @property
+    def contactemperature(self):
+        """Deprecated alias of contacttemperature (kept for compatibility)."""
+        warn("'contactemperature' is deprecated (missing 't'); "
+             "use 'contacttemperature'.", DeprecationWarning, stacklevel=2)
+        return self.contacttemperature
+    @contactemperature.setter
+    def contactemperature(self,value):
+        warn("'contactemperature' is deprecated (missing 't'); "
+             "use 'contacttemperature'.", DeprecationWarning, stacklevel=2)
+        self.contacttemperature = value
+    @property
+    def contactemperatureUnits(self):
+        """Deprecated alias of contacttemperatureUnits."""
+        return self.contacttemperatureUnits
+    @contactemperatureUnits.setter
+    def contactemperatureUnits(self,value):
+        # units are SI and fixed by design: contacttemperatureUnits is protected
+        # from kwargs by paramaterNamesWithUnits, so the alias refuses writes too
+        # rather than raising where the canonical name would silently ignore.
+        warn("'contactemperatureUnits' is deprecated and read-only; "
+             "units are SI and cannot be reassigned.", DeprecationWarning,
+             stacklevel=2)
+
+    # ---------------------------------------------------------------------
+    # Deprecated aliases: off-convention units labels
+    # ---------------------------------------------------------------------
+    # foodlayer declared "CF0units" (lowercase u) and "contacttime_units"
+    # (underscore) while paramaterNamesWithUnits is built as key+"Units" and
+    # __repr__ looks the label up as f"{key}Units". Neither name was ever
+    # found: the display silently fell back to the registry string, and the
+    # units-overwrite guard did not cover them, so they could be reassigned
+    # where volumeUnits and the others are protected. Renamed to CF0Units and
+    # contacttimeUnits; these aliases keep any external reader working.
+    @property
+    def CF0units(self):
+        """Deprecated alias of CF0Units."""
+        warn("'CF0units' is deprecated; use 'CF0Units'.",
+             DeprecationWarning, stacklevel=2)
+        return self.CF0Units
+    @CF0units.setter
+    def CF0units(self,value):
+        warn("'CF0units' is deprecated and read-only; units are SI and cannot "
+             "be reassigned.", DeprecationWarning, stacklevel=2)
+    @property
+    def contacttime_units(self):
+        """Deprecated alias of contacttimeUnits."""
+        warn("'contacttime_units' is deprecated; use 'contacttimeUnits'.",
+             DeprecationWarning, stacklevel=2)
+        return self.contacttimeUnits
+    @contacttime_units.setter
+    def contacttime_units(self,value):
+        warn("'contacttime_units' is deprecated and read-only; units are SI "
+             "and cannot be reassigned.", DeprecationWarning, stacklevel=2)
     @property
     def _compute_kmodel(self):
         """Return a callable function that evaluates k with updated parameters."""

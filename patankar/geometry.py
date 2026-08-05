@@ -1008,6 +1008,42 @@ SHAPE_REGISTRY = {
     "pot": OpenCylinder1,
     "jar": OpenCylinder1,
 
+    # ---- Cosmetic and home-care primary packaging --------------------------
+    # A minimum set covering the common formats. Each maps to the shape whose
+    # surface-to-volume behaviour it shares; the distinguishing quantity in a
+    # migration calculation is A/V, not the silhouette.
+    #
+    # Closed bodies (product fully enclosed, both faces of the wall counted):
+    "tube": Cylinder,            # squeeze tube: cream, gel, mask
+    "tottle": Cylinder,          # tube-bottle, stood on its cap
+    "airless": Cylinder,         # airless pump dispenser
+    "pump": Cylinder,            # pump dispenser body
+    "aerosol": Cylinder,         # aerosol can
+    "bidon": Cylinder,           # aluminium can/bidon -- varnished, see note
+    "stick": Cylinder,           # deodorant / balm stick
+    "roll_on": Cylinder,
+    "rollon": Cylinder,
+    "vial": Cylinder,            # dropper bottle, sample vial
+    "ampoule": Cylinder,
+    # Flat formats -- high surface-to-volume, usually the worst case:
+    "sachet": RectangularPrism,  # single-dose sachet
+    "stickpack": RectangularPrism,
+    "stick_pack": RectangularPrism,
+    "pouch": RectangularPrism,   # doypack / refill pouch
+    "compact": RectangularPrism,  # powder compact, palette
+    "palette": RectangularPrism,
+    # Open formats (one face in contact, the other to air):
+    "cup": OpenCylinder1,
+    "tray": OpenPrism1,
+    #
+    # NOTE on varnished metal (`aerosol`, `bidon`). The geometry is a cylinder,
+    # but the migration regime is not the one intuition supplies. A 5-10 um
+    # coating on an impermeable substrate holds the entire reservoir in the
+    # coating: a FINITE-DOSE problem, not a semi-infinite one. At long times it
+    # tends to near-total depletion, so the result is governed by the partition
+    # coefficient rather than by the diffusivity. Diffusion sets *when*;
+    # partition sets *how much*. Model the coating as the layer, not the metal.
+
     # Synonym for an open cylinder with two open ends:
     "straw": OpenCylinder2,
     "tube": OpenCylinder2,

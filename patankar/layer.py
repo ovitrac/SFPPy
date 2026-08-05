@@ -3690,8 +3690,8 @@ class plasticizedPVC(layer):
     _polarityindex = 4.5  # Plasticizers can slightly change overall polarity/solubility.
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
-                 layername="layer in plasticized PVC",**extra):
-        """ plasticized PVC layer constructor """
+                 layername="layer in plasticized PVC",Tg=None,**extra):
+        """ plasticized PVC layer constructor (Tg declarable, default -40°C) """
         super().__init__(
             l=l, D=D, k=k, C0=C0, T=T,
             lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
@@ -3701,6 +3701,7 @@ class plasticizedPVC(layer):
             layercode="pPVC",
             **extra
         )
+        self._Tguser = None if Tg is None else check_units(Tg,None,"degC")[0]
     def density(self, T=None):
         """
         density of plasticized PVC: ~1300 kg/m^3
@@ -3709,8 +3710,20 @@ class plasticizedPVC(layer):
         return 1300 * (1 - 3*(T - layer._defaults["Td"]) * 15e-5), "kg/m**3"
     @property
     def Tg(self):
-        """ glass transition temperature of plasticized PVC """
+        """
+        glass transition of plasticized PVC: declared value, else ~-40°C
+
+        Declarable for the same reason as `wPET`: the depression depends on the
+        plasticizer and on how much of it the medium extracts or adds.
+        """
+        Tguser = getattr(self, "_Tguser", None)
+        if Tguser is not None:
+            return float(np.asarray(Tguser).ravel()[0]), "degC"
         return -40, "degC"
+    @Tg.setter
+    def Tg(self,value):
+        """ declare the glass transition of the plasticized state """
+        self._Tguser = None if value is None else check_units(value,None,"degC")[0]
     @property
     def Tm(self):
         """ plasticized PVC also amorphous """
@@ -3812,11 +3825,36 @@ class gPET(layer):
 
 ## wPET(plasticized/wet PET) -------------------------------------------
 class wPET(gPET):
-    """ extended pantankar.layer for severaly plasticized PET (Tg ~46°C) """
+    """
+    extended pantankar.layer for severely plasticized PET (Tg ~46°C)
+
+    The `w` prefix is the PLASTICIZED (swollen) state, and it is general: it is
+    not restricted to water. Whatever sorbs into the polymer -- water, ethanol,
+    a surfactant solution, an oxidising solution -- depresses Tg and raises D.
+    (Contrast `rPET`, which is the RUBBERY state above Tg, a matter of
+    temperature rather than of sorption.)
+
+    Because the depression depends on what does the swelling, `Tg` is
+    **declarable** rather than fixed. The default, 46°C, corresponds to PET
+    plasticized by sorbed water; a medium that swells PET more than water does
+    -- a hydroalcoholic base, for instance -- depresses it further, and the
+    default is then no longer a bound. Declare it explicitly:
+
+        wPET(l=(500,"um"), Tg=(35,"degC"))     # more strongly swollen than by water
+        wall.Tg = (35,"degC")                  # equivalently, after construction
+
+    The value propagates to the diffusion model through `Tg_history`, so a
+    declared Tg genuinely changes D rather than merely being recorded.
+
+    Note the hole-free-volume parameterisation for 'wPET' was fitted at
+    Tg = 316.15 K (43°C); declaring a materially lower Tg extrapolates outside
+    that fit and should be stated as such.
+    """
     def __init__(self, l=200e-6, D=1e-14, T=None,
                  k=None, C0=None, lunit=None, Dunit=None, kunit=None, Cunit=None,
-                 layername="layer in wPET",layermaterial="plasticized PET",**extra):
-        """ plasticized PET layer constructor """
+                 layername="layer in wPET",layermaterial="plasticized PET",
+                 Tg=None,**extra):
+        """ plasticized PET layer constructor (Tg declarable, default 46°C) """
         super().__init__(
             l=l, D=D, k=k, C0=C0, T=T,
             lunit=lunit, Dunit=Dunit, kunit=kunit, Cunit=Cunit,
@@ -3824,11 +3862,20 @@ class wPET(gPET):
             layermaterial=layermaterial,
             **extra
         )
+        self._Tguser = None if Tg is None else check_units(Tg,None,"degC")[0]
 
     @property
     def Tg(self):
-        """ approximate glass transition temperature of PET """
+        """ glass transition of plasticized PET: declared value, else ~46°C """
+        Tguser = getattr(self, "_Tguser", None)
+        if Tguser is not None:
+            return float(np.asarray(Tguser).ravel()[0]), "degC"
         return 46, "degC"
+
+    @Tg.setter
+    def Tg(self,value):
+        """ declare the glass transition of the swollen state """
+        self._Tguser = None if value is None else check_units(value,None,"degC")[0]
 
 
 # -- rPET (rubbery PET, T > 76°C) --------------------------------------
