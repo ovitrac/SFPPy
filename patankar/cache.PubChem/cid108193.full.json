@@ -1,0 +1,186 @@
+{
+  "cid": 108193,
+  "synonyms": [
+    "Methylstannane",
+    "1631-78-3",
+    "Stannane, methyl-",
+    "Monomethyl tin radical",
+    "SCHEMBL11406987",
+    "SCHEMBL31683745",
+    "NS00122005",
+    "23001-26-5"
+  ],
+  "sids": [
+    44437071,
+    50076013,
+    75228761,
+    104380732,
+    135065916,
+    135098260,
+    162799777,
+    319139255,
+    341176317,
+    387100237,
+    392018603,
+    415812723,
+    468736378,
+    472503454,
+    509931674,
+    516607818,
+    521313341,
+    521652369
+  ],
+  "aids": [],
+  "elements": [
+    "Sn",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Sn",
+      "x": 2.5369,
+      "y": 0,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "C",
+      "x": 3.403,
+      "y": 0.5,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "H",
+      "x": 2,
+      "y": -0.31,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "H",
+      "x": 2.2269,
+      "y": 0.5369,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "H",
+      "x": 2.8469,
+      "y": -0.5369,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "H",
+      "x": 3.713,
+      "y": -0.0369,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "H",
+      "x": 3.9399,
+      "y": 0.81,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "H",
+      "x": 3.093,
+      "y": 1.0369,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 2,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 3,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 8,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "CH6Sn",
+  "molecular_weight": "136.77",
+  "canonical_smiles": "C[SnH3]",
+  "isomeric_smiles": "C[SnH3]",
+  "inchi": "InChI=1S/CH3.Sn.3H/h1H3;;;;",
+  "inchikey": "HOPFDHGWBPPFHV-UHFFFAOYSA-N",
+  "iupac_name": "methylstannane",
+  "xlogp": null,
+  "exact_mass": "137.949153",
+  "monoisotopic_mass": "137.949153",
+  "tpsa": 0,
+  "complexity": 2,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 0,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371800000000000000000008000000000000000000000000000000000000000000000000010000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "10000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 2,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

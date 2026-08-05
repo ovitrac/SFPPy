@@ -1,0 +1,237 @@
+{
+  "cid": 31651,
+  "synonyms": [
+    "DIMETHYLTIN",
+    "Dimethylstannylene",
+    "Stannylene, dimethyl-",
+    "23120-99-2",
+    "2GVK75K8EF",
+    "CHEBI:30539",
+    "DTXSID10177691",
+    "Me2Sn(IV)",
+    "RefChem:134391",
+    "DTXCID70100182",
+    "Tin, dimethyl-",
+    "dimethyltin(II)",
+    "Dimethyltin(IV)",
+    "[SnMe2]",
+    "Dimethylzinn",
+    "dimethyl tin",
+    "SnMe2",
+    "UNII-2GVK75K8EF",
+    "dimethyl-lambda(2)-stannane",
+    "Dimethyl-lambda~2~-stannane",
+    "SCHEMBL50898",
+    "PWEVMPIIOJUPRI-UHFFFAOYSA-N",
+    "NSC22307",
+    "NSC-22307",
+    "Q27113858"
+  ],
+  "sids": [
+    542036,
+    8146031,
+    8172314,
+    34673761,
+    50068520,
+    57311262,
+    77796136,
+    103818314,
+    104311438,
+    117394135,
+    134994338,
+    142298288,
+    163152067,
+    225140091,
+    241042207,
+    272736531,
+    273489879,
+    273550494,
+    273706325,
+    315738084,
+    319084336,
+    341162013,
+    385662786,
+    386248363,
+    386499292,
+    403380525,
+    419578724,
+    468762944,
+    468777199,
+    470527287,
+    472406721,
+    472587459,
+    486516475,
+    491080781,
+    500777809,
+    500848234,
+    508857931,
+    516610066
+  ],
+  "aids": [],
+  "elements": [
+    "Sn",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Sn",
+      "x": 2.866,
+      "y": -0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "C",
+      "x": 3.7321,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "C",
+      "x": 2,
+      "y": 0.25,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "H",
+      "x": 4.0421,
+      "y": -0.2869,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "H",
+      "x": 4.269,
+      "y": 0.56,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "H",
+      "x": 3.4221,
+      "y": 0.7869,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "H",
+      "x": 2.31,
+      "y": 0.7869,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "H",
+      "x": 1.4631,
+      "y": 0.56,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "H",
+      "x": 1.69,
+      "y": -0.2869,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 2,
+      "order": 1
+    },
+    {
+      "aid1": 1,
+      "aid2": 3,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 4,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 5,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 6,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 7,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 8,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 9,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C2H6Sn",
+  "molecular_weight": "148.78",
+  "canonical_smiles": "C[Sn]C",
+  "isomeric_smiles": "C[Sn]C",
+  "inchi": "InChI=1S/2CH3.Sn/h2*1H3;",
+  "inchikey": "PWEVMPIIOJUPRI-UHFFFAOYSA-N",
+  "iupac_name": "dimethyltin",
+  "xlogp": null,
+  "exact_mass": "149.949153",
+  "monoisotopic_mass": "149.949153",
+  "tpsa": 0,
+  "complexity": 2.8,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 0,
+  "rotatable_bond_count": 0,
+  "fingerprint": "00000371804000000000000000008000000000000000000000000000000000000000000000000010000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "cactvs_fingerprint": "10000000010000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "heavy_atom_count": 3,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}

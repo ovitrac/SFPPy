@@ -1,0 +1,411 @@
+{
+  "cid": 49931,
+  "synonyms": [
+    "1,2,4,6,7,8-HEXACHLORODIBENZOFURAN",
+    "67562-40-7",
+    "UNII-1K8ZFG7183",
+    "Dibenzofuran, 1,2,4,6,7,8-hexachloro",
+    "1K8ZFG7183",
+    "Dibenzofuran, 1,2,4,6,7,8-hexachloro-",
+    "PCDF 125",
+    "DTXSID00217893",
+    "3,4,6,10,11,12-hexachloro-8-oxatricyclo(7.4.0.02,7)trideca-1(13),2,4,6,9,11-hexaene",
+    "3,4,6,10,11,12-hexachloro-8-oxatricyclo[7.4.0.02,7]trideca-1(13),2,4,6,9,11-hexaene",
+    "RefChem:71479",
+    "8-Hexachloro-dibenzofuran",
+    "DTXCID50140384",
+    "CHEMBL136889",
+    "SCHEMBL2281954",
+    "CKDDYGBBKXIHRY-UHFFFAOYSA-N",
+    "BDBM50408351",
+    "1,2,4,6,7,8-hexa-chlorodibenzofuran",
+    "1,2,4,6,7,8-Hexachlorodibenzo[b,d]furan",
+    "NS00120709",
+    "Q27252533"
+  ],
+  "sids": [
+    8181318,
+    10549130,
+    34714554,
+    75354685,
+    103375133,
+    104358848,
+    135010700,
+    162635105,
+    163357375,
+    198942602,
+    228405675,
+    241118797,
+    250154809,
+    274089149,
+    315778165,
+    319095628,
+    349862168,
+    385730461,
+    386567080,
+    404745082,
+    406802465,
+    441005640,
+    446304772,
+    446417631,
+    470686600,
+    475819876,
+    486369922,
+    488269355,
+    500714897,
+    502455933,
+    527799242
+  ],
+  "aids": [
+    39064
+  ],
+  "elements": [
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "Cl",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H"
+  ],
+  "atoms": [
+    {
+      "aid": 1,
+      "element": "Cl",
+      "x": 6.3697,
+      "y": -1.935,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 2,
+      "element": "Cl",
+      "x": 3.3823,
+      "y": 1.935,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 3,
+      "element": "Cl",
+      "x": 7.6271,
+      "y": 1.935,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 4,
+      "element": "Cl",
+      "x": 2.633,
+      "y": -1.5246,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 5,
+      "element": "Cl",
+      "x": 8.3764,
+      "y": -1.5246,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 6,
+      "element": "Cl",
+      "x": 2,
+      "y": 0.4234,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 7,
+      "element": "O",
+      "x": 5.5047,
+      "y": 1.336,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 8,
+      "element": "C",
+      "x": 5.0047,
+      "y": -0.2029,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 9,
+      "element": "C",
+      "x": 6.0047,
+      "y": -0.2029,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 10,
+      "element": "C",
+      "x": 4.6957,
+      "y": 0.7482,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 11,
+      "element": "C",
+      "x": 6.3137,
+      "y": 0.7482,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 12,
+      "element": "C",
+      "x": 4.3197,
+      "y": -0.9876,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 13,
+      "element": "C",
+      "x": 6.6897,
+      "y": -0.9876,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 14,
+      "element": "C",
+      "x": 3.6803,
+      "y": 0.9804,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 15,
+      "element": "C",
+      "x": 7.3291,
+      "y": 0.9804,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 16,
+      "element": "C",
+      "x": 3.2992,
+      "y": -0.7789,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 17,
+      "element": "C",
+      "x": 7.7102,
+      "y": -0.7789,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 18,
+      "element": "C",
+      "x": 2.9773,
+      "y": 0.2118,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 19,
+      "element": "C",
+      "x": 8.0321,
+      "y": 0.2118,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 20,
+      "element": "H",
+      "x": 4.5181,
+      "y": -1.575,
+      "z": null,
+      "charge": 0
+    },
+    {
+      "aid": 21,
+      "element": "H",
+      "x": 8.638,
+      "y": 0.343,
+      "z": null,
+      "charge": 0
+    }
+  ],
+  "bonds": [
+    {
+      "aid1": 1,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 2,
+      "aid2": 14,
+      "order": 1
+    },
+    {
+      "aid1": 3,
+      "aid2": 15,
+      "order": 1
+    },
+    {
+      "aid1": 4,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 5,
+      "aid2": 17,
+      "order": 1
+    },
+    {
+      "aid1": 6,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 7,
+      "aid2": 11,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 9,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 10,
+      "order": 1
+    },
+    {
+      "aid1": 8,
+      "aid2": 12,
+      "order": 2
+    },
+    {
+      "aid1": 9,
+      "aid2": 11,
+      "order": 2
+    },
+    {
+      "aid1": 9,
+      "aid2": 13,
+      "order": 1
+    },
+    {
+      "aid1": 10,
+      "aid2": 14,
+      "order": 2
+    },
+    {
+      "aid1": 11,
+      "aid2": 15,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 16,
+      "order": 1
+    },
+    {
+      "aid1": 12,
+      "aid2": 20,
+      "order": 1
+    },
+    {
+      "aid1": 13,
+      "aid2": 17,
+      "order": 2
+    },
+    {
+      "aid1": 14,
+      "aid2": 18,
+      "order": 1
+    },
+    {
+      "aid1": 15,
+      "aid2": 19,
+      "order": 2
+    },
+    {
+      "aid1": 16,
+      "aid2": 18,
+      "order": 2
+    },
+    {
+      "aid1": 17,
+      "aid2": 19,
+      "order": 1
+    },
+    {
+      "aid1": 19,
+      "aid2": 21,
+      "order": 1
+    }
+  ],
+  "coordinate_type": "2d",
+  "charge": 0,
+  "molecular_formula": "C12H2Cl6O",
+  "molecular_weight": "374.9",
+  "canonical_smiles": "C1=C2C3=C(C(=CC(=C3Cl)Cl)Cl)OC2=C(C(=C1Cl)Cl)Cl",
+  "isomeric_smiles": "C1=C2C3=C(C(=CC(=C3Cl)Cl)Cl)OC2=C(C(=C1Cl)Cl)Cl",
+  "inchi": "InChI=1S/C12H2Cl6O/c13-4-1-3-7-8(16)5(14)2-6(15)12(7)19-11(3)10(18)9(4)17/h1-2H",
+  "inchikey": "CKDDYGBBKXIHRY-UHFFFAOYSA-N",
+  "iupac_name": "1,2,4,6,7,8-hexachlorodibenzofuran",
+  "xlogp": 7.3,
+  "exact_mass": "373.820731",
+  "monoisotopic_mass": "371.823681",
+  "tpsa": 13.1,
+  "complexity": 355,
+  "h_bond_donor_count": 0,
+  "h_bond_acceptor_count": 1,
+  "rotatable_bond_count": 0,
+  "fingerprint": "000003710070200007000000000000000000000000012000000030600000000000004801FC00001A02000000000C068098203006C00004408802A0520000020800242540008A41040BC84C263385361A823920A4C01108AD8788C8E08E84201021008908040840204201121008000000000000",
+  "cactvs_fingerprint": "00000000011100000010000000000000000001110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100100000000000000000000000000000001100000110000000000000000000000000000000000000000000000000000001001000000000011111110000000000000000000001101000000010000000000000000000000000000000000000110000000110100000001001100000100000001100000000011011000000000000000000010001000000100010000000001010100000010100100000000000000000000000100000100000000000001001000010010101000000000000001000101001000001000001000000101111001000010011000010011000110011100001010011011000011010100000100011100100100000101001001100000000010001000010001010110110000111100010001100100011100000100011101000010000100000000100000010000100000000100010010000100000000100000010000100000000100000010000100000000100010010000100000000100000000000000000000000000000000000000000000",
+  "heavy_atom_count": 19,
+  "isotope_atom_count": 0,
+  "atom_stereo_count": 0,
+  "defined_atom_stereo_count": 0,
+  "undefined_atom_stereo_count": 0,
+  "bond_stereo_count": 0,
+  "defined_bond_stereo_count": 0,
+  "undefined_bond_stereo_count": 0,
+  "covalent_unit_count": 1,
+  "volume_3d": null,
+  "multipoles_3d": null,
+  "conformer_rmsd_3d": null,
+  "effective_rotor_count_3d": null,
+  "pharmacophore_features_3d": null,
+  "mmff94_partial_charges_3d": null,
+  "mmff94_energy_3d": null,
+  "conformer_id_3d": null,
+  "shape_selfoverlap_3d": null,
+  "feature_selfoverlap_3d": null,
+  "shape_fingerprint_3d": null
+}
