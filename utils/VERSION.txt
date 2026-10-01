@@ -24,9 +24,12 @@
 #	- 1.40: fourth release, inline with SFPPylite
 #   - 1.42: minor fixes
 #   - 1.50: update for intelligent safe-by-design
+#   - 1.6: faster real-units migration engine + N-layer x multi-step survey solver
+#   - 1.7: cosmetic & home-care exposure (CosPaTox) + robust CSV tool
+#   - 1.8: Welle parameters fixed (gPET, rHIPS) + survey step split, extended percentiles
 #
 #
 # Author: INRAE\olivier.vitrac@agroparistech.fr
-# Revision: 2025-10-11
+# Revision: 2026-10-01
 #
-version="1.50"
+version="1.8"

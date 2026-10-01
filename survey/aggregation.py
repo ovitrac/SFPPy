@@ -525,11 +525,24 @@ def compute_statistics(
 
 # Standard percentiles for risk assessment (EFSA, FDA, regulatory contexts)
 RISK_PERCENTILES = [50, 75, 90, 95, 97.5, 99]
+# Extended grid: the lower tail matters — one cannot assume every
+# food is contaminated at p50 or above. 5 % grid + the regulatory 97.5/99; p0/p100 =
+# min/max of the Monte-Carlo sample.
+RISK_PERCENTILES_EXTENDED = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60,
+                             65, 70, 75, 80, 85, 90, 95, 97.5, 99, 100]
+
+
+def _pctl_key(level: float) -> str:
+    """Percentile column key: 50 -> 'p50', 97.5 -> 'p97_5', 100 -> 'p100'."""
+    if float(level).is_integer():
+        return f"p{int(level)}"
+    return "p" + str(level).replace(".", "_")
 
 
 def compute_risk_percentiles(
     cf_samples: np.ndarray,
-    weights: np.ndarray
+    weights: np.ndarray,
+    levels=None,
 ) -> Dict[str, float]:
     """
     Compute risk-relevant percentiles for regulatory assessment.
@@ -549,10 +562,16 @@ def compute_risk_percentiles(
     weights : np.ndarray
         Corresponding weights.
 
+    levels : list, optional
+        Percentile levels in [0, 100] to compute. Defaults to the standard
+        regulatory set ``RISK_PERCENTILES`` = [50, 75, 90, 95, 97.5, 99] — with
+        this default the output is bit-identical to the historical 6-key result.
+        Pass ``RISK_PERCENTILES_EXTENDED`` for the full lower-tail + extremes grid.
+
     Returns
     -------
     Dict[str, float]
-        Risk percentiles with keys: 'p50', 'p75', 'p90', 'p95', 'p97_5', 'p99'
+        Risk percentiles keyed by ``_pctl_key`` (e.g. 'p50', 'p97_5', 'p100').
 
     Notes
     -----
@@ -560,6 +579,7 @@ def compute_risk_percentiles(
     compute_percentiles(). They provide the exact values needed for
     regulatory reporting.
     """
+    levels = RISK_PERCENTILES if levels is None else levels
     cf_samples = np.asarray(cf_samples)
     weights = np.asarray(weights, dtype=float)
 
@@ -570,14 +590,8 @@ def compute_risk_percentiles(
     else:
         w = np.ones_like(weights) / len(weights)
 
-    return {
-        'p50': float(quantile_from_samples(cf_samples, w, 0.50)),
-        'p75': float(quantile_from_samples(cf_samples, w, 0.75)),
-        'p90': float(quantile_from_samples(cf_samples, w, 0.90)),
-        'p95': float(quantile_from_samples(cf_samples, w, 0.95)),
-        'p97_5': float(quantile_from_samples(cf_samples, w, 0.975)),
-        'p99': float(quantile_from_samples(cf_samples, w, 0.99)),
-    }
+    return {_pctl_key(L): float(quantile_from_samples(cf_samples, w, L / 100.0))
+            for L in levels}
 
 
 def compute_percentiles(

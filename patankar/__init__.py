@@ -27,7 +27,7 @@ Example Usage
 >>> import patankar.layer as polymer  # module import
 """
 
-__version__ = "1.7"
+__version__ = "1.8"
 __author__ = "Olivier Vitrac"
 __email__ = "olivier.vitrac@agroparistech.fr"
 
