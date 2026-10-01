@@ -4067,7 +4067,9 @@ class PA6(layer):
 
 # -- PA66 -------------------------------------------------------------
 class PA66(layer):
-    _chemicalsubstance = "adipamide" #"hexamethylenediamine" # monomer for polymers
+    _chemicalsubstance = "n-hexanamide" #"hexamethylenediamine" # monomer for polymers
+    # same amide density as PA66 (one amide per six carbons), like PA6; adipamide (two per
+    # six) doubled it and inflated k for apolar solutes ~50-fold (before SFPPy 1.9.3)
     _polarityindex = 7.5  # Similar to PA6, strongly polar with hydrogen bonds.
     """ extended pantankar.layer for polyamide 66 (PA66) """
     def __init__(self, l=200e-6, D=1e-14, T=None,
