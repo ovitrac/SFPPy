@@ -30,3 +30,11 @@ def reference(App, tau, M, T):
 def test_piringer_reference_equation(polymer, App, tau, M, T):
     assert_allclose(Dpiringer.evaluate(polymer=polymer, M=M, T=T), reference(App, tau, M, T), rtol=1e-12)
     assert_allclose(Dpiringer(polymer=polymer).eval(M=M, T=T), reference(App, tau, M, T), rtol=1e-12)
+
+
+def test_sbs_uses_sfppy_internal_parameters():
+    """SBS has no original Piringer data: it uses the SFPPy internal entry "PBS" (App 10.5, tau 0)."""
+    entry = Dpiringer.get_piringer_params("SBS")
+    assert entry is Dpiringer.get_piringer_params("PBS")
+    assert (entry["App"], entry["tau"]) == (10.5, 0)
+    assert_allclose(Dpiringer.evaluate(polymer="SBS", M=108.14, T=60.0), reference(10.5, 0, 108.14, 60.0), rtol=1e-12)

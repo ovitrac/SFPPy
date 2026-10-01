@@ -372,12 +372,12 @@ class Dpiringer(Diffusivities):
             "App": 1.0,
             "tau": 0
         },
-        "PBS": {     # category: polystyrenics
-            "className": "PBS",
+        "PBS": {     # category: polystyrenics -- SFPPy internal model, used by layer class SBS
+            "className": "SBS",
             "type": "polymer",
-            "material": "styrene-based polymer PBS",
+            "material": "styrene-based polymer (SBS)",
             "code": "PBS",
-            "description": "No original Piringer data; set to None.",
+            "description": "SFPPy internal model (no original Piringer data).",
             "App": 10.5,
             "tau": 0
         },
