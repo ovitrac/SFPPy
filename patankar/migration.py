@@ -107,6 +107,12 @@ from scipy.sparse import diags, coo_matrix
 # NumPy 2.0 and is removed in later 2.x releases. Keep one symbol that
 # works across both 1.x and 2.x.
 _np_trapezoid = getattr(np, "trapezoid", None) or np.trapz
+
+# SFPPylite (Pyodide/WebAssembly) detection, same test as the lite loadpubchem.
+# Under Pyodide, memory is capped (2-4 GB) and the restart interpolator kept for
+# resumeat() is not built (see SensPatankarResult). Always False on desktop.
+import sys
+_LITE_ = (sys.platform == "emscripten") or ("pyodide" in sys.modules)
 from scipy.interpolate import interp1d, PchipInterpolator
 from scipy.integrate import simpson, cumulative_trapezoid
 from scipy.optimize import minimize
@@ -1590,8 +1596,14 @@ class SensPatankarResult:
             # Time interpolation for resumeat(): PCHIP (monotone, shape-preserving)
             # rather than linear — linear-in-time commits errors at off-node restart
             # times, while cubic would overshoot near steep fronts. PCHIP avoids both.
+            # SFPPylite: no interpolator is kept. The PCHIP stores four coefficient
+            # arrays the size of the whole Cx(t) history (~55 MiB per result for
+            # 1000 times x 1800 nodes), which exhausts WebAssembly memory. resumeat()
+            # is disabled there; resume() and chaining (restart, frozen above) work.
             _t = np.asarray(t, dtype=float)
-            if _t.size >= 2:
+            if _LITE_:
+                self._restart_Cxi_interp = None
+            elif _t.size >= 2:
                 self._restart_Cxi_interp = PchipInterpolator(
                     _t, np.asarray(Cxi, dtype=float), axis=0, extrapolate=True)
             else:
@@ -2053,6 +2065,10 @@ class SensPatankarResult:
         SensPatankarResult
             The continued simulation, exactly as :meth:`resume` would return.
         """
+        if _LITE_:
+            raise ValueError(
+                "resumeat is disabled in SFPPylite (Pyodide) to save memory; use "
+                "resume() from the target time, or SFPPy on desktop.")
         if self._restart_Cxi_interp is None or self._restart_xi is None:
             raise ValueError(
                 "resumeat requires a fresh senspatankar solution that retained the "
