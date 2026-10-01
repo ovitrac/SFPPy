@@ -252,6 +252,20 @@ class Dpiringer(Diffusivities):
     """
         Piringer's overestimate of diffusion coefficient.
 
+            D = exp(A'_P - 0.1351 M^(2/3) + 0.003 M - 10454/T)  in m2/s,  A'_P = A''_P - tau/T
+
+        The constant 0.1351 is that of the reference equation (it was 0.135 before SFPPy 1.9,
+        an effect <= 1.1 % on D for M <= 1200 g/mol).
+
+        References:
+
+            Hoekstra E. et al. Practical guidelines on the application of migration modelling for the
+            estimation of specific migration. JRC, EUR 27529 EN (2015).
+
+            Zhu Y., Welle F., Vitrac O. A blob model to parameterize polymer hole free volumes and
+            solute diffusion. Soft Matter 2019, 15(42), 8912-8932, eq. 43.
+            https://doi.org/10.1039/C9SM01556F
+
         Two implementations are offered in the class:
             - static: Dpiringer.evaluate(polymer="polymer",M=Mvalue,T=Tvalue)
             - dynamic: Dmodel = Dpiringer(polymer="polymer"...)
@@ -608,7 +622,7 @@ class Dpiringer(Diffusivities):
         # Piringer expression for D in m^2/s
         exponent = (self._App
                     - (self._tau / TK)
-                    - 0.135 * (M ** (2.0 / 3.0))
+                    - 0.1351 * (M ** (2.0 / 3.0))
                     + 0.003 * M
                     - 10454.0 / TK)
         return np.exp(exponent)
@@ -752,8 +766,8 @@ class Dpiringer(Diffusivities):
         Ap  = App - tau / TK  # dimensionless exponent part
 
         # Piringer expression for D in m^2/s
-        # D = exp( Ap - 0.135 * M^(2/3) + 0.003 * M - 10454 / TK )
-        exponent = Ap - 0.135 * (M ** (2.0 / 3.0)) + 0.003 * M - 10454.0 / TK
+        # D = exp( Ap - 0.1351 * M^(2/3) + 0.003 * M - 10454 / TK )
+        exponent = Ap - 0.1351 * (M ** (2.0 / 3.0)) + 0.003 * M - 10454.0 / TK
         D = np.exp(exponent)
         return D
 
@@ -934,6 +948,20 @@ class Dwelle(Diffusivities):
             Welle, F. (2021). Diffusion Coefficients and Activation Energies of Diffusion of Organic Molecules
             in Polystyrene below and above Glass Transition Temperature. Polymers, 13(8), 1317.
             https://doi.org/10.3390/polym13081317
+
+        Limitations:
+
+            - One molecular descriptor only (the van der Waals volume V, where Piringer uses the
+              molar mass M) and no envelope: the correlations are central estimators of D, not
+              upper bounds.
+            - PET (Ewender & Welle 2022): 241 of 263 measured D are exceeded (91.6 %), with a mean
+              over-estimation of x2.6. For compliance assessment, the authors recommend reducing V
+              by 20 %.
+            - GPPS and HIPS (Welle 2021, 182 measured D): Welle exceeds the measurement in only 28 to
+              66 % of the cases depending on the parameter set (at best about one substance in two),
+              and Piringer >= Welle in only 47 % of the cases.
+            - Outside the domain V < c (e.g. methanol or ethanol in GPPS at low temperature), the
+              model over-predicts D by up to 10^7.7.
 
     """
 
