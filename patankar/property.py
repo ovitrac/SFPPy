@@ -923,9 +923,13 @@ class Dwelle(Diffusivities):
 
         References:
 
+            Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
+            terephthalate). J Appl Polym Sci. 2013; 129(4): 1845-1851.
+            https://doi.org/10.1002/app.38885
+
             Ewender J, Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
             terephthalate)—Validation data. Packag Technol Sci. 2022; 35(5): 405-413.
-            https://doi.org:10.1002/pts.2638
+            https://doi.org/10.1002/pts.2638
 
             Welle, F. (2021). Diffusion Coefficients and Activation Energies of Diffusion of Organic Molecules
             in Polystyrene below and above Glass Transition Temperature. Polymers, 13(8), 1317.
@@ -948,11 +952,21 @@ class Dwelle(Diffusivities):
     # Welle values (the primary key matches the one used in layer)
     welle_data = {
         # a in 1/K, b in cm2/s, c in A3, d in 1/K
-        "gPET": {"a": 1.93e-3, "b": 2.27e-6, "c": 11.1, "d":1.50e-4},
+        # Sources:
+        #   gPET          Ewender J., Welle F., Packag. Technol. Sci. 35(5):405-413 (2022), Table 1
+        #                 https://doi.org/10.1002/pts.2638
+        #                 (parameters of Welle F., J. Appl. Polym. Sci. 129(4):1845-1851, 2013,
+        #                 https://doi.org/10.1002/app.38885)
+        #   PS, rPS,      Welle F., Polymers 13(8):1317 (2021), Table 8
+        #   HIPS, rHIPS   (GPPS and HIPS, below and above Tg = 100 degC)
+        #                 https://doi.org/10.3390/polym13081317
+        # Fixed 2026-09-30: gPET b was 2.27e-6 (published 2.37e-6); rHIPS d was 2.07e-7,
+        # a copy of b (published 3.57e-5), which made D(rHIPS) collapse to 0 or diverge.
+        "gPET": {"a": 1.93e-3, "b": 2.37e-6, "c": 11.1, "d":1.50e-4},
         "PS": {"a": 2.59e-3, "b": 7.38e-9, "c": 55.71, "d":2.73e-5},
         "rPS": {"a": 2.44e-3, "b": 6.46e-8, "c": 25.51, "d":7.55e-5}, # rubber PS
         "HIPS": {"a": 2.55e-3, "b": 9.21e-9, "c": 73.28, "d": 2.04e-5},
-        "rHIPS": {"a": 2.46e-3, "b": 2.07e-7, "c": 45.00, "d": 2.07e-7}, # rubber HIPS
+        "rHIPS": {"a": 2.46e-3, "b": 2.07e-7, "c": 45.00, "d": 3.57e-5}, # rubber HIPS
   # add polymers here
         }
 
