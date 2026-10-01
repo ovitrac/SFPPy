@@ -322,8 +322,16 @@ def physical_cf_tensor(sv) -> Dict[str, Any]:
             "C0eq": c0eq[:, 0], "C0eq_is_default": bool(c0eq[:, 1].any()), **diag}
 
 
-def physical_per_substance_cf_tensors(sv) -> Dict[str, Dict[str, np.ndarray]]:
-    """Per-CAS decomposition (Σ_i CF_i == family) via the physical chain."""
+def physical_per_substance_cf_tensors(sv, step: str = "full") -> Dict[str, Dict[str, np.ndarray]]:
+    """Per-CAS decomposition (Σ_i CF_i == family) via the physical chain.
+
+    ``step`` (storage/full step split): ``"full"`` = storage then oven (default,
+    bit-identical); ``"storage"`` = step 1 alone, the cached storage curve g1
+    (Fo2=0) per substance — the same g1 ``physical_step_resolved_cf_tensors`` uses.
+    For a 1-step scenario storage ≡ full.
+    """
+    if step not in ("full", "storage"):
+        raise ValueError(f"step must be 'full' or 'storage', got {step!r}")
     ctx = _resolve(sv); subs = ctx["subs"]; conc = ctx["conc_vals"]
     factor = sv._per_substance_factors()
     out: Dict[str, Dict[str, np.ndarray]] = {}
@@ -334,6 +342,20 @@ def physical_per_substance_cf_tensors(sv) -> Dict[str, Dict[str, np.ndarray]]:
             out[cas]["CF_samples"] = out[cas]["CF_tensor"].ravel()
         else:
             out[cas] = {"CF_tensor": cf, "CF_samples": cf.ravel(), **extra}
+
+    if ctx["two_step"] and step == "storage":
+        # Step 1 alone: storage curve g1 (Fo2=0) per substance → single-step-format
+        # 2-D (n_t1, n_cp0) tensor so the combiner treats it as 1-step.
+        w = np.outer(ctx["time_w"], ctx["conc_w"]).ravel()
+        extra0 = {"weights": w, "time_vals": ctx["time_vals"], "time_weights": ctx["time_w"],
+                  "conc_vals": conc, "conc_weights": ctx["conc_w"]}
+        for j, s in enumerate(subs):
+            g1, _g12 = _cached_chain(sv, ctx, s, ctx["time_vals"])
+            cf = np.outer(factor[j] * np.asarray(g1, float), conc)
+            cas = getattr(s, "cas", None) or getattr(s, "id", f"idx{j}")
+            _store(cas, cf, dict(extra0, exchangeable=bool(getattr(s, "exchangeable", True)),
+                                 weight=float(getattr(s, "weight", 1.0))))
+        return out
 
     if ctx["two_step"]:
         w3 = np.einsum("i,j,k->ijk", ctx["time_w"], ctx["time2_w"], ctx["conc_w"]); w3 /= w3.sum()

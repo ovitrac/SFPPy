@@ -567,8 +567,12 @@ class Survey:
                 factor[i] = wn[k]
         return factor
 
-    def per_substance_cf_tensors(self) -> Dict[str, Dict[str, np.ndarray]]:
+    def per_substance_cf_tensors(self, step: str = "full") -> Dict[str, Dict[str, np.ndarray]]:
         """Decompose the family CF into per-substance contributions.
+
+        (``step`` is accepted for a uniform call signature with the two-step
+        subclasses; a base ``Survey`` is single-step, so storage ≡ full and the
+        argument is a no-op here.)
 
         Concentration is applied AFTER the (C0-independent) master curve, so
         each substance's *expected* contribution is a post-hoc re-weighting of
