@@ -156,7 +156,8 @@ class kFHP(HenryLikeCoefficients):
             P'i and P'k: Polarity index (e.g.: migrant("solute").polarityindex)
             Vi, Vk: molar volumes (e.g. migrant("solute").molarvolumeMiller)
             ispolymer: True for polymers
-            alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
+            alpha: scaling constant for chiik (default=0.162331, recalibrated on eight
+                   reference solvents; 0.14 = 1/P'_water before SFPPy 1.9.1)
             lngmin: minimum value (default=0)
             Psat: vapor saturation pressure
             cristallinity: crystallinity of the solid phase
@@ -182,7 +183,7 @@ class kFHP(HenryLikeCoefficients):
     _available_to_import = True # this model can be imported
 
     @classmethod
-    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.14,lngmin=0.0,Psat=1.0,scaling=True,porosity=0,crystallinity=0):
+    def evaluate(cls, Pi=1.41, Pk=3.97, Vi=124.1, Vk=30.9, ispolymer = False, alpha=0.162331,lngmin=0.0,Psat=1.0,scaling=True,porosity=0,crystallinity=0):
         """evaluate gFHP model(Pi,Pk,Vi,Vk,ispolymer)"""
         scalesolidamorphous = (1-porosity)*(1-crystallinity)
         scalesolidamorphous = 1 if scalesolidamorphous==0 else scalesolidamorphous # pure air
@@ -206,7 +207,8 @@ class gFHP(ActivityCoefficients):
             P'i and P'k: Polarity index (e.g.: migrant("solute").polarityindex)
             Vi, Vk: molar volumes (e.g. migrant("solute").molarvolumeMiller)
             ispolymer: True for polymers
-            alpha: scaling constant for chiik (default=0.14=1/migrant("water").polarityindex)
+            alpha: scaling constant for chiik (default=0.162331, recalibrated on eight
+                   reference solvents; 0.14 = 1/P'_water before SFPPy 1.9.1)
             lngmin: minimum value (default=0)
             gscale: activity coefficient (default=1.0)
 

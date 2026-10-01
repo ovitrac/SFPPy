@@ -2259,7 +2259,7 @@ class migrant:
                               "Vi":124.1, # molar volume of i
                               "Vk":30.9,  # molar volume of k
                               "ispolymer":True, # True if FH theory is applicable
-                              "alpha":0.14, # \alpha \times (P'_i-P'k)^2
+                              "alpha":0.162331, # \alpha \times (P'_i-P'k)^2 (recalibrated; 0.14 before 1.9.1)
                               "lngmin":0.0, # min of log(\gamma_i) -- see theory at inifinite dilution
                               "Psat":1.0,   # partial saturation pressure for i (usually not defined)
                               "crystallinity":0, # k are calculated respectively to the volume fraction
@@ -2322,7 +2322,7 @@ class migrant:
                     - kmodel="model name"
                       default =None
                     - ktemplate=template dict coding for the key:value parameters
-                      default =  {"Pi":1.41, "Pk":3.97, "Vi":124.1, "Vk":30.9, "ispolymer":True, "alpha":0.14, "lngmin":0.0,"Psat":1.0}
+                      default =  {"Pi":1.41, "Pk":3.97, "Vi":124.1, "Vk":30.9, "ispolymer":True, "alpha":0.162331, "lngmin":0.0,"Psat":1.0}
             other models could be implemented in the future, read the module property.py for details.
 
         Example of usage of Dpiringer

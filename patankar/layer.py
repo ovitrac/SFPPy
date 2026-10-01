@@ -3604,9 +3604,10 @@ class rHIPS(HIPS):
 
 
 # -- PBS (assuming a styrene-based polymer) ---------------------------
-# TODO (future update): no D model for SBS. Piringer has no SBS parameters and Welle does not
-# cover it (not even toluene via DFV). With a substance, layer.D raises "No match or suggestion
-# found for 'SBS'" -- impose D via Dlink (layerLink) meanwhile.
+# TODO (future update): no D model for SBS. The Piringer table holds a "PBS" entry (App 10.5,
+# tau 0, "styrene-based polymer") flagged "No original Piringer data", deliberately not mapped
+# to SBS until sourced values exist; Welle does not cover SBS (nor DFV). With a substance,
+# layer.D raises "No match or suggestion found for 'SBS'" -- impose D via Dlink meanwhile.
 class SBS(layer):
     _chemicalsubstance = "ethylbenzene" #"styrene" # Styrene + butadiene
     _polarityindex = 3.5  # Non-polar but somewhat more interactive than pure PE/PP due to styrene units
