@@ -30,9 +30,10 @@
 #   - 1.8.1: SFPPylite memory guard (no resumeat interpolator under Pyodide)
 #   - 1.9: survey two-step and n>=3-layer modules public; Piringer constant 0.1351
 #   - 1.9.1: k model uses the recalibrated alpha = 0.162331 (was 0.14 by default)
+#   - 1.9.2: SBS diffusivity from SFPPy internal Piringer-type parameters
 #
 #
 # Author: INRAE\olivier.vitrac@agroparistech.fr
 # Revision: 2026-10-01
 #
-version="1.9.1"
+version="1.9.2"
