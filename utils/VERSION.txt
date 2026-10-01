@@ -31,9 +31,10 @@
 #   - 1.9: survey two-step and n>=3-layer modules public; Piringer constant 0.1351
 #   - 1.9.1: k model uses the recalibrated alpha = 0.162331 (was 0.14 by default)
 #   - 1.9.2: SBS diffusivity from SFPPy internal Piringer-type parameters
+#   - 1.9.3: PA66 surrogate n-hexanamide (same amide density as PA6)
 #
 #
 # Author: INRAE\olivier.vitrac@agroparistech.fr
 # Revision: 2026-10-01
 #
-version="1.9.2"
+version="1.9.3"
