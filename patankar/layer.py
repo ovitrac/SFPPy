@@ -3443,6 +3443,10 @@ class oPP(layer):
 
 # <<<<<<<<<<<<<<<<<<<<<<< P O L Y A C R Y L A T E S >>>>>>>>>>>>>>>>>>>>>>
 # -- PMMA (polymethyl acrylate) -----------------------------------------------
+# TODO (future update): no general D model for PMMA. Piringer has no PMMA parameters and
+# Welle does not cover it; only toluene is predicted (hole free-volume model DFV). With any
+# other substance, layer.D raises "No match or suggestion found for 'PMMA'" -- impose D via
+# Dlink (layerLink) meanwhile.
 class PMMA(layer):
     """ extended pantankar.layer for polystyrene (PS) """
     _chemicalsubstance = "Isobutyl acetate" #"methyl methacrylate" # monomer for polymers
@@ -3600,6 +3604,9 @@ class rHIPS(HIPS):
 
 
 # -- PBS (assuming a styrene-based polymer) ---------------------------
+# TODO (future update): no D model for SBS. Piringer has no SBS parameters and Welle does not
+# cover it (not even toluene via DFV). With a substance, layer.D raises "No match or suggestion
+# found for 'SBS'" -- impose D via Dlink (layerLink) meanwhile.
 class SBS(layer):
     _chemicalsubstance = "ethylbenzene" #"styrene" # Styrene + butadiene
     _polarityindex = 3.5  # Non-polar but somewhat more interactive than pure PE/PP due to styrene units
