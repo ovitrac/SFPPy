@@ -923,9 +923,13 @@ class Dwelle(Diffusivities):
 
         References:
 
+            Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
+            terephthalate). J Appl Polym Sci. 2013; 129(4): 1845-1851.
+            https://doi.org/10.1002/app.38885
+
             Ewender J, Welle F. A new method for the prediction of diffusion coefficients in poly(ethylene
             terephthalate)—Validation data. Packag Technol Sci. 2022; 35(5): 405-413.
-            https://doi.org:10.1002/pts.2638
+            https://doi.org/10.1002/pts.2638
 
             Welle, F. (2021). Diffusion Coefficients and Activation Energies of Diffusion of Organic Molecules
             in Polystyrene below and above Glass Transition Temperature. Polymers, 13(8), 1317.
@@ -950,9 +954,12 @@ class Dwelle(Diffusivities):
         # a in 1/K, b in cm2/s, c in A3, d in 1/K
         # Sources:
         #   gPET          Ewender J., Welle F., Packag. Technol. Sci. 35(5):405-413 (2022), Table 1
-        #                 (parameters of Welle F., J. Appl. Polym. Sci. 129(4):1845-1851, 2013)
+        #                 https://doi.org/10.1002/pts.2638
+        #                 (parameters of Welle F., J. Appl. Polym. Sci. 129(4):1845-1851, 2013,
+        #                 https://doi.org/10.1002/app.38885)
         #   PS, rPS,      Welle F., Polymers 13(8):1317 (2021), Table 8
         #   HIPS, rHIPS   (GPPS and HIPS, below and above Tg = 100 degC)
+        #                 https://doi.org/10.3390/polym13081317
         # Fixed 2026-09-30: gPET b was 2.27e-6 (published 2.37e-6); rHIPS d was 2.07e-7,
         # a copy of b (published 3.57e-5), which made D(rHIPS) collapse to 0 or diverge.
         "gPET": {"a": 1.93e-3, "b": 2.37e-6, "c": 11.1, "d":1.50e-4},

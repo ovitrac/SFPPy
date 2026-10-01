@@ -10,10 +10,14 @@ Sources
 - Ewender J., Welle F. (2022). A new method for the prediction of diffusion
   coefficients in poly(ethylene terephthalate) - Validation data.
   Packag. Technol. Sci. 35(5):405-413, Table 1 (gPET).
+  https://doi.org/10.1002/pts.2638
+  (parameters of Welle F. (2013), J. Appl. Polym. Sci. 129(4):1845-1851,
+  https://doi.org/10.1002/app.38885)
 - Welle F. (2021). Diffusion coefficients and activation energies of diffusion
   of organic molecules in polystyrene below and above glass transition
   temperature. Polymers 13(8):1317, Table 8 (PS, rPS, HIPS, rHIPS),
   Tables 3-5 (measured D), Tables 6-7 (molecular volumes), Tg = 100 degC.
+  https://doi.org/10.3390/polym13081317
 
 @project: SFPPy - Safe Food Packaging in Python
 @author: Olivier Vitrac
