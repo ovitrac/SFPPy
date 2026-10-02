@@ -25,6 +25,7 @@ All examples include a **path bootstrap** and can be run directly without instal
 | [example6_cosmetic.py](#example-6-cosmetic-exposure) | Advanced | Cosmetic exposure & verdicts | `cosmetic`, dose, tiers, gates |
 | [example7_cosmetic_populations.py](#example-7-populations-and-comparable-units) | Advanced | Populations & unit conversions | body weight, retention, SML→TDI |
 | [example8_cosmetic_specification.py](#example-8-from-exposure-to-a-material-specification) | Advanced | **Reverse problem** — MAE → CP0max | `PR`, formats, `setCF`/`setMAE` |
+| [TI_AG6062/](TI_AG6062/README.md) | Intermediate | Case studies of a published article | Seven safe-design levers (C1–C7), tiers M0–M3 |
 
 ---
 
@@ -568,6 +569,23 @@ Migration does not care about the silhouette, only about how much wall faces how
 ### Robustness
 
 `verify=True` re-runs the transfer at ten times the guess and checks $PR$ is unchanged. Linearity is the assumption the whole inversion rests on, so it is **measured, not trusted**: a concentration-dependent $D$ or $k$ fires gate **G13-linearity** instead of returning a number that looks reasonable and is not. $PR = 0$ reports *unbounded* explicitly rather than dividing by zero; a missing $C_{P0}$, an absent M3 simulation and an unknown tier each refuse with a named remedy.
+
+---
+
+## Case Studies of Techniques de l'Ingénieur AG 6 062
+
+The folder [`TI_AG6062/`](TI_AG6062/README.md) holds the scripts of the seven case studies (C1–C7) of:
+
+> Vitrac O., Nguyen P.-M. *Conception sûre des emballages – Cas d'étude et outils numériques*.
+> Techniques de l'Ingénieur, AG 6 062 (2027, à paraître).
+
+Each script isolates one design lever (initial concentration, toxicological tier, food type, time and temperature,
+additive, diffusion barrier, coupled diffusivity and solubility of a functional barrier) and reproduces the
+migration and severity calculations of the article (SFPPy 1.9.3).
+
+```bash
+python examples/TI_AG6062/case_C1_reduce_C0.py
+```
 
 ---
 
